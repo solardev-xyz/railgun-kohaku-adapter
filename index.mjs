@@ -1,0 +1,8 @@
+import runtime from './index.cjs';
+export const createRailgunKohakuSnapshotPlugin = runtime.createRailgunKohakuSnapshotPlugin;
+export const createRailgunKohakuPrivateAdapter = runtime.createRailgunKohakuPrivateAdapter;
+export const createRailgunKohakuPrivateAdapterBroadcaster =
+  runtime.createRailgunKohakuPrivateAdapterBroadcaster;
+export const createRailgunKohakuPublicAdapter = runtime.createRailgunKohakuPublicAdapter;
+export const createRailgunKohakuPublicAdapterSubmitter =
+  runtime.createRailgunKohakuPublicAdapterSubmitter;
