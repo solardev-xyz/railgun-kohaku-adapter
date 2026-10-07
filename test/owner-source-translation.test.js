@@ -31,7 +31,7 @@ test("one immutable source basis, all36 owners and expanded R1/submission/worker
   expect(translation.packageBase).toBe(
     "714401ae4a6f18275829e297ef5856d305a820ae",
   );
-  expect(translation.files).toHaveLength(186);
+  expect(translation.files).toHaveLength(205);
   expect(translation.originalScc).toHaveLength(36);
   const sources = new Set(translation.files.map((row) => row.source));
   for (const source of translation.originalScc)
@@ -61,6 +61,15 @@ test("every translated algorithm reconstructs its exact immutable original bytes
       continue;
     }
     moved++;
+    const reverse =
+      require("../docs/owners/REVERSE-TRANSITIONS.json").changes.find(
+        (change) => change.file === row.destination,
+      );
+    if (reverse) {
+      expect(sha(text)).toBe(reverse.afterSha256);
+      text = undo(text, reverse.replacements);
+      expect(sha(text)).toBe(reverse.beforeSha256);
+    }
     const transition = transitions.changes.find(
       (change) => change.file === row.destination,
     );
@@ -84,7 +93,7 @@ test("every translated algorithm reconstructs its exact immutable original bytes
     );
     expect(sha(text)).toBe(row.sourceSha256);
   }
-  expect({ moved, reused }).toEqual({ moved: 135, reused: 51 });
+  expect({ moved, reused }).toEqual({ moved: 154, reused: 51 });
 });
 test("every reused data/POI/execution implementation has only one destination", () => {
   const rows = translation.files.filter(
@@ -136,7 +145,7 @@ test("private files parse, fixed imports are local, and missing transitions are 
   ).toHaveLength(6);
 });
 test("persisted schema, floor, record and store literals remain exactly unchanged", () => {
-  expect(persisted.files).toHaveLength(135);
+  expect(persisted.files).toHaveLength(154);
   const all = new Set();
   for (const row of persisted.files) {
     expect([...row.literals, ...row.relocatedToCredentialHost].sort()).toEqual(
@@ -276,6 +285,7 @@ test("high-authority host family imports have an exact reviewed source allowlist
       "src/owners/railgun-identity.js",
     ],
     signers: [
+      "src/owners/railgun-kohaku-plugin.js",
       "src/owners/railgun-private-operation.js",
       "src/owners/railgun-private-submission.js",
     ],
@@ -283,7 +293,11 @@ test("high-authority host family imports have an exact reviewed source allowlist
       "src/owners/railgun-private-submission.js",
       "src/owners/railgun-shield-operation.js",
     ],
-    submitter: ["src/owners/railgun-private-submission.js"],
+    submitter: [
+      "src/owners/railgun-kohaku-plugin.js",
+      "src/owners/railgun-private-submission.js",
+      "src/owners/railgun-shield-origin.js",
+    ],
   });
   for (const [family, files] of Object.entries(audit.allowed))
     expect(
@@ -306,4 +320,31 @@ test("controlled credential tests pin their immutable source and copied context 
     row.fixture.endsWith("owner-privacy-context.js"),
   );
   expect(issuer.current).toEqual(issuer.original);
+});
+
+test("all19 reviewed reverse owners move privately with immutable source pins and no unresolved imports", () => {
+  const additions = require("../docs/owners/REVERSE-ADDITIONS.json");
+  expect(additions.sourceCommit).toBe(translation.sourceRevision);
+  expect(additions.additions).toHaveLength(19);
+  for (const addition of additions.additions) {
+    const row = translation.files.find(
+      (item) => item.source === addition.source,
+    );
+    expect(row.sourceBlob).toBe(addition.gitBlob);
+    expect(row.sourceSha256).toBe(addition.sha256);
+    expect(row.destination).toBe(
+      `src/owners/${path.basename(addition.source)}`,
+    );
+    expect(staged[row.destination].syntaxDiagnostics).toBe(0);
+  }
+  expect(
+    imports.literalEdges.some((row) => row.status === "unresolved-relative"),
+  ).toBe(false);
+  for (const name of ["railgun-kohaku-plugin.js", "railgun-shield-origin.js"]) {
+    const source = fs.readFileSync(path.join(root, "src/owners", name), "utf8");
+    expect(source).toContain(".submitter.readMetadata()");
+    expect(source).not.toMatch(/identity-manager|getWalletRecord|unbound\//);
+    expect(source).toContain("record.type === 'mnemonic'");
+    expect(source).toContain("assert.ok(BigInt(address) > 0n)");
+  }
 });

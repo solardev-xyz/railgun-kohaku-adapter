@@ -40,7 +40,11 @@ const schema = {
     "getPrivateTransactionNetwork",
     "getPrivateTransactionNetworkDestination",
   ],
-  submissionJournal: ["getPrivateSubmissionJournal"],
+  submissionJournal: [
+    "getPrivateSubmissionJournal",
+    "readExistingPrivateSubmissionSnapshot",
+  ],
+  registry: ["getNetwork", "getEndpointSources", "getEndpoints"],
   journalRetention: ["validArchive"],
   transactions: ["signAndSendTransaction"],
   submitter: ["readMetadata"],

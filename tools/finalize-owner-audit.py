@@ -31,9 +31,9 @@ for file,item in ast.items():
   if family in capabilities:capabilities[family].append(file)
 expected={
  'credentials':['src/owners/credential-loan.js','src/owners/railgun-account-enrollment.js','src/owners/railgun-identity.js'],
- 'signers':['src/owners/railgun-private-operation.js','src/owners/railgun-private-submission.js'],
+ 'signers':['src/owners/railgun-kohaku-plugin.js','src/owners/railgun-private-operation.js','src/owners/railgun-private-submission.js'],
  'transactions':['src/owners/railgun-private-submission.js','src/owners/railgun-shield-operation.js'],
- 'submitter':['src/owners/railgun-private-submission.js'],
+ 'submitter':['src/owners/railgun-kohaku-plugin.js','src/owners/railgun-private-submission.js','src/owners/railgun-shield-origin.js'],
 }
 assert capabilities==expected,(capabilities,expected)
 (root/'docs/owners/HOST-CAPABILITIES.json').write_text(json.dumps({'scope':'Exact static imports of high-authority host families; not semantic whole-JavaScript authority proof. Dynamic or whole-family-object aliases refuse source parsing.','allowed':expected,'files':{file:sha((root/file).read_bytes()) for file in sorted(set(sum(expected.values(),[])))}},indent=2)+'\n')
