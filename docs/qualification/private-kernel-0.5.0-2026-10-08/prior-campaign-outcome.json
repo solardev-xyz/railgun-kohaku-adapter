@@ -1,0 +1,14 @@
+{
+  "qualified": false,
+  "sourceCommit": "470fd92619c49d7eb96f2a3ea24c192b400e5f05",
+  "passedCases": [
+    "controller",
+    "warm",
+    "setup"
+  ],
+  "failedCase": "resume",
+  "reason": "Cold reader exact handoff key set omitted newly emitted kernelEvidence; refused before any profile/account open",
+  "productionFailureEstablished": false,
+  "allPostChecksUnchanged": true,
+  "retryPolicy": "Fresh campaign only; preserve original outputs"
+}

@@ -1,0 +1,550 @@
+{
+  "schema": "railgun-private-kernel-qualification-archive-v1",
+  "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+  "packageSourceCommit": "3d52223b6c4fdd4d7ed9c78933d2ffe1a4d6ca4a",
+  "packageVersion": "0.5.0",
+  "electronVersion": "44.6.0",
+  "reportsExactBytes": true,
+  "publicFiles": {
+    "controller-report.json": {
+      "sha256": "561d810818d2c41b8c07b426aba6234eb3cec1fe8e0ebf4123f86ba9d60e56a3",
+      "bytes": 178893
+    },
+    "warm-report.json": {
+      "sha256": "1b185461d0fbbcf96674f9b8508b65636a7eec380060157e45eec31534d17bc2",
+      "bytes": 271758
+    },
+    "restart-handoff.json": {
+      "sha256": "57b093b16105ea3a123e3be3f3a674180d49f166813bfee8744d4eff5ef1e430",
+      "bytes": 191695
+    },
+    "resume-report.json": {
+      "sha256": "c561d5d96c7dbc56e234bec89588396d327d218b16950028b234f890e9b38739",
+      "bytes": 217017
+    },
+    "native-inputs.json": {
+      "sha256": "a7ca6585ac3659adf9506b75a7220be2f13bcebbf5ad407ca78fbe40250fcb41",
+      "bytes": 255200
+    },
+    "PACKAGED.json": {
+      "sha256": "34c5459d20e89335e5c15ac3ce274c74feddff5098b92cc372a5f1014b3dd338",
+      "bytes": 9541
+    },
+    "packaged-load.json": {
+      "sha256": "44525d3aed4cedad9e5ad80c88dfa0e4a595d7cbef12c0f434949e97e810fed9",
+      "bytes": 4533
+    },
+    "CLEAN-INVENTORY.json": {
+      "sha256": "685c68375f2a81e62e7569e97facc7b2c9d9a9e7fab5166dcfec172a5d9f2215",
+      "bytes": 244
+    },
+    "prior-campaign-outcome.json": {
+      "sha256": "599d7f7ca32938357647794c24d0e83613525d895fce3a42a13ab1bea4abf799",
+      "bytes": 448
+    },
+    "handoff-control.json": {
+      "sha256": "7574254a68a8447e496c247dd2bf8337569f54e3d98f9482b7a9fef8021e73bf",
+      "bytes": 185
+    }
+  },
+  "originalCampaignResult": {
+    "sha256": "93eed8e35b26ce79b7b4b6f06a74f9ab4b223c58593e3f5d5523b218def2f932",
+    "bytes": 5057
+  },
+  "nativeInputInventory": {
+    "path": "native-inputs.json",
+    "original": {
+      "sha256": "a7ca6585ac3659adf9506b75a7220be2f13bcebbf5ad407ca78fbe40250fcb41",
+      "bytes": 255200
+    },
+    "sourceFiles": 1507,
+    "packageFiles": 99,
+    "runtimeAndArtifactFiles": 29,
+    "allSourcePinsMatchedCommittedBlobs": true
+  },
+  "driver": {
+    "freeze": {
+      "sha256": "b95e0094ed25a4b8e93cb36078d4141797ad5badb1f32786f5e7c7f83211fedf",
+      "bytes": 883
+    },
+    "artifacts": {
+      "run.py": {
+        "bytes": 7067,
+        "sha256": "6da37b1702dc4c836f095d3b7b8837fe4c39416c1a29e12bff676367ab2e5641"
+      },
+      "validation.py": {
+        "bytes": 7601,
+        "sha256": "f5eb1907336c8a43c8d6de444c947c06f7194768bd6ba72fd09d0e51ec7ed86b"
+      },
+      "controls.py": {
+        "bytes": 8103,
+        "sha256": "2946fa146540cee98ce532e36769c3c865e3bc1aaadafc58c8eff4761012f25c"
+      },
+      "PINS.json": {
+        "bytes": 20805,
+        "sha256": "93887ed871a23bf44e242ab2f8de8897fe4db840a306ccb08be8c568d7727756"
+      },
+      "README.md": {
+        "bytes": 7200,
+        "sha256": "0548cf08a13cca363776a4d0eef6aaf54ad507096925667b1e0dd8a0628309d1"
+      },
+      "public-source.json": {
+        "bytes": 8466,
+        "sha256": "bfa8684f50b2bb838b026f2c4972653bfc4503d9fd15182c6c5b219ce1bc1e41"
+      },
+      "public-bytecodes.json": {
+        "bytes": 74671,
+        "sha256": "a1f3a1c51c6272eca7940313bf3b8d6b8229527db3aaf3334acc76d8314c0427"
+      }
+    },
+    "publicSourceInputReused": "bfa8684f50b2bb838b026f2c4972653bfc4503d9fd15182c6c5b219ce1bc1e41",
+    "notPublished": "Original driver source/README contain private machine paths; hashes only are preserved here."
+  },
+  "cases": [
+    {
+      "case": "controller",
+      "report": "controller-report.json",
+      "originalReport": {
+        "sha256": "561d810818d2c41b8c07b426aba6234eb3cec1fe8e0ebf4123f86ba9d60e56a3",
+        "bytes": 178893
+      },
+      "originalProcessRecord": {
+        "sha256": "2e3c4ff8f8c26c35ea84e9b9d3a251014c8fe8802d4d67160a3345b1df63a4cb",
+        "bytes": 905
+      },
+      "originalResult": {
+        "sha256": "4f0b18313ed2301cfa2d5f54fa95d6d8fd31936985d3375da321ff8346ea352b",
+        "bytes": 1096
+      },
+      "originalPost": {
+        "sha256": "1ae748d5796cc995906ddf0fba5e5626f9c1c6ac79cec8fb465106e92254a77b",
+        "bytes": 24
+      },
+      "process": {
+        "name": "controller",
+        "argv": [
+          "<source-root>/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron",
+          "<source-root>/scripts/qualify-railgun-partial-controller.js",
+          "<driver-r3>/public-source.json",
+          "<campaign-b>/controller",
+          "<source-root>/tmp/privacy-build/railgun-engine-oct3-a/railgun-engine.asar",
+          "<source-root>/tmp/privacy-build/railgun-prover-oct3-f/railgun-prover.asar",
+          "<source-root>/tmp/privacy-research-oct2/railgun-artifacts",
+          "<driver-r3>/public-bytecodes.json",
+          "Shield"
+        ],
+        "pid": 53865,
+        "exitCode": 0,
+        "naturalExit": true,
+        "elapsedSeconds": 22.53166975
+      },
+      "post": {
+        "unchanged": true
+      }
+    },
+    {
+      "case": "warm",
+      "report": "warm-report.json",
+      "originalReport": {
+        "sha256": "1b185461d0fbbcf96674f9b8508b65636a7eec380060157e45eec31534d17bc2",
+        "bytes": 271758
+      },
+      "originalProcessRecord": {
+        "sha256": "ab5c9da8f8ea1d07850fd7b5ae0a61e4305845976e001729787eb41f6c444b1b",
+        "bytes": 942
+      },
+      "originalResult": {
+        "sha256": "1012a3cd6576c2e0ef15a840e830e3c1c6b06ee4d94cce0b277ef363da8a682b",
+        "bytes": 1127
+      },
+      "originalPost": {
+        "sha256": "1ae748d5796cc995906ddf0fba5e5626f9c1c6ac79cec8fb465106e92254a77b",
+        "bytes": 24
+      },
+      "process": {
+        "name": "warm",
+        "argv": [
+          "<source-root>/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron",
+          "<source-root>/scripts/qualify-railgun-proof-recovery.js",
+          "<driver-r3>/public-source.json",
+          "<campaign-b>/warm",
+          "<source-root>/tmp/privacy-build/railgun-engine-oct3-a/railgun-engine.asar",
+          "<source-root>/tmp/privacy-build/railgun-prover-oct3-f/railgun-prover.asar",
+          "<source-root>/tmp/privacy-research-oct2/railgun-artifacts",
+          "<driver-r3>/public-bytecodes.json",
+          "Transact",
+          "foreign",
+          "warm",
+          "same-root"
+        ],
+        "pid": 54220,
+        "exitCode": 0,
+        "naturalExit": true,
+        "elapsedSeconds": 61.128972000000005
+      },
+      "post": {
+        "unchanged": true
+      }
+    },
+    {
+      "case": "setup",
+      "report": "restart-handoff.json",
+      "originalReport": {
+        "sha256": "57b093b16105ea3a123e3be3f3a674180d49f166813bfee8744d4eff5ef1e430",
+        "bytes": 191695
+      },
+      "originalProcessRecord": {
+        "sha256": "3881ea000dd0614bf566173750ad788e8a044739dee8511e80d9a5bbb13ca946",
+        "bytes": 948
+      },
+      "originalResult": {
+        "sha256": "b63d904c0c29779fc8b6a5386152cf01bccc427279fae3fc3363f2af0bb91cae",
+        "bytes": 1142
+      },
+      "originalPost": {
+        "sha256": "1ae748d5796cc995906ddf0fba5e5626f9c1c6ac79cec8fb465106e92254a77b",
+        "bytes": 24
+      },
+      "process": {
+        "name": "setup",
+        "argv": [
+          "<source-root>/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron",
+          "<source-root>/scripts/qualify-railgun-proof-recovery.js",
+          "<driver-r3>/public-source.json",
+          "<campaign-b>/cold",
+          "<source-root>/tmp/privacy-build/railgun-engine-oct3-a/railgun-engine.asar",
+          "<source-root>/tmp/privacy-build/railgun-prover-oct3-f/railgun-prover.asar",
+          "<source-root>/tmp/privacy-research-oct2/railgun-artifacts",
+          "<driver-r3>/public-bytecodes.json",
+          "Transact",
+          "foreign",
+          "setup",
+          "advanced-root"
+        ],
+        "pid": 55097,
+        "exitCode": 0,
+        "naturalExit": true,
+        "elapsedSeconds": 23.034961334000002
+      },
+      "post": {
+        "unchanged": true
+      }
+    },
+    {
+      "case": "resume",
+      "report": "resume-report.json",
+      "originalReport": {
+        "sha256": "c561d5d96c7dbc56e234bec89588396d327d218b16950028b234f890e9b38739",
+        "bytes": 217017
+      },
+      "originalProcessRecord": {
+        "sha256": "d966b6f1e05b9ddf60e7451e73c0a1c56ea41ceb2b17960cc1c2346cfa3ba0de",
+        "bytes": 949
+      },
+      "originalResult": {
+        "sha256": "6751ef48bab57ce34cd3f9e72d3a575dae85d94fe87b464309a62f68ae844438",
+        "bytes": 1141
+      },
+      "originalPost": {
+        "sha256": "1ae748d5796cc995906ddf0fba5e5626f9c1c6ac79cec8fb465106e92254a77b",
+        "bytes": 24
+      },
+      "process": {
+        "name": "resume",
+        "argv": [
+          "<source-root>/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron",
+          "<source-root>/scripts/qualify-railgun-proof-recovery.js",
+          "<driver-r3>/public-source.json",
+          "<campaign-b>/cold",
+          "<source-root>/tmp/privacy-build/railgun-engine-oct3-a/railgun-engine.asar",
+          "<source-root>/tmp/privacy-build/railgun-prover-oct3-f/railgun-prover.asar",
+          "<source-root>/tmp/privacy-research-oct2/railgun-artifacts",
+          "<driver-r3>/public-bytecodes.json",
+          "Transact",
+          "foreign",
+          "resume",
+          "advanced-root"
+        ],
+        "pid": 55340,
+        "exitCode": 0,
+        "naturalExit": true,
+        "elapsedSeconds": 38.11453566700001
+      },
+      "post": {
+        "unchanged": true
+      }
+    }
+  ],
+  "rootObservation": {
+    "attribution": "Parent/root tool observation supplied to archive author; distinct from driver-owned process JSON",
+    "campaignB": {
+      "execSession": 2381,
+      "observedExitCode": 0,
+      "separateOsAttestation": false
+    },
+    "campaignA": {
+      "originalExecSessionUnavailable": true,
+      "failureRetained": true
+    }
+  },
+  "priorCampaign": {
+    "sourceCommit": "470fd92619c49d7eb96f2a3ea24c192b400e5f05",
+    "outcome": "prior-campaign-outcome.json",
+    "processes": [
+      {
+        "case": "controller",
+        "originalProcess": {
+          "sha256": "bdb0b64e1db3201e046d19b3ff5e9648b07233516669f1d20667cba84ee1cf08",
+          "bytes": 905
+        },
+        "process": {
+          "name": "controller",
+          "argv": [
+            "<source-root>/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron",
+            "<source-root>/scripts/qualify-railgun-partial-controller.js",
+            "<driver-r2>/public-source.json",
+            "<campaign-a>/controller",
+            "<source-root>/tmp/privacy-build/railgun-engine-oct3-a/railgun-engine.asar",
+            "<source-root>/tmp/privacy-build/railgun-prover-oct3-f/railgun-prover.asar",
+            "<source-root>/tmp/privacy-research-oct2/railgun-artifacts",
+            "<driver-r2>/public-bytecodes.json",
+            "Shield"
+          ],
+          "pid": 50441,
+          "exitCode": 0,
+          "naturalExit": true,
+          "elapsedSeconds": 22.64597225
+        },
+        "originalPost": {
+          "sha256": "1ae748d5796cc995906ddf0fba5e5626f9c1c6ac79cec8fb465106e92254a77b",
+          "bytes": 24
+        },
+        "post": {
+          "unchanged": true
+        },
+        "qualified": true
+      },
+      {
+        "case": "warm",
+        "originalProcess": {
+          "sha256": "f8d9927edab54c3ccf86a9da415d03f3823e8623b047f5c8155402abbf9ac0eb",
+          "bytes": 942
+        },
+        "process": {
+          "name": "warm",
+          "argv": [
+            "<source-root>/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron",
+            "<source-root>/scripts/qualify-railgun-proof-recovery.js",
+            "<driver-r2>/public-source.json",
+            "<campaign-a>/warm",
+            "<source-root>/tmp/privacy-build/railgun-engine-oct3-a/railgun-engine.asar",
+            "<source-root>/tmp/privacy-build/railgun-prover-oct3-f/railgun-prover.asar",
+            "<source-root>/tmp/privacy-research-oct2/railgun-artifacts",
+            "<driver-r2>/public-bytecodes.json",
+            "Transact",
+            "foreign",
+            "warm",
+            "same-root"
+          ],
+          "pid": 50714,
+          "exitCode": 0,
+          "naturalExit": true,
+          "elapsedSeconds": 58.658375250000006
+        },
+        "originalPost": {
+          "sha256": "1ae748d5796cc995906ddf0fba5e5626f9c1c6ac79cec8fb465106e92254a77b",
+          "bytes": 24
+        },
+        "post": {
+          "unchanged": true
+        },
+        "qualified": true
+      },
+      {
+        "case": "setup",
+        "originalProcess": {
+          "sha256": "9dbebb1f033bb50b0509db69c48d076e2c4bced86fe7dba54024c200b84ecf70",
+          "bytes": 948
+        },
+        "process": {
+          "name": "setup",
+          "argv": [
+            "<source-root>/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron",
+            "<source-root>/scripts/qualify-railgun-proof-recovery.js",
+            "<driver-r2>/public-source.json",
+            "<campaign-a>/cold",
+            "<source-root>/tmp/privacy-build/railgun-engine-oct3-a/railgun-engine.asar",
+            "<source-root>/tmp/privacy-build/railgun-prover-oct3-f/railgun-prover.asar",
+            "<source-root>/tmp/privacy-research-oct2/railgun-artifacts",
+            "<driver-r2>/public-bytecodes.json",
+            "Transact",
+            "foreign",
+            "setup",
+            "advanced-root"
+          ],
+          "pid": 51212,
+          "exitCode": 0,
+          "naturalExit": true,
+          "elapsedSeconds": 23.137869167000005
+        },
+        "originalPost": {
+          "sha256": "1ae748d5796cc995906ddf0fba5e5626f9c1c6ac79cec8fb465106e92254a77b",
+          "bytes": 24
+        },
+        "post": {
+          "unchanged": true
+        },
+        "qualified": true
+      },
+      {
+        "case": "resume",
+        "originalProcess": {
+          "sha256": "0ccbaf998844a874dea25964eaadc754e8a2ef025fa8cfce1ee28ded069094f9",
+          "bytes": 951
+        },
+        "process": {
+          "name": "resume",
+          "argv": [
+            "<source-root>/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron",
+            "<source-root>/scripts/qualify-railgun-proof-recovery.js",
+            "<driver-r2>/public-source.json",
+            "<campaign-a>/cold",
+            "<source-root>/tmp/privacy-build/railgun-engine-oct3-a/railgun-engine.asar",
+            "<source-root>/tmp/privacy-build/railgun-prover-oct3-f/railgun-prover.asar",
+            "<source-root>/tmp/privacy-research-oct2/railgun-artifacts",
+            "<driver-r2>/public-bytecodes.json",
+            "Transact",
+            "foreign",
+            "resume",
+            "advanced-root"
+          ],
+          "pid": 51422,
+          "exitCode": 1,
+          "naturalExit": true,
+          "elapsedSeconds": 0.14415429100000665
+        },
+        "originalPost": {
+          "sha256": "1ae748d5796cc995906ddf0fba5e5626f9c1c6ac79cec8fb465106e92254a77b",
+          "bytes": 24
+        },
+        "post": {
+          "unchanged": true
+        },
+        "qualified": false
+      }
+    ],
+    "resumeLog": {
+      "sha256": "5494f3faba23a3e5d579cd289e36aecc8a32e3505965d8b1a73a7dc6ad713d3d",
+      "bytes": 1574
+    },
+    "productionFailureEstablished": false,
+    "retryUsedFreshCampaign": true,
+    "priorBefore": {
+      "sha256": "27176c14181c6a80f5c94e587ccdf1c9d2619b3fa36458de08ae0646ccce8f42",
+      "bytes": 255200
+    },
+    "priorDriverFreeze": {
+      "sha256": "3fd273979f282d568f1c85068fdd5911b7a5f2fd1af051e9652a1a3b45edce96",
+      "bytes": 883
+    }
+  },
+  "sourceChecks": {
+    "fullTests475": {
+      "sourceCommit": "475bdf17fdd597ce866e458df05abdd1035b6ba0",
+      "suitesPassed": 684,
+      "suitesSkipped": 6,
+      "testsPassed": 21896,
+      "testsSkipped": 36
+    },
+    "focusedTests470": {
+      "sourceCommit": "470fd92619c49d7eb96f2a3ea24c192b400e5f05",
+      "suitesPassed": 4,
+      "testsPassed": 338
+    },
+    "handoffTestsC6": {
+      "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "suitesPassed": 1,
+      "testsPassed": 39,
+      "note": "Command requested two patterns; only job-observer suite existed and ran. The separate actual handoff control is preserved independently."
+    }
+  },
+  "originalLogs": {
+    "fullTests475": {
+      "sha256": "829c64024be5dcb47b6c88849dc0e15df3c1b93623cb9b4a2076af9f48d5eb4f",
+      "bytes": 8009
+    },
+    "lint475": {
+      "sha256": "462d2ddfdd82da9a3a36c260c852ae0889f516c50d6b43e199930c4cc4fafa5f",
+      "bytes": 46
+    },
+    "focusedTests470": {
+      "sha256": "c1a10c880ca8a7dcf4bafc9b11d99eae946119b037f3b82befcf75bec9ee70b4",
+      "bytes": 844
+    },
+    "handoffTestsC6": {
+      "sha256": "58118fdc26c702a0d143c9f5c4e60fc57679d7267c06fa433f02eed4f15ef6ba",
+      "bytes": 562
+    },
+    "build475": {
+      "sha256": "cf310e49069784d71ed6d727b0f1bc04a01cf65c7cf6cfd41f6de3b5a3d6ce00",
+      "bytes": 3043
+    },
+    "campaignADriver": {
+      "sha256": "2acdf75c6aad0abd4b41e2a12c0b1fccb6444a0c89e619bc1076e6b049ac04ca",
+      "bytes": 1295
+    },
+    "campaignBDriver": {
+      "sha256": "e16d1e8662f829ecb7a7043a7ffdffb3158479bd85bb80d50d04840f40f5797b",
+      "bytes": 153
+    }
+  },
+  "packagedCheck": {
+    "sourceCommit": "475bdf17fdd597ce866e458df05abdd1035b6ba0",
+    "productionSourceIdenticalToNative": true,
+    "subsequentFixtureOnlyChanges": [
+      "scripts/fixtures/railgun-enrolled-operation.js",
+      "scripts/fixtures/railgun-job-observer.js",
+      "scripts/fixtures/railgun-job-observer.test.js",
+      "scripts/qualify-railgun-partial-controller.js",
+      "scripts/qualify-railgun-proof-recovery.js"
+    ],
+    "cleanPathInventory": {
+      "sha256": "278023b198d525db92df6ca6bb939dfb12bca63eb7d6d7cff9fe51d484019f61",
+      "bytes": 1728579
+    },
+    "checkPackagedSource": {
+      "sha256": "be9aa886f5eefba65c08b89df0ff129bc445caadaa3b41236b030548da30c1f5",
+      "bytes": 2924
+    },
+    "packagedLoadSource": {
+      "sha256": "8a1621f63a1264dfc64186237ec9ba96578e2b3f6c9421829ff3d21f504c5bac",
+      "bytes": 5379
+    },
+    "handoffControlSource": {
+      "sha256": "2e2d5accaac403c213d0cec6a5ffb41857dfdab43e785f3ecdc74d3e2b9f1de7",
+      "bytes": 1604
+    },
+    "artifactContentsReadByArchiveAuthor": false
+  },
+  "normalization": {
+    "scope": "Derived invocation/process metadata only; report bytes and path-free metadata files are untouched",
+    "tokens": [
+      "<source-root>",
+      "<driver-r2>",
+      "<driver-r3>",
+      "<campaign-a>",
+      "<campaign-b>"
+    ],
+    "absolutePrefixDictionaryPublished": false,
+    "rawSourceRecordHashesRetained": true
+  },
+  "limits": {
+    "syntheticOnly": true,
+    "utilityModuleCacheObserved": false,
+    "historicalExecutionCoverage": false,
+    "powerLossRecoveryQualified": false,
+    "fundedOrLiveQualified": false,
+    "realTorQualified": false,
+    "submissionEnabled": false
+  }
+}
