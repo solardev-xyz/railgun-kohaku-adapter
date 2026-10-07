@@ -2,7 +2,7 @@
   "name": "@freedom/railgun-kohaku-adapter",
   "version": "0.4.0",
   "private": true,
-  "description": "Restricted Kohaku adapters and historical Railgun capsule data readers (Sepolia qualification policy)",
+  "description": "Restricted Kohaku adapters, Railgun data helpers and a fixed private utility kernel",
   "license": "MPL-2.0",
   "main": "./index.cjs",
   "types": "./types/index.d.ts",
@@ -56,6 +56,20 @@
         "types": "./types/host-poi.d.ts",
         "default": "./host-poi.cjs"
       }
+    },
+    "./host/execution": {
+      "import": {
+        "types": "./types/host-execution.d.mts",
+        "default": "./host-execution.mjs"
+      },
+      "require": {
+        "types": "./types/host-execution.d.ts",
+        "default": "./host-execution.cjs"
+      }
+    },
+    "./host/bootstrap": {
+      "types": "./types/host-bootstrap.d.ts",
+      "default": "./host-bootstrap.cjs"
     }
   },
   "files": [
@@ -73,7 +87,11 @@
     "host-data.cjs",
     "host-data.mjs",
     "host-poi.cjs",
-    "host-poi.mjs"
+    "host-poi.mjs",
+    "host-execution.cjs",
+    "host-execution.mjs",
+    "host-bootstrap.cjs",
+    "docs/execution/"
   ],
   "engines": {
     "node": ">=24"

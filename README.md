@@ -2,7 +2,7 @@
 
 A restricted Kohaku-style facade over **trusted, application-supplied** Railgun hosts. Version 0.4.0 is not published to npm (`"private": true`); its source is public at https://github.com/solardev-xyz/railgun-kohaku-adapter. It was extracted from the Freedom browser (commit `88b2496b`) as the first package of the privacy work ("E1"); see `NOTICE.md` for exact provenance.
 
-This is **not** a self-contained Railgun SDK. It contains no Railgun engine, prover, key management, wallet vault, storage, RPC client, Tor transport or UI. The application's host does the actual work: it owns the account, holds the keys, generates proofs, signs and submits transactions, and keeps durable state. This package only sits between a Kohaku-style consumer and that host, and does four things:
+This is **not** a self-contained Railgun SDK. It bundles no Railgun engine or prover archive, key management, wallet vault, storage, RPC client, Tor transport or UI. The unreleased execution-kernel candidate adds fixed utility orchestration; it still requires explicit trusted host integration and separately authenticated engine/prover archives. The application's host does the actual work: it owns the account, holds the keys, generates proofs, signs and submits transactions, and keeps durable state. The existing Kohaku facade sits between a consumer and that host and does four things:
 
 - It validates the data that crosses the boundary.
 - It copies and freezes that data so neither side can mutate the other's view.
@@ -479,3 +479,14 @@ The Transact selector also accepts an absolute `input.archive` path under the
 host platform's path rules. This is trusted-host execution input, not portable
 data or proof that the engine/prover archive is authenticated; the execution host
 must still verify and constrain that runtime before use.
+
+## Execution kernel candidate (`/host/execution`, `/host/bootstrap`)
+
+The new trusted-host entry points are inactive until explicitly integrated. They
+provide a closed private-job inventory and a two-stage Electron utility bootstrap
+that installs guards before capturing context and artifact I/O functions once.
+The package owns archive verification and artifact content pins. Main account,
+key, storage and permit ownership remains with the host. No key lease or generic
+job runner is exported. See [the integration contract](docs/execution/INTEGRATION.md)
+for exact roles, deferred main changes, provenance, testing limits and packaging
+requirements. Existing qualification archives predate this kernel layout.
