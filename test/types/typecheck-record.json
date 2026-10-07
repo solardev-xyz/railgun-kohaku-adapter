@@ -45,6 +45,8 @@
     "types/data.d.ts": "37f680e0fde2313d98d075143139e20511c28e05989d5dc972084c0810270eff",
     "types/host-data.d.mts": "1ef2e5602f45a12f79410b63f87e893f7f5607d5799b7efdcfde361b5febbc5b",
     "types/host-data.d.ts": "bf57b5361e01f8eb561dcee79d2393c8c068d3b302eb7c9d7cb6cdf6ca2c2095",
+    "types/host-poi.d.mts": "fbeb28adf563abc8a2660b19abddd757274f005004c56c33f7735488ccf2f66e",
+    "types/host-poi.d.ts": "96094f86a15014cfd0e397e65d06459bded95719739d3d04019e18efb850f64a",
     "types/index.d.mts": "d0b8219062b13646230f02b849895515635912dc780ec8c3efa152554b67037e",
     "types/index.d.ts": "ee3aa1076f192ab9af3546c3a49e3352d6a087fc804dbd2ff8e71480b01c3a8c",
     "types/railgun-kohaku-private-contract.d.ts": "349a7daa4dcb22d65ad3db5cd184d9a2620c428c7cadffbcd0d0ff33af20a439",
@@ -57,43 +59,51 @@
   "resolution": {
     "portableRequire": {
       "file": "types/index.d.ts",
-      "package": "@freedom/railgun-kohaku-adapter@0.3.0"
+      "package": "@freedom/railgun-kohaku-adapter@0.4.0"
     },
     "portableImport": {
       "file": "types/index.d.mts",
-      "package": "@freedom/railgun-kohaku-adapter@0.3.0"
+      "package": "@freedom/railgun-kohaku-adapter@0.4.0"
     },
     "portableReadRequire": {
       "file": "types/read.d.ts",
-      "package": "@freedom/railgun-kohaku-adapter@0.3.0"
+      "package": "@freedom/railgun-kohaku-adapter@0.4.0"
     },
     "portableReadImport": {
       "file": "types/read.d.mts",
-      "package": "@freedom/railgun-kohaku-adapter@0.3.0"
+      "package": "@freedom/railgun-kohaku-adapter@0.4.0"
     },
     "sourceSubpathRequire": null,
     "sourceSubpathImport": null,
+    "hostPoiRequire": {
+      "file": "types/host-poi.d.ts",
+      "package": "@freedom/railgun-kohaku-adapter@0.4.0"
+    },
+    "hostPoiImport": {
+      "file": "types/host-poi.d.mts",
+      "package": "@freedom/railgun-kohaku-adapter@0.4.0"
+    },
     "hostDataRequire": {
       "file": "types/host-data.d.ts",
-      "package": "@freedom/railgun-kohaku-adapter@0.3.0"
+      "package": "@freedom/railgun-kohaku-adapter@0.4.0"
     },
     "hostDataImport": {
       "file": "types/host-data.d.mts",
-      "package": "@freedom/railgun-kohaku-adapter@0.3.0"
+      "package": "@freedom/railgun-kohaku-adapter@0.4.0"
     },
     "portableDataRequire": {
       "file": "types/data.d.ts",
-      "package": "@freedom/railgun-kohaku-adapter@0.3.0"
+      "package": "@freedom/railgun-kohaku-adapter@0.4.0"
     },
     "portableDataImport": {
       "file": "types/data.d.mts",
-      "package": "@freedom/railgun-kohaku-adapter@0.3.0"
+      "package": "@freedom/railgun-kohaku-adapter@0.4.0"
     },
     "dataSourceRequire": null,
     "dataSourceImport": null,
     "bridgeSelf": {
       "file": "types/index.d.mts",
-      "package": "@freedom/railgun-kohaku-adapter@0.3.0"
+      "package": "@freedom/railgun-kohaku-adapter@0.4.0"
     },
     "bridgeUpstream": {
       "file": "node_modules/@kohaku-eth/plugins/dist/index.d.ts",
@@ -227,6 +237,61 @@
       "verifyRailgunForeignOutput"
     ]
   },
+  "hostPoiExports": {
+    "count": 45,
+    "sameNames": true,
+    "sameIdentity": true,
+    "declaredIn": [
+      "types/host-poi.d.ts"
+    ],
+    "names": [
+      "MAX_NOTES",
+      "POI_LAUNCH_BLOCK",
+      "REQUIRED_LIST",
+      "RailgunNoteTxidWitness",
+      "RailgunOwnPoiShape",
+      "RailgunOwnedPoiRecord",
+      "RailgunPoiNote",
+      "RailgunPoiPayload",
+      "RailgunPoiProof",
+      "RailgunPoiResponseDiagnostic",
+      "RailgunPoiShieldFacts",
+      "RailgunPoiSubmission",
+      "RailgunTxidContinuity",
+      "RailgunTxidProjection",
+      "RailgunTxidState",
+      "RailgunTxidWitness",
+      "assertRailgunOwnPoiCapture",
+      "assertRailgunOwnPoiPayloadShape",
+      "assertRailgunOwnPoiStableCapture",
+      "assertRailgunPoiCreatorEvents",
+      "assertRailgunPoiCreatorVerification",
+      "bindRailgunOwnPoiPayload",
+      "classifyRailgunTxidContinuity",
+      "createRailgunTxidProjection",
+      "findRailgunNoteTxidWitness",
+      "getRailgunOwnPoiShape",
+      "inspectRailgunPoiResponse",
+      "normalizePoiNotes",
+      "normalizePoiProofs",
+      "normalizePoiStatuses",
+      "normalizeRailgunNoteTxidWitness",
+      "normalizeRailgunOwnedPoiRecords",
+      "normalizeRailgunPoiCreatorWitness",
+      "normalizeRailgunPoiPayload",
+      "normalizeRailgunPoiShieldFacts",
+      "normalizeRailgunPoiShieldInput",
+      "normalizeRailgunPoiSubmission",
+      "normalizeRailgunPoiTransactSelectorInput",
+      "normalizeRailgunTxidWitness",
+      "prepareRailgunPoiSubmission",
+      "prepareRailgunPoiTransactSelectorInput",
+      "projectRailgunOwnedPoiRecord",
+      "validateRailgunTxidRow",
+      "verifyPoiEvent",
+      "verifyPoiMembership"
+    ]
+  },
   "portable": [
     {
       "file": "test/types/consumer-cjs.cts",
@@ -279,6 +344,20 @@
     },
     {
       "file": "test/types/consumer-host-data-esm.mts",
+      "expected": [],
+      "diagnostics": [],
+      "pass": true,
+      "nodeModulesFiles": []
+    },
+    {
+      "file": "test/types/consumer-host-poi-cjs.cts",
+      "expected": [],
+      "diagnostics": [],
+      "pass": true,
+      "nodeModulesFiles": []
+    },
+    {
+      "file": "test/types/consumer-host-poi-esm.mts",
       "expected": [],
       "diagnostics": [],
       "pass": true,
@@ -554,6 +633,85 @@
         {
           "key": "test/types/negative/host-data-contract.mts:9 TS2322",
           "message": "Type 'RailgunCheckedTransaction' is not assignable to type '{ proof: string; }'."
+        }
+      ],
+      "pass": true,
+      "nodeModulesFiles": []
+    },
+    {
+      "file": "test/types/negative/host-poi-contract.mts",
+      "expected": [
+        "test/types/negative/host-poi-contract.mts:1 TS1192",
+        "test/types/negative/host-poi-contract.mts:10 TS2540",
+        "test/types/negative/host-poi-contract.mts:12 TS2322",
+        "test/types/negative/host-poi-contract.mts:13 TS2322",
+        "test/types/negative/host-poi-contract.mts:14 TS2540",
+        "test/types/negative/host-poi-contract.mts:16 TS2322",
+        "test/types/negative/host-poi-contract.mts:17 TS2542",
+        "test/types/negative/host-poi-contract.mts:18 TS2554",
+        "test/types/negative/host-poi-contract.mts:19 TS2554",
+        "test/types/negative/host-poi-contract.mts:3 TS2305",
+        "test/types/negative/host-poi-contract.mts:4 TS2305",
+        "test/types/negative/host-poi-contract.mts:5 TS2307",
+        "test/types/negative/host-poi-contract.mts:8 TS2540",
+        "test/types/negative/host-poi-contract.mts:9 TS2339"
+      ],
+      "diagnostics": [
+        {
+          "key": "test/types/negative/host-poi-contract.mts:1 TS1192",
+          "message": "Module '\"<root>/types/host-poi\"' has no default export."
+        },
+        {
+          "key": "test/types/negative/host-poi-contract.mts:10 TS2540",
+          "message": "Cannot assign to 'txidMerklerootIndex' because it is a read-only property."
+        },
+        {
+          "key": "test/types/negative/host-poi-contract.mts:12 TS2322",
+          "message": "Type 'false' is not assignable to type 'true'."
+        },
+        {
+          "key": "test/types/negative/host-poi-contract.mts:13 TS2322",
+          "message": "Type 'false' is not assignable to type 'true'."
+        },
+        {
+          "key": "test/types/negative/host-poi-contract.mts:14 TS2540",
+          "message": "Cannot assign to 'spendingEnabled' because it is a read-only property."
+        },
+        {
+          "key": "test/types/negative/host-poi-contract.mts:16 TS2322",
+          "message": "Type 'false' is not assignable to type 'true'."
+        },
+        {
+          "key": "test/types/negative/host-poi-contract.mts:17 TS2542",
+          "message": "Index signature in type 'readonly string[]' only permits reading."
+        },
+        {
+          "key": "test/types/negative/host-poi-contract.mts:18 TS2554",
+          "message": "Expected 3 arguments, but got 2."
+        },
+        {
+          "key": "test/types/negative/host-poi-contract.mts:19 TS2554",
+          "message": "Expected 2 arguments, but got 1."
+        },
+        {
+          "key": "test/types/negative/host-poi-contract.mts:3 TS2305",
+          "message": "Module '\"@freedom/railgun-kohaku-adapter/data\"' has no exported member 'normalizeRailgunPoiPayload'."
+        },
+        {
+          "key": "test/types/negative/host-poi-contract.mts:4 TS2305",
+          "message": "Module '\"@freedom/railgun-kohaku-adapter\"' has no exported member 'createRailgunTxidProjection'."
+        },
+        {
+          "key": "test/types/negative/host-poi-contract.mts:5 TS2307",
+          "message": "Cannot find module '@freedom/railgun-kohaku-adapter/src/data/railgun-poi-payload' or its corresponding type declarations."
+        },
+        {
+          "key": "test/types/negative/host-poi-contract.mts:8 TS2540",
+          "message": "Cannot assign to '0' because it is a read-only property."
+        },
+        {
+          "key": "test/types/negative/host-poi-contract.mts:9 TS2339",
+          "message": "Property 'push' does not exist on type 'readonly [] | readonly [`0x${string}`]'."
         }
       ],
       "pass": true,

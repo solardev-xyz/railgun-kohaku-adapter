@@ -1,6 +1,6 @@
 # @freedom/railgun-kohaku-adapter
 
-A restricted Kohaku-style facade over **trusted, application-supplied** Railgun hosts. Version 0.3.0 is not published to npm (`"private": true`); its source is public at https://github.com/solardev-xyz/railgun-kohaku-adapter. It was extracted from the Freedom browser (commit `88b2496b`) as the first package of the privacy work ("E1"); see `NOTICE.md` for exact provenance.
+A restricted Kohaku-style facade over **trusted, application-supplied** Railgun hosts. Version 0.4.0 is not published to npm (`"private": true`); its source is public at https://github.com/solardev-xyz/railgun-kohaku-adapter. It was extracted from the Freedom browser (commit `88b2496b`) as the first package of the privacy work ("E1"); see `NOTICE.md` for exact provenance.
 
 This is **not** a self-contained Railgun SDK. It contains no Railgun engine, prover, key management, wallet vault, storage, RPC client, Tor transport or UI. The application's host does the actual work: it owns the account, holds the keys, generates proofs, signs and submits transactions, and keeps durable state. This package only sits between a Kohaku-style consumer and that host, and does four things:
 
@@ -413,3 +413,69 @@ Recovery input includes absolute `proverArchive` and `artifactDirectory` paths,
 checked with the host platform's `path.isAbsolute`. They are trusted-host
 execution inputs, not portable data or authenticated runtime selection. The
 execution host must still authenticate and constrain the files before use.
+
+### Trusted-host POI and TXID data (`/host/poi`, 0.4.0)
+
+This subpath owns twelve complete data modules and the exact pure
+`bindRailgunOwnPoiPayload` function extracted from Freedom commit `668e97ed`.
+It exports 32 shared CJS/ESM values. `/host/data` stays at 22 values; root, `/read`
+and safe `/data` remain unchanged. These are internal host contracts with their
+original error behavior, not a new hostile-input boundary.
+
+| Module group | Role |
+| --- | --- |
+| POI records and payload | Bounded list notes, statuses, paths, signed events and mined-transaction proof payloads |
+| Creator, Shield and Transact selector data | Match supplied note/creator facts and retain the original binding digest domains |
+| Own-POI binding and shape; owned-note records | Compare supplied captures, preserve transfer/full/partial shapes and project private note facts |
+| POI submission data | Construct the fixed wire body and classify bounded supplied responses; no network call |
+| TXID projection, note witness and omissions | Project supplied public rows, return journal write proposals, derive supplied-note paths and enforce the pinned omission policy |
+| Pure payload binder | Join the payload to the exact caller-derived roots, index, marker and output count |
+
+The TXID witness/projection cycle remains a single implementation, including its
+lazy relative import. The projection returns proposed writes; it never applies
+them. Its hash and read callbacks belong to the host, which must retain the
+original work, authenticate the exclusive snapshot, and enforce cancellation,
+currentness and persistence. The package adds no store, registry, controller,
+privacy scope, utility launcher or capability token.
+
+POI membership verifies against a supplied root using a supplied hash function.
+The event helper verifies Ed25519 with the unchanged pinned list key, but the
+signed message omits chain and root. Historical `validatedMerkleroot` remains an
+unsigned service assertion. Neither check establishes ownership, canonical
+history, a current accepted root or permission to disclose. Owned-note records,
+paths, payloads and wire bodies remain private host data, even though their
+structure is serializable. Response classifications establish neither acceptance
+nor non-delivery or safe retry. All original false authority flags remain.
+
+This payload domain is mined own-POI: at most one private output with an optional
+unshield marker. It is distinct from the future two-output pre-transaction relay
+POI domain, which is not included in this extraction.
+
+#### POI extraction checks
+
+The full standalone suite passes **1,269 tests in 28 suites**. Twelve transferred
+suites retain their pure cases. The three selector-launch cases using Freedom's
+privacy scope and process seam remain in Freedom; the package replaces them with
+explicitly labeled domain-digest goldens, not an equivalent launch claim. The
+submission boundary test uses virtual forbidden host modules at their package
+relative paths because those modules are deliberately absent.
+
+The two selector fixtures are captured public dummy capsule outputs from the
+immutable original fixture inputs. They avoid importing transaction/journal host
+closures into the test runtime. Their output and generator input hashes, all
+copied sources/tests, the exact binder slice and the retained integration cases
+are recorded in `test/fixtures/poi-data-provenance.json`. A captured public signed
+event is copied verbatim; its test uses Node's real signature primitive. The
+remaining crypto callback models and dummy proof/ciphertext fixtures are unit
+seams. No native engine, wallet, live service or full proof verification was run.
+
+Actual Node consumers check all 32 CJS/ESM identities and refuse internal paths.
+TypeScript 5.9.3 checks ten positive consumers and twelve negative programs,
+including readonly proof coordinates, witness flags, response non-authority and
+subpath boundaries. POI declarations have 45 shared names (32 values, 13 types).
+The previous entrypoint checks and Kohaku bridge remain in the same campaign.
+
+The Transact selector also accepts an absolute `input.archive` path under the
+host platform's path rules. This is trusted-host execution input, not portable
+data or proof that the engine/prover archive is authenticated; the execution host
+must still verify and constrain that runtime before use.
