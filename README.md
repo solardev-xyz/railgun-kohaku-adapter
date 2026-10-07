@@ -150,15 +150,44 @@ This package is deliberately narrow. It has:
 
 Freedom's own fixed hosts, controllers and qualification fixtures stay in Freedom.
 
-## Types: pending, not verified
+## Types
 
-`types/index.d.ts` re-exports the five factory declarations and their contract types. The package's `exports` map uses it for both the `import` and `require` conditions. The three contract declarations import `PluginInstance` and `Broadcaster` from `@kohaku-eth/plugins` and `@kohaku-eth/plugins/broadcaster`. That peer is not a dependency: adding `@kohaku-eth/plugins@0.0.1-alpha.16` is a pending decision. Until it is added, the declarations do not resolve, and **no type check has been run**. No `skipLibCheck`, path mapping or ambient shim is used. `NOTICE.md` records the original import paths.
+The declarations are verified with TypeScript 5.9.3 under strict NodeNext, for a CommonJS and an ESM consumer, without `skipLibCheck`, path mappings or ambient shims. See [Type checks](#type-checks).
 
-Questions to settle once the peer is approved:
+- `require` and the top-level `types` field use `types/index.d.ts`, a CommonJS-format declaration.
+- `import` uses `types/index.d.mts`, an ESM-format declaration. It forwards `index.d.ts` rather than copying it, so both conditions share one identity for each operation brand and adapter type. Like `index.mjs`, it has no default export.
+- The declarations are self-contained and import nothing from `@kohaku-eth/plugins`. TypeScript consumers need no additional package, and this package declares no peer dependency on it.
 
-- At Freedom's pinned Kohaku revision, the upstream package is ESM-only and exposes `./broadcaster` through `types`/`import` conditions only. These declarations are CommonJS-format, and one file serves both conditions.
-- Freedom's reviewed prototype used self-contained `.d.cts`/`.d.mts` declarations instead.
-- Version `alpha.16` has not been compared with the pinned revision.
+The declarations no longer import Kohaku's types, because the published declarations of `@kohaku-eth/plugins@0.0.1-alpha.16` cannot be loaded under NodeNext without `skipLibCheck` or a path mapping:
+
+- `dist/index.d.ts` re-exports `./base`, `./host`, `./errors` and `./shared` without file extensions in a `"type": "module"` package (TS2834, TS2835). Its root entry therefore exports nothing, so importing `PluginInstance` fails (TS2305).
+- `dist/base.d.ts`, `dist/broadcaster/base.d.ts` and `dist/errors.d.ts` import `~/host` and `~/shared`, a tsconfig path alias that the build did not rewrite (TS2307, under Bundler resolution as well).
+- The `./instance` export points to `dist/instance/base.*`, which the tarball does not contain. `main` names `dist/index.cjs`, which is also missing.
+
+A separate upstream bridge check compiles the declarations against those published types instead. It establishes structural compatibility only:
+
+- Each restricted object is assignable to its Kohaku `PluginInstance` specialization.
+- `PrivateAdapterBroadcaster` is identical to Kohaku's `Broadcaster<PrivateOperation, PrivateSubmissionOutcome>`.
+
+This is not generic Kohaku `Host` or `CreatePluginFn` compatibility.
+
+The types cannot express the runtime contracts: native Promises, bounds, one-use identity and authority. The operation brands are phantom, type-only identities, and a host-shaped object proves nothing.
+
+### Kohaku 0.0.1-alpha.16 compared with the pinned revision
+
+The declarations were written against Kohaku revision `6fdc248b` (plugins manifest `0.0.1-alpha.11`). Its `packages/plugins/src` differs from the sources and declarations published in `0.0.1-alpha.16` as follows:
+
+| Upstream item                                                                                                                                                                      | Change in alpha.16                                                                                         | Effect on this package                                                                                                                                                                       |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `TxFeatureMap.prepareUnshieldMulti`                                                                                                                                                | Gains `options?: UnshieldOptions`                                                                          | None. The adapters have no `Multi` method. The bridge asserts that Kohaku's view of each adapter enables only `prepareTransfer` and `prepareUnshield` (private) or `prepareShield` (public). |
+| `host/index.ts`                                                                                                                                                                    | Adds `ExternalSyncClient` and `toExternalSyncClient`. `Host` is unchanged.                                 | None. `Host` appears only in a negative bridge program.                                                                                                                                      |
+| `host/mnemonic-keystore.ts`                                                                                                                                                        | RAILGUN-path key derivation (alpha.15)                                                                     | None. Runtime code only, not referenced.                                                                                                                                                     |
+| `PluginInstance`, `Transact`, `PICapabilities`, `PICapCfg`, `TxFeatures`, `AssetAmounts`, `UnshieldOptions`, `CreatePluginFn`, `Broadcaster`, `shared.ts`, `errors.ts`, `index.ts` | Unchanged                                                                                                  | None.                                                                                                                                                                                        |
+| Dependencies                                                                                                                                                                       | `@kohaku-eth/provider` moves from workspace `0.1.0-alpha.8` to exactly `0.1.0-alpha.11`; `ox` is `^0.12.0` | None. `TxData`, the element type of the `tailCalls` result, keeps its shape `{ to: string; data: string; value: bigint }`. `ox` resolves to 0.12.4.                                          |
+
+No unsupported functionality is broadened. The runtime sources are unchanged. The adapters still have no multi-operation methods and still refuse `tailCalls` and any other non-empty unshield options, non-ERC-20 private inputs and non-native Shield inputs. In the declarations, `PrivateUnshieldOptions` is still `{ tailCalls?: never }`. The negative bridge programs show that Kohaku's generic `Host`, generic `PluginInstance` views and `UnshieldOptions` are refused.
+
+One limitation is unchanged from the pinned revision. In Kohaku's `PluginInstance` view, `prepareUnshield` accepts `options?: UnshieldOptions`, and method-parameter bivariance lets a private adapter be assigned to that view. Code holding the adapter through that view can therefore pass `tailCalls` without a compile error. The runtime refuses it.
 
 ## Tests
 
@@ -169,3 +198,28 @@ Questions to settle once the peer is approved:
 - a package consumer check.
 
 The consumer check starts a child Node process that loads the package through its own `exports` with both `require()` and `import()`. It asserts that both return the same five functions. It then prepares and submits a public operation across the two entrypoints and does the same for a private operation, using the in-memory test hosts. The test hosts are fixtures, not genuine accounts or authority. Their passing is not native, live-network or security-audit evidence.
+
+### Type checks
+
+TypeScript is not a dependency. `npm run typecheck` uses the compiler that the `TYPESCRIPT_PATH` environment variable names, either an installed `typescript` package directory or its `lib/typescript.js`, and fails if the variable is unset:
+
+```sh
+TYPESCRIPT_PATH=/path/to/node_modules/typescript npm run typecheck
+```
+
+The runner, `test/types/typecheck.cjs`, compiles programs and never emits or runs them. Every program must produce exactly the diagnostics that its `// expect TS<code>` markers name, and no others.
+
+- **Portable checks** use `strict`, `noEmit`, `module` and `moduleResolution` `NodeNext`, `target` `ES2022`, `types: []`, and no `skipLibCheck` or `paths`. Programs must not load any file from `node_modules`.
+  - A CommonJS (`.cts`) and an ESM (`.mts`) consumer import the package by its own name. They use all five factories with typed hosts and pass brands across the two conditions.
+  - Six negative programs must fail:
+    - a host without `broadcast` (TS2741);
+    - snapshot callbacks that return a value or are `async` (TS2322);
+    - an unnarrowed or misused private result (TS2339, TS2322);
+    - cross-kind or forged operations and swapped adapters (TS2345);
+    - `tailCalls`, a `0zk` unshield recipient and a native private input (TS2322, TS2345);
+    - a default import from the ESM entry (TS1192).
+  - Both entries must export the same 32 names, each with a single declaration identity.
+- **Upstream bridge** compiles `test/types/upstream/` against the installed `@kohaku-eth/plugins@0.0.1-alpha.16`. It uses Bundler resolution and one `~/*` alias into that package's `dist/`. The runner checks that only files inside that `dist/` use the alias. One positive program covers the assignability, `Broadcaster` identity and enabled-feature assertions. Two negative programs cover Kohaku's generic `Host` (TS2739, TS2740), generic `PluginInstance` views and `UnshieldOptions` (TS2345).
+- **Controls** compile the bridge's positive program without that setup, under NodeNext and under Bundler without the alias. Both must fail inside the upstream files with the diagnostics recorded in the runner.
+
+`test/types/typecheck-record.json` holds the last recorded run: TypeScript 5.9.3 on Node 24.18.1, `lib/typescript.js` SHA-256 `3ae902c92cc44dace175c0e69e13a4b0899f6983c6121d76b9ab8dd5795e7675`. It also holds the options, resolutions, export parity, upstream declaration hashes, alias uses and each case's diagnostics. Regenerate it with `npm run typecheck -- --record test/types/typecheck-record.json`.
