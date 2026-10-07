@@ -349,6 +349,8 @@ function main() {
     'consumer-host-data-esm.mts',
     'consumer-host-poi-cjs.cts',
     'consumer-host-poi-esm.mts',
+    'consumer-host-execution-cjs.cts',
+    'consumer-host-execution-esm.mts',
   ].map((name) => path.join(HERE, name));
   const negatives = listPrograms(path.join(HERE, 'negative'), ['.cts', '.mts', '.ts']);
   const portableResults = [];
@@ -356,7 +358,8 @@ function main() {
     readProgram = null,
     dataProgram = null,
     hostDataProgram = null,
-    hostPoiProgram = null;
+    hostPoiProgram = null,
+    hostExecutionProgram = null;
   for (const file of [...positives, ...negatives]) {
     const expected = positives.includes(file) ? [] : expectedDiagnostics(file);
     if (!positives.includes(file))
@@ -374,6 +377,7 @@ function main() {
     if (file === positives[4]) dataProgram = program;
     if (file === positives[6]) hostDataProgram = program;
     if (file === positives[8]) hostPoiProgram = program;
+    if (file === positives[10]) hostExecutionProgram = program;
   }
 
   // Both conditions of each entry export the same names with one declaration
@@ -419,12 +423,14 @@ function main() {
     'types/host-data.d.mts'
   );
   const hostPoiParity = entryParity(hostPoiProgram, 'types/host-poi.d.ts', 'types/host-poi.d.mts');
+  const hostExecutionParity = entryParity(hostExecutionProgram, 'types/host-execution.d.ts', 'types/host-execution.d.mts');
   for (const [label, entry, count, contracts] of [
     ['exports', parity, EXPORT_COUNT, CONTRACTS],
     ['read exports', readParity, READ_EXPORT_COUNT, READ_CONTRACTS],
     ['data exports', dataParity, DATA_EXPORT_COUNT, DATA_CONTRACTS],
     ['host data exports', hostDataParity, HOST_DATA_EXPORT_COUNT, HOST_DATA_CONTRACTS],
     ['host poi exports', hostPoiParity, HOST_POI_EXPORT_COUNT, HOST_POI_CONTRACTS],
+    ['host execution exports', hostExecutionParity, 4, ['types/host-execution.d.ts']],
   ]) {
     check(`${label} count`, entry.count === count, String(entry.count));
     check(`${label} names`, entry.sameNames, 'the CommonJS and ESM declarations differ');
@@ -528,6 +534,7 @@ function main() {
     dataExports: dataParity,
     hostDataExports: hostDataParity,
     hostPoiExports: hostPoiParity,
+    hostExecutionExports: hostExecutionParity,
     portable: portableResults,
     upstream: {
       package: `${UPSTREAM}@${upstreamManifest.version}`,

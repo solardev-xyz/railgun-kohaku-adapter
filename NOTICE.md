@@ -180,3 +180,11 @@ Host entrypoints, declarations, type cases and package provenance/identity tests
 are new integration files. No additional third-party implementation, dependency,
 engine/prover artifact, live credential, profile, storage owner or transport is
 included. The fixed list and all digest domains retain their original values.
+
+Execution kernel candidate: the fixed private utility closure originates from
+Freedom a146331f63276ea5cbb90ef723195b65bc29e458, under the same MPL-2.0 license.
+Exact source hashes and destination mapping are in
+`docs/execution/PROVENANCE.json`. Host imports are relocated, the utility
+bootstrap admits a fixed enum, and artifact contents gain independent package
+checks. Existing shared data cores are reused; historical native evidence does
+not qualify these new execution paths.

@@ -1,0 +1,473 @@
+{
+  "sourceRevision": "a146331f63276ea5cbb90ef723195b65bc29e458",
+  "packageBase": "09c495f40cfff986b8a9a8977a24c5fb6d42578c",
+  "files": [
+    {
+      "source": "src/main/wallet/railgun-artifacts.js",
+      "sourceSha256": "3d1e929eab29896e511589217be42a13d30426b76e31e0ffd88eb35a7707c40a",
+      "destination": "src/execution/railgun-artifacts.js",
+      "disposition": "host I/O relocation plus explicit E2 owned snapshot, size and SHA256 checks",
+      "sha256": "a28017b216b2f51970185751a6a786945cf33a1fa8552074f0cb6d8430bcd229",
+      "transformation": "host I/O capture plus owned buffer/size/SHA checks before original artifact issuance",
+      "integrationSourceSha256": "3d1e929eab29896e511589217be42a13d30426b76e31e0ffd88eb35a7707c40a",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-engine-manifest.json",
+      "sourceSha256": "54a4d63dea94e17a542d7510c08e1f35ea71256c821639ba86da29b89f8c7f2c",
+      "destination": "src/execution/railgun-engine-manifest.json",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "54a4d63dea94e17a542d7510c08e1f35ea71256c821639ba86da29b89f8c7f2c",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "54a4d63dea94e17a542d7510c08e1f35ea71256c821639ba86da29b89f8c7f2c",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-engine-runtime.js",
+      "sourceSha256": "3dd0d43fc4cf9a766539986cd0779573ec49d39c261ebaa1c3906c81653bc860",
+      "destination": "src/execution/railgun-engine-runtime.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "3dd0d43fc4cf9a766539986cd0779573ec49d39c261ebaa1c3906c81653bc860",
+      "transformation": "archive loader unchanged, filesystem choice remains internal",
+      "integrationSourceSha256": "3dd0d43fc4cf9a766539986cd0779573ec49d39c261ebaa1c3906c81653bc860",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-identity-job.js",
+      "sourceSha256": "1b1ea70e073357ec2b83129e97f90ab073980610a392953d215f6c45ea827390",
+      "destination": "src/execution/railgun-identity-job.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "1b1ea70e073357ec2b83129e97f90ab073980610a392953d215f6c45ea827390",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "1b1ea70e073357ec2b83129e97f90ab073980610a392953d215f6c45ea827390",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-owned-poi-records.js",
+      "sourceSha256": "d591d52f31955c00bfa421b8b961d26adb94b2ebdcf709553bea8c4ef34b943f",
+      "destination": "src/data/railgun-owned-poi-records.js",
+      "disposition": "existing shared core",
+      "sha256": "d591d52f31955c00bfa421b8b961d26adb94b2ebdcf709553bea8c4ef34b943f",
+      "transformation": "existing shared core",
+      "integrationSourceSha256": "b8ad876db6f6101e2a2a11707dab0b4ef6a97bb50795fa17481ffd201051d06b",
+      "integrationSourceChange": "existing .3/.4 data wrapper"
+    },
+    {
+      "source": "src/main/wallet/railgun-poi-records.js",
+      "sourceSha256": "c4511c0ea185835c67bbbc8b8ba74bec6271e4b3a457a2b6a1576b42593fd1ac",
+      "destination": "src/data/railgun-poi-records.js",
+      "disposition": "existing shared core",
+      "sha256": "c4511c0ea185835c67bbbc8b8ba74bec6271e4b3a457a2b6a1576b42593fd1ac",
+      "transformation": "existing shared core",
+      "integrationSourceSha256": "6732462ef4ce240241bb6378f24885e5613eb69fd3e5e241ce750c8ef2943061",
+      "integrationSourceChange": "existing .3/.4 data wrapper"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-capsule.js",
+      "sourceSha256": "88aef94aae6ecc6c0a74adf42328b29a27c72d60870d68cb69b67dbcdcc056a9",
+      "destination": "src/execution/railgun-private-capsule.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "3962d8f52223865f216896ee26091dca5aba5956024f995c1b7c3ab6e8912bd5",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "88aef94aae6ecc6c0a74adf42328b29a27c72d60870d68cb69b67dbcdcc056a9",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-destination.js",
+      "sourceSha256": "b503b2303dd2b9726bca6542e2d656c88b0a18fd612ffffefb08dd2c73fb3064",
+      "destination": "src/data/railgun-private-destination.js",
+      "disposition": "existing shared core",
+      "sha256": "cb1e241d166bb11c0874ea59261ac85cdf89f6b7d35d6447fcf0360695467822",
+      "transformation": "existing shared core",
+      "integrationSourceSha256": "00cf1f08deb8a316211ee1a055ed443fac9ca4738f2b5d43fdbcb66a2a8757c5",
+      "integrationSourceChange": "existing .3/.4 data wrapper"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-intent.js",
+      "sourceSha256": "25186aa9ddb19365a39adc96fea2a75459215c382e627f4b204d1fe384811f65",
+      "destination": "src/data/railgun-private-intent.js",
+      "disposition": "existing shared core",
+      "sha256": "5a5ae43e3b7c4384496e1e17caa1ddfb7bc11e555f28eb8df61d3170c94800b0",
+      "transformation": "existing shared core",
+      "integrationSourceSha256": "25186aa9ddb19365a39adc96fea2a75459215c382e627f4b204d1fe384811f65",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-operate-job.js",
+      "sourceSha256": "f509d4637285839459c4af0a1a812410af3a96b3c8ff6fab8c39c7ec0bc22905",
+      "destination": "src/execution/railgun-private-operate-job.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "0f0b55c7ab71f627539c90b702442caf500efe760156021909b67cdc361d1527",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "f509d4637285839459c4af0a1a812410af3a96b3c8ff6fab8c39c7ec0bc22905",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-policy.js",
+      "sourceSha256": "4a4487d770d523f43f2658437ffd46b267ad63a146155c2173d6fd19dd045711",
+      "destination": "src/data/railgun-private-policy.js",
+      "disposition": "existing shared core",
+      "sha256": "4fed357312c315250bac7a9b89988881601fe31975a7b267875d709af8e4b7dc",
+      "transformation": "existing shared core",
+      "integrationSourceSha256": "4a4487d770d523f43f2658437ffd46b267ad63a146155c2173d6fd19dd045711",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-preparation.js",
+      "sourceSha256": "e4d4a21515a1aa4e51449b95cfbec44f8e5bcd68f8dfb6587f531dfa82e35768",
+      "destination": "src/data/railgun-private-preparation.js",
+      "disposition": "existing shared core",
+      "sha256": "d88ae9e0ed6b2f3f73b3f534cc96049134cbd4e88353a0f8a3b6ccbc912fec17",
+      "transformation": "existing shared core",
+      "integrationSourceSha256": "90ec8fd0bf1d1c4a8bbaaa64929b3d3840c42c3e24645a4015d4518aa34b9dc6",
+      "integrationSourceChange": "existing .3/.4 data wrapper"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-prepare-job.js",
+      "sourceSha256": "c19e9c021c1d84a284c3c24784a355089fa8b602a5bbceba84e9357311b75ee6",
+      "destination": "src/execution/railgun-private-prepare-job.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "c19e9c021c1d84a284c3c24784a355089fa8b602a5bbceba84e9357311b75ee6",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "c19e9c021c1d84a284c3c24784a355089fa8b602a5bbceba84e9357311b75ee6",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-prover.js",
+      "sourceSha256": "1428cdbbbb035a5f827a9dc3503aad1f9aa7cf24b25b4a0b55e191d4f3eb0f9e",
+      "destination": "src/execution/railgun-private-prover.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "a154a0ad76373824287ae3b6ec88c44d9bd8f1b6e9ebe73c709f28adc2a50539",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "1428cdbbbb035a5f827a9dc3503aad1f9aa7cf24b25b4a0b55e191d4f3eb0f9e",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-receive-job.js",
+      "sourceSha256": "915816c4a5875e8e96cb7a97e01242c2f0fc7bfd591ceaecf569001d98fdab69",
+      "destination": "src/execution/railgun-private-receive-job.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "9b1e7f8e2e7d8395a3d857a6cb9e421e5688b7175a6087e784d5fac604639f49",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "915816c4a5875e8e96cb7a97e01242c2f0fc7bfd591ceaecf569001d98fdab69",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-reconstruct.js",
+      "sourceSha256": "2f71bdcf2b59da42ce0ef0c74a86d5de4fd7fcb076e352f613ba615a2682f2eb",
+      "destination": "src/execution/railgun-private-reconstruct.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "28bdeb785db856668f48d488bf031a867fe09b77ca66f29f52ee79e73cf64509",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "2f71bdcf2b59da42ce0ef0c74a86d5de4fd7fcb076e352f613ba615a2682f2eb",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-recover-job.js",
+      "sourceSha256": "6758ba57a9b5070dfac7b74be843a0d91a6e4c4111d858696a6f79f80a16f167",
+      "destination": "src/execution/railgun-private-recover-job.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "201d390c672f69e62a1ba08508b42d968bd4c24af06d33040aae92248806a0ab",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "6758ba57a9b5070dfac7b74be843a0d91a6e4c4111d858696a6f79f80a16f167",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-recovery-data.js",
+      "sourceSha256": "fda3e125d45d25dbf9a92aafea6600a06e77200f1c08672b90a26e747914288f",
+      "destination": "src/data/railgun-private-recovery-data.js",
+      "disposition": "existing shared core",
+      "sha256": "77d9f826d80f5a32c78da2ec705e8c4a33d17efab105165412714d826b80496e",
+      "transformation": "existing shared core",
+      "integrationSourceSha256": "5eeac07a5759a2bb7b823075d60ac6a4d4b57547dac2e7be4f4f363bbe4c99ec",
+      "integrationSourceChange": "existing .3/.4 data wrapper"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-signature.js",
+      "sourceSha256": "4290f00656d5345d7c5301c979c98a2bb755ac5467880c879dd578c221a71777",
+      "destination": "src/data/railgun-private-signature.js",
+      "disposition": "existing shared core",
+      "sha256": "4290f00656d5345d7c5301c979c98a2bb755ac5467880c879dd578c221a71777",
+      "transformation": "existing shared core",
+      "integrationSourceSha256": "2251097f0422c62062d457f5dcdcbc92735bd29abc5a5deb5f29fe59bf94a10e",
+      "integrationSourceChange": "existing .3/.4 data wrapper"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-verify-job.js",
+      "sourceSha256": "4ca071f287453bd01f301ea8edb9f2456e520470782b7a650479c1173bc7ba12",
+      "destination": "src/execution/railgun-private-verify-job.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "42ee0cd1befff1e5134501c13c938d1ad11a03ab25dea7c8b0dbe623b2f1b289",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "4ca071f287453bd01f301ea8edb9f2456e520470782b7a650479c1173bc7ba12",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-witness.js",
+      "sourceSha256": "09990dacc1bec947094e9d774c367d5aa742acb62ea8fea65f16dc39af088cee",
+      "destination": "src/execution/railgun-private-witness.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "6528f8672534a66dcffaa24f1b4efc79b8ac34b5715042e6b9cbe191059f26c7",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "09990dacc1bec947094e9d774c367d5aa742acb62ea8fea65f16dc39af088cee",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-process-entry.js",
+      "sourceSha256": "d17252bdfc9d7b93994eb4df04bdb4d6eff77fd89b1dc569a1b47ed1e0772f1e",
+      "disposition": "split fixed-enum utility bootstrap; host activation deferred",
+      "destination": "host-bootstrap.cjs",
+      "sha256": "ee11d44f37cbc4333f6a466ba4fd5cdec254e95101d6a67fddf2f72877467b77",
+      "transformation": "guard-first fixed enum bootstrap; pre-import identity purpose join; keyless private-verify has no binary-key request",
+      "integrationSourceSha256": "d17252bdfc9d7b93994eb4df04bdb4d6eff77fd89b1dc569a1b47ed1e0772f1e",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-process-guards.js",
+      "sourceSha256": "f7bbf6220212b62ae7791f9b47c145d95abec9e499b26f7bfe854e950281d958",
+      "destination": "src/execution/railgun-process-guards.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "f7bbf6220212b62ae7791f9b47c145d95abec9e499b26f7bfe854e950281d958",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "f7bbf6220212b62ae7791f9b47c145d95abec9e499b26f7bfe854e950281d958",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-prover-manifest.json",
+      "sourceSha256": "656cbc549444a9d99162fd5ac2359c957e0919f96802ace21aa9250c8de0a877",
+      "destination": "src/execution/railgun-prover-manifest.json",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "656cbc549444a9d99162fd5ac2359c957e0919f96802ace21aa9250c8de0a877",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "656cbc549444a9d99162fd5ac2359c957e0919f96802ace21aa9250c8de0a877",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-prover-runtime.js",
+      "sourceSha256": "d5f94132812502d8e48bc273fe17615bd6038a9f0089884954725efe075c6bd8",
+      "destination": "src/execution/railgun-prover-runtime.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "d5f94132812502d8e48bc273fe17615bd6038a9f0089884954725efe075c6bd8",
+      "transformation": "archive loader unchanged, filesystem choice remains internal",
+      "integrationSourceSha256": "d5f94132812502d8e48bc273fe17615bd6038a9f0089884954725efe075c6bd8",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-capsule.js",
+      "sourceSha256": "36f992c05891d50d9a07b8195a5fedc3c1716086e3da5c005d5e7324a1212961",
+      "destination": "src/execution/railgun-relay-capsule.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "36f992c05891d50d9a07b8195a5fedc3c1716086e3da5c005d5e7324a1212961",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "36f992c05891d50d9a07b8195a5fedc3c1716086e3da5c005d5e7324a1212961",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-intent.js",
+      "sourceSha256": "f2ca51010f133573988d84132cc6af00e33d3a30d222ffab567381bb70073a2d",
+      "destination": "src/execution/railgun-relay-intent.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "af91328bf1a844a15dd8845a4870354368be242d06b2fab21d4acb65fc55c132",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "f2ca51010f133573988d84132cc6af00e33d3a30d222ffab567381bb70073a2d",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-poi-history.js",
+      "sourceSha256": "37a55a747c243e4818e0c3e0bc7cf1bfda672a68a1b5e336896d215e0534703a",
+      "destination": "src/execution/railgun-relay-poi-history.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "2eed74c53c22974e26dbbfc3ddaf45d3a48e3ab132cbf1ad8365bf2804253c6b",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "37a55a747c243e4818e0c3e0bc7cf1bfda672a68a1b5e336896d215e0534703a",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-pre-poi-data.js",
+      "sourceSha256": "6f85390605a1a904e3a222848b88302ae130dd5ea46a7365a9f6435e2444482b",
+      "destination": "src/execution/railgun-relay-pre-poi-data.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "3d3651ad7a6f18605ac5763d1587dd4b4e91badabb6e74668ab34fd6e04d0526",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "6f85390605a1a904e3a222848b88302ae130dd5ea46a7365a9f6435e2444482b",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-quote-data.js",
+      "sourceSha256": "b5efa2509c8bec39f637d17a57fdff121a9c888e4cd1e10dfc6f5e4fbca43b38",
+      "destination": "src/execution/railgun-relay-quote-data.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "2809f671c4391b61cf9116912b60c205bd4a6796666c2255a655c79f9f71513a",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "b5efa2509c8bec39f637d17a57fdff121a9c888e4cd1e10dfc6f5e4fbca43b38",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-record-stream.js",
+      "sourceSha256": "080681805d8f6bc32ccdf1fbf36878941ff950e839ad063bff7179de41f15f51",
+      "destination": "src/execution/railgun-relay-record-stream.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "080681805d8f6bc32ccdf1fbf36878941ff950e839ad063bff7179de41f15f51",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "080681805d8f6bc32ccdf1fbf36878941ff950e839ad063bff7179de41f15f51",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-recovery-data.js",
+      "sourceSha256": "97cdc1effb74c6c1df644c8f9bf594eba63cdd0d882b0c0480ae9a9d93faeb7d",
+      "destination": "src/execution/railgun-relay-recovery-data.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "2ca06009737b3f6a095d1bd59d86bb47a9b527c0186fe138895bdee9bd8bf8c7",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "97cdc1effb74c6c1df644c8f9bf594eba63cdd0d882b0c0480ae9a9d93faeb7d",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-transaction.js",
+      "sourceSha256": "8230344cabbd8131fe27b13f43b787d81d636fb7445fb01d4b991ac9025a0293",
+      "destination": "src/execution/railgun-relay-transaction.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "3b956b78518469f75af84bfd3a4845bdafcb6e7a0f2e5972d7c428a50d193ded",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "8230344cabbd8131fe27b13f43b787d81d636fb7445fb01d4b991ac9025a0293",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-wallet-data.js",
+      "sourceSha256": "2c5e15f00786e4304d27a394c362241c42289ebb0c624dae7cff1585a5bdb19b",
+      "destination": "src/execution/railgun-relay-wallet-data.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "3fa454587f4f99d3e93f9ea735c453a1e501c64e8ceeb46cb3616b7cf1313d73",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "2c5e15f00786e4304d27a394c362241c42289ebb0c624dae7cff1585a5bdb19b",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-remote.js",
+      "sourceSha256": "1ad3b7fad9b14be7e357ea117b7239cf2777ced44d3a3866602fbec20a3c4793",
+      "destination": "src/execution/railgun-remote.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "1ad3b7fad9b14be7e357ea117b7239cf2777ced44d3a3866602fbec20a3c4793",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "1ad3b7fad9b14be7e357ea117b7239cf2777ced44d3a3866602fbec20a3c4793",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-shield-pins.json",
+      "sourceSha256": "0f38d69a9acb5ecdaeb7197f4410a1c6068b8896e4204a179631176223e31a75",
+      "destination": "src/railgun-shield-pins.json",
+      "disposition": "existing shared core",
+      "sha256": "0f38d69a9acb5ecdaeb7197f4410a1c6068b8896e4204a179631176223e31a75",
+      "transformation": "existing shared core",
+      "integrationSourceSha256": "0f38d69a9acb5ecdaeb7197f4410a1c6068b8896e4204a179631176223e31a75",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-spend-sign-job.js",
+      "sourceSha256": "052b6e60a858d76f5acfa8dc27b2de06381e64e6b97125f8273634eec55d6e7d",
+      "destination": "src/execution/railgun-spend-sign-job.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "bc68cba055005a89758ccccf635d09e226861d945651caa78a829af1404b5c22",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "052b6e60a858d76f5acfa8dc27b2de06381e64e6b97125f8273634eec55d6e7d",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-wallet-job.js",
+      "sourceSha256": "b09799a395e153374411df77f5382e9779ac0731f9ae91448ead5a4ae26dd7b9",
+      "destination": "src/execution/railgun-wallet-job.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "b09799a395e153374411df77f5382e9779ac0731f9ae91448ead5a4ae26dd7b9",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "b09799a395e153374411df77f5382e9779ac0731f9ae91448ead5a4ae26dd7b9",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-wallet-records.js",
+      "sourceSha256": "331c0a5e5074e8c0a0aa981f3d794b9d65a9770ec9e28a2a24519018ad31fad5",
+      "destination": "src/execution/railgun-wallet-records.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "331c0a5e5074e8c0a0aa981f3d794b9d65a9770ec9e28a2a24519018ad31fad5",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "331c0a5e5074e8c0a0aa981f3d794b9d65a9770ec9e28a2a24519018ad31fad5",
+      "integrationSourceChange": "unchanged from extraction source"
+    },
+    {
+      "source": "src/main/wallet/railgun-wallet-scan.js",
+      "sourceSha256": "c3bfca8178e27409dd46a213851646975c521f16cabe29228b4bcc18341c6f13",
+      "destination": "src/execution/railgun-wallet-scan.js",
+      "disposition": "copied with fixed host/import relocation",
+      "sha256": "6d0ebaed8aee8372bd0c32ae91925120e3d9589dddb5e525e33361d3832fffb0",
+      "transformation": "copied with fixed host/import relocation",
+      "integrationSourceSha256": "c3bfca8178e27409dd46a213851646975c521f16cabe29228b4bcc18341c6f13",
+      "integrationSourceChange": "unchanged from extraction source"
+    }
+  ],
+  "packageDocumentationBase": "b77c7c1",
+  "limits": [
+    "source/control tests only; no extracted archive imports or native qualification",
+    "main owner SCC and process supervisor integration remain deferred",
+    "existing engine/prover archive pins unchanged"
+  ],
+  "additionalKernelFiles": {
+    "host-execution.cjs": "c03cb3bea181c6172a1ca33be84e3199ce71665da484acfc1e81e43bce249bdc",
+    "host-execution.mjs": "d2fc8d22e06626c77ae042abd0c80c351895531b8ea6616e5d6253a1d4c7eaef",
+    "src/execution/host-bindings.js": "acfcd034751f724f3756ba04ee1813bb3e5aa765f1f1aa00fec35a1785558378",
+    "src/execution/job-locations.js": "77738a112a8871e1682e2eddf90c33dd9b1a8b81f44e14a6c4141126da0ee9c5"
+  },
+  "testOrigins": {
+    "test/execution-artifacts.test.js": {
+      "source": "src/main/wallet/railgun-artifacts.test.js",
+      "sourceSha256": "58c8708521b43486676d27712c1f6307904a44272cf4664bb01c05a6ba8d5810"
+    },
+    "test/execution-engine-runtime.test.js": {
+      "source": "src/main/wallet/railgun-engine-runtime.test.js",
+      "sourceSha256": "cf1bbdbee9772f7d5ab4fe7873563f431865bb9a05e18f200e260aae78eac4e4"
+    },
+    "test/execution-private-operate-job.test.js": {
+      "source": "src/main/wallet/railgun-private-operate-job.test.js",
+      "sourceSha256": "590a7da290140b05c5104f96267ded83922d7cc4271c2fc4de29e26c51edd905"
+    },
+    "test/execution-private-prepare-job.test.js": {
+      "source": "src/main/wallet/railgun-private-prepare-job.test.js",
+      "sourceSha256": "d688d5dba35d3edb6a356a88d2f5021ba6f8248e9867c5a56f781383649a4dd8"
+    },
+    "test/execution-private-prover.test.js": {
+      "source": "src/main/wallet/railgun-private-prover.test.js",
+      "sourceSha256": "c57a6494b8e94db6f86376861f5267ba9615540be6d518b9baf90f3eebba1ebf"
+    },
+    "test/execution-private-receive-job.test.js": {
+      "source": "src/main/wallet/railgun-private-receive-job.test.js",
+      "sourceSha256": "6d651021067cfa3ce89804ec47675a28cccf12d36594d6c05f1a70347b6df275"
+    },
+    "test/execution-private-reconstruct.test.js": {
+      "source": "src/main/wallet/railgun-private-reconstruct.test.js",
+      "sourceSha256": "6d9e04e4ec9b92839841b4dcb55e5486b7f0042f5d40651317736347d950e340"
+    },
+    "test/execution-private-recover-job.test.js": {
+      "source": "src/main/wallet/railgun-private-recover-job.test.js",
+      "sourceSha256": "749f62b18298a390c9c69e6ee834aa1fefa3c9eb34b5bc8f1dce75f3eb6a2029"
+    },
+    "test/execution-private-verify-job.test.js": {
+      "source": "src/main/wallet/railgun-private-verify-job.test.js",
+      "sourceSha256": "7d8fa1c494984b1cd0d91e9c6ff71b77ca85e292fb404b183cd949259322692a"
+    },
+    "test/execution-private-witness.test.js": {
+      "source": "src/main/wallet/railgun-private-witness.test.js",
+      "sourceSha256": "c8a7c9895ce7b2345d9d99594274e00e1e78f0618093b1c25f29e7661188561e"
+    },
+    "test/execution-process-guards.test.js": {
+      "source": "src/main/wallet/railgun-process-guards.test.js",
+      "sourceSha256": "4da96b928291a7f756f1af45fcbd291c8561c23de8a74ef960ec739c1c7a8790"
+    },
+    "test/execution-prover-runtime.test.js": {
+      "source": "src/main/wallet/railgun-prover-runtime.test.js",
+      "sourceSha256": "673ea1d5f14a97db249f682f53d61eccdf9db8b7ba0994e8e227b1409075d82d"
+    }
+  },
+  "freedomIntegrationBasis": {
+    "revision": "0f2616b28062d5b107a361bfa0e9fdb876f8def9",
+    "model": "temporary duplicate helpers, disjoint main/legacy-utility/kernel-utility issuers",
+    "parity": "Both exact byte pins are checked; differences are reviewed wrappers/import relocation/bootstrap/E2, not a generic semantic equivalence claim."
+  }
+}
