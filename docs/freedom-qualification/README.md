@@ -9,7 +9,10 @@ that the complete Railgun runtime has already been extracted.
 [MANIFEST.json](MANIFEST.json) maps every preserved file to its original repository,
 full commit, path, Git blob ID, SHA-256, byte length and mode. The destination
 retains the original suffix under `docs/qualification/`. All listed payload bytes
-and modes are unchanged. This README, the manifest and [NOTICE.md](NOTICE.md) are
+and modes are unchanged. The `.gitattributes` rule
+`docs/freedom-qualification/** -text` prevents checkout line-ending conversion,
+including under `core.autocrlf`, so original bytes remain stable.
+This README, the manifest and [NOTICE.md](NOTICE.md) are
 new archive metadata and are not original observations.
 
 ## How to read the evidence
@@ -40,6 +43,10 @@ be interpreted at the original Freedom commit above. Use the manifest's
 `originalPath` and `originalCommit` to resolve them. Do not silently rewrite a
 historical hash inventory to describe the new layout or execute an archived
 command as a current recipe.
+
+Some historical records also contain `/private/tmp/` paths to local-only evidence
+that was not archived. Those paths remain provenance text, not available archive
+resources; the home-directory build paths are separately flagged in NOTICE.
 
 Future Freedom integration tests can retain only their necessary public input
 fixtures while linking here for the larger historical record. At this preparation
