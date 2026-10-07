@@ -2,8 +2,6 @@
  * Native Promise, bounds, one-use identity and genuine ownership are runtime
  * contracts; these structural types alone cannot authenticate any of them.
  */
-import type { PluginInstance } from '@kohaku-eth/plugins';
-import type { Broadcaster } from '@kohaku-eth/plugins/broadcaster';
 import type { ReadAsset, ReadAmount, ReadNote } from './railgun-kohaku-snapshot-contract';
 export type { ReadAsset, ReadAmount, ReadNote } from './railgun-kohaku-snapshot-contract';
 
@@ -91,8 +89,10 @@ export type PrivateCapabilities = {
   note: ReadNote;
   extras: PrivateAdapterExtras;
 };
-export type PinnedPrivateTarget = PluginInstance<string, PrivateCapabilities>;
-export type PrivateAdapterBroadcaster = Broadcaster<PrivateOperation, PrivateSubmissionOutcome>;
+// Kohaku's Broadcaster<PrivateOperation, PrivateSubmissionOutcome>, spelled out.
+export type PrivateAdapterBroadcaster = {
+  broadcast: (operation: PrivateOperation) => Promise<PrivateSubmissionOutcome>;
+};
 export declare function createRailgunKohakuPrivateAdapter(options: {
   host: RestrictedPrivateHost;
   signal: AbortSignal;

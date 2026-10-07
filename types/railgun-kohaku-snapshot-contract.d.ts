@@ -1,9 +1,7 @@
 /** Restricted snapshot extension, not CreatePluginFn<..., Host>.
- * Declaration syntax only until a real pinned compiler checks this source graph.
+ * Self-contained; test/types checks it against @kohaku-eth/plugins 0.0.1-alpha.16.
  * Callback code is trusted application code. Currency is host-relative.
  */
-import type { PluginInstance } from '@kohaku-eth/plugins';
-
 export type ReadAsset =
   | { __type: 'native' }
   | { __type: 'erc20'; contract: `0x${string}` }
@@ -52,15 +50,3 @@ export declare function createRailgunKohakuSnapshotPlugin(options: {
   host: SnapshotHost;
   signal: AbortSignal;
 }): SnapshotReadPlugin;
-
-// The actual pinned target, not an ambient any substitute. Assignability is NOT
-// claimed: a future compiler must resolve the complete alias/provider/ox graph.
-export type PinnedReadTarget = PluginInstance<
-  string,
-  {
-    features: {};
-    note: ReadNote;
-    assetAmounts: { input: ReadAmount; internal: ReadAmount; output: ReadAmount; read: ReadAmount };
-    extras: SnapshotExtras;
-  }
->;

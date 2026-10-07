@@ -1,8 +1,7 @@
 /** Restricted public Shield host extension; trusted hosts own policy/authority.
  * Native Promise, bounds and one-use identity are runtime contracts. These
- * draft types have not yet been qualified against the pinned upstream graph.
+ * types are self-contained; test/types checks them against the Kohaku target.
  */
-import type { PluginInstance } from '@kohaku-eth/plugins';
 import type { ReadAsset, ReadAmount, ReadNote } from './railgun-kohaku-snapshot-contract';
 export type { ReadAsset, ReadAmount, ReadNote } from './railgun-kohaku-snapshot-contract';
 export interface PublicShieldInput {
@@ -63,7 +62,6 @@ export type PublicCapabilities = {
   note: ReadNote;
   extras: PublicAdapterExtras;
 };
-export type PinnedPublicTarget = PluginInstance<string, PublicCapabilities>;
 /** Public submission rejects original trusted-host reasons, including journal
  * uncertainty/unresolved errors. Promise rejection is not expressed by this
  * result type and must be handled separately; no private outcome union.

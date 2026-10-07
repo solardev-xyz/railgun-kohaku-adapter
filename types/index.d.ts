@@ -1,7 +1,7 @@
-/** Package entry declarations for both the CommonJS and ESM conditions.
- * NOT YET VERIFIED: the contract files import PluginInstance/Broadcaster from
- * @kohaku-eth/plugins, a peer whose addition (0.0.1-alpha.16) awaits approval.
- * Until it is installed these declarations do not resolve; see README.md.
+/** CommonJS entry declarations (the "require" condition and top-level types).
+ * index.d.mts forwards this file for the "import" condition. The declarations
+ * are self-contained and import nothing from @kohaku-eth/plugins; test/types
+ * checks them with TypeScript, including against that package; see README.md.
  * Each type is re-exported from exactly one contract file, so the private and
  * public operation brands keep a single declaration identity.
  */
