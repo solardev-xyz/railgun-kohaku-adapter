@@ -1,0 +1,63 @@
+{
+  "schema": "railgun-recovery-data-native-archive-v1",
+  "derived": true,
+  "sourceCommit": "b5d949981a2d0069023d288c42214ac01d350cdf",
+  "packageCommit": "cbc34b2c5d2d346e4fde722741c3638f4dcd312c",
+  "synthetic": true,
+  "live": false,
+  "reportedProtectedInputCount": 73,
+  "trackedSourceCount": 1084,
+  "prePostMapsEqual": true,
+  "originalLocalRecords": {
+    "run.py": "58c778e141db4850f7ae9ec8c3db300c13b62b7fb50750dcc39b68f48b2f3fbe",
+    "foreign.py": "eb4d255ead0773a73c1996209f0e82a6055e01958e8d0c3179d3b24f9bbf3d63",
+    "BEFORE.json": "b0ca9482d72ecded8e109b6694c7f1ed6935fceda48a4fa2b0543bc45dcfe097",
+    "RESULT.json": "445f7b841f44aca5dc83b3ad66b360a138fd20aa7f0346a8fe4057e05b6779ca",
+    "partial-AFTER.json": "13e72d3884a2811e46bfd87df735a46cbbf2de4759054eb06d60dab95efbbfd1",
+    "transfer-unshield-AFTER.json": "13e72d3884a2811e46bfd87df735a46cbbf2de4759054eb06d60dab95efbbfd1",
+    "foreign-BEFORE.json": "474eb424773f68165a8ddf457c889853816b1d3efc3e0bcd95b481965c1a117a",
+    "foreign-AFTER.json": "5d73327a54bd20b2135ea80d89c60e93d8f473d2c003073871977b6e4ce3759d",
+    "foreign-RESULT.json": "b4fa1b9d14a833c19b1f2a343df5c877141a34910d348a8632af660238d816f3",
+    "foreign-process.json": "c8f15cbc7b1a60510e5fcbc740f67120510958bb228b8535696bd12e8bf50676",
+    "partial-process.json": "4b911162999c5e0a43a4a32914da638da2b97982632516fb8e8beb63d88c8ace",
+    "transfer-unshield-process.json": "6caf5222a26162875c7f99fad5a8c3d6f3c49428dad0089c1596a7572dfabd9a",
+    "check-packaged.cjs": "769cf0f3d32a0fa48dc38a7af8a69dc3c3d41e95ea4ce408a4c5ed7d39dc19db",
+    "packaged-load.cjs": "23b38ab9ee097c1e3e4f6bf5738b0644cd4d909bd199e1cb2b9bc73eac6213b8"
+  },
+  "reports": {
+    "transfer-unshield-report.json": "06effc713478c8f64bf43b33b7909555b202cfdc2ddf61ba8c7ff845991df865",
+    "partial-report.json": "1a32426b357ffa76cce6742e400f7b7c42135b8449ad1cbd80b34c3aef8a25fd",
+    "foreign-shield-report.json": "4fb62cbdaac5fca4dcdd99fbd041e0250535f489c37094d8b0598e9986c79ae8",
+    "PACKAGED.json": "99708cf17e99413a4c27f7a4c662589d15fd5d53d0d59b840312549d591a27d2",
+    "packaged-load.json": "62e7efcfc34e25336c8434a8c07cf242a92f44bd7745b93c6d0ba0ad2d26ae05"
+  },
+  "nativeCases": [
+    {
+      "name": "transfer-unshield",
+      "exitCode": 0,
+      "naturalExit": true,
+      "elapsedSeconds": 23.720949172973633,
+      "reportSha256": "06effc713478c8f64bf43b33b7909555b202cfdc2ddf61ba8c7ff845991df865",
+      "sourceCount": 51
+    },
+    {
+      "name": "partial",
+      "exitCode": 0,
+      "naturalExit": true,
+      "elapsedSeconds": 9.734317064285278,
+      "reportSha256": "1a32426b357ffa76cce6742e400f7b7c42135b8449ad1cbd80b34c3aef8a25fd",
+      "sourceCount": 51
+    }
+  ],
+  "foreign": {
+    "qualified": true,
+    "synthetic": true,
+    "live": false,
+    "commit": "b5d949981a2d0069023d288c42214ac01d350cdf",
+    "reportSha256": "4fb62cbdaac5fca4dcdd99fbd041e0250535f489c37094d8b0598e9986c79ae8",
+    "elapsedSeconds": 62.22656273841858,
+    "naturalExit": true,
+    "exitCode": 0
+  },
+  "packagedBuildLogSha256": "08e1d33cd8e11b3f6aabe7096997174dd37e5d111186923cff455b7125f8b849"
+}
