@@ -43,7 +43,7 @@ const READ_EXPORT_COUNT = 9; // four read helpers and five types
 const DATA_CONTRACTS = ['types/data.d.ts'];
 const DATA_EXPORT_COUNT = 9; // three values and six types
 const HOST_DATA_CONTRACTS = ['types/host-data.d.ts'];
-const HOST_DATA_EXPORT_COUNT = 10; // eight values and two types
+const HOST_DATA_EXPORT_COUNT = 31; // 22 values and nine types
 const SOURCE_SUBPATH = `${SELF}/src/railgun-kohaku-read-dispatch.js`;
 
 // Diagnostics of the bridge's positive program without the bridge setup.

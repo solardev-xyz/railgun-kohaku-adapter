@@ -1,6 +1,6 @@
 # Notice and provenance
 
-`@freedom/railgun-kohaku-adapter` 0.2.0 is an extraction from the Freedom browser repository (https://github.com/solardev-xyz/freedom-browser). It is not published to npm. The original E1 adapter files come from Freedom commit `88b2496b58b1bccca64a35a576b48c026089544a` (branch `feat/wallet-privacy-foundation`). Copies were taken from the git object database (`git cat-file blob 88b2496b:<path>`), not from a working tree.
+`@freedom/railgun-kohaku-adapter` 0.3.0 is an extraction from the Freedom browser repository (https://github.com/solardev-xyz/freedom-browser). It is not published to npm. The original E1 adapter files come from Freedom commit `88b2496b58b1bccca64a35a576b48c026089544a` (branch `feat/wallet-privacy-foundation`). Copies were taken from the git object database (`git cat-file blob 88b2496b:<path>`), not from a working tree.
 
 ## License
 
@@ -132,3 +132,26 @@ This extraction adds no dependency. ethers 6.17.0 is both the lowest declared pe
 version and Freedom's version at the extraction commit; golden tests therefore
 cover both with the same installed version. No broader peer-version matrix is
 claimed. E2a does not extract execution, keys, storage, POI or transport.
+
+
+## Recovery and guarded result data (0.3.0)
+
+Five more modules are copied from immutable Freedom commit
+`668e97ed19d37ce10f596cf19b1cdbd492a6226b`: private destination, signature,
+preparation, results and recovery-data. Every algorithm, assertion, error and
+false authority flag is retained. The only source edits are relative JSON imports
+and preparation's offer import into the existing shared data implementation.
+The five adjacent tests retain all assertions with import substitutions only.
+`test/fixtures/railgun-partial-capsule-data.js` is the sole added executable
+fixture: public structural dummy data, not valid proofs or recovered ownership.
+`src/railgun-engine-manifest.json` and `src/railgun-prover-manifest.json` are
+byte-identical report-comparison metadata, not engine or prover payloads.
+
+`test/fixtures/private-recovery-provenance.json` pins all 13 original and copied
+files and records every literal import substitution. The tests reverse those
+substitutions and verify the original hash without importing Freedom or requiring
+its repository. The existing deployment JSON is byte-identical at this new source
+commit. Existing capsule/intent/offer/policy implementations and safe `/data`
+remain unchanged. New host entry exports, declarations, type cases and identity
+checks are package integration. No third-party implementation or dependency was
+added; MPL-2.0 remains the source license. The package is still private/unpublished.

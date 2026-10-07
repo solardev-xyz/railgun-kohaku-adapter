@@ -1,6 +1,6 @@
 # @freedom/railgun-kohaku-adapter
 
-A restricted Kohaku-style facade over **trusted, application-supplied** Railgun hosts. Version 0.2.0 is not published to npm (`"private": true`); its source is public at https://github.com/solardev-xyz/railgun-kohaku-adapter. It was extracted from the Freedom browser (commit `88b2496b`) as the first package of the privacy work ("E1"); see `NOTICE.md` for exact provenance.
+A restricted Kohaku-style facade over **trusted, application-supplied** Railgun hosts. Version 0.3.0 is not published to npm (`"private": true`); its source is public at https://github.com/solardev-xyz/railgun-kohaku-adapter. It was extracted from the Freedom browser (commit `88b2496b`) as the first package of the privacy work ("E1"); see `NOTICE.md` for exact provenance.
 
 This is **not** a self-contained Railgun SDK. It contains no Railgun engine, prover, key management, wallet vault, storage, RPC client, Tor transport or UI. The application's host does the actual work: it owns the account, holds the keys, generates proofs, signs and submits transactions, and keeps durable state. This package only sits between a Kohaku-style consumer and that host, and does four things:
 
@@ -72,13 +72,39 @@ rules rather than a second vendored copy. It exports `TRANSACT_ABI`, `BOUND_PARA
 `matchRailgunPrivateProvedTransaction`, `normalizeRailgunPrivateOffer`,
 `normalizeRailgunPrivateCapsule` and `digestRailgunPrivateCapsule`.
 
-These preserve the original internal contracts: they expect host-validated inputs,
-do not perform the public boundary's bounded defensive copy, and can throw raw
-assertions or decoding errors. Never expose those errors in reports or call these
-functions on hostile objects. They confer no authority. The public `/data` API
-wraps the same capsule implementation and closes all errors. Engine binding for
-new operations, owned-note selection, recovery stores and execution remain host
-responsibilities. There is no policy override or general-chain support.
+Version 0.3.0 adds the original destination, signature, preparation, result and
+recovery-data helpers to this same host subpath:
+
+| Group | Exported functions |
+| --- | --- |
+| Destination | `isRailgunForeignTransfer`, `assertRailgunPrivateTransferRecipient`, `decodeRailgunForeignDestination`, `verifyRailgunForeignOutput` |
+| Signature and guarded results | `normalizeRailgunSignature`, `normalizeRailgunSpendKeyRequest`, `normalizeRailgunSpendSignature`, `normalizeRailgunPrivateVerification`, `normalizeRailgunPrivateReceiver` |
+| Preparation | `selectRailgunPrivatePreparation`, `normalizeRailgunPrivatePreparation`, `normalizeRailgunPrivateOperation` |
+| Recovery data | `normalizeRailgunPrivateRecoveryInput`, `normalizeRailgunPrivateRecoveryResult` |
+
+These preserve the original internal contracts and expect host-validated inputs.
+The recovery-input copier is bounded, but the host surface does not uniformly
+apply the public boundary's defensive copy or closed errors. Helpers may throw
+raw assertions or decoding errors; never expose them in reports or call them on
+hostile objects. Selecting from a supplied owned-note view only checks that data;
+it does not authenticate the view. A normalized result's `verified: true` or
+`recipientVerified: true` copies a checked report claim and is not a genuine
+utility receipt or an independent cryptographic verification.
+
+Destination decode and sent-output checks call the engine importer explicitly
+supplied by a trusted host. The host authenticates that importer and owns its
+execution, cancellation and effects. The helper checks the original output,
+retains the currentness callback and wipes its temporary symmetric key. It does
+not load an engine itself. Its detached destination byte array remains mutable,
+although the containing object is frozen. The tests use explicit engine shims.
+
+Root, `/read` and the safe `/data` API remain at five, four and three runtime
+exports. `/host/data` has 22 shared CJS/ESM values. Capsule formats, qualification
+policy, false authority flags, original-signature recovery and historical digests
+are unchanged. The caller must still own account, identity, currentness, observed
+utility closure, reservation, storage and signing gates. No job, controller,
+store, engine artifact or transport is extracted here. There is no policy
+override or general-chain support.
 
 ## Requirements
 
@@ -335,7 +361,7 @@ The runner, `test/types/typecheck.cjs`, compiles programs and never emits or run
 
 `test/types/typecheck-record.json` holds the last recorded run: TypeScript 5.9.3 on Node 24.18.1, `lib/typescript.js` SHA-256 `3ae902c92cc44dace175c0e69e13a4b0899f6983c6121d76b9ab8dd5795e7675`. It also holds the options, resolutions, export parity, upstream declaration hashes, alias uses and each case's diagnostics. Regenerate it with `npm run typecheck -- --record test/types/typecheck-record.json`.
 
-### E2a qualification
+### E2a qualification (0.2.0 historical result)
 
 The expanded package suite passes **353 tests in 10 suites**. This includes the
 four static capsule goldens, maximum supported ABI encodings, malformed and hostile
@@ -349,3 +375,27 @@ exports have parity: root 32 declaration names, read 9, data 9 and host/data 10.
 The data types distinguish the historical formats and readonly fields; they do
 not establish that a record is cryptographically valid or authorize an operation.
 The pre-existing upstream Kohaku bridge remains separately labeled and unchanged.
+
+
+### Recovery/result-data qualification (0.3.0)
+
+The package suite passes **557 tests in 15 suites**, including the five transferred
+Freedom suites. Their algorithms and assertions are unchanged; only import paths
+move. The minimum added fixture is public structural data with dummy proofs and
+ciphertext. Destination tests use a minimal engine shim, and result tests mock
+intent matchers where explicitly declared. These are standalone unit checks, not
+native engine, live recovery, account integration or cryptographic evidence.
+
+The provenance test verifies all five source modules, five tests, the public
+fixture and two data-only manifests against original and copied SHA-256 pins,
+reversing only the recorded import substitutions. Shared entry tests enforce all
+22 CJS/ESM host identities, the unchanged root/read/data surfaces, and the existing
+four historical capsule goldens. Engine/prover manifests retain the original
+report-comparison pins; their presence neither downloads nor authenticates a
+runtime.
+
+TypeScript 5.9.3 passes eight positive consumers and eleven negative programs,
+with CJS/ESM host parity at 31 declaration names (22 values, nine types).
+The additional cases cover readonly signatures/recovery records, refused-versus-
+proved narrowing, false authority flags and inaccessible safe/root exports.
+The existing Kohaku bridge and its two diagnostic controls remain unchanged.

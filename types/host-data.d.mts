@@ -7,5 +7,28 @@ export {
   normalizeRailgunPrivateOffer,
   normalizeRailgunPrivateCapsule,
   digestRailgunPrivateCapsule,
+  isRailgunForeignTransfer,
+  assertRailgunPrivateTransferRecipient,
+  decodeRailgunForeignDestination,
+  verifyRailgunForeignOutput,
+  normalizeRailgunSignature,
+  selectRailgunPrivatePreparation,
+  normalizeRailgunPrivatePreparation,
+  normalizeRailgunPrivateOperation,
+  normalizeRailgunSpendSignature,
+  normalizeRailgunSpendKeyRequest,
+  normalizeRailgunPrivateVerification,
+  normalizeRailgunPrivateReceiver,
+  normalizeRailgunPrivateRecoveryInput,
+  normalizeRailgunPrivateRecoveryResult,
 } from './host-data.js';
 export type { RailgunCheckedTransaction, RailgunPrivateOffer } from './host-data.js';
+export type {
+  RailgunSignature,
+  RailgunPrivatePreparation,
+  RailgunPrivateProvedResult,
+  RailgunPrivateOperationResult,
+  RailgunPrivateRecoveryInput,
+  RailgunForeignDestination,
+  RailgunPrivateReceiverResult,
+} from './host-data.js';

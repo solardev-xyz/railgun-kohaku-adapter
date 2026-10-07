@@ -18,6 +18,20 @@ const names = [
   'normalizeRailgunPrivateOffer',
   'normalizeRailgunPrivateCapsule',
   'digestRailgunPrivateCapsule',
+  'isRailgunForeignTransfer',
+  'assertRailgunPrivateTransferRecipient',
+  'decodeRailgunForeignDestination',
+  'verifyRailgunForeignOutput',
+  'normalizeRailgunSignature',
+  'selectRailgunPrivatePreparation',
+  'normalizeRailgunPrivatePreparation',
+  'normalizeRailgunPrivateOperation',
+  'normalizeRailgunSpendSignature',
+  'normalizeRailgunSpendKeyRequest',
+  'normalizeRailgunPrivateVerification',
+  'normalizeRailgunPrivateReceiver',
+  'normalizeRailgunPrivateRecoveryInput',
+  'normalizeRailgunPrivateRecoveryResult',
 ];
 const coreFiles = [
   'railgun-private-policy.js',
@@ -47,7 +61,7 @@ function falseGrants(checked) {
   expect(checked).not.toHaveProperty('signingPermit');
 }
 
-test('trusted host exports exactly the eight original core values', () => {
+test('trusted host exports the exact original and recovery core values', () => {
   expect(Object.isFrozen(host)).toBe(true);
   expect(Object.keys(host).sort()).toEqual([...names].sort());
   for (const file of coreFiles)
@@ -57,14 +71,14 @@ test('trusted host exports exactly the eight original core values', () => {
   expect(safe.digestRailgunPrivateCapsule).not.toBe(host.digestRailgunPrivateCapsule);
 });
 
-test('actual Node CJS/ESM package consumers share eight identities without widening root/read exports', () => {
+test('actual Node CJS/ESM package consumers share all host identities without widening root/read exports', () => {
   const script = `
     import assert from 'node:assert/strict';
     import { createRequire } from 'node:module';
     import * as esm from '@freedom/railgun-kohaku-adapter/host/data';
     const require = createRequire(import.meta.url);
     const cjs = require('@freedom/railgun-kohaku-adapter/host/data');
-    assert.equal(Object.keys(cjs).length, 8);
+    assert.equal(Object.keys(cjs).length, 22);
     assert.deepEqual(Object.keys(cjs).sort(), Object.keys(esm).sort());
     for (const name of Object.keys(cjs)) assert.equal(cjs[name], esm[name]);
     const root = require('@freedom/railgun-kohaku-adapter');
@@ -78,14 +92,14 @@ test('actual Node CJS/ESM package consumers share eight identities without widen
     assert.throws(() => require('@freedom/railgun-kohaku-adapter/src/data/railgun-private-policy'),
       { code: 'ERR_PACKAGE_PATH_NOT_EXPORTED' });
     assert.equal(Object.keys(require.cache).some((file) => file.includes('/src/main/')), false);
-    console.log(JSON.stringify({ sameHostValues: 8, rootValues: 5, readValues: 4 }));
+    console.log(JSON.stringify({ sameHostValues: 22, rootValues: 5, readValues: 4 }));
   `;
   const output = execFileSync(process.execPath, ['--input-type=module', '--eval', script], {
     cwd: path.resolve(__dirname, '..'),
     encoding: 'utf8',
     timeout: 30000,
   });
-  expect(JSON.parse(output)).toEqual({ sameHostValues: 8, rootValues: 5, readValues: 4 });
+  expect(JSON.parse(output)).toEqual({ sameHostValues: 22, rootValues: 5, readValues: 4 });
 });
 
 test.each(vectors)('$name raw and safe capsule readers preserve golden bytes and digest', (v) => {
@@ -229,4 +243,24 @@ test('all four copied core source hashes match the retained provenance fixture',
     expect(provenance.files[file].original).toMatch(/^[a-f0-9]{64}$/);
   }
   // This checks retained provenance, not a runtime import of Freedom or live source verification.
+});
+
+
+test('all recovery sources, adjacent tests and public fixture match their exact import-only provenance', () => {
+  const recovery = require('./fixtures/private-recovery-provenance.json');
+  expect(recovery.sourceCommit).toBe('668e97ed19d37ce10f596cf19b1cdbd492a6226b');
+  expect(Object.keys(recovery.files)).toHaveLength(13);
+  for (const [file, row] of Object.entries(recovery.files)) {
+    let bytes = readFileSync(path.join(__dirname, '..', file), 'utf8');
+    expect(createHash('sha256').update(bytes).digest('hex')).toBe(row.copySha256);
+    for (const change of [...row.replacements].reverse()) {
+      expect(bytes).toContain(change.to);
+      bytes = bytes.split(change.to).join(change.from);
+    }
+    expect(createHash('sha256').update(bytes).digest('hex')).toBe(row.originalSha256);
+  }
+  for (const name of ['destination', 'signature', 'preparation', 'results', 'recovery-data'])
+    for (const [key, value] of Object.entries(require('../src/data/railgun-private-' + name)))
+      expect(host[key]).toBe(value);
+  expect(Object.keys(safe)).toHaveLength(3);
 });

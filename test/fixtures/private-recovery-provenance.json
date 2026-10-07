@@ -1,0 +1,194 @@
+{
+  "sourceCommit": "668e97ed19d37ce10f596cf19b1cdbd492a6226b",
+  "scope": "Five raw trusted-host modules, five adjacent tests, one public structural fixture, two manifest JSON files. Only recorded import substitutions.",
+  "files": {
+    "src/data/railgun-private-destination.js": {
+      "source": "src/main/wallet/railgun-private-destination.js",
+      "originalSha256": "b503b2303dd2b9726bca6542e2d656c88b0a18fd612ffffefb08dd2c73fb3064",
+      "copySha256": "cb1e241d166bb11c0874ea59261ac85cdf89f6b7d35d6447fcf0360695467822",
+      "replacements": [
+        {
+          "from": "'./railgun-shield-pins.json'",
+          "to": "'../railgun-shield-pins.json'"
+        }
+      ]
+    },
+    "test/railgun-private-destination.test.js": {
+      "source": "src/main/wallet/railgun-private-destination.test.js",
+      "originalSha256": "34f32539fac42870e4fbd8daccf43874784f3bd25858758d002c8c5478114f73",
+      "copySha256": "1a04e61d98bb3e137066d5665114858e47888bd2a0b49ec9673f745889eb7461",
+      "replacements": [
+        {
+          "from": "'./railgun-private-destination'",
+          "to": "'../src/data/railgun-private-destination'"
+        },
+        {
+          "from": "'./railgun-shield-pins.json'",
+          "to": "'../src/railgun-shield-pins.json'"
+        }
+      ]
+    },
+    "src/data/railgun-private-signature.js": {
+      "source": "src/main/wallet/railgun-private-signature.js",
+      "originalSha256": "4290f00656d5345d7c5301c979c98a2bb755ac5467880c879dd578c221a71777",
+      "copySha256": "4290f00656d5345d7c5301c979c98a2bb755ac5467880c879dd578c221a71777",
+      "replacements": []
+    },
+    "test/railgun-private-signature.test.js": {
+      "source": "src/main/wallet/railgun-private-signature.test.js",
+      "originalSha256": "f2c6036746d7b8e4aa02b0fecce7b5ac763a3cf03ff564a5ed21c9fb78bd01d5",
+      "copySha256": "14dc7ef0ac178886160d63448d9f707c02a51cf516156f29fa82259cdadfe8b7",
+      "replacements": [
+        {
+          "from": "'./railgun-private-signature'",
+          "to": "'../src/data/railgun-private-signature'"
+        }
+      ]
+    },
+    "src/data/railgun-private-preparation.js": {
+      "source": "src/main/wallet/railgun-private-preparation.js",
+      "originalSha256": "e4d4a21515a1aa4e51449b95cfbec44f8e5bcd68f8dfb6587f531dfa82e35768",
+      "copySha256": "d88ae9e0ed6b2f3f73b3f534cc96049134cbd4e88353a0f8a3b6ccbc912fec17",
+      "replacements": [
+        {
+          "from": "'./railgun-shield-pins.json'",
+          "to": "'../railgun-shield-pins.json'"
+        },
+        {
+          "from": "'@freedom/railgun-kohaku-adapter/host/data'",
+          "to": "'./railgun-private-offer'"
+        }
+      ]
+    },
+    "test/railgun-private-preparation.test.js": {
+      "source": "src/main/wallet/railgun-private-preparation.test.js",
+      "originalSha256": "7319915bc0b6e1b6298df9ec028a999bbbe769a5d6c12c2d0af3a2abf3bc3d6a",
+      "copySha256": "a99e8bb545fcb68b1e71e06dfc0d581b1bb7b525952ea19ae85deee24030e5df",
+      "replacements": [
+        {
+          "from": "'./railgun-private-policy'",
+          "to": "'../src/data/railgun-private-policy'"
+        },
+        {
+          "from": "'./railgun-private-preparation'",
+          "to": "'../src/data/railgun-private-preparation'"
+        },
+        {
+          "from": "'./railgun-shield-pins.json'",
+          "to": "'../src/railgun-shield-pins.json'"
+        },
+        {
+          "from": "'./railgun-private-intent'",
+          "to": "'../src/data/railgun-private-intent'"
+        },
+        {
+          "from": "'../../../scripts/fixtures/railgun-partial-capsule-data'",
+          "to": "'./fixtures/railgun-partial-capsule-data'"
+        }
+      ]
+    },
+    "src/data/railgun-private-results.js": {
+      "source": "src/main/wallet/railgun-private-results.js",
+      "originalSha256": "e8a0b9c72afd51e2ebcbc44810090c23105bb2e49c3f62135ec1d231d64b92e2",
+      "copySha256": "a17a8009ec28ccef5a22103757682d3aea08021fc3b1c2866d02934d9e7cfe5b",
+      "replacements": [
+        {
+          "from": "'./railgun-shield-pins.json'",
+          "to": "'../railgun-shield-pins.json'"
+        },
+        {
+          "from": "'./railgun-engine-manifest.json'",
+          "to": "'../railgun-engine-manifest.json'"
+        },
+        {
+          "from": "'./railgun-prover-manifest.json'",
+          "to": "'../railgun-prover-manifest.json'"
+        }
+      ]
+    },
+    "test/railgun-private-results.test.js": {
+      "source": "src/main/wallet/railgun-private-results.test.js",
+      "originalSha256": "37b56577c5eb05694346a630f1beb17113a54213d9d26adc60d386e4613be4b0",
+      "copySha256": "6db2dc2606d2882fd7d453076324b5eebb1d6413210dbc664710eda029023bbb",
+      "replacements": [
+        {
+          "from": "'./railgun-private-intent'",
+          "to": "'../src/data/railgun-private-intent'"
+        },
+        {
+          "from": "'./railgun-private-results'",
+          "to": "'../src/data/railgun-private-results'"
+        },
+        {
+          "from": "'./railgun-engine-manifest.json'",
+          "to": "'../src/railgun-engine-manifest.json'"
+        },
+        {
+          "from": "'./railgun-prover-manifest.json'",
+          "to": "'../src/railgun-prover-manifest.json'"
+        },
+        {
+          "from": "'../../../scripts/fixtures/railgun-partial-capsule-data'",
+          "to": "'./fixtures/railgun-partial-capsule-data'"
+        }
+      ]
+    },
+    "src/data/railgun-private-recovery-data.js": {
+      "source": "src/main/wallet/railgun-private-recovery-data.js",
+      "originalSha256": "fda3e125d45d25dbf9a92aafea6600a06e77200f1c08672b90a26e747914288f",
+      "copySha256": "77d9f826d80f5a32c78da2ec705e8c4a33d17efab105165412714d826b80496e",
+      "replacements": [
+        {
+          "from": "'./railgun-shield-pins.json'",
+          "to": "'../railgun-shield-pins.json'"
+        }
+      ]
+    },
+    "test/railgun-private-recovery-data.test.js": {
+      "source": "src/main/wallet/railgun-private-recovery-data.test.js",
+      "originalSha256": "5c5b88a5058954faf9f63614021e64b1efd5cac6047ceb6a4fea85ce8ba561ef",
+      "copySha256": "64a723688dd963a2c795c15ed9eb0d2dbe8c49a159aeb96e9cac1cce8a96df8f",
+      "replacements": [
+        {
+          "from": "'./railgun-private-recovery-data'",
+          "to": "'../src/data/railgun-private-recovery-data'"
+        },
+        {
+          "from": "'../../../scripts/fixtures/railgun-partial-capsule-data'",
+          "to": "'./fixtures/railgun-partial-capsule-data'"
+        },
+        {
+          "from": "'./railgun-private-intent'",
+          "to": "'../src/data/railgun-private-intent'"
+        }
+      ]
+    },
+    "src/railgun-engine-manifest.json": {
+      "source": "src/main/wallet/railgun-engine-manifest.json",
+      "originalSha256": "54a4d63dea94e17a542d7510c08e1f35ea71256c821639ba86da29b89f8c7f2c",
+      "copySha256": "54a4d63dea94e17a542d7510c08e1f35ea71256c821639ba86da29b89f8c7f2c",
+      "replacements": []
+    },
+    "src/railgun-prover-manifest.json": {
+      "source": "src/main/wallet/railgun-prover-manifest.json",
+      "originalSha256": "656cbc549444a9d99162fd5ac2359c957e0919f96802ace21aa9250c8de0a877",
+      "copySha256": "656cbc549444a9d99162fd5ac2359c957e0919f96802ace21aa9250c8de0a877",
+      "replacements": []
+    },
+    "test/fixtures/railgun-partial-capsule-data.js": {
+      "source": "scripts/fixtures/railgun-partial-capsule-data.js",
+      "originalSha256": "2f9bf03d64202bbeb599fc781f3bcee90b80783a9b75e75a7ac52b36e9e1a50c",
+      "copySha256": "24e01d1a27b7cb69692acc1cb7d8fca02548ceaa86aa34b0743419492fec2496",
+      "replacements": [
+        {
+          "from": "'../../src/main/wallet/railgun-private-policy'",
+          "to": "'../../src/data/railgun-private-policy'"
+        },
+        {
+          "from": "'../../src/main/wallet/railgun-shield-pins.json'",
+          "to": "'../../src/railgun-shield-pins.json'"
+        }
+      ]
+    }
+  }
+}
