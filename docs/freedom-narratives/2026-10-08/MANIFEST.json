@@ -2561,5 +2561,18 @@
       "sha256": "ca1dce2931f2b79b3d3e61a2bbf4412a5790127155195dc03550818ff360ead7",
       "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-window-poi-2026-10-03.md"
     }
-  ]
+  ],
+  "futureFreedomCleanup": {
+    "status": "proposal-only-no-Freedom-files-changed",
+    "duplicateRemovalCount": 251,
+    "duplicateRemovalLines": 18012,
+    "duplicateRemovalBytes": 1743384,
+    "retainCurrentFiles": [
+      "docs/railgun-extraction-status-2026-10-07.md",
+      "docs/railgun-parity-plan-2026-10-04.md",
+      "docs/railgun-private-rpc-transport-2026-10-06.md",
+      "docs/railgun-tor-setup-deadlines-2026-10-07.md"
+    ],
+    "preservedSnapshotsUnchanged": 255
+  }
 }
