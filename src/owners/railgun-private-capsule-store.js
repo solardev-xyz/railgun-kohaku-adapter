@@ -12,7 +12,7 @@ const { assertRailgunPrivateReservationsOwner } = require("./railgun-private-res
 const {
   normalizeRailgunPrivateCapsule,
   digestRailgunPrivateCapsule,
-} = require("../data/railgun-private-capsule.js");
+} = require("../execution/railgun-private-capsule.js");
 const { normalizeRailgunSignature } = require("../data/railgun-private-signature.js");
 const {
   validateRailgunPrivateSigningIntent,

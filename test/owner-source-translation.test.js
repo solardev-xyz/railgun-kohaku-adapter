@@ -232,3 +232,34 @@ test("dynamic archive, legacy job loading and policy selectors remain explicit u
   ).toBe(true);
   expect(imports.dynamicExceptions).toHaveLength(82);
 });
+
+test("all reused static named export surfaces were checked, including the full current capsule wrapper", () => {
+  const audit = require("../docs/owners/REUSED-EXPORTS.json");
+  const rows = translation.files.filter(
+    (row) => row.disposition === "existing package implementation",
+  );
+  expect(audit.sourceRevision).toBe(translation.sourceRevision);
+  expect(audit.rows).toHaveLength(rows.length);
+  for (const row of rows) {
+    const found = audit.rows.find((item) => item.source === row.source);
+    expect(found.destination).toBe(row.destination);
+    expect(found.sourceSha256).toBe(row.sourceSha256);
+    expect(found.destinationSha256).toBe(
+      sha(fs.readFileSync(path.join(root, row.destination))),
+    );
+    expect(found.destinationExports).toEqual(found.exports);
+  }
+  const capsule = audit.rows.find((row) =>
+    row.source.endsWith("/railgun-private-capsule.js"),
+  );
+  expect(capsule.destination).toBe("src/execution/railgun-private-capsule.js");
+  expect(capsule.exports).toContain("normalizeRailgunNewCapsule");
+  for (const name of [
+    "railgun-account-wallet.js",
+    "railgun-wallet-run.js",
+    "railgun-private-operation.js",
+  ])
+    expect(
+      fs.readFileSync(path.join(root, "src/owners", name), "utf8"),
+    ).toContain('require("../execution/railgun-private-capsule.js")');
+});

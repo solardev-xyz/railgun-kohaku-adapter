@@ -8,7 +8,7 @@ const assert = require('assert/strict');
 const path = require('path');
 const { Interface } = require('ethers');
 const { TRANSACT_ABI } = require("../data/railgun-private-policy.js");
-const { normalizeRailgunPrivateCapsule } = require("../data/railgun-private-capsule.js");
+const { normalizeRailgunPrivateCapsule } = require("../execution/railgun-private-capsule.js");
 const {
   assertRailgunPrivateTransferRecipient,
   decodeRailgunForeignDestination,

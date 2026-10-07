@@ -906,7 +906,7 @@ async function submitRailgunRecoveredPrivateTransaction(options) {
           assert.equal(stored.holdId, holdId);
           assert.equal(stored.capsule.walletId, descriptor.walletId);
           assert.ok(stored.signature && stored.provedTransaction);
-          const capsule = require("../data/railgun-private-capsule.js").normalizeRailgunPrivateCapsule(
+          const capsule = require("../execution/railgun-private-capsule.js").normalizeRailgunPrivateCapsule(
             stored.capsule
           );
           step = 'proved-transaction';

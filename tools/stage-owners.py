@@ -37,7 +37,9 @@ for directory in ['src/data','src/execution','src']:
  for p in sorted((ROOT/directory).glob('railgun-*')):
   if p.is_file() and p.suffix in ['.js','.json']:
    existing.setdefault(p.name,p.relative_to(ROOT).as_posix())
-# execution includes data wrappers; canonical data mappings win above.
+# Most wrappers only re-export data. Capsule additionally binds the current
+# engine/account/preparation; preserve the existing complete execution wrapper.
+existing["railgun-private-capsule.js"] = "src/execution/railgun-private-capsule.js"
 mapping={p:existing.get(posixpath.basename(p),'src/owners/'+posixpath.basename(p)) for p in sorted(selected)}
 hosts={
  '../networks/privacy-context':'context','./privacy-artifacts':'artifacts',

@@ -8,7 +8,7 @@ const { createHash } = require('crypto');
 const {
   normalizeRailgunPrivateCapsule,
   digestRailgunPrivateCapsule,
-} = require("../data/railgun-private-capsule.js");
+} = require("../execution/railgun-private-capsule.js");
 const { extractRailgunTransactIntent } = require("./railgun-transact-intent.js");
 const { inspectRailgunTransactReceipt } = require("./railgun-transact-receipt.js");
 const { validRailgunTransactResolution } = require("./railgun-transact-resolution.js");

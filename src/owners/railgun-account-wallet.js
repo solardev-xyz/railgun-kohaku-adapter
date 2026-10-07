@@ -254,7 +254,7 @@ function completedInputCapsule(input) {
   };
   inspect(input);
   check(Buffer.byteLength(JSON.stringify(input)) <= 32768);
-  return require("../data/railgun-private-capsule.js").normalizeRailgunPrivateCapsule(input);
+  return require("../execution/railgun-private-capsule.js").normalizeRailgunPrivateCapsule(input);
 }
 function bindRecoveryInput(capsule, owned, descriptor) {
   check(
@@ -844,7 +844,7 @@ async function openAccount(
             );
             check(selected.length === 1);
             const normalizedCapsule =
-              require("../data/railgun-private-capsule.js").normalizeRailgunNewCapsule(capsule, {
+              require("../execution/railgun-private-capsule.js").normalizeRailgunNewCapsule(capsule, {
                 walletId: enrollment.descriptor.walletId,
                 selection: privateIntent,
                 preparation: normalized,

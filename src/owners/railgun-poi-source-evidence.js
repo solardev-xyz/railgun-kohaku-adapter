@@ -9,7 +9,7 @@ const {
   collectRailgunPoiTransactCreator,
   collectRailgunPoiRetainedCreator,
 } = require("./railgun-poi-creator.js");
-const { normalizeRailgunPrivateCapsule } = require("../data/railgun-private-capsule.js");
+const { normalizeRailgunPrivateCapsule } = require("../execution/railgun-private-capsule.js");
 const { railgunTransactIntentBinding } = require("./railgun-transact-intent.js");
 const fail = () =>
   Object.assign(new Error('Railgun POI source evidence unavailable'), {

@@ -21,7 +21,7 @@ const { selectRailgunPrivatePreparation } = require("../data/railgun-private-pre
 const {
   normalizeRailgunNewCapsule,
   digestRailgunPrivateCapsule,
-} = require("../data/railgun-private-capsule.js");
+} = require("../execution/railgun-private-capsule.js");
 const { verifyRailgunPrivateReceiver } = require("./railgun-private-receive.js");
 const {
   openRailgunPrivateWindowPoi,

@@ -94,11 +94,11 @@
     },
     {
       "file": "src/owners/railgun-account-wallet.js",
-      "beforeSha256": "82c47e4ddab3c1530b3ad24423a4218bcba0542b715f158965aa2e62fd5beebc",
-      "afterSha256": "522e9f49c07a331951f5e3887ba189f244660d6d16d5c302cf59aa3876756261",
+      "beforeSha256": "87811f5ad27f715c257248f297cb33a746031cba234da264e6809b85263f32bd",
+      "afterSha256": "595f532aa5af6e8267c1b189f4d95984adf8394a05ec7c217aa0ac4d2b4dfa7c",
       "replacements": [
         {
-          "start": 23772,
+          "start": 23777,
           "before": "enrollment.withGenerationKeys(",
           "after": "withRailgunEnrollmentGenerationKeys(enrollment, "
         },

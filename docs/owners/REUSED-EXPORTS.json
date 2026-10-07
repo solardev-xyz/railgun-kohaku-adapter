@@ -1,0 +1,804 @@
+{
+  "sourceRevision": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+  "rows": [
+    {
+      "source": "src/main/wallet/railgun-artifacts.js",
+      "destination": "src/execution/railgun-artifacts.js",
+      "sourceSha256": "3d1e929eab29896e511589217be42a13d30426b76e31e0ffd88eb35a7707c40a",
+      "destinationSha256": "a28017b216b2f51970185751a6a786945cf33a1fa8552074f0cb6d8430bcd229",
+      "exports": [
+        "assertRailgunArtifactVerifier",
+        "loadRailgunArtifacts",
+        "manifest"
+      ],
+      "destinationExports": [
+        "assertRailgunArtifactVerifier",
+        "loadRailgunArtifacts",
+        "manifest"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-engine-manifest.json",
+      "destination": "src/execution/railgun-engine-manifest.json",
+      "sourceSha256": "54a4d63dea94e17a542d7510c08e1f35ea71256c821639ba86da29b89f8c7f2c",
+      "destinationSha256": "54a4d63dea94e17a542d7510c08e1f35ea71256c821639ba86da29b89f8c7f2c",
+      "exports": null,
+      "destinationExports": null,
+      "scope": "JSON pinned separately; not an export surface"
+    },
+    {
+      "source": "src/main/wallet/railgun-engine-runtime.js",
+      "destination": "src/execution/railgun-engine-runtime.js",
+      "sourceSha256": "3dd0d43fc4cf9a766539986cd0779573ec49d39c261ebaa1c3906c81653bc860",
+      "destinationSha256": "3dd0d43fc4cf9a766539986cd0779573ec49d39c261ebaa1c3906c81653bc860",
+      "exports": [
+        "verifyRailgunEngineRuntime"
+      ],
+      "destinationExports": [
+        "verifyRailgunEngineRuntime"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-identity-job.js",
+      "destination": "src/execution/railgun-identity-job.js",
+      "sourceSha256": "1b1ea70e073357ec2b83129e97f90ab073980610a392953d215f6c45ea827390",
+      "destinationSha256": "1b1ea70e073357ec2b83129e97f90ab073980610a392953d215f6c45ea827390",
+      "exports": [
+        "run"
+      ],
+      "destinationExports": [
+        "run"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-read-data.js",
+      "destination": "src/railgun-kohaku-read-data.js",
+      "sourceSha256": "133ffcc40e06b8c1dfbc37ccec309a051b6a7764f2837ed3b4ef4eb5836ab81a",
+      "destinationSha256": "21522a816a905382b206acfab0cbfd5a767aefcfbccc82c051d18b952e4d409b",
+      "exports": [
+        "normalizeRailgunKohakuReadFilter",
+        "projectRailgunKohakuBalance",
+        "projectRailgunKohakuNotes"
+      ],
+      "destinationExports": [
+        "normalizeRailgunKohakuReadFilter",
+        "projectRailgunKohakuBalance",
+        "projectRailgunKohakuNotes"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-own-poi-binding.js",
+      "destination": "src/data/railgun-own-poi-binding.js",
+      "sourceSha256": "879b885209a8407db1d6d008b5ea59eb07194dca686c97091be3d4b6939e828f",
+      "destinationSha256": "1d599d752432eb655acd8008c29d4de019371ecd3c15b9834c368bf64b967a5d",
+      "exports": [
+        "assertRailgunOwnPoiCapture",
+        "assertRailgunOwnPoiStableCapture"
+      ],
+      "destinationExports": [
+        "assertRailgunOwnPoiCapture",
+        "assertRailgunOwnPoiStableCapture"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-own-poi-shape-data.js",
+      "destination": "src/data/railgun-own-poi-shape-data.js",
+      "sourceSha256": "36f7aa5527d6de3ce32b5d3373240bab8ba536be3eec2192fa909cc9be1e8421",
+      "destinationSha256": "8a15440dd217fdf3f246cc8b50e2f932597b1aa5629ed9129a2c42ffbbc90505",
+      "exports": [
+        "assertRailgunOwnPoiPayloadShape",
+        "getRailgunOwnPoiShape"
+      ],
+      "destinationExports": [
+        "assertRailgunOwnPoiPayloadShape",
+        "getRailgunOwnPoiShape"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-owned-poi-records.js",
+      "destination": "src/data/railgun-owned-poi-records.js",
+      "sourceSha256": "b8ad876db6f6101e2a2a11707dab0b4ef6a97bb50795fa17481ffd201051d06b",
+      "destinationSha256": "d591d52f31955c00bfa421b8b961d26adb94b2ebdcf709553bea8c4ef34b943f",
+      "exports": [
+        "POI_LAUNCH_BLOCK",
+        "normalizeRailgunOwnedPoiRecords",
+        "projectRailgunOwnedPoiRecord"
+      ],
+      "destinationExports": [
+        "POI_LAUNCH_BLOCK",
+        "normalizeRailgunOwnedPoiRecords",
+        "projectRailgunOwnedPoiRecord"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-poi-creator-data.js",
+      "destination": "src/data/railgun-poi-creator-data.js",
+      "sourceSha256": "6568974a74719a814beb861417e328bfbbd4f1e9a58d6bac6196966fcae7ee08",
+      "destinationSha256": "66ddddcbe9bba48d6491741614d6999ad0f132cc4bb11c5647565efe7d69c7ce",
+      "exports": [
+        "assertRailgunPoiCreatorEvents",
+        "assertRailgunPoiCreatorVerification",
+        "normalizeRailgunPoiCreatorWitness"
+      ],
+      "destinationExports": [
+        "assertRailgunPoiCreatorEvents",
+        "assertRailgunPoiCreatorVerification",
+        "normalizeRailgunPoiCreatorWitness"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-poi-payload.js",
+      "destination": "src/data/railgun-poi-payload.js",
+      "sourceSha256": "c6e5dbf9fb3bd136a4e3c7b3d5f61908db2dcd0f794569507f9f916b28117ea5",
+      "destinationSha256": "6e136e7d9f7b40b5d6c970e742b8e80a9a9e46e494d6a4bc16aa0cdbef986348",
+      "exports": [
+        "normalizeRailgunPoiPayload"
+      ],
+      "destinationExports": [
+        "normalizeRailgunPoiPayload"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-poi-records.js",
+      "destination": "src/data/railgun-poi-records.js",
+      "sourceSha256": "6732462ef4ce240241bb6378f24885e5613eb69fd3e5e241ce750c8ef2943061",
+      "destinationSha256": "c4511c0ea185835c67bbbc8b8ba74bec6271e4b3a457a2b6a1576b42593fd1ac",
+      "exports": [
+        "MAX_NOTES",
+        "REQUIRED_LIST",
+        "normalizePoiNotes",
+        "normalizePoiProofs",
+        "normalizePoiStatuses",
+        "verifyPoiEvent",
+        "verifyPoiMembership"
+      ],
+      "destinationExports": [
+        "MAX_NOTES",
+        "REQUIRED_LIST",
+        "normalizePoiNotes",
+        "normalizePoiProofs",
+        "normalizePoiStatuses",
+        "verifyPoiEvent",
+        "verifyPoiMembership"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-poi-shield-selector-data.js",
+      "destination": "src/data/railgun-poi-shield-selector-data.js",
+      "sourceSha256": "530b2a76d4cd20a0a1fe156acbe59a155db2b4ce60e7a306422a5ab9f69e7821",
+      "destinationSha256": "fc61c1a7e85bbb484ffba2e4063751ae6b33f73b92529f27477cd2b536d6d6b6",
+      "exports": [
+        "normalizeRailgunPoiShieldFacts",
+        "normalizeRailgunPoiShieldInput"
+      ],
+      "destinationExports": [
+        "normalizeRailgunPoiShieldFacts",
+        "normalizeRailgunPoiShieldInput"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-poi-submit-data.js",
+      "destination": "src/data/railgun-poi-submit-data.js",
+      "sourceSha256": "4bd2de29640d67f6dfbbd806a93bc0ffafb0e918229ee7f32c2e52da15163dbb",
+      "destinationSha256": "dc4a0f82586e6245752634bfba70cc0af3d3b21a3b60cb9b99f384a69d818a5f",
+      "exports": [
+        "inspectRailgunPoiResponse",
+        "normalizeRailgunPoiSubmission",
+        "prepareRailgunPoiSubmission"
+      ],
+      "destinationExports": [
+        "inspectRailgunPoiResponse",
+        "normalizeRailgunPoiSubmission",
+        "prepareRailgunPoiSubmission"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-poi-transact-selector-data.js",
+      "destination": "src/data/railgun-poi-transact-selector-data.js",
+      "sourceSha256": "f3374b144ed8ab08e71cf6ef0280e769b385b96f1975bcdadb80876d4819b915",
+      "destinationSha256": "b68b15ce0948721f6154fa81a4f623e496924fe5e55bd61f870727082971b563",
+      "exports": [
+        "normalizeRailgunPoiTransactSelectorInput",
+        "prepareRailgunPoiTransactSelectorInput"
+      ],
+      "destinationExports": [
+        "normalizeRailgunPoiTransactSelectorInput",
+        "prepareRailgunPoiTransactSelectorInput"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-capsule.js",
+      "destination": "src/execution/railgun-private-capsule.js",
+      "sourceSha256": "88aef94aae6ecc6c0a74adf42328b29a27c72d60870d68cb69b67dbcdcc056a9",
+      "destinationSha256": "3962d8f52223865f216896ee26091dca5aba5956024f995c1b7c3ab6e8912bd5",
+      "exports": [
+        "digestRailgunPrivateCapsule",
+        "normalizeRailgunNewCapsule",
+        "normalizeRailgunPrivateCapsule"
+      ],
+      "destinationExports": [
+        "digestRailgunPrivateCapsule",
+        "normalizeRailgunNewCapsule",
+        "normalizeRailgunPrivateCapsule"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-destination.js",
+      "destination": "src/data/railgun-private-destination.js",
+      "sourceSha256": "00cf1f08deb8a316211ee1a055ed443fac9ca4738f2b5d43fdbcb66a2a8757c5",
+      "destinationSha256": "cb1e241d166bb11c0874ea59261ac85cdf89f6b7d35d6447fcf0360695467822",
+      "exports": [
+        "assertRailgunPrivateTransferRecipient",
+        "decodeRailgunForeignDestination",
+        "isRailgunForeignTransfer",
+        "verifyRailgunForeignOutput"
+      ],
+      "destinationExports": [
+        "assertRailgunPrivateTransferRecipient",
+        "decodeRailgunForeignDestination",
+        "isRailgunForeignTransfer",
+        "verifyRailgunForeignOutput"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-intent.js",
+      "destination": "src/data/railgun-private-intent.js",
+      "sourceSha256": "25186aa9ddb19365a39adc96fea2a75459215c382e627f4b204d1fe384811f65",
+      "destinationSha256": "5a5ae43e3b7c4384496e1e17caa1ddfb7bc11e555f28eb8df61d3170c94800b0",
+      "exports": [
+        "matchRailgunPrivateProvedTransaction",
+        "validateRailgunPrivateSigningIntent"
+      ],
+      "destinationExports": [
+        "matchRailgunPrivateProvedTransaction",
+        "validateRailgunPrivateSigningIntent"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-operate-job.js",
+      "destination": "src/execution/railgun-private-operate-job.js",
+      "sourceSha256": "f509d4637285839459c4af0a1a812410af3a96b3c8ff6fab8c39c7ec0bc22905",
+      "destinationSha256": "0f0b55c7ab71f627539c90b702442caf500efe760156021909b67cdc361d1527",
+      "exports": [
+        "run"
+      ],
+      "destinationExports": [
+        "run"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-policy.js",
+      "destination": "src/data/railgun-private-policy.js",
+      "sourceSha256": "4a4487d770d523f43f2658437ffd46b267ad63a146155c2173d6fd19dd045711",
+      "destinationSha256": "4fed357312c315250bac7a9b89988881601fe31975a7b267875d709af8e4b7dc",
+      "exports": [
+        "BOUND_PARAMS",
+        "TRANSACT_ABI",
+        "validateRailgunPrivateTransaction"
+      ],
+      "destinationExports": [
+        "BOUND_PARAMS",
+        "TRANSACT_ABI",
+        "validateRailgunPrivateTransaction"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-preparation.js",
+      "destination": "src/data/railgun-private-preparation.js",
+      "sourceSha256": "90ec8fd0bf1d1c4a8bbaaa64929b3d3840c42c3e24645a4015d4518aa34b9dc6",
+      "destinationSha256": "d88ae9e0ed6b2f3f73b3f534cc96049134cbd4e88353a0f8a3b6ccbc912fec17",
+      "exports": [
+        "normalizeRailgunPrivateOffer",
+        "normalizeRailgunPrivateOperation",
+        "normalizeRailgunPrivatePreparation",
+        "selectRailgunPrivatePreparation"
+      ],
+      "destinationExports": [
+        "normalizeRailgunPrivateOffer",
+        "normalizeRailgunPrivateOperation",
+        "normalizeRailgunPrivatePreparation",
+        "selectRailgunPrivatePreparation"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-prepare-job.js",
+      "destination": "src/execution/railgun-private-prepare-job.js",
+      "sourceSha256": "c19e9c021c1d84a284c3c24784a355089fa8b602a5bbceba84e9357311b75ee6",
+      "destinationSha256": "c19e9c021c1d84a284c3c24784a355089fa8b602a5bbceba84e9357311b75ee6",
+      "exports": [
+        "run"
+      ],
+      "destinationExports": [
+        "run"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-prover.js",
+      "destination": "src/execution/railgun-private-prover.js",
+      "sourceSha256": "1428cdbbbb035a5f827a9dc3503aad1f9aa7cf24b25b4a0b55e191d4f3eb0f9e",
+      "destinationSha256": "a154a0ad76373824287ae3b6ec88c44d9bd8f1b6e9ebe73c709f28adc2a50539",
+      "exports": [
+        "createRailgunPrivateProver"
+      ],
+      "destinationExports": [
+        "createRailgunPrivateProver"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-receive-job.js",
+      "destination": "src/execution/railgun-private-receive-job.js",
+      "sourceSha256": "915816c4a5875e8e96cb7a97e01242c2f0fc7bfd591ceaecf569001d98fdab69",
+      "destinationSha256": "9b1e7f8e2e7d8395a3d857a6cb9e421e5688b7175a6087e784d5fac604639f49",
+      "exports": [
+        "run"
+      ],
+      "destinationExports": [
+        "run"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-reconstruct.js",
+      "destination": "src/execution/railgun-private-reconstruct.js",
+      "sourceSha256": "2f71bdcf2b59da42ce0ef0c74a86d5de4fd7fcb076e352f613ba615a2682f2eb",
+      "destinationSha256": "28bdeb785db856668f48d488bf031a867fe09b77ca66f29f52ee79e73cf64509",
+      "exports": [
+        "reconstructRailgunPrivateWitness"
+      ],
+      "destinationExports": [
+        "reconstructRailgunPrivateWitness"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-recover-job.js",
+      "destination": "src/execution/railgun-private-recover-job.js",
+      "sourceSha256": "6758ba57a9b5070dfac7b74be843a0d91a6e4c4111d858696a6f79f80a16f167",
+      "destinationSha256": "201d390c672f69e62a1ba08508b42d968bd4c24af06d33040aae92248806a0ab",
+      "exports": [
+        "run"
+      ],
+      "destinationExports": [
+        "run"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-recovery-data.js",
+      "destination": "src/data/railgun-private-recovery-data.js",
+      "sourceSha256": "5eeac07a5759a2bb7b823075d60ac6a4d4b57547dac2e7be4f4f363bbe4c99ec",
+      "destinationSha256": "77d9f826d80f5a32c78da2ec705e8c4a33d17efab105165412714d826b80496e",
+      "exports": [
+        "normalizeRailgunPrivateRecoveryInput",
+        "normalizeRailgunPrivateRecoveryResult"
+      ],
+      "destinationExports": [
+        "normalizeRailgunPrivateRecoveryInput",
+        "normalizeRailgunPrivateRecoveryResult"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-results.js",
+      "destination": "src/data/railgun-private-results.js",
+      "sourceSha256": "75a735a09afa509204ed8f1a9454111f9df084aacde472dbb90ec2d936bab432",
+      "destinationSha256": "a17a8009ec28ccef5a22103757682d3aea08021fc3b1c2866d02934d9e7cfe5b",
+      "exports": [
+        "normalizeRailgunPrivateReceiver",
+        "normalizeRailgunPrivateVerification",
+        "normalizeRailgunSignature",
+        "normalizeRailgunSpendKeyRequest",
+        "normalizeRailgunSpendSignature"
+      ],
+      "destinationExports": [
+        "normalizeRailgunPrivateReceiver",
+        "normalizeRailgunPrivateVerification",
+        "normalizeRailgunSignature",
+        "normalizeRailgunSpendKeyRequest",
+        "normalizeRailgunSpendSignature"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-signature.js",
+      "destination": "src/data/railgun-private-signature.js",
+      "sourceSha256": "2251097f0422c62062d457f5dcdcbc92735bd29abc5a5deb5f29fe59bf94a10e",
+      "destinationSha256": "4290f00656d5345d7c5301c979c98a2bb755ac5467880c879dd578c221a71777",
+      "exports": [
+        "normalizeRailgunSignature"
+      ],
+      "destinationExports": [
+        "normalizeRailgunSignature"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-verify-job.js",
+      "destination": "src/execution/railgun-private-verify-job.js",
+      "sourceSha256": "4ca071f287453bd01f301ea8edb9f2456e520470782b7a650479c1173bc7ba12",
+      "destinationSha256": "42ee0cd1befff1e5134501c13c938d1ad11a03ab25dea7c8b0dbe623b2f1b289",
+      "exports": [
+        "run"
+      ],
+      "destinationExports": [
+        "run"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-witness.js",
+      "destination": "src/execution/railgun-private-witness.js",
+      "sourceSha256": "09990dacc1bec947094e9d774c367d5aa742acb62ea8fea65f16dc39af088cee",
+      "destinationSha256": "6528f8672534a66dcffaa24f1b4efc79b8ac34b5715042e6b9cbe191059f26c7",
+      "exports": [
+        "prepareRailgunPrivateWitness"
+      ],
+      "destinationExports": [
+        "prepareRailgunPrivateWitness"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-process-guards.js",
+      "destination": "src/execution/railgun-process-guards.js",
+      "sourceSha256": "f7bbf6220212b62ae7791f9b47c145d95abec9e499b26f7bfe854e950281d958",
+      "destinationSha256": "f7bbf6220212b62ae7791f9b47c145d95abec9e499b26f7bfe854e950281d958",
+      "exports": [
+        "installRailgunProcessGuards"
+      ],
+      "destinationExports": [
+        "installRailgunProcessGuards"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-prover-manifest.json",
+      "destination": "src/execution/railgun-prover-manifest.json",
+      "sourceSha256": "656cbc549444a9d99162fd5ac2359c957e0919f96802ace21aa9250c8de0a877",
+      "destinationSha256": "656cbc549444a9d99162fd5ac2359c957e0919f96802ace21aa9250c8de0a877",
+      "exports": null,
+      "destinationExports": null,
+      "scope": "JSON pinned separately; not an export surface"
+    },
+    {
+      "source": "src/main/wallet/railgun-prover-runtime.js",
+      "destination": "src/execution/railgun-prover-runtime.js",
+      "sourceSha256": "d5f94132812502d8e48bc273fe17615bd6038a9f0089884954725efe075c6bd8",
+      "destinationSha256": "d5f94132812502d8e48bc273fe17615bd6038a9f0089884954725efe075c6bd8",
+      "exports": [
+        "loadRailgunProverRuntime",
+        "verifyRailgunProverRuntime"
+      ],
+      "destinationExports": [
+        "loadRailgunProverRuntime",
+        "verifyRailgunProverRuntime"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-capsule.js",
+      "destination": "src/execution/railgun-relay-capsule.js",
+      "sourceSha256": "36f992c05891d50d9a07b8195a5fedc3c1716086e3da5c005d5e7324a1212961",
+      "destinationSha256": "36f992c05891d50d9a07b8195a5fedc3c1716086e3da5c005d5e7324a1212961",
+      "exports": [
+        "digestRailgunRelayDraftCapsule",
+        "normalizeRailgunRelayDraftCapsule"
+      ],
+      "destinationExports": [
+        "digestRailgunRelayDraftCapsule",
+        "normalizeRailgunRelayDraftCapsule"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-intent.js",
+      "destination": "src/execution/railgun-relay-intent.js",
+      "sourceSha256": "f2ca51010f133573988d84132cc6af00e33d3a30d222ffab567381bb70073a2d",
+      "destinationSha256": "af91328bf1a844a15dd8845a4870354368be242d06b2fab21d4acb65fc55c132",
+      "exports": [
+        "normalizeRailgunRelayUnsignedContext",
+        "normalizeRailgunRelayUnsignedIntent"
+      ],
+      "destinationExports": [
+        "normalizeRailgunRelayUnsignedContext",
+        "normalizeRailgunRelayUnsignedIntent"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-poi-history.js",
+      "destination": "src/execution/railgun-relay-poi-history.js",
+      "sourceSha256": "37a55a747c243e4818e0c3e0bc7cf1bfda672a68a1b5e336896d215e0534703a",
+      "destinationSha256": "2eed74c53c22974e26dbbfc3ddaf45d3a48e3ab132cbf1ad8365bf2804253c6b",
+      "exports": [
+        "MAX_HISTORY_BYTES",
+        "normalizeRailgunRelayPoiHistory"
+      ],
+      "destinationExports": [
+        "MAX_HISTORY_BYTES",
+        "normalizeRailgunRelayPoiHistory"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-pre-poi-data.js",
+      "destination": "src/execution/railgun-relay-pre-poi-data.js",
+      "sourceSha256": "6f85390605a1a904e3a222848b88302ae130dd5ea46a7365a9f6435e2444482b",
+      "destinationSha256": "3d3651ad7a6f18605ac5763d1587dd4b4e91badabb6e74668ab34fd6e04d0526",
+      "exports": [
+        "RAILGUN_RELAY_PRE_POI_MAX_BINDING_BYTES",
+        "RAILGUN_RELAY_PRE_POI_MAX_BOUND_BYTES",
+        "RAILGUN_RELAY_PRE_POI_MAX_PAYLOAD_BYTES",
+        "bindRailgunRelayPrePoiPayload",
+        "normalizeRailgunRelayPrePoiBinding",
+        "normalizeRailgunRelayPrePoiPayload"
+      ],
+      "destinationExports": [
+        "RAILGUN_RELAY_PRE_POI_MAX_BINDING_BYTES",
+        "RAILGUN_RELAY_PRE_POI_MAX_BOUND_BYTES",
+        "RAILGUN_RELAY_PRE_POI_MAX_PAYLOAD_BYTES",
+        "bindRailgunRelayPrePoiPayload",
+        "normalizeRailgunRelayPrePoiBinding",
+        "normalizeRailgunRelayPrePoiPayload"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-quote-data.js",
+      "destination": "src/execution/railgun-relay-quote-data.js",
+      "sourceSha256": "b5efa2509c8bec39f637d17a57fdff121a9c888e4cd1e10dfc6f5e4fbca43b38",
+      "destinationSha256": "2809f671c4391b61cf9116912b60c205bd4a6796666c2255a655c79f9f71513a",
+      "exports": [
+        "EXPECTED_GUARDS",
+        "assertQuoteCurrent",
+        "decimal",
+        "digest",
+        "freeze",
+        "normalizeQuoteVerification",
+        "normalizeRailgunRelayQuote",
+        "shape"
+      ],
+      "destinationExports": [
+        "EXPECTED_GUARDS",
+        "assertQuoteCurrent",
+        "decimal",
+        "digest",
+        "freeze",
+        "normalizeQuoteVerification",
+        "normalizeRailgunRelayQuote",
+        "shape"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-record-stream.js",
+      "destination": "src/execution/railgun-relay-record-stream.js",
+      "sourceSha256": "080681805d8f6bc32ccdf1fbf36878941ff950e839ad063bff7179de41f15f51",
+      "destinationSha256": "080681805d8f6bc32ccdf1fbf36878941ff950e839ad063bff7179de41f15f51",
+      "exports": [
+        "createRailgunRelayProofRecordReader",
+        "createRailgunRelayProofRecordSender",
+        "createRailgunRelayVerifyRecordReader",
+        "createRailgunRelayVerifyRecordSender",
+        "normalizeRailgunRelayRecordStreamManifest"
+      ],
+      "destinationExports": [
+        "createRailgunRelayProofRecordReader",
+        "createRailgunRelayProofRecordSender",
+        "createRailgunRelayVerifyRecordReader",
+        "createRailgunRelayVerifyRecordSender",
+        "normalizeRailgunRelayRecordStreamManifest"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-recovery-data.js",
+      "destination": "src/execution/railgun-relay-recovery-data.js",
+      "sourceSha256": "97cdc1effb74c6c1df644c8f9bf594eba63cdd0d882b0c0480ae9a9d93faeb7d",
+      "destinationSha256": "2ca06009737b3f6a095d1bd59d86bb47a9b527c0186fe138895bdee9bd8bf8c7",
+      "exports": [
+        "RAILGUN_RELAY_LOCAL_LIMITS",
+        "decodeRailgunRelayLocalDocument",
+        "decodeRailgunRelayLocalRecord",
+        "digestRailgunRelayLocalIntent",
+        "matchRailgunRelayLocalReservation"
+      ],
+      "destinationExports": [
+        "RAILGUN_RELAY_LOCAL_LIMITS",
+        "decodeRailgunRelayLocalDocument",
+        "decodeRailgunRelayLocalRecord",
+        "digestRailgunRelayLocalIntent",
+        "matchRailgunRelayLocalReservation"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-transaction.js",
+      "destination": "src/execution/railgun-relay-transaction.js",
+      "sourceSha256": "8230344cabbd8131fe27b13f43b787d81d636fb7445fb01d4b991ac9025a0293",
+      "destinationSha256": "3b956b78518469f75af84bfd3a4845bdafcb6e7a0f2e5972d7c428a50d193ded",
+      "exports": [
+        "matchRailgunRelayProvedTransaction"
+      ],
+      "destinationExports": [
+        "matchRailgunRelayProvedTransaction"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-wallet-data.js",
+      "destination": "src/execution/railgun-relay-wallet-data.js",
+      "sourceSha256": "2c5e15f00786e4304d27a394c362241c42289ebb0c624dae7cff1585a5bdb19b",
+      "destinationSha256": "3fa454587f4f99d3e93f9ea735c453a1e501c64e8ceeb46cb3616b7cf1313d73",
+      "exports": [
+        "assertRailgunRelaySignal",
+        "bindRailgunRelayDraft",
+        "normalizeRailgunRelayPrePoiInput",
+        "normalizeRailgunRelayPrePoiResult",
+        "normalizeRailgunRelayReconstruction",
+        "normalizeRailgunRelayRequest",
+        "parseRailgunRelayDraft"
+      ],
+      "destinationExports": [
+        "assertRailgunRelaySignal",
+        "bindRailgunRelayDraft",
+        "normalizeRailgunRelayPrePoiInput",
+        "normalizeRailgunRelayPrePoiResult",
+        "normalizeRailgunRelayReconstruction",
+        "normalizeRailgunRelayRequest",
+        "parseRailgunRelayDraft"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-remote.js",
+      "destination": "src/execution/railgun-remote.js",
+      "sourceSha256": "1ad3b7fad9b14be7e357ea117b7239cf2777ced44d3a3866602fbec20a3c4793",
+      "destinationSha256": "1ad3b7fad9b14be7e357ea117b7239cf2777ced44d3a3866602fbec20a3c4793",
+      "exports": [
+        "createRailgunRemote"
+      ],
+      "destinationExports": [
+        "createRailgunRemote"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-shield-pins.json",
+      "destination": "src/railgun-shield-pins.json",
+      "sourceSha256": "0f38d69a9acb5ecdaeb7197f4410a1c6068b8896e4204a179631176223e31a75",
+      "destinationSha256": "0f38d69a9acb5ecdaeb7197f4410a1c6068b8896e4204a179631176223e31a75",
+      "exports": null,
+      "destinationExports": null,
+      "scope": "JSON pinned separately; not an export surface"
+    },
+    {
+      "source": "src/main/wallet/railgun-spend-sign-job.js",
+      "destination": "src/execution/railgun-spend-sign-job.js",
+      "sourceSha256": "052b6e60a858d76f5acfa8dc27b2de06381e64e6b97125f8273634eec55d6e7d",
+      "destinationSha256": "bc68cba055005a89758ccccf635d09e226861d945651caa78a829af1404b5c22",
+      "exports": [
+        "run"
+      ],
+      "destinationExports": [
+        "run"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-txid-note-witness.js",
+      "destination": "src/data/railgun-txid-note-witness.js",
+      "sourceSha256": "ffbe99c221c9363bd5ad37183072a555a1a8feaa7a63bedbbd38253e88ed863c",
+      "destinationSha256": "55c0f4ee08088f648c7030bce9e88c96b2d8c26d48a8b46d57326a104b9a2a6f",
+      "exports": [
+        "findRailgunNoteTxidWitness",
+        "normalizeRailgunNoteTxidWitness",
+        "normalizeRailgunTxidWitness"
+      ],
+      "destinationExports": [
+        "findRailgunNoteTxidWitness",
+        "normalizeRailgunNoteTxidWitness",
+        "normalizeRailgunTxidWitness"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-txid-omissions.js",
+      "destination": "src/data/railgun-txid-omissions.js",
+      "sourceSha256": "eb726bdbd81ae9ec57aec884000fe8622ff75732db5f62c5718c99a966fee493",
+      "destinationSha256": "643940be28f7064ae34ba96d856ec2f6cf37f623bcd5592be81928a11fe83a75",
+      "exports": [
+        "classifyRailgunTxidContinuity"
+      ],
+      "destinationExports": [
+        "classifyRailgunTxidContinuity"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-txid-projection.js",
+      "destination": "src/data/railgun-txid-projection.js",
+      "sourceSha256": "67e35796fe989319d1c7282238828e89ac3585e91cf8ce5b6ddd1e2b371a7684",
+      "destinationSha256": "21bd3aaef4b0b02c274cf5c0b2b1e9d9f49a9e461bfd7a4a2d6f1e5fef7c532f",
+      "exports": [
+        "createRailgunTxidProjection",
+        "validateRailgunTxidRow"
+      ],
+      "destinationExports": [
+        "createRailgunTxidProjection",
+        "validateRailgunTxidRow"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-wallet-job.js",
+      "destination": "src/execution/railgun-wallet-job.js",
+      "sourceSha256": "b09799a395e153374411df77f5382e9779ac0731f9ae91448ead5a4ae26dd7b9",
+      "destinationSha256": "b09799a395e153374411df77f5382e9779ac0731f9ae91448ead5a4ae26dd7b9",
+      "exports": [
+        "run",
+        "withWallet"
+      ],
+      "destinationExports": [
+        "run",
+        "withWallet"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-wallet-records.js",
+      "destination": "src/execution/railgun-wallet-records.js",
+      "sourceSha256": "331c0a5e5074e8c0a0aa981f3d794b9d65a9770ec9e28a2a24519018ad31fad5",
+      "destinationSha256": "331c0a5e5074e8c0a0aa981f3d794b9d65a9770ec9e28a2a24519018ad31fad5",
+      "exports": [
+        "createRailgunTokenResolver",
+        "inspectRailgunShield",
+        "inspectRailgunTransact",
+        "validateRailgunSentRecords",
+        "validateRailgunWalletRecords"
+      ],
+      "destinationExports": [
+        "createRailgunTokenResolver",
+        "inspectRailgunShield",
+        "inspectRailgunTransact",
+        "validateRailgunSentRecords",
+        "validateRailgunWalletRecords"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    },
+    {
+      "source": "src/main/wallet/railgun-wallet-scan.js",
+      "destination": "src/execution/railgun-wallet-scan.js",
+      "sourceSha256": "c3bfca8178e27409dd46a213851646975c521f16cabe29228b4bcc18341c6f13",
+      "destinationSha256": "6d0ebaed8aee8372bd0c32ae91925120e3d9589dddb5e525e33361d3832fffb0",
+      "exports": [
+        "scanRailgunWallet"
+      ],
+      "destinationExports": [
+        "scanRailgunWallet"
+      ],
+      "scope": "exact static named export surface; not semantic equivalence"
+    }
+  ]
+}

@@ -676,7 +676,7 @@
           "start": 9162,
           "end": 9189,
           "before": "'./railgun-private-capsule'",
-          "after": "\"../data/railgun-private-capsule.js\""
+          "after": "\"../execution/railgun-private-capsule.js\""
         },
         {
           "start": 9897,
@@ -718,7 +718,7 @@
           "start": 30592,
           "end": 30619,
           "before": "'./railgun-private-capsule'",
-          "after": "\"../data/railgun-private-capsule.js\""
+          "after": "\"../execution/railgun-private-capsule.js\""
         },
         {
           "start": 34065,
@@ -879,7 +879,7 @@
         "railgun-token-unshield",
         "railgun-wallet-v1:"
       ],
-      "destinationSha256": "522e9f49c07a331951f5e3887ba189f244660d6d16d5c302cf59aa3876756261"
+      "destinationSha256": "595f532aa5af6e8267c1b189f4d95984adf8394a05ec7c217aa0ac4d2b4dfa7c"
     },
     {
       "source": "src/main/wallet/railgun-artifacts.js",
@@ -1962,7 +1962,7 @@
           "start": 492,
           "end": 519,
           "before": "'./railgun-private-capsule'",
-          "after": "\"../data/railgun-private-capsule.js\""
+          "after": "\"../execution/railgun-private-capsule.js\""
         },
         {
           "start": 571,
@@ -2004,7 +2004,7 @@
       "sourcePersistedLiterals": [
         "railgun-partial-unshield"
       ],
-      "destinationSha256": "8907f4f7dad770eb193e58be87597ad4673677775af16518db8a8d523caba305"
+      "destinationSha256": "9116fe922d420d84557f607e35a40bc0aaf5c1808dbd3ec4f4661f64ec25c2ca"
     },
     {
       "source": "src/main/wallet/railgun-own-witness.js",
@@ -2327,7 +2327,7 @@
           "start": 536,
           "end": 563,
           "before": "'./railgun-private-capsule'",
-          "after": "\"../data/railgun-private-capsule.js\""
+          "after": "\"../execution/railgun-private-capsule.js\""
         },
         {
           "start": 623,
@@ -2355,7 +2355,7 @@
         }
       ],
       "sourcePersistedLiterals": [],
-      "destinationSha256": "55c9fc1c956df8ead740bf3ee399b7cbd07bb64517aebb62228ed5618e84ff08"
+      "destinationSha256": "de4b37eff3cc8bb336578217b942705ec40c64acd462105739d7ae69ad01c37e"
     },
     {
       "source": "src/main/wallet/railgun-poi-disclosure-plan.js",
@@ -2718,7 +2718,7 @@
           "start": 350,
           "end": 377,
           "before": "'./railgun-private-capsule'",
-          "after": "\"../data/railgun-private-capsule.js\""
+          "after": "\"../execution/railgun-private-capsule.js\""
         },
         {
           "start": 438,
@@ -2752,7 +2752,7 @@
         }
       ],
       "sourcePersistedLiterals": [],
-      "destinationSha256": "44d7a1d5608f9640efff1076a9ce9dd1c3cec492ba1290df39ba8333e4d9b3e7"
+      "destinationSha256": "fe9865a2ea52fef3b45063f201d7d0b242b6e2ab8d9606ea2537b486f6fac9d5"
     },
     {
       "source": "src/main/wallet/railgun-poi-output-recovery.js",
@@ -2967,7 +2967,7 @@
           "start": 590,
           "end": 617,
           "before": "'./railgun-private-capsule'",
-          "after": "\"../data/railgun-private-capsule.js\""
+          "after": "\"../execution/railgun-private-capsule.js\""
         },
         {
           "start": 746,
@@ -2993,7 +2993,7 @@
         "railgun-private-transfer",
         "railgun-token-unshield"
       ],
-      "destinationSha256": "cf72bc51a68dfbbb9df974f0f0a5dd6999551f263c6d6911962dcbc140c7e9f0"
+      "destinationSha256": "5a8f37212b0d9c9c5afe1058212c725eedb3096e70f58eae9e49737a0289342c"
     },
     {
       "source": "src/main/wallet/railgun-poi-records.js",
@@ -3202,7 +3202,7 @@
           "start": 547,
           "end": 574,
           "before": "'./railgun-private-capsule'",
-          "after": "\"../data/railgun-private-capsule.js\""
+          "after": "\"../execution/railgun-private-capsule.js\""
         },
         {
           "start": 626,
@@ -3212,7 +3212,7 @@
         }
       ],
       "sourcePersistedLiterals": [],
-      "destinationSha256": "4d3cd60e9c479fd43300c1af6e86e2e07e3baad11abe5ee9dd42e2d4ca79d994"
+      "destinationSha256": "e621cf5e891e59ca6f871aeb7b36b5cd34fe8f12ee430f65eb66b052c653616a"
     },
     {
       "source": "src/main/wallet/railgun-poi-source.js",
@@ -3494,7 +3494,7 @@
           "start": 796,
           "end": 823,
           "before": "'./railgun-private-capsule'",
-          "after": "\"../data/railgun-private-capsule.js\""
+          "after": "\"../execution/railgun-private-capsule.js\""
         },
         {
           "start": 872,
@@ -3513,19 +3513,19 @@
         "freedom:railgun:recovery-binding-v1\u0000",
         "railgun-private-capsules-v1"
       ],
-      "destinationSha256": "d763ce8a2abaf9c25137b04e05ec66a6d1971163b9b60686f51d4a8c324a7483"
+      "destinationSha256": "7568e7332ea6febf3b60a1ba5903f25ece2bec6b5ded5f8842c1fc7947466761"
     },
     {
       "source": "src/main/wallet/railgun-private-capsule.js",
       "sourceBlob": "6fba86020e42c8079d87c723d7f3f063aa40c972",
       "sourceSha256": "88aef94aae6ecc6c0a74adf42328b29a27c72d60870d68cb69b67dbcdcc056a9",
-      "destination": "src/data/railgun-private-capsule.js",
+      "destination": "src/execution/railgun-private-capsule.js",
       "disposition": "existing package implementation",
       "edits": [],
       "sourcePersistedLiterals": [
         "railgun-partial-unshield"
       ],
-      "destinationSha256": "b5c244d08e5185d52d3ef8e11a8d223df3a3f5e959cdd956a187646f5618b560"
+      "destinationSha256": "3962d8f52223865f216896ee26091dca5aba5956024f995c1b7c3ab6e8912bd5"
     },
     {
       "source": "src/main/wallet/railgun-private-creator.js",
@@ -3623,7 +3623,7 @@
           "start": 1020,
           "end": 1047,
           "before": "'./railgun-private-capsule'",
-          "after": "\"../data/railgun-private-capsule.js\""
+          "after": "\"../execution/railgun-private-capsule.js\""
         },
         {
           "start": 1099,
@@ -3698,7 +3698,7 @@
         "railgun-private-transfer",
         "railgun-token-unshield"
       ],
-      "destinationSha256": "d9f8133351ae8e1ebb7774def120cc3cb6f735d0b47cba92ad4a71dd4d70da12"
+      "destinationSha256": "17aeaab6031547ab6cf025b6a346d20eb819635164ffa2d502b6b2858f5df8af"
     },
     {
       "source": "src/main/wallet/railgun-private-policy.js",
@@ -4180,7 +4180,7 @@
           "start": 35815,
           "end": 35842,
           "before": "'./railgun-private-capsule'",
-          "after": "\"../data/railgun-private-capsule.js\""
+          "after": "\"../execution/railgun-private-capsule.js\""
         },
         {
           "start": 35973,
@@ -4323,7 +4323,7 @@
         "railgun-token-unshield",
         "railgun-transact"
       ],
-      "destinationSha256": "143ad6c8198d127f54940210c21733f929f8c3490d032ce13a1316310477968a"
+      "destinationSha256": "37f90bf15fef9e5fe49c5bbce933b02585ade189e744842da274efe5c980752f"
     },
     {
       "source": "src/main/wallet/railgun-private-verify-job.js",
@@ -7832,7 +7832,7 @@
           "start": 13825,
           "end": 13852,
           "before": "'./railgun-private-capsule'",
-          "after": "\"../data/railgun-private-capsule.js\""
+          "after": "\"../execution/railgun-private-capsule.js\""
         },
         {
           "start": 15408,
@@ -7872,7 +7872,7 @@
         }
       ],
       "sourcePersistedLiterals": [],
-      "destinationSha256": "b49125204ad587a75606551d0c678bfa0c4766dbd24a3c12a0dec1ebc925f1ce"
+      "destinationSha256": "c9258d91a49067a3b6a152d29c65d8aa33a1b079ee283e5f84e8df741794ac72"
     },
     {
       "source": "src/main/wallet/railgun-wallet-runner.js",

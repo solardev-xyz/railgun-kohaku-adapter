@@ -357,7 +357,7 @@ async function runRailgunWalletSnapshot({
           privateIntent
         );
         assert.deepEqual(Object.keys(message.value).sort(), ['capsule', 'preparation']);
-        const capsule = require("../data/railgun-private-capsule.js").normalizeRailgunNewCapsule(
+        const capsule = require("../execution/railgun-private-capsule.js").normalizeRailgunNewCapsule(
           message.value.capsule,
           { walletId, selection: privateIntent, preparation: offer }
         );

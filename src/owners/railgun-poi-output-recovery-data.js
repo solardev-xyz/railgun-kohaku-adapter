@@ -4,7 +4,7 @@
 const assert = require('assert/strict');
 const path = require('path');
 const { getRailgunOwnPoiShape } = require("../data/railgun-own-poi-shape-data.js");
-const { digestRailgunPrivateCapsule } = require("../data/railgun-private-capsule.js");
+const { digestRailgunPrivateCapsule } = require("../execution/railgun-private-capsule.js");
 const { assertRailgunPrivateTransferRecipient } = require("../data/railgun-private-destination.js");
 const { normalizeRailgunPoiShieldInput } = require("../data/railgun-poi-shield-selector-data.js");
 const { prepareRailgunPoiTransactSelectorInput } = require("../data/railgun-poi-transact-selector-data.js");
