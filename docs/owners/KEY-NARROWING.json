@@ -1,0 +1,113 @@
+{
+  "schema": "railgun-owner-private-key-narrowing-v1",
+  "changes": [
+    {
+      "file": "src/owners/railgun-account-enrollment.js",
+      "beforeSha256": "d326f13b57c511ad458c446643ae2787fa1e78c20aadf8d994a173102c059410",
+      "afterSha256": "1bc811f278bceef9e8a1516eb1142dfc725fbfab0b60bb84745ebd62c65b7c11",
+      "replacements": [
+        {
+          "start": 25405,
+          "before": "    // Trusted host composition only. Callers must not retain copies of these\n    // borrowed buffers; a worker must own/wipe any explicitly copied key.\n    withPublicKeys: (use) => withKeys(['source-ledger', 'public-store', 'scan-journal'], null, use),\n    withPublicCatalogKey: (use) => withKeys(['public-catalog'], null, use),\n    async withPublicGenerationKeys(publicCatalog, id, use) {\n      active();\n      check(\n        isRailgunPublicCatalog(publicCatalog) &&\n          publicCatalog.binding === binding &&\n          publicCatalog.directory === accountDirectory\n      );\n      const generation = publicCatalog.selected(id);\n      directory(generation.directory);\n      return withKeys(['source-ledger', 'public-store', 'scan-journal'], id, use);\n    },\n    async withTxidGenerationKeys(publicCatalog, id, policy, use) {\n      active();\n      check(\n        isRailgunPublicCatalog(publicCatalog) &&\n          publicCatalog.binding === binding &&\n          publicCatalog.directory === accountDirectory &&\n          typeof policy === 'string' &&\n          /^[0-9a-f]{64}$/.test(policy)\n      );\n      const generation = publicCatalog.selected(id);\n      publicCatalog.assertActive(id, generation.policy);\n      directory(generation.directory);\n      check(typeof generation.storeId === 'string' && /^[0-9a-f]{64}$/.test(generation.storeId));\n      return withKeys(['txid-store', 'txid-journal'], [id, generation.storeId, policy], use);\n    },\n    async withGenerationKeys(id, use) {\n      active();\n      check(typeof id === 'string' && /^[0-9a-f]{64}$/.test(id));\n      const current = await catalog.inspect();\n      active();\n      check([current.active?.id, current.pending?.id].includes(id));\n      directory(path.join(accountDirectory, 'railgun-cache-' + id));\n      return withKeys(['wallet-store', 'wallet-journal'], id, use);\n    },\n",
+          "after": ""
+        },
+        {
+          "start": 1553,
+          "before": "  credentialOwners = new WeakMap(),",
+          "after": "  credentialOwners = new WeakMap(),\n  keyMethods = new WeakMap(),"
+        },
+        {
+          "start": 25945,
+          "before": "  instances.add(instance);",
+          "after": "  keyMethods.set(instance, Object.freeze({\n    // Trusted host composition only. Callers must not retain copies of these\n    // borrowed buffers; a worker must own/wipe any explicitly copied key.\n    withPublicKeys: (use) => withKeys(['source-ledger', 'public-store', 'scan-journal'], null, use),\n    withPublicCatalogKey: (use) => withKeys(['public-catalog'], null, use),\n    async withPublicGenerationKeys(publicCatalog, id, use) {\n      active();\n      check(\n        isRailgunPublicCatalog(publicCatalog) &&\n          publicCatalog.binding === binding &&\n          publicCatalog.directory === accountDirectory\n      );\n      const generation = publicCatalog.selected(id);\n      directory(generation.directory);\n      return withKeys(['source-ledger', 'public-store', 'scan-journal'], id, use);\n    },\n    async withTxidGenerationKeys(publicCatalog, id, policy, use) {\n      active();\n      check(\n        isRailgunPublicCatalog(publicCatalog) &&\n          publicCatalog.binding === binding &&\n          publicCatalog.directory === accountDirectory &&\n          typeof policy === 'string' &&\n          /^[0-9a-f]{64}$/.test(policy)\n      );\n      const generation = publicCatalog.selected(id);\n      publicCatalog.assertActive(id, generation.policy);\n      directory(generation.directory);\n      check(typeof generation.storeId === 'string' && /^[0-9a-f]{64}$/.test(generation.storeId));\n      return withKeys(['txid-store', 'txid-journal'], [id, generation.storeId, policy], use);\n    },\n    async withGenerationKeys(id, use) {\n      active();\n      check(typeof id === 'string' && /^[0-9a-f]{64}$/.test(id));\n      const current = await catalog.inspect();\n      active();\n      check([current.active?.id, current.pending?.id].includes(id));\n      directory(path.join(accountDirectory, 'railgun-cache-' + id));\n      return withKeys(['wallet-store', 'wallet-journal'], id, use);\n    },\n  }));\n  instances.add(instance);"
+        },
+        {
+          "start": 28670,
+          "before": "module.exports = {",
+          "after": "function withRailgunEnrollmentPublicKeys(enrollment, ...args) {\n  const methods = keyMethods.get(enrollment);\n  check(methods);\n  return methods.withPublicKeys(...args);\n}\nfunction withRailgunEnrollmentPublicCatalogKey(enrollment, ...args) {\n  const methods = keyMethods.get(enrollment);\n  check(methods);\n  return methods.withPublicCatalogKey(...args);\n}\nfunction withRailgunEnrollmentPublicGenerationKeys(enrollment, ...args) {\n  const methods = keyMethods.get(enrollment);\n  check(methods);\n  return methods.withPublicGenerationKeys(...args);\n}\nfunction withRailgunEnrollmentTxidGenerationKeys(enrollment, ...args) {\n  const methods = keyMethods.get(enrollment);\n  check(methods);\n  return methods.withTxidGenerationKeys(...args);\n}\nfunction withRailgunEnrollmentGenerationKeys(enrollment, ...args) {\n  const methods = keyMethods.get(enrollment);\n  check(methods);\n  return methods.withGenerationKeys(...args);\n}\nmodule.exports = {\n  withRailgunEnrollmentPublicKeys,\n  withRailgunEnrollmentPublicCatalogKey,\n  withRailgunEnrollmentPublicGenerationKeys,\n  withRailgunEnrollmentTxidGenerationKeys,\n  withRailgunEnrollmentGenerationKeys,\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-account-store.js",
+      "beforeSha256": "2ac16ed6b840ac2594c97a7361381cab9156d94e906d6837b572cafa6c9f5c05",
+      "afterSha256": "8a75058b0dfa2f8bb0758123db708750ace332cd4f073b80b61e76978757b8a2",
+      "replacements": [
+        {
+          "start": 8950,
+          "before": "enrollment.withPublicKeys(",
+          "after": "withRailgunEnrollmentPublicKeys(enrollment, "
+        },
+        {
+          "start": 8868,
+          "before": "enrollment.withPublicGenerationKeys(",
+          "after": "withRailgunEnrollmentPublicGenerationKeys(enrollment, "
+        },
+        {
+          "start": 8752,
+          "before": "enrollment.withTxidGenerationKeys(",
+          "after": "withRailgunEnrollmentTxidGenerationKeys(enrollment, "
+        },
+        {
+          "start": 8669,
+          "before": "enrollment.withGenerationKeys(",
+          "after": "withRailgunEnrollmentGenerationKeys(enrollment, "
+        },
+        {
+          "start": 0,
+          "before": "/** Trusted host composition for a single enrolled paged store. Newly initialized\n",
+          "after": "const { withRailgunEnrollmentPublicKeys, withRailgunEnrollmentPublicGenerationKeys, withRailgunEnrollmentTxidGenerationKeys, withRailgunEnrollmentGenerationKeys } = require('./railgun-account-enrollment');\n/** Trusted host composition for a single enrolled paged store. Newly initialized\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-account-public.js",
+      "beforeSha256": "bfbedb485aa683abaff0258dc3f9f7ebe1fc5676df958b1ccdb9cf3a02b4620c",
+      "afterSha256": "9401e5866d8a2bf6f7491acec050329b9fa1ac39a6d20c925b72a61e380eb826",
+      "replacements": [
+        {
+          "start": 4940,
+          "before": "enrollment.withPublicKeys(",
+          "after": "withRailgunEnrollmentPublicKeys(enrollment, "
+        },
+        {
+          "start": 5485,
+          "before": "enrollment.withPublicCatalogKey(",
+          "after": "withRailgunEnrollmentPublicCatalogKey(enrollment, "
+        },
+        {
+          "start": 7897,
+          "before": "enrollment.withPublicGenerationKeys(",
+          "after": "withRailgunEnrollmentPublicGenerationKeys(enrollment, "
+        },
+        {
+          "start": 12466,
+          "before": "enrollment.withTxidGenerationKeys(",
+          "after": "withRailgunEnrollmentTxidGenerationKeys(enrollment,"
+        },
+        {
+          "start": 0,
+          "before": "/** Enrolled public scan lifetime. Main owns paths, keys, runtime and coordinator;\n",
+          "after": "const { withRailgunEnrollmentPublicKeys, withRailgunEnrollmentPublicCatalogKey, withRailgunEnrollmentPublicGenerationKeys, withRailgunEnrollmentTxidGenerationKeys } = require('./railgun-account-enrollment');\n/** Enrolled public scan lifetime. Main owns paths, keys, runtime and coordinator;\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-account-wallet.js",
+      "beforeSha256": "82c47e4ddab3c1530b3ad24423a4218bcba0542b715f158965aa2e62fd5beebc",
+      "afterSha256": "522e9f49c07a331951f5e3887ba189f244660d6d16d5c302cf59aa3876756261",
+      "replacements": [
+        {
+          "start": 23772,
+          "before": "enrollment.withGenerationKeys(",
+          "after": "withRailgunEnrollmentGenerationKeys(enrollment, "
+        },
+        {
+          "start": 0,
+          "before": "/** One enrolled wallet scan/restore window. Main composes the authenticated\n",
+          "after": "const { withRailgunEnrollmentGenerationKeys } = require('./railgun-account-enrollment');\n/** One enrolled wallet scan/restore window. Main composes the authenticated\n"
+        }
+      ]
+    }
+  ]
+}

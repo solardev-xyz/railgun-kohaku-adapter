@@ -1,0 +1,38 @@
+{
+  "schema": "railgun-owner-staging-prerequisites-v1",
+  "platform": {
+    "revision": "e6393dd3344c3d24a59cf2a4982f710966a3bbd9",
+    "file": {
+      "bytes": 8732,
+      "sha256": "65f96b6d1ecfd8d0aac48391de6dc041a48be397993138709d2641e6561d7ab0"
+    }
+  },
+  "credential": {
+    "revision": "b4bf7e6c4bd3676f0d10ad5f38114cc88ff4b61b",
+    "file": {
+      "bytes": 7489,
+      "sha256": "18341375f481f0e175494ffcd41491ce5e6a9a4196d94a432a24254435521e84"
+    }
+  },
+  "newPrivateBindings": {
+    "src/owners/host-bindings.js": {
+      "bytes": 4174,
+      "sha256": "3e721abb7e4d43803234a4162be732bf9c02594a58e77c631ee73e647e6ce638"
+    },
+    "src/owners/worker-host-bindings.js": {
+      "bytes": 2223,
+      "sha256": "2dd58f626ab35c944f4d479e9893c4e36e1125ab16951e57a6e5da79e4fb2277"
+    },
+    "src/owners/context-bindings.js": {
+      "bytes": 677,
+      "sha256": "4120da76f6d1a6bd83d2d7d8c23c50b97f010ab271650aa3cab777ef6b45900d"
+    }
+  },
+  "activation": false,
+  "publicExportsChanged": false,
+  "newDependenciesInstalled": false,
+  "dependencyObligations": {
+    "better-sqlite3": "13.0.3 exact peer approved; declaration/lock/runtime validation pending actual activation",
+    "ethers": "existing ^6.17.0 peer unchanged"
+  }
+}
