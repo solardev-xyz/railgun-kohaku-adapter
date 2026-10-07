@@ -1,0 +1,33 @@
+{
+  "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+  "sources": [
+    {
+      "path": "scripts/fixtures/railgun-transact-data.js",
+      "sha256": "eb96647d3e82fe5d6995d125284c8bf43817180184be80890cf5e4c4c7ef0afb"
+    },
+    {
+      "path": "docs/qualification/railgun-shield-account-2026-10-03.json",
+      "sha256": "dcf38019860d50b75100527e8f9e72da11b5870f0d029cb9d4bf29758305f044"
+    },
+    {
+      "path": "src/main/wallet/railgun-transact-resolution.test.js",
+      "sha256": "db0d9cfc135d05553a182a4919c0e023b87a2dce7a9c6c649aa407be910edc05"
+    },
+    {
+      "path": "src/main/wallet/railgun-transact-intent.test.js",
+      "sha256": "39d172a79ef8f1ceb8ae5284b52a0045421a3461203f153ec4fe464314649329"
+    }
+  ],
+  "transformations": [
+    "Transact fixture changes only the two relative imports to canonical package data/pins.",
+    "Shield fixture is the exact prepared[0] JSON value from the public report; property order preserved.",
+    "The consumer test retains the existing legacy journal/resolution SHA-256 golden transcripts and sample resolution values; it is not a relocation claim for the full original integration suites."
+  ],
+  "canonicalOwnerCommit": "53fa293c4e0c6338e54ac491204659058d974c99",
+  "canonicalModules": {
+    "src/owners/railgun-transact-intent.js": "e07edb7c2a3210070ac7c95fe7ac9ae446cf96d9e963528e61f2b6170f20f20f",
+    "src/owners/railgun-transact-resolution.js": "1f86f7e48b6fea3ccecb3452e3db4d2629c527d90b7909dee15703f6ddca07f7",
+    "src/owners/railgun-shield-intent.js": "f2d3d54d5171454d7acaa40378b87de7fb5f86856d237fe8648348f32b724516",
+    "src/owners/railgun-shield-resolution.js": "3da55173dbfdadf4688e8b4a82b7eabab18a72d08e38f7e853b065bafa319e51"
+  }
+}
