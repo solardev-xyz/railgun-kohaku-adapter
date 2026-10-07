@@ -141,6 +141,11 @@ function installRailgunExecutionBootstrap() {
         port.start();
         let job;
         try {
+          if (
+            ['spending-public', 'viewing-identity'].includes(message.job) &&
+            JSON.parse(message.input)?.purpose !== message.job
+          )
+            throw new Error('Railgun identity purpose unavailable');
           switch (message.job) {
             case 'spending-public':
             case 'viewing-identity':
@@ -194,7 +199,10 @@ function installRailgunExecutionBootstrap() {
           .then(() =>
             job.run(message.input, {
               request: (wire) => request(wire),
-              requestKey: (wire) => request(wire, true),
+              requestKey:
+                message.job === 'private-verify'
+                  ? () => Promise.reject(new Error('Railgun session unavailable'))
+                  : (wire) => request(wire, true),
               signal: controller.signal,
               guardReport: guard.report,
               close: () => port.close(),

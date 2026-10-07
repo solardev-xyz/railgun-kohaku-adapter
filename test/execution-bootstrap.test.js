@@ -72,7 +72,14 @@ function fixture(run = jest.fn(async () => {}), changes = {}) {
   const start = (...args) => module.exports.installRailgunExecutionBootstrap(...args);
   const send = (job, extra = {}) =>
     parent.emit('message', {
-      data: JSON.stringify({ type: 'init', job, input: '{}', ...extra }),
+      data: JSON.stringify({
+        type: 'init',
+        job,
+        input: ['spending-public', 'viewing-identity'].includes(job)
+          ? JSON.stringify({ purpose: job })
+          : '{}',
+        ...extra,
+      }),
       ports: [port],
     });
   return {
@@ -106,7 +113,9 @@ test.each(Object.entries(jobs))(
     await tick();
     expect(f.imports.at(-1)).toBe('./src/execution/' + file);
     expect(f.run).toHaveBeenCalledTimes(1);
-    expect(f.run.mock.calls[0][0]).toBe('{}');
+    expect(JSON.parse(f.run.mock.calls[0][0])).toEqual(
+      ['spending-public', 'viewing-identity'].includes(name) ? { purpose: name } : {}
+    );
     expect(f.run.mock.calls[0][1].guardReport).toBe(f.report);
     expect(f.port.postMessage).toHaveBeenLastCalledWith(JSON.stringify({ type: 'ready' }));
     expect(() => f.start()).toThrow('unavailable');
@@ -265,4 +274,59 @@ test('actual package require cache at guard installation contains only bootstrap
     { cwd: path.join(__dirname, '..'), encoding: 'utf8', timeout: 10000 }
   );
   expect({ status: result.status, stderr: result.stderr }).toEqual({ status: 0, stderr: '' });
+});
+
+test.each([
+  ['spending-public', '{"purpose":"viewing-identity"}'],
+  ['viewing-identity', '{"purpose":"spending-public"}'],
+  ['spending-public', '{}'],
+  ['spending-public', 'null'],
+  ['viewing-identity', 'invalid-json'],
+])('identity enum %s refuses mismatched input %s before importing its job', async (name, input) => {
+  const f = fixture();
+  f.start().initialize({});
+  f.send(name, { input });
+  await tick();
+  expect(f.imports).toHaveLength(3);
+  expect(f.run).not.toHaveBeenCalled();
+  expect(f.port.postMessage).toHaveBeenCalledWith('{"type":"failure","reason":"job"}');
+});
+test('keyless verifier has a rejecting key function without any broker command', async () => {
+  const f = fixture(
+    jest.fn(async (_, ports) => {
+      await expect(ports.requestKey('{"id":1}')).rejects.toThrow('unavailable');
+    })
+  );
+  f.start().initialize({});
+  f.send('private-verify');
+  await tick();
+  expect(f.port.postMessage.mock.calls).toEqual([['{"type":"ready"}']]);
+});
+test.each(['private-prepare', 'private-operate'])(
+  '%s still receives its genuine viewing-key reply',
+  async (name) => {
+    let received;
+    const f = fixture(
+      jest.fn(async (_, ports) => {
+        received = await ports.requestKey('{"id":1}');
+      })
+    );
+    f.start().initialize({});
+    f.send(name);
+    await tick();
+    const bytes = new Uint8Array(32);
+    f.port.emit('message', { data: { type: 'key-reply', id: 1, bytes } });
+    await tick();
+    expect(received).toBe(bytes);
+    expect(f.port.postMessage).toHaveBeenLastCalledWith('{"type":"ready"}');
+  }
+);
+test('synchronous initialization registers the first-message listener before returning', () => {
+  const f = fixture();
+  const installed = f.start();
+  expect(f.parent.listenerCount('message')).toBe(0);
+  installed.initialize({});
+  expect(f.parent.listenerCount('message')).toBe(1);
+  f.send('private-verify');
+  expect(f.imports.at(-1)).toBe('./src/execution/railgun-private-verify-job');
 });

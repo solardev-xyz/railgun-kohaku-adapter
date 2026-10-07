@@ -74,7 +74,9 @@ All binary-key paths retain pinned Sepolia protocol/deployment/chain and the
 exact existing main subject constraints. Main must derive binary-key eligibility
 from this fixed enum and its original genuine owner checks, never from an
 arbitrary caller boolean. `getRailgunExecutionJob(job)` is an inert inventory
-locator, not process or key admission. The old unmoved relay/POI routes remain
+locator, not process or key admission. The two identity enums also require input.purpose to equal the enum before job import. Only private-verify is keyless and receives a rejecting requestKey function; private-prepare and private-operate still restore a viewing wallet using the original one-key wire.
+
+The old unmoved relay/POI routes remain
 separate and keep their current exact-filename admission.
 
 The future main patch must preserve original supervisor ready/closed tasks,
@@ -119,3 +121,31 @@ independent-verify/recovery with original utility closures. Tests here cover
 controlled shims, transport/guard ordering, real container hashing of disposable
 synthetic files, and shared-data compatibility only. No native, funded, live RPC,
 Tor, relay service, disclosure, signing or submission was performed.
+
+## Explicit staged duplicate model (K1 choice b)
+
+This bounded extraction deliberately keeps the local Freedom helpers needed by
+main and legacy jobs. It is not complete Railgun removal. The package has no
+public main-helper surface and main must not initialize the execution host just
+to use the inert locator. `private-preflight` keeps its original local artifact
+issuer/assertion together. Legacy POI/relay utilities use local helpers and
+issuers. Newly admitted private utilities use only package helpers/issuers. Do
+not pass artifact objects between those implementations or initialize both in
+one utility. Existing data wrappers and the kernel share the same installed
+.3/.4 data cores by module identity.
+
+Each of the 40 provenance rows now pins both immutable extraction source and
+Freedom integration basis `0f2616b28062d5b107a361bfa0e9fdb876f8def9`, plus the
+package destination. Six rows changed only to existing .3/.4 data wrappers.
+Import relocation, the bootstrap split and E2 artifact checks are explicit
+reviewed differences; two hashes are not a claim of semantic equivalence. The
+Freedom integration test must verify every local and installed destination pin,
+and source policies/qualification inventories must retain BOTH sets of files.
+Any changed row needs deliberate successor review; no silent parity exemption.
+The later coherent owner/SCC move will remove this temporary duplication.
+
+`initialize` installs the parent message listener synchronously before it
+returns. Freedom's entry must call it during module evaluation, without an
+await, timer or promise turn. A controlled immediate-message test covers the
+ordering, but actual Electron startup/timing remains an integration qualification
+requirement, not an already observed native result.

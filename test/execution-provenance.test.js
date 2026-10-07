@@ -36,3 +36,29 @@ test('fixed local imports resolve inside the package, without Freedom paths or d
     expect(fs.existsSync(path.join(directory, path.basename(row.destination)))).toBe(false);
   }
 });
+
+test('staged duplicates pin all 40 integration sources and only the six reviewed data-wrapper changes', () => {
+  expect(provenance.freedomIntegrationBasis.revision).toBe(
+    '0f2616b28062d5b107a361bfa0e9fdb876f8def9'
+  );
+  const changed = [];
+  for (const row of provenance.files) {
+    expect(row.integrationSourceSha256).toMatch(/^[0-9a-f]{64}$/);
+    if (row.integrationSourceSha256 !== row.sourceSha256) {
+      expect(row.integrationSourceChange).toBe('existing .3/.4 data wrapper');
+      expect(row.disposition).toBe('existing shared core');
+      changed.push(path.basename(row.source));
+    } else expect(row.integrationSourceChange).toBe('unchanged from extraction source');
+  }
+  expect(changed.sort()).toEqual([
+    'railgun-owned-poi-records.js',
+    'railgun-poi-records.js',
+    'railgun-private-destination.js',
+    'railgun-private-preparation.js',
+    'railgun-private-recovery-data.js',
+    'railgun-private-signature.js',
+  ]);
+  expect(
+    provenance.files.find((row) => row.source.endsWith('/railgun-artifacts.js')).disposition
+  ).toContain('explicit E2');
+});
