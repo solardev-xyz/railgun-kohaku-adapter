@@ -1,0 +1,96 @@
+{
+  "schema": "railgun-build-tool-move-v1",
+  "originalRepository": "https://github.com/solardev-xyz/freedom-browser",
+  "originalCommit": "0f2616b28062d5b107a361bfa0e9fdb876f8def9",
+  "verbatim": true,
+  "files": [
+    {
+      "originalPath": "scripts/build-railgun-engine.js",
+      "path": "tools/railgun-runtime-build/scripts/build-railgun-engine.js",
+      "gitBlob": "723af49e32fc137d2f54fba421f9ed2b73fadbdb",
+      "mode": "100644",
+      "bytes": 3228,
+      "sha256": "5d099db61d5c898b1d1b54d0679a5a1374efb93355126338b03f98141edc8704"
+    },
+    {
+      "originalPath": "scripts/build-railgun-prover.js",
+      "path": "tools/railgun-runtime-build/scripts/build-railgun-prover.js",
+      "gitBlob": "fec96de34c589c75e05bbaf814f02ca979867534",
+      "mode": "100644",
+      "bytes": 9543,
+      "sha256": "8d5dd3c15e20c255f8dfd4daeb8278df2f0b7da4fc37ee75a1d2888e6b00f554"
+    },
+    {
+      "originalPath": "scripts/check-railgun-prover-build.js",
+      "path": "tools/railgun-runtime-build/scripts/check-railgun-prover-build.js",
+      "gitBlob": "7c231c88587dc7a3d135a9d07398c376e978ba11",
+      "mode": "100644",
+      "bytes": 3545,
+      "sha256": "3756242ce22cb1c0efb0738ae1dae34045217cb29e3058d00ead6114225fe010"
+    },
+    {
+      "originalPath": "scripts/railgun-fixture-integrity.js",
+      "path": "tools/railgun-runtime-build/scripts/railgun-fixture-integrity.js",
+      "gitBlob": "e4803c307885be80c54ec44c071e93ad8f1fa660",
+      "mode": "100644",
+      "bytes": 2120,
+      "sha256": "ecb3bdd30ed61572ac14444c9579f978f222c35fd203274c25428d5fb313aa93"
+    },
+    {
+      "originalPath": "scripts/fixtures/railgun-engine/package.json",
+      "path": "tools/railgun-runtime-build/scripts/fixtures/railgun-engine/package.json",
+      "gitBlob": "c467c21a23b078c9764fd7d96aee6e2a8d0a5a33",
+      "mode": "100644",
+      "bytes": 264,
+      "sha256": "d1f9f6b9d8093701c3ea4bcdb54e6296568facae622c943b5a41f06dc415e56a"
+    },
+    {
+      "originalPath": "scripts/fixtures/railgun-engine/package-lock.json",
+      "path": "tools/railgun-runtime-build/scripts/fixtures/railgun-engine/package-lock.json",
+      "gitBlob": "8aabfc70d066e2b14994622de68149da915bdeb6",
+      "mode": "100644",
+      "bytes": 191972,
+      "sha256": "463826801d2adb2a10911f7f1542431183692a55d9f3b9f1a1cf2a0f563adc31"
+    },
+    {
+      "originalPath": "scripts/fixtures/railgun-engine/runtime-integrity.json",
+      "path": "tools/railgun-runtime-build/scripts/fixtures/railgun-engine/runtime-integrity.json",
+      "gitBlob": "810aefd22ac07e889fb467eb6f074473d7b0e636",
+      "mode": "100644",
+      "bytes": 1902,
+      "sha256": "dd2415c7d64ac3dc848e0d491b3e281fc30a1df54768252f1b42112837454513"
+    },
+    {
+      "originalPath": "scripts/fixtures/railgun-engine/README.md",
+      "path": "tools/railgun-runtime-build/scripts/fixtures/railgun-engine/README.md",
+      "gitBlob": "a0bf6b5e171254b185e64f265ffa082fcd4a4b43",
+      "mode": "100644",
+      "bytes": 2280,
+      "sha256": "0cfb4a21377cbde8120ccd879490cf10df8fa9729fbdcbe2b9cab938da6bf4c8"
+    },
+    {
+      "originalPath": "scripts/fixtures/railgun-prover-inputs.json",
+      "path": "tools/railgun-runtime-build/scripts/fixtures/railgun-prover-inputs.json",
+      "gitBlob": "c923af56f20c5050a0cea07c419a6fe71f74f070",
+      "mode": "100644",
+      "bytes": 22105,
+      "sha256": "ed9bb98b901bbbd74bc731967e50c36aa6582287fefaa5c1f08238fcacd347b5"
+    },
+    {
+      "originalPath": "src/main/wallet/railgun-prover-manifest.json",
+      "path": "tools/railgun-runtime-build/src/main/wallet/railgun-prover-manifest.json",
+      "gitBlob": "7add2d3bd69c3a8a49c1ec1c6e363047b5bb1b5a",
+      "mode": "100644",
+      "bytes": 366,
+      "sha256": "656cbc549444a9d99162fd5ac2359c957e0919f96802ace21aa9250c8de0a877"
+    },
+    {
+      "originalPath": "src/main/wallet/railgun-engine-manifest.json",
+      "path": "tools/railgun-runtime-build/src/main/wallet/railgun-engine-manifest.json",
+      "gitBlob": "ca9383e9cd8cc716ef7e8079732cef7cebff0f01",
+      "mode": "100644",
+      "bytes": 2254,
+      "sha256": "54a4d63dea94e17a542d7510c08e1f35ea71256c821639ba86da29b89f8c7f2c"
+    }
+  ]
+}
