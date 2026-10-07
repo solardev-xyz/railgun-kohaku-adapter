@@ -4,12 +4,16 @@ const fs = require("fs"),
   vm = require("vm"),
   { createHash } = require("crypto");
 const root = path.join(__dirname, "..");
+const signerTransitions = require("../docs/owners/SIGNER-LIFETIME-TRANSITIONS.json");
 const callerTransitions = require("../docs/owners/CALLER-TRANSITIONS.json");
 const processTransitions = require("../docs/owners/PROCESS-TRANSITIONS.json");
 const translation = require("../docs/owners/TRANSLATION.json");
 const transitions = require("../docs/owners/CREDENTIAL-TRANSITIONS.json");
 const narrowing = require("../docs/owners/KEY-NARROWING.json");
-const staged = require("../docs/owners/STAGED-IMPORTS.json");
+const staged = {
+  ...require("../docs/owners/STAGED-IMPORTS.json"),
+  ...require("../docs/owners/SIGNER-LIFETIME-STAGED-IMPORTS.json"),
+};
 const persisted = require("../docs/owners/PERSISTED-LITERALS.json");
 const imports = require("../docs/owners/IMPORTS.json");
 const retired = require("../docs/owners/RETIRED-RUNTIME.json");
@@ -58,6 +62,14 @@ test("every translated algorithm reconstructs its exact immutable original bytes
     reused = 0;
   for (const row of translation.files) {
     let text = fs.readFileSync(sourceFile(row.destination), "utf8");
+    const signerTransition = signerTransitions.changes.find(
+      (change) => change.file === row.destination,
+    );
+    if (signerTransition) {
+      expect(sha(text)).toBe(signerTransition.afterSha256);
+      text = undo(text, signerTransition.replacements);
+      expect(sha(text)).toBe(signerTransition.beforeSha256);
+    }
     const callerTransition = callerTransitions.changes.find(
       (change) => change.file === row.destination,
     );

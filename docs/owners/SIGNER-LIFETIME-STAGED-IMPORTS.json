@@ -1,0 +1,188 @@
+{
+  "src/owners/railgun-identity.js": {
+    "edges": [
+      {
+        "kind": "require",
+        "request": "assert/strict",
+        "start": 325,
+        "end": 340,
+        "callStart": 317,
+        "callEnd": 341,
+        "line": 6
+      },
+      {
+        "kind": "require",
+        "request": "./context-bindings",
+        "start": 401,
+        "end": 421,
+        "callStart": 393,
+        "callEnd": 422,
+        "line": 7
+      },
+      {
+        "kind": "require",
+        "request": "./host-bindings",
+        "start": 456,
+        "end": 473,
+        "callStart": 448,
+        "callEnd": 474,
+        "line": 8
+      },
+      {
+        "kind": "require",
+        "request": "./credential-loan",
+        "start": 524,
+        "end": 543,
+        "callStart": 516,
+        "callEnd": 544,
+        "line": 9
+      },
+      {
+        "kind": "require",
+        "request": "./host-bindings",
+        "start": 585,
+        "end": 602,
+        "callStart": 577,
+        "callEnd": 603,
+        "line": 10
+      },
+      {
+        "kind": "require",
+        "request": "../execution/railgun-engine-runtime.js",
+        "start": 661,
+        "end": 701,
+        "callStart": 653,
+        "callEnd": 702,
+        "line": 11
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-process.js",
+        "start": 744,
+        "end": 766,
+        "callStart": 736,
+        "callEnd": 767,
+        "line": 12
+      },
+      {
+        "kind": "require",
+        "request": "../data/railgun-private-intent.js",
+        "start": 11898,
+        "end": 11933,
+        "callStart": 11890,
+        "callEnd": 11934,
+        "line": 291
+      },
+      {
+        "kind": "require",
+        "request": "../data/railgun-private-results.js",
+        "start": 13142,
+        "end": 13178,
+        "callStart": 13134,
+        "callEnd": 13179,
+        "line": 333
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-private-operation.js",
+        "start": 13389,
+        "end": 13421,
+        "callStart": 13381,
+        "callEnd": 13422,
+        "line": 338
+      },
+      {
+        "kind": "require",
+        "request": "util",
+        "start": 15732,
+        "end": 15738,
+        "callStart": 15724,
+        "callEnd": 15739,
+        "line": 404
+      },
+      {
+        "kind": "require",
+        "request": "../execution/railgun-relay-intent.js",
+        "start": 18916,
+        "end": 18954,
+        "callStart": 18908,
+        "callEnd": 18955,
+        "line": 488
+      },
+      {
+        "kind": "require",
+        "request": "util",
+        "start": 20594,
+        "end": 20600,
+        "callStart": 20586,
+        "callEnd": 20601,
+        "line": 540
+      },
+      {
+        "kind": "require",
+        "request": "../execution/railgun-relay-quote-data.js",
+        "start": 21598,
+        "end": 21640,
+        "callStart": 21590,
+        "callEnd": 21641,
+        "line": 580
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-relay-operation.js",
+        "start": 22342,
+        "end": 22372,
+        "callStart": 22334,
+        "callEnd": 22373,
+        "line": 595
+      },
+      {
+        "kind": "require",
+        "request": "util",
+        "start": 23494,
+        "end": 23500,
+        "callStart": 23486,
+        "callEnd": 23501,
+        "line": 622
+      },
+      {
+        "kind": "require",
+        "request": "../execution/railgun-engine-manifest.json",
+        "start": 24475,
+        "end": 24518,
+        "callStart": 24467,
+        "callEnd": 24519,
+        "line": 653
+      },
+      {
+        "kind": "require",
+        "request": "../data/railgun-private-signature.js",
+        "start": 25159,
+        "end": 25197,
+        "callStart": 25151,
+        "callEnd": 25198,
+        "line": 667
+      },
+      {
+        "kind": "require",
+        "request": "../execution/railgun-relay-intent.js",
+        "start": 28677,
+        "end": 28715,
+        "callStart": 28669,
+        "callEnd": 28716,
+        "line": 776
+      }
+    ],
+    "dynamic": [],
+    "hostFamilies": [
+      "credentials",
+      "sessions"
+    ],
+    "literals": [
+      "railgun-partial-unshield",
+      "railgun-private-transfer",
+      "railgun-token-unshield"
+    ],
+    "syntaxDiagnostics": 0
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "baseRevision": "8e41803c7d1efa79c5249f77c36a989208877db9",
+  "label": "Behavior fix: stable-owner exclusion remains held by pending original signer closure, callbacks and host loans after identity close or vault replacement.",
+  "changes": [
+    {
+      "file": "src/owners/railgun-identity.js",
+      "beforeSha256": "1dc122a02b97c72abbe97cfb79b66bd4613ff8f399173518c9746be0e6865105",
+      "afterSha256": "a0e9435a3ed5ac09514d06baa358e851486848b124a219601bb64c6ff4937cad",
+      "replacements": [
+        {
+          "start": 26829,
+          "before": "    if (!unobserved) signing.delete(identity);\n",
+          "after": "    if (!unobserved) {\n      signing.delete(identity);\n      pendingSigningOwners.delete(saved.owner);\n    }\n"
+        },
+        {
+          "start": 26351,
+          "before": "",
+          "after": "    if (task && !taskClosed) {\n      unobserved = true;\n      try { quarantineRailgunIdentityCredentials(identity); } catch { /* Marker first. */ }\n    }\n"
+        },
+        {
+          "start": 24958,
+          "before": "",
+          "after": "  assert.ok(!pendingSigningOwners.has(saved.owner));\n  pendingSigningOwners.add(saved.owner);\n"
+        },
+        {
+          "start": 16851,
+          "before": "",
+          "after": "      pendingSigningOwners.delete(saved.owner);\n"
+        },
+        {
+          "start": 16495,
+          "before": "",
+          "after": "    if (task && !taskClosed) {\n      closureUnknown = true;\n      try { quarantineRailgunIdentityCredentials(identity); } catch { /* Marker first. */ }\n    }\n"
+        },
+        {
+          "start": 14230,
+          "before": "",
+          "after": "  assert.ok(!pendingSigningOwners.has(saved.owner));\n  pendingSigningOwners.add(saved.owner);\n"
+        },
+        {
+          "start": 5846,
+          "before": "  if (quarantinedOwners.has(owner)) throw fail();\n",
+          "after": "  if (quarantinedOwners.has(owner) || pendingSigningOwners.has(owner)) throw fail();\n"
+        },
+        {
+          "start": 1184,
+          "before": "",
+          "after": "// An admitted signer can outlive identity.close() or a replaced vault. This\n// separate stable-owner latch gates only new identities, never its own current().\nconst pendingSigningOwners = new Set();\n"
+        }
+      ]
+    }
+  ]
+}
