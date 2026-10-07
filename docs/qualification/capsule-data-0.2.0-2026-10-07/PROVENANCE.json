@@ -1,0 +1,192 @@
+{
+  "schema": "railgun-capsule-qualification-public-provenance-v1",
+  "kind": "derived-path-free-metadata-not-original-launcher-report",
+  "sourceCommit": "668e97ed19d37ce10f596cf19b1cdbd492a6226b",
+  "packageCommit": "22d9265e8d7acf6b9234eb544c6df341b6501fc9",
+  "packageVersion": "0.2.0",
+  "originalMetadataPins": {
+    "RESULT.json": {
+      "sha256": "84fcbdf7d02f2fb3c243f05ed7037ff441c66c3cea333ced1a4a336c60831773",
+      "bytes": 14437
+    },
+    "BEFORE.json": {
+      "sha256": "cdf5971b5bfa7e7f5fb0acb4e3e5abe5b5d7a5f0999e2133076e43d43fad730e",
+      "bytes": 12394
+    },
+    "PACKAGED.json": {
+      "sha256": "47af3f9b6a8547cd222450846a9a918bc0c62af50fb077a43b4887fa3e723bb1",
+      "bytes": 2825
+    },
+    "packaged-load.json": {
+      "sha256": "1765c1122fef62b8831ea547d24c77cf8c6c4962735a03986e41dcaaeaed2401",
+      "bytes": 1005
+    },
+    "run.py": {
+      "sha256": "37647505424c836f1afcb9f5b6c0fa5e5a85efa7a10d395acdfbc7514947f183",
+      "bytes": 3916
+    },
+    "packaged-load.cjs": {
+      "sha256": "42ee386dacfc5d37508f8c5a1155011fa300b8516c42e87725fc57ccff6c27d8",
+      "bytes": 2296
+    },
+    "transfer-unshield-process.json": {
+      "sha256": "79b987d3a2ce42b33911a7217d943d0b33213315dfa7d24e5ed395dc4a58c188",
+      "bytes": 805
+    },
+    "partial-process.json": {
+      "sha256": "d955f6ae0a1dc4f7d554dbfc3988c6c5caa47b5b341bcabc6e143ec4873e0bb9",
+      "bytes": 798
+    },
+    "packaged-build.log": {
+      "sha256": "09fb6b77d48c1837525c44ce962718d7afc25d305a138aeb50852fafb0248573",
+      "bytes": 3023
+    }
+  },
+  "nativeCases": [
+    {
+      "name": "transfer-unshield",
+      "pid": 85670,
+      "startedAt": 1791407683.9003131,
+      "elapsedSeconds": 21.945173978805542,
+      "exitCode": 0,
+      "naturalExit": true,
+      "reportSha256": "54b8a866bd12b4a8f3dfa8a85c06bb06336a5d1e12084432871815526517b5cd",
+      "sourceCount": 44,
+      "runs": 2,
+      "coldRecovery": 4
+    },
+    {
+      "name": "partial",
+      "pid": 85748,
+      "startedAt": 1791407706.036059,
+      "elapsedSeconds": 8.928436279296875,
+      "exitCode": 0,
+      "naturalExit": true,
+      "reportSha256": "4bd0da509a2ee4ec3d455cdfc75a25ea20c7bbbd67fefe0733e19d7581503955",
+      "sourceCount": 44,
+      "runs": 1,
+      "coldRecovery": 1
+    }
+  ],
+  "recordedInputSha256ByRole": {
+    "runtime": {
+      "electronExecutable": "ca7e3290800255f5018160cff99cf6ecc58eae299c66148de1374a70e2715c83",
+      "electronFramework": "75bbc78aca00244bd11760fd0a0f3d9fdff1b6bac2bbe7434238d409e664619a",
+      "engineArchive": "019f10880abf1c448aee02ec77c5c2d68c3561c7b4eef02095d66bb5fecd6a7a",
+      "proverArchive": "dd50a29f297867b3bf91cb425066e1d257ea02230a94b02e4cf34c5c70a0c7ab"
+    },
+    "artifacts": {
+      "01x01.vkey": "b1295384591b05481ad16d579a64d0d4a4e014e251e90f1027d2bdf2dcc1a8f7",
+      "01x01.wasm": "37a1528543305c64805e3c607940341abf61ba8516f73cfeb625cd09e5bda7a6",
+      "01x01.zkey": "27443e834f807f0d4ce8a0c2a0e028d1d540cba9c3e4d64b864b367e797215f4",
+      "01x02.vkey": "9369fa6ad3d7a1becf4b10cf4bd6a7eb83725cfb5cf75a08b191c5bc2cd479f4",
+      "01x02.wasm": "6ce87ddb4e33cff9564338a8b1f58047b22809e5d198f243c777d1aa4eaaa1e3",
+      "01x02.zkey": "8ef8e7abcfb5e60fb593d4d961657465f498435a0835adef05acc09534d7557b",
+      "01x03.vkey": "649561f264ee8dc6cfbf78a989d2978d848f6a5c730bb1817659edfa54266130",
+      "01x03.wasm": "72e55865fccca077f443bae9f1e6762a156ea478a137efc1324fb79153050276",
+      "01x03.zkey": "477aeca6a8ed3706f572bce0e99a7054e700a4e3c2ee4499d7013a4d7770e0d0",
+      "02x02.vkey": "27ac4fc50fde0ca2dc62046f5f38715b6094676bcdbe4e2987875aba65cac620",
+      "02x02.wasm": "8595023762a3067b70960be81e1a983c1630c9900d4caef3d608b9d849568829",
+      "02x02.zkey": "47c279ec3fcc8bdcc7a2fb80078e38ba8ca3a7bbaa608967c3c3af82f1d454e5",
+      "02x03.vkey": "2c9162607a77773b5d030012bf0d87eecf27201ad8f2f0a319a7c1661df2fb71",
+      "02x03.wasm": "20ab2f0987f94b6e959fcf11c9d37415c98848acd6a900a0ca75768db3938afa",
+      "02x03.zkey": "75611fffbc675993e55964404136df2a4e59821b40103ebe7afafc6c76863d11",
+      "POI_3x3.vkey": "2f4dcbf58d383204e09240863a6f6eff249071849e5161801ebfe83691037b23",
+      "POI_3x3.wasm": "831aad53c05d19f9854ed27429610da724fbdf9e1e7023aa7a90666f50b0da78",
+      "POI_3x3.zkey": "667984c51df2122956107c11c3c606e4e4688f70fb25515b9388cbd5140e48b3",
+      "download-relayed.cjs": "97cc353738c592c00640d78bc275ef00d4055c79f2fd73d771b898fb80d0cda1",
+      "download.cjs": "ba88c967bb59e2e64c0d9cb49b87807add8bc1541c44bde703fdc937cd58c5ba",
+      "downloads-relayed.json": "8d2e4f093f29a20750a0ad975b056b5a06d2431290794f7395d5ad94a71abda6",
+      "downloads.json": "3a9ba0ddf8bee56675131c5ecdace7221c4a06a63d40eae83029cacce590ce94",
+      "prove-poi.cjs": "76a5ab5aef6fddfe2ab57caef0472698b18ef648265f750005fddd6cd02a3399",
+      "verification.json": "15cc5e9ee00f297ce4d85c921624533dff7b9f9c91274179ee5655d6a155a5db",
+      "verify.cjs": "5180d01f4e723a134df6b67902d477582ae9abfce4215a83999de8412526e2ec"
+    },
+    "adapterPackage": {
+      "LICENSE": "86cf9656479f1edb82245b985f4a2cc0d503b945766ebeda4269c60b307699ae",
+      "NOTICE.md": "96fef13305f1f395d2fc001723c362adc83451cc40e2554af952aff01e6d9f8c",
+      "README.md": "20595800eadee799bbc313da63552709f4d29a6c05c56139662a47efec872511",
+      "data.cjs": "349fa6bddc5682e0ba3b9515797c07ac0ac85081fcd5f4ec11bf472525c7d42d",
+      "data.mjs": "a050fcf435df09d0eddd84c5276ce3e974959b1a1e4f4209e60d695eb14cad4a",
+      "host-data.cjs": "30470f58ae8663c4a927fdb73f979fb137b98a77c9c1146f3750f7fcb62b8f58",
+      "host-data.mjs": "c252d14ce8a431af952d7757ddbc7174057cd7f5411483bd81ee72a071c0f5be",
+      "index.cjs": "1827df2d24c7fdffbdcef5f2cf9535736a626a03911721132e8ee485e316cedd",
+      "index.mjs": "e8d904a468a0dee8b0649cfa273550f0cdb9b35cf8d17dec15c82bc4932577f9",
+      "package.json": "32641ea6a271fd4dace94adf9a49fa55e6ce51fe93c5d80c8f7b5993809016b1",
+      "read.cjs": "9ce5340a9e0c80c88b752e74bb087fe7042d645c714608b8a7415f229fdb5876",
+      "read.mjs": "efed78d776770114d4dbfa88dd985bceaa9e18564b00d6e4f4414e9394d2ba6d",
+      "src/data/index.js": "af3e58c9a5bc2eece3f0e91d79a4f9fe6ff6dcf4bb0904159aba4a75f71865a6",
+      "src/data/railgun-private-capsule.js": "b5c244d08e5185d52d3ef8e11a8d223df3a3f5e959cdd956a187646f5618b560",
+      "src/data/railgun-private-intent.js": "5a5ae43e3b7c4384496e1e17caa1ddfb7bc11e555f28eb8df61d3170c94800b0",
+      "src/data/railgun-private-offer.js": "120f4b1f3ed31206a5311cf36557bb98c48ab14e6fc58dfad6e984cacee30f6d",
+      "src/data/railgun-private-policy.js": "4fed357312c315250bac7a9b89988881601fe31975a7b267875d709af8e4b7dc",
+      "src/railgun-kohaku-private-adapter.js": "55dd17ada728d1213f8f051a3141f5575b89fcf1caa5622b733d52bb5495a3f4",
+      "src/railgun-kohaku-public-adapter.js": "18e4bc11207307fad8df688389e6fd8fc0b9ee3feb632fadf56d9be9a2eff9af",
+      "src/railgun-kohaku-read-data.js": "21522a816a905382b206acfab0cbfd5a767aefcfbccc82c051d18b952e4d409b",
+      "src/railgun-kohaku-read-dispatch.js": "ed930d0517b759f442a6c19a9d250f0203fce5fc229fd9c6a750051fa41bd705",
+      "src/railgun-kohaku-snapshot-plugin.js": "24d3d695c99f8860ce0cdc222f31d0ddc52ad049dec71e7c7d961edd9adb6d0b",
+      "src/railgun-shield-pins.json": "0f38d69a9acb5ecdaeb7197f4410a1c6068b8896e4204a179631176223e31a75",
+      "types/data.d.mts": "e1d2a82402ce6eedb1f691a41d276f83515b8ff733d226ac5b59971890cb45ef",
+      "types/data.d.ts": "37f680e0fde2313d98d075143139e20511c28e05989d5dc972084c0810270eff",
+      "types/host-data.d.mts": "694f17d0c242834e05da8e1e772f726e5db0e527110f2c8948c4cc31ec61d6e2",
+      "types/host-data.d.ts": "d7495ef03d8b1ab3e12365de748c30a080e23661be7ad545edee3af52a9f132f",
+      "types/index.d.mts": "d0b8219062b13646230f02b849895515635912dc780ec8c3efa152554b67037e",
+      "types/index.d.ts": "ee3aa1076f192ab9af3546c3a49e3352d6a087fc804dbd2ff8e71480b01c3a8c",
+      "types/railgun-kohaku-private-contract.d.ts": "349a7daa4dcb22d65ad3db5cd184d9a2620c428c7cadffbcd0d0ff33af20a439",
+      "types/railgun-kohaku-public-contract.d.ts": "08769e3485a50a9bd63c936df870df16afb66318c0f40f6b8c23fff964858492",
+      "types/railgun-kohaku-read-contract.d.ts": "bd42421245b79b91300d6943832ff4f0ffeb18f4a6d450538edb4a1bd707d610",
+      "types/railgun-kohaku-snapshot-contract.d.ts": "72230958335021c87c1513e311754a6eaa0a7df80a8bc959e93b585af11c3d81",
+      "types/read.d.mts": "5ce4a59d320887e90e2b95fb5943f67d80e0ebc7e28880da8f61d2941ed1bc5b",
+      "types/read.d.ts": "44ffd7206458a14fb4bf963806dfbcf5d4283b235e0da44513aada8c319705e6"
+    },
+    "lockfiles": {
+      "applicationPackageLock": "8a76ec449017e3dd99dd4ff40b37c9d298fb19899ca3b1a48504d3f69c805342",
+      "installedPackageLock": "fb5bccfff9168b486abd7e746452082094d5e11a990facae3c0cf3c9d14c5cf6"
+    }
+  },
+  "structuralChecks": {
+    "beforeAndResultInputMapsEqual": true,
+    "fixedInputCount": 66,
+    "runnerHashMatchesBefore": true,
+    "exactReportsMatchResultHashes": true,
+    "processRowsMatchResult": true,
+    "selectedSourceCountPerReport": 44,
+    "selectedSourceMapsEqualBetweenCases": true,
+    "packagedLoadMatchesPackagedRecord": true,
+    "packagedLoadedHashesMatchNativePackageInputMap": true,
+    "packageShippedAndOmittedPartitionMatches35InputFiles": true,
+    "safeReportsCopiedByteForByte": true,
+    "publicPayloadAbsolutePathScanPassed": true,
+    "runtimeOrPackageTargetsRehashedByArchiveAuthor": false,
+    "cryptographyRerunByArchiveAuthor": false
+  },
+  "recordedRunnerChecks": {
+    "fixed66InputHashesCheckedAfterEachNativeCase": true,
+    "selected44SourceHashesCheckedAfterEachCaseAgainstThatReport": true,
+    "cleanTreeAndSameCommitCheckedBeforeAndAfterEachCase": true,
+    "separatePostInventoryRetained": false,
+    "completeSourceTreePrePostInventory": false,
+    "newInputFileDetection": false,
+    "allSelectedSourceFilesIndividuallyPinnedBeforeRun": false
+  },
+  "packagingDiscovery": {
+    "authority": "parent-reported developer check failure; no standalone failure log retained",
+    "expectedShippedFiles": 35,
+    "observedShippedFiles": 26,
+    "firstAssertion": "README.md missing",
+    "explanation": "Packaging omits README.md and eight .d.ts files; 26 shipped files and nine omissions are enumerated in PACKAGED.json.",
+    "nativeQualificationAttempt": false,
+    "artifactMutationReported": false
+  },
+  "limits": [
+    "Native notes, scan and ownership were synthetic; real signatures and proofs were generated and independently verified by the fixture.",
+    "Two launcher-owned Electron parent cases exited naturally with code zero; nested utility records include deliberate code15 closures and code1 negative controls.",
+    "No live, Tor, funded-account, submission, deployed-verifier equality or production ownership/reservation qualification.",
+    "Cold recovery is the fixture encrypted capsule reconstruction flow, not a funded wallet restart or proof of rollback resistance.",
+    "Native transfer and full-unshield runs report productionWitnessUsed false; partial reports true.",
+    "The packaged macOS arm64 build is unsigned, unnotarized and unpublished. Packaged acceptance loads four synthetic vectors; native proof campaigns ran separately.",
+    "Original launcher metadata and build logs are omitted because they contain local paths; only their hashes and this derived projection are public.",
+    "Recorded runner postconditions are source-inspected claims supported by the saved result, not an independently saved after-inventory or a new runtime rehash.",
+    "No operating-system confinement, complete runtime/dependency graph or independent process observation is claimed by this archive author."
+  ]
+}

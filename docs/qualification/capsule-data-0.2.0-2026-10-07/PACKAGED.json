@@ -1,0 +1,83 @@
+{
+  "passed": true,
+  "sourceCommit": "668e97ed19d37ce10f596cf19b1cdbd492a6226b",
+  "packageCommit": "22d9265e8d7acf6b9234eb544c6df341b6501fc9",
+  "npmFileCount": 35,
+  "shippedCount": 26,
+  "shipped": [
+    "LICENSE",
+    "NOTICE.md",
+    "data.cjs",
+    "data.mjs",
+    "host-data.cjs",
+    "host-data.mjs",
+    "index.cjs",
+    "index.mjs",
+    "package.json",
+    "read.cjs",
+    "read.mjs",
+    "src/data/index.js",
+    "src/data/railgun-private-capsule.js",
+    "src/data/railgun-private-intent.js",
+    "src/data/railgun-private-offer.js",
+    "src/data/railgun-private-policy.js",
+    "src/railgun-kohaku-private-adapter.js",
+    "src/railgun-kohaku-public-adapter.js",
+    "src/railgun-kohaku-read-data.js",
+    "src/railgun-kohaku-read-dispatch.js",
+    "src/railgun-kohaku-snapshot-plugin.js",
+    "src/railgun-shield-pins.json",
+    "types/data.d.mts",
+    "types/host-data.d.mts",
+    "types/index.d.mts",
+    "types/read.d.mts"
+  ],
+  "omitted": [
+    "README.md",
+    "types/data.d.ts",
+    "types/host-data.d.ts",
+    "types/index.d.ts",
+    "types/railgun-kohaku-private-contract.d.ts",
+    "types/railgun-kohaku-public-contract.d.ts",
+    "types/railgun-kohaku-read-contract.d.ts",
+    "types/railgun-kohaku-snapshot-contract.d.ts",
+    "types/read.d.ts"
+  ],
+  "eachShippedPresentExactlyOnce": true,
+  "shippedBytesEqualExceptPackageScripts": true,
+  "packagedRuntimeLoad": {
+    "passed": true,
+    "vectorCount": 4,
+    "sharedFunctions": 5,
+    "hashes": {
+      "host-data.cjs": "30470f58ae8663c4a927fdb73f979fb137b98a77c9c1146f3750f7fcb62b8f58",
+      "data.cjs": "349fa6bddc5682e0ba3b9515797c07ac0ac85081fcd5f4ec11bf472525c7d42d",
+      "src/data/index.js": "af3e58c9a5bc2eece3f0e91d79a4f9fe6ff6dcf4bb0904159aba4a75f71865a6",
+      "src/data/railgun-private-policy.js": "4fed357312c315250bac7a9b89988881601fe31975a7b267875d709af8e4b7dc",
+      "src/data/railgun-private-intent.js": "5a5ae43e3b7c4384496e1e17caa1ddfb7bc11e555f28eb8df61d3170c94800b0",
+      "src/data/railgun-private-offer.js": "120f4b1f3ed31206a5311cf36557bb98c48ab14e6fc58dfad6e984cacee30f6d",
+      "src/data/railgun-private-capsule.js": "b5c244d08e5185d52d3ef8e11a8d223df3a3f5e959cdd956a187646f5618b560"
+    },
+    "loaded": [
+      "host-data.cjs",
+      "src/data/railgun-private-policy.js",
+      "src/railgun-shield-pins.json",
+      "src/data/railgun-private-intent.js",
+      "src/data/railgun-private-offer.js",
+      "src/data/railgun-private-capsule.js",
+      "data.cjs",
+      "src/data/index.js"
+    ],
+    "walletOpened": false,
+    "networkRequests": 0
+  },
+  "build": {
+    "mac": "arm64",
+    "unsigned": true,
+    "notarized": false,
+    "published": false,
+    "npmRebuild": false,
+    "afterPack": "scripts/after-pack.js"
+  },
+  "asarSha256": "b37c1caab9442939b6469c1c56ccab2ce08435907fa6ed3102d871e5028cb3c8"
+}

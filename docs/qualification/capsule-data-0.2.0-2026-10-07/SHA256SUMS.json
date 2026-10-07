@@ -1,0 +1,29 @@
+{
+  "schema": "railgun-capsule-public-evidence-hashes-v1",
+  "files": {
+    "PACKAGED.json": {
+      "bytes": 2825,
+      "sha256": "47af3f9b6a8547cd222450846a9a918bc0c62af50fb077a43b4887fa3e723bb1"
+    },
+    "PROVENANCE.json": {
+      "bytes": 11608,
+      "sha256": "8a38a0bd40d072c48be01018701ecf1cf0ae53cea98201baae0d78dbbc6c3ac8"
+    },
+    "README.md": {
+      "bytes": 3869,
+      "sha256": "ba3872bd22e1222004585471601edb07dc4eabfaeef7f8ae2dbc298eaaa4ac7f"
+    },
+    "packaged-load.json": {
+      "bytes": 1005,
+      "sha256": "1765c1122fef62b8831ea547d24c77cf8c6c4962735a03986e41dcaaeaed2401"
+    },
+    "partial-report.json": {
+      "bytes": 35592,
+      "sha256": "4bd0da509a2ee4ec3d455cdfc75a25ea20c7bbbd67fefe0733e19d7581503955"
+    },
+    "transfer-unshield-report.json": {
+      "bytes": 93305,
+      "sha256": "54b8a866bd12b4a8f3dfa8a85c06bb06336a5d1e12084432871815526517b5cd"
+    }
+  }
+}
