@@ -1,0 +1,2565 @@
+{
+  "schema": "freedom-narrative-preservation-v1",
+  "sourceRepository": "https://github.com/solardev-xyz/freedom-browser",
+  "sourceCommit": "354e9a9887dff106ec7fb62a24d7a9490d002d5e",
+  "sourcePublicationVerified": false,
+  "packageBaseCommit": "714401ae4a6f18275829e297ef5856d305a820ae",
+  "sourcePlanFreezeSha256": "4b1d1c0cf6395ae35b6003f3cf9226a429c547cfb11a988c3a57b421c5b8a6cc",
+  "scope": "255 verbatim historical narrative snapshots; no profiles, runtime artifacts or qualification evidence copied",
+  "fileCount": 255,
+  "bytes": 1818178,
+  "lines": 18836,
+  "lineCounting": "UTF-8 splitlines; terminal newline absence preserved",
+  "files": [
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-02.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-02.md",
+      "gitBlob": "abee7dbc92a2be9895065dbc7766c52e18b61bdc",
+      "mode": "100644",
+      "bytes": 11293,
+      "lines": 56,
+      "sha256": "fcadb5535959ecf871093a5705819dc78bd634fac2421d5ce16fc7a096991d94",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-02.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-03.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-03.md",
+      "gitBlob": "7d87e4c4a786c8d9443e7294a4ec6a1b6d146c7e",
+      "mode": "100644",
+      "bytes": 80972,
+      "lines": 344,
+      "sha256": "5aed3264f9857928309bb4dcff2daee47a2c4c9c85a5ddddc914f5fdf1a7269a",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-account-drain.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-account-drain.md",
+      "gitBlob": "184d978d7777cb66c67e9e88f7c52cd72402f3de",
+      "mode": "100644",
+      "bytes": 4720,
+      "lines": 20,
+      "sha256": "27ca37ca15d0b6678057bf669129aa87ea5655b6dce9206cf0d8c84312ab811d",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-account-drain.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-attempt.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-attempt.md",
+      "gitBlob": "2b8edd1dc4ac7ad923db305c58c9b3e0e2223433",
+      "mode": "100644",
+      "bytes": 5354,
+      "lines": 24,
+      "sha256": "8a17b13ba82f081b117750b618ebfb2585486bbb32fcc4f6b0558671491125fc",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-attempt.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-budget.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-budget.md",
+      "gitBlob": "db24b88f30b832b1c5e5f69bcc2baa60992a61d8",
+      "mode": "100644",
+      "bytes": 5256,
+      "lines": 20,
+      "sha256": "0c64b319b3bdb5261df1a98e0bd62e015bb1dc90b4358af6b58b64ecba0292e0",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-budget.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-cancel.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-cancel.md",
+      "gitBlob": "96592abb322d0991cdf9132a3ffafe46a555929c",
+      "mode": "100644",
+      "bytes": 5366,
+      "lines": 20,
+      "sha256": "24dacfdcf8aa6c91b2e0b23fc75b043af1847d568f93966b14f928679ef4eefb",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-cancel.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-checks.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-checks.md",
+      "gitBlob": "8f0f22fd2c79f8d284b352756d9edcdf85636af8",
+      "mode": "100644",
+      "bytes": 5295,
+      "lines": 24,
+      "sha256": "d5d507d6dc373ab87a36c84b761cd2ec822e73fcc658ed4df4534f4918909ce5",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-checks.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-cold.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-cold.md",
+      "gitBlob": "a817d5d8205eabfea68c662b8ba1f9eac561be07",
+      "mode": "100644",
+      "bytes": 5384,
+      "lines": 24,
+      "sha256": "7797721111fd9d6bd34f8d4b255c68f157825bff89f54a71100cd65bb16f0365",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-cold.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-completed.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-completed.md",
+      "gitBlob": "65e8c98dc93abe2ff19bb18ccf0506d2c24f885f",
+      "mode": "100644",
+      "bytes": 5178,
+      "lines": 18,
+      "sha256": "ad38a847339b05b13f2f18c73b85a2b027b907a7d31777b5ab2a4c2beeebcc30",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-completed.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-drain.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-drain.md",
+      "gitBlob": "179b5b64fb64ca63d0ffbbc68f091a4ef7b4a9a9",
+      "mode": "100644",
+      "bytes": 5155,
+      "lines": 22,
+      "sha256": "38b146e51ae6bee1b7e5a456c6b288ae29e6f5be066fd66d41eeda1995b3925d",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-drain.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-hardening.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-hardening.md",
+      "gitBlob": "b9e291426f2e396b2b6cf05962b53e0b00d9aa5c",
+      "mode": "100644",
+      "bytes": 5437,
+      "lines": 20,
+      "sha256": "cd993bdbe1ecdcea034b2554140c66cf8a9b657ae8c9756b656ff97d09f46c4f",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-hardening.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-historical.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-historical.md",
+      "gitBlob": "c2c469e0ff2223f553770f93833296a90d74b1d6",
+      "mode": "100644",
+      "bytes": 5488,
+      "lines": 27,
+      "sha256": "f2fde970b86e23da7f1c68231545cd9a4bf3407f52a0d37fcfa656673f9286be",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-historical.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-intents.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-intents.md",
+      "gitBlob": "55921945f76f7dfa03fe83025b78a1a246d1ba4f",
+      "mode": "100644",
+      "bytes": 5418,
+      "lines": 26,
+      "sha256": "c9a9ef551b9489ea700e57820aa4b58674a487be1acb3e6570416a29d22fad65",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-intents.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-kohaku-private.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-kohaku-private.md",
+      "gitBlob": "9386ea9902767b7e6b150c6e04222da7c8469936",
+      "mode": "100644",
+      "bytes": 5128,
+      "lines": 20,
+      "sha256": "bf0558656d005c7382aece7491f0c0bcd9fc7a1b17c1f0145f57258c23946120",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-kohaku-private.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-local-poi.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-local-poi.md",
+      "gitBlob": "00c5c02d0def5a264cbb5ea3fb7021340cdefe9e",
+      "mode": "100644",
+      "bytes": 5150,
+      "lines": 20,
+      "sha256": "7e21c4607dc06606fb716f4fa0b55b22a4e380bfdbae8ad841f3e66a28a268ac",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-local-poi.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-membership.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-membership.md",
+      "gitBlob": "ad98f0ce961fcb00bb75de21980410c05661ae92",
+      "mode": "100644",
+      "bytes": 5442,
+      "lines": 20,
+      "sha256": "55985e49deedcf6d8d4c7f717fe3ad3e16e367ef5912939035ddc63d3c244d4c",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-membership.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-output.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-output.md",
+      "gitBlob": "5379050ee3734770a74d16033936aab9f47ab308",
+      "mode": "100644",
+      "bytes": 5398,
+      "lines": 24,
+      "sha256": "3c28da976b120253c545d7bf3abfb1946e5d8746ee5c11a6b09388c6b9bc27a8",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-output.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-own-broker.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-own-broker.md",
+      "gitBlob": "27d03d20c0d5411e673109fa9bbe733c2cdcb094",
+      "mode": "100644",
+      "bytes": 5436,
+      "lines": 24,
+      "sha256": "d7e055f2bef2b1db3727613640836547dd86fdeabcb466ccc9ef52f5b516a939",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-own-broker.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-partial-crypto.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-partial-crypto.md",
+      "gitBlob": "7f129cf85b2f0eb688a13948bef00b18fe225dab",
+      "mode": "100644",
+      "bytes": 4577,
+      "lines": 27,
+      "sha256": "c46ae42739e282630e76aef86969ff43d5541b843a3d38e21131f4d78f8d657a",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-partial-crypto.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-partial-receipt.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-partial-receipt.md",
+      "gitBlob": "8ef5a2906057704efb1cda461e631fe625a920b3",
+      "mode": "100644",
+      "bytes": 5057,
+      "lines": 29,
+      "sha256": "636ca67051a3a4c9b58783396ac5fa9957687b981deaae66d65be832558913a5",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-partial-receipt.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-partial-structure.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-partial-structure.md",
+      "gitBlob": "3a3edf38837cedd0d8fbbacc7985bc89057bf1bb",
+      "mode": "100644",
+      "bytes": 4241,
+      "lines": 27,
+      "sha256": "62a5d177701d2bb8e684cf1e2e07c8c7077e03a72596034acb77f48b07bde705",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-partial-structure.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-plan.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-plan.md",
+      "gitBlob": "21d8a23ed8f000818805fd0dcaccced064ff814d",
+      "mode": "100644",
+      "bytes": 5366,
+      "lines": 24,
+      "sha256": "6b5640bf4093b6b8a3d4676ea7edd42d7442f8399c25c6819d01074edb849683",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-plan.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-poi-selector.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-poi-selector.md",
+      "gitBlob": "94b08ab05d57cd28d3cfc3a5b66dbb7e499dad0f",
+      "mode": "100644",
+      "bytes": 5397,
+      "lines": 20,
+      "sha256": "d9c5449b8299685b4495d32acb4ff840f77a235e5568010866e6791344164d73",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-poi-selector.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-poi-source.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-poi-source.md",
+      "gitBlob": "f40b229549ba05982245124a19545f560579a77d",
+      "mode": "100644",
+      "bytes": 5455,
+      "lines": 20,
+      "sha256": "7a51dbbd8b362b3d625945a3a2943410e3636b1d0c2d67f449aad8622b2d7271",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-poi-source.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-proof.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-proof.md",
+      "gitBlob": "92a67cf08176145ddef0d65e03227fed023b944a",
+      "mode": "100644",
+      "bytes": 5459,
+      "lines": 22,
+      "sha256": "4dbcf4b214ea57b09e157c38bc1336aadeaa9f2854917a86b5d458a77d9abc2c",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-proof.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-public-shield.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-public-shield.md",
+      "gitBlob": "0b7f0bdf69a80d6b33ddf640da5f283cf32d8a87",
+      "mode": "100644",
+      "bytes": 5369,
+      "lines": 29,
+      "sha256": "778e61538700e2ec2b26c68d3feba3438bfcf7b4e385b3bfdcabf487804d89e5",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-public-shield.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-receipt.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-receipt.md",
+      "gitBlob": "17aafa2b1172ec0717a473b57a3a259908af195b",
+      "mode": "100644",
+      "bytes": 5334,
+      "lines": 18,
+      "sha256": "92b4198a2fb8521981174c9852bfba79f4cbe37d30ee3d7119bcb65010aa4f48",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-receipt.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-recovery.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-recovery.md",
+      "gitBlob": "bb74c170a841a245f45cbfbce05a9274155630b7",
+      "mode": "100644",
+      "bytes": 5348,
+      "lines": 20,
+      "sha256": "3d25c4098334be7abc9524d406587e7d5e2035abc855280f61d318cb594b5efa",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-recovery.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-response.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-response.md",
+      "gitBlob": "4954576381229732bc0e3327c1c3efc5f85b2499",
+      "mode": "100644",
+      "bytes": 5216,
+      "lines": 24,
+      "sha256": "ee33b6f1559928318ea1f2625b675d1b386cc2f27c63f46d5ce319171d41a067",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-response.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-retained-history.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-retained-history.md",
+      "gitBlob": "e1ae339b7f5a2394626bdd112d9eca5973a4e5ad",
+      "mode": "100644",
+      "bytes": 5412,
+      "lines": 24,
+      "sha256": "a78bf2cfb3704a5b890dbf6c85b27603f502e295df9479f6dc7d76342151edd4",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-retained-history.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-retained-transact.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-retained-transact.md",
+      "gitBlob": "3b2fecf18712eb109c029b86018cad68b0eb0374",
+      "mode": "100644",
+      "bytes": 5313,
+      "lines": 26,
+      "sha256": "98dc88545a480067d4073c07f118ea68440b586127356fbeb2f4f9b392d2abdf",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-retained-transact.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-retained.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-retained.md",
+      "gitBlob": "323b85c9f4147edc4f17a1927ff219f913ea13cc",
+      "mode": "100644",
+      "bytes": 4966,
+      "lines": 18,
+      "sha256": "7149c273954eb85560b7992ff4a5340c3dc9982f93829ae1ecd40778d89f9377",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-retained.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-sender.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-sender.md",
+      "gitBlob": "03c39b3be80f8f8d9031b686261529586897ee29",
+      "mode": "100644",
+      "bytes": 5207,
+      "lines": 18,
+      "sha256": "f0b33bd615be70a0aa663f6ee37da4b04f6ae815024f3cc334577a3febd54830",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-sender.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-shield-prerequisites.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-shield-prerequisites.md",
+      "gitBlob": "571689b70df1f518b9fdfc54303baf80794227f5",
+      "mode": "100644",
+      "bytes": 5328,
+      "lines": 35,
+      "sha256": "5efd0dcb6a5a201913fce3886553bf8c9d36192f4606b751f702d2168f133073",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-shield-prerequisites.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-source-drain.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-source-drain.md",
+      "gitBlob": "900f9b33b04cabdc9602a0ff73993d1f594f49e6",
+      "mode": "100644",
+      "bytes": 5207,
+      "lines": 20,
+      "sha256": "46fd8752f8ee0cacd2b8c30e27fad33f7986e971ce45e6d90e28ef43390deb0b",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-source-drain.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-source.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-source.md",
+      "gitBlob": "203b4c5199c4476d3d69af994a01efdfc9767bfc",
+      "mode": "100644",
+      "bytes": 5426,
+      "lines": 20,
+      "sha256": "8988bf13b594b5319296e35a96a1ab09deb55da3da12e48f1b0e492d51b361be",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-source.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-transact-membership.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-transact-membership.md",
+      "gitBlob": "961c50a5a79e536033fed1fab968cd61a02aaa7c",
+      "mode": "100644",
+      "bytes": 5358,
+      "lines": 24,
+      "sha256": "2ed21b7122b461ed6c2c73317edec2baf14ed295a836fe6e2313aa3ac66f052d",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-transact-membership.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-transact-proof.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-transact-proof.md",
+      "gitBlob": "03acf19e8026f6d84ff7b283d666cf9d948e400c",
+      "mode": "100644",
+      "bytes": 5031,
+      "lines": 22,
+      "sha256": "c0c0ce1b90c95c290f139510d00041ffd0f7268acb897e421f09e61c47c86eea",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-transact-proof.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04-transact-selector.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04-transact-selector.md",
+      "gitBlob": "9c8389a7f6167b9cb154b3092c445598fe57e14f",
+      "mode": "100644",
+      "bytes": 5307,
+      "lines": 22,
+      "sha256": "ca6b5bde6378bcd16b0c674a25981f200a73739341168c8df0ab257d07909500",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04-transact-selector.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-04.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-04.md",
+      "gitBlob": "7ddf69982ed9ffa34c90bb40f3202921d6139981",
+      "mode": "100644",
+      "bytes": 4720,
+      "lines": 18,
+      "sha256": "95f46c9bdb557738b3276539b94abef4f29e4a589ed4fb7334c8c9541a3dbc48",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-05-change-scan.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-05-change-scan.md",
+      "gitBlob": "bc5c4600c46048b5fce3ddea3c9eaafc04547ae8",
+      "mode": "100644",
+      "bytes": 3875,
+      "lines": 20,
+      "sha256": "f3ed98860d39ac4cefbcc77cfd85b886718196977854772e5b5e079900f46d11",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-05-change-scan.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-05-cold-credit.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-05-cold-credit.md",
+      "gitBlob": "457bb2e8ce89064bcf528efad0d4fefe291ca4a1",
+      "mode": "100644",
+      "bytes": 4305,
+      "lines": 20,
+      "sha256": "a797562fcc0be7ef82b79d0615c6b7ce7beca4e807866b3a89ecd66999f0b75c",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-05-cold-credit.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-05-cold-submission.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-05-cold-submission.md",
+      "gitBlob": "1d64ea049d2a9bf7da07c364fee75cc845b412f3",
+      "mode": "100644",
+      "bytes": 3784,
+      "lines": 29,
+      "sha256": "d4e50702f1c14a506813cbeade9d6966cce8588e72ef8595df9e3b6294b3a81f",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-05-cold-submission.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-05-combined-poi.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-05-combined-poi.md",
+      "gitBlob": "eb4b82411936f0ac92a470fda15f1cd5cb850f5c",
+      "mode": "100644",
+      "bytes": 4123,
+      "lines": 24,
+      "sha256": "9795e5cbc72dbfbc48ad4dfd1bf8df83ee3724156d6b18a13fa194db07acb725",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-05-combined-poi.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-05-completed.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-05-completed.md",
+      "gitBlob": "c2fe13c16e0271a425bd261e82fe877a55cee98c",
+      "mode": "100644",
+      "bytes": 4007,
+      "lines": 26,
+      "sha256": "7aa250a2ed94fa6729b8fae76b9a8841e3a6ae79a40b2a3b2599aa36a745fb7a",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-05-completed.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-05-connected-restart.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-05-connected-restart.md",
+      "gitBlob": "21404f1e7ef263bd1a902553ea9810092357305b",
+      "mode": "100644",
+      "bytes": 3044,
+      "lines": 22,
+      "sha256": "4376a680b169cabe73d03de581df00b4354094e1258adb8448e07670e9925842",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-05-connected-restart.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-05-controller.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-05-controller.md",
+      "gitBlob": "c0cfbfc8c38f454577db5f3e43372bfa3deb2da8",
+      "mode": "100644",
+      "bytes": 4147,
+      "lines": 23,
+      "sha256": "1015c9c256ad0b1f16387103fe3f756ef95b35b0eb1c4cfe09e238f74ec34d82",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-05-controller.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-05-creator.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-05-creator.md",
+      "gitBlob": "5eab8bce2febdaba510a49d486ad66f3aef404ad",
+      "mode": "100644",
+      "bytes": 4943,
+      "lines": 29,
+      "sha256": "0974ba1771d61d9bac9759b714bfc6569dd0e60cf4ded3be6dfb256681016239",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-05-creator.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-05-durable-combined-poi.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-05-durable-combined-poi.md",
+      "gitBlob": "361b9ce17a4d28a433d743cf215bbfed1c3c8943",
+      "mode": "100644",
+      "bytes": 4529,
+      "lines": 26,
+      "sha256": "56413e78c465587608e15716f77b3e5754b5941e77ada878e4d5c8284e9131e5",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-05-durable-combined-poi.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-05-kohaku-contract.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-05-kohaku-contract.md",
+      "gitBlob": "1d73d831117053e3983fd740c28ccccdaf8ce2b4",
+      "mode": "100644",
+      "bytes": 3859,
+      "lines": 16,
+      "sha256": "b84ede359016950e263c87a45d7642e1d66e788249510e3d703259e459b14110",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-05-kohaku-contract.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-05-partial-facade.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-05-partial-facade.md",
+      "gitBlob": "298aff171e7af172fe227c04376563b97eb4eddd",
+      "mode": "100644",
+      "bytes": 3377,
+      "lines": 19,
+      "sha256": "047e4f40c3539b01ad61fc92995d302db85850062d3275f4b2cf1fb3e25f20ca",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-05-partial-facade.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-05-partial-submission.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-05-partial-submission.md",
+      "gitBlob": "6bd50b9b7ee9f8a3152242f39f696bcfe1b318b6",
+      "mode": "100644",
+      "bytes": 3847,
+      "lines": 31,
+      "sha256": "5980788853fd335caf7a361cc763dc01801642faebf14ba09e3dd739ca026c6c",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-05-partial-submission.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-05-proof-recovery.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-05-proof-recovery.md",
+      "gitBlob": "99a93d331ed11298323c2ecb6e4d2d8e4074b791",
+      "mode": "100644",
+      "bytes": 4023,
+      "lines": 28,
+      "sha256": "5a64064da1f1c3c8818395cd69880d6e91471035af07adeb8652c678b29fe7c1",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-05-proof-recovery.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-05-proof-restart.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-05-proof-restart.md",
+      "gitBlob": "457b0155eebd65360ce96cefdf5b61b7c4bf410f",
+      "mode": "100644",
+      "bytes": 4103,
+      "lines": 24,
+      "sha256": "ea8d3c36a3522a02d39336b8333de434530a9f00f9bb35c7a14f68aff8797939",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-05-proof-restart.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-05-read-data.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-05-read-data.md",
+      "gitBlob": "27538ced3fb44660e57c4de8725c6ce6533f2e99",
+      "mode": "100644",
+      "bytes": 4098,
+      "lines": 20,
+      "sha256": "8e0ef39745c7550f4d355532ad763e8f566561fd127d062f22f0a05a32c88c0a",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-05-read-data.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-05-second-cold.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-05-second-cold.md",
+      "gitBlob": "d158be63a52e1ebf2523adc33f23dc23610d5a4f",
+      "mode": "100644",
+      "bytes": 3621,
+      "lines": 20,
+      "sha256": "b07183f6573f79474a273184ca91152c67cded0d20f52b91f1cf5cbefc651bfa",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-05-second-cold.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-05-second-proof.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-05-second-proof.md",
+      "gitBlob": "d8fddfa253874aa7f0ddbeca8c1ff55c54584764",
+      "mode": "100644",
+      "bytes": 3583,
+      "lines": 16,
+      "sha256": "b1f407b2825ef0a7d511748fe872b3e619636da8314d20f7d2587d703a0bb567",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-05-second-proof.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-05-second-spend.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-05-second-spend.md",
+      "gitBlob": "2e082da553ca68057bb33252856ef7c3c4960297",
+      "mode": "100644",
+      "bytes": 3648,
+      "lines": 16,
+      "sha256": "7342f88534bbba4234550bf2f61f908c7250d91c1957c1883e3d13d3f3ebbd08",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-05-second-spend.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-05-terminal-ingest.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-05-terminal-ingest.md",
+      "gitBlob": "b5919b2dd54b95bba6947570077fa51edb6f96cc",
+      "mode": "100644",
+      "bytes": 3350,
+      "lines": 16,
+      "sha256": "f48e196d6c656e5efb4c34cf7c403be4d1b9974a8914df848578e27901e13cd0",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-05-terminal-ingest.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-05-transact.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-05-transact.md",
+      "gitBlob": "d9a884b0585ee88a5420d1d20d874ddd1cda8de8",
+      "mode": "100644",
+      "bytes": 3740,
+      "lines": 23,
+      "sha256": "c3c9e683717d2d19e9d635325215de003f3d882d9097b13835fc7ea60d22d438",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-05-transact.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-06-account-review.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-06-account-review.md",
+      "gitBlob": "681ce751cddf3a8848fb26e0029bcf6fc0297c80",
+      "mode": "100644",
+      "bytes": 4308,
+      "lines": 16,
+      "sha256": "03f05e255a9fd320dc25dd24959862ea33243fc02401ff63b6434daec83f5fc0",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-06-account-review.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-06-local-completion.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-06-local-completion.md",
+      "gitBlob": "cde2d1989d00b226c68af98fc10a6137339774f4",
+      "mode": "100644",
+      "bytes": 4119,
+      "lines": 18,
+      "sha256": "54a4149f4b8bbd9d0b8c616f95471bf16406719d92878ec17d5c8adfe0a9506c",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-06-local-completion.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-06-local-relay.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-06-local-relay.md",
+      "gitBlob": "40b322e1983da9e508bb6c87e8979f32e8b506cc",
+      "mode": "100644",
+      "bytes": 4151,
+      "lines": 16,
+      "sha256": "403cda61a8217cfb0ec5a160d9c9fc3e2920ec3098cc6869bad8466569f01d28",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-06-local-relay.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-06-origin.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-06-origin.md",
+      "gitBlob": "ecde2693ac4687d8409224cf37975d83c6d091d6",
+      "mode": "100644",
+      "bytes": 3281,
+      "lines": 21,
+      "sha256": "d65b7c730baeb0ca2e9e234dacef197bce922b8526f45fdbbdc1d07702c24085",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-06-origin.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-06-private-node.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-06-private-node.md",
+      "gitBlob": "600dbbf2368c1d92efbf53d44a2390da0d97be9b",
+      "mode": "100644",
+      "bytes": 3452,
+      "lines": 14,
+      "sha256": "33c333f2981bc7bef7e66bca8c482738cefb906a40a94e2dc08b26fbb71a0472",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-06-private-node.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-06-public-node.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-06-public-node.md",
+      "gitBlob": "499c1f8f5591e84094210ee6273a47736d24a16d",
+      "mode": "100644",
+      "bytes": 3853,
+      "lines": 16,
+      "sha256": "f02808625b7c5ae7424fddc25fe239a3747c9e90101ba0d704fac9fad681f6c0",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-06-public-node.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-06-recovery.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-06-recovery.md",
+      "gitBlob": "6a17c569d69d2d4017a4022924453d654f8d45b6",
+      "mode": "100644",
+      "bytes": 3500,
+      "lines": 18,
+      "sha256": "442dd99885b786ed1c2c3afcb2ef2cdf307886b52968550df8e64865a29fd240",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-06-recovery.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-06-relay-primitives.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-06-relay-primitives.md",
+      "gitBlob": "5254b4d4d88ef00aa347ac1e4d6de6a72464d5fc",
+      "mode": "100644",
+      "bytes": 4215,
+      "lines": 16,
+      "sha256": "36d1a5fdc93c2a3b628449116cae1de1e938c3697e79a78b38403d23b8f9126d",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-06-relay-primitives.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-06-snapshot.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-06-snapshot.md",
+      "gitBlob": "915c7ae794d36463bcda5d81511852168a4efb0c",
+      "mode": "100644",
+      "bytes": 3765,
+      "lines": 21,
+      "sha256": "b123c41542b566c5fb1b6e025138ad6520a9c99996eff42fb026ce74fda72534",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-06-snapshot.md"
+    },
+    {
+      "sourcePath": "docs/privacy-progress-history-2026-10-06-unsigned-preparation.md",
+      "archivePath": "docs/privacy-progress-history-2026-10-06-unsigned-preparation.md",
+      "gitBlob": "a9e9e809e8be30f2875a2b78d1da0f72fa737948",
+      "mode": "100644",
+      "bytes": 4632,
+      "lines": 16,
+      "sha256": "6f4e2a80ed95a9dc5481df81f6d15c2424147a7103d28381c6f01b0623ad75bb",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/privacy-progress-history-2026-10-06-unsigned-preparation.md"
+    },
+    {
+      "sourcePath": "docs/railgun-account-fence-qualification-2026-10-06.md",
+      "archivePath": "docs/railgun-account-fence-qualification-2026-10-06.md",
+      "gitBlob": "6111cb16a71a88f8e84a352fe081a2d8f8ae6c74",
+      "mode": "100644",
+      "bytes": 7501,
+      "lines": 38,
+      "sha256": "3374f10d61149e7de81e4a423d3f4fa20487d02f63df175719a93694b143551e",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-account-fence-qualification-2026-10-06.md"
+    },
+    {
+      "sourcePath": "docs/railgun-account-public-2026-10-03.md",
+      "archivePath": "docs/railgun-account-public-2026-10-03.md",
+      "gitBlob": "ff592f8fe38f1f2a012d5f3d145a6659507dde6b",
+      "mode": "100644",
+      "bytes": 6257,
+      "lines": 92,
+      "sha256": "703d86c0b5ded86b717d5782464395c071e53bfba8cce770d8e7f2b027e3b38d",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-account-public-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-account-stores-2026-10-03.md",
+      "archivePath": "docs/railgun-account-stores-2026-10-03.md",
+      "gitBlob": "45ebcd9eb93eae7cda5c91457c1663ecf659158a",
+      "mode": "100644",
+      "bytes": 4340,
+      "lines": 65,
+      "sha256": "55d039729e39344e259e3d02b170f9938e11409f0e98555adbe0006c3198cf00",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-account-stores-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-account-txid-2026-10-03.md",
+      "archivePath": "docs/railgun-account-txid-2026-10-03.md",
+      "gitBlob": "5ade4b60b7a3234ad6975e3bf661e16122351c86",
+      "mode": "100644",
+      "bytes": 4840,
+      "lines": 74,
+      "sha256": "726cfe447ee9780e0e6b33c50fd30ce00990b1772e9e45f2fa636e064be39a26",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-account-txid-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-account-wallet-2026-10-03.md",
+      "archivePath": "docs/railgun-account-wallet-2026-10-03.md",
+      "gitBlob": "c792219152573e246489dbb992143046a1eea212",
+      "mode": "100644",
+      "bytes": 6596,
+      "lines": 99,
+      "sha256": "eb45017cdbeaed54d142c738f79f37d80086a3db520df915e0319581aae71b67",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-account-wallet-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-account-windows-2026-10-03.md",
+      "archivePath": "docs/railgun-account-windows-2026-10-03.md",
+      "gitBlob": "38a95f9ed9f944a150e9b6395e15c2c3b44334f3",
+      "mode": "100644",
+      "bytes": 3747,
+      "lines": 56,
+      "sha256": "9fefe75e6977a548ef257e1497f2fbdc8b12252e04dccd8567b6537c13e04bdd",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-account-windows-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-adapter-plan-2026-10-02.md",
+      "archivePath": "docs/railgun-adapter-plan-2026-10-02.md",
+      "gitBlob": "a26fd199bfc26e471d0bc25ae41a3e6afa7dad97",
+      "mode": "100644",
+      "bytes": 14346,
+      "lines": 62,
+      "sha256": "91bece98a5f23928e4267890c3981690eaba8f9a33335df9ab9f84109623648f",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-adapter-plan-2026-10-02.md"
+    },
+    {
+      "sourcePath": "docs/railgun-artifacts-proofs-2026-10-02.md",
+      "archivePath": "docs/railgun-artifacts-proofs-2026-10-02.md",
+      "gitBlob": "f46589263d8489f8021e142d68a758ed63820307",
+      "mode": "100644",
+      "bytes": 8162,
+      "lines": 46,
+      "sha256": "36870ffd81df78be863e7c9e6ad159799d7ca5ba8bc7b2f5aefe0d43af35979b",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-artifacts-proofs-2026-10-02.md"
+    },
+    {
+      "sourcePath": "docs/railgun-attempted-output-recovery-2026-10-04.md",
+      "archivePath": "docs/railgun-attempted-output-recovery-2026-10-04.md",
+      "gitBlob": "284468f5815dab8d9a9fe73493e888af87ec1d14",
+      "mode": "100644",
+      "bytes": 9598,
+      "lines": 137,
+      "sha256": "76cf778db9958ae7c28932a1bdd4e6cf4286b22dd1ea2233f238d6c5246e33f0",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-attempted-output-recovery-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-capsule-handoff-2026-10-03.md",
+      "archivePath": "docs/railgun-capsule-handoff-2026-10-03.md",
+      "gitBlob": "820de44676a7098983266a2ea12750dff438cd67",
+      "mode": "100644",
+      "bytes": 3506,
+      "lines": 55,
+      "sha256": "e6c610c917f8f51da9ca88a865665a67a7338d44a612c79d9f6637cc4705d4d1",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-capsule-handoff-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-capsule-package-2026-10-07.md",
+      "archivePath": "docs/railgun-capsule-package-2026-10-07.md",
+      "gitBlob": "1f4d763beb6e661e9f0ef471206ce94dc03b29de",
+      "mode": "100644",
+      "bytes": 5988,
+      "lines": 97,
+      "sha256": "fa3f9aaa1dfda38b018c3e28c0b0c0a566ea83f782a33dc1122ad8163e8bc069",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-capsule-package-2026-10-07.md"
+    },
+    {
+      "sourcePath": "docs/railgun-capsule-storage-2026-10-03.md",
+      "archivePath": "docs/railgun-capsule-storage-2026-10-03.md",
+      "gitBlob": "786e7c7403da588c8bbf34b533f191b3b4997961",
+      "mode": "100644",
+      "bytes": 5585,
+      "lines": 87,
+      "sha256": "9a8a18e9e28b683f7ba1ca4ca97673e5de10b70ac049f195edd86185e82d4ac0",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-capsule-storage-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-cold-submission-2026-10-05.md",
+      "archivePath": "docs/railgun-cold-submission-2026-10-05.md",
+      "gitBlob": "6af94edd40d5d99f9fb6211c4a0bcec34ad02103",
+      "mode": "100644",
+      "bytes": 10579,
+      "lines": 159,
+      "sha256": "e7bddf602154b52f1f4cce2f637653f5a2e1a9f8efd5d861a01cb7adba670f25",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-cold-submission-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-cold-submission-latency-2026-10-07.md",
+      "archivePath": "docs/railgun-cold-submission-latency-2026-10-07.md",
+      "gitBlob": "ec6b938e0568626a2952cfa3bd77859ba92c8991",
+      "mode": "100644",
+      "bytes": 5983,
+      "lines": 86,
+      "sha256": "2bd44ab5fcd356d0112c2c4f1452b8fe1f92d335518360d9587069cde971503c",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-cold-submission-latency-2026-10-07.md"
+    },
+    {
+      "sourcePath": "docs/railgun-cold-submission-prerequisites-2026-10-05.md",
+      "archivePath": "docs/railgun-cold-submission-prerequisites-2026-10-05.md",
+      "gitBlob": "aa8a037ce4402b765b612eca2d8293dfc87ecb55",
+      "mode": "100644",
+      "bytes": 4834,
+      "lines": 75,
+      "sha256": "52774f2f54cb8a05a2de75612c578b8b9a76bbab13bfcdca1cb50e9db922cd62",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-cold-submission-prerequisites-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-combined-change-integration-2026-10-05.md",
+      "archivePath": "docs/railgun-combined-change-integration-2026-10-05.md",
+      "gitBlob": "283c3eeaca4497c1f49ecd2723348201559098c9",
+      "mode": "100644",
+      "bytes": 6554,
+      "lines": 93,
+      "sha256": "7479fbaa78b57945d5255436edae6f3ecaed39ab19fe4a6a64663abacee2b36b",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-combined-change-integration-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-combined-poi-2026-10-05.md",
+      "archivePath": "docs/railgun-combined-poi-2026-10-05.md",
+      "gitBlob": "85fffa47984ad61a0abb8afc728a698e1e625bc3",
+      "mode": "100644",
+      "bytes": 8548,
+      "lines": 132,
+      "sha256": "a96f95ed82d2eb56e5cd183f12dd14752f4b4beb68f667e08b9d61b3ff78dc3f",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-combined-poi-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-combined-poi-integration-2026-10-05.md",
+      "archivePath": "docs/railgun-combined-poi-integration-2026-10-05.md",
+      "gitBlob": "438ba7fa7fb56d6ced1390f3a7ee7d736833e649",
+      "mode": "100644",
+      "bytes": 11651,
+      "lines": 182,
+      "sha256": "0033c79e7d3890463cce49785a2a732f7fc92fa0c0cb8c106c5469bb50558cfa",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-combined-poi-integration-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-combined-second-spend-integration-2026-10-05.md",
+      "archivePath": "docs/railgun-combined-second-spend-integration-2026-10-05.md",
+      "gitBlob": "a34a6d75b316b36a40e922cf3acec72792232683",
+      "mode": "100644",
+      "bytes": 6321,
+      "lines": 93,
+      "sha256": "44de547d17af2fdaa3951677255d67b946c24ea43001580ac60ed26ab6a7f63d",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-combined-second-spend-integration-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-completed-snapshot-2026-10-04.md",
+      "archivePath": "docs/railgun-completed-snapshot-2026-10-04.md",
+      "gitBlob": "47c9fc22b91d63041601023466714bea39810e4b",
+      "mode": "100644",
+      "bytes": 12112,
+      "lines": 182,
+      "sha256": "5a1808aa4c8fe0e36cd1be3582b886d7b5af3dc8359c1d73ac9ce33b15cdba3a",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-completed-snapshot-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-completed-wallet-2026-10-05.md",
+      "archivePath": "docs/railgun-completed-wallet-2026-10-05.md",
+      "gitBlob": "1c6b788f6cd4f19a5c31e33c5dccb93f066374f0",
+      "mode": "100644",
+      "bytes": 8024,
+      "lines": 116,
+      "sha256": "aaa541675d5ddb787261dee9e010253b3a05892970976fee1093b9e2a35b2e06",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-completed-wallet-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-connected-change-restart-2026-10-05.md",
+      "archivePath": "docs/railgun-connected-change-restart-2026-10-05.md",
+      "gitBlob": "07efcaae052325f9be5973405cb23a9769ea40f8",
+      "mode": "100644",
+      "bytes": 7699,
+      "lines": 45,
+      "sha256": "0ffe973644ffeed97116f750195422eeeacc9c8899954ca0c62ec021fecefcfd",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-connected-change-restart-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-connected-restart-implementation-2026-10-05.md",
+      "archivePath": "docs/railgun-connected-restart-implementation-2026-10-05.md",
+      "gitBlob": "31001ff410b8d9beb1cb2039df0cdf272ba153eb",
+      "mode": "100644",
+      "bytes": 5370,
+      "lines": 29,
+      "sha256": "754505883fa7a99cd3369bcc1117ed00f8596980f7593acd07f9ac382ba472ae",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-connected-restart-implementation-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-coordinated-electron-2026-10-02.md",
+      "archivePath": "docs/railgun-coordinated-electron-2026-10-02.md",
+      "gitBlob": "196c90c982b4df3e9d7f3921b5758bc99785570c",
+      "mode": "100644",
+      "bytes": 4169,
+      "lines": 59,
+      "sha256": "429f1e18f5638a79a5332f644cfa27bde820cf4488118efa4d0b22b8594bd734",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-coordinated-electron-2026-10-02.md"
+    },
+    {
+      "sourcePath": "docs/railgun-coordinated-replay-2026-10-02.md",
+      "archivePath": "docs/railgun-coordinated-replay-2026-10-02.md",
+      "gitBlob": "6478be78041c031e74ac0aefac9483a4411f9b17",
+      "mode": "100644",
+      "bytes": 4504,
+      "lines": 66,
+      "sha256": "cc49ca4b6fbc7c56e0af85e806e393784a5c5fa230f671c55e21560c3b885a40",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-coordinated-replay-2026-10-02.md"
+    },
+    {
+      "sourcePath": "docs/railgun-creator-merged-qualification-2026-10-05.md",
+      "archivePath": "docs/railgun-creator-merged-qualification-2026-10-05.md",
+      "gitBlob": "f34ae44ed0b2a63b16a1e7a2c16e5a59aa2b8215",
+      "mode": "100644",
+      "bytes": 3429,
+      "lines": 52,
+      "sha256": "1d9eee36dac287ba0a56621f7a853a1434c83821937589eb5ada61271b782a72",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-creator-merged-qualification-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-durable-combined-poi-plan-2026-10-05.md",
+      "archivePath": "docs/railgun-durable-combined-poi-plan-2026-10-05.md",
+      "gitBlob": "798e47f36ee66b82d43141465067a4bcb434d74c",
+      "mode": "100644",
+      "bytes": 22197,
+      "lines": 89,
+      "sha256": "09f7e424743c8ba7b3e6528293fab63aaee6a1e1550d94fe4084ac18c3f78b70",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-durable-combined-poi-plan-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-electron-supervision-2026-10-02.md",
+      "archivePath": "docs/railgun-electron-supervision-2026-10-02.md",
+      "gitBlob": "312e9c3f3ebb82658114299f259e9af6a4cbb109",
+      "mode": "100644",
+      "bytes": 10076,
+      "lines": 42,
+      "sha256": "881d68ef2361e79665c79592f53bc980f81ee0adca66ffa222be0fc81e24d937",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-electron-supervision-2026-10-02.md"
+    },
+    {
+      "sourcePath": "docs/railgun-engine-qualification-2026-10-02.md",
+      "archivePath": "docs/railgun-engine-qualification-2026-10-02.md",
+      "gitBlob": "6d4c2eda902569138c5a775098be3f924a746d66",
+      "mode": "100644",
+      "bytes": 11348,
+      "lines": 50,
+      "sha256": "b367ff34f3552913968d78cc1067618cd7788062a7520b424d82c0b91758cdaa",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-engine-qualification-2026-10-02.md"
+    },
+    {
+      "sourcePath": "docs/railgun-enrolled-source-2026-10-03.md",
+      "archivePath": "docs/railgun-enrolled-source-2026-10-03.md",
+      "gitBlob": "ec2eed22926d1243b9c101cff50de2e3c380ba67",
+      "mode": "100644",
+      "bytes": 3113,
+      "lines": 45,
+      "sha256": "a1b74dcd3b2fdcd6b0a327a582aba382b3dd65e77e25762d810ff4450e57935b",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-enrolled-source-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-enrolled-submission-2026-10-03.md",
+      "archivePath": "docs/railgun-enrolled-submission-2026-10-03.md",
+      "gitBlob": "079f9b46a80e4ffdfb050c71aa788c01448352b6",
+      "mode": "100644",
+      "bytes": 4636,
+      "lines": 67,
+      "sha256": "c873ab8fe378c7415ae63c6fadccb92363b362de310c81d73e6cb82c061af3d5",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-enrolled-submission-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-enrollment-2026-10-03.md",
+      "archivePath": "docs/railgun-enrollment-2026-10-03.md",
+      "gitBlob": "f356054d885141eeff2231f96043ac77b23a998a",
+      "mode": "100644",
+      "bytes": 6486,
+      "lines": 102,
+      "sha256": "2757d61546c42b5a532b927711325741e2497ab83803275aca1b04c7816c7049",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-enrollment-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-existing-journal-reader-2026-10-05.md",
+      "archivePath": "docs/railgun-existing-journal-reader-2026-10-05.md",
+      "gitBlob": "6633cf26e7c00789d068d047d57a19fe984a9962",
+      "mode": "100644",
+      "bytes": 3784,
+      "lines": 58,
+      "sha256": "54297436cd255b52c8b4fb00ef74a2e2e2b99da459b405bf92e1832759df4922",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-existing-journal-reader-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-extraction-status-2026-10-07.md",
+      "archivePath": "docs/railgun-extraction-status-2026-10-07.md",
+      "gitBlob": "9dc3de37cf6b3ffc135620967f4d2e9488fe03cd",
+      "mode": "100644",
+      "bytes": 3235,
+      "lines": 9,
+      "sha256": "adc7f44a0bc4307ec0d04b0723d16a4748bb1b4a4db0475b1c968e2fda4fd470",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-extraction-status-2026-10-07.md"
+    },
+    {
+      "sourcePath": "docs/railgun-foreign-recipient-2026-10-06.md",
+      "archivePath": "docs/railgun-foreign-recipient-2026-10-06.md",
+      "gitBlob": "8e4410f0cde82a6cb993c1babebb63760cf9abf9",
+      "mode": "100644",
+      "bytes": 11198,
+      "lines": 184,
+      "sha256": "9f4db5ec445b749bd87fd5840997ea9617494121ff4648eed14007ea8b40c9ba",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-foreign-recipient-2026-10-06.md"
+    },
+    {
+      "sourcePath": "docs/railgun-frontier-2026-10-02.md",
+      "archivePath": "docs/railgun-frontier-2026-10-02.md",
+      "gitBlob": "aff434169473a14ac9fdbde661a9aff0d418cacd",
+      "mode": "100644",
+      "bytes": 13756,
+      "lines": 62,
+      "sha256": "055d8c5cc79c4be2089ec31c12b3d83d6303efcc494eb5276126903fea068790",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-frontier-2026-10-02.md"
+    },
+    {
+      "sourcePath": "docs/railgun-funded-qualification-2026-10-03.md",
+      "archivePath": "docs/railgun-funded-qualification-2026-10-03.md",
+      "gitBlob": "68677d5dd80e68fa8713542009bd176f236eec81",
+      "mode": "100644",
+      "bytes": 6828,
+      "lines": 91,
+      "sha256": "33593472c2e0b9722b1890c44918b1b73264d662161389c035531f0db268bb6b",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-funded-qualification-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-independent-prover-2026-10-03.md",
+      "archivePath": "docs/railgun-independent-prover-2026-10-03.md",
+      "gitBlob": "fc8755b1efe7704a00efce1f7f6cf9a980f6eabe",
+      "mode": "100644",
+      "bytes": 7000,
+      "lines": 105,
+      "sha256": "377c91fc0fb7e7337c3175d65f704bc6cb41c192b565ee156a05b2b350ad67d0",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-independent-prover-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-kohaku-contract-2026-10-05.md",
+      "archivePath": "docs/railgun-kohaku-contract-2026-10-05.md",
+      "gitBlob": "e7c275a1f25d7152eec17c5d76fdc5e9b94445c3",
+      "mode": "100644",
+      "bytes": 8786,
+      "lines": 49,
+      "sha256": "65f817ce56bc9029e3fe5ce0ff1fb6b2acbb4aab9d32f7a8685f60ef60a924fa",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-kohaku-contract-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-kohaku-node-prototype-2026-10-06.md",
+      "archivePath": "docs/railgun-kohaku-node-prototype-2026-10-06.md",
+      "gitBlob": "8596481a972b7309e30b1743e4db9609d3e24f7c",
+      "mode": "100644",
+      "bytes": 9091,
+      "lines": 52,
+      "sha256": "0d913f3fa1bae670e703b8281b9325e476716bab9e939bf1ffcb23d81b6de786",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-kohaku-node-prototype-2026-10-06.md"
+    },
+    {
+      "sourcePath": "docs/railgun-kohaku-operation-dispatch-2026-10-06.md",
+      "archivePath": "docs/railgun-kohaku-operation-dispatch-2026-10-06.md",
+      "gitBlob": "d0f6193b695f96f6edf5a947a5e745fa9e76b255",
+      "mode": "100644",
+      "bytes": 5733,
+      "lines": 29,
+      "sha256": "088e7bf2233f4f17bf26d0b0e1ff54ad3f3a9c2efe6018cf41bdc64e4f68e8b4",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-kohaku-operation-dispatch-2026-10-06.md"
+    },
+    {
+      "sourcePath": "docs/railgun-kohaku-partial-facade-2026-10-05.md",
+      "archivePath": "docs/railgun-kohaku-partial-facade-2026-10-05.md",
+      "gitBlob": "1047db13c311f2ef4ae25c3ae33ba02ff4d62e8a",
+      "mode": "100644",
+      "bytes": 8962,
+      "lines": 44,
+      "sha256": "66bae5db93ee3341df58eff1b09f5832897a6f7788aae9015c1c5695ec2063a3",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-kohaku-partial-facade-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-kohaku-private-adapter-2026-10-06.md",
+      "archivePath": "docs/railgun-kohaku-private-adapter-2026-10-06.md",
+      "gitBlob": "dc2cb52d60ef7cc135ba8a358de654caa830e610",
+      "mode": "100644",
+      "bytes": 11189,
+      "lines": 57,
+      "sha256": "fe49b67d5b8b6ae13390272acbad96a4d1d24c6fca97af2dd3979fb2ae489aab",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-kohaku-private-adapter-2026-10-06.md"
+    },
+    {
+      "sourcePath": "docs/railgun-kohaku-private-integration-2026-10-04.md",
+      "archivePath": "docs/railgun-kohaku-private-integration-2026-10-04.md",
+      "gitBlob": "f7d2028428bd9a7afd23b7aea284ad087289d862",
+      "mode": "100644",
+      "bytes": 13306,
+      "lines": 188,
+      "sha256": "b5935ced21a401ec3ad82c3253f6c5443eb8f59331dce572189f99b8b95d2539",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-kohaku-private-integration-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-kohaku-public-adapter-2026-10-06.md",
+      "archivePath": "docs/railgun-kohaku-public-adapter-2026-10-06.md",
+      "gitBlob": "7ed4d647fbf8756ebe655bb2b8761fdec7404462",
+      "mode": "100644",
+      "bytes": 8883,
+      "lines": 49,
+      "sha256": "b82e54a972a7804c1248eaa20bdcfd2e6d787434cac18a39174f0ee7749ac3ca",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-kohaku-public-adapter-2026-10-06.md"
+    },
+    {
+      "sourcePath": "docs/railgun-kohaku-public-integration-2026-10-04.md",
+      "archivePath": "docs/railgun-kohaku-public-integration-2026-10-04.md",
+      "gitBlob": "74c1ec2ca5d20cb25733a5742fdbc9bf5e8befa4",
+      "mode": "100644",
+      "bytes": 10843,
+      "lines": 155,
+      "sha256": "2b900fefc96326c78a8eae5a88e65a2361495f39d927f038f7f335f602aebcfc",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-kohaku-public-integration-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-kohaku-public-node-prototype-2026-10-06.md",
+      "archivePath": "docs/railgun-kohaku-public-node-prototype-2026-10-06.md",
+      "gitBlob": "cec133e93d0ced202ed6d8f71283b2e52591352c",
+      "mode": "100644",
+      "bytes": 7985,
+      "lines": 47,
+      "sha256": "8c9fcd3f1eb6d948610d692723f4140f1e0759aedcea88dde094b003b2303c43",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-kohaku-public-node-prototype-2026-10-06.md"
+    },
+    {
+      "sourcePath": "docs/railgun-kohaku-public-shield-plan-2026-10-04.md",
+      "archivePath": "docs/railgun-kohaku-public-shield-plan-2026-10-04.md",
+      "gitBlob": "472dc8eeb6560ac554b92593138f572b8cf018b4",
+      "mode": "100644",
+      "bytes": 15896,
+      "lines": 232,
+      "sha256": "f4c5bdd892bd76db6a8930b9891df840d1dc337c40039e33c69476b6ca1283e3",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-kohaku-public-shield-plan-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-kohaku-read-dispatch-2026-10-05.md",
+      "archivePath": "docs/railgun-kohaku-read-dispatch-2026-10-05.md",
+      "gitBlob": "fd66ff225ae5f4fc608deb957fd4823e07fe6dbe",
+      "mode": "100644",
+      "bytes": 4957,
+      "lines": 80,
+      "sha256": "db96e383ba65fa2c1130d9871823b650eb676538e728ff60613fd8247a30d9da",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-kohaku-read-dispatch-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-kohaku-reads-2026-10-03.md",
+      "archivePath": "docs/railgun-kohaku-reads-2026-10-03.md",
+      "gitBlob": "af014d539efc3ffe28b0488147864d68cd0733d7",
+      "mode": "100644",
+      "bytes": 5819,
+      "lines": 89,
+      "sha256": "307ccdc167d6d812f6f0fa84683e90cc7082ce9c152cafe8112e9d447cd64777",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-kohaku-reads-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-kohaku-snapshot-adapter-2026-10-05.md",
+      "archivePath": "docs/railgun-kohaku-snapshot-adapter-2026-10-05.md",
+      "gitBlob": "5f90bd252440a0ed76badbeee96fc3ed0290c63e",
+      "mode": "100644",
+      "bytes": 4509,
+      "lines": 71,
+      "sha256": "7ef09dfb1c10cfbb18b3db060aa9d3f961afc95a0ac3dc215873571585fc1b0d",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-kohaku-snapshot-adapter-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-kohaku-snapshot-qualification-2026-10-06.md",
+      "archivePath": "docs/railgun-kohaku-snapshot-qualification-2026-10-06.md",
+      "gitBlob": "58051c7f333a3fb89cc0dad77dd94b7bea52135d",
+      "mode": "100644",
+      "bytes": 5317,
+      "lines": 83,
+      "sha256": "a74c5cea82b79c39fbfdf4857bc87856d5300b0132d9167863d8d43a17656192",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-kohaku-snapshot-qualification-2026-10-06.md"
+    },
+    {
+      "sourcePath": "docs/railgun-live-event-coverage-2026-10-03.md",
+      "archivePath": "docs/railgun-live-event-coverage-2026-10-03.md",
+      "gitBlob": "548bc4d92b325d0011760843fbf91a6e04df6942",
+      "mode": "100644",
+      "bytes": 2388,
+      "lines": 36,
+      "sha256": "064d1258c8547ac3339f7e4d3594ad2784ea67c1ce6c6f18466ea335aa7a781c",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-live-event-coverage-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-live-scan-2026-10-03.md",
+      "archivePath": "docs/railgun-live-scan-2026-10-03.md",
+      "gitBlob": "8a2a51a1fc2b2f407dbbbb2d23a9146faca8ef38",
+      "mode": "100644",
+      "bytes": 2084,
+      "lines": 33,
+      "sha256": "f7647547ff14657b3d492035377d43fa1e25c17ebc1a0b898daee245177b2ec7",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-live-scan-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-local-relay-review-2026-10-06.md",
+      "archivePath": "docs/railgun-local-relay-review-2026-10-06.md",
+      "gitBlob": "c020c8e04151c37b96367152b1cb81a0db0a10bc",
+      "mode": "100644",
+      "bytes": 5664,
+      "lines": 17,
+      "sha256": "881255498064848d56a9d634b06187eb5fbaa4d294c0f5e129e32ff4e514c318",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-local-relay-review-2026-10-06.md"
+    },
+    {
+      "sourcePath": "docs/railgun-local-relay-storage-2026-10-06.md",
+      "archivePath": "docs/railgun-local-relay-storage-2026-10-06.md",
+      "gitBlob": "ccc5868bf47a01cfc6a6cb5d4f728b7b1f644f73",
+      "mode": "100644",
+      "bytes": 12676,
+      "lines": 45,
+      "sha256": "f85718b5756b4aa92e7e8bbe7b42b82ccf8779a61e5792626132dd7c30d764d7",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-local-relay-storage-2026-10-06.md"
+    },
+    {
+      "sourcePath": "docs/railgun-membership-host-hardening-2026-10-04.md",
+      "archivePath": "docs/railgun-membership-host-hardening-2026-10-04.md",
+      "gitBlob": "26068d4304d4baabe426748f20777b2dd26fa87c",
+      "mode": "100644",
+      "bytes": 4558,
+      "lines": 68,
+      "sha256": "8958b3ac832a9233c3f808cd0a7a6a02154314cbd5cd2eb2f0972fb8052f6e42",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-membership-host-hardening-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-metadata-repair-continuation.md",
+      "archivePath": "docs/railgun-metadata-repair-continuation.md",
+      "gitBlob": "1acc4b15b03b8a20df97934be48fa7767f1bf01b",
+      "mode": "100644",
+      "bytes": 4078,
+      "lines": 73,
+      "sha256": "0a54209055bc652739da0aaf500c8073cc19c1f1036bdd92c92c9cf70bd61047",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-metadata-repair-continuation.md"
+    },
+    {
+      "sourcePath": "docs/railgun-note-provenance-2026-10-03.md",
+      "archivePath": "docs/railgun-note-provenance-2026-10-03.md",
+      "gitBlob": "28b6fa96eba3837bd81ea887bcd1a89137c7410f",
+      "mode": "100644",
+      "bytes": 5346,
+      "lines": 86,
+      "sha256": "eb5f1d550bfc22afad26da89abcbb85d066866fd7c20c3ce83dbc8dc7de9ccae",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-note-provenance-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-note-provenance-hardening-2026-10-04.md",
+      "archivePath": "docs/railgun-note-provenance-hardening-2026-10-04.md",
+      "gitBlob": "2a2c128b1f75706a4f21989afee59c580c869102",
+      "mode": "100644",
+      "bytes": 3836,
+      "lines": 61,
+      "sha256": "70016b289b689367f3dd16a8a1c61411bd98a5bba507fbe7d5cb5a94ffad49ef",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-note-provenance-hardening-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-note-txid-witness-2026-10-03.md",
+      "archivePath": "docs/railgun-note-txid-witness-2026-10-03.md",
+      "gitBlob": "111f8fccd48136c58992a32f3f9368fa47be37d8",
+      "mode": "100644",
+      "bytes": 5713,
+      "lines": 83,
+      "sha256": "42bbf346e34fceefddfeae9cd3381af8597065e2cee00c5b0409fd72d73889ec",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-note-txid-witness-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-own-broker-refusal-2026-10-04.md",
+      "archivePath": "docs/railgun-own-broker-refusal-2026-10-04.md",
+      "gitBlob": "01eb3c7afd0531e099636c778e0d5ffb12dde5ee",
+      "mode": "100644",
+      "bytes": 4439,
+      "lines": 64,
+      "sha256": "6985b5adbedafed1304d6970e2efe40a599b1f8fc08d341afe8a64611a48aeae",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-own-broker-refusal-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-own-operation-2026-10-03.md",
+      "archivePath": "docs/railgun-own-operation-2026-10-03.md",
+      "gitBlob": "1e5b53bf89cdb64753d0773fa43ef632fdeb4bbe",
+      "mode": "100644",
+      "bytes": 5830,
+      "lines": 88,
+      "sha256": "41a9e8198939c651693a5342472328acbde5f2c88f0f3139a05dc21a35206394",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-own-operation-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-own-poi-checks-2026-10-04.md",
+      "archivePath": "docs/railgun-own-poi-checks-2026-10-04.md",
+      "gitBlob": "dcfd9b86c0f6ebde33041ea6e4993624f395a4bb",
+      "mode": "100644",
+      "bytes": 9853,
+      "lines": 148,
+      "sha256": "82a5af599dca5366212fe27f350a012712a8e2606379e8aaebe407e3e9b1c8d7",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-own-poi-checks-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-own-poi-membership-2026-10-04.md",
+      "archivePath": "docs/railgun-own-poi-membership-2026-10-04.md",
+      "gitBlob": "318e527c307148e3552913905d5d217a4ce957c3",
+      "mode": "100644",
+      "bytes": 6457,
+      "lines": 98,
+      "sha256": "3d18af962b4e300b694669f824f6957c44a0449dd584ecedaaaf850de3dc9bc0",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-own-poi-membership-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-own-poi-proof-2026-10-04.md",
+      "archivePath": "docs/railgun-own-poi-proof-2026-10-04.md",
+      "gitBlob": "4881f78fe5a9a3fbed4e46af38a1e68355648ba5",
+      "mode": "100644",
+      "bytes": 7746,
+      "lines": 115,
+      "sha256": "0cef4e2cf21ed017c2b4a4894f4e963f5690bad1b7a0a855c3ca31907ec290c5",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-own-poi-proof-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-own-preflight-2026-10-04.md",
+      "archivePath": "docs/railgun-own-preflight-2026-10-04.md",
+      "gitBlob": "ed4a29b9b1921c429803dce4ebb3d99e4e8ac2b5",
+      "mode": "100644",
+      "bytes": 5273,
+      "lines": 82,
+      "sha256": "6fa4368a018ee441d1d8615554f91a9315e02136d41712036c02184c36d75322",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-own-preflight-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-own-receipt-2026-10-03.md",
+      "archivePath": "docs/railgun-own-receipt-2026-10-03.md",
+      "gitBlob": "faaf4b3171b0a2499f951572ea32501cf03ab362",
+      "mode": "100644",
+      "bytes": 4331,
+      "lines": 63,
+      "sha256": "76c2d78094860ac274e5812d457bea15f4e549db4225c9d338d270da4e3e4d74",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-own-receipt-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-own-recovery-window-2026-10-04.md",
+      "archivePath": "docs/railgun-own-recovery-window-2026-10-04.md",
+      "gitBlob": "5b8808484514dafe74fef1c9d12adf10358f79c3",
+      "mode": "100644",
+      "bytes": 5522,
+      "lines": 83,
+      "sha256": "1128bd1a295ce54b79db71447c48fe71e79c50cbe8d26e3868def17a623285db",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-own-recovery-window-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-own-selector-2026-10-03.md",
+      "archivePath": "docs/railgun-own-selector-2026-10-03.md",
+      "gitBlob": "708e5744b430de460621fa45167680e0f92cd0d6",
+      "mode": "100644",
+      "bytes": 2355,
+      "lines": 33,
+      "sha256": "8d2a7a564dee5c9bd8e44ef72e6c45d110d340ade835c20f4a537bc83fe2a1af",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-own-selector-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-own-source-2026-10-03.md",
+      "archivePath": "docs/railgun-own-source-2026-10-03.md",
+      "gitBlob": "58054ee85c02640bf1513514251fc228dc711714",
+      "mode": "100644",
+      "bytes": 7003,
+      "lines": 103,
+      "sha256": "fce4b2b03522a0b996117f7987d469f3e7850121d7bccebd9294c3d261140478",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-own-source-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-own-txid-2026-10-03.md",
+      "archivePath": "docs/railgun-own-txid-2026-10-03.md",
+      "gitBlob": "fd6425cc6f0d08a3537c58b53ed06fda435b503e",
+      "mode": "100644",
+      "bytes": 5896,
+      "lines": 91,
+      "sha256": "c30058ec3cf7089f6a2a5667d3db7a1b7de2d20cc9a594a9bd0d4c4c4c18a587",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-own-txid-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-own-witness-2026-10-03.md",
+      "archivePath": "docs/railgun-own-witness-2026-10-03.md",
+      "gitBlob": "ab1cf15a9673e8776d3ca16e5feef27564ae0a1b",
+      "mode": "100644",
+      "bytes": 4797,
+      "lines": 69,
+      "sha256": "68b89447b03cd04494cfd582f6a8d61469ae053ea1a57ca6b24f83244f2566e4",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-own-witness-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-owned-poi-2026-10-03.md",
+      "archivePath": "docs/railgun-owned-poi-2026-10-03.md",
+      "gitBlob": "61c515d0679f450471ab1ed633bafcf10e8ce0ee",
+      "mode": "100644",
+      "bytes": 5671,
+      "lines": 87,
+      "sha256": "ea9b9346bc3ef0d89ffd4f4552f8906bd89aa1ac80eb75b3f55cb5a78d713610",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-owned-poi-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-paged-storage-2026-10-02.md",
+      "archivePath": "docs/railgun-paged-storage-2026-10-02.md",
+      "gitBlob": "51c4ae8ebea1ff72489889003f6d5fa873405a18",
+      "mode": "100644",
+      "bytes": 8262,
+      "lines": 36,
+      "sha256": "c1da4633a8abfedc98d9add8c77ae6d180b3ff83557ebc0d1daa81e29ca7fb8c",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-paged-storage-2026-10-02.md"
+    },
+    {
+      "sourcePath": "docs/railgun-parity-plan-2026-10-04.md",
+      "archivePath": "docs/railgun-parity-plan-2026-10-04.md",
+      "gitBlob": "572b763da7872629212e99282a8c3e69e88acb2d",
+      "mode": "100644",
+      "bytes": 55169,
+      "lines": 614,
+      "sha256": "7fd5dd95476c594d1de93844a61a2df477e3c7c9efd88fe43b801bf6dff12038",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-parity-plan-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-partial-controller-2026-10-05.md",
+      "archivePath": "docs/railgun-partial-controller-2026-10-05.md",
+      "gitBlob": "2c49ead23da6332bf06b2bf92a9958f3fd4662c8",
+      "mode": "100644",
+      "bytes": 8710,
+      "lines": 128,
+      "sha256": "61d2fedd4227964e625e7b69c6629da1648d5a02ac0af144105741178fd98c1a",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-partial-controller-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-partial-creator-authentication-2026-10-05.md",
+      "archivePath": "docs/railgun-partial-creator-authentication-2026-10-05.md",
+      "gitBlob": "8f533d35a2023145ac32a1928782e70ed2cc9efd",
+      "mode": "100644",
+      "bytes": 7204,
+      "lines": 111,
+      "sha256": "b6623b4d19e7a90d232c48bf0e617a9d189fb59da48f8228fd6de5bdb40c82f9",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-partial-creator-authentication-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-partial-crypto-2026-10-04.md",
+      "archivePath": "docs/railgun-partial-crypto-2026-10-04.md",
+      "gitBlob": "2433ecdfd094d949f7359f637bc7e1bfbd8a2411",
+      "mode": "100644",
+      "bytes": 9196,
+      "lines": 137,
+      "sha256": "55bbc0c46ee20bca19d25f53c9a6527569277fb7b387eb9613156f7f79803988",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-partial-crypto-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-partial-receipt-2026-10-04.md",
+      "archivePath": "docs/railgun-partial-receipt-2026-10-04.md",
+      "gitBlob": "ee07e66a7af277b0782e1fc8a987f2af9d007147",
+      "mode": "100644",
+      "bytes": 7666,
+      "lines": 119,
+      "sha256": "f0303b4fc88fc5e8207144dfbfac27d192516d13017a6392fe4c7fb9e0205e78",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-partial-receipt-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-partial-receipt-bytecode-2026-10-04.md",
+      "archivePath": "docs/railgun-partial-receipt-bytecode-2026-10-04.md",
+      "gitBlob": "178d3303cc5571e13a15f6c17f62b9f1061e3f6d",
+      "mode": "100644",
+      "bytes": 16179,
+      "lines": 160,
+      "sha256": "685386e3d5d459e8877af5860c5428c812ed339b4b408447a3aac2154c1eb2cd",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-partial-receipt-bytecode-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-partial-structure-2026-10-04.md",
+      "archivePath": "docs/railgun-partial-structure-2026-10-04.md",
+      "gitBlob": "50074a215283149005f6ea1f29f7b903b951b179",
+      "mode": "100644",
+      "bytes": 8095,
+      "lines": 124,
+      "sha256": "409be9b412b2a8f2a87d087f09608a0bd7c31f1c4f1ba4c109bbc15453fc3094",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-partial-structure-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-partial-submission-2026-10-05.md",
+      "archivePath": "docs/railgun-partial-submission-2026-10-05.md",
+      "gitBlob": "6070de2d62dddcc1fd6df40a7fa765a77c352b13",
+      "mode": "100644",
+      "bytes": 7258,
+      "lines": 116,
+      "sha256": "994800f45dd816d80ad8a75a542ffe0ab2db17e504ea9e2dd97a6a5de46d6655",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-partial-submission-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-partial-transact-controller-2026-10-05.md",
+      "archivePath": "docs/railgun-partial-transact-controller-2026-10-05.md",
+      "gitBlob": "c38b18c43b14d20fe1816d61fb057718ed592300",
+      "mode": "100644",
+      "bytes": 6235,
+      "lines": 95,
+      "sha256": "114118a052b66f6c172fc0f923d9fb046afe2d4d9d8a9467c4e072b3a4bb99da",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-partial-transact-controller-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-partial-unshield-plan-2026-10-04.md",
+      "archivePath": "docs/railgun-partial-unshield-plan-2026-10-04.md",
+      "gitBlob": "757ba3915ed7ab39f7704bf51bb2c4506c51ace6",
+      "mode": "100644",
+      "bytes": 18050,
+      "lines": 256,
+      "sha256": "1f35933c3698848b1c5ce86cb26d426bfdc5e519ad36723fa421f77997144227",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-partial-unshield-plan-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-poi-account-drain-2026-10-04.md",
+      "archivePath": "docs/railgun-poi-account-drain-2026-10-04.md",
+      "gitBlob": "4d9c16071c9b4dbc24af56c9e3afd0e387b24cc0",
+      "mode": "100644",
+      "bytes": 5792,
+      "lines": 86,
+      "sha256": "56feb6f9a5902166823317d5de00f575664daf4c0c5c1769feba122565e2f399",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-poi-account-drain-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-poi-cold-validation-2026-10-04.md",
+      "archivePath": "docs/railgun-poi-cold-validation-2026-10-04.md",
+      "gitBlob": "bc92235b4c7a869d948f69de429b5aa519b88426",
+      "mode": "100644",
+      "bytes": 10688,
+      "lines": 165,
+      "sha256": "0d00d44a539728df391db3ae9bb31dceac9774219fce86bc2c624e93f47f5c1e",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-poi-cold-validation-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-poi-creator-2026-10-04.md",
+      "archivePath": "docs/railgun-poi-creator-2026-10-04.md",
+      "gitBlob": "a4bd2a255da5b0412afc5a72f54115135754fdd8",
+      "mode": "100644",
+      "bytes": 4056,
+      "lines": 57,
+      "sha256": "d1d1123e96b597f3fdd162b9c8a507642b3ebce19edf4da52a2865a888984cfb",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-poi-creator-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-poi-data-package-2026-10-07.md",
+      "archivePath": "docs/railgun-poi-data-package-2026-10-07.md",
+      "gitBlob": "d60374af6ffb0c00dec16692584c3069eb04681d",
+      "mode": "100644",
+      "bytes": 7097,
+      "lines": 107,
+      "sha256": "a77eaa3c144463ce901d2d22480c5916e6a55e9a539fb2a256e32c75e72f6608",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-poi-data-package-2026-10-07.md"
+    },
+    {
+      "sourcePath": "docs/railgun-poi-disclosure-plan-2026-10-04.md",
+      "archivePath": "docs/railgun-poi-disclosure-plan-2026-10-04.md",
+      "gitBlob": "2c11bdd208a3e2819aee2d1e1ddb4b73f254e02a",
+      "mode": "100644",
+      "bytes": 10705,
+      "lines": 161,
+      "sha256": "18fec19d4c16985664cd4a3993dfe32e25477ab336e7016ee3094d4d6e13661b",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-poi-disclosure-plan-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-poi-durable-attempt-2026-10-04.md",
+      "archivePath": "docs/railgun-poi-durable-attempt-2026-10-04.md",
+      "gitBlob": "fb3110f85f78848b169fa510b372334ea79e6b3f",
+      "mode": "100644",
+      "bytes": 8429,
+      "lines": 127,
+      "sha256": "78adc91f47bd6106a38f69640ec239fa2e6335731659c34329fa7b3295e777e7",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-poi-durable-attempt-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-poi-intent-store-2026-10-04.md",
+      "archivePath": "docs/railgun-poi-intent-store-2026-10-04.md",
+      "gitBlob": "3617ad636ef5bb2be7b22a6c908d936ad448b6fc",
+      "mode": "100644",
+      "bytes": 7041,
+      "lines": 107,
+      "sha256": "00dc3740703d93dc8c7848c1099badc08f6544b9ac812d8c54ef3970f88098e2",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-poi-intent-store-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-poi-output-recovery-2026-10-04.md",
+      "archivePath": "docs/railgun-poi-output-recovery-2026-10-04.md",
+      "gitBlob": "ec5250db3004f13ff50ddcd318be0bc0de89ca1d",
+      "mode": "100644",
+      "bytes": 9513,
+      "lines": 144,
+      "sha256": "e73bd2d7be6cbd4c3e46852a26305bfe308d41bc5ddaf0a9b876b9cda3ef0fdc",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-poi-output-recovery-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-poi-parent-context-2026-10-04.md",
+      "archivePath": "docs/railgun-poi-parent-context-2026-10-04.md",
+      "gitBlob": "8f6886711526a0cb2f3c4da4be4ac72bf45f74ba",
+      "mode": "100644",
+      "bytes": 3588,
+      "lines": 54,
+      "sha256": "fb79033a453d60948786010bffe6dd8f510f17b81eaf0d2bcad3e5988c4f3238",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-poi-parent-context-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-poi-preflight-2026-10-04.md",
+      "archivePath": "docs/railgun-poi-preflight-2026-10-04.md",
+      "gitBlob": "65a97403da05fd719a0aab75c4834475978b223d",
+      "mode": "100644",
+      "bytes": 4838,
+      "lines": 66,
+      "sha256": "84532fc633247bff0f7cc8316116a8a803474ddeb500105338e0b24b08c8ebc6",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-poi-preflight-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-poi-proof-host-hardening-2026-10-04.md",
+      "archivePath": "docs/railgun-poi-proof-host-hardening-2026-10-04.md",
+      "gitBlob": "63aaab0cb49f2a4fb5163ae98aa6896b6343c56b",
+      "mode": "100644",
+      "bytes": 6373,
+      "lines": 100,
+      "sha256": "02d8d8a75a6fa2d6ff689ba4bb2c8393e03e259daba7700b30a5963f553697f3",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-poi-proof-host-hardening-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-poi-prover-2026-10-04.md",
+      "archivePath": "docs/railgun-poi-prover-2026-10-04.md",
+      "gitBlob": "6580a5de807b2cec337ec2be8c915d491eb712b2",
+      "mode": "100644",
+      "bytes": 4060,
+      "lines": 62,
+      "sha256": "288065733f13687328b1459b0924482635a5ad213b3e8af315ab3297c8d6088c",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-poi-prover-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-poi-read-2026-10-03.md",
+      "archivePath": "docs/railgun-poi-read-2026-10-03.md",
+      "gitBlob": "1e8c99b1fc0402e19f70ba6146bdc91330f34fc3",
+      "mode": "100644",
+      "bytes": 5087,
+      "lines": 71,
+      "sha256": "ce86d9fc92f2f3bd64e29a0613b7ef1c3fa771581722178849d38554cd42f6bc",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-poi-read-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-poi-reconstruction-2026-10-04.md",
+      "archivePath": "docs/railgun-poi-reconstruction-2026-10-04.md",
+      "gitBlob": "a04481696a5ae07e775a653bce4233a1f9415769",
+      "mode": "100644",
+      "bytes": 5330,
+      "lines": 79,
+      "sha256": "e4c76cfaf6df7bf103c580872890547a17ff12bda9778eb72629b077c935380a",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-poi-reconstruction-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-poi-response-inspection-2026-10-04.md",
+      "archivePath": "docs/railgun-poi-response-inspection-2026-10-04.md",
+      "gitBlob": "f3d770b42f3edfcfb20d9c0bdff4ee43e8720cc6",
+      "mode": "100644",
+      "bytes": 7668,
+      "lines": 122,
+      "sha256": "81df4bcf04f4e3b9a7db566c40ec4a4d1db52b020a9c584383da7e8f2add505d",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-poi-response-inspection-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-poi-retained-history-2026-10-04.md",
+      "archivePath": "docs/railgun-poi-retained-history-2026-10-04.md",
+      "gitBlob": "4bbbed3882417327678016a04b7c532a691f3ca9",
+      "mode": "100644",
+      "bytes": 10998,
+      "lines": 166,
+      "sha256": "47e6481715f13a9d6aa8355cd2827555e65a6ca87e4c080822a1a5f26caf772f",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-poi-retained-history-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-poi-root-2026-10-04.md",
+      "archivePath": "docs/railgun-poi-root-2026-10-04.md",
+      "gitBlob": "79b2845abe14c87cf4befcd9cccf8abbb4987411",
+      "mode": "100644",
+      "bytes": 4177,
+      "lines": 62,
+      "sha256": "29e49069fdf7033cd52e04ca37dab39f282af03da4f79031acfd6c1ba337fea0",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-poi-root-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-poi-shield-selector-2026-10-04.md",
+      "archivePath": "docs/railgun-poi-shield-selector-2026-10-04.md",
+      "gitBlob": "0015ccbe0c8fb68f4bb8d8b8596032438a909050",
+      "mode": "100644",
+      "bytes": 3998,
+      "lines": 61,
+      "sha256": "4e247ad9d7ecc9016dc8554eeb07ff106381c390a0d671952661e70d10e95199",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-poi-shield-selector-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-poi-source-2026-10-04.md",
+      "archivePath": "docs/railgun-poi-source-2026-10-04.md",
+      "gitBlob": "df4ceea522cdafc11e7f8ba9622a5d795c2c0145",
+      "mode": "100644",
+      "bytes": 4640,
+      "lines": 63,
+      "sha256": "13b1e517362fe134683fb614efdf5a086bda8eedf7233ec75943f441900cceef",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-poi-source-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-poi-source-drain-2026-10-04.md",
+      "archivePath": "docs/railgun-poi-source-drain-2026-10-04.md",
+      "gitBlob": "056392f1aaa4d04ae322692f331435d4ecdc1d74",
+      "mode": "100644",
+      "bytes": 7778,
+      "lines": 118,
+      "sha256": "a56e1c5000160ed821f199a9c0105f8cd92ccbf52bb9b952969fd922e9d8941a",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-poi-source-drain-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-poi-submit-data-2026-10-04.md",
+      "archivePath": "docs/railgun-poi-submit-data-2026-10-04.md",
+      "gitBlob": "dff6705f8a06f4804414cb3dac83a220a621c134",
+      "mode": "100644",
+      "bytes": 3518,
+      "lines": 53,
+      "sha256": "04e1bac1e3b1bc2d46bdc87474504ca3846985700c2745b6a80bd3d89efe2040",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-poi-submit-data-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-poi-transact-reconstruction-2026-10-04.md",
+      "archivePath": "docs/railgun-poi-transact-reconstruction-2026-10-04.md",
+      "gitBlob": "5dc5740ce2fe6940b319952f3a170457972ecb67",
+      "mode": "100644",
+      "bytes": 4005,
+      "lines": 59,
+      "sha256": "efc83aa5cd8925dad09790115a4e24125e99caf4282d4b8c6fa2e099ec643f91",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-poi-transact-reconstruction-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-poi-verifier-2026-10-04.md",
+      "archivePath": "docs/railgun-poi-verifier-2026-10-04.md",
+      "gitBlob": "1115888c39c6e6fca55992fa703cefc62530e2c2",
+      "mode": "100644",
+      "bytes": 3696,
+      "lines": 54,
+      "sha256": "5e624502d2f60437cae421b0cf859a6818e252095e1de3ff12bd2c1095b6ec47",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-poi-verifier-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-poi-witness-2026-10-04.md",
+      "archivePath": "docs/railgun-poi-witness-2026-10-04.md",
+      "gitBlob": "7fddd024f965836cf1b337404da6043c41549a3b",
+      "mode": "100644",
+      "bytes": 4073,
+      "lines": 63,
+      "sha256": "74151730dabab22bbce09307637c3baa2bb8ec265570cd2384aa3326ca885edf",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-poi-witness-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-private-capsule-2026-10-03.md",
+      "archivePath": "docs/railgun-private-capsule-2026-10-03.md",
+      "gitBlob": "733907fbf1a5b23e7d1d3d5075b900759fc533fb",
+      "mode": "100644",
+      "bytes": 4690,
+      "lines": 71,
+      "sha256": "ee40c3e9359c10955855c2d5dc7e7c5b53c8a0cb011b7b84831cbcdc2bb78b4c",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-private-capsule-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-private-completion-2026-10-03.md",
+      "archivePath": "docs/railgun-private-completion-2026-10-03.md",
+      "gitBlob": "4433447075c3fdba1c6b26392d0908e52c99484b",
+      "mode": "100644",
+      "bytes": 5244,
+      "lines": 83,
+      "sha256": "e74f549604fdaaa5e06701c5dffeff8b7b9a455389617acbdbdf827713292f33",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-private-completion-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-private-controller-2026-10-03.md",
+      "archivePath": "docs/railgun-private-controller-2026-10-03.md",
+      "gitBlob": "a5bbfde18edafb0d6bf64bb294b580f7d361b549",
+      "mode": "100644",
+      "bytes": 5274,
+      "lines": 77,
+      "sha256": "ece14ee015a4c05a3527ee53a913c00821994a3d48875eed97819b74af536e5e",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-private-controller-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-private-creator-2026-10-03.md",
+      "archivePath": "docs/railgun-private-creator-2026-10-03.md",
+      "gitBlob": "ee3b15a7d013e590481c58e48655d543a055b370",
+      "mode": "100644",
+      "bytes": 6859,
+      "lines": 110,
+      "sha256": "917c0e60b2752da800dfb8f94e492005e9220080ad0ee410a899541987505820",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-private-creator-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-private-input-binding-2026-10-03.md",
+      "archivePath": "docs/railgun-private-input-binding-2026-10-03.md",
+      "gitBlob": "ed2356fde448b67088c724b2860095848dc2e380",
+      "mode": "100644",
+      "bytes": 7366,
+      "lines": 110,
+      "sha256": "638071da1d5eed9998539b4f1d659c99dcea81e7a79d67f8730c7b79107f177d",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-private-input-binding-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-private-operation-windows-2026-10-03.md",
+      "archivePath": "docs/railgun-private-operation-windows-2026-10-03.md",
+      "gitBlob": "66de636e6196f929351e4acc1196d375edba7090",
+      "mode": "100644",
+      "bytes": 7352,
+      "lines": 40,
+      "sha256": "660b1dd7b723d3e7548839a3941987394d82f5bf3f36b64b54e659628754ebbc",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-private-operation-windows-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-private-preflight-2026-10-03.md",
+      "archivePath": "docs/railgun-private-preflight-2026-10-03.md",
+      "gitBlob": "e76b87ff22c859815c33acb663bc650dcadaa8bd",
+      "mode": "100644",
+      "bytes": 3880,
+      "lines": 62,
+      "sha256": "1bf25a4b12454d666d4494c3e19738be61f5ac21dcfd1a2419890f1f94008f4f",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-private-preflight-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-private-preparation-2026-10-03.md",
+      "archivePath": "docs/railgun-private-preparation-2026-10-03.md",
+      "gitBlob": "eacf993ecfc568f7a336ce2809b2d1e2ef69ee02",
+      "mode": "100644",
+      "bytes": 5198,
+      "lines": 77,
+      "sha256": "58d7c63d27130b8769875fe12af8906d746df255203e213e9df61be21b906af1",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-private-preparation-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-private-receiver-2026-10-03.md",
+      "archivePath": "docs/railgun-private-receiver-2026-10-03.md",
+      "gitBlob": "3f9f4491e7b942836c20a966fd209441f0605e06",
+      "mode": "100644",
+      "bytes": 4582,
+      "lines": 71,
+      "sha256": "4326cb05e7adcde36b39bbb3296ce7fdfb6bd4940db5152a5281fdbc240fc22e",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-private-receiver-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-private-reservations-2026-10-03.md",
+      "archivePath": "docs/railgun-private-reservations-2026-10-03.md",
+      "gitBlob": "5583639e252708e3e9b2e4db47843ce5352b88af",
+      "mode": "100644",
+      "bytes": 3671,
+      "lines": 56,
+      "sha256": "919915b8cc8d75d8281b8029652808963d1f988acb813b3bdeb7f2bd305b72b6",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-private-reservations-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-private-rpc-transport-2026-10-06.md",
+      "archivePath": "docs/railgun-private-rpc-transport-2026-10-06.md",
+      "gitBlob": "99bb6aa6642af46772d22f0958a0afd5d342ac35",
+      "mode": "100644",
+      "bytes": 4927,
+      "lines": 24,
+      "sha256": "ce1cc44cf6ce9a60d4c57bea2f4d91ef805d6e348b33fecc2e084c1d7f422773",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-private-rpc-transport-2026-10-06.md"
+    },
+    {
+      "sourcePath": "docs/railgun-private-sign-proof-2026-10-03.md",
+      "archivePath": "docs/railgun-private-sign-proof-2026-10-03.md",
+      "gitBlob": "f7f176dd75d5ea9af29a76b5c9555990d7b186a3",
+      "mode": "100644",
+      "bytes": 6997,
+      "lines": 108,
+      "sha256": "2836a022a05329b5095c28deb5d235990d746228fec952c91d53ba60cdd409f1",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-private-sign-proof-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-private-submission-2026-10-03.md",
+      "archivePath": "docs/railgun-private-submission-2026-10-03.md",
+      "gitBlob": "b0b3b441fb16fd6b8bd41f5902cdeb5b7b5662ad",
+      "mode": "100644",
+      "bytes": 4537,
+      "lines": 70,
+      "sha256": "61c0c091c6ec81e5a5b9a3b23a80c8fc9cd83f5cdd6153739d5aa31e967e8c6a",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-private-submission-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-proof-receipt-2026-10-03.md",
+      "archivePath": "docs/railgun-proof-receipt-2026-10-03.md",
+      "gitBlob": "ce919d502d98e512bbc528d3fc639477846dd074",
+      "mode": "100644",
+      "bytes": 2577,
+      "lines": 38,
+      "sha256": "6cceda2955226c3dd4393b9ae0f41dc6c27302c3c874f73e2f18902e2f7698d4",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-proof-receipt-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-proof-recovery-2026-10-05.md",
+      "archivePath": "docs/railgun-proof-recovery-2026-10-05.md",
+      "gitBlob": "34c929bb1690f02da642a74fed202ab5a6775890",
+      "mode": "100644",
+      "bytes": 9998,
+      "lines": 138,
+      "sha256": "bef01570b90b94d4f9cc0fede50ca831573a1d7850d8984f78618cdcbc301369",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-proof-recovery-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-proof-restart-2026-10-05.md",
+      "archivePath": "docs/railgun-proof-restart-2026-10-05.md",
+      "gitBlob": "8befc92543060c8d25c69111ba19d0edadf2627a",
+      "mode": "100644",
+      "bytes": 9147,
+      "lines": 149,
+      "sha256": "22e905f7a560baa1879a713aa14a28804432b4d4f28381f5b5483a46e424496a",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-proof-restart-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-public-facade-cold-credit-2026-10-05.md",
+      "archivePath": "docs/railgun-public-facade-cold-credit-2026-10-05.md",
+      "gitBlob": "b3c3da21e382c9b74312d375345855cca6386e06",
+      "mode": "100644",
+      "bytes": 9469,
+      "lines": 145,
+      "sha256": "6fb82fb6814cd474ff347e0e61f432cff24d5e7b3c49b0fb4f5fa5d640fcac03",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-public-facade-cold-credit-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-public-facade-cold-credit-plan-2026-10-05.md",
+      "archivePath": "docs/railgun-public-facade-cold-credit-plan-2026-10-05.md",
+      "gitBlob": "473099d8f41f1f7073ca55d76da83a5f08c320aa",
+      "mode": "100644",
+      "bytes": 14392,
+      "lines": 50,
+      "sha256": "71089d6aae9bf9fadbadc42798cb774fb0d30cf06b47157f20617511cdda0011",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-public-facade-cold-credit-plan-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-public-generations-2026-10-03.md",
+      "archivePath": "docs/railgun-public-generations-2026-10-03.md",
+      "gitBlob": "5bcde433367772a521d37951428106d069e1e1f1",
+      "mode": "100644",
+      "bytes": 5919,
+      "lines": 86,
+      "sha256": "bbcbe610b7cca2d5fcbd95fb4618e3670b2f50bd0827356da974d0c1b027d0d4",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-public-generations-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-public-history-2026-10-02.md",
+      "archivePath": "docs/railgun-public-history-2026-10-02.md",
+      "gitBlob": "abc0b7e6475349b7bc9bc0c25cfd2e6721ffa586",
+      "mode": "100644",
+      "bytes": 12012,
+      "lines": 67,
+      "sha256": "6a8186b8b0833bde5c19ee0a6d239562f50b9287502eb1ee7c4b81dac6e26ccc",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-public-history-2026-10-02.md"
+    },
+    {
+      "sourcePath": "docs/railgun-public-services-2026-10-03.md",
+      "archivePath": "docs/railgun-public-services-2026-10-03.md",
+      "gitBlob": "ba33fcfdf9467acb5703817684262c8cfe2e3b54",
+      "mode": "100644",
+      "bytes": 10728,
+      "lines": 152,
+      "sha256": "c867073ab4a5355b14557dd3b588630ea3be97cc2b2c5ebe2d09abfde890b1d4",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-public-services-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-public-signature-replay-2026-10-05.md",
+      "archivePath": "docs/railgun-public-signature-replay-2026-10-05.md",
+      "gitBlob": "898fd56412863df71654fcb501e860ada798fec2",
+      "mode": "100644",
+      "bytes": 3710,
+      "lines": 53,
+      "sha256": "ba5590dd1b90914b7952db8a1231b5933436386d36124bae0e172b3f90e37328",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-public-signature-replay-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-read-data-and-origin-2026-10-05.md",
+      "archivePath": "docs/railgun-read-data-and-origin-2026-10-05.md",
+      "gitBlob": "5d97c0617f3da5f3f668b168db68296a0f5b3ebe",
+      "mode": "100644",
+      "bytes": 9633,
+      "lines": 149,
+      "sha256": "3428f5d7b22e5389e7bd2a07fb9d1b7272c3dcd192f7b7db29f7c236ac8a7a53",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-read-data-and-origin-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-readonly-wallet-windows-2026-10-03.md",
+      "archivePath": "docs/railgun-readonly-wallet-windows-2026-10-03.md",
+      "gitBlob": "7d212f5d342538de28e425020777b2bb3edd70af",
+      "mode": "100644",
+      "bytes": 6381,
+      "lines": 97,
+      "sha256": "aac770e5b5ca75ba885cd16b95a9a9e986c3a81c3be3d574ac5dafb9c42d3dc2",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-readonly-wallet-windows-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-receipt-destination-2026-10-04.md",
+      "archivePath": "docs/railgun-receipt-destination-2026-10-04.md",
+      "gitBlob": "63b7d1580edc1b677e80dc6a4ce1b226de100fc3",
+      "mode": "100644",
+      "bytes": 8818,
+      "lines": 119,
+      "sha256": "4fb2de08186862d7f038f76b600c206d42d92258f1772907ebbb9b2e33dfcfec",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-receipt-destination-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-recovery-companion-2026-10-06.md",
+      "archivePath": "docs/railgun-recovery-companion-2026-10-06.md",
+      "gitBlob": "19abc1a600751243732f1c9c0e9675389a913cfd",
+      "mode": "100644",
+      "bytes": 10201,
+      "lines": 50,
+      "sha256": "775fd8dded150882fa52ce99c084b99693d5243e63469d6d775e50f593e096b3",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-recovery-companion-2026-10-06.md"
+    },
+    {
+      "sourcePath": "docs/railgun-recovery-data-package-2026-10-07.md",
+      "archivePath": "docs/railgun-recovery-data-package-2026-10-07.md",
+      "gitBlob": "e8c48799552b32b90a936cc2c35193257668a634",
+      "mode": "100644",
+      "bytes": 3414,
+      "lines": 53,
+      "sha256": "a7ec47dbd5a34b3fda120c3cf78eed813e851d09e73f9e418ce62d9b0fb66e70",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-recovery-data-package-2026-10-07.md"
+    },
+    {
+      "sourcePath": "docs/railgun-relay-exact-review-2026-10-06.md",
+      "archivePath": "docs/railgun-relay-exact-review-2026-10-06.md",
+      "gitBlob": "70aa2eb5029e43d92fda7a53c545e4686ac78990",
+      "mode": "100644",
+      "bytes": 7226,
+      "lines": 116,
+      "sha256": "8a4f5ccb2c7571247411a16e0d7315e1e3e96c9d7230ce259114db5f1e33a24e",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-relay-exact-review-2026-10-06.md"
+    },
+    {
+      "sourcePath": "docs/railgun-relay-handoff-model-2026-10-06.md",
+      "archivePath": "docs/railgun-relay-handoff-model-2026-10-06.md",
+      "gitBlob": "85aaf9a076acbf76c47c9cd6c915511ffb06ee0a",
+      "mode": "100644",
+      "bytes": 5474,
+      "lines": 37,
+      "sha256": "5a6f5cb01e2415f8690caa227545d3c10843a01266f4e65be8bb21d872a1c2dd",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-relay-handoff-model-2026-10-06.md"
+    },
+    {
+      "sourcePath": "docs/railgun-relay-integration-plan-2026-10-06.md",
+      "archivePath": "docs/railgun-relay-integration-plan-2026-10-06.md",
+      "gitBlob": "4fcd83ff8b9a5656ce12eb86ede154f9f1c5d6ea",
+      "mode": "100644",
+      "bytes": 19525,
+      "lines": 56,
+      "sha256": "cf885ee382f2e0916d9a6965057cd3559c9790fd6236862a190763dccac0c72a",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-relay-integration-plan-2026-10-06.md"
+    },
+    {
+      "sourcePath": "docs/railgun-relay-key-admission-2026-10-06.md",
+      "archivePath": "docs/railgun-relay-key-admission-2026-10-06.md",
+      "gitBlob": "72ede0323fcbd2a40a417b523d2207db0bc41a48",
+      "mode": "100644",
+      "bytes": 3833,
+      "lines": 17,
+      "sha256": "a29d8701df3c6d791be583eae5cf26676c9453651f2b174807038cde0d4da446",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-relay-key-admission-2026-10-06.md"
+    },
+    {
+      "sourcePath": "docs/railgun-relay-proof-2026-10-06.md",
+      "archivePath": "docs/railgun-relay-proof-2026-10-06.md",
+      "gitBlob": "599eb879587ee182deff37fda07d7ea0125a5292",
+      "mode": "100644",
+      "bytes": 5219,
+      "lines": 34,
+      "sha256": "077a2cac72eeb74bc3e24037dc354e1b8c321687caad70d4eb792610a7887fc0",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-relay-proof-2026-10-06.md"
+    },
+    {
+      "sourcePath": "docs/railgun-relay-unsigned-preparation-2026-10-06.md",
+      "archivePath": "docs/railgun-relay-unsigned-preparation-2026-10-06.md",
+      "gitBlob": "c0573673221728089b362094502b542d84c37598",
+      "mode": "100644",
+      "bytes": 11828,
+      "lines": 189,
+      "sha256": "dcc2e3b23635c4e54f115016558b9c6970dfe571667e36c723d4564bb04292db",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-relay-unsigned-preparation-2026-10-06.md"
+    },
+    {
+      "sourcePath": "docs/railgun-relay-wire-2026-10-06.md",
+      "archivePath": "docs/railgun-relay-wire-2026-10-06.md",
+      "gitBlob": "a54b7c9523ea8e0e7cad9b969e7197abb3793113",
+      "mode": "100644",
+      "bytes": 4839,
+      "lines": 19,
+      "sha256": "a841be70f502849fe1dafcfec01d4c935982ce73e6a6466c9eaaaa864178b9eb",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-relay-wire-2026-10-06.md"
+    },
+    {
+      "sourcePath": "docs/railgun-relay-witness-recovery-2026-10-06.md",
+      "archivePath": "docs/railgun-relay-witness-recovery-2026-10-06.md",
+      "gitBlob": "dd381eb1540a681d12de689a341fad7525f188ce",
+      "mode": "100644",
+      "bytes": 10730,
+      "lines": 33,
+      "sha256": "7fa930654bd4c06368ca9594095934a6703fa7b61bfe7cc86b922e4ef13a85a7",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-relay-witness-recovery-2026-10-06.md"
+    },
+    {
+      "sourcePath": "docs/railgun-reservation-lifecycle-2026-10-03.md",
+      "archivePath": "docs/railgun-reservation-lifecycle-2026-10-03.md",
+      "gitBlob": "19588527afb6c5609d51be810b89fff2146ffa06",
+      "mode": "100644",
+      "bytes": 5535,
+      "lines": 85,
+      "sha256": "2178b21cf3f59f407bef8d18aa7fb012263568ad65476cf9c7ff52fc3a9605a0",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-reservation-lifecycle-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-retained-completed-source-2026-10-04.md",
+      "archivePath": "docs/railgun-retained-completed-source-2026-10-04.md",
+      "gitBlob": "c106cee425943e0757a58e658607a3ac96d13654",
+      "mode": "100644",
+      "bytes": 11346,
+      "lines": 179,
+      "sha256": "197d0e30d662d17265e83e4388b43ccd7b33cfe1dd6f5f54e0ceb984d5157845",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-retained-completed-source-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-retained-poi-sender-2026-10-04.md",
+      "archivePath": "docs/railgun-retained-poi-sender-2026-10-04.md",
+      "gitBlob": "e969fa88f0f7690ed1fda8c764b981e480dd4424",
+      "mode": "100644",
+      "bytes": 15392,
+      "lines": 228,
+      "sha256": "e39ecc6e676083b674a48b726af05827157dca5f0f12cec923fc4f6ca8833fcc",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-retained-poi-sender-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-retained-transact-integration-2026-10-04.md",
+      "archivePath": "docs/railgun-retained-transact-integration-2026-10-04.md",
+      "gitBlob": "16faaf6060837b78651ee6d56b4e6e88c5d35a34",
+      "mode": "100644",
+      "bytes": 19048,
+      "lines": 270,
+      "sha256": "e8e232b0c57aac46d83ce7b8f54103d72dc7163e4d098521ca7b53c21f189415",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-retained-transact-integration-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-scan-journal-2026-10-02.md",
+      "archivePath": "docs/railgun-scan-journal-2026-10-02.md",
+      "gitBlob": "d3aeb73e70f5358502cc4de25bf17e1567dcf380",
+      "mode": "100644",
+      "bytes": 6962,
+      "lines": 37,
+      "sha256": "1a4818196a6cf94f26178a6f20eccfad857ea3ee773edfd6a11232ce1db09751",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-scan-journal-2026-10-02.md"
+    },
+    {
+      "sourcePath": "docs/railgun-second-cold-submission-2026-10-05.md",
+      "archivePath": "docs/railgun-second-cold-submission-2026-10-05.md",
+      "gitBlob": "218bae49e0d3431f3b7f8723d4733097c5096e4b",
+      "mode": "100644",
+      "bytes": 10122,
+      "lines": 59,
+      "sha256": "d6ef0a01f08ac7c559b7ad4420afff949b992dd3ba34b72ebf749054187a3a11",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-second-cold-submission-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-second-proof-recovery-and-kohaku-2026-10-05.md",
+      "archivePath": "docs/railgun-second-proof-recovery-and-kohaku-2026-10-05.md",
+      "gitBlob": "26c4e7a366c557d1b33e87f26081d235a57cbee8",
+      "mode": "100644",
+      "bytes": 9359,
+      "lines": 55,
+      "sha256": "dfbaeeec976cc193ab8e6f16443d0fab93adfdf0e1d79ca9e6e19ca4316ac6ca",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-second-proof-recovery-and-kohaku-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-sepolia-deployment-2026-10-02.md",
+      "archivePath": "docs/railgun-sepolia-deployment-2026-10-02.md",
+      "gitBlob": "237bd340667f6e0caba5df4a9dc2b9061ec59316",
+      "mode": "100644",
+      "bytes": 3158,
+      "lines": 20,
+      "sha256": "7702f3c7d3221bb3eee8a6a1af8562f0357203da71c4ed6a13f647538c4eee17",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-sepolia-deployment-2026-10-02.md"
+    },
+    {
+      "sourcePath": "docs/railgun-session-qualification-2026-10-02.md",
+      "archivePath": "docs/railgun-session-qualification-2026-10-02.md",
+      "gitBlob": "6648a9baf7cc999cff01b812acbeaff7a9b3eb08",
+      "mode": "100644",
+      "bytes": 12562,
+      "lines": 57,
+      "sha256": "a2450c4a4e032e9b2e115b7d38c24a156bb34ae4342a299d1e4f66c0b88337c7",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-session-qualification-2026-10-02.md"
+    },
+    {
+      "sourcePath": "docs/railgun-shield-origin-2026-10-05.md",
+      "archivePath": "docs/railgun-shield-origin-2026-10-05.md",
+      "gitBlob": "68bdaf0d31877fd5c28432af7f6e1653f0914071",
+      "mode": "100644",
+      "bytes": 6597,
+      "lines": 104,
+      "sha256": "dde30dc9058b59bd57f1ae75c0e3c6ecda3e886e999c6e5f5a78ea367a006d92",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-shield-origin-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-shield-origin-diagnostic-2026-10-05.md",
+      "archivePath": "docs/railgun-shield-origin-diagnostic-2026-10-05.md",
+      "gitBlob": "035c0651d12e7f2b49718c85ce4c21d6b173c0cd",
+      "mode": "100644",
+      "bytes": 3480,
+      "lines": 54,
+      "sha256": "d2eb28dc64b61c7ae931ebd54e2536712eb73680c870a95d547fce40275b6612",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-shield-origin-diagnostic-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-shield-preparation-2026-10-03.md",
+      "archivePath": "docs/railgun-shield-preparation-2026-10-03.md",
+      "gitBlob": "77ba07223e3b82b96b6b5043e5d861a25e5327fa",
+      "mode": "100644",
+      "bytes": 5906,
+      "lines": 92,
+      "sha256": "401d12224fef8413468b896c9be35ef463a1ed687d93dc07cb4bca78e0a79c6a",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-shield-preparation-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-shield-prerequisites-2026-10-04.md",
+      "archivePath": "docs/railgun-shield-prerequisites-2026-10-04.md",
+      "gitBlob": "de6d100081b7707b6b641391603920a744cc6474",
+      "mode": "100644",
+      "bytes": 8934,
+      "lines": 128,
+      "sha256": "e384531e7d8ba9768d4d6fbbeee3479a15c8ad16ab601616a424484e574ef2f8",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-shield-prerequisites-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-shield-submission-2026-10-03.md",
+      "archivePath": "docs/railgun-shield-submission-2026-10-03.md",
+      "gitBlob": "a9b639ec0eca0fe04e31ed352bb30a6f4d2f72fb",
+      "mode": "100644",
+      "bytes": 7440,
+      "lines": 119,
+      "sha256": "8950919f10e03cd3dcbf54a5b463eeff25c98f9c8c490b67ed12ab60899ba46f",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-shield-submission-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-source-coordinator-2026-10-02.md",
+      "archivePath": "docs/railgun-source-coordinator-2026-10-02.md",
+      "gitBlob": "bee9ab3cfff89087e63517912b01cf624b350d41",
+      "mode": "100644",
+      "bytes": 7680,
+      "lines": 42,
+      "sha256": "fcea72114919ed809a6d407924e0493631c3c285191b4b33c2558bc027f44573",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-source-coordinator-2026-10-02.md"
+    },
+    {
+      "sourcePath": "docs/railgun-source-destination-2026-10-04.md",
+      "archivePath": "docs/railgun-source-destination-2026-10-04.md",
+      "gitBlob": "344db68b22aba4f075b147ce55ab87ab94d4454e",
+      "mode": "100644",
+      "bytes": 8793,
+      "lines": 126,
+      "sha256": "ceec7da15788f180a6f4591c1ed72daa8dc2ee3f8454c91777c9ae9166a2a44b",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-source-destination-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-storage-worker-2026-10-02.md",
+      "archivePath": "docs/railgun-storage-worker-2026-10-02.md",
+      "gitBlob": "21fd6736357fb97e6a7bcda94c76705250480470",
+      "mode": "100644",
+      "bytes": 10219,
+      "lines": 50,
+      "sha256": "095c04c9dbc524b6ddd97f9e63c4e6560385debad626f00be2766b5d55b5715d",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-storage-worker-2026-10-02.md"
+    },
+    {
+      "sourcePath": "docs/railgun-terminal-ingest-integration-2026-10-05.md",
+      "archivePath": "docs/railgun-terminal-ingest-integration-2026-10-05.md",
+      "gitBlob": "619d1d4a1358bb0083586342af63065e186f78d0",
+      "mode": "100644",
+      "bytes": 5185,
+      "lines": 49,
+      "sha256": "7a33454e9f6ab4233b08d434eecef68fba5177fe9e3295a47e3ca60d0bfb6ef5",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-terminal-ingest-integration-2026-10-05.md"
+    },
+    {
+      "sourcePath": "docs/railgun-tor-drain-2026-10-03.md",
+      "archivePath": "docs/railgun-tor-drain-2026-10-03.md",
+      "gitBlob": "cf1fc182896f3e0a49745d576224774a1f8abeb3",
+      "mode": "100644",
+      "bytes": 3725,
+      "lines": 56,
+      "sha256": "11f00f271bd29a4a0e5d937599443601c7266146c2f87bfffbc03dd752c77af5",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-tor-drain-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-tor-setup-deadlines-2026-10-07.md",
+      "archivePath": "docs/railgun-tor-setup-deadlines-2026-10-07.md",
+      "gitBlob": "470c092a4c08ee30de23485ad23d5cb3ab55f55c",
+      "mode": "100644",
+      "bytes": 11463,
+      "lines": 177,
+      "sha256": "40d5c8191d82238b45cc565dc3bb0d10a527456d82926d628e72ee8fadda03de",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-tor-setup-deadlines-2026-10-07.md"
+    },
+    {
+      "sourcePath": "docs/railgun-transact-controller-2026-10-03.md",
+      "archivePath": "docs/railgun-transact-controller-2026-10-03.md",
+      "gitBlob": "e598daf0f1d840b220e724097012b8a9f4c7018d",
+      "mode": "100644",
+      "bytes": 6182,
+      "lines": 92,
+      "sha256": "01179615f72de6f4fc2ca1dfc2368c036d79a0bc6e109185b83a9066ffa9e423",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-transact-controller-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-transact-creator-preflight-2026-10-04.md",
+      "archivePath": "docs/railgun-transact-creator-preflight-2026-10-04.md",
+      "gitBlob": "dbed1c8262a66c088ffed61d6dbe601926114238",
+      "mode": "100644",
+      "bytes": 11424,
+      "lines": 146,
+      "sha256": "e761f2bca78083a033ed8a807842eebe6db5c23ae60a8b23ea4bfac45137af3c",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-transact-creator-preflight-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-transact-membership-2026-10-04.md",
+      "archivePath": "docs/railgun-transact-membership-2026-10-04.md",
+      "gitBlob": "0994f7d987f4a2c7f6418d808335e27ac2bb84a9",
+      "mode": "100644",
+      "bytes": 12514,
+      "lines": 177,
+      "sha256": "5d6dacc87e76ed43134e6c6e487c9423a55f0a2b0deba7d6fd65a0c3ad414b26",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-transact-membership-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-transact-proof-2026-10-04.md",
+      "archivePath": "docs/railgun-transact-proof-2026-10-04.md",
+      "gitBlob": "016127cce15f0103049af156012fe9856ba8b4e4",
+      "mode": "100644",
+      "bytes": 11500,
+      "lines": 167,
+      "sha256": "3f6cc2d6e6b5c6b12ed0524edc29b347bd727078e2b67a6fe76a1ab7691a9b0f",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-transact-proof-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-transact-provenance-2026-10-03.md",
+      "archivePath": "docs/railgun-transact-provenance-2026-10-03.md",
+      "gitBlob": "b093bdba6f0bc0ebfa2e382111bb51917c9ea779",
+      "mode": "100644",
+      "bytes": 4963,
+      "lines": 77,
+      "sha256": "c9f71c8bd6577cca1803b18610f1713c8437f9ab19cccfaecfec0df28aaa02a2",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-transact-provenance-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-transact-selector-2026-10-04.md",
+      "archivePath": "docs/railgun-transact-selector-2026-10-04.md",
+      "gitBlob": "963506eea860f70b172f098c442c87cbe1a33e5e",
+      "mode": "100644",
+      "bytes": 11389,
+      "lines": 149,
+      "sha256": "c38d2da70e68d6a40ec66583748f92ed2358d314666dacf9f37d53e9ec37e430",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-transact-selector-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-transact-staging-2026-10-03.md",
+      "archivePath": "docs/railgun-transact-staging-2026-10-03.md",
+      "gitBlob": "701da8bfb78e5a9075d3ff375291b27ace1182a2",
+      "mode": "100644",
+      "bytes": 6254,
+      "lines": 102,
+      "sha256": "23b805ec50adb3ec3b0db46e06886c6ece62b23789408745fd09ba2f524af8eb",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-transact-staging-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-transact-submission-2026-10-03.md",
+      "archivePath": "docs/railgun-transact-submission-2026-10-03.md",
+      "gitBlob": "b3ff53901a9d727af8ed070645fc8b3673e34d03",
+      "mode": "100644",
+      "bytes": 3481,
+      "lines": 49,
+      "sha256": "7a95e9054588841ff4bb9c25d3d30cc2cb3fa86adc5ca1b9aeb19f5c9d4c6fe6",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-transact-submission-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-tree-transactions-2026-10-02.md",
+      "archivePath": "docs/railgun-tree-transactions-2026-10-02.md",
+      "gitBlob": "41965965c9e9d245edc804eaba3dd0d62b66e73b",
+      "mode": "100644",
+      "bytes": 9985,
+      "lines": 53,
+      "sha256": "514155b8b304e165a4b2779f8a750c4fb9eed32be15c23cc1ef849ec1bf1f993",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-tree-transactions-2026-10-02.md"
+    },
+    {
+      "sourcePath": "docs/railgun-txid-cancellation-2026-10-04.md",
+      "archivePath": "docs/railgun-txid-cancellation-2026-10-04.md",
+      "gitBlob": "6e4b878cf717ea4d03bda47cca84d28dd555c559",
+      "mode": "100644",
+      "bytes": 8981,
+      "lines": 130,
+      "sha256": "067ae01cd6a5f156a9c63735e247a400888cc719d30ffd6d222098cdbf41f23b",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-txid-cancellation-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-txid-coverage-2026-10-03.md",
+      "archivePath": "docs/railgun-txid-coverage-2026-10-03.md",
+      "gitBlob": "58923233c0e97a1d7c01a273dce18281363daa34",
+      "mode": "100644",
+      "bytes": 5003,
+      "lines": 69,
+      "sha256": "95f916d0402249bfb82b2ae5d4464ef37de05e8b1fc846d606cba6b93b4f3180",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-txid-coverage-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-txid-historical-root-2026-10-04.md",
+      "archivePath": "docs/railgun-txid-historical-root-2026-10-04.md",
+      "gitBlob": "fb34c844c1e3016b1cb516736832233e1d2bed41",
+      "mode": "100644",
+      "bytes": 12382,
+      "lines": 189,
+      "sha256": "8c4bafa0c4e4b21a9f78119c207607bf69b271870611e2cb06192b1bbb9ec864",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-txid-historical-root-2026-10-04.md"
+    },
+    {
+      "sourcePath": "docs/railgun-txid-journal-2026-10-03.md",
+      "archivePath": "docs/railgun-txid-journal-2026-10-03.md",
+      "gitBlob": "ad0a020daaf3419c6a7050cee3d2c9bdfccb79b0",
+      "mode": "100644",
+      "bytes": 4906,
+      "lines": 73,
+      "sha256": "f78798aa0dfaeafa7d0a756322b773b6d993ba1ca2f212aaee347d464664263f",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-txid-journal-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-txid-storage-2026-10-03.md",
+      "archivePath": "docs/railgun-txid-storage-2026-10-03.md",
+      "gitBlob": "3ee7d65ecc91f54987d731b74c9be5cfa96e3c91",
+      "mode": "100644",
+      "bytes": 5101,
+      "lines": 75,
+      "sha256": "400facb43b1674186ae5ea21ed9961fd14c962a693b5cac5075a1b299e407e4b",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-txid-storage-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-vault-identity-2026-10-03.md",
+      "archivePath": "docs/railgun-vault-identity-2026-10-03.md",
+      "gitBlob": "69540422e106e61abbaaea3abc54e2ea9ea9369b",
+      "mode": "100644",
+      "bytes": 9318,
+      "lines": 138,
+      "sha256": "c6e51d80f2a2ba27f5095b5eb3e8278fcafec64c8495f24264f2a33b01bd3a01",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-vault-identity-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-wallet-checkpoints-2026-10-02.md",
+      "archivePath": "docs/railgun-wallet-checkpoints-2026-10-02.md",
+      "gitBlob": "51fa131a0ffb6321d9ccd6e527626d5ef603a056",
+      "mode": "100644",
+      "bytes": 8830,
+      "lines": 49,
+      "sha256": "3754c0d927da36d7c0f24abe61095071f46967f5606a841c610f04575e50cdd0",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-wallet-checkpoints-2026-10-02.md"
+    },
+    {
+      "sourcePath": "docs/railgun-wallet-notes-2026-10-02.md",
+      "archivePath": "docs/railgun-wallet-notes-2026-10-02.md",
+      "gitBlob": "f49a6f5038b2f065e7066cd866e651857b5e96c2",
+      "mode": "100644",
+      "bytes": 4977,
+      "lines": 72,
+      "sha256": "ba9665df567882595c84e06c5d74a932d0194bbe4f7aa9b6405213304d731174",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-wallet-notes-2026-10-02.md"
+    },
+    {
+      "sourcePath": "docs/railgun-wallet-public-binding-2026-10-03.md",
+      "archivePath": "docs/railgun-wallet-public-binding-2026-10-03.md",
+      "gitBlob": "79c3b05d671a4449f857e6431de1832b9ba8cf6f",
+      "mode": "100644",
+      "bytes": 3522,
+      "lines": 48,
+      "sha256": "9b2461656e912f4e6fac73d4b1e1646a1bd48ff9536b3494c7d8afd0ad023b1d",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-wallet-public-binding-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-wallet-retirement-2026-10-03.md",
+      "archivePath": "docs/railgun-wallet-retirement-2026-10-03.md",
+      "gitBlob": "e5ac9127930c291b125c3e880f59a2c995a735a0",
+      "mode": "100644",
+      "bytes": 3163,
+      "lines": 48,
+      "sha256": "7cf811e2d9c1aafd3c5004b5f6d24d0f65b9bc4bfffe385c9711804335bf25bb",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-wallet-retirement-2026-10-03.md"
+    },
+    {
+      "sourcePath": "docs/railgun-wallet-snapshot-2026-10-02.md",
+      "archivePath": "docs/railgun-wallet-snapshot-2026-10-02.md",
+      "gitBlob": "41358e152d41a0fa2c0feec067ce89088b8b4de9",
+      "mode": "100644",
+      "bytes": 7271,
+      "lines": 106,
+      "sha256": "4255cf6d2cf1ee50bd8f4255716fd3bac4998d9c18199c1b162b9b164418969d",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-wallet-snapshot-2026-10-02.md"
+    },
+    {
+      "sourcePath": "docs/railgun-window-poi-2026-10-03.md",
+      "archivePath": "docs/railgun-window-poi-2026-10-03.md",
+      "gitBlob": "6e78ad992896cc6fccfe4a9d1af6d31f63c99236",
+      "mode": "100644",
+      "bytes": 4366,
+      "lines": 19,
+      "sha256": "ca1dce2931f2b79b3d3e61a2bbf4412a5790127155195dc03550818ff360ead7",
+      "originalContext": "https://github.com/solardev-xyz/freedom-browser/blob/354e9a9887dff106ec7fb62a24d7a9490d002d5e/docs/railgun-window-poi-2026-10-03.md"
+    }
+  ]
+}
