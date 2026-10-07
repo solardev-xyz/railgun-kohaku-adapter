@@ -399,3 +399,17 @@ with CJS/ESM host parity at 31 declaration names (22 values, nine types).
 The additional cases cover readonly signatures/recovery records, refused-versus-
 proved narrowing, false authority flags and inaccessible safe/root exports.
 The existing Kohaku bridge and its two diagnostic controls remain unchanged.
+
+### Trusted-host constraints of the 0.3.0 helpers
+
+The result helpers require the exact engine inventory and prover archive digests
+in the shipped manifests. A host using different builds is refused; changing
+Freedom's pinned engine or prover therefore requires a matching package release.
+`verifyRailgunForeignOutput` also requires the engine output's `walletSource` to
+be `freedomfixture`, the label set by Freedom's engine job. These are existing
+Freedom-host constraints, not generic Railgun engine compatibility.
+
+Recovery input includes absolute `proverArchive` and `artifactDirectory` paths,
+checked with the host platform's `path.isAbsolute`. They are trusted-host
+execution inputs, not portable data or authenticated runtime selection. The
+execution host must still authenticate and constrain the files before use.
