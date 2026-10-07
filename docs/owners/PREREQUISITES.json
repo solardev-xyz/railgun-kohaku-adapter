@@ -16,8 +16,8 @@
   },
   "newPrivateBindings": {
     "src/owners/host-bindings.js": {
-      "bytes": 5095,
-      "sha256": "3c03b0ac0bd0301b288f2e6e8258e30a2ab7df914a999f8d34f0c0cf034eef43"
+      "bytes": 5230,
+      "sha256": "bba3604d15cc0599772a863b6fd1b6458fd6c27de9e59ec0a910a89269738c40"
     },
     "src/owners/worker-host-bindings.js": {
       "bytes": 2223,

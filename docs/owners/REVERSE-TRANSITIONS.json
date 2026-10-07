@@ -1,0 +1,50 @@
+{
+  "sourceRevision": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+  "scope": "Only fixed public submitter metadata port; original local address/type checks remain.",
+  "changes": [
+    {
+      "file": "src/owners/railgun-kohaku-plugin.js",
+      "beforeSha256": "76b07b522abd52c1a9569b5837f125c90d086035cf29cdc2b0a419e5346a3ad4",
+      "afterSha256": "ecaa2cba7c99b71034395af4fc0602babd63e15773cab6e10bce04df4decba2f",
+      "replacements": [
+        {
+          "start": 3127,
+          "before": "  const { getWalletRecord, WALLET_TYPES } = require(\"./unbound/eoa-wallet-record-transition\");\n",
+          "after": ""
+        },
+        {
+          "start": 3127,
+          "before": "  const record = getWalletRecord(0);",
+          "after": "  const record = require('./host-bindings').submitter.readMetadata();"
+        },
+        {
+          "start": 3241,
+          "before": "record.type === WALLET_TYPES.MNEMONIC",
+          "after": "record.type === 'mnemonic'"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-shield-origin.js",
+      "beforeSha256": "5cd64c50565c22c61e4b7dcef286939a234046c787c56fed9558dc69538b6b47",
+      "afterSha256": "c507d496c0836ec37198d8611fdb1425ae9cbee5c55da65de3e52392de61c8b4",
+      "replacements": [
+        {
+          "start": 997,
+          "before": "const { getWalletRecord, WALLET_TYPES } = require(\"./unbound/eoa-wallet-record-transition\");\n",
+          "after": ""
+        },
+        {
+          "start": 1909,
+          "before": "  const record = getWalletRecord(0);",
+          "after": "  const record = require('./host-bindings').submitter.readMetadata();"
+        },
+        {
+          "start": 2023,
+          "before": "record.type === WALLET_TYPES.MNEMONIC",
+          "after": "record.type === 'mnemonic'"
+        }
+      ]
+    }
+  ]
+}

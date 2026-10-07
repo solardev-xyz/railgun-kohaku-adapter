@@ -1,0 +1,793 @@
+{
+  "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+  "stagedBasis": "31bd04dd",
+  "seeds": [
+    "src/main/wallet/railgun-kohaku-plugin.js",
+    "src/main/wallet/railgun-kohaku-recovery.js",
+    "src/main/wallet/railgun-kohaku-snapshot-host.js",
+    "src/main/wallet/railgun-leveldown.js",
+    "src/main/wallet/railgun-own-poi-checks.js",
+    "src/main/wallet/railgun-poi-creator-capture.js",
+    "src/main/wallet/railgun-poi-transact-selector.js",
+    "src/main/wallet/railgun-private-proof-recovery.js",
+    "src/main/wallet/railgun-private-recovery-history.js",
+    "src/main/wallet/railgun-private-selection.js",
+    "src/main/wallet/railgun-relay-review.js",
+    "src/main/wallet/railgun-shield-intent.js",
+    "src/main/wallet/railgun-shield-origin-data.js",
+    "src/main/wallet/railgun-shield-origin.js",
+    "src/main/wallet/railgun-shield-recovery.js",
+    "src/main/wallet/railgun-transact-recovery.js"
+  ],
+  "additions": [
+    {
+      "source": "src/main/wallet/railgun-kohaku-plugin.js",
+      "gitBlob": "eb185743c61f04452a7a98bdc4d588c15a7d1d86",
+      "sha256": "134d7883cb33699d5fb8acdbeea993400bf0fd52799f14cbdacb39544e88bf68",
+      "bytes": 40474,
+      "reason": "direct reverse-owner consumer"
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-recovery.js",
+      "gitBlob": "7c61572e7cfdfc9ee803bec450d5010e4b43107a",
+      "sha256": "2aff5c2216f18a5b2c5e746363a068b0232e8e5e02b4d05c26324bb822e97c57",
+      "bytes": 6300,
+      "reason": "direct reverse-owner consumer"
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-snapshot-host.js",
+      "gitBlob": "e82879b4b4009e602bbebb07368bf504f108e2a6",
+      "sha256": "20cafadcf900eef4180e6ca68e01caca73a84b858df4bcc802811c0b2064375f",
+      "bytes": 3122,
+      "reason": "direct reverse-owner consumer"
+    },
+    {
+      "source": "src/main/wallet/railgun-leveldown.js",
+      "gitBlob": "7f2c02a1e94cd6e0b18295b6c51286da1365a78d",
+      "sha256": "057e059ce0df9e8c4a1f0145dc25124911d55ff6237b9b80d4d4209027351613",
+      "bytes": 4948,
+      "reason": "direct reverse-owner consumer"
+    },
+    {
+      "source": "src/main/wallet/railgun-own-poi-checks.js",
+      "gitBlob": "c4b24213405de5705481cf70a804fd0d283a1907",
+      "sha256": "0efc42eea9dbd3eecc2d8d57efdd511d7eca98e0e0cf806547c5879980d065ce",
+      "bytes": 13461,
+      "reason": "direct reverse-owner consumer"
+    },
+    {
+      "source": "src/main/wallet/railgun-poi-creator-capture.js",
+      "gitBlob": "ad4d2621b0ef0052930a20ed7ed3be7954bac209",
+      "sha256": "9fbe8f93c5fc3d1beceedf3a8e32863395ea028076fe13eebab02fc2abcbd9b3",
+      "bytes": 4641,
+      "reason": "direct reverse-owner consumer"
+    },
+    {
+      "source": "src/main/wallet/railgun-poi-transact-selector.js",
+      "gitBlob": "8998186eee9a6d9d0b9db00d6b4ebc8e88cab606",
+      "sha256": "ab542107984f07caa3f963f8147c3df2065cbfc6898eb288d6792b36cb1ace7e",
+      "bytes": 376,
+      "reason": "direct reverse-owner consumer"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-proof-recovery.js",
+      "gitBlob": "1ae6bd2c986e962aa4a6472c1f3f368cc61a41d8",
+      "sha256": "6a00f6087e034f03696532300641ffca4847de0fc4b38cd6ecbae6ad24a7618e",
+      "bytes": 9841,
+      "reason": "direct reverse-owner consumer"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-recovery-history.js",
+      "gitBlob": "c3e0241cdc53254edb623a4eaaf27abd3cc3e455",
+      "sha256": "c2b791186b185b20861d4e3149c23b1fe90089e8f42b7a4957cec8d5ca3a5164",
+      "bytes": 6067,
+      "reason": "direct reverse-owner consumer"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-selection.js",
+      "gitBlob": "ddc9e2e128519bd64cbf285080477be4c515cfd8",
+      "sha256": "2f6cb6715216bb5bcbb9b16673d603315c273405c15e0b06bbd6b6f951625b97",
+      "bytes": 4528,
+      "reason": "direct reverse-owner consumer"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-review.js",
+      "gitBlob": "bb5e57cc173b320f7e26008ea092cf82f91aa963",
+      "sha256": "48a6b546b6a540735d2b8dac2a8de1e233548c8f395ea30a5230a062c39914d3",
+      "bytes": 9931,
+      "reason": "direct reverse-owner consumer"
+    },
+    {
+      "source": "src/main/wallet/railgun-shield-intent.js",
+      "gitBlob": "890a835fdffcb6ea020d37a623011bf988ca3e8c",
+      "sha256": "70c31bf2a77edae5820c9471b7bf0fbccc26f9ec5e4eee376f00cb4464689a55",
+      "bytes": 2133,
+      "reason": "direct reverse-owner consumer"
+    },
+    {
+      "source": "src/main/wallet/railgun-shield-origin-data.js",
+      "gitBlob": "157289bfa368824ebd1249b86b24b58196747da4",
+      "sha256": "5ed4a5fe4a27366f72484030b15ee436e4cfe4d3eb84aad46061c5d79cef17d3",
+      "bytes": 7768,
+      "reason": "direct reverse-owner consumer"
+    },
+    {
+      "source": "src/main/wallet/railgun-shield-origin.js",
+      "gitBlob": "02542f0ca75871ff740df4ef3b005088d259da9f",
+      "sha256": "f2a12e52735b11bccc0eeba7ddb833780bd0102a988c51e3c7984e5e25a5b8c8",
+      "bytes": 9962,
+      "reason": "direct reverse-owner consumer"
+    },
+    {
+      "source": "src/main/wallet/railgun-shield-recovery.js",
+      "gitBlob": "2820b22a4860b92352025cfe1b63bb333b68c1cf",
+      "sha256": "ace39cac93e8d120d329dcb6a2f01cafd89ae072f20cb6f930d9986732d99547",
+      "bytes": 10374,
+      "reason": "direct reverse-owner consumer"
+    },
+    {
+      "source": "src/main/wallet/railgun-transact-recovery.js",
+      "gitBlob": "a4c98b6369386b58282221d53205b5b81703219d",
+      "sha256": "80f353f748bfb1af820b73b6fdbc904685aae32c7a3e68156896e81736d973fb",
+      "bytes": 7640,
+      "reason": "direct reverse-owner consumer"
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-read-dispatch.js",
+      "gitBlob": "590be15cd49252426ff64906132ab8d0b6881114",
+      "sha256": "4eb9cbc6d8d75845392d806a9228603156eff75c45f30df068e7cb3208e5723e",
+      "bytes": 347,
+      "reason": "recursive Railgun relative dependency"
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-operation-dispatch.js",
+      "gitBlob": "304902dff9ff8922ea1265c4a7797c85d577137c",
+      "sha256": "22e4f84c12bdf60750582bdadc64d3d47e71f4e962f1b57a8cc793ef2eebaf95",
+      "bytes": 664,
+      "reason": "recursive Railgun relative dependency"
+    },
+    {
+      "source": "src/main/wallet/railgun-shield-resolution.js",
+      "gitBlob": "b1b83e371ae215c24d4827478290377a82335898",
+      "sha256": "3da55173dbfdadf4688e8b4a82b7eabab18a72d08e38f7e853b065bafa319e51",
+      "bytes": 2118,
+      "reason": "recursive Railgun relative dependency"
+    }
+  ],
+  "edges": [
+    {
+      "file": "src/main/wallet/railgun-kohaku-plugin.js",
+      "target": "src/main/wallet/railgun-kohaku-read-dispatch.js",
+      "request": "./railgun-kohaku-read-dispatch",
+      "line": 8
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-plugin.js",
+      "target": "src/main/wallet/railgun-kohaku-operation-dispatch.js",
+      "request": "./railgun-kohaku-operation-dispatch",
+      "line": 9
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-plugin.js",
+      "target": "src/main/wallet/railgun-account-enrollment.js",
+      "request": "./railgun-account-enrollment",
+      "line": 10
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-plugin.js",
+      "target": "src/main/wallet/railgun-identity.js",
+      "request": "./railgun-identity",
+      "line": 11
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-plugin.js",
+      "target": "src/main/wallet/railgun-account-wallet.js",
+      "request": "./railgun-account-wallet",
+      "line": 15
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-plugin.js",
+      "target": "src/main/wallet/railgun-account-public.js",
+      "request": "./railgun-account-public",
+      "line": 20
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-plugin.js",
+      "target": "src/main/wallet/railgun-private-preparation.js",
+      "request": "./railgun-private-preparation",
+      "line": 21
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-plugin.js",
+      "target": "src/main/wallet/railgun-transact-staging.js",
+      "request": "./railgun-transact-staging",
+      "line": 22
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-plugin.js",
+      "target": "src/main/wallet/railgun-private-operation.js",
+      "request": "./railgun-private-operation",
+      "line": 23
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-plugin.js",
+      "target": "src/main/wallet/railgun-private-submission.js",
+      "request": "./railgun-private-submission",
+      "line": 24
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-plugin.js",
+      "target": "src/main/wallet/railgun-shield-operation.js",
+      "request": "./railgun-shield-operation",
+      "line": 25
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-plugin.js",
+      "target": "src/main/wallet/railgun-shield-policy.js",
+      "request": "./railgun-shield-policy",
+      "line": 26
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-plugin.js",
+      "target": "src/main/networks/privacy-context.js",
+      "request": "../networks/privacy-context",
+      "line": 27
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-plugin.js",
+      "target": "src/main/networks/private-rpc.js",
+      "request": "../networks/private-rpc",
+      "line": 33
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-plugin.js",
+      "target": "src/main/networks/network-registry.js",
+      "request": "../networks/network-registry",
+      "line": 34
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-plugin.js",
+      "target": "src/main/wallet/railgun-shield-pins.json",
+      "request": "./railgun-shield-pins.json",
+      "line": 35
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-plugin.js",
+      "target": "src/main/identity-manager.js",
+      "request": "../identity-manager",
+      "line": 70
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-plugin.js",
+      "target": "src/main/wallet/signers.js",
+      "request": "./signers",
+      "line": 467
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-plugin.js",
+      "target": "src/main/wallet/signers.js",
+      "request": "./signers",
+      "line": 917
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-recovery.js",
+      "target": "src/main/wallet/railgun-account-enrollment.js",
+      "request": "./railgun-account-enrollment",
+      "line": 6
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-recovery.js",
+      "target": "src/main/wallet/railgun-identity.js",
+      "request": "./railgun-identity",
+      "line": 7
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-recovery.js",
+      "target": "src/main/wallet/railgun-account-public.js",
+      "request": "./railgun-account-public",
+      "line": 8
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-recovery.js",
+      "target": "src/main/wallet/railgun-private-recovery-history.js",
+      "request": "./railgun-private-recovery-history",
+      "line": 9
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-recovery.js",
+      "target": "src/main/wallet/railgun-private-proof-recovery.js",
+      "request": "./railgun-private-proof-recovery",
+      "line": 10
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-recovery.js",
+      "target": "src/main/wallet/railgun-private-submission.js",
+      "request": "./railgun-private-submission",
+      "line": 11
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-snapshot-host.js",
+      "target": "src/main/wallet/railgun-account-wallet.js",
+      "request": "./railgun-account-wallet",
+      "line": 6
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-snapshot-host.js",
+      "target": "src/main/wallet/railgun-account-public.js",
+      "request": "./railgun-account-public",
+      "line": 7
+    },
+    {
+      "file": "src/main/wallet/railgun-leveldown.js",
+      "target": "src/main/wallet/railgun-store-cursor.js",
+      "request": "./railgun-store-cursor",
+      "line": 2
+    },
+    {
+      "file": "src/main/wallet/railgun-own-poi-checks.js",
+      "target": "src/main/networks/privacy-context.js",
+      "request": "../networks/privacy-context",
+      "line": 7
+    },
+    {
+      "file": "src/main/wallet/railgun-own-poi-checks.js",
+      "target": "src/main/wallet/railgun-engine-runtime.js",
+      "request": "./railgun-engine-runtime",
+      "line": 8
+    },
+    {
+      "file": "src/main/wallet/railgun-own-poi-checks.js",
+      "target": "src/main/wallet/railgun-own-poi-proof.js",
+      "request": "./railgun-own-poi-proof",
+      "line": 9
+    },
+    {
+      "file": "src/main/wallet/railgun-own-poi-checks.js",
+      "target": "src/main/wallet/railgun-own-witness.js",
+      "request": "./railgun-own-witness",
+      "line": 10
+    },
+    {
+      "file": "src/main/wallet/railgun-own-poi-checks.js",
+      "target": "src/main/wallet/railgun-public-policy.js",
+      "request": "./railgun-public-policy",
+      "line": 11
+    },
+    {
+      "file": "src/main/wallet/railgun-own-poi-checks.js",
+      "target": "src/main/wallet/railgun-account-public.js",
+      "request": "./railgun-account-public",
+      "line": 15
+    },
+    {
+      "file": "src/main/wallet/railgun-own-poi-checks.js",
+      "target": "src/main/wallet/railgun-poi-creator-data.js",
+      "request": "./railgun-poi-creator-data",
+      "line": 16
+    },
+    {
+      "file": "src/main/wallet/railgun-own-poi-checks.js",
+      "target": "src/main/wallet/railgun-own-poi-binding.js",
+      "request": "./railgun-own-poi-binding",
+      "line": 17
+    },
+    {
+      "file": "src/main/wallet/railgun-own-poi-checks.js",
+      "target": "src/main/wallet/railgun-own-operation.js",
+      "request": "./railgun-own-operation",
+      "line": 18
+    },
+    {
+      "file": "src/main/wallet/railgun-own-poi-checks.js",
+      "target": "src/main/wallet/railgun-poi-root.js",
+      "request": "./railgun-poi-root",
+      "line": 22
+    },
+    {
+      "file": "src/main/wallet/railgun-own-poi-checks.js",
+      "target": "src/main/wallet/railgun-own-poi-proof-data.js",
+      "request": "./railgun-own-poi-proof-data",
+      "line": 23
+    },
+    {
+      "file": "src/main/wallet/railgun-poi-creator-capture.js",
+      "target": "src/main/networks/privacy-context.js",
+      "request": "../networks/privacy-context",
+      "line": 6
+    },
+    {
+      "file": "src/main/wallet/railgun-poi-creator-capture.js",
+      "target": "src/main/wallet/railgun-account-public.js",
+      "request": "./railgun-account-public",
+      "line": 10
+    },
+    {
+      "file": "src/main/wallet/railgun-poi-creator-capture.js",
+      "target": "src/main/wallet/railgun-poi-creator.js",
+      "request": "./railgun-poi-creator",
+      "line": 11
+    },
+    {
+      "file": "src/main/wallet/railgun-poi-creator-capture.js",
+      "target": "src/main/wallet/railgun-wallet-coverage.js",
+      "request": "./railgun-wallet-coverage",
+      "line": 12
+    },
+    {
+      "file": "src/main/wallet/railgun-poi-transact-selector.js",
+      "target": "src/main/wallet/railgun-own-poi-membership.js",
+      "request": "./railgun-own-poi-membership",
+      "line": 3
+    },
+    {
+      "file": "src/main/wallet/railgun-private-proof-recovery.js",
+      "target": "src/main/wallet/railgun-account-enrollment.js",
+      "request": "./railgun-account-enrollment",
+      "line": 8
+    },
+    {
+      "file": "src/main/wallet/railgun-private-proof-recovery.js",
+      "target": "src/main/wallet/railgun-identity.js",
+      "request": "./railgun-identity",
+      "line": 9
+    },
+    {
+      "file": "src/main/wallet/railgun-private-proof-recovery.js",
+      "target": "src/main/wallet/railgun-account-public.js",
+      "request": "./railgun-account-public",
+      "line": 10
+    },
+    {
+      "file": "src/main/wallet/railgun-private-proof-recovery.js",
+      "target": "src/main/wallet/railgun-account-wallet.js",
+      "request": "./railgun-account-wallet",
+      "line": 14
+    },
+    {
+      "file": "src/main/wallet/railgun-private-proof-recovery.js",
+      "target": "src/main/wallet/railgun-private-proof.js",
+      "request": "./railgun-private-proof",
+      "line": 15
+    },
+    {
+      "file": "src/main/wallet/railgun-private-proof-recovery.js",
+      "target": "src/main/wallet/railgun-private-intent.js",
+      "request": "./railgun-private-intent",
+      "line": 16
+    },
+    {
+      "file": "src/main/wallet/railgun-private-recovery-history.js",
+      "target": "src/main/wallet/railgun-account-enrollment.js",
+      "request": "./railgun-account-enrollment",
+      "line": 6
+    },
+    {
+      "file": "src/main/wallet/railgun-private-recovery-history.js",
+      "target": "src/main/wallet/railgun-identity.js",
+      "request": "./railgun-identity",
+      "line": 7
+    },
+    {
+      "file": "src/main/wallet/railgun-private-recovery-history.js",
+      "target": "src/main/wallet/railgun-account-public.js",
+      "request": "./railgun-account-public",
+      "line": 8
+    },
+    {
+      "file": "src/main/wallet/railgun-private-selection.js",
+      "target": "src/main/wallet/railgun-account-wallet.js",
+      "request": "./railgun-account-wallet",
+      "line": 5
+    },
+    {
+      "file": "src/main/wallet/railgun-private-selection.js",
+      "target": "src/main/wallet/railgun-private-policy.js",
+      "request": "./railgun-private-policy",
+      "line": 6
+    },
+    {
+      "file": "src/main/wallet/railgun-private-selection.js",
+      "target": "src/main/wallet/railgun-shield-pins.json",
+      "request": "./railgun-shield-pins.json",
+      "line": 7
+    },
+    {
+      "file": "src/main/wallet/railgun-relay-review.js",
+      "target": "src/main/wallet/railgun-account-wallet.js",
+      "request": "./railgun-account-wallet",
+      "line": 10
+    },
+    {
+      "file": "src/main/wallet/railgun-relay-review.js",
+      "target": "src/main/wallet/railgun-account-public.js",
+      "request": "./railgun-account-public",
+      "line": 11
+    },
+    {
+      "file": "src/main/wallet/railgun-relay-review.js",
+      "target": "src/main/wallet/railgun-private-preparation.js",
+      "request": "./railgun-private-preparation",
+      "line": 12
+    },
+    {
+      "file": "src/main/wallet/railgun-relay-review.js",
+      "target": "src/main/wallet/railgun-relay-quote-verify.js",
+      "request": "./railgun-relay-quote-verify",
+      "line": 13
+    },
+    {
+      "file": "src/main/wallet/railgun-relay-review.js",
+      "target": "src/main/wallet/railgun-relay-quote-data.js",
+      "request": "./railgun-relay-quote-data",
+      "line": 20
+    },
+    {
+      "file": "src/main/wallet/railgun-relay-review.js",
+      "target": "src/main/wallet/railgun-shield-pins.json",
+      "request": "./railgun-shield-pins.json",
+      "line": 21
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-intent.js",
+      "target": "src/main/wallet/railgun-shield-policy.js",
+      "request": "./railgun-shield-policy",
+      "line": 9
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-intent.js",
+      "target": "src/main/wallet/railgun-shield-pins.json",
+      "request": "./railgun-shield-pins.json",
+      "line": 10
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-origin-data.js",
+      "target": "src/main/wallet/railgun-shield-receipt.js",
+      "request": "./railgun-shield-receipt",
+      "line": 8
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-origin-data.js",
+      "target": "src/main/wallet/railgun-shield-resolution.js",
+      "request": "./railgun-shield-resolution",
+      "line": 9
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-origin-data.js",
+      "target": "src/main/wallet/railgun-wallet-coverage.js",
+      "request": "./railgun-wallet-coverage",
+      "line": 10
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-origin-data.js",
+      "target": "src/main/wallet/railgun-shield-pins.json",
+      "request": "./railgun-shield-pins.json",
+      "line": 11
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-origin.js",
+      "target": "src/main/networks/privacy-context.js",
+      "request": "../networks/privacy-context",
+      "line": 9
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-origin.js",
+      "target": "src/main/wallet/railgun-account-enrollment.js",
+      "request": "./railgun-account-enrollment",
+      "line": 10
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-origin.js",
+      "target": "src/main/wallet/railgun-identity.js",
+      "request": "./railgun-identity",
+      "line": 11
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-origin.js",
+      "target": "src/main/wallet/railgun-account-wallet.js",
+      "request": "./railgun-account-wallet",
+      "line": 12
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-origin.js",
+      "target": "src/main/wallet/railgun-account-public.js",
+      "request": "./railgun-account-public",
+      "line": 13
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-origin.js",
+      "target": "src/main/wallet/private-submission-journal.js",
+      "request": "./private-submission-journal",
+      "line": 14
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-origin.js",
+      "target": "src/main/wallet/railgun-shield-origin-data.js",
+      "request": "./railgun-shield-origin-data",
+      "line": 15
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-origin.js",
+      "target": "src/main/identity-manager.js",
+      "request": "../identity-manager",
+      "line": 16
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-recovery.js",
+      "target": "src/main/networks/privacy-context.js",
+      "request": "../networks/privacy-context",
+      "line": 6
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-recovery.js",
+      "target": "src/main/wallet/privacy-session.js",
+      "request": "./privacy-session",
+      "line": 7
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-recovery.js",
+      "target": "src/main/wallet/private-transaction-network.js",
+      "request": "./private-transaction-network",
+      "line": 8
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-recovery.js",
+      "target": "src/main/wallet/railgun-shield-receipt.js",
+      "request": "./railgun-shield-receipt",
+      "line": 9
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-recovery.js",
+      "target": "src/main/wallet/railgun-recovery-finality.js",
+      "request": "./railgun-recovery-finality",
+      "line": 10
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-recovery.js",
+      "target": "src/main/wallet/railgun-shield-resolution.js",
+      "request": "./railgun-shield-resolution",
+      "line": 14
+    },
+    {
+      "file": "src/main/wallet/railgun-transact-recovery.js",
+      "target": "src/main/networks/privacy-context.js",
+      "request": "../networks/privacy-context",
+      "line": 4
+    },
+    {
+      "file": "src/main/wallet/railgun-transact-recovery.js",
+      "target": "src/main/wallet/privacy-session.js",
+      "request": "./privacy-session",
+      "line": 5
+    },
+    {
+      "file": "src/main/wallet/railgun-transact-recovery.js",
+      "target": "src/main/wallet/private-transaction-network.js",
+      "request": "./private-transaction-network",
+      "line": 6
+    },
+    {
+      "file": "src/main/wallet/railgun-transact-recovery.js",
+      "target": "src/main/wallet/railgun-transact-receipt.js",
+      "request": "./railgun-transact-receipt",
+      "line": 7
+    },
+    {
+      "file": "src/main/wallet/railgun-transact-recovery.js",
+      "target": "src/main/wallet/railgun-recovery-finality.js",
+      "request": "./railgun-recovery-finality",
+      "line": 8
+    },
+    {
+      "file": "src/main/wallet/railgun-transact-recovery.js",
+      "target": "src/main/wallet/railgun-transact-resolution.js",
+      "request": "./railgun-transact-resolution",
+      "line": 12
+    }
+  ],
+  "hostOrOtherDependencies": [
+    {
+      "file": "src/main/wallet/railgun-kohaku-plugin.js",
+      "target": "src/main/networks/privacy-context.js",
+      "request": "../networks/privacy-context",
+      "line": 27
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-plugin.js",
+      "target": "src/main/networks/private-rpc.js",
+      "request": "../networks/private-rpc",
+      "line": 33
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-plugin.js",
+      "target": "src/main/networks/network-registry.js",
+      "request": "../networks/network-registry",
+      "line": 34
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-plugin.js",
+      "target": "src/main/identity-manager.js",
+      "request": "../identity-manager",
+      "line": 70
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-plugin.js",
+      "target": "src/main/wallet/signers.js",
+      "request": "./signers",
+      "line": 467
+    },
+    {
+      "file": "src/main/wallet/railgun-kohaku-plugin.js",
+      "target": "src/main/wallet/signers.js",
+      "request": "./signers",
+      "line": 917
+    },
+    {
+      "file": "src/main/wallet/railgun-own-poi-checks.js",
+      "target": "src/main/networks/privacy-context.js",
+      "request": "../networks/privacy-context",
+      "line": 7
+    },
+    {
+      "file": "src/main/wallet/railgun-poi-creator-capture.js",
+      "target": "src/main/networks/privacy-context.js",
+      "request": "../networks/privacy-context",
+      "line": 6
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-origin.js",
+      "target": "src/main/networks/privacy-context.js",
+      "request": "../networks/privacy-context",
+      "line": 9
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-origin.js",
+      "target": "src/main/wallet/private-submission-journal.js",
+      "request": "./private-submission-journal",
+      "line": 14
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-origin.js",
+      "target": "src/main/identity-manager.js",
+      "request": "../identity-manager",
+      "line": 16
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-recovery.js",
+      "target": "src/main/networks/privacy-context.js",
+      "request": "../networks/privacy-context",
+      "line": 6
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-recovery.js",
+      "target": "src/main/wallet/privacy-session.js",
+      "request": "./privacy-session",
+      "line": 7
+    },
+    {
+      "file": "src/main/wallet/railgun-shield-recovery.js",
+      "target": "src/main/wallet/private-transaction-network.js",
+      "request": "./private-transaction-network",
+      "line": 8
+    },
+    {
+      "file": "src/main/wallet/railgun-transact-recovery.js",
+      "target": "src/main/networks/privacy-context.js",
+      "request": "../networks/privacy-context",
+      "line": 4
+    },
+    {
+      "file": "src/main/wallet/railgun-transact-recovery.js",
+      "target": "src/main/wallet/privacy-session.js",
+      "request": "./privacy-session",
+      "line": 5
+    },
+    {
+      "file": "src/main/wallet/railgun-transact-recovery.js",
+      "target": "src/main/wallet/private-transaction-network.js",
+      "request": "./private-transaction-network",
+      "line": 6
+    }
+  ],
+  "computed": [],
+  "note": "Exact relative Railgun recursion; host ports and computed targets remain explicit and need source review. This is not permission to expose these files publicly."
+}

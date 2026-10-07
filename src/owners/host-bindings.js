@@ -39,7 +39,11 @@ const SCHEMA = Object.freeze({
     "getPrivateTransactionNetwork",
     "getPrivateTransactionNetworkDestination",
   ]),
-  submissionJournal: Object.freeze(["getPrivateSubmissionJournal"]),
+  submissionJournal: Object.freeze([
+    "getPrivateSubmissionJournal",
+    "readExistingPrivateSubmissionSnapshot",
+  ]),
+  registry: Object.freeze(["getNetwork", "getEndpointSources", "getEndpoints"]),
   journalRetention: Object.freeze(["validArchive"]),
   transactions: Object.freeze(["signAndSendTransaction"]),
   submitter: Object.freeze(["readMetadata"]),

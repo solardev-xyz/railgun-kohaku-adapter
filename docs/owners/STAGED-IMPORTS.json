@@ -96,11 +96,11 @@
       {
         "kind": "require",
         "request": "../execution/host-bindings",
-        "start": 3312,
-        "end": 3340,
-        "callStart": 3304,
-        "callEnd": 3341,
-        "line": 91
+        "start": 3447,
+        "end": 3475,
+        "callStart": 3439,
+        "callEnd": 3476,
+        "line": 95
       }
     ],
     "dynamic": [],
@@ -1919,6 +1919,266 @@
     ],
     "syntaxDiagnostics": 0
   },
+  "src/owners/railgun-kohaku-operation-dispatch.js": {
+    "edges": [],
+    "dynamic": [],
+    "hostFamilies": [],
+    "literals": [],
+    "syntaxDiagnostics": 0
+  },
+  "src/owners/railgun-kohaku-plugin.js": {
+    "edges": [
+      {
+        "kind": "require",
+        "request": "assert/strict",
+        "start": 283,
+        "end": 298,
+        "callStart": 275,
+        "callEnd": 299,
+        "line": 5
+      },
+      {
+        "kind": "require",
+        "request": "path",
+        "start": 322,
+        "end": 328,
+        "callStart": 314,
+        "callEnd": 329,
+        "line": 6
+      },
+      {
+        "kind": "require",
+        "request": "util",
+        "start": 359,
+        "end": 365,
+        "callStart": 351,
+        "callEnd": 366,
+        "line": 7
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-kohaku-read-dispatch.js",
+        "start": 420,
+        "end": 455,
+        "callStart": 412,
+        "callEnd": 456,
+        "line": 8
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-kohaku-operation-dispatch.js",
+        "start": 517,
+        "end": 557,
+        "callStart": 509,
+        "callEnd": 558,
+        "line": 9
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-account-enrollment.js",
+        "start": 607,
+        "end": 640,
+        "callStart": 599,
+        "callEnd": 641,
+        "line": 10
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-identity.js",
+        "start": 685,
+        "end": 708,
+        "callStart": 677,
+        "callEnd": 709,
+        "line": 11
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-account-wallet.js",
+        "start": 801,
+        "end": 830,
+        "callStart": 793,
+        "callEnd": 831,
+        "line": 15
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-account-public.js",
+        "start": 967,
+        "end": 996,
+        "callStart": 959,
+        "callEnd": 997,
+        "line": 20
+      },
+      {
+        "kind": "require",
+        "request": "../data/railgun-private-preparation.js",
+        "start": 1051,
+        "end": 1091,
+        "callStart": 1043,
+        "callEnd": 1092,
+        "line": 21
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-transact-staging.js",
+        "start": 1140,
+        "end": 1171,
+        "callStart": 1132,
+        "callEnd": 1172,
+        "line": 22
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-private-operation.js",
+        "start": 1230,
+        "end": 1262,
+        "callStart": 1222,
+        "callEnd": 1263,
+        "line": 23
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-private-submission.js",
+        "start": 1317,
+        "end": 1350,
+        "callStart": 1309,
+        "callEnd": 1351,
+        "line": 24
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-shield-operation.js",
+        "start": 1400,
+        "end": 1431,
+        "callStart": 1392,
+        "callEnd": 1432,
+        "line": 25
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-shield-policy.js",
+        "start": 1467,
+        "end": 1495,
+        "callStart": 1459,
+        "callEnd": 1496,
+        "line": 26
+      },
+      {
+        "kind": "require",
+        "request": "./context-bindings",
+        "start": 1556,
+        "end": 1576,
+        "callStart": 1548,
+        "callEnd": 1577,
+        "line": 27
+      },
+      {
+        "kind": "require",
+        "request": "./host-bindings",
+        "start": 1723,
+        "end": 1740,
+        "callStart": 1715,
+        "callEnd": 1741,
+        "line": 33
+      },
+      {
+        "kind": "require",
+        "request": "./host-bindings",
+        "start": 1772,
+        "end": 1789,
+        "callStart": 1764,
+        "callEnd": 1790,
+        "line": 34
+      },
+      {
+        "kind": "require",
+        "request": "../railgun-shield-pins.json",
+        "start": 1822,
+        "end": 1851,
+        "callStart": 1814,
+        "callEnd": 1852,
+        "line": 35
+      },
+      {
+        "kind": "require",
+        "request": "./host-bindings",
+        "start": 3152,
+        "end": 3169,
+        "callStart": 3144,
+        "callEnd": 3170,
+        "line": 70
+      },
+      {
+        "kind": "require",
+        "request": "ethers",
+        "start": 3345,
+        "end": 3353,
+        "callStart": 3337,
+        "callEnd": 3354,
+        "line": 73
+      },
+      {
+        "kind": "require",
+        "request": "ethers",
+        "start": 14655,
+        "end": 14663,
+        "callStart": 14647,
+        "callEnd": 14664,
+        "line": 424
+      },
+      {
+        "kind": "require",
+        "request": "./host-bindings",
+        "start": 16521,
+        "end": 16538,
+        "callStart": 16513,
+        "callEnd": 16539,
+        "line": 466
+      },
+      {
+        "kind": "require",
+        "request": "./host-bindings",
+        "start": 34913,
+        "end": 34930,
+        "callStart": 34905,
+        "callEnd": 34931,
+        "line": 916
+      }
+    ],
+    "dynamic": [],
+    "hostFamilies": [
+      "registry",
+      "rpc",
+      "signers",
+      "submitter"
+    ],
+    "literals": [
+      "railgun-native-shield",
+      "railgun-partial-unshield",
+      "railgun-private-preparation",
+      "railgun-private-transfer",
+      "railgun-public-shield-preparation",
+      "railgun-token-unshield"
+    ],
+    "syntaxDiagnostics": 0
+  },
+  "src/owners/railgun-kohaku-read-dispatch.js": {
+    "edges": [
+      {
+        "kind": "require",
+        "request": "../../read.cjs",
+        "start": 258,
+        "end": 274,
+        "callStart": 250,
+        "callEnd": 275,
+        "line": 5
+      }
+    ],
+    "dynamic": [],
+    "hostFamilies": [],
+    "literals": [],
+    "syntaxDiagnostics": 0
+  },
   "src/owners/railgun-kohaku-read.js": {
     "edges": [
       {
@@ -1947,6 +2207,156 @@
         "callStart": 387,
         "callEnd": 428,
         "line": 10
+      }
+    ],
+    "dynamic": [],
+    "hostFamilies": [],
+    "literals": [],
+    "syntaxDiagnostics": 0
+  },
+  "src/owners/railgun-kohaku-recovery.js": {
+    "edges": [
+      {
+        "kind": "require",
+        "request": "assert/strict",
+        "start": 187,
+        "end": 202,
+        "callStart": 179,
+        "callEnd": 203,
+        "line": 3
+      },
+      {
+        "kind": "require",
+        "request": "path",
+        "start": 226,
+        "end": 232,
+        "callStart": 218,
+        "callEnd": 233,
+        "line": 4
+      },
+      {
+        "kind": "require",
+        "request": "util",
+        "start": 274,
+        "end": 280,
+        "callStart": 266,
+        "callEnd": 281,
+        "line": 5
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-account-enrollment.js",
+        "start": 336,
+        "end": 369,
+        "callStart": 328,
+        "callEnd": 370,
+        "line": 6
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-identity.js",
+        "start": 414,
+        "end": 437,
+        "callStart": 406,
+        "callEnd": 438,
+        "line": 7
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-account-public.js",
+        "start": 498,
+        "end": 527,
+        "callStart": 490,
+        "callEnd": 528,
+        "line": 8
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-private-recovery-history.js",
+        "start": 584,
+        "end": 623,
+        "callStart": 576,
+        "callEnd": 624,
+        "line": 9
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-private-proof-recovery.js",
+        "start": 679,
+        "end": 716,
+        "callStart": 671,
+        "callEnd": 717,
+        "line": 10
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-private-submission.js",
+        "start": 780,
+        "end": 813,
+        "callStart": 772,
+        "callEnd": 814,
+        "line": 11
+      }
+    ],
+    "dynamic": [],
+    "hostFamilies": [],
+    "literals": [],
+    "syntaxDiagnostics": 0
+  },
+  "src/owners/railgun-kohaku-snapshot-host.js": {
+    "edges": [
+      {
+        "kind": "require",
+        "request": "assert/strict",
+        "start": 189,
+        "end": 204,
+        "callStart": 181,
+        "callEnd": 205,
+        "line": 4
+      },
+      {
+        "kind": "require",
+        "request": "util",
+        "start": 235,
+        "end": 241,
+        "callStart": 227,
+        "callEnd": 242,
+        "line": 5
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-account-wallet.js",
+        "start": 299,
+        "end": 328,
+        "callStart": 291,
+        "callEnd": 329,
+        "line": 6
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-account-public.js",
+        "start": 383,
+        "end": 412,
+        "callStart": 375,
+        "callEnd": 413,
+        "line": 7
+      }
+    ],
+    "dynamic": [],
+    "hostFamilies": [],
+    "literals": [],
+    "syntaxDiagnostics": 0
+  },
+  "src/owners/railgun-leveldown.js": {
+    "edges": [
+      {
+        "kind": "require",
+        "request": "./railgun-store-cursor.js",
+        "start": 146,
+        "end": 173,
+        "callStart": 138,
+        "callEnd": 174,
+        "line": 2
       }
     ],
     "dynamic": [],
@@ -2248,6 +2658,133 @@
       "railgun-private-transfer",
       "railgun-token-unshield",
       "railgun-transact"
+    ],
+    "syntaxDiagnostics": 0
+  },
+  "src/owners/railgun-own-poi-checks.js": {
+    "edges": [
+      {
+        "kind": "require",
+        "request": "assert/strict",
+        "start": 266,
+        "end": 281,
+        "callStart": 258,
+        "callEnd": 282,
+        "line": 5
+      },
+      {
+        "kind": "require",
+        "request": "crypto",
+        "start": 327,
+        "end": 335,
+        "callStart": 319,
+        "callEnd": 336,
+        "line": 6
+      },
+      {
+        "kind": "require",
+        "request": "./context-bindings",
+        "start": 396,
+        "end": 416,
+        "callStart": 388,
+        "callEnd": 417,
+        "line": 7
+      },
+      {
+        "kind": "require",
+        "request": "../execution/railgun-engine-runtime.js",
+        "start": 466,
+        "end": 506,
+        "callStart": 458,
+        "callEnd": 507,
+        "line": 8
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-own-poi-proof.js",
+        "start": 554,
+        "end": 582,
+        "callStart": 546,
+        "callEnd": 583,
+        "line": 9
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-own-witness.js",
+        "start": 642,
+        "end": 668,
+        "callStart": 634,
+        "callEnd": 669,
+        "line": 10
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-public-policy.js",
+        "start": 714,
+        "end": 742,
+        "callStart": 706,
+        "callEnd": 743,
+        "line": 11
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-account-public.js",
+        "start": 844,
+        "end": 873,
+        "callStart": 836,
+        "callEnd": 874,
+        "line": 15
+      },
+      {
+        "kind": "require",
+        "request": "../data/railgun-poi-creator-data.js",
+        "start": 932,
+        "end": 969,
+        "callStart": 924,
+        "callEnd": 970,
+        "line": 16
+      },
+      {
+        "kind": "require",
+        "request": "../data/railgun-own-poi-binding.js",
+        "start": 1019,
+        "end": 1055,
+        "callStart": 1011,
+        "callEnd": 1056,
+        "line": 17
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-own-operation.js",
+        "start": 1110,
+        "end": 1138,
+        "callStart": 1102,
+        "callEnd": 1139,
+        "line": 18
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-poi-root.js",
+        "start": 1225,
+        "end": 1248,
+        "callStart": 1217,
+        "callEnd": 1249,
+        "line": 22
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-own-poi-proof-data.js",
+        "start": 1296,
+        "end": 1329,
+        "callStart": 1288,
+        "callEnd": 1330,
+        "line": 23
+      }
+    ],
+    "dynamic": [],
+    "hostFamilies": [],
+    "literals": [
+      "freedom:railgun:own-poi-checks-v1"
     ],
     "syntaxDiagnostics": 0
   },
@@ -3956,6 +4493,59 @@
     "literals": [],
     "syntaxDiagnostics": 0
   },
+  "src/owners/railgun-poi-creator-capture.js": {
+    "edges": [
+      {
+        "kind": "require",
+        "request": "assert/strict",
+        "start": 264,
+        "end": 279,
+        "callStart": 256,
+        "callEnd": 280,
+        "line": 5
+      },
+      {
+        "kind": "require",
+        "request": "./context-bindings",
+        "start": 340,
+        "end": 360,
+        "callStart": 332,
+        "callEnd": 361,
+        "line": 6
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-account-public.js",
+        "start": 448,
+        "end": 477,
+        "callStart": 440,
+        "callEnd": 478,
+        "line": 10
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-poi-creator.js",
+        "start": 525,
+        "end": 551,
+        "callStart": 517,
+        "callEnd": 552,
+        "line": 11
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-wallet-coverage.js",
+        "start": 589,
+        "end": 619,
+        "callStart": 581,
+        "callEnd": 620,
+        "line": 12
+      }
+    ],
+    "dynamic": [],
+    "hostFamilies": [],
+    "literals": [],
+    "syntaxDiagnostics": 0
+  },
   "src/owners/railgun-poi-creator.js": {
     "edges": [
       {
@@ -5637,6 +6227,23 @@
     "literals": [],
     "syntaxDiagnostics": 0
   },
+  "src/owners/railgun-poi-transact-selector.js": {
+    "edges": [
+      {
+        "kind": "require",
+        "request": "./railgun-own-poi-membership.js",
+        "start": 226,
+        "end": 259,
+        "callStart": 218,
+        "callEnd": 260,
+        "line": 3
+      }
+    ],
+    "dynamic": [],
+    "hostFamilies": [],
+    "literals": [],
+    "syntaxDiagnostics": 0
+  },
   "src/owners/railgun-poi-verifier.js": {
     "edges": [
       {
@@ -6378,6 +6985,95 @@
     ],
     "syntaxDiagnostics": 0
   },
+  "src/owners/railgun-private-proof-recovery.js": {
+    "edges": [
+      {
+        "kind": "require",
+        "request": "assert/strict",
+        "start": 249,
+        "end": 264,
+        "callStart": 241,
+        "callEnd": 265,
+        "line": 5
+      },
+      {
+        "kind": "require",
+        "request": "path",
+        "start": 288,
+        "end": 294,
+        "callStart": 280,
+        "callEnd": 295,
+        "line": 6
+      },
+      {
+        "kind": "require",
+        "request": "util",
+        "start": 323,
+        "end": 329,
+        "callStart": 315,
+        "callEnd": 330,
+        "line": 7
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-account-enrollment.js",
+        "start": 379,
+        "end": 412,
+        "callStart": 371,
+        "callEnd": 413,
+        "line": 8
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-identity.js",
+        "start": 457,
+        "end": 480,
+        "callStart": 449,
+        "callEnd": 481,
+        "line": 9
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-account-public.js",
+        "start": 541,
+        "end": 570,
+        "callStart": 533,
+        "callEnd": 571,
+        "line": 10
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-account-wallet.js",
+        "start": 667,
+        "end": 696,
+        "callStart": 659,
+        "callEnd": 697,
+        "line": 14
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-private-proof.js",
+        "start": 772,
+        "end": 800,
+        "callStart": 764,
+        "callEnd": 801,
+        "line": 15
+      },
+      {
+        "kind": "require",
+        "request": "../data/railgun-private-intent.js",
+        "start": 860,
+        "end": 895,
+        "callStart": 852,
+        "callEnd": 896,
+        "line": 16
+      }
+    ],
+    "dynamic": [],
+    "hostFamilies": [],
+    "literals": [],
+    "syntaxDiagnostics": 0
+  },
   "src/owners/railgun-private-proof.js": {
     "edges": [
       {
@@ -6550,6 +7246,63 @@
     ],
     "syntaxDiagnostics": 0
   },
+  "src/owners/railgun-private-recovery-history.js": {
+    "edges": [
+      {
+        "kind": "require",
+        "request": "assert/strict",
+        "start": 259,
+        "end": 274,
+        "callStart": 251,
+        "callEnd": 275,
+        "line": 4
+      },
+      {
+        "kind": "require",
+        "request": "util",
+        "start": 305,
+        "end": 311,
+        "callStart": 297,
+        "callEnd": 312,
+        "line": 5
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-account-enrollment.js",
+        "start": 367,
+        "end": 400,
+        "callStart": 359,
+        "callEnd": 401,
+        "line": 6
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-identity.js",
+        "start": 445,
+        "end": 468,
+        "callStart": 437,
+        "callEnd": 469,
+        "line": 7
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-account-public.js",
+        "start": 529,
+        "end": 558,
+        "callStart": 521,
+        "callEnd": 559,
+        "line": 8
+      }
+    ],
+    "dynamic": [],
+    "hostFamilies": [],
+    "literals": [
+      "railgun-partial-unshield",
+      "railgun-private-transfer",
+      "railgun-token-unshield"
+    ],
+    "syntaxDiagnostics": 0
+  },
   "src/owners/railgun-private-reservations.js": {
     "edges": [
       {
@@ -6670,6 +7423,44 @@
       "railgun-private-reservations-v1",
       "railgun-private-transfer",
       "railgun-relay-self-transfer",
+      "railgun-token-unshield"
+    ],
+    "syntaxDiagnostics": 0
+  },
+  "src/owners/railgun-private-selection.js": {
+    "edges": [
+      {
+        "kind": "require",
+        "request": "./railgun-account-wallet.js",
+        "start": 277,
+        "end": 306,
+        "callStart": 269,
+        "callEnd": 307,
+        "line": 5
+      },
+      {
+        "kind": "require",
+        "request": "../data/railgun-private-policy.js",
+        "start": 363,
+        "end": 398,
+        "callStart": 355,
+        "callEnd": 399,
+        "line": 6
+      },
+      {
+        "kind": "require",
+        "request": "../railgun-shield-pins.json",
+        "start": 422,
+        "end": 451,
+        "callStart": 414,
+        "callEnd": 452,
+        "line": 7
+      }
+    ],
+    "dynamic": [],
+    "hostFamilies": [],
+    "literals": [
+      "railgun-partial-unshield",
       "railgun-token-unshield"
     ],
     "syntaxDiagnostics": 0
@@ -9471,6 +10262,98 @@
     ],
     "syntaxDiagnostics": 0
   },
+  "src/owners/railgun-relay-review.js": {
+    "edges": [
+      {
+        "kind": "require",
+        "request": "assert/strict",
+        "start": 251,
+        "end": 266,
+        "callStart": 243,
+        "callEnd": 267,
+        "line": 4
+      },
+      {
+        "kind": "require",
+        "request": "path",
+        "start": 290,
+        "end": 296,
+        "callStart": 282,
+        "callEnd": 297,
+        "line": 5
+      },
+      {
+        "kind": "require",
+        "request": "util",
+        "start": 327,
+        "end": 333,
+        "callStart": 319,
+        "callEnd": 334,
+        "line": 6
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-account-wallet.js",
+        "start": 432,
+        "end": 461,
+        "callStart": 424,
+        "callEnd": 462,
+        "line": 10
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-account-public.js",
+        "start": 516,
+        "end": 545,
+        "callStart": 508,
+        "callEnd": 546,
+        "line": 11
+      },
+      {
+        "kind": "require",
+        "request": "../data/railgun-private-preparation.js",
+        "start": 600,
+        "end": 640,
+        "callStart": 592,
+        "callEnd": 641,
+        "line": 12
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-relay-quote-verify.js",
+        "start": 687,
+        "end": 720,
+        "callStart": 679,
+        "callEnd": 721,
+        "line": 13
+      },
+      {
+        "kind": "require",
+        "request": "../execution/railgun-relay-quote-data.js",
+        "start": 825,
+        "end": 867,
+        "callStart": 817,
+        "callEnd": 868,
+        "line": 20
+      },
+      {
+        "kind": "require",
+        "request": "../railgun-shield-pins.json",
+        "start": 891,
+        "end": 920,
+        "callStart": 883,
+        "callEnd": 921,
+        "line": 21
+      }
+    ],
+    "dynamic": [],
+    "hostFamilies": [],
+    "literals": [
+      "railgun-local-relay-review-v1",
+      "railgun-private-transfer"
+    ],
+    "syntaxDiagnostics": 0
+  },
   "src/owners/railgun-relay-sign-job.js": {
     "edges": [
       {
@@ -10581,6 +11464,43 @@
     "literals": [],
     "syntaxDiagnostics": 0
   },
+  "src/owners/railgun-shield-intent.js": {
+    "edges": [
+      {
+        "kind": "require",
+        "request": "ethers",
+        "start": 195,
+        "end": 203,
+        "callStart": 187,
+        "callEnd": 204,
+        "line": 4
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-shield-policy.js",
+        "start": 287,
+        "end": 315,
+        "callStart": 279,
+        "callEnd": 316,
+        "line": 9
+      },
+      {
+        "kind": "require",
+        "request": "../railgun-shield-pins.json",
+        "start": 339,
+        "end": 368,
+        "callStart": 331,
+        "callEnd": 369,
+        "line": 10
+      }
+    ],
+    "dynamic": [],
+    "hostFamilies": [],
+    "literals": [
+      "railgun-native-shield"
+    ],
+    "syntaxDiagnostics": 0
+  },
   "src/owners/railgun-shield-job.js": {
     "edges": [
       {
@@ -10781,6 +11701,196 @@
     "literals": [
       "railgun-native-shield"
     ],
+    "syntaxDiagnostics": 0
+  },
+  "src/owners/railgun-shield-origin-data.js": {
+    "edges": [
+      {
+        "kind": "require",
+        "request": "assert/strict",
+        "start": 269,
+        "end": 284,
+        "callStart": 261,
+        "callEnd": 285,
+        "line": 5
+      },
+      {
+        "kind": "require",
+        "request": "util",
+        "start": 315,
+        "end": 321,
+        "callStart": 307,
+        "callEnd": 322,
+        "line": 6
+      },
+      {
+        "kind": "require",
+        "request": "ethers",
+        "start": 370,
+        "end": 378,
+        "callStart": 362,
+        "callEnd": 379,
+        "line": 7
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-shield-receipt.js",
+        "start": 429,
+        "end": 458,
+        "callStart": 421,
+        "callEnd": 459,
+        "line": 8
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-shield-resolution.js",
+        "start": 510,
+        "end": 542,
+        "callStart": 502,
+        "callEnd": 543,
+        "line": 9
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-wallet-coverage.js",
+        "start": 580,
+        "end": 610,
+        "callStart": 572,
+        "callEnd": 611,
+        "line": 10
+      },
+      {
+        "kind": "require",
+        "request": "../railgun-shield-pins.json",
+        "start": 634,
+        "end": 663,
+        "callStart": 626,
+        "callEnd": 664,
+        "line": 11
+      }
+    ],
+    "dynamic": [],
+    "hostFamilies": [],
+    "literals": [],
+    "syntaxDiagnostics": 0
+  },
+  "src/owners/railgun-shield-origin.js": {
+    "edges": [
+      {
+        "kind": "require",
+        "request": "assert/strict",
+        "start": 273,
+        "end": 288,
+        "callStart": 265,
+        "callEnd": 289,
+        "line": 5
+      },
+      {
+        "kind": "require",
+        "request": "util",
+        "start": 319,
+        "end": 325,
+        "callStart": 311,
+        "callEnd": 326,
+        "line": 6
+      },
+      {
+        "kind": "require",
+        "request": "perf_hooks",
+        "start": 366,
+        "end": 378,
+        "callStart": 358,
+        "callEnd": 379,
+        "line": 7
+      },
+      {
+        "kind": "require",
+        "request": "ethers",
+        "start": 412,
+        "end": 420,
+        "callStart": 404,
+        "callEnd": 421,
+        "line": 8
+      },
+      {
+        "kind": "require",
+        "request": "./context-bindings",
+        "start": 481,
+        "end": 501,
+        "callStart": 473,
+        "callEnd": 502,
+        "line": 9
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-account-enrollment.js",
+        "start": 551,
+        "end": 584,
+        "callStart": 543,
+        "callEnd": 585,
+        "line": 10
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-identity.js",
+        "start": 629,
+        "end": 652,
+        "callStart": 621,
+        "callEnd": 653,
+        "line": 11
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-account-wallet.js",
+        "start": 704,
+        "end": 733,
+        "callStart": 696,
+        "callEnd": 734,
+        "line": 12
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-account-public.js",
+        "start": 788,
+        "end": 817,
+        "callStart": 780,
+        "callEnd": 818,
+        "line": 13
+      },
+      {
+        "kind": "require",
+        "request": "./host-bindings",
+        "start": 878,
+        "end": 895,
+        "callStart": 870,
+        "callEnd": 896,
+        "line": 14
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-shield-origin-data.js",
+        "start": 961,
+        "end": 994,
+        "callStart": 953,
+        "callEnd": 995,
+        "line": 15
+      },
+      {
+        "kind": "require",
+        "request": "./host-bindings",
+        "start": 1934,
+        "end": 1951,
+        "callStart": 1926,
+        "callEnd": 1952,
+        "line": 40
+      }
+    ],
+    "dynamic": [],
+    "hostFamilies": [
+      "submissionJournal",
+      "submitter"
+    ],
+    "literals": [],
     "syntaxDiagnostics": 0
   },
   "src/owners/railgun-shield-policy.js": {
@@ -11184,6 +12294,91 @@
     "literals": [],
     "syntaxDiagnostics": 0
   },
+  "src/owners/railgun-shield-recovery.js": {
+    "edges": [
+      {
+        "kind": "require",
+        "request": "util",
+        "start": 266,
+        "end": 272,
+        "callStart": 258,
+        "callEnd": 273,
+        "line": 5
+      },
+      {
+        "kind": "require",
+        "request": "./context-bindings",
+        "start": 339,
+        "end": 359,
+        "callStart": 331,
+        "callEnd": 360,
+        "line": 6
+      },
+      {
+        "kind": "require",
+        "request": "./host-bindings",
+        "start": 401,
+        "end": 418,
+        "callStart": 393,
+        "callEnd": 419,
+        "line": 7
+      },
+      {
+        "kind": "require",
+        "request": "./host-bindings",
+        "start": 479,
+        "end": 496,
+        "callStart": 471,
+        "callEnd": 497,
+        "line": 8
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-shield-receipt.js",
+        "start": 566,
+        "end": 595,
+        "callStart": 558,
+        "callEnd": 596,
+        "line": 9
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-recovery-finality.js",
+        "start": 646,
+        "end": 678,
+        "callStart": 638,
+        "callEnd": 679,
+        "line": 10
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-shield-resolution.js",
+        "start": 766,
+        "end": 798,
+        "callStart": 758,
+        "callEnd": 799,
+        "line": 14
+      }
+    ],
+    "dynamic": [],
+    "hostFamilies": [
+      "sessions",
+      "transactionNetwork"
+    ],
+    "literals": [
+      "railgun-native-shield"
+    ],
+    "syntaxDiagnostics": 0
+  },
+  "src/owners/railgun-shield-resolution.js": {
+    "edges": [],
+    "dynamic": [],
+    "hostFamilies": [],
+    "literals": [
+      "railgun-native-shield"
+    ],
+    "syntaxDiagnostics": 0
+  },
   "src/owners/railgun-source-feed.js": {
     "edges": [
       {
@@ -11521,6 +12716,73 @@
     "literals": [
       "railgun-partial-unshield",
       "railgun-private-transfer"
+    ],
+    "syntaxDiagnostics": 0
+  },
+  "src/owners/railgun-transact-recovery.js": {
+    "edges": [
+      {
+        "kind": "require",
+        "request": "./context-bindings",
+        "start": 212,
+        "end": 232,
+        "callStart": 204,
+        "callEnd": 233,
+        "line": 4
+      },
+      {
+        "kind": "require",
+        "request": "./host-bindings",
+        "start": 274,
+        "end": 291,
+        "callStart": 266,
+        "callEnd": 292,
+        "line": 5
+      },
+      {
+        "kind": "require",
+        "request": "./host-bindings",
+        "start": 352,
+        "end": 369,
+        "callStart": 344,
+        "callEnd": 370,
+        "line": 6
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-transact-receipt.js",
+        "start": 441,
+        "end": 472,
+        "callStart": 433,
+        "callEnd": 473,
+        "line": 7
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-recovery-finality.js",
+        "start": 523,
+        "end": 555,
+        "callStart": 515,
+        "callEnd": 556,
+        "line": 8
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-transact-resolution.js",
+        "start": 647,
+        "end": 681,
+        "callStart": 639,
+        "callEnd": 682,
+        "line": 12
+      }
+    ],
+    "dynamic": [],
+    "hostFamilies": [
+      "sessions",
+      "transactionNetwork"
+    ],
+    "literals": [
+      "railgun-transact"
     ],
     "syntaxDiagnostics": 0
   },

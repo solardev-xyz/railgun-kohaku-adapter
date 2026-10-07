@@ -7,6 +7,7 @@
       "src/owners/railgun-identity.js"
     ],
     "signers": [
+      "src/owners/railgun-kohaku-plugin.js",
       "src/owners/railgun-private-operation.js",
       "src/owners/railgun-private-submission.js"
     ],
@@ -15,15 +16,19 @@
       "src/owners/railgun-shield-operation.js"
     ],
     "submitter": [
-      "src/owners/railgun-private-submission.js"
+      "src/owners/railgun-kohaku-plugin.js",
+      "src/owners/railgun-private-submission.js",
+      "src/owners/railgun-shield-origin.js"
     ]
   },
   "files": {
     "src/owners/credential-loan.js": "fd7d930854102271ce1bec8b8f07bd74b9b4a8fd5f5a6a58e7c076e4463e894e",
     "src/owners/railgun-account-enrollment.js": "79ff32c60048d7cde919635568c68144f5cabab64638ce08a2c7a956906a75b7",
     "src/owners/railgun-identity.js": "1dc122a02b97c72abbe97cfb79b66bd4613ff8f399173518c9746be0e6865105",
+    "src/owners/railgun-kohaku-plugin.js": "ecaa2cba7c99b71034395af4fc0602babd63e15773cab6e10bce04df4decba2f",
     "src/owners/railgun-private-operation.js": "17aeaab6031547ab6cf025b6a346d20eb819635164ffa2d502b6b2858f5df8af",
     "src/owners/railgun-private-submission.js": "6eed619e6c24d7a6e4b54ced4ddb9e444defd5409916da147bce267386434faf",
-    "src/owners/railgun-shield-operation.js": "f070078e8f8f947b15ec84fe08d7f525026ac4c10af314d3747127bfa9fbc573"
+    "src/owners/railgun-shield-operation.js": "f070078e8f8f947b15ec84fe08d7f525026ac4c10af314d3747127bfa9fbc573",
+    "src/owners/railgun-shield-origin.js": "c507d496c0836ec37198d8611fdb1425ae9cbee5c55da65de3e52392de61c8b4"
   }
 }
