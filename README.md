@@ -15,7 +15,7 @@ Host-shaped objects and readable notes do not establish authority. Host callback
 
 - Node.js 24 or later. Tested on Node 24.18.1 and on Electron 44.5.1's bundled Node 24.21.0. The floor is real; see [Native Promise contract](#native-promise-contract).
 - Peer dependency `ethers` `^6.17.0`, used only for `getAddress` checksum validation. It is not bundled.
-- CommonJS is the canonical runtime. `index.mjs` is a thin ESM wrapper that re-exports the same CommonJS module objects. `require()` and `import` of this package therefore return the same five functions and share one set of operation registries. Separate physical copies of the package do not share registries, so each copy must use its own hosts.
+- CommonJS is the canonical runtime. `index.mjs` is a thin ESM wrapper that re-exports the same CommonJS module objects. `require()` and `import` of this package therefore return the same five functions and share one set of operation registries. The `./read` subpath works the same way: `read.mjs` wraps `read.cjs`, so both return the same four functions. Separate physical copies of the package do not share registries, so each copy must use its own hosts.
 
 ## Exports
 
@@ -39,6 +39,29 @@ const adapter = createRailgunKohakuPublicAdapter({ host: myTrustedPublicHost, si
 const operation = await adapter.prepareShield({ asset: { __type: 'native' }, amount: 10n ** 15n });
 const acknowledged = await createRailgunKohakuPublicAdapterSubmitter(adapter).submit(operation);
 ```
+
+### Read helpers (`@freedom/railgun-kohaku-adapter/read`)
+
+The `./read` subpath exports four functions in a frozen module object. They are the same function objects that the factories use internally, whether loaded with `require()` or `import`. The root entry still exports exactly the five factories. No other subpath is exported, including anything under `./src/`. The helpers do not include the factories' host validation, copying or lifecycle checks, and they confer no authority.
+
+**Projection and normalization helpers.** These three functions are synchronous and work only on the values they are given. They do **not** authenticate the ownership or currentness of those values: a note passed to them is not thereby the user's, unspent or current. They check only the fields they read, and throw Node's `AssertionError` (or a `TypeError`) on anything else, without a refusal code.
+
+| Function                                                    | Behavior                                                                                                                                                                                                                                                                                                                                           |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `normalizeRailgunKohakuReadFilter(assets)`                  | `undefined` gives `null`, meaning unfiltered. Otherwise, at most 1000 `native`, `erc20` or `erc721` assets, each with exactly the keys of its type, give a frozen, deduplicated array of canonical keys: `'native'`, `'erc20:<lowercase contract>'` or `'erc721:<lowercase contract>:<tokenId>'`. An empty array matches nothing.                  |
+| `projectRailgunKohakuBalance(received, filter)`             | Sums the unspent notes (`spentTxid === false`) that match `filter`, per asset key. Returns a frozen array of frozen `{ asset, amount, tag: 'unverified' }` entries, sorted by key. Each `asset` is the last matching note's own asset object, not a copy. An unfiltered projection throws on an unspent ERC-1155 note; a filter excludes ERC-1155. |
+| `projectRailgunKohakuNotes(received, filter, includeSpent)` | Returns the matching supplied note objects themselves, not copies, in a frozen array. `includeSpent` must be a boolean. Throws if a selected note is ERC-1155.                                                                                                                                                                                     |
+
+A projection's `filter` must be `null` or a frozen array of strings, as `normalizeRailgunKohakuReadFilter` returns. The projections do not copy, detach or freeze the supplied notes, and they do not check note IDs, hashes or bounds. The snapshot plugin validates and copies its host's snapshot before projecting it, and detaches the results afterwards.
+
+**Sequencing helper.** `dispatchRailgunKohakuRead(ports, method, args)` is a trusted-host sequencing helper. It is **not** pure: it calls the caller's `capture`, view method, `retain`, `recheck` and `refused` callbacks and sequences asynchronous work between them. It has no intrinsic account authority. The caller-supplied callbacks are trusted application code and carry their own authority and side effects. In order, it:
+
+1. checks that `method` is `'instanceId'`, `'balance'` or `'notes'`;
+2. calls `ports.capture()` synchronously, then the captured `view[method](...args)` with the view as `this`;
+3. passes the pending result to `ports.retain()` synchronously and returns whatever `retain` returns, so `retain` must return the promise it receives;
+4. once the view's result fulfils, calls `ports.recheck(captured)` and then fulfils with the view's original value, not a copy.
+
+Every failure rejects with the value that `ports.refused()` returns, and the original reason is discarded. Failures include an unknown method, a throw from `capture`, the view lookup or the view call, a rejected result and a throw from `recheck`. A failure before `retain` is not retained, and an exception from `refused` itself escapes instead. The helper detects no stale read of its own: currentness is exactly what `recheck` asserts. Unlike the adapters, it applies no shape or native-Promise checks, so a thenable result is adopted. Its stale-read, exception, retention and rejection behavior is unchanged from Freedom; the sources under `src/` are byte-identical (see `NOTICE.md`).
 
 ## Restrictions
 
@@ -156,6 +179,7 @@ The declarations are verified with TypeScript 5.9.3 under strict NodeNext, for a
 
 - `require` and the top-level `types` field use `types/index.d.ts`, a CommonJS-format declaration.
 - `import` uses `types/index.d.mts`, an ESM-format declaration. It forwards `index.d.ts` rather than copying it, so both conditions share one identity for each operation brand and adapter type. Like `index.mjs`, it has no default export.
+- The `./read` subpath has the same pair, `types/read.d.ts` and `types/read.d.mts`. They re-export the four helpers and five supporting types (`ReadFilterKey`, `ReadFilter`, `ReadMethod`, `ReadDispatchView`, `ReadDispatchPorts`) from `types/railgun-kohaku-read-contract.d.ts`. The types cannot express a frozen filter, a thrown assertion or the callbacks' authority.
 - The declarations are self-contained and import nothing from `@kohaku-eth/plugins`. TypeScript consumers need no additional package, and this package declares no peer dependency on it.
 
 The declarations no longer import Kohaku's types, because the published declarations of `@kohaku-eth/plugins@0.0.1-alpha.16` cannot be loaded under NodeNext without `skipLibCheck` or a path mapping:
@@ -191,13 +215,19 @@ One limitation is unchanged from the pinned revision. In Kohaku's `PluginInstanc
 
 ## Tests
 
-`npm test` runs Jest: 7 suites and 291 tests. The suites are:
+`npm test` runs Jest: 7 suites and 292 tests. The suites are:
 
 - the five Freedom suites for the copied modules;
 - the pinned contract-oracle suite;
 - a package consumer check.
 
 The consumer check starts a child Node process that loads the package through its own `exports` with both `require()` and `import()`. It asserts that both return the same five functions. It then prepares and submits a public operation across the two entrypoints and does the same for a private operation, using the in-memory test hosts. The test hosts are fixtures, not genuine accounts or authority. Their passing is not native, live-network or security-audit evidence.
+
+The same process checks the `./read` subpath:
+
+- `require()` and `import()` return the same four functions, and the root entry still has exactly five keys.
+- During reads, it records the function objects on the call stack and finds the exported helpers there by identity: all four in the snapshot plugin, and `normalizeRailgunKohakuReadFilter` in the private and public adapters. The check reads no source file. A wrapper or a separate copy exported by `read.cjs` fails it.
+- `src/railgun-kohaku-read-data.js`, `src/railgun-kohaku-read-dispatch.js` and `read.cjs` are refused as subpaths with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
 
 ### Type checks
 
@@ -211,14 +241,17 @@ The runner, `test/types/typecheck.cjs`, compiles programs and never emits or run
 
 - **Portable checks** use `strict`, `noEmit`, `module` and `moduleResolution` `NodeNext`, `target` `ES2022`, `types: []`, and no `skipLibCheck` or `paths`. Programs must not load any file from `node_modules`.
   - A CommonJS (`.cts`) and an ESM (`.mts`) consumer import the package by its own name. They use all five factories with typed hosts and pass brands across the two conditions.
-  - Six negative programs must fail:
+  - Two more consumers use the four `./read` helpers by subpath, with a synchronous and an asynchronous view, and pass types across the two conditions.
+  - Eight negative programs must fail:
     - a host without `broadcast` (TS2741);
     - snapshot callbacks that return a value or are `async` (TS2322);
     - an unnarrowed or misused private result (TS2339, TS2322);
     - cross-kind or forged operations and swapped adapters (TS2345);
     - `tailCalls`, a `0zk` unshield recipient and a native private input (TS2322, TS2345);
-    - a default import from the ESM entry (TS1192).
-  - Both entries must export the same 32 names, each with a single declaration identity.
+    - a default import from the ESM entry (TS1192);
+    - read-helper misuse: an ERC-1155 filter asset (TS2769), an unhandled `null` filter, an asset array as a filter, a missing or non-boolean `includeSpent`, an unknown dispatch method, and the wrong view arguments or result type (TS2322, TS2554, TS2345);
+    - imports of `src/…`, `read.cjs` and `types/read` (TS2307), the helpers from the root entry (TS2305), and a default import of `./read` (TS1192).
+  - Both conditions of the root entry must export the same 32 names, and both conditions of `./read` the same 9 (four helpers and five types), each with a single declaration identity. `./read` must resolve to `types/read.d.ts` and `types/read.d.mts`, and a `./src/…` subpath must not resolve.
 - **Upstream bridge** compiles `test/types/upstream/` against the installed `@kohaku-eth/plugins@0.0.1-alpha.16`. It uses Bundler resolution and one `~/*` alias into that package's `dist/`. The runner checks that only files inside that `dist/` use the alias. One positive program covers the assignability, `Broadcaster` identity and enabled-feature assertions. Two negative programs cover Kohaku's generic `Host` (TS2739, TS2740), generic `PluginInstance` views and `UnshieldOptions` (TS2345).
 - **Controls** compile the bridge's positive program without that setup, under NodeNext and under Bundler without the alias. Both must fail inside the upstream files with the diagnostics recorded in the runner.
 

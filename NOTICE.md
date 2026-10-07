@@ -20,7 +20,7 @@ Freedom's code in this package is licensed under the Mozilla Public License 2.0.
 | `src/railgun-shield-pins.json`          | `src/main/wallet/railgun-shield-pins.json`          | `0f38d69a9acb5ecdaeb7197f4410a1c6068b8896e4204a179631176223e31a75` |
 | `LICENSE`                               | `LICENSE`                                           | `86cf9656479f1edb82245b985f4a2cc0d503b945766ebeda4269c60b307699ae` |
 
-No runtime source needed a change to work standalone. Relative `require`s already resolve within `src/`. `ethers` resolves from the consumer's installation as a peer dependency.
+No runtime source needed a change to work standalone. Relative `require`s already resolve within `src/`. `ethers` resolves from the consumer's installation as a peer dependency. The later `./read` subpath (below) also required no source change.
 
 ### Minimally changed copies
 
@@ -48,13 +48,26 @@ The first package copies (commit `95f904a`) had only replaced the two specifiers
 
 ### New package files
 
-| Package file                             | Basis                                                                                                                                                                                                                                                                                |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `index.cjs`                              | Freedom's reviewed prototype entry `docs/qualification/railgun-kohaku-public-node-prototype-2026-10-06/artifact/source/restricted-entry.cjs.txt` (SHA-256 `ed8348e6…b010f`). The `require` paths change from `./src/main/wallet/` to `./src/`, and Prettier re-wraps two long lines. |
-| `index.mjs`                              | The prototype's `artifact/index.mjs.txt` (SHA-256 `057df46b…c489d`). The import target changes from `./runtime.cjs` to `./index.cjs`, and Prettier re-wraps two long lines.                                                                                                          |
-| `types/index.d.ts`                       | New. The CommonJS-format entry declaration for the `require` condition and the top-level `types` field. It re-exports the five factory declarations and their contract types.                                                                                                        |
-| `types/index.d.mts`                      | New. The ESM-format entry declaration for the `import` condition. Like the prototype's `artifact/index.d.mts.txt`, it forwards the CommonJS declaration's five factories and 27 types instead of copying them.                                                                       |
-| `package.json`, `README.md`, `NOTICE.md` | New.                                                                                                                                                                                                                                                                                 |
+| Package file                              | Basis                                                                                                                                                                                                                                                                                |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `index.cjs`                               | Freedom's reviewed prototype entry `docs/qualification/railgun-kohaku-public-node-prototype-2026-10-06/artifact/source/restricted-entry.cjs.txt` (SHA-256 `ed8348e6…b010f`). The `require` paths change from `./src/main/wallet/` to `./src/`, and Prettier re-wraps two long lines. |
+| `index.mjs`                               | The prototype's `artifact/index.mjs.txt` (SHA-256 `057df46b…c489d`). The import target changes from `./runtime.cjs` to `./index.cjs`, and Prettier re-wraps two long lines.                                                                                                          |
+| `types/index.d.ts`                        | New. The CommonJS-format entry declaration for the `require` condition and the top-level `types` field. It re-exports the five factory declarations and their contract types.                                                                                                        |
+| `types/index.d.mts`                       | New. The ESM-format entry declaration for the `import` condition. Like the prototype's `artifact/index.d.mts.txt`, it forwards the CommonJS declaration's five factories and 27 types instead of copying them.                                                                       |
+| `read.cjs`                                | New. The `./read` subpath's CommonJS entry. It requires `./src/railgun-kohaku-read-data.js` and `./src/railgun-kohaku-read-dispatch.js` and exports their four helper functions, unwrapped, in a frozen object.                                                                      |
+| `read.mjs`                                | New. The `./read` subpath's ESM entry. Like `index.mjs`, it imports `./read.cjs` and re-exports the same four functions by name.                                                                                                                                                     |
+| `types/railgun-kohaku-read-contract.d.ts` | New. Self-contained declarations of the four helpers and five supporting types, written from the sources and Freedom's callers.                                                                                                                                                      |
+| `types/read.d.ts`, `types/read.d.mts`     | New. The `./read` entry declarations for the `require` and `import` conditions; `read.d.mts` forwards `read.d.ts`.                                                                                                                                                                   |
+| `package.json`, `README.md`, `NOTICE.md`  | New.                                                                                                                                                                                                                                                                                 |
+
+## The `./read` subpath
+
+The subpath exposes four helpers that Freedom's own callers use directly, without changing any source under `src/`. At `88b2496b`, Freedom's viewing-only read surface `src/main/wallet/railgun-kohaku-read.js` uses the three data helpers, and its private plugin `src/main/wallet/railgun-kohaku-plugin.js` uses `dispatchRailgunKohakuRead` with fixed, main-owned ports. In this package, the snapshot plugin uses all four, and the private and public adapters use `normalizeRailgunKohakuReadFilter`. `read.cjs` and `read.mjs` export those same function objects, not wrappers or copies, and the root entry still exports only the five factories.
+
+- `normalizeRailgunKohakuReadFilter`, `projectRailgunKohakuBalance` and `projectRailgunKohakuNotes` are projection and normalization helpers. They do not authenticate the ownership or currentness of what they are given.
+- `dispatchRailgunKohakuRead` is a trusted-host sequencing helper, not a pure function. It calls the caller's capture, view method, retain, recheck and refused callbacks and sequences asynchronous work between them. It has no intrinsic account authority; the caller-supplied callbacks carry their own authority and side effects. Its stale-read, exception, retention and rejection behavior is unchanged from Freedom.
+
+`README.md` ("Read helpers") describes their behavior in detail.
 
 ## Relationship to the reviewed prototype
 
