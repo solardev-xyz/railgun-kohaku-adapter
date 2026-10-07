@@ -1,0 +1,55 @@
+{
+  "stagedSubset": {
+    "command": "npm test -- --runInBand --config tools/owner-test-staging/jest.config.cjs",
+    "suites": 12,
+    "tests": 292,
+    "exitCode": 0
+  },
+  "parity": {
+    "suites": 1,
+    "tests": 2,
+    "exitCode": 0
+  },
+  "strictLint": {
+    "exitCode": 0,
+    "scope": "all staged JavaScript plus new parity/config",
+    "newDependencies": false
+  },
+  "defaultPackageTests": {
+    "suitesPassed": 49,
+    "suitesFailed": 2,
+    "testsPassed": 1708,
+    "testsFailed": 2,
+    "exitCode": 1,
+    "knownFailures": [
+      "owner-source-translation.test.js historical hash",
+      "execution-provenance.test.js historical hash"
+    ],
+    "note": "Default test discovery excludes staging; run explicit config for the292."
+  },
+  "logs": {
+    "staged": {
+      "path": "/private/tmp/railgun-owner-adjacent-committed-config-oct8.log",
+      "bytes": 248,
+      "sha256": "911a2ec17bd202043bd34214d4a4b30c5baf4b788f72aa9d6f7833ccbbfc888c"
+    },
+    "parity": {
+      "path": "/private/tmp/railgun-owner-adjacent-parity-oct8.log",
+      "bytes": 272,
+      "sha256": "3aeb37eb776f5ec97f3b46e4a5528f3c8b464dfc526c26aad91f8dfd5274826c"
+    },
+    "lint": {
+      "path": "/private/tmp/railgun-owner-adjacent-lint-oct8.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "full": {
+      "path": "/private/tmp/railgun-owner-adjacent-full-oct8.log",
+      "bytes": 3678,
+      "sha256": "3c83147f43146f7799b2785fcb465a6294a54544ba0b0292b3d748c77faae19b"
+    }
+  },
+  "nativeExecuted": false,
+  "FreedomFilesChanged": false,
+  "packageRuntimeChanged": false
+}

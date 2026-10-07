@@ -1,0 +1,3 @@
+# Literal-import-only staging must preserve historical source bytes on checkout.
+tests/** -text
+fixtures/** -text
