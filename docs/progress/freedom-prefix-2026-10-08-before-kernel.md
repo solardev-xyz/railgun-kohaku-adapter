@@ -1,0 +1,16 @@
+## Current checkpoint: standalone Railgun extraction and a smaller Freedom PR
+
+PPv2 retains its bounded live Sepolia evidence. Railgun has real native synthetic signing, proving, recovery and A->B receipt/preparation evidence, but its complete live private self-transfer -> output POI -> restart -> unshield journey remains open. User-facing privacy features remain disabled. Research: #475; implementation: draft #476.
+
+The public [Railgun Kohaku package](https://github.com/solardev-xyz/railgun-kohaku-adapter) is consumed by Freedom. Version 0.3.0 includes the adapter facade, historical capsule reader and shared destination, signature, preparation, result and recovery-input checks. Its installed-package native and packaged checks passed at their recorded Electron 44.5.1 baselines. The reviewed 0.4.0 POI/TXID data package is published; Freedom adoption is being qualified. Execution, durable ownership, keys and transport are still being extracted behind fixed host boundaries. This is not yet an independent general-purpose Railgun SDK.
+
+All 1,165 historical Railgun qualification records now have a byte-identical, tagged archive in the package repository. Freedom keeps 17 public test inputs and immutable links. The cleanup commit `7745d831` removed 1,148 duplicate files and reduced additions against `60837dc2` from 1,781,630 at `668e97ed` to 389,206 lines (78.15%); later integration changes the current GitHub diff count. The cleaned-up baseline passed 21,380 tests in 678 suites, with 33 skipped; that result predates the latest main merge. Independent review checked blob identity, retained-input parity and link closure. The archive changes location, not the historical claims.
+
+The last live continuation completed a scan and a preflight probe that queried the nullifier, then its sole recovery attempt refused at the fresh deployment-anchor RPC. It completed POI membership but did not reach its later nullifier query or transaction review; authenticated readback found no journaled attempt or send. The held note stays reserved and the campaign allowance is consumed. The transport failure's root cause is unresolved. No live retry follows from this update.
+
+Main `bf8d050f` is integrated: Electron 44.6.0, Ant 0.5.61 and Myotis 0.1.14/ABI 38, with dependencies, binaries and supervisor refreshed. Next: finish POI/TXID adoption and qualification on this runtime, move the guarded utility kernel, then the genuine account/storage ownership domain and remaining tooling/tests. Complete live recovery, relayer transport/uncertainty, independent-host acceptance and product UX remain distinct open milestones. Historical details below remain unchanged.
+
+[Native and packaged recovery-core evidence](https://github.com/solardev-xyz/railgun-kohaku-adapter/tree/7cfad7287d41b347dfc21d036d6c2558fd83986d/docs/qualification/recovery-data-0.3.0-2026-10-07) | [Historical archive](https://github.com/solardev-xyz/railgun-kohaku-adapter/tree/377c2a5d1aca18f0ed328dfdda955bd7d1ba271c/docs/freedom-qualification).
+
+[Previous checkpoint, preserved verbatim](https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/2c18afe5b755f1964be9091fe3ee999d0fc37ef8/docs/progress/freedom-prefix-2026-10-06-local-matrix.md).
+
