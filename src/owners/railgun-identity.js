@@ -20,6 +20,9 @@ const identities = new WeakMap(),
   signing = new WeakSet();
 // Process-lifetime quarantine deliberately survives identity/vault replacement.
 // The key is the same stable owner used for identity opening, not a caller ID.
+// An admitted signer can outlive identity.close() or a replaced vault. This
+// separate stable-owner latch gates only new identities, never its own current().
+const pendingSigningOwners = new Set();
 const quarantinedOwners = new Set(),
   ownerScopes = new Map(),
   ownerLoans = new Map();
@@ -121,7 +124,7 @@ async function openRailgunIdentity({ archive, accountIndex = 0 }) {
   const parentHandle = parent.getContext(subject),
     context = getPrivacyContext(parentHandle);
   const owner = JSON.stringify([context.profileId, accountIndex]);
-  if (quarantinedOwners.has(owner)) throw fail();
+  if (quarantinedOwners.has(owner) || pendingSigningOwners.has(owner)) throw fail();
   assert.ok(!owners.has(owner));
   const scope = createPrivacyScope({
     profileId: context.profileId,
@@ -362,6 +365,8 @@ async function signPrivateIntent({
     value = results.normalizeRailgunSpendSignature(message.value, payload);
     return JSON.stringify({ id: 2, value: null });
   }
+  assert.ok(!pendingSigningOwners.has(saved.owner));
+  pendingSigningOwners.add(saved.owner);
   signing.add(identity);
   signers.set(token, { identity, payload, current, signal: scope.signal });
   try {
@@ -427,12 +432,17 @@ async function signPrivateIntent({
     if (taskClosed) {
       try { await taskClosed; } catch (error) { cleanupError ||= error; }
     }
+    if (task && !taskClosed) {
+      closureUnknown = true;
+      try { quarantineRailgunIdentityCredentials(identity); } catch { /* Marker first. */ }
+    }
     // Retain exclusion through all admitted original callbacks even if a close
     // throws. Unknown child settlement retains the original host loan as well.
     await Promise.allSettled([...requests]);
     if (!closureUnknown) {
       try { await finishCredentialLoans(loans); } catch (error) { cleanupError ||= error; }
       signing.delete(identity);
+      pendingSigningOwners.delete(saved.owner);
     }
     if (cleanupError && !outcomeFailed) { outcomeFailed = true; outcomeError = cleanupError; }
   }
@@ -667,6 +677,8 @@ async function signRelayIntent({
       throw error;
     }
   }
+  assert.ok(!pendingSigningOwners.has(saved.owner));
+  pendingSigningOwners.add(saved.owner);
   signing.add(identity);
   relaySigners.set(token, state);
   try {
@@ -716,6 +728,10 @@ async function signRelayIntent({
         closureError = error;
       }
     }
+    if (task && !taskClosed) {
+      unobserved = true;
+      try { quarantineRailgunIdentityCredentials(identity); } catch { /* Marker first. */ }
+    }
     // Ordinary rejected callback work is settled; an unobservable original or
     // rejected child closure quarantines this owner instead of claiming drain.
     await Promise.allSettled([...requests, ...originals]);
@@ -725,7 +741,10 @@ async function signRelayIntent({
         if (!outcomeFailed) { outcomeFailed = true; outcomeError = error; }
       }
     }
-    if (!unobserved) signing.delete(identity);
+    if (!unobserved) {
+      signing.delete(identity);
+      pendingSigningOwners.delete(saved.owner);
+    }
   }
   if (unobserved) {
     const error = Object.assign(new Error('Railgun relay signer exit unavailable'), {
