@@ -1,6 +1,6 @@
 {
   "name": "@freedom/railgun-kohaku-adapter",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Restricted Kohaku adapters and historical Railgun capsule data readers (Sepolia qualification policy)",
   "license": "MPL-2.0",

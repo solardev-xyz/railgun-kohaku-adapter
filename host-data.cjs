@@ -7,4 +7,9 @@ module.exports = Object.freeze({
   ...require("./src/data/railgun-private-intent"),
   ...require("./src/data/railgun-private-offer"),
   ...require("./src/data/railgun-private-capsule"),
+  ...require("./src/data/railgun-private-destination"),
+  ...require("./src/data/railgun-private-signature"),
+  ...require("./src/data/railgun-private-preparation"),
+  ...require("./src/data/railgun-private-results"),
+  ...require("./src/data/railgun-private-recovery-data"),
 });
