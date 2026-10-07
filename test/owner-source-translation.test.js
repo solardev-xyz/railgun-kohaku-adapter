@@ -12,6 +12,8 @@ const narrowing = require("../docs/owners/KEY-NARROWING.json");
 const staged = require("../docs/owners/STAGED-IMPORTS.json");
 const persisted = require("../docs/owners/PERSISTED-LITERALS.json");
 const imports = require("../docs/owners/IMPORTS.json");
+const retired = require("../docs/owners/RETIRED-RUNTIME.json");
+const sourceFile = (file) => path.join(root, retired.find((row) => row.source === file)?.preserved || file);
 const sha = (value) => createHash("sha256").update(value).digest("hex");
 function undo(text, edits) {
   for (const edit of [...edits].reverse()) {
@@ -55,7 +57,7 @@ test("every translated algorithm reconstructs its exact immutable original bytes
   let moved = 0,
     reused = 0;
   for (const row of translation.files) {
-    let text = fs.readFileSync(path.join(root, row.destination), "utf8");
+    let text = fs.readFileSync(sourceFile(row.destination), "utf8");
     const callerTransition = callerTransitions.changes.find(
       (change) => change.file === row.destination,
     );
@@ -140,7 +142,7 @@ test("every reused data/POI/execution implementation has only one destination", 
 test("private files parse, fixed imports are local, and missing transitions are exactly inventoried", () => {
   const missing = new Set();
   for (const [name, audit] of Object.entries(staged)) {
-    const text = fs.readFileSync(path.join(root, name), "utf8");
+    const text = fs.readFileSync(sourceFile(name), "utf8");
     expect(audit.syntaxDiagnostics).toBe(0);
     expect(() => new vm.Script(text, { filename: name })).not.toThrow();
     expect(text).not.toMatch(
@@ -251,7 +253,7 @@ test("no owner facade, raw-key package export or job activation is published", (
   expect(fs.existsSync(path.join(root, "host-owner.cjs"))).toBe(false);
   expect(manifest.version).toBe("0.5.0");
 });
-test("dynamic archive, legacy job loading and policy selectors remain explicit unfinished work", () => {
+test("historical dynamic import audit remains immutable after retiring generic filename bootstrap", () => {
   const expressions = imports.dynamicExceptions.map((site) => site.expression);
   expect(expressions).toContain("require(message.filename)");
   expect(expressions).toContain("require.resolve('./' + name)");
@@ -365,4 +367,16 @@ test("all19 reviewed reverse owners move privately with immutable source pins an
     expect(source).toContain("record.type === 'mnemonic'");
     expect(source).toContain("assert.ok(BigInt(address) > 0n)");
   }
+});
+
+
+test("generic filename loader is preserved as historical text and absent from runtime", () => {
+  expect(retired).toHaveLength(1);
+  const row = retired[0];
+  expect(row.source).toBe("src/owners/railgun-process-entry.js");
+  expect(fs.existsSync(path.join(root, row.source))).toBe(false);
+  expect(sha(fs.readFileSync(sourceFile(row.source)))).toBe(row.sha256);
+  expect(row.preserved).toBe("docs/owners/historical/railgun-process-entry.source.txt");
+  const manifest = require("../package.json");
+  expect(manifest.files).not.toContain("docs/owners/");
 });

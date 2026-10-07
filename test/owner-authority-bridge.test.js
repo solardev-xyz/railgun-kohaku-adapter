@@ -139,3 +139,10 @@ test('real owner binding exposes the complete fixed process and worker platform 
     );
   }
 });
+
+
+test.each(cases)("%s has its actual fixed owner export in the package source", (_name, file, method) => {
+  const text = fs.readFileSync(path.join(__dirname, "../src/owners", file + ".js"), "utf8");
+  const exported = text.slice(text.lastIndexOf("module.exports = {"));
+  expect(exported).toMatch(new RegExp("\\b" + method + "\\b"));
+});
