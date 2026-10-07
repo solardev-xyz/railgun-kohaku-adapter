@@ -1,4 +1,4 @@
-# Private owner source staging — not activated
+# Private owner source and credential transition — not activated
 
 This package-only prerequisite starts at package commit
 `714401ae4a6f18275829e297ef5856d305a820ae` and reads every Freedom source from
@@ -16,8 +16,13 @@ has186 entries:135 translated private owner files and51 existing package targets
 The latter reuse the actual data, POI, artifacts, execution jobs and helper
 implementations. There is no second copy of those files under `src/owners`.
 `TRANSLATION.json` records every original Git blob/SHA, chosen destination/SHA and
-exact import edit. `KEY-NARROWING.json` records the only additional algorithm-side
-edit sequence; tests undo all edits and reconstruct each moved original SHA.
+exact import edit. `KEY-NARROWING.json` records the initial same-instance key-method narrowing.
+`CREDENTIAL-TRANSITIONS.json` records the explicit subsequent credential and
+submitter edits against capsule-correction commit3515cc9. Tests undo both sets
+and the import translation to reconstruct each moved original SHA. The capsule
+mapping reuses the full existing execution wrapper, including current-engine
+checks. `REUSED-EXPORTS.json` audits all51 original/destination named surfaces;
+its parser control catches the former missing normalizeRailgunNewCapsule export.
 
 Enrollment's five `with*Keys` methods are no longer properties of a returned
 enrollment. Their unchanged closures live in a private WeakMap keyed by that
@@ -31,7 +36,9 @@ relocation; no published test export is introduced.
 
 `PERSISTED-LITERALS.json` pins every Railgun/Freedom-prefixed static literal in
 the moved files, including record/floor/schema/store names. Exact reconstruction
-also preserves all other non-import bytes. This is stronger textual preservation,
+also records semantic changes separately. The root HMAC domain moved unchanged
+to the pinned credential host; all child-purpose HMAC domains stay package-private.
+This is textual preservation,
 not an encrypted-state round-trip or semantic migration qualification.
 
 ## Closed bootstrap skeleton
@@ -44,11 +51,19 @@ seed API. It captures fixed methods and their original receivers once; wrappers
 return the original values/promises and throw original errors. It does not
 validate that trusted host implementations are benevolent or manufacture host
 brands. Current context/storage/RPC/journal/EOA functions must be supplied by the
-real host at bootstrap, not by an operation.
+real host at bootstrap, not by an operation. Main initialization also initializes
+the existing execution binding using the same captured context/artifact functions.
+Execution preemption refuses owner initialization; malformed owner attempts poison
+both domains. The private zero-argument assertRailgunOwnerHost returns no binding
+and refuses uninitialized/second copies before lazy authority wrapper loading.
 
 The exact families are in that source and independent tests: context, artifacts,
 credentials, platform, profiles, sessions, storage, RPC, Tor transport/settings,
-signers, transaction intent/network/service, submission journal and retention.
+signers, transaction intent/network/service, submission journal, retention and
+submitter.readMetadata. `HOST-CAPABILITIES.json` pins the exact permitted importers
+of credentials/signers/transactions/submitter. Whole-object or dynamic host import
+aliases refuse the source parser; this is a static source constraint, not a
+semantic whole-JavaScript authority proof.
 Credential methods are only currentSession/withMaterial. Platform uses the
 reviewed fixed adapter plus applicationLifetime. The platform contract basis is
 `e6393dd3344c3d24a59cf2a4982f710966a3bbd9`; the credential adapter basis is
@@ -70,16 +85,19 @@ This domain is syntactically parsed and source-tested, **not loadable or qualifi
 as a complete owner implementation**. There is no public owner facade or job
 registration. Do not route production operations here yet.
 
-1. Six source imports intentionally point to five absent `./unbound/` transition
-   modules. They record the two identity/enrollment vault sites, original
-   keystore derivation, seed-to-root/guard construction, and EOA wallet-record
-   shape. They are not fake functions. Implement the fixed credential loan
-   conversion directly in the owners; never implement these missing names as
-   compatible raw vault/seed/derive facades. Original derivation/callback work
-   must settle before release, while utility broker byte replies can occur
-   within the held loan. Signing needs the actual per-operation context. Root
-   bytes remain scoped to enrollment and its original guard context must abort
-   on close/failure while a marked SQLite fence remains retained.
+1. The six absent credential/submitter imports have been removed, without raw
+   vault/seed/path facades. Identity uses currentSession and private scoped loans
+   with actual per-operation handles. Broker bytes are replied within the held
+   host callback; original host settlement follows observed child/callback drain.
+   Unknown child exit retains the host loan and existing identity quarantine.
+   Private/relay exclusion remains held until normal host settlement. Relay uses
+   the fixed relay-sign enum expected by the parallel supervisor successor.
+   Enrollment holds its original root callback for its lifetime; close revokes
+   the original guard context and wipes bytes even if a store close throws.
+   Legacy ownership clears only after original host settlement, so immediate
+   same-stack reopen deliberately refuses. Marked fences remain process-retained.
+   These controls are tested with deterministic public mock credential bytes and
+   controlled stores, not genuine moved encrypted-state or native operations.
 2. `railgun-process.js` still contains its reviewed mixed-route supervisor and
    actual Electron imports. `railgun-process-entry.js` still has the inherited
    `require(message.filename)` path. Neither is authorized as the future owner
@@ -95,7 +113,7 @@ registration. Do not route production operations here yet.
    data/one32-byte transfer, revocation counters, observed exit and pending work.
    The host now immediately resumes stdout/stderr; redundant supervisor resume
    is harmless. No worker can import the main initializer. The fixed host stub
-   filenames remain `railgun-owner-utility-entry.js` and
+   filenames are the existing `railgun-kernel-entry.js` and
    `railgun-owner-storage-entry.js`; no fallback is permitted.
 4. Current public/wallet/TXID source policy lists and relative file/entry selectors
    describe the old layout. Rebind all source-policy inventories and static job
@@ -106,8 +124,10 @@ registration. Do not route production operations here yet.
    together. Host EOA transaction/network and journal consumers still need an
    explicit closed initialized facade, same-instance receipt checks, uninitialized
    and second-copy refusals, and ordinary EOA regressions. Do not spread the
-   private modules into a facade. The WALLET_TYPES/source-wallet-record join is
-   an explicit unresolved seam, not a caller assertion.
+   private modules into a facade. The source-wallet-record join now calls only
+   the fixed submitter.readMetadata port, pinned to the original host checks.
+   The19 additional reverse Railgun owner modules are separately inventoried
+   and will be staged in the next bounded successor, not hidden by extra exports.
 6. Exact SQLite13.0.3 peer migration is parent-authorized but not declared or
    installed in this source-only prerequisite. The runtime addon must match the
    host's canonical importer and original constructor/connection. No acquired
@@ -122,20 +142,37 @@ fixed guard name loops, inherited dynamic filename loading and policy selectors.
 inventories, not semantic JS closure, dependency admission, runtime execution or
 proof that arbitrary archives are safe. No engine/archive target was loaded.
 
+## Inherited private-signer activation blocker
+
+A controlled source experiment confirms that the older private signer retains
+its per-identity signing latch and original held credential callback when
+`task.closed` rejects after key issuance. Closing that identity still releases
+its base identity owner, so a new identity for the same account can reopen while
+the original work is unobserved. Relay signing already quarantines the stable
+account owner. This older private path needs a separate owner-wide quarantine
+fix and regression before activation; the retained old latch/loan alone is not
+sufficient account exclusion. No child drainage is inferred from the rejection.
+
 ## Checks and next code boundary
 
-34 new source/bootstrap tests cover exact original reconstruction, missing-gate
-inventory, shared implementation reuse, private key methods, permanent bootstrap
-preemption, immutable method capture, original promise/error identity and fixed
-realm routing. The complete existing package regression plus these tests passed
-1,557 tests/47 suites. This does not exercise a genuine moved owner operation.
+The initial31bd checkpoint passed1,557 tests/47 suites. Current tests additionally
+cover all74 adapted identity controls plus original credential-callback lifetime,
+loan observation failures, enrollment guard/root revocation, paired bootstrap
+preemption, the fixed host importer allowlist and exact capsule wrapper reuse.
+The current full regression passed1,657 tests/50 suites; strict affected ESLint
+passed. Two detached lifecycle mutants (early callback release and omitted guard
+revocation) were refused, as was a whole-host alias parser control.
+The test context issuer is an exact copy of the immutable original, isolated to
+tests; deterministic credential bytes and controlled storage/fence ports are
+explicit mocks. Check logs record current totals. This does not qualify a genuine
+moved encrypted owner operation.
 Strict ESLint uses the existing Freedom configuration/tool without installation.
 This package has no npm lint script; the attempted command and the separate
 successful strict lint are recorded accurately. No formatting was applied to
 translated source bodies, so source provenance remains reversible.
 
-Next connected work is the fixed credential-lifetime conversion and platform
-supervisor/enum wiring, then genuine owner composition tests before any public
+Next connected work is the parallel platform supervisor/enum wiring and the19
+reverse-owner additions, then genuine owner composition tests before any public
 facade/adoption. Encrypted-store parity, callback/child rejection/unknown drain,
 worker cache separation, second-copy receipts, .5 artifact identity, native
 synthetic custody/sign/proof/cold recovery and packaged resolution remain gates.

@@ -5,6 +5,7 @@ const fs = require("fs"),
   { createHash } = require("crypto");
 const root = path.join(__dirname, "..");
 const translation = require("../docs/owners/TRANSLATION.json");
+const transitions = require("../docs/owners/CREDENTIAL-TRANSITIONS.json");
 const narrowing = require("../docs/owners/KEY-NARROWING.json");
 const staged = require("../docs/owners/STAGED-IMPORTS.json");
 const persisted = require("../docs/owners/PERSISTED-LITERALS.json");
@@ -60,6 +61,14 @@ test("every translated algorithm reconstructs its exact immutable original bytes
       continue;
     }
     moved++;
+    const transition = transitions.changes.find(
+      (change) => change.file === row.destination,
+    );
+    if (transition) {
+      expect(sha(text)).toBe(transition.afterSha256);
+      text = undo(text, transition.replacements);
+      expect(sha(text)).toBe(transition.beforeSha256);
+    }
     const privateKeys = narrowing.changes.find(
       (change) => change.file === row.destination,
     );
@@ -121,13 +130,7 @@ test("private files parse, fixed imports are local, and missing transitions are 
       expect(require.resolve(target).startsWith(root + path.sep)).toBe(true);
     }
   }
-  expect([...missing].sort()).toEqual([
-    "./unbound/credential-lifetime",
-    "./unbound/credential-session-transition",
-    "./unbound/eoa-wallet-record-transition",
-    "./unbound/storage-root-guard-transition",
-    "./unbound/storage-root-loan-transition",
-  ]);
+  expect([...missing]).toEqual([]);
   expect(
     imports.literalEdges.filter((edge) => edge.status === "activation-blocker"),
   ).toHaveLength(6);
@@ -136,7 +139,7 @@ test("persisted schema, floor, record and store literals remain exactly unchange
   expect(persisted.files).toHaveLength(135);
   const all = new Set();
   for (const row of persisted.files) {
-    expect(row.literals).toEqual(
+    expect([...row.literals, ...row.relocatedToCredentialHost].sort()).toEqual(
       translation.files.find((source) => source.source === row.source)
         .sourcePersistedLiterals,
     );
@@ -262,4 +265,45 @@ test("all reused static named export surfaces were checked, including the full c
     expect(
       fs.readFileSync(path.join(root, "src/owners", name), "utf8"),
     ).toContain('require("../execution/railgun-private-capsule.js")');
+});
+
+test("high-authority host family imports have an exact reviewed source allowlist", () => {
+  const audit = require("../docs/owners/HOST-CAPABILITIES.json");
+  expect(audit.allowed).toEqual({
+    credentials: [
+      "src/owners/credential-loan.js",
+      "src/owners/railgun-account-enrollment.js",
+      "src/owners/railgun-identity.js",
+    ],
+    signers: [
+      "src/owners/railgun-private-operation.js",
+      "src/owners/railgun-private-submission.js",
+    ],
+    transactions: [
+      "src/owners/railgun-private-submission.js",
+      "src/owners/railgun-shield-operation.js",
+    ],
+    submitter: ["src/owners/railgun-private-submission.js"],
+  });
+  for (const [family, files] of Object.entries(audit.allowed))
+    expect(
+      Object.entries(staged)
+        .filter(([, row]) => row.hostFamilies.includes(family))
+        .map(([file]) => file),
+    ).toEqual(files);
+  for (const [file, digest] of Object.entries(audit.files))
+    expect(sha(fs.readFileSync(path.join(root, file)))).toBe(digest);
+});
+
+test("controlled credential tests pin their immutable source and copied context issuer", () => {
+  const rows = require("../docs/owners/CREDENTIAL-TEST-SOURCES.json");
+  expect(rows).toHaveLength(3);
+  for (const row of rows) {
+    const bytes = fs.readFileSync(path.join(root, row.fixture));
+    expect({ bytes: bytes.length, sha256: sha(bytes) }).toEqual(row.current);
+  }
+  const issuer = rows.find((row) =>
+    row.fixture.endsWith("owner-privacy-context.js"),
+  );
+  expect(issuer.current).toEqual(issuer.original);
 });

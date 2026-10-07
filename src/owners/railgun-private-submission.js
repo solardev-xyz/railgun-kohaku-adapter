@@ -247,12 +247,7 @@ function getRailgunPrivatePreflightDiagnostic(substage, error) {
 // profile whose vault was made without identity-manager has none, and refuses.
 // Exported for the live qualifier's read-only probe.
 function readRailgunSubmitterMetadata() {
-  const { getWalletRecord, WALLET_TYPES } = require("./unbound/eoa-wallet-record-transition");
-  const record = getWalletRecord(0);
-  assert.ok(record && record.index === 0 && record.type === WALLET_TYPES.MNEMONIC);
-  const address = require('ethers').getAddress(record.address).toLowerCase();
-  assert.ok(BigInt(address) > 0n);
-  return Object.freeze({ index: 0, type: record.type, address });
+  return require('./host-bindings').submitter.readMetadata();
 }
 // Both callers are fixed entry points below. This core is not exported and
 // accepts no renderer/caller-selected admission callback or completion object.

@@ -5,8 +5,8 @@
 const fs = require('fs'),
   path = require('path');
 const { createHash, createHmac } = require('crypto');
-const { mnemonicToSeedSync } = require("./unbound/storage-root-loan-transition");
-const vault = require("./unbound/credential-session-transition");
+const { credentials } = require('./host-bindings');
+const { createRailgunCredentialLoan } = require('./credential-loan');
 const { getActiveProfile } = require('./host-bindings').profiles;
 const { createPrivacyScope, getPrivacyContext } = require('./context-bindings');
 const { openPrivacySession } = require('./host-bindings').sessions;
@@ -15,7 +15,6 @@ const {
   quarantineRailgunIdentityCredentials,
 } = require("./railgun-identity.js");
 const { createPrivacyStorage, getPrivacyStoragePath } = require('./host-bindings').storage;
-const { createPrivacyProfileGuard } = require("./unbound/storage-root-guard-transition");
 const { createRailgunWalletCatalog } = require("./railgun-wallet-catalog.js");
 const { isRailgunPublicCatalog } = require("./railgun-public-catalog.js");
 const { createRailgunPrivateReservations } = require("./railgun-private-reservations.js");
@@ -67,7 +66,7 @@ async function openAccountEnrollment({ identity, create = false }, cooperative) 
   const descriptor = assertRailgunIdentity(identity),
     parent = openPrivacySession(),
     profile = getActiveProfile(),
-    vaultSignal = vault.getSessionSignal();
+    vaultSignal = credentials.currentSession();
   const subject = {
     kind: 'private-account',
     principal: `railgun:${descriptor.accountIndex}`,
@@ -80,7 +79,7 @@ async function openAccountEnrollment({ identity, create = false }, cooperative) 
   const parentHandle = parent.getContext(subject),
     context = getPrivacyContext(parentHandle);
   assertRailgunIdentity(identity, parentHandle);
-  check(!vaultSignal.aborted && vault.getMnemonic());
+  check(!vaultSignal.aborted);
   // A moved or aliased profile must be deliberately recovered; don't redirect
   // persistent account state through symlinks or silently change its identity.
   directory(profile.userDataDir);
@@ -91,7 +90,7 @@ async function openAccountEnrollment({ identity, create = false }, cooperative) 
     isCurrent: () => {
       assertRailgunIdentity(identity, parentHandle);
       fence?.assertCurrent();
-      return vaultSignal === vault.getSessionSignal();
+      return vaultSignal === credentials.currentSession();
     },
   });
   const base = path.join(profile.userDataDir, 'wallet-railgun-accounts');
@@ -109,7 +108,8 @@ async function openAccountEnrollment({ identity, create = false }, cooperative) 
     throw fail();
   }
   owners.add(file);
-  let rootKey,
+  let rootLoan,
+    rootKey,
     catalog,
     guard,
     manifest,
@@ -128,22 +128,29 @@ async function openAccountEnrollment({ identity, create = false }, cooperative) 
     closed = true;
     // A synchronous enrollment close cannot establish original-work drainage.
     // Marked accounts retain their main connection until this process exits.
-    fence?.retainUntilExit();
-    rootKey?.fill(0);
-    borrowed.forEach((key) => key.fill(0));
-    catalog?.close();
-    capsules?.close();
-    poiIntents?.close();
-    relayRecovery?.close();
-    reservations?.close();
-    scope.close();
-    owners.delete(file);
+    let cleanupError;
+    const cleanup = (run) => { try { run(); } catch (error) { cleanupError ||= error; } };
+    cleanup(() => fence?.retainUntilExit());
+    // The genuine guard's MAC lifetime is the original enrollment context.
+    // Revoke it even if an individual store close throws.
+    cleanup(() => scope.close());
+    cleanup(() => rootKey?.fill(0));
+    for (const key of borrowed) cleanup(() => key.fill(0));
+    for (const store of [catalog, capsules, poiIntents, relayRecovery, reservations])
+      cleanup(() => store?.close());
+    if (rootLoan) {
+      cleanup(() => rootLoan.release());
+      // This synchronous API never reports callback drainage. Only observed
+      // settlement permits same-process legacy reuse; an unknown stays held.
+      rootLoan.closed.then(() => owners.delete(file), () => owners.delete(file));
+    } else owners.delete(file);
+    if (cleanupError) throw cleanupError;
   }
   scope.signal.addEventListener('abort', close, { once: true });
   function active() {
     check(!closed);
     assertRailgunIdentity(identity, handle);
-    check(vaultSignal === vault.getSessionSignal());
+    check(vaultSignal === credentials.currentSession());
     fence?.assertCurrent();
     check(!closed);
   }
@@ -174,22 +181,23 @@ async function openAccountEnrollment({ identity, create = false }, cooperative) 
     return v;
   }
   try {
-    const seed = mnemonicToSeedSync(vault.getMnemonic());
+    rootLoan = createRailgunCredentialLoan({
+      handle, vaultSession: vaultSignal, accountIndex: descriptor.accountIndex,
+      purpose: 'storage-root', signal: scope.signal,
+    });
+    const material = await rootLoan.ready;
+    rootKey = material.bytes;
+    guard = material.profileGuard;
+    active();
+    // The host already bootstrapped the genuine inventory with this context.
+    // Account namespace and manifest writes still follow that original guard.
     let key;
     try {
-      rootKey = createHmac('sha256', seed)
-        .update('Freedom Railgun account storage v1\0')
-        .update(JSON.stringify([context.profileId, descriptor.accountIndex, 11155111, 'sepolia']))
-        .digest();
-      // Shared profile inventory bootstraps before account namespace creation.
-      // The account fence does not serialize other profiles/accounts/protocols.
-      guard = createPrivacyProfileGuard({ handle, profile, seed });
       directory(base, !fs.existsSync(base));
       regularFileIfPresent(file);
       key = derive('account-manifest');
       manifest = createPrivacyStorage({ handle, directory: base, key, profileGuard: guard });
     } finally {
-      seed.fill(0);
       key?.fill(0);
     }
     let current = await manifest.get(RECORD);

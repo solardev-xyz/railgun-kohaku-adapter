@@ -4,13 +4,13 @@
     {
       "source": "src/main/networks/railgun-host-provider.js",
       "destination": "src/owners/railgun-host-provider.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-account-enrollment.js",
       "destination": "src/owners/railgun-account-enrollment.js",
       "literals": [
-        "Freedom Railgun account storage v1\u0000",
         "railgun-account-enrollment-v1",
         "railgun-cache-",
         "railgun-poi-intents-floor-v1",
@@ -22,6 +22,9 @@
         "railgun-relay-local-recovery-floor-v4",
         "railgun-relay-local-recovery-v4",
         "railgun-wallet-catalog-v1:"
+      ],
+      "relocatedToCredentialHost": [
+        "Freedom Railgun account storage v1\u0000"
       ]
     },
     {
@@ -29,12 +32,14 @@
       "destination": "src/owners/railgun-account-fence.js",
       "literals": [
         "freedom.railgun.account-writer-fence.v1"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-account-phase.js",
       "destination": "src/owners/railgun-account-phase.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-account-poi.js",
@@ -43,7 +48,8 @@
         "freedom:railgun:account-poi-v1",
         "freedom:railgun:window-poi-v1:",
         "railgun-relay-input-poi-history-v1"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-account-public.js",
@@ -51,7 +57,8 @@
       "literals": [
         "railgun-public-catalog-v1",
         "railgun-scan-v1"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-account-store.js",
@@ -59,7 +66,8 @@
       "literals": [
         "railgun-cache-",
         "railgun-public-"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-account-txid.js",
@@ -67,7 +75,8 @@
       "literals": [
         "railgun-public-sync",
         "railgun-txid-v1:"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-account-wallet.js",
@@ -79,17 +88,20 @@
         "railgun-private-transfer",
         "railgun-token-unshield",
         "railgun-wallet-v1:"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-event-projector.js",
       "destination": "src/owners/railgun-event-projector.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-frontier.js",
       "destination": "src/owners/railgun-frontier.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-identity.js",
@@ -98,22 +110,26 @@
         "railgun-partial-unshield",
         "railgun-private-transfer",
         "railgun-token-unshield"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-kohaku-read.js",
       "destination": "src/owners/railgun-kohaku-read.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-note-provenance-job.js",
       "destination": "src/owners/railgun-note-provenance-job.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-note-provenance.js",
       "destination": "src/owners/railgun-note-provenance.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-own-operation.js",
@@ -124,7 +140,8 @@
         "railgun-private-transfer",
         "railgun-token-unshield",
         "railgun-transact"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-own-poi-membership.js",
@@ -132,74 +149,86 @@
       "literals": [
         "freedom:railgun:own-poi-membership-v1",
         "railgun-public-sync"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-own-poi-proof-data.js",
       "destination": "src/owners/railgun-own-poi-proof-data.js",
       "literals": [
         "railgun-partial-unshield"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-own-poi-proof.js",
       "destination": "src/owners/railgun-own-poi-proof.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-own-poi-prove-job.js",
       "destination": "src/owners/railgun-own-poi-prove-job.js",
       "literals": [
         "railgun-own-poi-artifacts"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-own-receipt.js",
       "destination": "src/owners/railgun-own-receipt.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-own-selector-job.js",
       "destination": "src/owners/railgun-own-selector-job.js",
       "literals": [
         "railgun-partial-unshield"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-own-selector.js",
       "destination": "src/owners/railgun-own-selector.js",
       "literals": [
         "railgun-partial-unshield"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-own-source-capture.js",
       "destination": "src/owners/railgun-own-source-capture.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-own-source.js",
       "destination": "src/owners/railgun-own-source.js",
       "literals": [
         "railgun-partial-unshield"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-own-txid-job.js",
       "destination": "src/owners/railgun-own-txid-job.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-own-txid-verifier.js",
       "destination": "src/owners/railgun-own-txid-verifier.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-own-txid.js",
       "destination": "src/owners/railgun-own-txid.js",
       "literals": [
         "railgun-partial-unshield"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-own-witness.js",
@@ -207,24 +236,28 @@
       "literals": [
         "railgun-partial-unshield",
         "railgun-public-sync"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-paged-store.js",
       "destination": "src/owners/railgun-paged-store.js",
       "literals": [
         "railgun-paged-store-v2"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-poi-cold-validation.js",
       "destination": "src/owners/railgun-poi-cold-validation.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-poi-creator.js",
       "destination": "src/owners/railgun-poi-creator.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-poi-disclosure-plan.js",
@@ -234,46 +267,54 @@
         "railgun-partial-unshield",
         "railgun-private-transfer",
         "railgun-txid"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-poi-intent-store.js",
       "destination": "src/owners/railgun-poi-intent-store.js",
       "literals": [
         "railgun-poi-intents-v1"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-poi-job.js",
       "destination": "src/owners/railgun-poi-job.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-poi-membership.js",
       "destination": "src/owners/railgun-poi-membership.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-poi-output-recover-job.js",
       "destination": "src/owners/railgun-poi-output-recover-job.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-poi-output-recovery-data.js",
       "destination": "src/owners/railgun-poi-output-recovery-data.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-poi-output-recovery.js",
       "destination": "src/owners/railgun-poi-output-recovery.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-poi-prover.js",
       "destination": "src/owners/railgun-poi-prover.js",
       "literals": [
         "railgun-local-poi-proof"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-poi-reconstruct.js",
@@ -282,59 +323,70 @@
         "railgun-partial-unshield",
         "railgun-private-transfer",
         "railgun-token-unshield"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-poi-root.js",
       "destination": "src/owners/railgun-poi-root.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-poi-shield-selector-job.js",
       "destination": "src/owners/railgun-poi-shield-selector-job.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-poi-shield-selector.js",
       "destination": "src/owners/railgun-poi-shield-selector.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-poi-source-capture.js",
       "destination": "src/owners/railgun-poi-source-capture.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-poi-source-evidence.js",
       "destination": "src/owners/railgun-poi-source-evidence.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-poi-source.js",
       "destination": "src/owners/railgun-poi-source.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-poi-transact-selector-job.js",
       "destination": "src/owners/railgun-poi-transact-selector-job.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-poi-verifier.js",
       "destination": "src/owners/railgun-poi-verifier.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-poi-verify-job.js",
       "destination": "src/owners/railgun-poi-verify-job.js",
       "literals": [
         "railgun-keyless-poi-verify"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-poi-witness.js",
       "destination": "src/owners/railgun-poi-witness.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-private-capsule-store.js",
@@ -342,12 +394,14 @@
       "literals": [
         "freedom:railgun:recovery-binding-v1\u0000",
         "railgun-private-capsules-v1"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-private-creator.js",
       "destination": "src/owners/railgun-private-creator.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-private-operation.js",
@@ -357,7 +411,8 @@
         "railgun-partial-unshield",
         "railgun-private-transfer",
         "railgun-token-unshield"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-private-preflight.js",
@@ -367,12 +422,14 @@
         "railgun-private-transfer",
         "railgun-relay-self-transfer",
         "railgun-token-unshield"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-private-proof.js",
       "destination": "src/owners/railgun-private-proof.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-private-receive.js",
@@ -380,7 +437,8 @@
       "literals": [
         "railgun-partial-unshield",
         "railgun-private-transfer"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-private-reservations.js",
@@ -391,7 +449,8 @@
         "railgun-private-transfer",
         "railgun-relay-self-transfer",
         "railgun-token-unshield"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-private-submission.js",
@@ -403,12 +462,14 @@
         "railgun-recovered-private-submission",
         "railgun-token-unshield",
         "railgun-transact"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-process-entry.js",
       "destination": "src/owners/railgun-process-entry.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-process.js",
@@ -425,7 +486,8 @@
         "railgun-process-entry.js",
         "railgun-spend-sign-job",
         "railgun-wallet-job"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-public-catalog.js",
@@ -433,14 +495,16 @@
       "literals": [
         "railgun-public-",
         "railgun-public-catalog-v1"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-public-job.js",
       "destination": "src/owners/railgun-public-job.js",
       "literals": [
         "railgun-engine"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-public-policy.js",
@@ -460,36 +524,42 @@
         "railgun-source-feed.js",
         "railgun-source-ledger.js",
         "railgun-tree-transactions.js"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-public-records.js",
       "destination": "src/owners/railgun-public-records.js",
       "literals": [
         "freedom:railgun:public-records-v1:"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-public-run.js",
       "destination": "src/owners/railgun-public-run.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-public-services.js",
       "destination": "src/owners/railgun-public-services.js",
       "literals": [
         "railgun-public-sync"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-recovered-review-budget.json",
       "destination": "src/owners/railgun-recovered-review-budget.json",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-recovery-finality.js",
       "destination": "src/owners/railgun-recovery-finality.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-relay-operation.js",
@@ -500,75 +570,88 @@
         "railgun-relay-local-record-v4",
         "railgun-relay-selected-input-disclosure-v1",
         "railgun-relay-selected-root-disclosure-v1"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-relay-pre-poi-job.js",
       "destination": "src/owners/railgun-relay-pre-poi-job.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-relay-pre-poi-math.js",
       "destination": "src/owners/railgun-relay-pre-poi-math.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-relay-pre-poi-witness.js",
       "destination": "src/owners/railgun-relay-pre-poi-witness.js",
       "literals": [
         "railgun-relay-pre-poi-binding-v1"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-relay-proof-results.js",
       "destination": "src/owners/railgun-relay-proof-results.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-relay-proof-verifier.js",
       "destination": "src/owners/railgun-relay-proof-verifier.js",
       "literals": [
         "railgun-relay-independent-proof"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-relay-proof.js",
       "destination": "src/owners/railgun-relay-proof.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-relay-prove-job.js",
       "destination": "src/owners/railgun-relay-prove-job.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-relay-prover.js",
       "destination": "src/owners/railgun-relay-prover.js",
       "literals": [
         "railgun-local-relay-prover"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-relay-quote-job.js",
       "destination": "src/owners/railgun-relay-quote-job.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-relay-quote-verify.js",
       "destination": "src/owners/railgun-relay-quote-verify.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-relay-reconstruct.js",
       "destination": "src/owners/railgun-relay-reconstruct.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-relay-recovery-store.js",
       "destination": "src/owners/railgun-relay-recovery-store.js",
       "literals": [
         "railgun-relay-local-recovery-v4"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-relay-review-summary.js",
@@ -576,46 +659,54 @@
       "literals": [
         "freedom:railgun:relay-review-summary-v1\u0000",
         "railgun-relay-unsigned-review-v1"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-relay-sign-job.js",
       "destination": "src/owners/railgun-relay-sign-job.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-relay-signature-verify-job.js",
       "destination": "src/owners/railgun-relay-signature-verify-job.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-relay-signature-verify.js",
       "destination": "src/owners/railgun-relay-signature-verify.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-relay-transact-provenance.js",
       "destination": "src/owners/railgun-relay-transact-provenance.js",
       "literals": [
         "railgun-public-sync"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-relay-transact-staging.js",
       "destination": "src/owners/railgun-relay-transact-staging.js",
       "literals": [
         "railgun-relay-transact-staging-disclosure-v1"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-relay-verify-job.js",
       "destination": "src/owners/railgun-relay-verify-job.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-relay-wallet-job.js",
       "destination": "src/owners/railgun-relay-wallet-job.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-relay-witness.js",
@@ -623,7 +714,8 @@
       "literals": [
         "railgun-relay-self-transfer",
         "railgun-relay-unsigned-draft-v1"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-reservation-ledger.js",
@@ -633,94 +725,110 @@
         "railgun-private-transfer",
         "railgun-relay-self-transfer",
         "railgun-token-unshield"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-scan-coordinator.js",
       "destination": "src/owners/railgun-scan-coordinator.js",
       "literals": [
         "railgun-scan-v1"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-scan-journal.js",
       "destination": "src/owners/railgun-scan-journal.js",
       "literals": [
         "railgun-scan-v1"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-scan-source.js",
       "destination": "src/owners/railgun-scan-source.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-session-worker-entry.js",
       "destination": "src/owners/railgun-session-worker-entry.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-session-worker.js",
       "destination": "src/owners/railgun-session-worker.js",
       "literals": [
         "railgun-session-worker-entry.js"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-session.js",
       "destination": "src/owners/railgun-session.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-shield-job.js",
       "destination": "src/owners/railgun-shield-job.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-shield-operation.js",
       "destination": "src/owners/railgun-shield-operation.js",
       "literals": [
         "railgun-native-shield"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-shield-policy.js",
       "destination": "src/owners/railgun-shield-policy.js",
       "literals": [
         "railgun-native-shield"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-shield-preflight.js",
       "destination": "src/owners/railgun-shield-preflight.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-shield-prepare.js",
       "destination": "src/owners/railgun-shield-prepare.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-shield-receipt.js",
       "destination": "src/owners/railgun-shield-receipt.js",
       "literals": [
         "railgun-native-shield"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-shield-receive-job.js",
       "destination": "src/owners/railgun-shield-receive-job.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-shield-receive.js",
       "destination": "src/owners/railgun-shield-receive.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-source-feed.js",
       "destination": "src/owners/railgun-source-feed.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-source-ledger.js",
@@ -728,24 +836,28 @@
       "literals": [
         "freedom:railgun:source-ledger-v1",
         "freedom:railgun:source-ledger-v1:"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-store-cursor.js",
       "destination": "src/owners/railgun-store-cursor.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-store-owners.js",
       "destination": "src/owners/railgun-store-owners.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-store.js",
       "destination": "src/owners/railgun-store.js",
       "literals": [
         "railgun-store-v1"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-transact-intent.js",
@@ -756,21 +868,24 @@
         "railgun-token-unshield",
         "railgun-transact",
         "railgun-transact-v2"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-transact-provenance.js",
       "destination": "src/owners/railgun-transact-provenance.js",
       "literals": [
         "railgun-public-sync"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-transact-receipt-policy.js",
       "destination": "src/owners/railgun-transact-receipt-policy.js",
       "literals": [
         "railgun-sepolia-partial-receipt-v1"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-transact-receipt.js",
@@ -778,7 +893,8 @@
       "literals": [
         "railgun-partial-unshield",
         "railgun-private-transfer"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-transact-resolution.js",
@@ -787,7 +903,8 @@
         "railgun-partial-unshield",
         "railgun-private-transfer",
         "railgun-token-unshield"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-transact-staging.js",
@@ -796,34 +913,40 @@
         "railgun-partial-unshield",
         "railgun-private-transfer",
         "railgun-token-unshield"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-tree-transactions.js",
       "destination": "src/owners/railgun-tree-transactions.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-txid-coverage.js",
       "destination": "src/owners/railgun-txid-coverage.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-txid-events.js",
       "destination": "src/owners/railgun-txid-events.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-txid-job.js",
       "destination": "src/owners/railgun-txid-job.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-txid-journal.js",
       "destination": "src/owners/railgun-txid-journal.js",
       "literals": [
         "railgun-txid-v1:"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-txid-policy.js",
@@ -848,17 +971,20 @@
         "railgun-txid-projection",
         "railgun-txid-root",
         "railgun-txid-runner"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-txid-root.js",
       "destination": "src/owners/railgun-txid-root.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-txid-runner.js",
       "destination": "src/owners/railgun-txid-runner.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-wallet-catalog.js",
@@ -867,14 +993,16 @@
         "railgun-cache-",
         "railgun-wallet-catalog-v1",
         "railgun-wallet-catalog-v1:"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-wallet-coverage-store.js",
       "destination": "src/owners/railgun-wallet-coverage-store.js",
       "literals": [
         "freedom:railgun:wallet-coverage:v1:"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-wallet-coverage.js",
@@ -882,7 +1010,8 @@
       "literals": [
         "freedom:railgun:wallet-checkpoint-v1\u0000",
         "freedom:railgun:wallet-coverage-v1:"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-wallet-journal.js",
@@ -890,7 +1019,8 @@
       "literals": [
         "railgun-wallet-journal-v1",
         "railgun-wallet-v1:"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-wallet-policy.js",
@@ -964,34 +1094,40 @@
         "railgun-wallet-scan",
         "railgun-wallet-state",
         "railgun-wallet-storage"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-wallet-read.js",
       "destination": "src/owners/railgun-wallet-read.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-wallet-run.js",
       "destination": "src/owners/railgun-wallet-run.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-wallet-runner.js",
       "destination": "src/owners/railgun-wallet-runner.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-wallet-state.js",
       "destination": "src/owners/railgun-wallet-state.js",
       "literals": [
         "freedom:railgun:wallet-store-v1\u0000"
-      ]
+      ],
+      "relocatedToCredentialHost": []
     },
     {
       "source": "src/main/wallet/railgun-wallet-storage.js",
       "destination": "src/owners/railgun-wallet-storage.js",
-      "literals": []
+      "literals": [],
+      "relocatedToCredentialHost": []
     }
   ]
 }
