@@ -205,8 +205,7 @@ async function verify(options) {
     sender = createRailgunRelayVerifyRecordSender(candidateText, scope.signal);
     task = startRailgunProcess({
       handle: scope.getContext(context.subject),
-      filename: require.resolve("./railgun-relay-verify-job.js"),
-      binaryKey: false,
+      executionJob: 'relay-verify',
       input: JSON.stringify({
         archive,
         proverArchive,

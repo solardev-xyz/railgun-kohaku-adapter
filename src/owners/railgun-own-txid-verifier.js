@@ -76,7 +76,7 @@ async function verify({ handle, archive, state, evidence, witness, signal, timeo
     active();
     task = startRailgunProcess({
       handle: scope.getContext(parent.subject),
-      filename: require.resolve("./railgun-own-txid-job.js"),
+      executionJob: 'own-txid-proof',
       input,
       startupMs: Math.min(30000, timeoutMs),
       lifetimeMs: timeoutMs,

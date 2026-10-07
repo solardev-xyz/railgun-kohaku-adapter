@@ -92,7 +92,7 @@ function createRailgunPublicJobs({ handle, archive }) {
       task = startRailgunProcess({
         handle: scope.getContext({ ...context.subject, operation: 'public-scan' }),
         broker,
-        filename: require.resolve("./railgun-public-job.js"),
+        executionJob: 'public-scan',
         input: JSON.stringify({ mode, ...input, archive, qualifiedThrough: QUALIFIED_THROUGH }),
         startupMs: 120000,
         lifetimeMs: 170000,

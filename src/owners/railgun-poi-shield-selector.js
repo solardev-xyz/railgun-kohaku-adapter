@@ -70,7 +70,7 @@ async function derive({ handle, archive, capsule, creator, signal, timeoutMs = 3
     active();
     task = startRailgunProcess({
       handle: scope.getContext(parent.subject),
-      filename: require.resolve("./railgun-poi-shield-selector-job.js"),
+      executionJob: 'poi-shield-selector',
       input,
       startupMs: Math.min(30000, timeoutMs),
       lifetimeMs: timeoutMs,
