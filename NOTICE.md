@@ -1,6 +1,6 @@
 # Notice and provenance
 
-`@freedom/railgun-kohaku-adapter` 0.1.0 is a private, unpublished extraction from the Freedom browser repository. Every Freedom file in this package comes from Freedom commit `88b2496b58b1bccca64a35a576b48c026089544a` (branch `feat/wallet-privacy-foundation`). Copies were taken from the git object database (`git cat-file blob 88b2496b:<path>`), not from a working tree.
+`@freedom/railgun-kohaku-adapter` 0.1.0 is an extraction from the Freedom browser repository (https://github.com/solardev-xyz/freedom-browser). It is not published to npm. Every Freedom file in this package comes from Freedom commit `88b2496b58b1bccca64a35a576b48c026089544a` (branch `feat/wallet-privacy-foundation`). Copies were taken from the git object database (`git cat-file blob 88b2496b:<path>`), not from a working tree.
 
 ## License
 

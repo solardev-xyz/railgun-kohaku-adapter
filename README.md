@@ -1,6 +1,6 @@
 # @freedom/railgun-kohaku-adapter
 
-A restricted Kohaku-style facade over **trusted, application-supplied** Railgun hosts. Version 0.1.0 is private and unpublished. It was extracted from the Freedom browser (commit `88b2496b`) as the first package of the privacy work ("E1"); see `NOTICE.md` for exact provenance.
+A restricted Kohaku-style facade over **trusted, application-supplied** Railgun hosts. Version 0.1.0 is not published to npm (`"private": true`); its source is public at https://github.com/solardev-xyz/railgun-kohaku-adapter. It was extracted from the Freedom browser (commit `88b2496b`) as the first package of the privacy work ("E1"); see `NOTICE.md` for exact provenance.
 
 This is **not** a self-contained Railgun SDK. It contains no Railgun engine, prover, key management, wallet vault, storage, RPC client, Tor transport or UI. The application's host does the actual work: it owns the account, holds the keys, generates proofs, signs and submits transactions, and keeps durable state. This package only sits between a Kohaku-style consumer and that host, and does four things:
 
