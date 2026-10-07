@@ -4,13 +4,20 @@
 const { execFileSync } = require('child_process');
 const path = require('path');
 
+let output;
+beforeAll(() => {
+  output = JSON.parse(
+    execFileSync(process.execPath, [path.join(__dirname, 'consumer', 'smoke.mjs')], {
+      cwd: path.resolve(__dirname, '..'),
+      encoding: 'utf8',
+      timeout: 30000,
+    })
+  );
+});
+
 test('CommonJS and ESM consumers share the five factories and operation registries', () => {
-  const output = execFileSync(process.execPath, [path.join(__dirname, 'consumer', 'smoke.mjs')], {
-    cwd: path.resolve(__dirname, '..'),
-    encoding: 'utf8',
-    timeout: 30000,
-  });
-  expect(JSON.parse(output)).toEqual({
+  const { read: _read, ...root } = output;
+  expect(root).toEqual({
     resolved: { require: 'index.cjs', import: 'index.mjs' },
     factories: [
       'createRailgunKohakuSnapshotPlugin',
@@ -27,6 +34,36 @@ test('CommonJS and ESM consumers share the five factories and operation registri
       broadcast: 1,
       close: 1,
       authority: false,
+    },
+  });
+});
+
+test('the read subpath exports the four helper functions the factories run', () => {
+  const refused = ['ERR_PACKAGE_PATH_NOT_EXPORTED', 'ERR_PACKAGE_PATH_NOT_EXPORTED'];
+  expect(output.read).toEqual({
+    resolved: { require: 'read.cjs', import: 'read.mjs' },
+    helpers: [
+      'normalizeRailgunKohakuReadFilter',
+      'projectRailgunKohakuBalance',
+      'projectRailgunKohakuNotes',
+      'dispatchRailgunKohakuRead',
+    ],
+    // The read exports found, by identity, on the factories' own call stacks.
+    usedBy: {
+      snapshotBalance: [
+        'normalizeRailgunKohakuReadFilter',
+        'projectRailgunKohakuBalance',
+        'dispatchRailgunKohakuRead',
+      ],
+      snapshotNotes: ['projectRailgunKohakuNotes', 'dispatchRailgunKohakuRead'],
+      privateBalance: ['normalizeRailgunKohakuReadFilter'],
+      publicBalance: ['normalizeRailgunKohakuReadFilter'],
+    },
+    // [require(), import()] error codes for subpaths outside "exports".
+    refused: {
+      'src/railgun-kohaku-read-data.js': refused,
+      'src/railgun-kohaku-read-dispatch.js': refused,
+      'read.cjs': refused,
     },
   });
 });
