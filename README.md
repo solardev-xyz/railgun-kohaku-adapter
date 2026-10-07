@@ -1,6 +1,6 @@
 # @freedom/railgun-kohaku-adapter
 
-A restricted Kohaku-style facade over **trusted, application-supplied** Railgun hosts. Version 0.1.0 is not published to npm (`"private": true`); its source is public at https://github.com/solardev-xyz/railgun-kohaku-adapter. It was extracted from the Freedom browser (commit `88b2496b`) as the first package of the privacy work ("E1"); see `NOTICE.md` for exact provenance.
+A restricted Kohaku-style facade over **trusted, application-supplied** Railgun hosts. Version 0.2.0 is not published to npm (`"private": true`); its source is public at https://github.com/solardev-xyz/railgun-kohaku-adapter. It was extracted from the Freedom browser (commit `88b2496b`) as the first package of the privacy work ("E1"); see `NOTICE.md` for exact provenance.
 
 This is **not** a self-contained Railgun SDK. It contains no Railgun engine, prover, key management, wallet vault, storage, RPC client, Tor transport or UI. The application's host does the actual work: it owns the account, holds the keys, generates proofs, signs and submits transactions, and keeps durable state. This package only sits between a Kohaku-style consumer and that host, and does four things:
 
@@ -11,10 +11,78 @@ This is **not** a self-contained Railgun SDK. It contains no Railgun engine, pro
 
 Host-shaped objects and readable notes do not establish authority. Host callbacks run in-process and are not sandboxed.
 
+## Historical capsule reader (`/data`)
+
+The additive E2a data layer reads the exact persisted capsule formats used by
+Freedom. It needs only Node and the existing ethers peer, with no Freedom source,
+profile, Electron, engine, prover or network. It is not a wallet restore or spend
+API. The root factories and `/read` helpers keep their existing contracts.
+
+```js
+const {
+  normalizeRailgunPrivateCapsule,
+  digestRailgunPrivateCapsule,
+  railgunPrivateCapsuleCompatibility,
+} = require("@freedom/railgun-kohaku-adapter/data");
+const capsule = normalizeRailgunPrivateCapsule(parsedAuthenticatedRecord);
+const digest = digestRailgunPrivateCapsule(capsule);
+```
+
+Both functions take bounded plain data. Normalization returns a detached, deeply
+frozen canonical record; digest returns the original domain-separated SHA-256
+hex string. CJS and ESM share the same functions. All refusals have code
+`RAILGUN_CAPSULE_DATA_REFUSED` and a fixed message, without raw values or causes.
+The reader never invokes getters, proxy traps or `toJSON`. It refuses cycles,
+sparse arrays, symbol/non-enumerable keys, non-plain objects, unsafe numbers and
+negative zero. Copy bounds are 4,096 visited values, depth 16 and 65,536 UTF-8
+string bytes; structural checks impose much tighter limits on accepted records.
+
+The frozen compatibility descriptor describes the policy actually enforced:
+
+- Version 1: one-input self or explicitly marked foreign transfer, or full unshield.
+- Version 2: one-input partial unshield with one change output.
+- Sepolia chain 11155111 and the pinned Railgun proxy only. The 0.01 ETH input
+  ceiling is **Freedom's qualification policy**, not a protocol limit.
+- Exact digest domains `freedom:railgun:private-capsule-v1\0` and
+  `freedom:railgun:private-capsule-v2\0` (the last character is a NUL byte).
+- Unknown keys, kinds and marker values refuse. No format is silently upgraded.
+- `engineSha256` is checked for shape and retained as provenance; it does not
+  require the current engine or guarantee execution/downgrade compatibility.
+
+Capsules contain the **zero-proof signing intent**, not a proved transaction.
+Proof coordinates occupy fixed-width ABI words regardless of their values. The
+supported maximum calldata sizes are 1,892 bytes for a transfer, 1,028 for a full
+unshield and 1,924 for a partial unshield, with each permitted annotation and memo
+at its 256-byte ceiling. The calldata policy itself also imposes a 4,096-byte cap.
+
+A structurally valid capsule does not authenticate ownership, recipient keys,
+proofs, POI, freshness, reservations or spending authority. Changing a foreign
+marker changes the digest; the reader cannot establish the real relationship
+between accounts. Hosts must compare records against authenticated storage and
+repeat the account and operation checks before acting. Keep account-linked
+nullifiers, paths and ciphertext out of public logs. The static test vectors use
+public dummy data and preserve Freedom's four original golden digests.
+
+### Trusted-host compatibility (`/host/data`)
+
+Freedom uses this subpath to keep **one physical implementation** of the structural
+rules rather than a second vendored copy. It exports `TRANSACT_ABI`, `BOUND_PARAMS`,
+`validateRailgunPrivateTransaction`, `validateRailgunPrivateSigningIntent`,
+`matchRailgunPrivateProvedTransaction`, `normalizeRailgunPrivateOffer`,
+`normalizeRailgunPrivateCapsule` and `digestRailgunPrivateCapsule`.
+
+These preserve the original internal contracts: they expect host-validated inputs,
+do not perform the public boundary's bounded defensive copy, and can throw raw
+assertions or decoding errors. Never expose those errors in reports or call these
+functions on hostile objects. They confer no authority. The public `/data` API
+wraps the same capsule implementation and closes all errors. Engine binding for
+new operations, owned-note selection, recovery stores and execution remain host
+responsibilities. There is no policy override or general-chain support.
+
 ## Requirements
 
 - Node.js 24 or later. Tested on Node 24.18.1 and on Electron 44.5.1's bundled Node 24.21.0. The floor is real; see [Native Promise contract](#native-promise-contract).
-- Peer dependency `ethers` `^6.17.0`, used only for `getAddress` checksum validation. It is not bundled.
+- Peer dependency `ethers` `^6.17.0`, used for checksum validation and the capsule data reader’s ABI decoding and hashing. It is not bundled.
 - CommonJS is the canonical runtime. `index.mjs` is a thin ESM wrapper that re-exports the same CommonJS module objects. `require()` and `import` of this package therefore return the same five functions and share one set of operation registries. The `./read` subpath works the same way: `read.mjs` wraps `read.cjs`, so both return the same four functions. Separate physical copies of the package do not share registries, so each copy must use its own hosts.
 
 ## Exports
@@ -33,16 +101,23 @@ The module object is frozen and has exactly these five keys. Each factory throws
 const {
   createRailgunKohakuPublicAdapter,
   createRailgunKohakuPublicAdapterSubmitter,
-} = require('@freedom/railgun-kohaku-adapter');
+} = require("@freedom/railgun-kohaku-adapter");
 
-const adapter = createRailgunKohakuPublicAdapter({ host: myTrustedPublicHost, signal });
-const operation = await adapter.prepareShield({ asset: { __type: 'native' }, amount: 10n ** 15n });
-const acknowledged = await createRailgunKohakuPublicAdapterSubmitter(adapter).submit(operation);
+const adapter = createRailgunKohakuPublicAdapter({
+  host: myTrustedPublicHost,
+  signal,
+});
+const operation = await adapter.prepareShield({
+  asset: { __type: "native" },
+  amount: 10n ** 15n,
+});
+const acknowledged =
+  await createRailgunKohakuPublicAdapterSubmitter(adapter).submit(operation);
 ```
 
 ### Read helpers (`@freedom/railgun-kohaku-adapter/read`)
 
-The `./read` subpath exports four functions in a frozen module object. They are the same function objects that the factories use internally, whether loaded with `require()` or `import`. The root entry still exports exactly the five factories. No other subpath is exported, including anything under `./src/`. The helpers do not include the factories' host validation, copying or lifecycle checks, and they confer no authority.
+The `./read` subpath exports four functions in a frozen module object. They are the same function objects that the factories use internally, whether loaded with `require()` or `import`. The root entry still exports exactly the five factories. The data subpaths below are also exported; anything under `./src/` remains private. The helpers do not include the factories' host validation, copying or lifecycle checks, and they confer no authority.
 
 **Projection and normalization helpers.** These three functions are synchronous and work only on the values they are given. They do **not** authenticate the ownership or currentness of those values: a note passed to them is not thereby the user's, unspent or current. They check only the fields they read, and throw Node's `AssertionError` (or a `TypeError`) on anything else, without a refusal code.
 
@@ -209,13 +284,13 @@ The declarations were written against Kohaku revision `6fdc248b` (plugins manife
 | `PluginInstance`, `Transact`, `PICapabilities`, `PICapCfg`, `TxFeatures`, `AssetAmounts`, `UnshieldOptions`, `CreatePluginFn`, `Broadcaster`, `shared.ts`, `errors.ts`, `index.ts` | Unchanged                                                                                                  | None.                                                                                                                                                                                        |
 | Dependencies                                                                                                                                                                       | `@kohaku-eth/provider` moves from workspace `0.1.0-alpha.8` to exactly `0.1.0-alpha.11`; `ox` is `^0.12.0` | None. `TxData`, the element type of the `tailCalls` result, keeps its shape `{ to: string; data: string; value: bigint }`. `ox` resolves to 0.12.4.                                          |
 
-No unsupported functionality is broadened. The runtime sources are unchanged. The adapters still have no multi-operation methods and still refuse `tailCalls` and any other non-empty unshield options, non-ERC-20 private inputs and non-native Shield inputs. In the declarations, `PrivateUnshieldOptions` is still `{ tailCalls?: never }`. The negative bridge programs show that Kohaku's generic `Host`, generic `PluginInstance` views and `UnshieldOptions` are refused.
+No unsupported functionality is broadened. The five adapter runtime sources are unchanged. The adapters still have no multi-operation methods and still refuse `tailCalls` and any other non-empty unshield options, non-ERC-20 private inputs and non-native Shield inputs. In the declarations, `PrivateUnshieldOptions` is still `{ tailCalls?: never }`. The negative bridge programs show that Kohaku's generic `Host`, generic `PluginInstance` views and `UnshieldOptions` are refused.
 
 One limitation is unchanged from the pinned revision. In Kohaku's `PluginInstance` view, `prepareUnshield` accepts `options?: UnshieldOptions`, and method-parameter bivariance lets a private adapter be assigned to that view. Code holding the adapter through that view can therefore pass `tailCalls` without a compile error. The runtime refuses it.
 
 ## Tests
 
-`npm test` runs Jest: 7 suites and 292 tests. The suites are:
+`npm test` runs the adapter and data-reader suites. The original adapter suites are:
 
 - the five Freedom suites for the copied modules;
 - the pinned contract-oracle suite;
@@ -242,7 +317,7 @@ The runner, `test/types/typecheck.cjs`, compiles programs and never emits or run
 - **Portable checks** use `strict`, `noEmit`, `module` and `moduleResolution` `NodeNext`, `target` `ES2022`, `types: []`, and no `skipLibCheck` or `paths`. Programs must not load any file from `node_modules`.
   - A CommonJS (`.cts`) and an ESM (`.mts`) consumer import the package by its own name. They use all five factories with typed hosts and pass brands across the two conditions.
   - Two more consumers use the four `./read` helpers by subpath, with a synchronous and an asynchronous view, and pass types across the two conditions.
-  - Eight negative programs must fail:
+  - Eleven negative programs must fail:
     - a host without `broadcast` (TS2741);
     - snapshot callbacks that return a value or are `async` (TS2322);
     - an unnarrowed or misused private result (TS2339, TS2322);
@@ -256,3 +331,18 @@ The runner, `test/types/typecheck.cjs`, compiles programs and never emits or run
 - **Controls** compile the bridge's positive program without that setup, under NodeNext and under Bundler without the alias. Both must fail inside the upstream files with the diagnostics recorded in the runner.
 
 `test/types/typecheck-record.json` holds the last recorded run: TypeScript 5.9.3 on Node 24.18.1, `lib/typescript.js` SHA-256 `3ae902c92cc44dace175c0e69e13a4b0899f6983c6121d76b9ab8dd5795e7675`. It also holds the options, resolutions, export parity, upstream declaration hashes, alias uses and each case's diagnostics. Regenerate it with `npm run typecheck -- --record test/types/typecheck-record.json`.
+
+### E2a qualification
+
+The expanded package suite passes **353 tests in 10 suites**. This includes the
+four static capsule goldens, maximum supported ABI encodings, malformed and hostile
+inputs, closed errors, exact copy limits, shared host/core identity and copied-file
+provenance. No test imports Freedom or opens a real wallet. Copy-limit seam tests
+replace only the core normalizer and are labeled separately from valid ABI cases.
+
+The strict TypeScript 5.9.3 checks cover eight positive consumers and eleven
+negative programs, including CJS/ESM data and trusted-host consumers. Conditional
+exports have parity: root 32 declaration names, read 9, data 9 and host/data 10.
+The data types distinguish the historical formats and readonly fields; they do
+not establish that a record is cryptographically valid or authorize an operation.
+The pre-existing upstream Kohaku bridge remains separately labeled and unchanged.

@@ -1,5 +1,5 @@
-// Negative: the package exports only "." and "./read". Source files, entry files
-// and declaration paths are not importable subpaths, the root entry does not
+// Negative: declared public/host entries do not expose source or entry files.
+// Declaration paths are not importable subpaths, the root entry does not
 // export the read helpers, and read.mjs has named exports only.
 import { dispatchRailgunKohakuRead } from '@freedom/railgun-kohaku-adapter/src/railgun-kohaku-read-dispatch.js'; // expect TS2307
 import { projectRailgunKohakuNotes } from '@freedom/railgun-kohaku-adapter/read.cjs'; // expect TS2307

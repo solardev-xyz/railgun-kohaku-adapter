@@ -41,6 +41,10 @@
   },
   "defaultLib": "lib.es2022.full.d.ts",
   "shippedDeclarations": {
+    "types/data.d.mts": "e1d2a82402ce6eedb1f691a41d276f83515b8ff733d226ac5b59971890cb45ef",
+    "types/data.d.ts": "58c60a42b6c3d904a668fd386bc6048c561bfd522bd230a2ef586741c946da94",
+    "types/host-data.d.mts": "694f17d0c242834e05da8e1e772f726e5db0e527110f2c8948c4cc31ec61d6e2",
+    "types/host-data.d.ts": "d7495ef03d8b1ab3e12365de748c30a080e23661be7ad545edee3af52a9f132f",
     "types/index.d.mts": "d0b8219062b13646230f02b849895515635912dc780ec8c3efa152554b67037e",
     "types/index.d.ts": "ee3aa1076f192ab9af3546c3a49e3352d6a087fc804dbd2ff8e71480b01c3a8c",
     "types/railgun-kohaku-private-contract.d.ts": "349a7daa4dcb22d65ad3db5cd184d9a2620c428c7cadffbcd0d0ff33af20a439",
@@ -53,25 +57,43 @@
   "resolution": {
     "portableRequire": {
       "file": "types/index.d.ts",
-      "package": "@freedom/railgun-kohaku-adapter@0.1.0"
+      "package": "@freedom/railgun-kohaku-adapter@0.2.0"
     },
     "portableImport": {
       "file": "types/index.d.mts",
-      "package": "@freedom/railgun-kohaku-adapter@0.1.0"
+      "package": "@freedom/railgun-kohaku-adapter@0.2.0"
     },
     "portableReadRequire": {
       "file": "types/read.d.ts",
-      "package": "@freedom/railgun-kohaku-adapter@0.1.0"
+      "package": "@freedom/railgun-kohaku-adapter@0.2.0"
     },
     "portableReadImport": {
       "file": "types/read.d.mts",
-      "package": "@freedom/railgun-kohaku-adapter@0.1.0"
+      "package": "@freedom/railgun-kohaku-adapter@0.2.0"
     },
     "sourceSubpathRequire": null,
     "sourceSubpathImport": null,
+    "hostDataRequire": {
+      "file": "types/host-data.d.ts",
+      "package": "@freedom/railgun-kohaku-adapter@0.2.0"
+    },
+    "hostDataImport": {
+      "file": "types/host-data.d.mts",
+      "package": "@freedom/railgun-kohaku-adapter@0.2.0"
+    },
+    "portableDataRequire": {
+      "file": "types/data.d.ts",
+      "package": "@freedom/railgun-kohaku-adapter@0.2.0"
+    },
+    "portableDataImport": {
+      "file": "types/data.d.mts",
+      "package": "@freedom/railgun-kohaku-adapter@0.2.0"
+    },
+    "dataSourceRequire": null,
+    "dataSourceImport": null,
     "bridgeSelf": {
       "file": "types/index.d.mts",
-      "package": "@freedom/railgun-kohaku-adapter@0.1.0"
+      "package": "@freedom/railgun-kohaku-adapter@0.2.0"
     },
     "bridgeUpstream": {
       "file": "node_modules/@kohaku-eth/plugins/dist/index.d.ts",
@@ -145,6 +167,45 @@
       "projectRailgunKohakuNotes"
     ]
   },
+  "dataExports": {
+    "count": 9,
+    "sameNames": true,
+    "sameIdentity": true,
+    "declaredIn": [
+      "types/data.d.ts"
+    ],
+    "names": [
+      "RailgunCapsuleTransaction",
+      "RailgunDataHex",
+      "RailgunPartialUnshieldCapsule",
+      "RailgunPrivateCapsule",
+      "RailgunTransferCapsule",
+      "RailgunUnshieldCapsule",
+      "digestRailgunPrivateCapsule",
+      "normalizeRailgunPrivateCapsule",
+      "railgunPrivateCapsuleCompatibility"
+    ]
+  },
+  "hostDataExports": {
+    "count": 10,
+    "sameNames": true,
+    "sameIdentity": true,
+    "declaredIn": [
+      "types/host-data.d.ts"
+    ],
+    "names": [
+      "BOUND_PARAMS",
+      "RailgunCheckedTransaction",
+      "RailgunPrivateOffer",
+      "TRANSACT_ABI",
+      "digestRailgunPrivateCapsule",
+      "matchRailgunPrivateProvedTransaction",
+      "normalizeRailgunPrivateCapsule",
+      "normalizeRailgunPrivateOffer",
+      "validateRailgunPrivateSigningIntent",
+      "validateRailgunPrivateTransaction"
+    ]
+  },
   "portable": [
     {
       "file": "test/types/consumer-cjs.cts",
@@ -169,6 +230,34 @@
     },
     {
       "file": "test/types/consumer-read-esm.mts",
+      "expected": [],
+      "diagnostics": [],
+      "pass": true,
+      "nodeModulesFiles": []
+    },
+    {
+      "file": "test/types/consumer-data-cjs.cts",
+      "expected": [],
+      "diagnostics": [],
+      "pass": true,
+      "nodeModulesFiles": []
+    },
+    {
+      "file": "test/types/consumer-data-esm.mts",
+      "expected": [],
+      "diagnostics": [],
+      "pass": true,
+      "nodeModulesFiles": []
+    },
+    {
+      "file": "test/types/consumer-host-data-cjs.cts",
+      "expected": [],
+      "diagnostics": [],
+      "pass": true,
+      "nodeModulesFiles": []
+    },
+    {
+      "file": "test/types/consumer-host-data-esm.mts",
       "expected": [],
       "diagnostics": [],
       "pass": true,
@@ -209,6 +298,139 @@
       "nodeModulesFiles": []
     },
     {
+      "file": "test/types/negative/data-contract.cts",
+      "expected": [
+        "test/types/negative/data-contract.cts:10 TS2540",
+        "test/types/negative/data-contract.cts:11 TS2540",
+        "test/types/negative/data-contract.cts:12 TS2322",
+        "test/types/negative/data-contract.cts:13 TS2322",
+        "test/types/negative/data-contract.cts:14 TS2339",
+        "test/types/negative/data-contract.cts:17 TS2322",
+        "test/types/negative/data-contract.cts:18 TS2322",
+        "test/types/negative/data-contract.cts:19 TS2322",
+        "test/types/negative/data-contract.cts:20 TS2322",
+        "test/types/negative/data-contract.cts:21 TS2554",
+        "test/types/negative/data-contract.cts:22 TS2554",
+        "test/types/negative/data-contract.cts:5 TS2540",
+        "test/types/negative/data-contract.cts:6 TS2540",
+        "test/types/negative/data-contract.cts:7 TS2540",
+        "test/types/negative/data-contract.cts:8 TS2540",
+        "test/types/negative/data-contract.cts:9 TS2339"
+      ],
+      "diagnostics": [
+        {
+          "key": "test/types/negative/data-contract.cts:10 TS2540",
+          "message": "Cannot assign to '0' because it is a read-only property."
+        },
+        {
+          "key": "test/types/negative/data-contract.cts:11 TS2540",
+          "message": "Cannot assign to 'version' because it is a read-only property."
+        },
+        {
+          "key": "test/types/negative/data-contract.cts:12 TS2322",
+          "message": "Type 'false' is not assignable to type 'true'."
+        },
+        {
+          "key": "test/types/negative/data-contract.cts:13 TS2322",
+          "message": "Type 'RailgunPrivateCapsule' is not assignable to type '{ signature: string; }'."
+        },
+        {
+          "key": "test/types/negative/data-contract.cts:14 TS2339",
+          "message": "Property 'amount' does not exist on type 'Readonly<PreparationBase & { amount: string; expected: Readonly<ExpectedBase & { kind: \"railgun-private-transfer\"; commitment: `0x${string}`; }>; }> | Readonly<...> | Readonly<...>'."
+        },
+        {
+          "key": "test/types/negative/data-contract.cts:17 TS2322",
+          "message": "Type 'Readonly<{ version: 1; walletId: string; engineSha256: string; selection: Readonly<Position & { kind: \"railgun-private-transfer\"; recipient: string; recipientRelationship?: \"foreign\" | undefined; }>; preparation: Readonly<...>; noteHash: `0x${string}`; pathElements: readonly `0x${string}`[]; }>' is not assignable to type 'Readonly<{ version: 2; walletId: string; engineSha256: string; selection: Readonly<Position & { kind: \"railgun-partial-unshield\"; recipient: `0x${string}`; unshieldAmount: string; }>; preparation: Readonly<...>; noteHash: `0x${string}`; pathElements: readonly `0x${string}`[]; }>'."
+        },
+        {
+          "key": "test/types/negative/data-contract.cts:18 TS2322",
+          "message": "Type 'Readonly<{ version: 2; walletId: string; engineSha256: string; selection: Readonly<Position & { kind: \"railgun-partial-unshield\"; recipient: `0x${string}`; unshieldAmount: string; }>; preparation: Readonly<...>; noteHash: `0x${string}`; pathElements: readonly `0x${string}`[]; }>' is not assignable to type 'Readonly<{ version: 1; walletId: string; engineSha256: string; selection: Readonly<Position & { kind: \"railgun-private-transfer\"; recipient: string; recipientRelationship?: \"foreign\" | undefined; }>; preparation: Readonly<...>; noteHash: `0x${string}`; pathElements: readonly `0x${string}`[]; }>'."
+        },
+        {
+          "key": "test/types/negative/data-contract.cts:19 TS2322",
+          "message": "Type '1' is not assignable to type '11155111'."
+        },
+        {
+          "key": "test/types/negative/data-contract.cts:20 TS2322",
+          "message": "Type '\"1\"' is not assignable to type '\"0\"'."
+        },
+        {
+          "key": "test/types/negative/data-contract.cts:21 TS2554",
+          "message": "Expected 1 arguments, but got 0."
+        },
+        {
+          "key": "test/types/negative/data-contract.cts:22 TS2554",
+          "message": "Expected 1 arguments, but got 2."
+        },
+        {
+          "key": "test/types/negative/data-contract.cts:5 TS2540",
+          "message": "Cannot assign to 'walletId' because it is a read-only property."
+        },
+        {
+          "key": "test/types/negative/data-contract.cts:6 TS2540",
+          "message": "Cannot assign to 'tree' because it is a read-only property."
+        },
+        {
+          "key": "test/types/negative/data-contract.cts:7 TS2540",
+          "message": "Cannot assign to 'data' because it is a read-only property."
+        },
+        {
+          "key": "test/types/negative/data-contract.cts:8 TS2540",
+          "message": "Cannot assign to 'nullifier' because it is a read-only property."
+        },
+        {
+          "key": "test/types/negative/data-contract.cts:9 TS2339",
+          "message": "Property 'push' does not exist on type 'readonly `0x${string}`[]'."
+        }
+      ],
+      "pass": true,
+      "nodeModulesFiles": []
+    },
+    {
+      "file": "test/types/negative/data-subpath-boundary.mts",
+      "expected": [
+        "test/types/negative/data-subpath-boundary.mts:1 TS1192",
+        "test/types/negative/data-subpath-boundary.mts:2 TS2305",
+        "test/types/negative/data-subpath-boundary.mts:3 TS2305",
+        "test/types/negative/data-subpath-boundary.mts:4 TS2305",
+        "test/types/negative/data-subpath-boundary.mts:5 TS2307",
+        "test/types/negative/data-subpath-boundary.mts:6 TS2307",
+        "test/types/negative/data-subpath-boundary.mts:7 TS2307"
+      ],
+      "diagnostics": [
+        {
+          "key": "test/types/negative/data-subpath-boundary.mts:1 TS1192",
+          "message": "Module '\"<root>/types/data\"' has no default export."
+        },
+        {
+          "key": "test/types/negative/data-subpath-boundary.mts:2 TS2305",
+          "message": "Module '\"@freedom/railgun-kohaku-adapter\"' has no exported member 'normalizeRailgunPrivateCapsule'."
+        },
+        {
+          "key": "test/types/negative/data-subpath-boundary.mts:3 TS2305",
+          "message": "Module '\"@freedom/railgun-kohaku-adapter/read\"' has no exported member 'digestRailgunPrivateCapsule'."
+        },
+        {
+          "key": "test/types/negative/data-subpath-boundary.mts:4 TS2305",
+          "message": "Module '\"@freedom/railgun-kohaku-adapter/data\"' has no exported member 'createRailgunKohakuPrivateAdapter'."
+        },
+        {
+          "key": "test/types/negative/data-subpath-boundary.mts:5 TS2307",
+          "message": "Cannot find module '@freedom/railgun-kohaku-adapter/src/data/railgun-private-capsule.js' or its corresponding type declarations."
+        },
+        {
+          "key": "test/types/negative/data-subpath-boundary.mts:6 TS2307",
+          "message": "Cannot find module '@freedom/railgun-kohaku-adapter/types/data' or its corresponding type declarations."
+        },
+        {
+          "key": "test/types/negative/data-subpath-boundary.mts:7 TS2307",
+          "message": "Cannot find module '@freedom/railgun-kohaku-adapter/data.cjs' or its corresponding type declarations."
+        }
+      ],
+      "pass": true,
+      "nodeModulesFiles": []
+    },
+    {
       "file": "test/types/negative/esm-default-import.mts",
       "expected": [
         "test/types/negative/esm-default-import.mts:3 TS1192"
@@ -217,6 +439,55 @@
         {
           "key": "test/types/negative/esm-default-import.mts:3 TS1192",
           "message": "Module '\"<root>/types/index\"' has no default export."
+        }
+      ],
+      "pass": true,
+      "nodeModulesFiles": []
+    },
+    {
+      "file": "test/types/negative/host-data-contract.mts",
+      "expected": [
+        "test/types/negative/host-data-contract.mts:1 TS1192",
+        "test/types/negative/host-data-contract.mts:10 TS2322",
+        "test/types/negative/host-data-contract.mts:11 TS2554",
+        "test/types/negative/host-data-contract.mts:3 TS2305",
+        "test/types/negative/host-data-contract.mts:6 TS2540",
+        "test/types/negative/host-data-contract.mts:7 TS2540",
+        "test/types/negative/host-data-contract.mts:8 TS2322",
+        "test/types/negative/host-data-contract.mts:9 TS2322"
+      ],
+      "diagnostics": [
+        {
+          "key": "test/types/negative/host-data-contract.mts:1 TS1192",
+          "message": "Module '\"<root>/types/host-data\"' has no default export."
+        },
+        {
+          "key": "test/types/negative/host-data-contract.mts:10 TS2322",
+          "message": "Type '\"railgun-relay-self-transfer\"' is not assignable to type '\"railgun-private-transfer\" | \"railgun-token-unshield\" | \"railgun-partial-unshield\"'."
+        },
+        {
+          "key": "test/types/negative/host-data-contract.mts:11 TS2554",
+          "message": "Expected 3 arguments, but got 2."
+        },
+        {
+          "key": "test/types/negative/host-data-contract.mts:3 TS2305",
+          "message": "Module '\"@freedom/railgun-kohaku-adapter/data\"' has no exported member 'validateRailgunPrivateSigningIntent'."
+        },
+        {
+          "key": "test/types/negative/host-data-contract.mts:6 TS2540",
+          "message": "Cannot assign to 'digest' because it is a read-only property."
+        },
+        {
+          "key": "test/types/negative/host-data-contract.mts:7 TS2540",
+          "message": "Cannot assign to 'proofVerified' because it is a read-only property."
+        },
+        {
+          "key": "test/types/negative/host-data-contract.mts:8 TS2322",
+          "message": "Type 'false' is not assignable to type 'true'."
+        },
+        {
+          "key": "test/types/negative/host-data-contract.mts:9 TS2322",
+          "message": "Type 'RailgunCheckedTransaction' is not assignable to type '{ proof: string; }'."
         }
       ],
       "pass": true,

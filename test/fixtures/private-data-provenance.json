@@ -1,0 +1,24 @@
+{
+  "sourceCommit": "c208245fa6edeb8eb79452cf399daca264622f4c",
+  "files": {
+    "railgun-private-policy.js": {
+      "original": "481b90461f5e65be2efd1b68778abd1428f191220d648eb56b4008d0873d7f9b",
+      "copy": "4fed357312c315250bac7a9b89988881601fe31975a7b267875d709af8e4b7dc"
+    },
+    "railgun-private-intent.js": {
+      "original": "5a5ae43e3b7c4384496e1e17caa1ddfb7bc11e555f28eb8df61d3170c94800b0",
+      "copy": "5a5ae43e3b7c4384496e1e17caa1ddfb7bc11e555f28eb8df61d3170c94800b0"
+    },
+    "railgun-private-offer.js": {
+      "source": "railgun-private-preparation.js",
+      "original": "c9b06e139a4f3ea89b88cfa7a5ffcf1cdb2ee5a25de223744130a4ad133aef18",
+      "copy": "120f4b1f3ed31206a5311cf36557bb98c48ab14e6fc58dfad6e984cacee30f6d",
+      "change": "retain exact shape, amount and normalizeRailgunPrivateOffer functions only"
+    },
+    "railgun-private-capsule.js": {
+      "original": "e230c6624de7832c5ac986bb01bae3aa199e85318afdcc20b3b4cba2cdf74387",
+      "copy": "b5c244d08e5185d52d3ef8e11a8d223df3a3f5e959cdd956a187646f5618b560",
+      "change": "retain exact historical normalization and digest; new-operation engine binding stays in Freedom"
+    }
+  }
+}

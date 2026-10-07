@@ -4,7 +4,8 @@
 // directory, or its lib/typescript.js. Programs are compiled, never emitted or run.
 //
 // - Portable: consumer-cjs.cts, consumer-esm.mts, the "./read" subpath consumers
-//   consumer-read-cjs.cts and consumer-read-esm.mts, and negative/* under strict
+//   consumer-read-cjs.cts and consumer-read-esm.mts, the "./data" consumers,
+//   the trusted "./host/data" consumers, and negative/* under strict
 //   NodeNext, with no skipLibCheck, no paths and no ambient types. They import
 //   the package by its own name and must load no file from node_modules.
 // - Upstream bridge: upstream/* against the installed @kohaku-eth/plugins
@@ -39,6 +40,10 @@ const CONTRACTS = [
 const EXPORT_COUNT = 32; // five factories and 27 types
 const READ_CONTRACTS = ['types/railgun-kohaku-read-contract.d.ts'];
 const READ_EXPORT_COUNT = 9; // four read helpers and five types
+const DATA_CONTRACTS = ['types/data.d.ts'];
+const DATA_EXPORT_COUNT = 9; // three values and six types
+const HOST_DATA_CONTRACTS = ['types/host-data.d.ts'];
+const HOST_DATA_EXPORT_COUNT = 10; // eight values and two types
 const SOURCE_SUBPATH = `${SELF}/src/railgun-kohaku-read-dispatch.js`;
 
 // Diagnostics of the bridge's positive program without the bridge setup.
@@ -244,6 +249,42 @@ function main() {
       portable,
       ts.ModuleKind.ESNext
     ),
+    hostDataRequire: resolve(
+      `${SELF}/host/data`,
+      path.join(HERE, 'consumer-host-data-cjs.cts'),
+      portable,
+      ts.ModuleKind.CommonJS
+    ),
+    hostDataImport: resolve(
+      `${SELF}/host/data`,
+      path.join(HERE, 'consumer-host-data-esm.mts'),
+      portable,
+      ts.ModuleKind.ESNext
+    ),
+    portableDataRequire: resolve(
+      `${SELF}/data`,
+      path.join(HERE, 'consumer-data-cjs.cts'),
+      portable,
+      ts.ModuleKind.CommonJS
+    ),
+    portableDataImport: resolve(
+      `${SELF}/data`,
+      path.join(HERE, 'consumer-data-esm.mts'),
+      portable,
+      ts.ModuleKind.ESNext
+    ),
+    dataSourceRequire: resolve(
+      `${SELF}/src/data/railgun-private-capsule.js`,
+      path.join(HERE, 'consumer-data-cjs.cts'),
+      portable,
+      ts.ModuleKind.CommonJS
+    ),
+    dataSourceImport: resolve(
+      `${SELF}/src/data/railgun-private-capsule.js`,
+      path.join(HERE, 'consumer-data-esm.mts'),
+      portable,
+      ts.ModuleKind.ESNext
+    ),
     bridgeSelf: resolve(SELF, path.join(HERE, 'upstream', 'conformance.ts'), bridge),
     bridgeUpstream: resolve(UPSTREAM, path.join(HERE, 'upstream', 'conformance.ts'), bridge),
     bridgeBroadcaster: resolve(
@@ -257,6 +298,10 @@ function main() {
     portableImport: 'types/index.d.mts',
     portableReadRequire: 'types/read.d.ts',
     portableReadImport: 'types/read.d.mts',
+    hostDataRequire: 'types/host-data.d.ts',
+    hostDataImport: 'types/host-data.d.mts',
+    portableDataRequire: 'types/data.d.ts',
+    portableDataImport: 'types/data.d.mts',
     bridgeSelf: 'types/index.d.mts',
     bridgeUpstream: 'node_modules/@kohaku-eth/plugins/dist/index.d.ts',
     bridgeBroadcaster: 'node_modules/@kohaku-eth/plugins/dist/broadcaster/base.d.ts',
@@ -268,11 +313,16 @@ function main() {
       JSON.stringify(resolution[key])
     );
   }
-  // Only "." and "./read" are exported: a source file is not a subpath.
+  // Public entries do not export arbitrary source-file subpaths.
   check(
     'resolution source subpath refused',
     resolution.sourceSubpathRequire === null && resolution.sourceSubpathImport === null,
     JSON.stringify([resolution.sourceSubpathRequire, resolution.sourceSubpathImport])
+  );
+  check(
+    'resolution data source refused',
+    resolution.dataSourceRequire === null && resolution.dataSourceImport === null,
+    JSON.stringify([resolution.dataSourceRequire, resolution.dataSourceImport])
   );
   check(
     'resolution upstream version',
@@ -287,11 +337,17 @@ function main() {
     'consumer-esm.mts',
     'consumer-read-cjs.cts',
     'consumer-read-esm.mts',
+    'consumer-data-cjs.cts',
+    'consumer-data-esm.mts',
+    'consumer-host-data-cjs.cts',
+    'consumer-host-data-esm.mts',
   ].map((name) => path.join(HERE, name));
   const negatives = listPrograms(path.join(HERE, 'negative'), ['.cts', '.mts', '.ts']);
   const portableResults = [];
   let entryProgram = null,
-    readProgram = null;
+    readProgram = null,
+    dataProgram = null,
+    hostDataProgram = null;
   for (const file of [...positives, ...negatives]) {
     const expected = positives.includes(file) ? [] : expectedDiagnostics(file);
     if (!positives.includes(file))
@@ -306,10 +362,12 @@ function main() {
     portableResults.push(result);
     if (file === positives[0]) entryProgram = program;
     if (file === positives[2]) readProgram = program;
+    if (file === positives[4]) dataProgram = program;
+    if (file === positives[6]) hostDataProgram = program;
   }
 
   // Both conditions of each entry export the same names with one declaration
-  // identity each: 32 for ".", 9 for "./read".
+  // identity each: 32 for ".", 9 for "./read", 9 for "./data", 10 for "./host/data".
   function entryParity(program, cjsFile, esmFile) {
     const checker = program.getTypeChecker();
     const entryExports = (relative) => {
@@ -344,9 +402,17 @@ function main() {
   }
   const parity = entryParity(entryProgram, 'types/index.d.ts', 'types/index.d.mts');
   const readParity = entryParity(readProgram, 'types/read.d.ts', 'types/read.d.mts');
+  const dataParity = entryParity(dataProgram, 'types/data.d.ts', 'types/data.d.mts');
+  const hostDataParity = entryParity(
+    hostDataProgram,
+    'types/host-data.d.ts',
+    'types/host-data.d.mts'
+  );
   for (const [label, entry, count, contracts] of [
     ['exports', parity, EXPORT_COUNT, CONTRACTS],
     ['read exports', readParity, READ_EXPORT_COUNT, READ_CONTRACTS],
+    ['data exports', dataParity, DATA_EXPORT_COUNT, DATA_CONTRACTS],
+    ['host data exports', hostDataParity, HOST_DATA_EXPORT_COUNT, HOST_DATA_CONTRACTS],
   ]) {
     check(`${label} count`, entry.count === count, String(entry.count));
     check(`${label} names`, entry.sameNames, 'the CommonJS and ESM declarations differ');
@@ -447,6 +513,8 @@ function main() {
     resolution,
     exports: parity,
     readExports: readParity,
+    dataExports: dataParity,
+    hostDataExports: hostDataParity,
     portable: portableResults,
     upstream: {
       package: `${UPSTREAM}@${upstreamManifest.version}`,
@@ -465,7 +533,7 @@ function main() {
   console.log(
     `portable: ${positives.length} positive, ${negativeCount} negative programs; ` +
       `bridge: ${bridgeResults.length - bridgeNegatives} positive, ${bridgeNegatives} negative; ` +
-      `controls: ${controlResults.length}; exports: ${parity.count}, read: ${readParity.count}`
+      `controls: ${controlResults.length}; exports: ${parity.count}, read: ${readParity.count}, data: ${dataParity.count}, host data: ${hostDataParity.count}`
   );
   if (args.record) {
     fs.writeFileSync(args.record, JSON.stringify(record, null, 2) + '\n');

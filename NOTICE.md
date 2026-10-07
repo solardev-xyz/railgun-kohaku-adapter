@@ -1,6 +1,6 @@
 # Notice and provenance
 
-`@freedom/railgun-kohaku-adapter` 0.1.0 is an extraction from the Freedom browser repository (https://github.com/solardev-xyz/freedom-browser). It is not published to npm. Every Freedom file in this package comes from Freedom commit `88b2496b58b1bccca64a35a576b48c026089544a` (branch `feat/wallet-privacy-foundation`). Copies were taken from the git object database (`git cat-file blob 88b2496b:<path>`), not from a working tree.
+`@freedom/railgun-kohaku-adapter` 0.2.0 is an extraction from the Freedom browser repository (https://github.com/solardev-xyz/freedom-browser). It is not published to npm. The original E1 adapter files come from Freedom commit `88b2496b58b1bccca64a35a576b48c026089544a` (branch `feat/wallet-privacy-foundation`). Copies were taken from the git object database (`git cat-file blob 88b2496b:<path>`), not from a working tree.
 
 ## License
 
@@ -20,7 +20,7 @@ Freedom's code in this package is licensed under the Mozilla Public License 2.0.
 | `src/railgun-shield-pins.json`          | `src/main/wallet/railgun-shield-pins.json`          | `0f38d69a9acb5ecdaeb7197f4410a1c6068b8896e4204a179631176223e31a75` |
 | `LICENSE`                               | `LICENSE`                                           | `86cf9656479f1edb82245b985f4a2cc0d503b945766ebeda4269c60b307699ae` |
 
-No runtime source needed a change to work standalone. Relative `require`s already resolve within `src/`. `ethers` resolves from the consumer's installation as a peer dependency. The later `./read` subpath (below) also required no source change.
+No E1 adapter runtime source needed a change to work standalone. Relative `require`s already resolve within `src/`. `ethers` resolves from the consumer's installation as a peer dependency. The later `./read` subpath (below) also required no source change.
 
 ### Minimally changed copies
 
@@ -108,3 +108,27 @@ These files are in the repository but are excluded by the `files` whitelist.
 | `test/fixtures/railgun-kohaku-contract-pin.json`       | `scripts/fixtures/railgun-kohaku-contract-pin.json`       | `b9fa6285978d5b342e74e0ed7af65d0458de96083957aa09191ffc91f3c99aac` | identical                                                          | none                                                      |
 
 Removed assertion: in Freedom, the snapshot test "constructor snapshots callbacks, enforces exact options and never grants a genuine plugin" also evaluated Freedom's `src/main/wallet/railgun-kohaku-plugin.js` in a `vm` sandbox. It asserted that Freedom's private-plugin registry rejects a snapshot plugin. That module is a Freedom wallet controller (engine, RPC, signers) and is deliberately not part of this package, so that one assertion and its `fs`/`vm` imports were removed. The test case and all its other assertions remain, and Freedom's own copy of the test keeps the registry check. The contract pin JSON describes the pinned Kohaku interface as data (file hashes and method names); it contains no upstream text. `test/package-consumer.test.js`, `test/consumer/smoke.mjs` and `jest.config.js` are new, as is everything under `test/types/`: the type-check runner, the consumer, negative and upstream bridge programs, and `typecheck-record.json`, which records the compiler version and SHA-256 with its path relative to `TYPESCRIPT_PATH`.
+
+## E2a historical capsule data (0.2.0)
+
+The four `src/data/railgun-private-*` modules derive from committed Freedom source
+`c208245fa6edeb8eb79452cf399daca264622f4c`, read from git objects. They carry the
+same MPL-2.0 license. `test/fixtures/private-data-provenance.json` records original
+and copied SHA-256 values and extraction edits. The intent module is byte-identical;
+policy changes only its pins import. The offer module retains the exact structural
+normalizer and helpers from preparation, excluding owned-note and destination
+checks. The capsule module retains historical normalization and digest functions,
+changing only the offer import and excluding new-operation engine binding.
+The existing pinned deployment JSON is byte-identical at both source commits.
+
+`src/data/index.js`, the data and host-data entrypoints, declarations, consumers
+and boundary tests are new. The public reader adds bounded plain-data admission
+and fixed errors; the host subpath shares the extracted core without wrapping its
+legacy contracts. Static public-dummy capsule vectors record source commit,
+canonical bytes and original digests. No funded profile, private note, credential,
+engine artifact or authenticated recovery store is included.
+
+This extraction adds no dependency. ethers 6.17.0 is both the lowest declared peer
+version and Freedom's version at the extraction commit; golden tests therefore
+cover both with the same installed version. No broader peer-version matrix is
+claimed. E2a does not extract execution, keys, storage, POI or transport.
