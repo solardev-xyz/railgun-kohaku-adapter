@@ -1,5 +1,5 @@
 /** Main-owned persistent Electron utility session. No renderer channel. The
- * caller supplies a reviewed runtime entry and minimum non-spending JSON input.
+ * caller selects a closed job enum and minimum non-spending JSON input.
  * Only the dedicated identity and vault-bound viewing-wallet entries can
  * receive one binary key response. Other runtime entries cannot opt in.
  * A supplied host broker is borrowed for this job; its owner retains storage
@@ -8,142 +8,64 @@
  * Ready means initialization completed, never a balance/proof result. RSS limits
  * are sampled soft limits; these JavaScript processes are not an OS sandbox.
  */
-const path = require('path');
+const { types } = require('util');
 const { getPrivacyContext } = require('./context-bindings');
-const { createRailgunSession } = require("./railgun-session.js");
-const { startRailgunSessionWorker } = require("./railgun-session-worker.js");
-const { getRailgunExecutionJob } = require("../../host-execution.cjs");
-// The enum, not a caller boolean/path, determines the kernel key capability.
-// Actual identity/permit/loan authority stays with the existing main owners.
-const kernelJobs = Object.freeze({
-  'spending-public': Object.freeze({ role: 'keystore', key: true }),
-  'viewing-identity': Object.freeze({ role: 'keystore', key: true }),
-  'spending-sign': Object.freeze({ role: 'keystore', key: true }),
-  'wallet-viewing': Object.freeze({ role: 'engine', key: true }),
-  'private-prepare': Object.freeze({ role: 'engine', key: true }),
-  'private-operate': Object.freeze({ role: 'engine', key: true }),
-  'private-recover': Object.freeze({ role: 'engine', key: true, kind: 'private-account' }),
-  'private-receive': Object.freeze({ role: 'engine', key: true }),
-  'private-verify': Object.freeze({ role: 'prover', key: false, kind: 'private-account' }),
-});
-const movedJobs = new Set([
-  ...Object.keys(kernelJobs).map(getRailgunExecutionJob),
-  ...[
-    'railgun-identity-job',
-    'railgun-spend-sign-job',
-    'railgun-wallet-job',
-    'railgun-private-prepare-job',
-    'railgun-private-operate-job',
-    'railgun-private-recover-job',
-    'railgun-private-receive-job',
-    'railgun-private-verify-job',
-  ].map((name) => require.resolve('./' + name)),
-]);
-function isMovedJob(filename) {
-  const absolute = path.resolve(filename);
-  if (movedJobs.has(absolute)) return true;
+const { platform } = require('./host-bindings');
+const { createRailgunSession } = require('./railgun-session.js');
+const { startRailgunSessionWorker } = require('./railgun-session-worker.js');
+const { getProcessJob, admitsProcessJob } = require('./process-jobs');
+const abortedGetter = Object.getOwnPropertyDescriptor(AbortSignal.prototype, 'aborted').get;
+const listen = EventTarget.prototype.addEventListener;
+const unlisten = EventTarget.prototype.removeEventListener;
+function abortedSignal(signal) {
+  if (
+    !signal ||
+    typeof signal !== 'object' ||
+    types.isProxy(signal) ||
+    Object.getPrototypeOf(signal) !== AbortSignal.prototype ||
+    Object.hasOwn(signal, 'aborted') ||
+    Object.hasOwn(signal, 'reason')
+  )
+    throw fail('RAILGUN_PROCESS_INVALID');
   try {
-    return movedJobs.has(require('fs').realpathSync(absolute));
+    return abortedGetter.call(signal);
   } catch {
-    // Existing legacy qualification filenames can be checked only by the child.
-    return false;
+    throw fail('RAILGUN_PROCESS_INVALID');
   }
 }
-for (const filename of [...movedJobs]) movedJobs.add(require('fs').realpathSync(filename));
 const owners = new Set();
 const fail = (code) => Object.assign(new Error('Railgun process unavailable'), { code });
 function startRailgunProcess(options) {
   const {
     handle,
-    filename,
     executionJob,
     input,
     storage,
     createProvider,
     broker,
     storageWorker = false,
-    binaryKey: requestedBinaryKey,
     startupMs = 30000,
     lifetimeMs = 600000,
     heapMb = 256,
     rssMb = 768,
   } = options;
   const context = getPrivacyContext(handle);
-  const { app, utilityProcess, MessageChannelMain } = require('electron');
-  const kernel = Object.hasOwn(options, 'executionJob');
-  const specification =
-    kernel && typeof executionJob === 'string' && Object.hasOwn(kernelJobs, executionJob)
-      ? kernelJobs[executionJob]
-      : undefined;
-  const binaryKey = kernel
-    ? specification?.key
-    : requestedBinaryKey === undefined
-      ? false
-      : requestedBinaryKey;
+  const specification = getProcessJob(executionJob);
+  const application = platform.applicationLifetime();
+  const binaryKey = specification?.key;
   if (
-    !app.isReady() ||
-    (kernel
-      ? !specification ||
-        Object.hasOwn(options, 'filename') ||
-        Object.hasOwn(options, 'binaryKey') ||
-        !broker ||
-        context.subject.protocol !== 'railgun' ||
-        context.subject.chainId !== 11155111 ||
-        context.subject.deployment !== 'sepolia' ||
-        context.subject.role !== specification.role ||
-        context.subject.operation !== executionJob ||
-        (specification.kind !== undefined && context.subject.kind !== specification.kind)
-      : typeof filename !== 'string' || !path.isAbsolute(filename) || isMovedJob(filename)) ||
+    !specification ||
+    Object.hasOwn(options, 'filename') ||
+    Object.hasOwn(options, 'binaryKey') ||
+    !admitsProcessJob(executionJob, context.subject) ||
     typeof input !== 'string' ||
     Buffer.byteLength(input) > 65536 ||
     typeof storageWorker !== 'boolean' ||
-    typeof binaryKey !== 'boolean' ||
-    (binaryKey &&
-      (!broker ||
-        context.subject.protocol !== 'railgun' ||
-        context.subject.chainId !== 11155111 ||
-        context.subject.deployment !== 'sepolia' ||
-        (!kernel &&
-          !(
-            (context.subject.kind === 'private-account' &&
-              context.subject.role === 'keystore' &&
-              context.subject.operation === 'relay-sign' &&
-              filename === require.resolve("./railgun-relay-sign-job.js")) ||
-            (context.subject.kind === 'private-account' &&
-              context.subject.role === 'engine' &&
-              context.subject.operation === 'relay-pre-poi' &&
-              filename === require.resolve("./railgun-relay-pre-poi-job.js")) ||
-            (context.subject.kind === 'private-account' &&
-              context.subject.role === 'engine' &&
-              context.subject.operation === 'relay-prove-local' &&
-              filename === require.resolve("./railgun-relay-prove-job.js")) ||
-            (context.subject.kind === 'private-account' &&
-              context.subject.role === 'engine' &&
-              ['relay-prepare', 'relay-reconstruct'].includes(context.subject.operation) &&
-              filename === require.resolve("./railgun-relay-wallet-job.js")) ||
-            (context.subject.kind === 'private-account' &&
-              context.subject.role === 'engine' &&
-              context.subject.operation === 'poi-prove' &&
-              filename === require.resolve("./railgun-own-poi-prove-job.js")) ||
-            (context.subject.kind === 'private-account' &&
-              context.subject.role === 'engine' &&
-              context.subject.operation === 'poi-transact-selector' &&
-              filename === require.resolve("./railgun-poi-transact-selector-job.js")) ||
-            (context.subject.role === 'engine' &&
-              context.subject.operation === 'poi-output-recover' &&
-              filename === require.resolve("./railgun-poi-output-recover-job.js")) ||
-            (context.subject.kind === 'private-account' &&
-              context.subject.role === 'engine' &&
-              context.subject.operation === 'shield-receive' &&
-              filename === require.resolve("./railgun-shield-receive-job.js"))
-          )))) ||
-    (broker !== undefined &&
-      (!broker ||
-        typeof broker.dispatch !== 'function' ||
-        !(broker.signal instanceof AbortSignal) ||
-        storage !== undefined ||
-        createProvider !== undefined ||
-        storageWorker)) ||
+    !broker ||
+    typeof broker.dispatch !== 'function' ||
+    storage !== undefined ||
+    createProvider !== undefined ||
+    storageWorker ||
     !Number.isInteger(startupMs) ||
     startupMs < 1 ||
     startupMs > 120000 ||
@@ -158,6 +80,11 @@ function startRailgunProcess(options) {
     rssMb > 2048
   )
     throw fail('RAILGUN_PROCESS_INVALID');
+  // Brand/shape validation is distinct from legitimate cancellation.
+  // A genuine aborted lifetime follows the original closed-task path below.
+  abortedSignal(application);
+  abortedSignal(context.signal);
+  abortedSignal(broker.signal);
   const owner = JSON.stringify([context.profileId, context.generation, context.subject]);
   if (owners.size >= 2 || owners.has(owner)) throw fail('RAILGUN_PROCESS_BUSY');
   owners.add(owner);
@@ -200,8 +127,7 @@ function startRailgunProcess(options) {
     try {
       // Electron kill() also schedules Chromium termination/reaping. On POSIX
       // send TERM ourselves so our bounded grace interval owns escalation.
-      if (process.platform === 'win32') child.kill();
-      else process.kill(pid, 'SIGTERM');
+      platform.terminateUtility(child, 'SIGTERM');
     } catch {
       /* Escalation and observed exit remain authoritative. */
     }
@@ -210,7 +136,7 @@ function startRailgunProcess(options) {
       if (!exited && child.pid === pid) {
         escalated = true;
         try {
-          process.kill(pid, 'SIGKILL');
+          platform.terminateUtility(child, 'SIGKILL');
         } catch {
           /* Never release a living process slot. */
         }
@@ -236,9 +162,15 @@ function startRailgunProcess(options) {
       }
     }
   }
-  const aborted = () => stop('PRIVACY_CONTEXT_REVOKED');
-  const quit = () => stop('RAILGUN_PROCESS_CLOSED');
-  const brokerAborted = () => stop('RAILGUN_SESSION_REVOKED');
+  const aborted = () => {
+    if (abortedGetter.call(context.signal)) stop('PRIVACY_CONTEXT_REVOKED');
+  };
+  const quit = () => {
+    if (abortedGetter.call(application)) stop('RAILGUN_PROCESS_CLOSED');
+  };
+  const brokerAborted = () => {
+    if (abortedGetter.call(broker.signal)) stop('RAILGUN_SESSION_REVOKED');
+  };
   function finish(exitCode = null) {
     if (exited) return;
     exited = true;
@@ -250,9 +182,9 @@ function startRailgunProcess(options) {
     clearTimeout(startup);
     clearTimeout(deadline);
     clearInterval(memoryPoll);
-    context.signal.removeEventListener('abort', aborted);
-    broker?.signal.removeEventListener('abort', brokerAborted);
-    app.removeListener('before-quit', quit);
+    unlisten.call(context.signal, 'abort', aborted);
+    unlisten.call(broker.signal, 'abort', brokerAborted);
+    unlisten.call(application, 'abort', quit);
     if (!readyDelivered) rejectReady(fail(cause));
     const release = () => {
       owners.delete(owner);
@@ -268,7 +200,7 @@ function startRailgunProcess(options) {
     if (!spawned || exited || stopping) return;
     try {
       getPrivacyContext(handle);
-      const value = app.getAppMetrics().find((entry) => entry.pid === child.pid)
+      const value = platform.memorySamples().find((entry) => entry.pid === child.pid)
         ?.memory?.workingSetSize;
       if (!Number.isFinite(value) || value <= 0) {
         if (++missingMetrics >= 20) stop('RAILGUN_PROCESS_MEMORY_UNAVAILABLE');
@@ -309,25 +241,29 @@ function startRailgunProcess(options) {
         },
         () => stop('RAILGUN_SESSION_REVOKED')
       );
-    context.signal.addEventListener('abort', aborted, { once: true });
-    broker?.signal.addEventListener('abort', brokerAborted, { once: true });
-    app.once('before-quit', quit);
-    if (context.signal.aborted || session.signal.aborted || stopping) {
-      stop(context.signal.aborted ? 'PRIVACY_CONTEXT_REVOKED' : 'RAILGUN_SESSION_REVOKED');
+    listen.call(context.signal, 'abort', aborted);
+    listen.call(broker.signal, 'abort', brokerAborted);
+    listen.call(application, 'abort', quit);
+    if (
+      abortedSignal(application) ||
+      context.signal.aborted ||
+      session.signal.aborted ||
+      stopping
+    ) {
+      stop(
+        abortedGetter.call(application)
+          ? 'RAILGUN_PROCESS_CLOSED'
+          : abortedGetter.call(context.signal)
+            ? 'PRIVACY_CONTEXT_REVOKED'
+            : 'RAILGUN_SESSION_REVOKED'
+      );
       finish();
     } else {
-      channel = new MessageChannelMain();
-      child = utilityProcess.fork(
-        path.join(__dirname, kernel ? 'railgun-kernel-entry.js' : 'railgun-process-entry.js'),
-        [],
-        {
-          env: Object.fromEntries(Object.keys(process.env).map((key) => [key, ''])),
-          cwd: app.getPath('temp'),
-          stdio: 'ignore',
-          execArgv: [`--max-old-space-size=${heapMb}`],
-          serviceName: 'Freedom Railgun engine',
-        }
-      );
+      channel = platform.createUtilityChannel();
+      getPrivacyContext(handle);
+      if (stopping || abortedGetter.call(application) || abortedGetter.call(session.signal))
+        throw fail('RAILGUN_PROCESS_CLOSED');
+      child = platform.spawnUtility({ entry: 'railgun-utility-v1', heapMb });
       child.once('exit', finish);
       child.once('error', () => stop('RAILGUN_PROCESS_FAILED'));
       child.once('spawn', () => {
@@ -338,14 +274,9 @@ function startRailgunProcess(options) {
         }
         try {
           getPrivacyContext(handle);
-          child.postMessage(
-            JSON.stringify(
-              kernel
-                ? { type: 'init', job: executionJob, input }
-                : { type: 'init', filename, input }
-            ),
-            [channel.port2]
-          );
+          child.postMessage(JSON.stringify({ type: 'init', job: executionJob, input }), [
+            channel.port2,
+          ]);
           sampleMemory();
         } catch {
           stop('RAILGUN_PROCESS_FAILED');

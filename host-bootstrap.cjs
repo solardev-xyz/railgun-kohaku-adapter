@@ -146,6 +146,11 @@ function installRailgunExecutionBootstrap() {
             JSON.parse(message.input)?.purpose !== message.job
           )
             throw new Error('Railgun identity purpose unavailable');
+          if (
+            message.job.startsWith('txid-') &&
+            JSON.parse(message.input)?.mode !== message.job.slice(5)
+          )
+            throw new Error('Railgun TXID purpose unavailable');
           switch (message.job) {
             case 'spending-public':
             case 'viewing-identity':
@@ -171,6 +176,87 @@ function installRailgunExecutionBootstrap() {
               break;
             case 'private-verify':
               job = require('./src/execution/railgun-private-verify-job');
+              break;
+            case 'relay-sign':
+              job = require('./src/owners/railgun-relay-sign-job');
+              break;
+            case 'relay-pre-poi':
+              job = require('./src/owners/railgun-relay-pre-poi-job');
+              break;
+            case 'relay-prove-local':
+              job = require('./src/owners/railgun-relay-prove-job');
+              break;
+            case 'relay-prepare':
+              job = require('./src/owners/railgun-relay-wallet-job');
+              break;
+            case 'relay-reconstruct':
+              job = require('./src/owners/railgun-relay-wallet-job');
+              break;
+            case 'poi-prove':
+              job = require('./src/owners/railgun-own-poi-prove-job');
+              break;
+            case 'poi-transact-selector':
+              job = require('./src/owners/railgun-poi-transact-selector-job');
+              break;
+            case 'poi-output-recover':
+              job = require('./src/owners/railgun-poi-output-recover-job');
+              break;
+            case 'shield-receive':
+              job = require('./src/owners/railgun-shield-receive-job');
+              break;
+            case 'poi-verify':
+              job = require('./src/owners/railgun-poi-verify-job');
+              break;
+            case 'relay-verify':
+              job = require('./src/owners/railgun-relay-verify-job');
+              break;
+            case 'relay-signature-verify':
+              job = require('./src/owners/railgun-relay-signature-verify-job');
+              break;
+            case 'shield-prepare':
+              job = require('./src/owners/railgun-shield-job');
+              break;
+            case 'note-provenance':
+              job = require('./src/owners/railgun-note-provenance-job');
+              break;
+            case 'relay-quote-review':
+              job = require('./src/owners/railgun-relay-quote-job');
+              break;
+            case 'poi-shield-selector':
+              job = require('./src/owners/railgun-poi-shield-selector-job');
+              break;
+            case 'own-txid-selector':
+              job = require('./src/owners/railgun-own-selector-job');
+              break;
+            case 'own-txid-proof':
+              job = require('./src/owners/railgun-own-txid-job');
+              break;
+            case 'public-scan':
+              job = require('./src/owners/railgun-public-job');
+              break;
+            case 'poi-membership':
+              job = require('./src/owners/railgun-poi-job');
+              break;
+            case 'txid-inspect':
+              job = require('./src/owners/railgun-txid-job');
+              break;
+            case 'txid-project':
+              job = require('./src/owners/railgun-txid-job');
+              break;
+            case 'txid-apply':
+              job = require('./src/owners/railgun-txid-job');
+              break;
+            case 'txid-witness':
+              job = require('./src/owners/railgun-txid-job');
+              break;
+            case 'txid-note-witness':
+              job = require('./src/owners/railgun-txid-job');
+              break;
+            case 'txid-historical-root':
+              job = require('./src/owners/railgun-txid-job');
+              break;
+            case 'txid-coverage':
+              job = require('./src/owners/railgun-txid-job');
               break;
             default:
               throw new Error('Railgun execution job unavailable');
@@ -199,10 +285,27 @@ function installRailgunExecutionBootstrap() {
           .then(() =>
             job.run(message.input, {
               request: (wire) => request(wire),
-              requestKey:
-                message.job === 'private-verify'
-                  ? () => Promise.reject(new Error('Railgun session unavailable'))
-                  : (wire) => request(wire, true),
+              requestKey: [
+                'spending-public',
+                'viewing-identity',
+                'spending-sign',
+                'wallet-viewing',
+                'private-prepare',
+                'private-operate',
+                'private-recover',
+                'private-receive',
+                'relay-sign',
+                'relay-pre-poi',
+                'relay-prove-local',
+                'relay-prepare',
+                'relay-reconstruct',
+                'poi-prove',
+                'poi-transact-selector',
+                'poi-output-recover',
+                'shield-receive',
+              ].includes(message.job)
+                ? (wire) => request(wire, true)
+                : () => Promise.reject(new Error('Railgun session unavailable')),
               signal: controller.signal,
               guardReport: guard.report,
               close: () => port.close(),

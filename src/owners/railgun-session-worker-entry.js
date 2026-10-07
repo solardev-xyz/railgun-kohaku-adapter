@@ -2,9 +2,9 @@
  * engine. Reuses the broker's validation and transaction/cursor semantics.
  */
 const { isMainThread, parentPort, workerData } = require('worker_threads');
-const { createPrivacyScope } = require('./context-bindings');
-const { createRailgunSession, createRailgunReadOnlySession } = require("./railgun-session.js");
 if (isMainThread || !parentPort) throw new Error('Railgun worker entry only');
+const { createPrivacyScope } = require('./context-bindings');
+const { createRailgunSession, createRailgunReadOnlySession } = require('./railgun-session.js');
 const revoked = new Int32Array(workerData.revoked);
 const controller = new AbortController();
 const scope = createPrivacyScope({
