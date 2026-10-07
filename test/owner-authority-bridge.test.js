@@ -108,3 +108,34 @@ test.each(cases)(
     expect(m.assertRailgunOwnerHost).toHaveBeenCalledTimes(2);
   },
 );
+
+test('the real uninitialized bridge refuses before loading private owner implementations', () => {
+  const real = require('../host-owner-authority.cjs');
+  for (const [name] of cases)
+    expect(() => real[name]({}, {}, {})).toThrow(
+      expect.objectContaining({ code: 'RAILGUN_OWNER_HOST_UNAVAILABLE' }),
+    );
+  for (const filename of new Set(cases.map(([, file]) => file))) {
+    const full = path.join(__dirname, '../src/owners/', filename + '.js');
+    expect(require.cache[full]).toBeUndefined();
+  }
+});
+
+test('real owner binding exposes the complete fixed process and worker platform families', () => {
+  const binding = require('../src/owners/host-bindings');
+  expect(Object.keys(binding.platform).sort()).toEqual([
+    'applicationLifetime',
+    'createUtilityChannel',
+    'memorySamples',
+    'spawnStorageWorker',
+    'spawnUtility',
+    'terminateUtility',
+  ]);
+  expect(Object.keys(binding.submitter)).toEqual(['readMetadata']);
+  for (const method of Object.values(binding.platform)) {
+    expect(typeof method).toBe('function');
+    expect(() => method()).toThrow(
+      expect.objectContaining({ code: 'RAILGUN_OWNER_HOST_UNAVAILABLE' }),
+    );
+  }
+});

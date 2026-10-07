@@ -1,0 +1,1185 @@
+{
+  "baseRevision": "31bd04dd4f1400832c145e039cdd7b5606a6faa3",
+  "revision": "f7da14e8d864a416444380cc99f2fa6c85102ff9",
+  "label": "reviewed algorithm changes; not import-only relocation",
+  "changes": [
+    {
+      "file": "host-bootstrap.cjs",
+      "beforeSha256": "ee11d44f37cbc4333f6a466ba4fd5cdec254e95101d6a67fddf2f72877467b77",
+      "afterSha256": "77c84448cfc49f5a19340625776eb11f462876e1e1a851efcd449bd00d527c61",
+      "replacements": [
+        {
+          "start": 7416,
+          "before": ")\n                  : (wire) => request(wire, true",
+          "after": ""
+        },
+        {
+          "start": 7354,
+          "before": "",
+          "after": " (wire) => request(wire, true)\n                :"
+        },
+        {
+          "start": 7351,
+          "before": "",
+          "after": "'viewing-identity',\n                'spending-sign',\n                'wallet-viewing',\n                'private-prepare',\n                'private-operate',\n                'private-recover',\n                'private-receive',\n                'relay-sign',\n                'relay-pre-poi',\n                'relay-prove-local',\n                'relay-prepare',\n                'relay-reconstruct',\n                'poi-prove',\n                'poi-transact-selector',\n                'poi-output-recover',\n                'shield-receive',\n              ].includes(message.job)\n              "
+        },
+        {
+          "start": 7319,
+          "before": "private-verify'",
+          "after": ","
+        },
+        {
+          "start": 7313,
+          "before": " === ",
+          "after": "lic"
+        },
+        {
+          "start": 7308,
+          "before": "e.jo",
+          "after": "-pu"
+        },
+        {
+          "start": 7304,
+          "before": "ssa",
+          "after": "ndin"
+        },
+        {
+          "start": 7302,
+          "before": "m",
+          "after": "'sp"
+        },
+        {
+          "start": 7285,
+          "before": "",
+          "after": " ["
+        },
+        {
+          "start": 6248,
+          "before": "",
+          "after": "case 'relay-sign':\n              job = require('./src/owners/railgun-relay-sign-job');\n              break;\n            case 'relay-pre-poi':\n              job = require('./src/owners/railgun-relay-pre-poi-job');\n              break;\n            case 'relay-prove-local':\n              job = require('./src/owners/railgun-relay-prove-job');\n              break;\n            case 'relay-prepare':\n              job = require('./src/owners/railgun-relay-wallet-job');\n              break;\n            case 'relay-reconstruct':\n              job = require('./src/owners/railgun-relay-wallet-job');\n              break;\n            case 'poi-prove':\n              job = require('./src/owners/railgun-own-poi-prove-job');\n              break;\n            case 'poi-transact-selector':\n              job = require('./src/owners/railgun-poi-transact-selector-job');\n              break;\n            case 'poi-output-recover':\n              job = require('./src/owners/railgun-poi-output-recover-job');\n              break;\n            case 'shield-receive':\n              job = require('./src/owners/railgun-shield-receive-job');\n              break;\n            case 'poi-verify':\n              job = require('./src/owners/railgun-poi-verify-job');\n              break;\n            case 'relay-verify':\n              job = require('./src/owners/railgun-relay-verify-job');\n              break;\n            case 'relay-signature-verify':\n              job = require('./src/owners/railgun-relay-signature-verify-job');\n              break;\n            case 'shield-prepare':\n              job = require('./src/owners/railgun-shield-job');\n              break;\n            case 'note-provenance':\n              job = require('./src/owners/railgun-note-provenance-job');\n              break;\n            case 'relay-quote-review':\n              job = require('./src/owners/railgun-relay-quote-job');\n              break;\n            case 'poi-shield-selector':\n              job = require('./src/owners/railgun-poi-shield-selector-job');\n              break;\n            case 'own-txid-selector':\n              job = require('./src/owners/railgun-own-selector-job');\n              break;\n            case 'own-txid-proof':\n              job = require('./src/owners/railgun-own-txid-job');\n              break;\n            case 'public-scan':\n              job = require('./src/owners/railgun-public-job');\n              break;\n            case 'poi-membership':\n              job = require('./src/owners/railgun-poi-job');\n              break;\n            case 'txid-inspect':\n              job = require('./src/owners/railgun-txid-job');\n              break;\n            case 'txid-project':\n              job = require('./src/owners/railgun-txid-job');\n              break;\n            case 'txid-apply':\n              job = require('./src/owners/railgun-txid-job');\n              break;\n            case 'txid-witness':\n              job = require('./src/owners/railgun-txid-job');\n              break;\n            case 'txid-note-witness':\n              job = require('./src/owners/railgun-txid-job');\n              break;\n            case 'txid-historical-root':\n              job = require('./src/owners/railgun-txid-job');\n              break;\n            case 'txid-coverage':\n              job = require('./src/owners/railgun-txid-job');\n              break;\n            "
+        },
+        {
+          "start": 5138,
+          "before": "",
+          "after": "if (\n            message.job.startsWith('txid-') &&\n            JSON.parse(message.input)?.mode !== message.job.slice(5)\n          )\n            throw new Error('Railgun TXID purpose unavailable');\n          "
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-process.js",
+      "beforeSha256": "794687e205f0f40b31aefe1d08a3ec56d1e1599b67dd328766d6551c471f4193",
+      "afterSha256": "472d39995a22905a3dbd0ea546b5de8da3b60e360ad6a7978041c1509af367ed",
+      "replacements": [
+        {
+          "start": 13369,
+          "before": "",
+          "after": "]"
+        },
+        {
+          "start": 13357,
+          "before": "]",
+          "after": ","
+        },
+        {
+          "start": 13276,
+          "before": "    : { type: 'init', filename, input }\n            ),\n            [",
+          "after": ""
+        },
+        {
+          "start": 13263,
+          "before": "",
+          "after": "), ["
+        },
+        {
+          "start": 13181,
+          "before": "\n              kernel\n                ? ",
+          "after": ""
+        },
+        {
+          "start": 13153,
+          "before": "\n            ",
+          "after": ""
+        },
+        {
+          "start": 12806,
+          "before": "\n      ",
+          "after": ""
+        },
+        {
+          "start": 12743,
+          "before": "}`],\n          serviceName: 'Freedom Railgun engine',\n       ",
+          "after": ""
+        },
+        {
+          "start": 12622,
+          "before": "''])),\n          cwd: app.getPath('temp'),\n          stdio: 'ignore',\n          execArgv: [`--max-old-space-size=${",
+          "after": ""
+        },
+        {
+          "start": 12519,
+          "before": "),\n        [],\n        {\n          env: Object.fromEntries(Object.keys(process.env).map((key) => [key",
+          "after": ""
+        },
+        {
+          "start": 12510,
+          "before": "entry.js",
+          "after": "v1"
+        },
+        {
+          "start": 12502,
+          "before": "process",
+          "after": "utility"
+        },
+        {
+          "start": 12486,
+          "before": ".js' ",
+          "after": ""
+        },
+        {
+          "start": 12428,
+          "before": "       path.join(__dirname, kernel ? 'railgun-kernel-",
+          "after": ""
+        },
+        {
+          "start": 12426,
+          "before": "\n",
+          "after": "{"
+        },
+        {
+          "start": 12413,
+          "before": "Process.fork",
+          "after": ""
+        },
+        {
+          "start": 12406,
+          "before": "u",
+          "after": "platform.spawnU"
+        },
+        {
+          "start": 12389,
+          "before": "",
+          "after": "'RAILGUN_PROCESS_CLOSED'"
+        },
+        {
+          "start": 12387,
+          "before": "n",
+          "after": "l"
+        },
+        {
+          "start": 12384,
+          "before": "M",
+          "after": "();\n      getPrivacyContext(handle);\n      if (stopping || abortedGetter.call(application) || abortedGetter.call(session.signal))\n        throw f"
+        },
+        {
+          "start": 12372,
+          "before": "ssage",
+          "after": "Utility"
+        },
+        {
+          "start": 12368,
+          "before": "w M",
+          "after": "at"
+        },
+        {
+          "start": 12366,
+          "before": "n",
+          "after": "platform.cr"
+        },
+        {
+          "start": 12318,
+          "before": "",
+          "after": "\n      "
+        },
+        {
+          "start": 12290,
+          "before": "",
+          "after": "\n           "
+        },
+        {
+          "start": 12254,
+          "before": ".aborted",
+          "after": ")\n           "
+        },
+        {
+          "start": 12240,
+          "before": "",
+          "after": "\n        abortedGetter.call(application)\n          ? 'RAILGUN_PROCESS_CLOSED'\n          : abortedGetter.call("
+        },
+        {
+          "start": 12225,
+          "before": "",
+          "after": "\n    "
+        },
+        {
+          "start": 12216,
+          "before": "",
+          "after": "\n     "
+        },
+        {
+          "start": 12190,
+          "before": "",
+          "after": "\n     "
+        },
+        {
+          "start": 12165,
+          "before": "",
+          "after": "\n      abortedSignal(application) ||\n      "
+        },
+        {
+          "start": 12141,
+          "before": "e-qui",
+          "after": ""
+        },
+        {
+          "start": 12137,
+          "before": "ef",
+          "after": ""
+        },
+        {
+          "start": 12136,
+          "before": "",
+          "after": "a"
+        },
+        {
+          "start": 12132,
+          "before": "ce(",
+          "after": ", "
+        },
+        {
+          "start": 12129,
+          "before": ".",
+          "after": "licati"
+        },
+        {
+          "start": 12126,
+          "before": "",
+          "after": "listen.call("
+        },
+        {
+          "start": 12103,
+          "before": ", { once: true }",
+          "after": ""
+        },
+        {
+          "start": 12063,
+          "before": ".addEventListener(",
+          "after": ", "
+        },
+        {
+          "start": 12055,
+          "before": "?",
+          "after": ""
+        },
+        {
+          "start": 12049,
+          "before": "",
+          "after": "listen.call("
+        },
+        {
+          "start": 12026,
+          "before": ", { once: true }",
+          "after": ""
+        },
+        {
+          "start": 11992,
+          "before": ".addEventListener(",
+          "after": ", "
+        },
+        {
+          "start": 11978,
+          "before": "",
+          "after": "listen.call("
+        },
+        {
+          "start": 10641,
+          "before": "tAppMetric",
+          "after": ""
+        },
+        {
+          "start": 10637,
+          "before": "p.g",
+          "after": "l"
+        },
+        {
+          "start": 10636,
+          "before": "",
+          "after": "tform.memorySam"
+        },
+        {
+          "start": 10635,
+          "before": "",
+          "after": "pl"
+        },
+        {
+          "start": 10072,
+          "before": "e-qui",
+          "after": ""
+        },
+        {
+          "start": 10068,
+          "before": "ef",
+          "after": ""
+        },
+        {
+          "start": 10067,
+          "before": "",
+          "after": "a"
+        },
+        {
+          "start": 10066,
+          "before": "",
+          "after": "application, "
+        },
+        {
+          "start": 10063,
+          "before": "er",
+          "after": ".call"
+        },
+        {
+          "start": 10047,
+          "before": "app.removeL",
+          "after": "unl"
+        },
+        {
+          "start": 9997,
+          "before": ".removeEventListener(",
+          "after": ", "
+        },
+        {
+          "start": 9989,
+          "before": "?",
+          "after": ""
+        },
+        {
+          "start": 9983,
+          "before": "",
+          "after": "unlisten.call("
+        },
+        {
+          "start": 9939,
+          "before": ".removeEventListener(",
+          "after": ", "
+        },
+        {
+          "start": 9925,
+          "before": "",
+          "after": "unlisten.call("
+        },
+        {
+          "start": 9606,
+          "before": "",
+          "after": ";\n  }"
+        },
+        {
+          "start": 9574,
+          "before": "",
+          "after": " {\n    if (abortedGetter.call(broker.signal))"
+        },
+        {
+          "start": 9547,
+          "before": "",
+          "after": "};\n  "
+        },
+        {
+          "start": 9512,
+          "before": "",
+          "after": " {\n    if (abortedGetter.call(application))"
+        },
+        {
+          "start": 9494,
+          "before": "",
+          "after": "};\n  "
+        },
+        {
+          "start": 9459,
+          "before": "",
+          "after": "{\n    if (abortedGetter.call(context.signal)) "
+        },
+        {
+          "start": 8818,
+          "before": "(pi",
+          "after": ""
+        },
+        {
+          "start": 8817,
+          "before": "",
+          "after": "ity(chi"
+        },
+        {
+          "start": 8811,
+          "before": "ss.k",
+          "after": "rminateUt"
+        },
+        {
+          "start": 8808,
+          "before": "oc",
+          "after": "m.t"
+        },
+        {
+          "start": 8807,
+          "before": "",
+          "after": "latfo"
+        },
+        {
+          "start": 8518,
+          "before": "d.kill();\n      else process.kill(pi",
+          "after": ""
+        },
+        {
+          "start": 8509,
+          "before": "32') ",
+          "after": "ateUtility("
+        },
+        {
+          "start": 8500,
+          "before": " === 'w",
+          "after": ".term"
+        },
+        {
+          "start": 8480,
+          "before": "if (process.",
+          "after": ""
+        },
+        {
+          "start": 7174,
+          "before": "",
+          "after": ");\n  // Brand/shape validation is distinct from legitimate cancellation.\n  // A genuine aborted lifetime follows the original closed-task path below.\n  abortedSignal(application);\n  abortedSignal(context.signal);\n  abortedSignal(broker.signal"
+        },
+        {
+          "start": 6806,
+          "before": "))",
+          "after": ""
+        },
+        {
+          "start": 6789,
+          "before": "    ",
+          "after": ""
+        },
+        {
+          "start": 6745,
+          "before": "    ",
+          "after": ""
+        },
+        {
+          "start": 6665,
+          "before": "    !(broker.signal instanceof AbortSignal) ||\n        ",
+          "after": ""
+        },
+        {
+          "start": 4345,
+          "before": "        context.subject.protocol !== 'railgun' ||\n        context.subject.chainId !== 11155111 ||\n        context.subject.deployment !== 'sepolia' ||\n        (!kernel &&\n          !(\n            (context.subject.kind === 'private-account' &&\n              context.subject.role === 'keystore' &&\n              context.subject.operation === 'relay-sign' &&\n              filename === require.resolve(\"./railgun-relay-sign-job.js\")) ||\n            (context.subject.kind === 'private-account' &&\n              context.subject.role === 'engine' &&\n              context.subject.operation === 'relay-pre-poi' &&\n              filename === require.resolve(\"./railgun-relay-pre-poi-job.js\")) ||\n            (context.subject.kind === 'private-account' &&\n              context.subject.role === 'engine' &&\n              context.subject.operation === 'relay-prove-local' &&\n              filename === require.resolve(\"./railgun-relay-prove-job.js\")) ||\n            (context.subject.kind === 'private-account' &&\n              context.subject.role === 'engine' &&\n              ['relay-prepare', 'relay-reconstruct'].includes(context.subject.operation) &&\n              filename === require.resolve(\"./railgun-relay-wallet-job.js\")) ||\n            (context.subject.kind === 'private-account' &&\n              context.subject.role === 'engine' &&\n              context.subject.operation === 'poi-prove' &&\n              filename === require.resolve(\"./railgun-own-poi-prove-job.js\")) ||\n            (context.subject.kind === 'private-account' &&\n              context.subject.role === 'engine' &&\n              context.subject.operation === 'poi-transact-selector' &&\n              filename === require.resolve(\"./railgun-poi-transact-selector-job.js\")) ||\n            (context.subject.role === 'engine' &&\n              context.subject.operation === 'poi-output-recover' &&\n              filename === require.resolve(\"./railgun-poi-output-recover-job.js\")) ||\n            (context.subject.kind === 'private-account' &&\n              context.subject.role === 'engine' &&\n              context.subject.operation === 'shield-receive' &&\n              filename === require.resolve(\"./railgun-shield-receive-job.js\"))\n          )))) ||\n    (broker !== undefined &&\n      (!broker ||\n    ",
+          "after": ""
+        },
+        {
+          "start": 4275,
+          "before": "typeof binaryKey !== 'boolean' ||\n    (binaryKey &&\n      (",
+          "after": ""
+        },
+        {
+          "start": 3735,
+          "before": ".protocol !== 'railgun' ||\n        context.subject.chainId !== 11155111 ||\n        context.subject.deployment !== 'sepolia' ||\n        context.subject.role !== specification.role ||\n        context.subject.operation !== executionJob ||\n        (specification.kind !== undefined && context.subject.kind !== specification.kind)\n      : typeof filename !== 'string' || !path.isAbsolute(filename) || isMovedJob(filename)",
+          "after": ""
+        },
+        {
+          "start": 3707,
+          "before": "r ||\n       ",
+          "after": "ssJob(executionJob,"
+        },
+        {
+          "start": 3705,
+          "before": "k",
+          "after": "c"
+        },
+        {
+          "start": 3702,
+          "before": "b",
+          "after": "admitsP"
+        },
+        {
+          "start": 3697,
+          "before": "    ",
+          "after": ""
+        },
+        {
+          "start": 3646,
+          "before": "    ",
+          "after": ""
+        },
+        {
+          "start": 3600,
+          "before": "    ",
+          "after": ""
+        },
+        {
+          "start": 3543,
+          "before": " !app.isReady() ||\n    (kernel\n      ?",
+          "after": ""
+        },
+        {
+          "start": 3451,
+          "before": "\n    : requestedBinaryKey === undefined\n      ? false\n      : requestedBinaryKey",
+          "after": ""
+        },
+        {
+          "start": 3420,
+          "before": "kernel\n    ? ",
+          "after": ""
+        },
+        {
+          "start": 3397,
+          "before": "d",
+          "after": "()"
+        },
+        {
+          "start": 3395,
+          "before": "n",
+          "after": "m"
+        },
+        {
+          "start": 3393,
+          "before": "f",
+          "after": "t"
+        },
+        {
+          "start": 3391,
+          "before": "d",
+          "after": "Lif"
+        },
+        {
+          "start": 3378,
+          "before": "b]\n      : u",
+          "after": "rm.applicatio"
+        },
+        {
+          "start": 3376,
+          "before": "J",
+          "after": " = platf"
+        },
+        {
+          "start": 3371,
+          "before": "u",
+          "after": "a"
+        },
+        {
+          "start": 3362,
+          "before": "Jobs[exe",
+          "after": "i"
+        },
+        {
+          "start": 3351,
+          "before": "   ? kerne",
+          "after": "app"
+        },
+        {
+          "start": 3350,
+          "before": "",
+          "after": "const"
+        },
+        {
+          "start": 3347,
+          "before": "",
+          "after": ";"
+        },
+        {
+          "start": 3322,
+          "before": "kernelJobs, ",
+          "after": ""
+        },
+        {
+          "start": 3291,
+          "before": " === 'string' && Object.hasOwn",
+          "after": ""
+        },
+        {
+          "start": 3267,
+          "before": "l && typeof execution",
+          "after": "ss"
+        },
+        {
+          "start": 3265,
+          "before": "n",
+          "after": "oc"
+        },
+        {
+          "start": 3264,
+          "before": "",
+          "after": "tP"
+        },
+        {
+          "start": 3259,
+          "before": "   k",
+          "after": "g"
+        },
+        {
+          "start": 3257,
+          "before": "\n",
+          "after": ""
+        },
+        {
+          "start": 3110,
+          "before": "{ app, utilityProcess, MessageChannelMain } = require('electron');\n  const kernel = Object.hasOwn(options, 'executionJob');\n  const ",
+          "after": ""
+        },
+        {
+          "start": 2922,
+          "before": ",\n    binaryKey: requestedBinaryKey",
+          "after": ""
+        },
+        {
+          "start": 2813,
+          "before": "filename,\n    ",
+          "after": ""
+        },
+        {
+          "start": 2538,
+          "before": "\nfor (const filename of [...movedJobs]) movedJobs.add(require('fs').realpathSync(filename));",
+          "after": ""
+        },
+        {
+          "start": 2529,
+          "before": "se",
+          "after": "('RAILGUN_PROCESS_INVALID')"
+        },
+        {
+          "start": 2528,
+          "before": "",
+          "after": "i"
+        },
+        {
+          "start": 2520,
+          "before": "eturn",
+          "after": "ow"
+        },
+        {
+          "start": 2506,
+          "before": "e child.\n    ",
+          "after": ""
+        },
+        {
+          "start": 2438,
+          "before": "// Existing legacy qualification filenames can be checked only by ",
+          "after": ""
+        },
+        {
+          "start": 2415,
+          "before": "ute)",
+          "after": ""
+        },
+        {
+          "start": 2403,
+          "before": "thSync(abso",
+          "after": ""
+        },
+        {
+          "start": 2401,
+          "before": "p",
+          "after": "l(sign"
+        },
+        {
+          "start": 2379,
+          "before": "has(require('fs').re",
+          "after": "c"
+        },
+        {
+          "start": 2374,
+          "before": "Jobs",
+          "after": "Getter"
+        },
+        {
+          "start": 2371,
+          "before": "v",
+          "after": "rt"
+        },
+        {
+          "start": 2369,
+          "before": "m",
+          "after": "ab"
+        },
+        {
+          "start": 2346,
+          "before": "ue",
+          "after": "ow fail('RAILGUN_PROCESS_INVALID')"
+        },
+        {
+          "start": 2345,
+          "before": "",
+          "after": "h"
+        },
+        {
+          "start": 2337,
+          "before": "return",
+          "after": "  "
+        },
+        {
+          "start": 2336,
+          "before": "",
+          "after": "\n"
+        },
+        {
+          "start": 2335,
+          "before": "",
+          "after": "\n  "
+        },
+        {
+          "start": 2330,
+          "before": "lute",
+          "after": "n'"
+        },
+        {
+          "start": 2328,
+          "before": "",
+          "after": "orted') ||\n    Object.hasOwn(signal, 'rea"
+        },
+        {
+          "start": 2326,
+          "before": "",
+          "after": "signal, '"
+        },
+        {
+          "start": 2325,
+          "before": "",
+          "after": "Own"
+        },
+        {
+          "start": 2321,
+          "before": "",
+          "after": ".isProxy(signal) ||\n    Object.getPrototypeOf(signal) !== AbortSignal.prototype ||\n    Object"
+        },
+        {
+          "start": 2320,
+          "before": "",
+          "after": "ject' ||\n    type"
+        },
+        {
+          "start": 2314,
+          "before": "vedJ",
+          "after": "f signal !== '"
+        },
+        {
+          "start": 2312,
+          "before": "m",
+          "after": "\n    !signal ||\n    type"
+        },
+        {
+          "start": 2262,
+          "before": "\n  const absolute = path.resolve(filename);",
+          "after": ""
+        },
+        {
+          "start": 2257,
+          "before": "me",
+          "after": "l(signal"
+        },
+        {
+          "start": 2253,
+          "before": "le",
+          "after": "g"
+        },
+        {
+          "start": 2247,
+          "before": "Job(f",
+          "after": "S"
+        },
+        {
+          "start": 2244,
+          "before": "v",
+          "after": "rt"
+        },
+        {
+          "start": 2240,
+          "before": "isM",
+          "after": "ab"
+        },
+        {
+          "start": 2064,
+          "before": "ate-job',\n    'railgun-private-recover-job',\n    'railgun-private-receive-job',\n    'railgun-private-verify-job',\n  ].map((name) => require.resolve('./' + name)),\n])",
+          "after": ""
+        },
+        {
+          "start": 1965,
+          "before": "d-sign-job',\n    'railgun-wallet-job',\n    'railgun-private-prepare-job',\n    'railgun-private-op",
+          "after": ""
+        },
+        {
+          "start": 1940,
+          "before": "y-job',\n    'railgun-sp",
+          "after": ""
+        },
+        {
+          "start": 1939,
+          "before": "",
+          "after": "s"
+        },
+        {
+          "start": 1938,
+          "before": "",
+          "after": "L"
+        },
+        {
+          "start": 1899,
+          "before": "xecutionJob),\n  ...[\n    'railgun-id",
+          "after": "v"
+        },
+        {
+          "start": 1837,
+          "before": "dJobs = new Set([\n  ...Object.keys(kernelJobs).map(getRailgun",
+          "after": ""
+        },
+        {
+          "start": 1833,
+          "before": "",
+          "after": "listen = EventTarget.prototype.addEventListener;\nconst unlisten = EventTarget.prototype.re"
+        },
+        {
+          "start": 1658,
+          "before": "' }),\n  'private-receive': Object.freeze({ role: 'engine', key: true }),\n  'private-verify': Object.freeze({ role: 'prover', key: false, kind: 'private-account' }),\n})",
+          "after": ""
+        },
+        {
+          "start": 1650,
+          "before": "-accoun",
+          "after": "d').ge"
+        },
+        {
+          "start": 1645,
+          "before": "iva",
+          "after": ""
+        },
+        {
+          "start": 1643,
+          "before": "p",
+          "after": "abo"
+        },
+        {
+          "start": 1636,
+          "before": "kind: ",
+          "after": ""
+        },
+        {
+          "start": 1576,
+          "before": "rivate-recover': Object.freeze({ role: 'engine', key: tru",
+          "after": ""
+        },
+        {
+          "start": 1561,
+          "before": ": true }),\n  '",
+          "after": ""
+        },
+        {
+          "start": 1544,
+          "before": "le: 'engine', ke",
+          "after": "tot"
+        },
+        {
+          "start": 1533,
+          "before": "freeze({ ",
+          "after": "p"
+        },
+        {
+          "start": 1521,
+          "before": "te': Object",
+          "after": "l"
+        },
+        {
+          "start": 1520,
+          "before": "",
+          "after": "tyDescriptor(AbortSign"
+        },
+        {
+          "start": 1401,
+          "before": "eeze({ role: 'engine', key: true }),\n  'private-prepare': Object.freeze({ role: 'engine', key: true }),\n  'private-",
+          "after": ""
+        },
+        {
+          "start": 1388,
+          "before": "g': Object.f",
+          "after": "P"
+        },
+        {
+          "start": 1386,
+          "before": "i",
+          "after": ""
+        },
+        {
+          "start": 1381,
+          "before": "-vie",
+          "after": "O"
+        },
+        {
+          "start": 1177,
+          "before": "-public': Object.freeze({ role: 'keystore', key: true }),\n  'viewing-identity': Object.freeze({ role: 'keystore', key: true }),\n  'spending-sign': Object.freeze({ role: 'keystore', key: true }),\n  'wall",
+          "after": ""
+        },
+        {
+          "start": 1157,
+          "before": "freeze({\n  'spendin",
+          "after": ""
+        },
+        {
+          "start": 1140,
+          "before": "nelJobs",
+          "after": ""
+        },
+        {
+          "start": 1137,
+          "before": "k",
+          "after": "abortedGett"
+        },
+        {
+          "start": 974,
+          "before": "\n// The enum, not a caller boolean/path, determines the kernel key capability.\n// Actual identity/permit/loan authority stays with the existing main owners.",
+          "after": ""
+        },
+        {
+          "start": 971,
+          "before": "\"",
+          "after": "'"
+        },
+        {
+          "start": 966,
+          "before": "n.cj",
+          "after": "b"
+        },
+        {
+          "start": 958,
+          "before": "executi",
+          "after": "j"
+        },
+        {
+          "start": 956,
+          "before": "t",
+          "after": "s"
+        },
+        {
+          "start": 955,
+          "before": "",
+          "after": "ce"
+        },
+        {
+          "start": 950,
+          "before": "../h",
+          "after": "pr"
+        },
+        {
+          "start": 946,
+          "before": "\".",
+          "after": "'"
+        },
+        {
+          "start": 924,
+          "before": "cution",
+          "after": "ss"
+        },
+        {
+          "start": 917,
+          "before": "lgunEx",
+          "after": "tsProc"
+        },
+        {
+          "start": 916,
+          "before": "",
+          "after": "dm"
+        },
+        {
+          "start": 914,
+          "before": "R",
+          "after": "ProcessJob, "
+        },
+        {
+          "start": 899,
+          "before": "\"",
+          "after": "'"
+        },
+        {
+          "start": 871,
+          "before": "\"",
+          "after": "'"
+        },
+        {
+          "start": 821,
+          "before": "\"",
+          "after": "'"
+        },
+        {
+          "start": 800,
+          "before": "\"",
+          "after": "'"
+        },
+        {
+          "start": 767,
+          "before": "",
+          "after": "platform } = require('./host-bindings');\nconst { "
+        },
+        {
+          "start": 693,
+          "before": "h",
+          "after": "il"
+        },
+        {
+          "start": 690,
+          "before": "pa",
+          "after": "u"
+        },
+        {
+          "start": 675,
+          "before": "ath",
+          "after": "es }"
+        },
+        {
+          "start": 674,
+          "before": "",
+          "after": "{ ty"
+        },
+        {
+          "start": 117,
+          "before": "try",
+          "after": "um"
+        },
+        {
+          "start": 107,
+          "before": "runtime",
+          "after": "job"
+        },
+        {
+          "start": 98,
+          "before": "review",
+          "after": "clos"
+        },
+        {
+          "start": 94,
+          "before": "",
+          "after": "ct"
+        },
+        {
+          "start": 92,
+          "before": "i",
+          "after": ""
+        },
+        {
+          "start": 88,
+          "before": "upp",
+          "after": "e"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-session-worker.js",
+      "beforeSha256": "daf1bd5b0e84dbd6c2663de1989cc5294da5d29d66d618942a94ee11846459ed",
+      "afterSha256": "bf564be656aaebd0ed4b5915013f389e805f72ebf176376a7a3fa0876de0f9b8",
+      "replacements": [
+        {
+          "start": 7198,
+          "before": ",\n      execArgv: [],\n      stdout: true,\n      stderr: true,\n      resourceLimits: { maxOldGenerationSizeMb: 256 },\n    });\n    worker.stdout.resume();\n    worker.stderr.resume(",
+          "after": ""
+        },
+        {
+          "start": 7189,
+          "before": "  env: {",
+          "after": ""
+        },
+        {
+          "start": 6697,
+          "before": "path.join(__dirname, 'railgun-session-worker-entry.js'), ",
+          "after": ""
+        },
+        {
+          "start": 6688,
+          "before": "w ",
+          "after": ""
+        },
+        {
+          "start": 6687,
+          "before": "",
+          "after": "Storag"
+        },
+        {
+          "start": 6686,
+          "before": "",
+          "after": "platform.spaw"
+        },
+        {
+          "start": 6677,
+          "before": "",
+          "after": "if (applicationAborted(application)) throw fail();\n    "
+        },
+        {
+          "start": 4576,
+          "before": "",
+          "after": ");\n  listen.call(application, 'abort', quit"
+        },
+        {
+          "start": 4430,
+          "before": "",
+          "after": ");\n    unlisten.call(application, 'abort', quit"
+        },
+        {
+          "start": 4319,
+          "before": "",
+          "after": "const quit = () => {\n    if (abortedGetter.call(application)) close();\n  };\n  "
+        },
+        {
+          "start": 1193,
+          "before": "",
+          "after": ");\n  const application = platform.applicationLifetime();\n  if (applicationAborted(application)) throw fail("
+        },
+        {
+          "start": 317,
+          "before": "",
+          "after": "\nconst { types } = require('util');\nconst abortedGetter = Object.getOwnPropertyDescriptor(AbortSignal.prototype, 'aborted').get;\nconst listen = EventTarget.prototype.addEventListener;\nconst unlisten = EventTarget.prototype.removeEventListener;\nfunction applicationAborted(signal) {\n  if (\n    types.isProxy(signal) ||\n    Object.getPrototypeOf(signal) !== AbortSignal.prototype ||\n    Object.hasOwn(signal, 'aborted') ||\n    Object.hasOwn(signal, 'reason')\n  )\n    throw fail();\n  return abortedGetter.call(signal);\n}"
+        },
+        {
+          "start": 313,
+          "before": "",
+          "after": "ing"
+        },
+        {
+          "start": 308,
+          "before": "hrea",
+          "after": "-bin"
+        },
+        {
+          "start": 302,
+          "before": "rker_",
+          "after": "s"
+        },
+        {
+          "start": 300,
+          "before": "w",
+          "after": "./h"
+        },
+        {
+          "start": 283,
+          "before": "ker",
+          "after": "m"
+        },
+        {
+          "start": 280,
+          "before": "W",
+          "after": "platf"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-session-worker-entry.js",
+      "beforeSha256": "b509ea04768e146f5893c7017c869681656c185a538e28a11c538d5eed380c38",
+      "afterSha256": "e98010f68777bd429fb1f1b568a1dae389629afe5ad85109229f1ec5cb937337",
+      "replacements": [
+        {
+          "start": 390,
+          "before": "\");\nif (isMainThread || !parentPort) throw new Error('Railgun worker entry only",
+          "after": ""
+        },
+        {
+          "start": 369,
+          "before": "\"",
+          "after": "'"
+        },
+        {
+          "start": 236,
+          "before": "",
+          "after": "if (isMainThread || !parentPort) throw new Error('Railgun worker entry only');\n"
+        }
+      ]
+    }
+  ]
+}

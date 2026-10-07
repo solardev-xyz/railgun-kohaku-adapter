@@ -4,6 +4,7 @@ const fs = require("fs"),
   vm = require("vm"),
   { createHash } = require("crypto");
 const root = path.join(__dirname, "..");
+const processTransitions = require("../docs/owners/PROCESS-TRANSITIONS.json");
 const translation = require("../docs/owners/TRANSLATION.json");
 const transitions = require("../docs/owners/CREDENTIAL-TRANSITIONS.json");
 const narrowing = require("../docs/owners/KEY-NARROWING.json");
@@ -54,6 +55,14 @@ test("every translated algorithm reconstructs its exact immutable original bytes
     reused = 0;
   for (const row of translation.files) {
     let text = fs.readFileSync(path.join(root, row.destination), "utf8");
+    const processTransition = processTransitions.changes.find(
+      (change) => change.file === row.destination,
+    );
+    if (processTransition) {
+      expect(sha(text)).toBe(processTransition.afterSha256);
+      text = undo(text, processTransition.replacements);
+      expect(sha(text)).toBe(processTransition.beforeSha256);
+    }
     expect(sha(text)).toBe(row.destinationSha256);
     expect(row.sourceBlob).toMatch(/^[a-f0-9]{40}$/);
     if (row.disposition === "existing package implementation") {
