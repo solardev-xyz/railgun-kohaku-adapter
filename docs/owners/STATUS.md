@@ -142,16 +142,19 @@ fixed guard name loops, inherited dynamic filename loading and policy selectors.
 inventories, not semantic JS closure, dependency admission, runtime execution or
 proof that arbitrary archives are safe. No engine/archive target was loaded.
 
-## Inherited private-signer activation blocker
+## Explicit private-signer behavior correction
 
-A controlled source experiment confirms that the older private signer retains
-its per-identity signing latch and original held credential callback when
-`task.closed` rejects after key issuance. Closing that identity still releases
-its base identity owner, so a new identity for the same account can reopen while
-the original work is unobserved. Relay signing already quarantines the stable
-account owner. This older private path needs a separate owner-wide quarantine
-fix and regression before activation; the retained old latch/loan alone is not
-sufficient account exclusion. No child drainage is inferred from the rejection.
+A source experiment against credential checkpointd3951d1 confirmed an inherited
+private-signer gap: a rejected task.closed retained the old identity's signing
+latch and host loan, but closing that identity allowed a same-account reopen.
+The separate successor now captures/observes the original closure and invokes
+the genuine stable-account quarantine on rejected/unobservable closure. The
+original host callback remains held, bytes are wiped, and the old signing latch
+is not released. Closing the identity or replacing its vault session cannot
+reset that owner; a different account remains usable. Cleanup exceptions cannot
+skip remaining observed callback drainage. This is an explicit behavior fix,
+not an unchanged source move. The outward old private-signing refusal shape is
+preserved; no new positive drain or custody assertion is introduced.
 
 ## Checks and next code boundary
 
@@ -159,7 +162,7 @@ The initial31bd checkpoint passed1,557 tests/47 suites. Current tests additional
 cover all74 adapted identity controls plus original credential-callback lifetime,
 loan observation failures, enrollment guard/root revocation, paired bootstrap
 preemption, the fixed host importer allowlist and exact capsule wrapper reuse.
-The current full regression passed1,657 tests/50 suites; strict affected ESLint
+The current full regression passed1,659 tests/50 suites; strict affected ESLint
 passed. Two detached lifecycle mutants (early callback release and omitted guard
 revocation) were refused, as was a whole-host alias parser control.
 The test context issuer is an exact copy of the immutable original, isolated to

@@ -1063,7 +1063,7 @@
         "railgun-private-transfer",
         "railgun-token-unshield"
       ],
-      "destinationSha256": "21dc93c0e148e34be8e66655188bc6a4d0dada44deca42320afeab7a8dca6503"
+      "destinationSha256": "1dc122a02b97c72abbe97cfb79b66bd4613ff8f399173518c9746be0e6865105"
     },
     {
       "source": "src/main/wallet/railgun-kohaku-read-data.js",

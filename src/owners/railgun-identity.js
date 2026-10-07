@@ -15,6 +15,7 @@ const identities = new WeakMap(),
   signers = new WeakMap(),
   relaySigners = new WeakMap(),
   unobservedRelayWork = new Set(),
+  unobservedPrivateWork = new Set(),
   unknownRelayFailures = new WeakSet(),
   signing = new WeakSet();
 // Process-lifetime quarantine deliberately survives identity/vault replacement.
@@ -307,6 +308,10 @@ async function signPrivateIntent({
   }
   const token = Object.freeze({});
   let task,
+    taskClosed,
+    closureUnknown = false,
+    outcomeFailed = false,
+    outcomeError,
     sequence = 0,
     value;
   const current = () => {
@@ -381,32 +386,58 @@ async function signPrivateIntent({
         },
       },
     });
+    const originalClosed = task.closed;
+    const unknown = () => {
+      closureUnknown = true;
+      unobservedPrivateWork.add(originalClosed);
+      // Stable account quarantine survives closing/replacing this identity and
+      // vault session. Wiped bytes alone are not proof that the child exited.
+      try { quarantineRailgunIdentityCredentials(identity); } catch { /* Marker is installed first. */ }
+    };
+    taskClosed = new Promise((resolve, reject) => {
+      try {
+        assert.ok(require('util').types.isPromise(originalClosed));
+        Promise.prototype.then.call(originalClosed, resolve, (error) => {
+          unknown();
+          reject(error);
+        });
+      } catch (error) { unknown(); reject(error); }
+    });
+    taskClosed.catch(() => {});
     await task.ready;
     current();
     assert.ok(value && sequence === 2);
     task.close();
-    assert.equal((await task.closed).code, 'RAILGUN_PROCESS_CLOSED');
+    assert.equal((await taskClosed).code, 'RAILGUN_PROCESS_CLOSED');
     await Promise.allSettled([...requests]);
     await finishCredentialLoans(loans);
     assertRailgunIdentity(identity);
     assert.ok(!scope.signal.aborted);
-    return value;
   } catch {
-    throw Object.assign(new Error('Railgun private signing unavailable'), {
+    outcomeFailed = true;
+    outcomeError = Object.assign(new Error('Railgun private signing unavailable'), {
       code: 'RAILGUN_PRIVATE_SIGNING_REFUSED',
     });
   } finally {
     signers.delete(token);
-    scope.close();
-    task?.close();
-    if (task) await task.closed;
-    // A child can exit while its host durability callback is still pending.
-    // Keep identity exclusion until that callback has observed revocation.
+    let cleanupError;
+    const cleanup = (run) => { try { run(); } catch (error) { cleanupError ||= error; } };
+    cleanup(() => scope.close());
+    cleanup(() => task?.close());
+    if (taskClosed) {
+      try { await taskClosed; } catch (error) { cleanupError ||= error; }
+    }
+    // Retain exclusion through all admitted original callbacks even if a close
+    // throws. Unknown child settlement retains the original host loan as well.
     await Promise.allSettled([...requests]);
-    // Success already checked host settlement before scope revocation. Here an
-    // ordinary failed operation may make the closed host callback reject too.
-    try { await finishCredentialLoans(loans); } finally { signing.delete(identity); }
+    if (!closureUnknown) {
+      try { await finishCredentialLoans(loans); } catch (error) { cleanupError ||= error; }
+      signing.delete(identity);
+    }
+    if (cleanupError && !outcomeFailed) { outcomeFailed = true; outcomeError = cleanupError; }
   }
+  if (outcomeFailed) throw outcomeError;
+  return value;
 }
 async function signRailgunPrivateIntent(options) {
   try {
