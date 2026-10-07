@@ -1,0 +1,547 @@
+{
+  "schema": "railgun-relay-installed-package-qualification-archive-v1",
+  "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+  "packageSourceCommit": "3d52223b6c4fdd4d7ed9c78933d2ffe1a4d6ca4a",
+  "packageVersion": "0.5.0",
+  "electronVersion": "44.6.0",
+  "reportsExactBytes": true,
+  "campaigns": {
+    "positive": {
+      "report": {
+        "file": "positive-report.json",
+        "bytes": 534313,
+        "sha256": "1efdb83c21380e9b079aa491e7630c06b2b16ae09ff594962678b35c572501ce"
+      },
+      "originalResult": {
+        "pin": {
+          "bytes": 894,
+          "sha256": "f59e3374b7e4fd7eac2718d6418491cd7daffce46245b81cd642c6e703d57507"
+        },
+        "value": {
+          "schema": "railgun-relay-positive-result-v1",
+          "qualified": true,
+          "originalChild": {
+            "state": "finished",
+            "pid": 6611,
+            "exitObserved": true,
+            "exitCode": 0,
+            "timedOut": false,
+            "interrupted": false,
+            "terminateRequested": false,
+            "killRequested": false
+          },
+          "reportSha256": "1efdb83c21380e9b079aa491e7630c06b2b16ae09ff594962678b35c572501ce",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sourceFreezeSha256": "19f042bddbb46e794640865b5ac78099e0d130b222f028f5cd39010974bb1c74",
+          "head": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+          "createdWindow": [
+            1791416000659,
+            1791416029183
+          ],
+          "syntheticTrustDomain": true,
+          "productionServiceAuthority": false,
+          "osNetworkConfinementQualified": false,
+          "driverPid": 97553,
+          "parentOriginalObservationRequired": true,
+          "profilePayloadReadsByLauncher": false
+        }
+      },
+      "originalPost": {
+        "pin": {
+          "bytes": 24,
+          "sha256": "1ae748d5796cc995906ddf0fba5e5626f9c1c6ac79cec8fb465106e92254a77b"
+        },
+        "value": {
+          "unchanged": true
+        }
+      },
+      "originalProcess": {
+        "pin": {
+          "bytes": 184,
+          "sha256": "dd5a12243b6fce47f0a049c0cf72c37f59edbf7bda78150241a2c66bbf20a882"
+        },
+        "value": {
+          "state": "finished",
+          "pid": 6611,
+          "exitObserved": true,
+          "exitCode": 0,
+          "timedOut": false,
+          "interrupted": false,
+          "terminateRequested": false,
+          "killRequested": false
+        }
+      },
+      "outerOriginalDriver": {
+        "pin": {
+          "bytes": 185,
+          "sha256": "9821307834de8db7dfbd84b360f4eed0304ea6c4303026fd45bac27e0dec011e"
+        },
+        "value": {
+          "state": "finished",
+          "pid": 97553,
+          "exitObserved": true,
+          "exitCode": 0,
+          "timedOut": false,
+          "interrupted": false,
+          "terminateRequested": false,
+          "killRequested": false
+        }
+      },
+      "sourceFreeze": {
+        "bytes": 7328208,
+        "sha256": "19f042bddbb46e794640865b5ac78099e0d130b222f028f5cd39010974bb1c74"
+      },
+      "launcherFreeze": {
+        "bytes": 4977,
+        "sha256": "34bce24697e652bf97b33e1afd6cbfe2a6069eccb3acf11bb0ad23b7f3e77a44"
+      },
+      "request": {
+        "bytes": 478,
+        "sha256": "0388d2e7874a8f99923efc51ae678eee1d4361208c10f7920bc9e7a4f5f57467"
+      }
+    },
+    "cold": {
+      "report": {
+        "file": "cold-report.json",
+        "bytes": 228633,
+        "sha256": "147415a4c96ca0a0c927948d8afc8e85ebcf30a00ec109cdd9b00b1a9e5b0a47"
+      },
+      "originalResult": {
+        "pin": {
+          "bytes": 1079,
+          "sha256": "56f1de3f8887d9b9e133f0174342d65af2ddcf2e101fc827b2fb6748bb7992ae"
+        },
+        "value": {
+          "schema": "railgun-relay-cold-result-v1",
+          "qualified": true,
+          "originalChild": {
+            "state": "finished",
+            "pid": 12280,
+            "exitObserved": true,
+            "exitCode": 0,
+            "timedOut": false,
+            "interrupted": false,
+            "terminateRequested": false,
+            "killRequested": false
+          },
+          "driverPid": 11085,
+          "parentOriginalObservationRequired": true,
+          "reportSha256": "147415a4c96ca0a0c927948d8afc8e85ebcf30a00ec109cdd9b00b1a9e5b0a47",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sourceFreezeSha256": "74df8cdd2614e96a6dafd9ba63d0d58f9e11eb9087840b4b06937fe2027b992d",
+          "firstReportSha256": "1efdb83c21380e9b079aa491e7630c06b2b16ae09ff594962678b35c572501ce",
+          "firstOutcomeSha256": "664f613ba66671973d4959238acf2f009112f3dad9aa85572b383de620167eea",
+          "sourceBuildSha256": "f1361b9ab19c8402b7e601c74126e353aede84d123ffcb67caf725863e6441fd",
+          "createdWindow": [
+            1791416456975,
+            1791416465028
+          ],
+          "profilePayloadReadsByLauncher": false,
+          "productionServiceAuthority": false,
+          "osNetworkConfinementQualified": false
+        }
+      },
+      "originalPost": {
+        "pin": {
+          "bytes": 24,
+          "sha256": "1ae748d5796cc995906ddf0fba5e5626f9c1c6ac79cec8fb465106e92254a77b"
+        },
+        "value": {
+          "unchanged": true
+        }
+      },
+      "originalProcess": {
+        "pin": {
+          "bytes": 185,
+          "sha256": "fff5aececa6702fc6404f67796a257b8bb89d4751bfb018dc9cef396400bfce5"
+        },
+        "value": {
+          "state": "finished",
+          "pid": 12280,
+          "exitObserved": true,
+          "exitCode": 0,
+          "timedOut": false,
+          "interrupted": false,
+          "terminateRequested": false,
+          "killRequested": false
+        }
+      },
+      "outerOriginalDriver": {
+        "pin": {
+          "bytes": 185,
+          "sha256": "1f735331b7e07d7c6dfe680a0f403403bbec04970fea9952699e3b884024243b"
+        },
+        "value": {
+          "state": "finished",
+          "pid": 11085,
+          "exitObserved": true,
+          "exitCode": 0,
+          "timedOut": false,
+          "interrupted": false,
+          "terminateRequested": false,
+          "killRequested": false
+        }
+      },
+      "sourceFreeze": {
+        "bytes": 8348275,
+        "sha256": "74df8cdd2614e96a6dafd9ba63d0d58f9e11eb9087840b4b06937fe2027b992d"
+      },
+      "launcherFreeze": {
+        "bytes": 5224,
+        "sha256": "6c67c32f8885a6f84cef75e7fcbf4a64cb3627da46a8c2c7242034990dedbeb7"
+      },
+      "request": {
+        "bytes": 619,
+        "sha256": "d91cda2c56ae61bc5cc978ef857609f04faa79990ee877be845de29b296a373a"
+      }
+    }
+  },
+  "earlierFailedAttempts": {
+    "a": {
+      "outcomePin": {
+        "bytes": 658,
+        "sha256": "55375dfc52373ff6c22eb6134dead97a17c3d38f5cc76430878d2c8d1e5d9e7b"
+      },
+      "outcome": {
+        "qualified": false,
+        "source": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+        "originalMain": {
+          "state": "finished",
+          "pid": 80641,
+          "exitObserved": true,
+          "exitCode": -6,
+          "timedOut": false,
+          "interrupted": false,
+          "terminateRequested": false,
+          "killRequested": false
+        },
+        "postChecksUnchanged": true,
+        "outputDirectoryCreated": false,
+        "failure": "Electron SIGABRT in macOS _RegisterApplication/NSApplication startup before fixture output. Crash record matches pid80641. Application cause not established; next controlled attempt uses desktop execution permission.",
+        "driverExitCode": 1,
+        "fundedProfileAccess": false
+      },
+      "processPin": {
+        "bytes": 186,
+        "sha256": "88fa216fe389c063753e0c74058a17a744da342ac744fcbe2675300422904968"
+      },
+      "process": {
+        "state": "finished",
+        "pid": 80641,
+        "exitObserved": true,
+        "exitCode": -6,
+        "timedOut": false,
+        "interrupted": false,
+        "terminateRequested": false,
+        "killRequested": false
+      },
+      "postPin": {
+        "bytes": 24,
+        "sha256": "1ae748d5796cc995906ddf0fba5e5626f9c1c6ac79cec8fb465106e92254a77b"
+      },
+      "post": {
+        "unchanged": true
+      },
+      "launcherErrorPin": {
+        "bytes": 1033,
+        "sha256": "f2b765923b0fd0f32252ae863740038ad7e35d1a2d33af1ca333b043963856bc"
+      },
+      "childLogPin": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "b": {
+      "outcomePin": {
+        "bytes": 795,
+        "sha256": "0729b2d9fa3727b0bb059edfc467f20a2d41f35b75eb2e905ffaec6dc71c051f"
+      },
+      "outcome": {
+        "qualified": false,
+        "reason": "main-dependency-cache-outside-prepared-static-closure",
+        "originalMain": {
+          "state": "finished",
+          "pid": 86176,
+          "exitObserved": true,
+          "exitCode": 0,
+          "timedOut": false,
+          "interrupted": false,
+          "terminateRequested": false,
+          "killRequested": false
+        },
+        "originalDriver": {
+          "state": "finished",
+          "pid": 84828,
+          "exitObserved": true,
+          "exitCode": 1,
+          "timedOut": false,
+          "interrupted": false,
+          "terminateRequested": false,
+          "killRequested": false
+        },
+        "postCheck": {
+          "unchanged": true
+        },
+        "reportSha256": "64a22d466912666f16fa8c59109b6e29366e3d1e22a0d24aaf1fd8b48cbae6b1",
+        "note": "Preserved failed validation. A successor validator and fresh campaign are required; this run is not relabelled."
+      },
+      "processPin": {
+        "bytes": 185,
+        "sha256": "9ae4d9179b8fa1ae0e5201d406e2679b4ccc7cec40718972ff2d2e98bd99c15e"
+      },
+      "process": {
+        "state": "finished",
+        "pid": 86176,
+        "exitObserved": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "interrupted": false,
+        "terminateRequested": false,
+        "killRequested": false
+      },
+      "postPin": {
+        "bytes": 24,
+        "sha256": "1ae748d5796cc995906ddf0fba5e5626f9c1c6ac79cec8fb465106e92254a77b"
+      },
+      "post": {
+        "unchanged": true
+      },
+      "launcherErrorPin": {
+        "bytes": 909,
+        "sha256": "99f4631dbc186718537f00bba4da7b5a3cc9ffdf7e0420412176bd2c6be0ab5d"
+      },
+      "childLogPin": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  },
+  "sourceAndPackageJoins": {
+    "selectedSources": 734,
+    "selectedCounts": {
+      "freedom": 664,
+      "package": 70
+    },
+    "allSelectedPinsMatchedCommittedBlobsExceptDeclaredLiteral": true,
+    "originalPackageFiles": 99,
+    "allOriginalPackagePinsMatchedCommittedBlobs": true,
+    "onlyTransformedPackageFile": "src/data/railgun-poi-records.js",
+    "originalFile": {
+      "bytes": 5116,
+      "sha256": "c4511c0ea185835c67bbbc8b8ba74bec6271e4b3a457a2b6a1576b42593fd1ac"
+    },
+    "transformedFile": {
+      "bytes": 5116,
+      "sha256": "16a8e5e15621d2da51568319717a43ca51e3517beb59441e44931539d47b45ab"
+    },
+    "transformation": "One exact REQUIRED_LIST literal replacement in the isolated physical package only.",
+    "originalAndCopyRegularSingleLinkDistinctInodes": true,
+    "identityClaimsBasis": "Recorded pre-run BUILD identities; publication did not re-open dependency payloads.",
+    "applicationFilesUnchanged": true
+  },
+  "externalMetadata": {
+    "build": {
+      "bytes": 44675979,
+      "sha256": "f1361b9ab19c8402b7e601c74126e353aede84d123ffcb67caf725863e6441fd"
+    },
+    "preparation": {
+      "bytes": 6666,
+      "sha256": "1912c05ee7b89bb808787314b5d64ca6f842912378c208c2af9d69f096535261"
+    },
+    "firstOutcome": {
+      "bytes": 466,
+      "sha256": "664f613ba66671973d4959238acf2f009112f3dad9aa85572b383de620167eea"
+    },
+    "coldConfig": {
+      "bytes": 983,
+      "sha256": "029d3b5671bff2aa5c3d2209e1b6dbecc43112819b31347d27a6a6e23f81ef43"
+    },
+    "inventoriesPublishedInFull": false,
+    "inventoryAndRuntimePrePostUnchanged": true,
+    "originalSourceFiles": 11775,
+    "isolatedSourceFiles": 11874,
+    "staticApplicationClosureFiles": 311,
+    "staticDependencyClosureFiles": 1016
+  },
+  "runtimeInputs": {
+    "electronExecutable": {
+      "bytes": 33968,
+      "sha256": "c9da78c3c79b9e6d6714fbf2a1136c4eb4a93cc5edad0f8ccfb058d681325e7e"
+    },
+    "electronFramework": {
+      "bytes": 202648272,
+      "sha256": "69147ed2f3eb9c95f47c442ae864767fa5a9fc8a2a9700c5ecf86be28c099c7f"
+    },
+    "electronDefaultApp": {
+      "bytes": 110862,
+      "sha256": "0eb2491b0a9ac94790389d39c09dd5005c6c1f0665842943829bbd0193f6cc4f"
+    },
+    "engineArchive": {
+      "bytes": 81790332,
+      "sha256": "019f10880abf1c448aee02ec77c5c2d68c3561c7b4eef02095d66bb5fecd6a7a"
+    },
+    "proverArchive": {
+      "bytes": 1613882,
+      "sha256": "dd50a29f297867b3bf91cb425066e1d257ea02230a94b02e4cf34c5c70a0c7ab"
+    },
+    "publicSource": {
+      "bytes": 8466,
+      "sha256": "bfa8684f50b2bb838b026f2c4972653bfc4503d9fd15182c6c5b219ce1bc1e41"
+    }
+  },
+  "artifactInputs": {
+    "directories": [],
+    "files": {
+      "01x01.vkey": {
+        "bytes": 3089,
+        "sha256": "b1295384591b05481ad16d579a64d0d4a4e014e251e90f1027d2bdf2dcc1a8f7"
+      },
+      "01x01.wasm": {
+        "bytes": 3602116,
+        "sha256": "37a1528543305c64805e3c607940341abf61ba8516f73cfeb625cd09e5bda7a6"
+      },
+      "01x01.zkey": {
+        "bytes": 5888790,
+        "sha256": "27443e834f807f0d4ce8a0c2a0e028d1d540cba9c3e4d64b864b367e797215f4"
+      },
+      "01x02.vkey": {
+        "bytes": 3256,
+        "sha256": "9369fa6ad3d7a1becf4b10cf4bd6a7eb83725cfb5cf75a08b191c5bc2cd479f4"
+      },
+      "01x02.wasm": {
+        "bytes": 3007613,
+        "sha256": "6ce87ddb4e33cff9564338a8b1f58047b22809e5d198f243c777d1aa4eaaa1e3"
+      },
+      "01x02.zkey": {
+        "bytes": 6121318,
+        "sha256": "8ef8e7abcfb5e60fb593d4d961657465f498435a0835adef05acc09534d7557b"
+      },
+      "01x03.vkey": {
+        "bytes": 3420,
+        "sha256": "649561f264ee8dc6cfbf78a989d2978d848f6a5c730bb1817659edfa54266130"
+      },
+      "01x03.wasm": {
+        "bytes": 3918931,
+        "sha256": "72e55865fccca077f443bae9f1e6762a156ea478a137efc1324fb79153050276"
+      },
+      "01x03.zkey": {
+        "bytes": 6361742,
+        "sha256": "477aeca6a8ed3706f572bce0e99a7054e700a4e3c2ee4499d7013a4d7770e0d0"
+      },
+      "02x02.vkey": {
+        "bytes": 3422,
+        "sha256": "27ac4fc50fde0ca2dc62046f5f38715b6094676bcdbe4e2987875aba65cac620"
+      },
+      "02x02.wasm": {
+        "bytes": 3936627,
+        "sha256": "8595023762a3067b70960be81e1a983c1630c9900d4caef3d608b9d849568829"
+      },
+      "02x02.zkey": {
+        "bytes": 8461426,
+        "sha256": "47c279ec3fcc8bdcc7a2fb80078e38ba8ca3a7bbaa608967c3c3af82f1d454e5"
+      },
+      "02x03.vkey": {
+        "bytes": 3585,
+        "sha256": "2c9162607a77773b5d030012bf0d87eecf27201ad8f2f0a319a7c1661df2fb71"
+      },
+      "02x03.wasm": {
+        "bytes": 4098477,
+        "sha256": "20ab2f0987f94b6e959fcf11c9d37415c98848acd6a900a0ca75768db3938afa"
+      },
+      "02x03.zkey": {
+        "bytes": 8700194,
+        "sha256": "75611fffbc675993e55964404136df2a4e59821b40103ebe7afafc6c76863d11"
+      },
+      "POI_3x3.vkey": {
+        "bytes": 4207,
+        "sha256": "2f4dcbf58d383204e09240863a6f6eff249071849e5161801ebfe83691037b23"
+      },
+      "POI_3x3.wasm": {
+        "bytes": 4520908,
+        "sha256": "831aad53c05d19f9854ed27429610da724fbdf9e1e7023aa7a90666f50b0da78"
+      },
+      "POI_3x3.zkey": {
+        "bytes": 13605800,
+        "sha256": "667984c51df2122956107c11c3c606e4e4688f70fb25515b9388cbd5140e48b3"
+      },
+      "download-relayed.cjs": {
+        "bytes": 2373,
+        "sha256": "97cc353738c592c00640d78bc275ef00d4055c79f2fd73d771b898fb80d0cda1"
+      },
+      "download.cjs": {
+        "bytes": 2385,
+        "sha256": "ba88c967bb59e2e64c0d9cb49b87807add8bc1541c44bde703fdc937cd58c5ba"
+      },
+      "downloads-relayed.json": {
+        "bytes": 1957,
+        "sha256": "8d2e4f093f29a20750a0ad975b056b5a06d2431290794f7395d5ad94a71abda6"
+      },
+      "downloads.json": {
+        "bytes": 3767,
+        "sha256": "3a9ba0ddf8bee56675131c5ecdace7221c4a06a63d40eae83029cacce590ce94"
+      },
+      "prove-poi.cjs": {
+        "bytes": 1686,
+        "sha256": "76a5ab5aef6fddfe2ab57caef0472698b18ef648265f750005fddd6cd02a3399"
+      },
+      "verification.json": {
+        "bytes": 1741,
+        "sha256": "15cc5e9ee00f297ce4d85c921624533dff7b9f9c91274179ee5655d6a155a5db"
+      },
+      "verify.cjs": {
+        "bytes": 2653,
+        "sha256": "5180d01f4e723a134df6b67902d477582ae9abfce4215a83999de8412526e2ec"
+      }
+    },
+    "links": {}
+  },
+  "loaderBootstrapEntry": {
+    "bytes": 95,
+    "relativePath": "default_app.asar/package.json",
+    "sha256": "3688987acbbeeea464615eee547ab4feca1c33e71ff85607e84e5167ebc595fc"
+  },
+  "sqliteLoaderException": {
+    "relativePath": "better-sqlite3/prebuilds/darwin-arm64.node",
+    "pin": {
+      "bytes": 1980736,
+      "sha256": "98e0e8acd01c632fe5615243e1296af0372826f8783b18fc31c506f73c47459c"
+    },
+    "basis": {
+      "bytes": 3559,
+      "sha256": "13c6774e900652ca23cebdfc168169960c9232603a6eef91a671fdc398869301"
+    },
+    "scope": "Only the predeclared platform native binding, joined to all 17 SQLite pins and package inventory; ordinary JavaScript remains subject to static closure."
+  },
+  "publicationChecks": {
+    "positiveAndColdFrozenReportValidatorsReplayed": true,
+    "sourceRequestRunnerFreezeProcessPostAndFirstOutcomeJoins": true,
+    "selectedAndFullOriginalPackageGitBlobJoins": true,
+    "noRuntimeOrCryptographyRerun": true,
+    "noProfilePayloadRead": true,
+    "noAbsoluteMachinePathsInPublicArtifacts": true
+  },
+  "rootObservationAttribution": {
+    "source": "Parent agent original process observations, separately matched to outer RESULT records.",
+    "positive": {
+      "driverPid": 97553,
+      "mainPid": 6611,
+      "naturalExitCode": 0
+    },
+    "cold": {
+      "originalToolSession": 98827,
+      "driverPid": 11085,
+      "mainPid": 12280,
+      "naturalExitCode": 0
+    },
+    "independentOsAttestation": false
+  },
+  "scope": {
+    "syntheticTrustDomain": true,
+    "realRelayTransportQualified": false,
+    "productionServiceAuthority": false,
+    "utilityModuleCacheObserved": false,
+    "historicalExecutionCoverage": false,
+    "osNetworkConfinementQualified": false,
+    "wholeProfileBytesUnchangedClaimed": false
+  }
+}
