@@ -19,13 +19,19 @@ const listen = EventTarget.prototype.addEventListener;
 const unlisten = EventTarget.prototype.removeEventListener;
 function abortedSignal(signal) {
   if (
+    !signal ||
+    typeof signal !== 'object' ||
     types.isProxy(signal) ||
     Object.getPrototypeOf(signal) !== AbortSignal.prototype ||
     Object.hasOwn(signal, 'aborted') ||
     Object.hasOwn(signal, 'reason')
   )
     throw fail('RAILGUN_PROCESS_INVALID');
-  return abortedGetter.call(signal);
+  try {
+    return abortedGetter.call(signal);
+  } catch {
+    throw fail('RAILGUN_PROCESS_INVALID');
+  }
 }
 const owners = new Set();
 const fail = (code) => Object.assign(new Error('Railgun process unavailable'), { code });
@@ -52,14 +58,11 @@ function startRailgunProcess(options) {
     Object.hasOwn(options, 'filename') ||
     Object.hasOwn(options, 'binaryKey') ||
     !admitsProcessJob(executionJob, context.subject) ||
-    abortedSignal(application) ||
-    abortedSignal(context.signal) ||
     typeof input !== 'string' ||
     Buffer.byteLength(input) > 65536 ||
     typeof storageWorker !== 'boolean' ||
     !broker ||
     typeof broker.dispatch !== 'function' ||
-    abortedSignal(broker.signal) ||
     storage !== undefined ||
     createProvider !== undefined ||
     storageWorker ||
@@ -77,6 +80,11 @@ function startRailgunProcess(options) {
     rssMb > 2048
   )
     throw fail('RAILGUN_PROCESS_INVALID');
+  // Brand/shape validation is distinct from legitimate cancellation.
+  // A genuine aborted lifetime follows the original closed-task path below.
+  abortedSignal(application);
+  abortedSignal(context.signal);
+  abortedSignal(broker.signal);
   const owner = JSON.stringify([context.profileId, context.generation, context.subject]);
   if (owners.size >= 2 || owners.has(owner)) throw fail('RAILGUN_PROCESS_BUSY');
   owners.add(owner);
@@ -242,7 +250,13 @@ function startRailgunProcess(options) {
       session.signal.aborted ||
       stopping
     ) {
-      stop(context.signal.aborted ? 'PRIVACY_CONTEXT_REVOKED' : 'RAILGUN_SESSION_REVOKED');
+      stop(
+        abortedGetter.call(application)
+          ? 'RAILGUN_PROCESS_CLOSED'
+          : abortedGetter.call(context.signal)
+            ? 'PRIVACY_CONTEXT_REVOKED'
+            : 'RAILGUN_SESSION_REVOKED'
+      );
       finish();
     } else {
       channel = platform.createUtilityChannel();

@@ -5,7 +5,7 @@ const fs = require('fs'),
 const { EventEmitter, getEventListeners } = require('events');
 const jobs = require('../src/owners/process-jobs');
 const source = fs.readFileSync(path.join(__dirname, '../src/owners/railgun-process.js'), 'utf8');
-function fixture(job = 'relay-sign') {
+function fixture(job = 'relay-sign', allowRevokedContext = false) {
   const application = new AbortController(),
     context = new AbortController(),
     brokerSignal = new AbortController();
@@ -71,8 +71,10 @@ function fixture(job = 'relay-sign') {
       if (name === './context-bindings')
         return {
           getPrivacyContext(value) {
-            if (value !== handle || context.signal.aborted)
-              throw new Error('Invalid genuine handle');
+            if (value !== handle || (context.signal.aborted && !allowRevokedContext))
+              throw Object.assign(new Error('Invalid genuine handle'), {
+                code: 'PRIVACY_CONTEXT_REVOKED',
+              });
             return original;
           },
         };
@@ -199,7 +201,9 @@ test('POI job requires exact authenticated operation domain', () => {
 test('preaborted application refuses before fork; forged abort events cannot revoke or eat subscription', async () => {
   const f = fixture();
   f.application.abort();
-  expect(() => f.start()).toThrow();
+  const closed = f.start();
+  await expect(closed.ready).rejects.toMatchObject({ code: 'RAILGUN_PROCESS_CLOSED' });
+  expect(await closed.closed).toMatchObject({ code: 'RAILGUN_PROCESS_CLOSED', exitCode: null });
   expect(f.platform.spawnUtility).not.toHaveBeenCalled();
   const g = fixture(),
     task = g.start(),
@@ -325,3 +329,50 @@ test.each(['startup', 'lifetime', 'memory', 'wire'])(
     await task.closed;
   }
 );
+
+test.each([
+  ['application', 'RAILGUN_PROCESS_CLOSED'],
+  ['context', 'PRIVACY_CONTEXT_REVOKED'],
+  ['brokerSignal', 'RAILGUN_SESSION_REVOKED'],
+])(
+  'genuine preaborted %s preserves cancellation attribution and an observed absent-child close',
+  async (field, code) => {
+    const f = fixture('relay-sign', true);
+    f[field].abort();
+    const task = f.start();
+    await expect(task.ready).rejects.toMatchObject({ code });
+    expect(await task.closed).toEqual({
+      code,
+      exitCode: null,
+      peakRssBytes: 0,
+      escalated: false,
+      peerDisconnected: false,
+    });
+    expect(f.platform.spawnUtility).not.toHaveBeenCalled();
+    expect(f.platform.createUtilityChannel).not.toHaveBeenCalled();
+    expect(getEventListeners(f.application.signal, 'abort')).toHaveLength(0);
+  }
+);
+test('the genuine context authority own revoked-handle error is preserved', () => {
+  const f = fixture();
+  f.context.abort();
+  expect(() => f.start()).toThrow(expect.objectContaining({ code: 'PRIVACY_CONTEXT_REVOKED' }));
+  expect(f.platform.spawnUtility).not.toHaveBeenCalled();
+});
+test.each([
+  null,
+  {},
+  Object.create(AbortSignal.prototype),
+  new Proxy(new AbortController().signal, {}),
+])('malformed application signal has INVALID attribution %p', (signal) => {
+  const f = fixture();
+  f.platform.applicationLifetime.mockReturnValue(signal);
+  expect(() => f.start()).toThrow(expect.objectContaining({ code: 'RAILGUN_PROCESS_INVALID' }));
+  expect(f.platform.spawnUtility).not.toHaveBeenCalled();
+});
+test('malformed broker signal has INVALID attribution without dispatch', () => {
+  const f = fixture();
+  f.broker.signal = {};
+  expect(() => f.start()).toThrow(expect.objectContaining({ code: 'RAILGUN_PROCESS_INVALID' }));
+  expect(f.broker.dispatch).not.toHaveBeenCalled();
+});

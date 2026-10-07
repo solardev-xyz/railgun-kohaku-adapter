@@ -1,0 +1,561 @@
+{
+  "schema": "railgun-owner-process-caller-audit-v1",
+  "revision": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+  "scope": "All direct startRailgunProcess calls in committed src/main JavaScript excluding test files; AST examined every matching module. No aliases exist in these imports.",
+  "files": 20,
+  "calls": 22,
+  "allExplicitBorrowedBrokers": true,
+  "allPrivateAccountByOwnerSource": true,
+  "rows": [
+    {
+      "path": "src/main/wallet/railgun-identity.js",
+      "line": 148,
+      "callSha256": "c944837c40d9138b9e43e8f0c6775bff8c5c0894e76c8493d4138f5d685d3bb9",
+      "brokerLine": 160,
+      "brokerExpression": "literal bounded broker",
+      "handleExpression": "scope.getContext({ ...subject, operation: purpose })",
+      "kindEvidence": [
+        {
+          "path": "src/main/wallet/railgun-identity.js",
+          "line": 94,
+          "needle": "kind: 'private-account'"
+        },
+        {
+          "path": "src/main/wallet/railgun-identity.js",
+          "line": 61,
+          "needle": "['kind', 'principal', 'protocol', 'deployment', 'chainId']"
+        }
+      ]
+    },
+    {
+      "path": "src/main/wallet/railgun-identity.js",
+      "line": 353,
+      "callSha256": "c23eab525c0783d9fff736fd0c91bc2ba438a6e6682d642d7caae1ce8b8f1df0",
+      "brokerLine": 361,
+      "brokerExpression": "literal bounded broker",
+      "handleExpression": "handle",
+      "kindEvidence": [
+        {
+          "path": "src/main/wallet/railgun-identity.js",
+          "line": 94,
+          "needle": "kind: 'private-account'"
+        },
+        {
+          "path": "src/main/wallet/railgun-identity.js",
+          "line": 61,
+          "needle": "['kind', 'principal', 'protocol', 'deployment', 'chainId']"
+        }
+      ]
+    },
+    {
+      "path": "src/main/wallet/railgun-identity.js",
+      "line": 631,
+      "callSha256": "8432f1ef5089e723e5e7071fcaca9b3e3376fde9e46c415c45dc9d1957c3db15",
+      "brokerLine": 640,
+      "brokerExpression": "literal bounded broker",
+      "handleExpression": "handle",
+      "kindEvidence": [
+        {
+          "path": "src/main/wallet/railgun-identity.js",
+          "line": 94,
+          "needle": "kind: 'private-account'"
+        },
+        {
+          "path": "src/main/wallet/railgun-identity.js",
+          "line": 61,
+          "needle": "['kind', 'principal', 'protocol', 'deployment', 'chainId']"
+        }
+      ]
+    },
+    {
+      "path": "src/main/wallet/railgun-note-provenance.js",
+      "line": 119,
+      "callSha256": "76831196a7cba3fb7ef3c81a525992b82f45f05d70b9bf951e2715aeeff1fa5a",
+      "brokerLine": 125,
+      "brokerExpression": "literal bounded broker",
+      "handleExpression": "scope.getContext(parent.subject)",
+      "kindEvidence": [
+        {
+          "path": "src/main/wallet/railgun-note-provenance.js",
+          "line": 37,
+          "needle": "subject.kind, 'private-account'"
+        }
+      ]
+    },
+    {
+      "path": "src/main/wallet/railgun-own-poi-membership.js",
+      "line": 437,
+      "callSha256": "e0ee1b6661632ba0ac0fb39d0c9677f2ae07ecae3d695ca93a4d3a7f18b7ed1e",
+      "brokerLine": 446,
+      "brokerExpression": "literal bounded broker",
+      "handleExpression": "jobScope.getContext(context.subject)",
+      "kindEvidence": [
+        {
+          "path": "src/main/wallet/railgun-account-enrollment.js",
+          "line": 71,
+          "needle": "kind: 'private-account'"
+        },
+        {
+          "path": "src/main/wallet/railgun-account-enrollment.js",
+          "line": 739,
+          "needle": "getContext(role, operation)"
+        },
+        {
+          "path": "src/main/wallet/railgun-own-poi-membership.js",
+          "line": 184,
+          "needle": "enrollment.getContext("
+        }
+      ]
+    },
+    {
+      "path": "src/main/wallet/railgun-own-poi-proof.js",
+      "line": 343,
+      "callSha256": "67b6076e6dcbafbc0ddbbec8314fdb521a1a13814c79745c0648c9ab165e99fc",
+      "brokerLine": 352,
+      "brokerExpression": "literal bounded broker",
+      "handleExpression": "handle",
+      "kindEvidence": [
+        {
+          "path": "src/main/wallet/railgun-account-enrollment.js",
+          "line": 71,
+          "needle": "kind: 'private-account'"
+        },
+        {
+          "path": "src/main/wallet/railgun-account-enrollment.js",
+          "line": 739,
+          "needle": "getContext(role, operation)"
+        },
+        {
+          "path": "src/main/wallet/railgun-own-poi-proof.js",
+          "line": 90,
+          "needle": "enrollment.getContext("
+        }
+      ]
+    },
+    {
+      "path": "src/main/wallet/railgun-own-selector.js",
+      "line": 88,
+      "callSha256": "66aaad2cbe224f56bb9f43352650b4645964becf8fc6d02253fe8c72745da2ab",
+      "brokerLine": 94,
+      "brokerExpression": "literal bounded broker",
+      "handleExpression": "scope.getContext(parent.subject)",
+      "kindEvidence": [
+        {
+          "path": "src/main/wallet/railgun-own-selector.js",
+          "line": 23,
+          "needle": "subject.kind, 'private-account'"
+        }
+      ]
+    },
+    {
+      "path": "src/main/wallet/railgun-own-txid-verifier.js",
+      "line": 77,
+      "callSha256": "db580ff7bc9a4d16349f1e356572537969502f9cd208e8de5458b54ff8c8afa2",
+      "brokerLine": 83,
+      "brokerExpression": "literal bounded broker",
+      "handleExpression": "scope.getContext(parent.subject)",
+      "kindEvidence": [
+        {
+          "path": "src/main/wallet/railgun-own-txid-verifier.js",
+          "line": 24,
+          "needle": "subject.kind, 'private-account'"
+        }
+      ]
+    },
+    {
+      "path": "src/main/wallet/railgun-poi-membership.js",
+      "line": 110,
+      "callSha256": "8c303eebc2592dea5252bd9d687a8673101891891b1ed7d4a84430b12f28dd0b",
+      "brokerLine": 116,
+      "brokerExpression": "literal bounded broker",
+      "handleExpression": "handle",
+      "kindEvidence": [
+        {
+          "path": "src/main/wallet/railgun-poi-membership.js",
+          "line": 26,
+          "needle": "assertRailgunPoiSource(source, handle)"
+        },
+        {
+          "path": "src/main/wallet/railgun-poi-source.js",
+          "line": 31,
+          "needle": "subject.kind === 'private-account'"
+        }
+      ]
+    },
+    {
+      "path": "src/main/wallet/railgun-poi-output-recovery.js",
+      "line": 442,
+      "callSha256": "f0fdab1d1ab287ab384842e9d9b1c6096b74b8f6ddc6b482b17dca343a6e2c72",
+      "brokerLine": 451,
+      "brokerExpression": "literal bounded broker",
+      "handleExpression": "handle",
+      "kindEvidence": [
+        {
+          "path": "src/main/wallet/railgun-account-enrollment.js",
+          "line": 71,
+          "needle": "kind: 'private-account'"
+        },
+        {
+          "path": "src/main/wallet/railgun-account-enrollment.js",
+          "line": 739,
+          "needle": "getContext(role, operation)"
+        },
+        {
+          "path": "src/main/wallet/railgun-poi-output-recovery.js",
+          "line": 113,
+          "needle": "enrollment.getContext("
+        }
+      ]
+    },
+    {
+      "path": "src/main/wallet/railgun-poi-shield-selector.js",
+      "line": 71,
+      "callSha256": "23d9e6e4d1528f775b1a745d4a7321f5e871cdc51cc057052c74b542fb452032",
+      "brokerLine": 77,
+      "brokerExpression": "literal bounded broker",
+      "handleExpression": "scope.getContext(parent.subject)",
+      "kindEvidence": [
+        {
+          "path": "src/main/wallet/railgun-poi-shield-selector.js",
+          "line": 23,
+          "needle": "subject.kind, 'private-account'"
+        }
+      ]
+    },
+    {
+      "path": "src/main/wallet/railgun-poi-verifier.js",
+      "line": 82,
+      "callSha256": "957acac0160b54494ba162e9f8511ba40e93338df05e31e6ee2b841e3cff3de4",
+      "brokerLine": 88,
+      "brokerExpression": "literal bounded broker",
+      "handleExpression": "scope.getContext(parent.subject)",
+      "kindEvidence": [
+        {
+          "path": "src/main/wallet/railgun-poi-verifier.js",
+          "line": 31,
+          "needle": "subject.kind, 'private-account'"
+        }
+      ]
+    },
+    {
+      "path": "src/main/wallet/railgun-private-proof.js",
+      "line": 80,
+      "callSha256": "953ee6d2971f9983c965cc1e69a8cff6c8ef3671338b3b4554388ee3508a116e",
+      "brokerLine": 92,
+      "brokerExpression": "literal bounded broker",
+      "handleExpression": "scope.getContext(context.subject)",
+      "kindEvidence": [
+        {
+          "path": "src/main/wallet/railgun-account-enrollment.js",
+          "line": 71,
+          "needle": "kind: 'private-account'"
+        },
+        {
+          "path": "src/main/wallet/railgun-account-enrollment.js",
+          "line": 739,
+          "needle": "getContext(role, operation)"
+        },
+        {
+          "path": "src/main/wallet/railgun-private-proof.js",
+          "line": 37,
+          "needle": "enrollment.getContext("
+        }
+      ]
+    },
+    {
+      "path": "src/main/wallet/railgun-private-receive.js",
+      "line": 178,
+      "callSha256": "915c866a3944b20bd807829e5ca6af5d2c8408e50cef52b4fa51ebb0c840d999",
+      "brokerLine": 192,
+      "brokerExpression": "literal bounded broker",
+      "handleExpression": "handle",
+      "kindEvidence": [
+        {
+          "path": "src/main/wallet/railgun-account-enrollment.js",
+          "line": 71,
+          "needle": "kind: 'private-account'"
+        },
+        {
+          "path": "src/main/wallet/railgun-account-enrollment.js",
+          "line": 739,
+          "needle": "getContext(role, operation)"
+        },
+        {
+          "path": "src/main/wallet/railgun-private-receive.js",
+          "line": 27,
+          "needle": "enrollment.getContext("
+        }
+      ]
+    },
+    {
+      "path": "src/main/wallet/railgun-public-run.js",
+      "line": 92,
+      "callSha256": "59308c6885372c9d470e568e2b470c1344b2be6f66b02a895ba2ebbef3a53f39",
+      "brokerLine": 94,
+      "brokerExpression": "broker",
+      "handleExpression": "scope.getContext({ ...context.subject, operation: 'public-scan' })",
+      "kindEvidence": [
+        {
+          "path": "src/main/wallet/railgun-public-run.js",
+          "line": 26,
+          "needle": "subject.kind, 'private-account'"
+        }
+      ]
+    },
+    {
+      "path": "src/main/wallet/railgun-relay-proof.js",
+      "line": 206,
+      "callSha256": "eb17f103d2a3260c2c2d45e76832d84fba494320a78169a8b1ec2d6b11894065",
+      "brokerLine": 219,
+      "brokerExpression": "literal bounded broker",
+      "handleExpression": "scope.getContext(context.subject)",
+      "kindEvidence": [
+        {
+          "path": "src/main/wallet/railgun-account-enrollment.js",
+          "line": 71,
+          "needle": "kind: 'private-account'"
+        },
+        {
+          "path": "src/main/wallet/railgun-account-enrollment.js",
+          "line": 739,
+          "needle": "getContext(role, operation)"
+        },
+        {
+          "path": "src/main/wallet/railgun-relay-proof.js",
+          "line": 44,
+          "needle": "enrollment.getContext("
+        }
+      ]
+    },
+    {
+      "path": "src/main/wallet/railgun-relay-quote-verify.js",
+      "line": 77,
+      "callSha256": "50e50d744fb9b9edfa9e303b0ce68f9a3b2126760ce7c5f0a20a0ce32c669dbd",
+      "brokerLine": 84,
+      "brokerExpression": "literal bounded broker",
+      "handleExpression": "handle",
+      "kindEvidence": [
+        {
+          "path": "src/main/wallet/railgun-account-enrollment.js",
+          "line": 71,
+          "needle": "kind: 'private-account'"
+        },
+        {
+          "path": "src/main/wallet/railgun-account-enrollment.js",
+          "line": 739,
+          "needle": "getContext(role, operation)"
+        },
+        {
+          "path": "src/main/wallet/railgun-relay-quote-verify.js",
+          "line": 36,
+          "needle": "enrollment.getContext("
+        }
+      ]
+    },
+    {
+      "path": "src/main/wallet/railgun-relay-signature-verify.js",
+      "line": 142,
+      "callSha256": "7f8ad70e8a0d3cc5aa7881d96d1cb5fb95c689d2831cff7583dad2c9f7f62321",
+      "brokerLine": 149,
+      "brokerExpression": "literal bounded broker",
+      "handleExpression": "handle",
+      "kindEvidence": [
+        {
+          "path": "src/main/wallet/railgun-account-enrollment.js",
+          "line": 71,
+          "needle": "kind: 'private-account'"
+        },
+        {
+          "path": "src/main/wallet/railgun-account-enrollment.js",
+          "line": 739,
+          "needle": "getContext(role, operation)"
+        },
+        {
+          "path": "src/main/wallet/railgun-relay-signature-verify.js",
+          "line": 67,
+          "needle": "enrollment.getContext("
+        }
+      ]
+    },
+    {
+      "path": "src/main/wallet/railgun-shield-prepare.js",
+      "line": 98,
+      "callSha256": "9188c11be6a955cb8030049dc0445f12656f973cbbd49eace14d30311647dc94",
+      "brokerLine": 104,
+      "brokerExpression": "literal bounded broker",
+      "handleExpression": "handle",
+      "kindEvidence": [
+        {
+          "path": "src/main/wallet/railgun-account-enrollment.js",
+          "line": 71,
+          "needle": "kind: 'private-account'"
+        },
+        {
+          "path": "src/main/wallet/railgun-account-enrollment.js",
+          "line": 739,
+          "needle": "getContext(role, operation)"
+        },
+        {
+          "path": "src/main/wallet/railgun-shield-prepare.js",
+          "line": 27,
+          "needle": "enrollment.getContext("
+        }
+      ]
+    },
+    {
+      "path": "src/main/wallet/railgun-shield-receive.js",
+      "line": 137,
+      "callSha256": "e99017a8f770c92d6dd528a6247e73cd9144ad7804651dbf78e3d5f09a55cfad",
+      "brokerLine": 144,
+      "brokerExpression": "literal bounded broker",
+      "handleExpression": "handle",
+      "kindEvidence": [
+        {
+          "path": "src/main/wallet/railgun-account-enrollment.js",
+          "line": 71,
+          "needle": "kind: 'private-account'"
+        },
+        {
+          "path": "src/main/wallet/railgun-account-enrollment.js",
+          "line": 739,
+          "needle": "getContext(role, operation)"
+        },
+        {
+          "path": "src/main/wallet/railgun-shield-receive.js",
+          "line": 26,
+          "needle": "enrollment.getContext("
+        }
+      ]
+    },
+    {
+      "path": "src/main/wallet/railgun-txid-runner.js",
+      "line": 132,
+      "callSha256": "f08ab1a5598fb54d0756560058631c6edf474e86a1ea39848a3ab9a04d95ed05",
+      "brokerLine": 139,
+      "brokerExpression": "literal bounded broker",
+      "handleExpression": "scope.getContext({ ...subject, operation: 'txid-' + mode })",
+      "kindEvidence": [
+        {
+          "path": "src/main/wallet/railgun-txid-runner.js",
+          "line": 29,
+          "needle": "subject.kind === 'private-account'"
+        }
+      ]
+    },
+    {
+      "path": "src/main/wallet/railgun-wallet-run.js",
+      "line": 458,
+      "callSha256": "ca030716229cade8a3e5595e2e5a52229eee4b9cc5d8c7452b9d5c08e58b7962",
+      "brokerLine": 473,
+      "brokerExpression": "literal bounded broker",
+      "handleExpression": "scope.getContext({ ...context.subject, role: 'engine', operation: purpose })",
+      "kindEvidence": [
+        {
+          "path": "src/main/wallet/railgun-identity.js",
+          "line": 94,
+          "needle": "kind: 'private-account'"
+        },
+        {
+          "path": "src/main/wallet/railgun-identity.js",
+          "line": 61,
+          "needle": "['kind', 'principal', 'protocol', 'deployment', 'chainId']"
+        },
+        {
+          "path": "src/main/wallet/railgun-wallet-run.js",
+          "line": 55,
+          "needle": "assertRailgunIdentity(identity, handle)"
+        }
+      ]
+    }
+  ],
+  "sources": {
+    "src/main/wallet/railgun-account-enrollment.js": {
+      "sha256": "ae3ec01a7f4b4a6f2d7bdcad92875100ae2dccbb7006363fd7b0ce38ddae2e79",
+      "gitBlob": "b9c20d95aff3d3a792c574be14b28da5a3f5f58c"
+    },
+    "src/main/wallet/railgun-identity.js": {
+      "sha256": "4db78ebc4445eab4b71e0ec4642a808ad908ac370dc7dd183bac0e24eef7a724",
+      "gitBlob": "7be7bf263030e3d2a03e65fc740dbfaea7951f22"
+    },
+    "src/main/wallet/railgun-note-provenance.js": {
+      "sha256": "239482efae43a9d0e01ba372be56b27e3f615a320df9e81f7813c2152d0db5cb",
+      "gitBlob": "59a85ccaf80a52d5ea7f8ef29176868b7f1ee6de"
+    },
+    "src/main/wallet/railgun-own-poi-membership.js": {
+      "sha256": "5c51fca46804cad2134175691dcd8d1e24df357aff8bdaf1fb00a276a1d71b61",
+      "gitBlob": "793e27c0f52d0fa0b35869e0bf502f5c2c49f553"
+    },
+    "src/main/wallet/railgun-own-poi-proof.js": {
+      "sha256": "430fd09fe9bd710722dbaf33bd1354a6fb589cfc954dfc716c0204d09fe8ac88",
+      "gitBlob": "cf80df53ed489603f082a75a8bb32ce920bbeed9"
+    },
+    "src/main/wallet/railgun-own-selector.js": {
+      "sha256": "9a06c38378e52f5bea9627c5fe4f4a017e771267329d3616a6972da85bfde0d9",
+      "gitBlob": "024a63cf9e74248024f5e06e21b9d73d1e771ff6"
+    },
+    "src/main/wallet/railgun-own-txid-verifier.js": {
+      "sha256": "2c9be09d3a7d2301215709b7bde58cee4bd57d249d861fa7c06fe9397b95e6a7",
+      "gitBlob": "c3beecca0854534d5b1ac41e98374cbbc22a8354"
+    },
+    "src/main/wallet/railgun-poi-membership.js": {
+      "sha256": "e76086babb7ce17afe730b84985ccda6e8f8bb60898458fd79f9594e139d6199",
+      "gitBlob": "ff86c9be276ef50343e89eb13fb7eb7512054d19"
+    },
+    "src/main/wallet/railgun-poi-output-recovery.js": {
+      "sha256": "938df2e599e171c73dfe9d054fb49a766e399e7e916e7d8563cef2d0d449b88f",
+      "gitBlob": "339cc79efab5d2df609bc13912b1fad063b57a08"
+    },
+    "src/main/wallet/railgun-poi-shield-selector.js": {
+      "sha256": "5ef7e0caf3be72ee0612ff0662121dd2f74d8526cac50dd553eac4ab356b852c",
+      "gitBlob": "f4954a76e80f19739b4ba00f96230d66bcb8cd9b"
+    },
+    "src/main/wallet/railgun-poi-source.js": {
+      "sha256": "f02bc199ae280c9b2d5e3c15edd9d19b09214dd00336702eee209b4115997610",
+      "gitBlob": "18270dec340bcef98a639ced43245a50a24945e0"
+    },
+    "src/main/wallet/railgun-poi-verifier.js": {
+      "sha256": "77b160dca8b1f899ddb5c59f113391e2cae9e0710f4c259d1aa583054c4333e6",
+      "gitBlob": "382f725d2701cc9f6bde41a0b3b57aa9d3a26f02"
+    },
+    "src/main/wallet/railgun-private-proof.js": {
+      "sha256": "def0ec82d3fd59cc1bfc0fbabfe8496790a482977cb42207751f62ed89334e05",
+      "gitBlob": "a080e38e06a08b5f01b63a9d0d2c249a0d4c26b1"
+    },
+    "src/main/wallet/railgun-private-receive.js": {
+      "sha256": "5ef6e3d80baa04c6c9f8755f2e6523b5fc0c3d83175a955fc45c84cb719726fe",
+      "gitBlob": "09c15b2c2bb4f1de0700cf2ca2aa50472c7dc8fa"
+    },
+    "src/main/wallet/railgun-public-run.js": {
+      "sha256": "9847f821576a72f171fb8a45fabce1365a85fbb0d57af04ac9f84242a037abc7",
+      "gitBlob": "9aface74c3200dfe73d9120f991122f0f6392492"
+    },
+    "src/main/wallet/railgun-relay-proof.js": {
+      "sha256": "fa87c8d26c0edc4db6e82aa5cba2608446aca42ceb67c6f359dcb0534c186b95",
+      "gitBlob": "c6f7f300497d8599876861cf18e6d9b33d5f2fd9"
+    },
+    "src/main/wallet/railgun-relay-quote-verify.js": {
+      "sha256": "f556284f5503e0d5b0df2c8a680065a385180c3261c3bf9508398d5feff4e934",
+      "gitBlob": "4e121858f6903d9218f1d816eedd8de3be29933e"
+    },
+    "src/main/wallet/railgun-relay-signature-verify.js": {
+      "sha256": "dba7d0eceecaa886d9b5cffa7035ab9a1a27fc43306235c80b1e65ccb472f7eb",
+      "gitBlob": "e8744adaa8efef824161dfb2ab456d7e375998dc"
+    },
+    "src/main/wallet/railgun-shield-prepare.js": {
+      "sha256": "8313e8fbade2df58a3d01a2aa1ae6fda22859a999d267ee41fc4924585dfe3ff",
+      "gitBlob": "da4ae44a73dbc3c77caf7bb4bcef8677ce725395"
+    },
+    "src/main/wallet/railgun-shield-receive.js": {
+      "sha256": "48a12f2367c7bdfb73071c2958f66c079ac344030f673868cedcbcd599a3fe7a",
+      "gitBlob": "388c83f574e8ed25ebda23ea40f157bfae472534"
+    },
+    "src/main/wallet/railgun-txid-runner.js": {
+      "sha256": "7248e67f160feb68c95e676f35940f7a2e9a327bdbe0b5cb6b6a48972789a2af",
+      "gitBlob": "99e297faf83dbcff53027576ec0a910e53286ace"
+    },
+    "src/main/wallet/railgun-wallet-run.js": {
+      "sha256": "8f3a9d5f8af6bedf257345379a9cfa2ec10757a63b077ac8f848a3dbdbb0427e",
+      "gitBlob": "898661952410d68edeb3cdba3d67afa73c92399f"
+    }
+  }
+}

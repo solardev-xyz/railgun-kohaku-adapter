@@ -23,8 +23,8 @@
     {
       "path": "src/owners/railgun-process.js",
       "beforeSha256": "794687e205f0f40b31aefe1d08a3ec56d1e1599b67dd328766d6551c471f4193",
-      "sha256": "dfaa32e72ed6e1b5a87f0393cce843ec18ab088735554946342926201e44a099",
-      "bytes": 13431
+      "sha256": "472d39995a22905a3dbd0ea546b5de8da3b60e360ad6a7978041c1509af367ed",
+      "bytes": 13817
     },
     {
       "path": "src/owners/railgun-session-worker.js",
@@ -47,8 +47,8 @@
     {
       "path": "test/owner-process.test.js",
       "beforeSha256": null,
-      "sha256": "43a4e5fe552c3aea230789e1201081d1561d016dab5e1037ee90908444c3c2cf",
-      "bytes": 10253
+      "sha256": "aae708ee9589235460a1e2fae6c9807fa386a9994373b881a7db4e31352d3c04",
+      "bytes": 12367
     },
     {
       "path": "test/owner-session-worker.test.js",
