@@ -17,6 +17,38 @@ const jobs = {
   'private-receive': 'railgun-private-receive-job',
   'private-verify': 'railgun-private-verify-job',
 };
+const ownerJobs = {
+  'relay-sign': 'railgun-relay-sign-job',
+  'relay-pre-poi': 'railgun-relay-pre-poi-job',
+  'relay-prove-local': 'railgun-relay-prove-job',
+  'relay-prepare': 'railgun-relay-wallet-job',
+  'relay-reconstruct': 'railgun-relay-wallet-job',
+  'poi-prove': 'railgun-own-poi-prove-job',
+  'poi-transact-selector': 'railgun-poi-transact-selector-job',
+  'poi-output-recover': 'railgun-poi-output-recover-job',
+  'shield-receive': 'railgun-shield-receive-job',
+  'poi-verify': 'railgun-poi-verify-job',
+  'relay-verify': 'railgun-relay-verify-job',
+  'relay-signature-verify': 'railgun-relay-signature-verify-job',
+  'shield-prepare': 'railgun-shield-job',
+  'note-provenance': 'railgun-note-provenance-job',
+  'relay-quote-review': 'railgun-relay-quote-job',
+  'poi-shield-selector': 'railgun-poi-shield-selector-job',
+  'own-txid-selector': 'railgun-own-selector-job',
+  'own-txid-proof': 'railgun-own-txid-job',
+  'public-scan': 'railgun-public-job',
+  'poi-membership': 'railgun-poi-job',
+  'txid-inspect': 'railgun-txid-job',
+  'txid-project': 'railgun-txid-job',
+  'txid-apply': 'railgun-txid-job',
+  'txid-witness': 'railgun-txid-job',
+  'txid-note-witness': 'railgun-txid-job',
+  'txid-historical-root': 'railgun-txid-job',
+  'txid-coverage': 'railgun-txid-job',
+};
+Object.assign(jobs, ownerJobs);
+const jobPath = (name, file) =>
+  `./src/${Object.hasOwn(ownerJobs, name) ? 'owners' : 'execution'}/${file}`;
 function fixture(run = jest.fn(async () => {}), changes = {}) {
   const parent = new EventEmitter(),
     port = new EventEmitter(),
@@ -58,7 +90,7 @@ function fixture(run = jest.fn(async () => {}), changes = {}) {
         return { installRailgunProcessGuards: install };
       if (name === './src/execution/host-bindings')
         return { initializeRailgunExecutionHost: initialize };
-      if (Object.values(jobs).some((job) => name === './src/execution/' + job)) return { run };
+      if (Object.entries(jobs).some(([key, job]) => name === jobPath(key, job))) return { run };
       throw new Error('Unexpected import');
     },
   };
@@ -77,7 +109,9 @@ function fixture(run = jest.fn(async () => {}), changes = {}) {
         job,
         input: ['spending-public', 'viewing-identity'].includes(job)
           ? JSON.stringify({ purpose: job })
-          : '{}',
+          : typeof job === 'string' && job.startsWith('txid-')
+            ? JSON.stringify({ mode: job.slice(5) })
+            : '{}',
         ...extra,
       }),
       ports: [port],
@@ -111,17 +145,21 @@ test.each(Object.entries(jobs))(
     expect(() => bootstrap.initialize(bindings)).toThrow('unavailable');
     f.send(name);
     await tick();
-    expect(f.imports.at(-1)).toBe('./src/execution/' + file);
+    expect(f.imports.at(-1)).toBe(jobPath(name, file));
     expect(f.run).toHaveBeenCalledTimes(1);
     expect(JSON.parse(f.run.mock.calls[0][0])).toEqual(
-      ['spending-public', 'viewing-identity'].includes(name) ? { purpose: name } : {}
+      ['spending-public', 'viewing-identity'].includes(name)
+        ? { purpose: name }
+        : name.startsWith('txid-')
+          ? { mode: name.slice(5) }
+          : {}
     );
     expect(f.run.mock.calls[0][1].guardReport).toBe(f.report);
     expect(f.port.postMessage).toHaveBeenLastCalledWith(JSON.stringify({ type: 'ready' }));
     expect(() => f.start()).toThrow('unavailable');
   }
 );
-test.each(['/tmp/evil.js', 'relay-sign', '__proto__', '../railgun-identity-job', '', null])(
+test.each(['/tmp/evil.js', 'relay-other', '__proto__', '../railgun-identity-job', '', null])(
   'refuses unknown utility job %p without requiring it',
   async (name) => {
     const f = fixture();
@@ -330,3 +368,57 @@ test('synchronous initialization registers the first-message listener before ret
   f.send('private-verify');
   expect(f.imports.at(-1)).toBe('./src/execution/railgun-private-verify-job');
 });
+
+test.each([
+  'private-verify',
+  'poi-verify',
+  'relay-verify',
+  'relay-signature-verify',
+  'shield-prepare',
+  'public-scan',
+  'poi-membership',
+  'txid-inspect',
+])('keyless %s has no binary request capability', async (name) => {
+  const f = fixture(
+    jest.fn(async (_, ports) => {
+      await expect(ports.requestKey('{"id":1}')).rejects.toThrow('unavailable');
+    })
+  );
+  f.start().initialize({});
+  f.send(name);
+  await tick();
+  expect(f.port.postMessage).toHaveBeenCalledTimes(1);
+  expect(f.port.postMessage).toHaveBeenCalledWith('{"type":"ready"}');
+});
+test('TXID mode must match fixed enum before loading', async () => {
+  const f = fixture();
+  f.start().initialize({});
+  f.send('txid-apply', { input: '{"mode":"inspect"}' });
+  await tick();
+  expect(f.run).not.toHaveBeenCalled();
+  expect(f.imports).toHaveLength(3);
+});
+test.each(Object.keys(jobs))(
+  'binary capability for %s matches fixed owner admission',
+  async (name) => {
+    const spec = require('../src/owners/process-jobs').getProcessJob(name);
+    let received;
+    const f = fixture(
+      jest.fn(async (_, ports) => {
+        if (spec.key) received = await ports.requestKey('{"id":1}');
+        else await expect(ports.requestKey('{"id":1}')).rejects.toThrow('unavailable');
+      })
+    );
+    f.start().initialize({});
+    f.send(name);
+    await tick();
+    if (spec.key) {
+      const bytes = new Uint8Array(32);
+      f.port.emit('message', { data: { type: 'key-reply', id: 1, bytes } });
+      await tick();
+      expect(received).toBe(bytes);
+      expect(f.port.postMessage).toHaveBeenCalledTimes(2);
+    } else expect(f.port.postMessage).toHaveBeenCalledTimes(1);
+    expect(f.port.postMessage).toHaveBeenLastCalledWith('{"type":"ready"}');
+  }
+);

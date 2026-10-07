@@ -3,7 +3,21 @@
  * RPC remains in main. No renderer channels or signing capabilities are added.
  */
 const path = require('path');
-const { Worker } = require('worker_threads');
+const { platform } = require('./host-bindings');
+const { types } = require('util');
+const abortedGetter = Object.getOwnPropertyDescriptor(AbortSignal.prototype, 'aborted').get;
+const listen = EventTarget.prototype.addEventListener;
+const unlisten = EventTarget.prototype.removeEventListener;
+function applicationAborted(signal) {
+  if (
+    types.isProxy(signal) ||
+    Object.getPrototypeOf(signal) !== AbortSignal.prototype ||
+    Object.hasOwn(signal, 'aborted') ||
+    Object.hasOwn(signal, 'reason')
+  )
+    throw fail();
+  return abortedGetter.call(signal);
+}
 const { createPrivacyScope, getPrivacyContext } = require('./context-bindings');
 const MAX_MESSAGE = 2 * 1024 * 1024;
 const MAX_PENDING_BYTES = 8 * 1024 * 1024;
@@ -32,6 +46,8 @@ const shape = (value, keys) =>
 
 function startSessionWorker({ handle, storage, createProvider, onClose }, readOnly) {
   const context = getPrivacyContext(handle);
+  const application = platform.applicationLifetime();
+  if (applicationAborted(application)) throw fail();
   if (
     context.subject.kind !== 'private-account' ||
     context.subject.protocol !== 'railgun' ||
@@ -131,15 +147,20 @@ function startSessionWorker({ handle, storage, createProvider, onClose }, readOn
       /* The capability is already revoked. */
     }
   }
+  const quit = () => {
+    if (abortedGetter.call(application)) close();
+  };
   function finish(exitCode) {
     if (exited) return;
     exited = true;
     close();
     clearTimeout(escalation);
+    unlisten.call(application, 'abort', quit);
     owners.delete(filename);
     resolveClosed(Object.freeze({ exitCode }));
   }
   scope.signal.addEventListener('abort', close, { once: true });
+  listen.call(application, 'abort', quit);
   async function message(value) {
     try {
       if (stopping || exited) return;
@@ -207,7 +228,8 @@ function startSessionWorker({ handle, storage, createProvider, onClose }, readOn
     provider = createProvider({ handle: rpcHandle, signal: scope.signal });
     if (typeof provider?.request !== 'function' || provider.signal !== scope.signal) throw fail();
     active();
-    worker = new Worker(path.join(__dirname, 'railgun-session-worker-entry.js'), {
+    if (applicationAborted(application)) throw fail();
+    worker = platform.spawnStorageWorker({
       workerData: {
         profileId: context.profileId,
         subject,
@@ -223,14 +245,7 @@ function startSessionWorker({ handle, storage, createProvider, onClose }, readOn
         revoked: revoked.buffer,
       },
       transferList: [secret.buffer],
-      env: {},
-      execArgv: [],
-      stdout: true,
-      stderr: true,
-      resourceLimits: { maxOldGenerationSizeMb: 256 },
     });
-    worker.stdout.resume();
-    worker.stderr.resume();
     worker.on('message', message);
     worker.once('error', close);
     worker.once('messageerror', close);

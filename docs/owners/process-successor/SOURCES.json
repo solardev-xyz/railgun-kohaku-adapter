@@ -1,0 +1,68 @@
+{
+  "schema": "railgun-owner-process-successor-v1",
+  "basis": "31bd04dd4f1400832c145e039cdd7b5606a6faa3",
+  "files": [
+    {
+      "path": "host-bootstrap.cjs",
+      "beforeSha256": "ee11d44f37cbc4333f6a466ba4fd5cdec254e95101d6a67fddf2f72877467b77",
+      "sha256": "77c84448cfc49f5a19340625776eb11f462876e1e1a851efcd449bd00d527c61",
+      "bytes": 12099
+    },
+    {
+      "path": "host-owner-worker-bootstrap.cjs",
+      "beforeSha256": null,
+      "sha256": "099628018c4a30e8faa55539367a0ce43122b2296ce98ae0356b6732f56ff4f7",
+      "bytes": 1225
+    },
+    {
+      "path": "src/owners/process-jobs.js",
+      "beforeSha256": null,
+      "sha256": "9a6b403caf026faeb1850608dddc3137e1430d64e9ef96650b8a1fcc607dfa78",
+      "bytes": 1827
+    },
+    {
+      "path": "src/owners/railgun-process.js",
+      "beforeSha256": "794687e205f0f40b31aefe1d08a3ec56d1e1599b67dd328766d6551c471f4193",
+      "sha256": "dfaa32e72ed6e1b5a87f0393cce843ec18ab088735554946342926201e44a099",
+      "bytes": 13431
+    },
+    {
+      "path": "src/owners/railgun-session-worker.js",
+      "beforeSha256": "daf1bd5b0e84dbd6c2663de1989cc5294da5d29d66d618942a94ee11846459ed",
+      "sha256": "bf564be656aaebd0ed4b5915013f389e805f72ebf176376a7a3fa0876de0f9b8",
+      "bytes": 13589
+    },
+    {
+      "path": "src/owners/railgun-session-worker-entry.js",
+      "beforeSha256": "b509ea04768e146f5893c7017c869681656c185a538e28a11c538d5eed380c38",
+      "sha256": "e98010f68777bd429fb1f1b568a1dae389629afe5ad85109229f1ec5cb937337",
+      "bytes": 5259
+    },
+    {
+      "path": "test/execution-bootstrap.test.js",
+      "beforeSha256": "336455c2caa02a51fb8b0f20442b95a7ebf314263ebc4297cfa537ca24732fce",
+      "sha256": "b19fa25adb350c94c1de42cbe12eb034db0b9aa62f2ef6591ea59437f9c46ebb",
+      "bytes": 15122
+    },
+    {
+      "path": "test/owner-process.test.js",
+      "beforeSha256": null,
+      "sha256": "43a4e5fe552c3aea230789e1201081d1561d016dab5e1037ee90908444c3c2cf",
+      "bytes": 10253
+    },
+    {
+      "path": "test/owner-session-worker.test.js",
+      "beforeSha256": null,
+      "sha256": "f50c39f00093218c6f7ee39f580147eb28a00331d8be543b408355286cb68a15",
+      "bytes": 5897
+    },
+    {
+      "path": "test/owner-worker-bootstrap.test.js",
+      "beforeSha256": null,
+      "sha256": "59dfe6d172d1f65908d5b153e3e1804eed506f12fff5fb00d264a3248191ea2a",
+      "bytes": 2481
+    }
+  ],
+  "productionActivated": false,
+  "nativeQualified": false
+}

@@ -1,0 +1,77 @@
+{
+  "instructions": "Replace filename + binaryKey fields with executionJob. Preserve original input/handle/broker/options identities. Do not apply separately from complete reviewed owner integration. No caller edited in this change.",
+  "callers": [
+    {
+      "path": "src/owners/railgun-identity.js",
+      "executionJob": "relay-sign (existing spending-public/viewing-identity/spending-sign unchanged)"
+    },
+    {
+      "path": "src/owners/railgun-relay-quote-verify.js",
+      "executionJob": "relay-quote-review"
+    },
+    {
+      "path": "src/owners/railgun-shield-prepare.js",
+      "executionJob": "shield-prepare"
+    },
+    {
+      "path": "src/owners/railgun-poi-membership.js",
+      "executionJob": "poi-membership (context retains role poi and poi:<64lowerhex> operation)"
+    },
+    {
+      "path": "src/owners/railgun-note-provenance.js",
+      "executionJob": "note-provenance"
+    },
+    {
+      "path": "src/owners/railgun-relay-proof.js",
+      "executionJob": "relay-verify"
+    },
+    {
+      "path": "src/owners/railgun-relay-signature-verify.js",
+      "executionJob": "relay-signature-verify"
+    },
+    {
+      "path": "src/owners/railgun-poi-shield-selector.js",
+      "executionJob": "poi-shield-selector"
+    },
+    {
+      "path": "src/owners/railgun-own-selector.js",
+      "executionJob": "own-txid-selector"
+    },
+    {
+      "path": "src/owners/railgun-own-txid-verifier.js",
+      "executionJob": "own-txid-proof"
+    },
+    {
+      "path": "src/owners/railgun-poi-verifier.js",
+      "executionJob": "poi-verify"
+    },
+    {
+      "path": "src/owners/railgun-shield-receive.js",
+      "executionJob": "shield-receive"
+    },
+    {
+      "path": "src/owners/railgun-own-poi-proof.js",
+      "executionJob": "poi-prove"
+    },
+    {
+      "path": "src/owners/railgun-poi-output-recovery.js",
+      "executionJob": "poi-output-recover"
+    },
+    {
+      "path": "src/owners/railgun-own-poi-membership.js",
+      "executionJob": "poi-transact-selector"
+    },
+    {
+      "path": "src/owners/railgun-public-run.js",
+      "executionJob": "public-scan"
+    },
+    {
+      "path": "src/owners/railgun-txid-runner.js",
+      "executionJob": "'txid-' + mode (seven existing modes only)"
+    },
+    {
+      "path": "src/owners/railgun-wallet-run.js",
+      "executionJob": "purpose (relay-pre-poi, relay-prove-local, relay-prepare, relay-reconstruct; existing kernel modes unchanged)"
+    }
+  ]
+}
