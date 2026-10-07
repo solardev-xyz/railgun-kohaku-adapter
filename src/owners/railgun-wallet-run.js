@@ -457,16 +457,7 @@ async function runRailgunWalletSnapshot({
     if (prePoiInput) assert.ok(Buffer.byteLength(jobInput) <= 65536);
     task = startRailgunProcess({
       handle: scope.getContext({ ...context.subject, role: 'engine', operation: purpose }),
-      ...(prePoiInput || proofInput || relay
-        ? {
-            binaryKey: true,
-            filename: prePoiInput
-              ? require.resolve("./railgun-relay-pre-poi-job.js")
-              : proofInput
-                ? require.resolve("./railgun-relay-prove-job.js")
-                : require.resolve("./railgun-relay-wallet-job.js"),
-          }
-        : { executionJob: purpose }),
+      executionJob: purpose,
       startupMs: proofInput ? proofInput.timeoutMs : relay ? 30000 : 120000,
       lifetimeMs: proofInput ? proofInput.timeoutMs : relay ? 30000 : 180000,
       input: jobInput,

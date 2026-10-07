@@ -436,9 +436,8 @@ async function open(options = {}, mode = 'shield') {
             jobCurrent();
             task = startRailgunProcess({
               handle: jobScope.getContext(context.subject),
-              filename: require.resolve("./railgun-poi-transact-selector-job.js"),
+              executionJob: 'poi-transact-selector',
               input: inputText,
-              binaryKey: true,
               startupMs: jobMs,
               lifetimeMs: jobMs,
               heapMb: 256,

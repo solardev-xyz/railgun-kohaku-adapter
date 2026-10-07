@@ -87,7 +87,7 @@ async function derive({ handle, archive, provedTransaction, signal, timeoutMs = 
     active();
     task = startRailgunProcess({
       handle: scope.getContext(parent.subject),
-      filename: require.resolve("./railgun-own-selector-job.js"),
+      executionJob: 'own-txid-selector',
       input,
       startupMs: Math.min(30000, timeoutMs),
       lifetimeMs: timeoutMs,

@@ -118,7 +118,7 @@ async function verify({
     active();
     task = startRailgunProcess({
       handle: scope.getContext(parent.subject),
-      filename: require.resolve("./railgun-note-provenance-job.js"),
+      executionJob: 'note-provenance',
       input,
       startupMs: Math.min(30000, timeoutMs),
       lifetimeMs: timeoutMs,

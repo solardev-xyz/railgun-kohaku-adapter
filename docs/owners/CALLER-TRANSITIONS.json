@@ -1,0 +1,245 @@
+{
+  "baseRevision": "8905ee2fab85c2fc5b866299cdc2021198e15b63",
+  "label": "fixed utility job caller conversion; all non-selector expressions unchanged",
+  "changes": [
+    {
+      "file": "src/owners/railgun-relay-quote-verify.js",
+      "beforeSha256": "d882875d837003febd0353bffcd675ca5b07c5af715028ef3f2147c6f28cdfde",
+      "afterSha256": "f9ade9cb1486f0c5aa23b75f89c67db2099a30a12d7be22c7a3067a0b361f411",
+      "replacements": [
+        {
+          "start": 2955,
+          "before": "      binaryKey: false,\n",
+          "after": ""
+        },
+        {
+          "start": 2883,
+          "before": "filename: require.resolve(\"./railgun-relay-quote-job.js\")",
+          "after": "executionJob: 'relay-quote-review'"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-shield-prepare.js",
+      "beforeSha256": "6e49260f8e3b4095e0654bfa797c8d59a311f53daefa275d46b79709999e43b3",
+      "afterSha256": "58578dbaca5ffc7f43a11f97278df5b4dec48591cd548068877b2bcb3838e4b4",
+      "replacements": [
+        {
+          "start": 3669,
+          "before": "filename: require.resolve(\"./railgun-shield-job.js\")",
+          "after": "executionJob: 'shield-prepare'"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-poi-membership.js",
+      "beforeSha256": "d49574755322a24508d9cba66dce6c7e55697deed75d02db66fe92cfbd12f157",
+      "afterSha256": "c8ada751bbdc8f3739d9c9a2054636a12ec24d857b64c6c1eec24b6d62ae30fa",
+      "replacements": [
+        {
+          "start": 3948,
+          "before": "filename: require.resolve(\"./railgun-poi-job.js\")",
+          "after": "executionJob: 'poi-membership'"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-note-provenance.js",
+      "beforeSha256": "c4bfd1a5a513c2d247510998b28b70bf7cf73371dc6be48d27203ae1988eef1f",
+      "afterSha256": "11856ba5ca97961c7d57202a88450c2ddf6578febb0e7b998bcf3929a309a2d2",
+      "replacements": [
+        {
+          "start": 4065,
+          "before": "filename: require.resolve(\"./railgun-note-provenance-job.js\")",
+          "after": "executionJob: 'note-provenance'"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-relay-proof.js",
+      "beforeSha256": "46805acad50d9f783f585b3e4eb79a389742e20580037146b269db92a456ea26",
+      "afterSha256": "f34ece9f8387068dc7625598a27b85c16063a47bf7da825a869a4444d63a299d",
+      "replacements": [
+        {
+          "start": 7282,
+          "before": "      binaryKey: false,\n",
+          "after": ""
+        },
+        {
+          "start": 7222,
+          "before": "filename: require.resolve(\"./railgun-relay-verify-job.js\")",
+          "after": "executionJob: 'relay-verify'"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-relay-signature-verify.js",
+      "beforeSha256": "9b2c14ac94c9ce398e151311aae08ef108870a799e740495de7e3cb3a20d9831",
+      "afterSha256": "2423b64b514abbce3e28cf1ce1bb370858060c5d449d250fe1a131e33c0e33f3",
+      "replacements": [
+        {
+          "start": 5991,
+          "before": "      binaryKey: false,\n",
+          "after": ""
+        },
+        {
+          "start": 5908,
+          "before": "filename: require.resolve(\"./railgun-relay-signature-verify-job.js\")",
+          "after": "executionJob: 'relay-signature-verify'"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-poi-shield-selector.js",
+      "beforeSha256": "8068bb10f392b0f2cf4d0df37343eaf421450ebae44d4740a7c4d0ce6e74ee7c",
+      "afterSha256": "24b6f840f92e9f8b54679f9e3c8a950c765e330282a22a641e59be4fdcd32a1b",
+      "replacements": [
+        {
+          "start": 2827,
+          "before": "filename: require.resolve(\"./railgun-poi-shield-selector-job.js\")",
+          "after": "executionJob: 'poi-shield-selector'"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-own-selector.js",
+      "beforeSha256": "1a05ab51b2a113300c4255d74041f164e2b492c87ca13c36821b34f448abccc2",
+      "afterSha256": "f9b59ff1f1f31139b8e48347b57db4d5e48b379157bf3edf69a3975717935da3",
+      "replacements": [
+        {
+          "start": 3487,
+          "before": "filename: require.resolve(\"./railgun-own-selector-job.js\")",
+          "after": "executionJob: 'own-txid-selector'"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-own-txid-verifier.js",
+      "beforeSha256": "05395c772467b7fdecae90df2a103603aa387066da2191b1f6b1637ab87f8815",
+      "afterSha256": "b5c7ad62079c0c31bac3950a925d101b0327c4d2ba1a5b7d714e78875655926a",
+      "replacements": [
+        {
+          "start": 3135,
+          "before": "filename: require.resolve(\"./railgun-own-txid-job.js\")",
+          "after": "executionJob: 'own-txid-proof'"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-poi-verifier.js",
+      "beforeSha256": "5351a754aa4f58525b625255537de2b0398407f89f1f926ab1be3a5ab400a3a4",
+      "afterSha256": "ef28bde43593b3f7b5a6d146c53d190d920189828daaee8ea695a4b5448162bf",
+      "replacements": [
+        {
+          "start": 3093,
+          "before": "filename: require.resolve(\"./railgun-poi-verify-job.js\")",
+          "after": "executionJob: 'poi-verify'"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-shield-receive.js",
+      "beforeSha256": "fbd40d608e155f95f317d26973d2ee168aec35baa4ba1458c38a3069d4e8cbba",
+      "afterSha256": "2fa295b273fa9423b7a938dc6c0de0e7cefe77aadab34865257c335c4f403899",
+      "replacements": [
+        {
+          "start": 4819,
+          "before": "filename: require.resolve(\"./railgun-shield-receive-job.js\")",
+          "after": "executionJob: 'shield-receive'"
+        },
+        {
+          "start": 4790,
+          "before": "      binaryKey: true,\n",
+          "after": ""
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-own-poi-proof.js",
+      "beforeSha256": "b454922678b697f9a9872df3b014465398fa4f29e53382c93804ea3fd262ee76",
+      "afterSha256": "b8a198b89641581f638648db6f6079dce180a869154b87659708756ec219481e",
+      "replacements": [
+        {
+          "start": 14829,
+          "before": "filename: require.resolve(\"./railgun-own-poi-prove-job.js\")",
+          "after": "executionJob: 'poi-prove'"
+        },
+        {
+          "start": 14788,
+          "before": "            binaryKey: true,\n",
+          "after": ""
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-poi-output-recovery.js",
+      "beforeSha256": "96060dc4f3e6b567d92e6d97c078456f3f4e52f8f2c943a0d6e55e1f3edf5761",
+      "afterSha256": "ec24460b34ad131bfa22305f74a20af1fbbdb88ecc0a039385e5aa4d3329072e",
+      "replacements": [
+        {
+          "start": 19220,
+          "before": "              binaryKey: true,\n",
+          "after": ""
+        },
+        {
+          "start": 19122,
+          "before": "filename: require.resolve(\"./railgun-poi-output-recover-job.js\")",
+          "after": "executionJob: 'poi-output-recover'"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-own-poi-membership.js",
+      "beforeSha256": "77513a2336a704f596e36cae3b3eee4357d3377b9657bfa2495e9ec08fa363d9",
+      "afterSha256": "c7a12f4ddfd9d4aac74ac25957f1c986cebd5c62ef261192909d1f6292d66746",
+      "replacements": [
+        {
+          "start": 16472,
+          "before": "              binaryKey: true,\n",
+          "after": ""
+        },
+        {
+          "start": 16371,
+          "before": "filename: require.resolve(\"./railgun-poi-transact-selector-job.js\")",
+          "after": "executionJob: 'poi-transact-selector'"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-public-run.js",
+      "beforeSha256": "e2be41c2183a6de0cc50665fe6f3002e2dc6987a0754fa8161c737f7e127f287",
+      "afterSha256": "d1829cd9cf4cc8783f4a2de6c139f9e22ba6055c3f618e952bbec07ea733de82",
+      "replacements": [
+        {
+          "start": 3378,
+          "before": "filename: require.resolve(\"./railgun-public-job.js\")",
+          "after": "executionJob: 'public-scan'"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-txid-runner.js",
+      "beforeSha256": "80fc68eb523f5f97316daecc2092d456e123ecb4c0e07ca7ed19ce4ff9504fc5",
+      "afterSha256": "a3fff3f960ecf797ece753f1c9dbafcb1bc6e9c80dcce06abae739c45c6d0dcf",
+      "replacements": [
+        {
+          "start": 4638,
+          "before": "filename: require.resolve(\"./railgun-txid-job.js\")",
+          "after": "executionJob: 'txid-' + mode"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-wallet-run.js",
+      "beforeSha256": "c9258d91a49067a3b6a152d29c65d8aa33a1b079ee283e5f84e8df741794ac72",
+      "afterSha256": "4464c92e96b8e3b3dd6a0716bf70a378b58aa7085cdfa6b7f802352e90c1f5c3",
+      "replacements": [
+        {
+          "start": 17833,
+          "before": "      ...(prePoiInput || proofInput || relay\n        ? {\n            binaryKey: true,\n            filename: prePoiInput\n              ? require.resolve(\"./railgun-relay-pre-poi-job.js\")\n              : proofInput\n                ? require.resolve(\"./railgun-relay-prove-job.js\")\n                : require.resolve(\"./railgun-relay-wallet-job.js\"),\n          }\n        : { executionJob: purpose }),",
+          "after": "      executionJob: purpose,"
+        }
+      ]
+    }
+  ]
+}

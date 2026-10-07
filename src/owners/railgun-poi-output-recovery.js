@@ -441,9 +441,8 @@ async function recover(options = {}, completed = false, submission, attempted = 
             jobCurrent();
             task = startRailgunProcess({
               handle,
-              filename: require.resolve("./railgun-poi-output-recover-job.js"),
+              executionJob: 'poi-output-recover',
               input: inputText,
-              binaryKey: true,
               startupMs: jobMs,
               lifetimeMs: jobMs,
               heapMb: 256,

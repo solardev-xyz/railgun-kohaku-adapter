@@ -76,9 +76,8 @@ async function verifyRailgunRelayQuote({ enrollment, archive, quote, gas, signal
     active();
     task = startRailgunProcess({
       handle,
-      filename: require.resolve("./railgun-relay-quote-job.js"),
+      executionJob: 'relay-quote-review',
       input,
-      binaryKey: false,
       startupMs: 15000,
       lifetimeMs: 15000,
       broker: {

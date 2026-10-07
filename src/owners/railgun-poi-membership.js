@@ -109,7 +109,7 @@ async function verifyRailgunPoiMembership({
     current();
     task = startRailgunProcess({
       handle,
-      filename: require.resolve("./railgun-poi-job.js"),
+      executionJob: 'poi-membership',
       input: JSON.stringify({ archive }),
       startupMs: Math.min(120000, timeoutMs),
       lifetimeMs: timeoutMs,

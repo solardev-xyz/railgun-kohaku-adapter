@@ -132,7 +132,7 @@ function createRailgunTxidRunner({ handle, archive, session, filename, binding, 
       task = startRailgunProcess({
         handle: scope.getContext({ ...subject, operation: 'txid-' + mode }),
         archive,
-        filename: require.resolve("./railgun-txid-job.js"),
+        executionJob: 'txid-' + mode,
         input: JSON.stringify({ archive, mode }),
         startupMs: 120000,
         lifetimeMs: 180000,

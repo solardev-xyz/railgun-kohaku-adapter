@@ -1,0 +1,13 @@
+{
+  "sourceRevision": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+  "source": "src/main/wallet/railgun-relay-quote-verify.test.js",
+  "sourceSha256": "1ba5ae9bc38d0fb37faab1a814acefabe562ed70875bd9bc2097f460c8aa0424",
+  "stagedBasisSha256": "93a566f85cebb5258c626c45c5c23d95a38854ea3ac5e8538e20fab0a2db3aaf",
+  "destination": "test/owner-caller-quote.test.js",
+  "changes": [
+    "mechanical module paths to package-private canonical modules",
+    "replace obsolete binaryKey expectation with fixed executionJob",
+    "assert original handle identity and exact engine/operation context plus legacy selector absence"
+  ],
+  "scope": "all original quote owner test bodies retained; no new crypto or process mocks"
+}

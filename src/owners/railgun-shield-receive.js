@@ -136,8 +136,7 @@ async function verify({ identity, enrollment, preparation, archive, signal, time
     active();
     task = startRailgunProcess({
       handle,
-      binaryKey: true,
-      filename: require.resolve("./railgun-shield-receive-job.js"),
+      executionJob: 'shield-receive',
       input: JSON.stringify({ archive, descriptor, prepared }),
       startupMs: Math.min(120000, timeoutMs),
       lifetimeMs: timeoutMs,

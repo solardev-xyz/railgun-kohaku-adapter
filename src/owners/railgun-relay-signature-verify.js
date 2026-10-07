@@ -141,9 +141,8 @@ async function verifyRailgunRelaySignature(options) {
     assert.ok(executionMs > 0);
     task = startRailgunProcess({
       handle,
-      filename: require.resolve("./railgun-relay-signature-verify-job.js"),
+      executionJob: 'relay-signature-verify',
       input,
-      binaryKey: false,
       startupMs: executionMs,
       lifetimeMs: executionMs,
       broker: {

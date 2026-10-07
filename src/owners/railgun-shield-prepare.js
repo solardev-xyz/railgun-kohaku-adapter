@@ -97,7 +97,7 @@ async function prepare({ identity, enrollment, archive, amount, signal, timeoutM
     current();
     task = startRailgunProcess({
       handle,
-      filename: require.resolve("./railgun-shield-job.js"),
+      executionJob: 'shield-prepare',
       input: JSON.stringify({ archive }),
       startupMs: Math.min(120000, timeoutMs),
       lifetimeMs: timeoutMs,

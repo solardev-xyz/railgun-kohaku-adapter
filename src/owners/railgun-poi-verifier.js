@@ -81,7 +81,7 @@ async function verify({
     active();
     task = startRailgunProcess({
       handle: scope.getContext(parent.subject),
-      filename: require.resolve("./railgun-poi-verify-job.js"),
+      executionJob: 'poi-verify',
       input,
       startupMs: Math.min(30000, timeoutMs),
       lifetimeMs: timeoutMs,

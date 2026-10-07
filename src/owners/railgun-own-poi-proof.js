@@ -342,8 +342,7 @@ async function proveRailgunOwnPoi(options = {}) {
           jobCurrent();
           task = startRailgunProcess({
             handle,
-            binaryKey: true,
-            filename: require.resolve("./railgun-own-poi-prove-job.js"),
+            executionJob: 'poi-prove',
             input: inputText,
             startupMs: jobMs,
             lifetimeMs: jobMs,
