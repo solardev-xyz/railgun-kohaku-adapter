@@ -24,6 +24,7 @@ const { openRailgunAccountFence } = require("./railgun-account-fence.js");
 const owners = new Set(),
   instances = new WeakSet(),
   credentialOwners = new WeakMap(),
+  closureOwners = new WeakMap(),
   keyMethods = new WeakMap(),
   fencedInstances = new WeakMap(),
   RECORD = 'railgun-account-enrollment-v1';
@@ -275,7 +276,12 @@ async function openAccountEnrollment({ identity, create = false }, cooperative) 
       });
     active();
   } catch (error) {
-    close();
+    let cleanupError;
+    try { close(); } catch (failure) { cleanupError = failure; }
+    // A failed opener publishes no instance for a facade to drain. Retain its
+    // original root loan here; cancellation is not callback settlement.
+    if (rootLoan) await Promise.allSettled([rootLoan.closed]);
+    if (cleanupError) throw cleanupError;
     if (error.code?.startsWith('PRIVATE_PROFILE_')) throw error;
     throw fail();
   }
@@ -761,6 +767,7 @@ async function openAccountEnrollment({ identity, create = false }, cooperative) 
       return withKeys(['wallet-store', 'wallet-journal'], id, use);
     },
   }));
+  closureOwners.set(instance, rootLoan.closed);
   instances.add(instance);
   credentialOwners.set(instance, identity);
   if (fence) fencedInstances.set(instance, active);
@@ -809,7 +816,15 @@ function withRailgunEnrollmentGenerationKeys(enrollment, ...args) {
   check(methods);
   return methods.withGenerationKeys(...args);
 }
+// Private lifecycle observer: remains valid after revocation, never returns a
+// key/store or authorizes any operation on the revoked enrollment.
+function observeRailgunEnrollmentClosure(enrollment) {
+  const original = closureOwners.get(enrollment);
+  check(original);
+  return original;
+}
 module.exports = {
+  observeRailgunEnrollmentClosure,
   withRailgunEnrollmentPublicKeys,
   withRailgunEnrollmentPublicCatalogKey,
   withRailgunEnrollmentPublicGenerationKeys,
