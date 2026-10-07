@@ -1,6 +1,6 @@
 # Notice and provenance
 
-`@freedom/railgun-kohaku-adapter` 0.3.0 is an extraction from the Freedom browser repository (https://github.com/solardev-xyz/freedom-browser). It is not published to npm. The original E1 adapter files come from Freedom commit `88b2496b58b1bccca64a35a576b48c026089544a` (branch `feat/wallet-privacy-foundation`). Copies were taken from the git object database (`git cat-file blob 88b2496b:<path>`), not from a working tree.
+`@freedom/railgun-kohaku-adapter` 0.4.0 is an extraction from the Freedom browser repository (https://github.com/solardev-xyz/freedom-browser). It is not published to npm. The original E1 adapter files come from Freedom commit `88b2496b58b1bccca64a35a576b48c026089544a` (branch `feat/wallet-privacy-foundation`). Copies were taken from the git object database (`git cat-file blob 88b2496b:<path>`), not from a working tree.
 
 ## License
 
@@ -155,3 +155,28 @@ commit. Existing capsule/intent/offer/policy implementations and safe `/data`
 remain unchanged. New host entry exports, declarations, type cases and identity
 checks are package integration. No third-party implementation or dependency was
 added; MPL-2.0 remains the source license. The package is still private/unpublished.
+
+
+## POI and TXID data (0.4.0)
+
+The twelve modules named in `test/fixtures/poi-data-provenance.json` are copied
+from Freedom `668e97ed19d37ce10f596cf19b1cdbd492a6226b`, changing only deployment
+JSON import paths where necessary. The payload binder is the exact function body
+from `railgun-own-poi-proof-data.js`, with its two pure imports and an export;
+the rest of that host proof-input module is not copied. Original whole-source,
+function-slice and package-copy SHA-256 values are recorded. MPL-2.0 applies.
+
+Twelve adjacent test files are moved with import substitutions. The provenance
+record separately lists the three retained Freedom selector-launch integration
+cases and their replacement package-only domain goldens. The no-host-import test
+uses virtual forbidden modules at the new relative paths. The removed launch mocks and their no-launch assertions are recorded as host
+seams; all other pure predicate checks are retained. Two captured public dummy capsules are derived from the original
+`railgun-own-txid-data` fixture with the immutable generation inputs pinned in the
+same record. Its broader fixture modules are not shipped or imported by tests.
+The signed-event JSON is byte-identical public fixture data. Existing partial
+capsule fixtures and existing core implementations are reused without edits.
+
+Host entrypoints, declarations, type cases and package provenance/identity tests
+are new integration files. No additional third-party implementation, dependency,
+engine/prover artifact, live credential, profile, storage owner or transport is
+included. The fixed list and all digest domains retain their original values.

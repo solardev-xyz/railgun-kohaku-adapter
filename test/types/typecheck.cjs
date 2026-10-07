@@ -44,6 +44,8 @@ const DATA_CONTRACTS = ['types/data.d.ts'];
 const DATA_EXPORT_COUNT = 9; // three values and six types
 const HOST_DATA_CONTRACTS = ['types/host-data.d.ts'];
 const HOST_DATA_EXPORT_COUNT = 31; // 22 values and nine types
+const HOST_POI_CONTRACTS = ['types/host-poi.d.ts'];
+const HOST_POI_EXPORT_COUNT = 45; // 32 values and 13 types
 const SOURCE_SUBPATH = `${SELF}/src/railgun-kohaku-read-dispatch.js`;
 
 // Diagnostics of the bridge's positive program without the bridge setup.
@@ -249,6 +251,8 @@ function main() {
       portable,
       ts.ModuleKind.ESNext
     ),
+    hostPoiRequire: resolve(`${SELF}/host/poi`, path.join(HERE, 'consumer-host-poi-cjs.cts'), portable, ts.ModuleKind.CommonJS),
+    hostPoiImport: resolve(`${SELF}/host/poi`, path.join(HERE, 'consumer-host-poi-esm.mts'), portable, ts.ModuleKind.ESNext),
     hostDataRequire: resolve(
       `${SELF}/host/data`,
       path.join(HERE, 'consumer-host-data-cjs.cts'),
@@ -298,6 +302,8 @@ function main() {
     portableImport: 'types/index.d.mts',
     portableReadRequire: 'types/read.d.ts',
     portableReadImport: 'types/read.d.mts',
+    hostPoiRequire: 'types/host-poi.d.ts',
+    hostPoiImport: 'types/host-poi.d.mts',
     hostDataRequire: 'types/host-data.d.ts',
     hostDataImport: 'types/host-data.d.mts',
     portableDataRequire: 'types/data.d.ts',
@@ -341,13 +347,16 @@ function main() {
     'consumer-data-esm.mts',
     'consumer-host-data-cjs.cts',
     'consumer-host-data-esm.mts',
+    'consumer-host-poi-cjs.cts',
+    'consumer-host-poi-esm.mts',
   ].map((name) => path.join(HERE, name));
   const negatives = listPrograms(path.join(HERE, 'negative'), ['.cts', '.mts', '.ts']);
   const portableResults = [];
   let entryProgram = null,
     readProgram = null,
     dataProgram = null,
-    hostDataProgram = null;
+    hostDataProgram = null,
+    hostPoiProgram = null;
   for (const file of [...positives, ...negatives]) {
     const expected = positives.includes(file) ? [] : expectedDiagnostics(file);
     if (!positives.includes(file))
@@ -364,10 +373,11 @@ function main() {
     if (file === positives[2]) readProgram = program;
     if (file === positives[4]) dataProgram = program;
     if (file === positives[6]) hostDataProgram = program;
+    if (file === positives[8]) hostPoiProgram = program;
   }
 
   // Both conditions of each entry export the same names with one declaration
-  // identity each: 32 for ".", 9 for "./read", 9 for "./data", 10 for "./host/data".
+  // identity each: 32 for ".", 9 for "./read", 9 for "./data", 31 for "./host/data", and 45 for "./host/poi".
   function entryParity(program, cjsFile, esmFile) {
     const checker = program.getTypeChecker();
     const entryExports = (relative) => {
@@ -408,11 +418,13 @@ function main() {
     'types/host-data.d.ts',
     'types/host-data.d.mts'
   );
+  const hostPoiParity = entryParity(hostPoiProgram, 'types/host-poi.d.ts', 'types/host-poi.d.mts');
   for (const [label, entry, count, contracts] of [
     ['exports', parity, EXPORT_COUNT, CONTRACTS],
     ['read exports', readParity, READ_EXPORT_COUNT, READ_CONTRACTS],
     ['data exports', dataParity, DATA_EXPORT_COUNT, DATA_CONTRACTS],
     ['host data exports', hostDataParity, HOST_DATA_EXPORT_COUNT, HOST_DATA_CONTRACTS],
+    ['host poi exports', hostPoiParity, HOST_POI_EXPORT_COUNT, HOST_POI_CONTRACTS],
   ]) {
     check(`${label} count`, entry.count === count, String(entry.count));
     check(`${label} names`, entry.sameNames, 'the CommonJS and ESM declarations differ');
@@ -515,6 +527,7 @@ function main() {
     readExports: readParity,
     dataExports: dataParity,
     hostDataExports: hostDataParity,
+    hostPoiExports: hostPoiParity,
     portable: portableResults,
     upstream: {
       package: `${UPSTREAM}@${upstreamManifest.version}`,
@@ -533,7 +546,7 @@ function main() {
   console.log(
     `portable: ${positives.length} positive, ${negativeCount} negative programs; ` +
       `bridge: ${bridgeResults.length - bridgeNegatives} positive, ${bridgeNegatives} negative; ` +
-      `controls: ${controlResults.length}; exports: ${parity.count}, read: ${readParity.count}, data: ${dataParity.count}, host data: ${hostDataParity.count}`
+      `controls: ${controlResults.length}; exports: ${parity.count}, read: ${readParity.count}, data: ${dataParity.count}, host data: ${hostDataParity.count}, host poi: ${hostPoiParity.count}`
   );
   if (args.record) {
     fs.writeFileSync(args.record, JSON.stringify(record, null, 2) + '\n');
