@@ -1,0 +1,17 @@
+{
+  "CLEAN-INVENTORY.json": "ecba1f65daf7f751edd026af99935d91d58f26b7d5d25bc06498bebc1f81c553",
+  "PACKAGED.json": "64b4420268007b593d38d3dd8eed47656aed6d32f0a6a548c3a51cb5c8894bee",
+  "PROVENANCE.json": "79fed35c760a3c479039ca66a5987d1df85e5f001b5096f265d55e1b39021c5f",
+  "README.md": "4643620d3275e810e28e15bbc879a57d752ee5f8eead3b240b96514d1dbabdb9",
+  "foreign-transact-report.json": "6ec73c2f4c71c8857685a83a6fce9137f1b7b98dac11b64f5a0867f547055d70",
+  "own-selector-partial-report.json": "141da5ad4b1fdebcfe76202eb8b2131583b62254fa20fcd10069323b79affc68",
+  "own-selector-report.json": "dd6d6848f2223415937935283c69b3e5ff06d3494c9f8540fe9d9060153e2996",
+  "own-txid-partial-report.json": "292cf0ff5a352f9528d4e7812e20c9db386bf29f70bb03938400a848cee1f08e",
+  "own-txid-report.json": "51b0d9d3836e0a976ebf5c8a017f3c90e092a2ef7daea2ca165c006b651a72d9",
+  "packaged-load.json": "946d0572f05d0d9a7718ed78ccfa629feed9ee2293d0a2ed690c2b2a09fa43bd",
+  "poi-verifier-shield-report.json": "a9a7810a529222842e55a4cb9e19a905e4b9308917f3f326a3807f56e016781e",
+  "poi-verifier-transact-report.json": "e9cd20c2dfc41686571e3e70aa35230ccd14546912082147fba037959cdaaea7",
+  "private-proof-partial-report.json": "d92660f5846203cbad39521e1b8dbdc22d155aeded1858031af6ae84094d0b95",
+  "private-proof-report.json": "9562fb253096c75824f3c5db525e8e2aaffa64713a3ffc11066c21b16658238f",
+  "shield-selector-report.json": "63faa16187c03c9924b6d6f6a266467b0e9d04ccc68e45cd17e29b2ebf6b2687"
+}

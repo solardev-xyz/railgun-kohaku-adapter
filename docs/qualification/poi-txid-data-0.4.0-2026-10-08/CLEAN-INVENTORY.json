@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "entries": 28824,
+  "forbiddenRootsAbsent": [
+    "identity-data",
+    "tmp",
+    "coverage",
+    "dist",
+    ".git"
+  ],
+  "sourceCommit": "0f2616b28062d5b107a361bfa0e9fdb876f8def9",
+  "knownExtraRepositoryPaths": 1357
+}

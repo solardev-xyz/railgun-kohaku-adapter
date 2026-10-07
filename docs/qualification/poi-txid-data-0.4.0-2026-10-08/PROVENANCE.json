@@ -1,0 +1,142 @@
+{
+  "schema": "railgun-poi-txid-data-native-archive-v1",
+  "derived": true,
+  "sourceCommit": "0f2616b28062d5b107a361bfa0e9fdb876f8def9",
+  "packageCommit": "b77c7c1edf0e3e7ffe00ed9627f97d86814ae78a",
+  "synthetic": true,
+  "live": false,
+  "electronVersion": "44.6.0",
+  "reportedProtectedInputCount": 92,
+  "trackedSourceCount": 1407,
+  "prePostMapsEqual": true,
+  "originalLocalRecords": {
+    "own-selector-AFTER.json": "994196105910464a68e56824bdf0c0ca89fe40829289102eb798d6230e2e6897",
+    "own-selector-process.json": "83db5215dc6390e9235ef46d40dab6c3ae9b1888a44cc4f1b54c35cd64b5bb85",
+    "own-txid-AFTER.json": "994196105910464a68e56824bdf0c0ca89fe40829289102eb798d6230e2e6897",
+    "own-txid-process.json": "5f98afa8c60668c9a55c7fc44345f02a3212dc72444666ed15eb17afc49fcafa",
+    "own-selector-partial-AFTER.json": "994196105910464a68e56824bdf0c0ca89fe40829289102eb798d6230e2e6897",
+    "own-selector-partial-process.json": "2425bc5e0651c94d8b892bc4414904161d92c7c7ec0ba29687842b9981bb6972",
+    "own-txid-partial-AFTER.json": "994196105910464a68e56824bdf0c0ca89fe40829289102eb798d6230e2e6897",
+    "own-txid-partial-process.json": "383d4b0601ffa2cacf4e7381e35a2279613c7b459698dae286717c2247798abc",
+    "shield-selector-AFTER.json": "994196105910464a68e56824bdf0c0ca89fe40829289102eb798d6230e2e6897",
+    "shield-selector-process.json": "bdc9455ca194782faaec2b1ba5f19041d8a8d66c6b13c5fff21c1cd601ec58fa",
+    "poi-verifier-shield-AFTER.json": "994196105910464a68e56824bdf0c0ca89fe40829289102eb798d6230e2e6897",
+    "poi-verifier-shield-process.json": "1fa16a21a610c64c3adb580a06b7bed6e91b972f8c9446fe56efb205e40c57da",
+    "poi-verifier-transact-AFTER.json": "994196105910464a68e56824bdf0c0ca89fe40829289102eb798d6230e2e6897",
+    "poi-verifier-transact-process.json": "f3b2352cd18eba2488bc73d2ba83e23554c3ac0627aa84a06439efe740ccd29b",
+    "private-proof-AFTER.json": "994196105910464a68e56824bdf0c0ca89fe40829289102eb798d6230e2e6897",
+    "private-proof-process.json": "74e842362d32d8f45e028700911433a5240543f080bd367afff11f712ed686e9",
+    "private-proof-partial-AFTER.json": "994196105910464a68e56824bdf0c0ca89fe40829289102eb798d6230e2e6897",
+    "private-proof-partial-process.json": "c24ea1ab98699e4db9fd9b437bf8e31bbd3b65dbd28e28ba58dfe9fd45335bfd",
+    "foreign-transact-AFTER.json": "994196105910464a68e56824bdf0c0ca89fe40829289102eb798d6230e2e6897",
+    "foreign-transact-process.json": "5ee5a112e4fa770bf21d562ad3a2a63e7bc95e9f059aee5abc2f4647c0537381",
+    "run.py": "26b936fbd4271abf07a62f99b64c93edb15cde5511d7a0beb681e5c77f2b94a4",
+    "BEFORE.json": "0a510ce5992e0e64d17aa380462237c7f243decee1dff5c388a7a95d92664496",
+    "RESULT.json": "da028e3d8cc4037850e199c006abcdbfb6a4ab1860d12171a991b03847c808aa",
+    "driver.log": "81c866c5a46f299dead118e314813013869ea5f1cdfe31491af0f9c4ca91c9f2",
+    "public-source.json": "bfa8684f50b2bb838b026f2c4972653bfc4503d9fd15182c6c5b219ce1bc1e41",
+    "packaged-load.cjs": "40bdeca9b22bd7752e10a75fcdc53d40e2b45bf188015193587106f875aa58f8",
+    "check-packaged.cjs": "1ce5621acc62f3ca858521c9bcf523dc10fb3a686fb51c82f1ad2eb17334fa37",
+    "check-clean-inventory.cjs": "95a307132dceac43976ec3e5344a5bcd8c3bca1fe32d9382e3e9cbd95f581616",
+    "CLEAN-PATHS.json": "091482a69440b5b347f615044ad7a1127bd4bda401a0818d123f58252d22519f"
+  },
+  "reports": {
+    "own-selector-report.json": "dd6d6848f2223415937935283c69b3e5ff06d3494c9f8540fe9d9060153e2996",
+    "own-txid-report.json": "51b0d9d3836e0a976ebf5c8a017f3c90e092a2ef7daea2ca165c006b651a72d9",
+    "own-selector-partial-report.json": "141da5ad4b1fdebcfe76202eb8b2131583b62254fa20fcd10069323b79affc68",
+    "own-txid-partial-report.json": "292cf0ff5a352f9528d4e7812e20c9db386bf29f70bb03938400a848cee1f08e",
+    "shield-selector-report.json": "63faa16187c03c9924b6d6f6a266467b0e9d04ccc68e45cd17e29b2ebf6b2687",
+    "poi-verifier-shield-report.json": "a9a7810a529222842e55a4cb9e19a905e4b9308917f3f326a3807f56e016781e",
+    "poi-verifier-transact-report.json": "e9cd20c2dfc41686571e3e70aa35230ccd14546912082147fba037959cdaaea7",
+    "private-proof-report.json": "9562fb253096c75824f3c5db525e8e2aaffa64713a3ffc11066c21b16658238f",
+    "private-proof-partial-report.json": "d92660f5846203cbad39521e1b8dbdc22d155aeded1858031af6ae84094d0b95",
+    "foreign-transact-report.json": "6ec73c2f4c71c8857685a83a6fce9137f1b7b98dac11b64f5a0867f547055d70",
+    "PACKAGED.json": "64b4420268007b593d38d3dd8eed47656aed6d32f0a6a548c3a51cb5c8894bee",
+    "packaged-load.json": "946d0572f05d0d9a7718ed78ccfa629feed9ee2293d0a2ed690c2b2a09fa43bd",
+    "CLEAN-INVENTORY.json": "ecba1f65daf7f751edd026af99935d91d58f26b7d5d25bc06498bebc1f81c553"
+  },
+  "nativeCases": [
+    {
+      "name": "own-selector",
+      "exitCode": 0,
+      "naturalExit": true,
+      "elapsedSeconds": 2.2251861095428467,
+      "reportSha256": "dd6d6848f2223415937935283c69b3e5ff06d3494c9f8540fe9d9060153e2996",
+      "sourceCount": 78
+    },
+    {
+      "name": "own-txid",
+      "exitCode": 0,
+      "naturalExit": true,
+      "elapsedSeconds": 2.1198883056640625,
+      "reportSha256": "51b0d9d3836e0a976ebf5c8a017f3c90e092a2ef7daea2ca165c006b651a72d9",
+      "sourceCount": 77
+    },
+    {
+      "name": "own-selector-partial",
+      "exitCode": 0,
+      "naturalExit": true,
+      "elapsedSeconds": 3.1140153408050537,
+      "reportSha256": "141da5ad4b1fdebcfe76202eb8b2131583b62254fa20fcd10069323b79affc68",
+      "sourceCount": 78
+    },
+    {
+      "name": "own-txid-partial",
+      "exitCode": 0,
+      "naturalExit": true,
+      "elapsedSeconds": 2.7146410942077637,
+      "reportSha256": "292cf0ff5a352f9528d4e7812e20c9db386bf29f70bb03938400a848cee1f08e",
+      "sourceCount": 77
+    },
+    {
+      "name": "shield-selector",
+      "exitCode": 0,
+      "naturalExit": true,
+      "elapsedSeconds": 3.154554843902588,
+      "reportSha256": "63faa16187c03c9924b6d6f6a266467b0e9d04ccc68e45cd17e29b2ebf6b2687",
+      "sourceCount": 64
+    },
+    {
+      "name": "poi-verifier-shield",
+      "exitCode": 0,
+      "naturalExit": true,
+      "elapsedSeconds": 16.372671127319336,
+      "reportSha256": "a9a7810a529222842e55a4cb9e19a905e4b9308917f3f326a3807f56e016781e",
+      "sourceCount": 79
+    },
+    {
+      "name": "poi-verifier-transact",
+      "exitCode": 0,
+      "naturalExit": true,
+      "elapsedSeconds": 16.224531888961792,
+      "reportSha256": "e9cd20c2dfc41686571e3e70aa35230ccd14546912082147fba037959cdaaea7",
+      "sourceCount": 79
+    },
+    {
+      "name": "private-proof",
+      "exitCode": 0,
+      "naturalExit": true,
+      "elapsedSeconds": 21.554615020751953,
+      "reportSha256": "9562fb253096c75824f3c5db525e8e2aaffa64713a3ffc11066c21b16658238f",
+      "sourceCount": 65
+    },
+    {
+      "name": "private-proof-partial",
+      "exitCode": 0,
+      "naturalExit": true,
+      "elapsedSeconds": 9.646827936172485,
+      "reportSha256": "d92660f5846203cbad39521e1b8dbdc22d155aeded1858031af6ae84094d0b95",
+      "sourceCount": 65
+    },
+    {
+      "name": "foreign-transact",
+      "exitCode": 0,
+      "naturalExit": true,
+      "elapsedSeconds": 66.21278405189514,
+      "reportSha256": "6ec73c2f4c71c8857685a83a6fce9137f1b7b98dac11b64f5a0867f547055d70",
+      "sourceCount": 839
+    }
+  ],
+  "packagedBuildLogSha256": "b98590ff8ebacaaf8770550e6088984e1d7e3fe183dd690babaf2ac61a03dc08",
+  "earlierCampaignOutcomeSha256": "a8ba5f1ef246e00e8bff581af655085faee6c14a62cbfacc9cd1c1d7f8d1943c"
+}
