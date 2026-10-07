@@ -39,6 +39,37 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "context"
+    ],
+    "literals": [],
+    "syntaxDiagnostics": 0
+  },
+  "src/owners/credential-loan.js": {
+    "edges": [
+      {
+        "kind": "require",
+        "request": "util",
+        "start": 362,
+        "end": 368,
+        "callStart": 354,
+        "callEnd": 369,
+        "line": 7
+      },
+      {
+        "kind": "require",
+        "request": "./host-bindings",
+        "start": 403,
+        "end": 420,
+        "callStart": 395,
+        "callEnd": 421,
+        "line": 8
+      }
+    ],
+    "dynamic": [],
+    "hostFamilies": [
+      "credentials"
+    ],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -61,9 +92,19 @@
         "callStart": 327,
         "callEnd": 352,
         "line": 7
+      },
+      {
+        "kind": "require",
+        "request": "../execution/host-bindings",
+        "start": 3312,
+        "end": 3340,
+        "callStart": 3304,
+        "callEnd": 3341,
+        "line": 91
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -98,206 +139,202 @@
       },
       {
         "kind": "require",
-        "request": "./unbound/storage-root-loan-transition",
-        "start": 387,
-        "end": 427,
-        "callStart": 379,
-        "callEnd": 428,
+        "request": "./host-bindings",
+        "start": 380,
+        "end": 397,
+        "callStart": 372,
+        "callEnd": 398,
         "line": 8
       },
       {
         "kind": "require",
-        "request": "./unbound/credential-session-transition",
-        "start": 452,
-        "end": 493,
-        "callStart": 444,
-        "callEnd": 494,
+        "request": "./credential-loan",
+        "start": 448,
+        "end": 467,
+        "callStart": 440,
+        "callEnd": 468,
         "line": 9
       },
       {
         "kind": "require",
         "request": "./host-bindings",
-        "start": 533,
-        "end": 550,
-        "callStart": 525,
-        "callEnd": 551,
+        "start": 507,
+        "end": 524,
+        "callStart": 499,
+        "callEnd": 525,
         "line": 10
       },
       {
         "kind": "require",
         "request": "./context-bindings",
-        "start": 620,
-        "end": 640,
-        "callStart": 612,
-        "callEnd": 641,
+        "start": 594,
+        "end": 614,
+        "callStart": 586,
+        "callEnd": 615,
         "line": 11
       },
       {
         "kind": "require",
         "request": "./host-bindings",
-        "start": 682,
-        "end": 699,
-        "callStart": 674,
-        "callEnd": 700,
+        "start": 656,
+        "end": 673,
+        "callStart": 648,
+        "callEnd": 674,
         "line": 12
       },
       {
         "kind": "require",
         "request": "./railgun-identity.js",
-        "start": 796,
-        "end": 819,
-        "callStart": 788,
-        "callEnd": 820,
+        "start": 770,
+        "end": 793,
+        "callStart": 762,
+        "callEnd": 794,
         "line": 16
       },
       {
         "kind": "require",
         "request": "./host-bindings",
-        "start": 886,
-        "end": 903,
-        "callStart": 878,
-        "callEnd": 904,
+        "start": 860,
+        "end": 877,
+        "callStart": 852,
+        "callEnd": 878,
         "line": 17
       },
       {
         "kind": "require",
-        "request": "./unbound/storage-root-guard-transition",
-        "start": 960,
-        "end": 1001,
-        "callStart": 952,
-        "callEnd": 1002,
+        "request": "./railgun-wallet-catalog.js",
+        "start": 935,
+        "end": 964,
+        "callStart": 927,
+        "callEnd": 965,
         "line": 18
       },
       {
         "kind": "require",
-        "request": "./railgun-wallet-catalog.js",
-        "start": 1051,
-        "end": 1080,
-        "callStart": 1043,
-        "callEnd": 1081,
+        "request": "./railgun-public-catalog.js",
+        "start": 1010,
+        "end": 1039,
+        "callStart": 1002,
+        "callEnd": 1040,
         "line": 19
       },
       {
         "kind": "require",
-        "request": "./railgun-public-catalog.js",
-        "start": 1126,
-        "end": 1155,
-        "callStart": 1118,
-        "callEnd": 1156,
+        "request": "./railgun-private-reservations.js",
+        "start": 1095,
+        "end": 1130,
+        "callStart": 1087,
+        "callEnd": 1131,
         "line": 20
       },
       {
         "kind": "require",
-        "request": "./railgun-private-reservations.js",
-        "start": 1211,
-        "end": 1246,
-        "callStart": 1203,
-        "callEnd": 1247,
+        "request": "./railgun-private-capsule-store.js",
+        "start": 1186,
+        "end": 1222,
+        "callStart": 1178,
+        "callEnd": 1223,
         "line": 21
       },
       {
         "kind": "require",
-        "request": "./railgun-private-capsule-store.js",
-        "start": 1302,
-        "end": 1338,
-        "callStart": 1294,
-        "callEnd": 1339,
+        "request": "./railgun-poi-intent-store.js",
+        "start": 1273,
+        "end": 1304,
+        "callStart": 1265,
+        "callEnd": 1305,
         "line": 22
       },
       {
         "kind": "require",
-        "request": "./railgun-poi-intent-store.js",
-        "start": 1389,
-        "end": 1420,
-        "callStart": 1381,
-        "callEnd": 1421,
+        "request": "./railgun-account-fence.js",
+        "start": 1351,
+        "end": 1379,
+        "callStart": 1343,
+        "callEnd": 1380,
         "line": 23
       },
       {
         "kind": "require",
-        "request": "./railgun-account-fence.js",
-        "start": 1467,
-        "end": 1495,
-        "callStart": 1459,
-        "callEnd": 1496,
-        "line": 24
-      },
-      {
-        "kind": "require",
         "request": "./railgun-private-capsule-store.js",
-        "start": 14332,
-        "end": 14368,
-        "callStart": 14324,
-        "callEnd": 14369,
-        "line": 391
-      },
-      {
-        "kind": "require",
-        "request": "./railgun-account-phase.js",
-        "start": 14573,
-        "end": 14601,
-        "callStart": 14565,
-        "callEnd": 14602,
+        "start": 14814,
+        "end": 14850,
+        "callStart": 14806,
+        "callEnd": 14851,
         "line": 399
       },
       {
         "kind": "require",
+        "request": "./railgun-account-phase.js",
+        "start": 15055,
+        "end": 15083,
+        "callStart": 15047,
+        "callEnd": 15084,
+        "line": 407
+      },
+      {
+        "kind": "require",
         "request": "util",
-        "start": 15059,
-        "end": 15065,
-        "callStart": 15051,
-        "callEnd": 15066,
-        "line": 411
+        "start": 15541,
+        "end": 15547,
+        "callStart": 15533,
+        "callEnd": 15548,
+        "line": 419
       },
       {
         "kind": "require",
         "request": "../execution/railgun-relay-quote-data.js",
-        "start": 15225,
-        "end": 15267,
-        "callStart": 15217,
-        "callEnd": 15268,
-        "line": 414
+        "start": 15707,
+        "end": 15749,
+        "callStart": 15699,
+        "callEnd": 15750,
+        "line": 422
       },
       {
         "kind": "require",
         "request": "../execution/railgun-relay-recovery-data.js",
-        "start": 16633,
-        "end": 16678,
-        "callStart": 16625,
-        "callEnd": 16679,
-        "line": 445
+        "start": 17115,
+        "end": 17160,
+        "callStart": 17107,
+        "callEnd": 17161,
+        "line": 453
       },
       {
         "kind": "require",
         "request": "./railgun-relay-recovery-store.js",
-        "start": 17564,
-        "end": 17599,
-        "callStart": 17556,
-        "callEnd": 17600,
-        "line": 472
+        "start": 18046,
+        "end": 18081,
+        "callStart": 18038,
+        "callEnd": 18082,
+        "line": 480
       },
       {
         "kind": "require",
         "request": "./railgun-account-phase.js",
-        "start": 20640,
-        "end": 20668,
-        "callStart": 20632,
-        "callEnd": 20669,
-        "line": 565
+        "start": 21122,
+        "end": 21150,
+        "callStart": 21114,
+        "callEnd": 21151,
+        "line": 573
       },
       {
         "kind": "require",
         "request": "../execution/railgun-relay-quote-data.js",
-        "start": 24888,
-        "end": 24930,
-        "callStart": 24880,
-        "callEnd": 24931,
-        "line": 687
+        "start": 25370,
+        "end": 25412,
+        "callStart": 25362,
+        "callEnd": 25413,
+        "line": 695
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "credentials",
+      "profiles",
+      "sessions",
+      "storage"
+    ],
     "literals": [
-      "Freedom Railgun account storage v1\u0000",
       "railgun-account-enrollment-v1",
       "railgun-cache-",
       "railgun-poi-intents-floor-v1",
@@ -370,6 +407,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "freedom.railgun.account-writer-fence.v1"
     ],
@@ -388,6 +426,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -485,6 +524,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "freedom:railgun:account-poi-v1",
       "freedom:railgun:window-poi-v1:",
@@ -631,6 +671,9 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "storage"
+    ],
     "literals": [
       "railgun-public-catalog-v1",
       "railgun-scan-v1"
@@ -731,6 +774,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "railgun-cache-",
       "railgun-public-"
@@ -858,6 +902,9 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "storage"
+    ],
     "literals": [
       "railgun-public-sync",
       "railgun-txid-v1:"
@@ -1606,6 +1653,9 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "storage"
+    ],
     "literals": [
       "freedom:railgun:account-wallet-policy-v1",
       "railgun-partial-unshield",
@@ -1665,18 +1715,21 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
   "src/owners/railgun-frontier.js": {
     "edges": [],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
   "src/owners/railgun-host-provider.js": {
     "edges": [],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -1702,159 +1755,154 @@
       },
       {
         "kind": "require",
-        "request": "./unbound/credential-lifetime",
-        "start": 496,
-        "end": 527,
-        "callStart": 488,
-        "callEnd": 528,
+        "request": "./host-bindings",
+        "start": 456,
+        "end": 473,
+        "callStart": 448,
+        "callEnd": 474,
         "line": 8
       },
       {
         "kind": "require",
-        "request": "./host-bindings",
-        "start": 569,
-        "end": 586,
-        "callStart": 561,
-        "callEnd": 587,
+        "request": "./credential-loan",
+        "start": 524,
+        "end": 543,
+        "callStart": 516,
+        "callEnd": 544,
         "line": 9
       },
       {
         "kind": "require",
-        "request": "../execution/railgun-engine-runtime.js",
-        "start": 645,
-        "end": 685,
-        "callStart": 637,
-        "callEnd": 686,
+        "request": "./host-bindings",
+        "start": 585,
+        "end": 602,
+        "callStart": 577,
+        "callEnd": 603,
         "line": 10
       },
       {
         "kind": "require",
-        "request": "./railgun-process.js",
-        "start": 728,
-        "end": 750,
-        "callStart": 720,
-        "callEnd": 751,
+        "request": "../execution/railgun-engine-runtime.js",
+        "start": 661,
+        "end": 701,
+        "callStart": 653,
+        "callEnd": 702,
         "line": 11
       },
       {
         "kind": "require",
-        "request": "./unbound/credential-session-transition",
-        "start": 775,
-        "end": 816,
-        "callStart": 767,
-        "callEnd": 817,
+        "request": "./railgun-process.js",
+        "start": 744,
+        "end": 766,
+        "callStart": 736,
+        "callEnd": 767,
         "line": 12
       },
       {
         "kind": "require",
         "request": "../data/railgun-private-intent.js",
-        "start": 10867,
-        "end": 10902,
-        "callStart": 10859,
-        "callEnd": 10903,
-        "line": 275
+        "start": 11626,
+        "end": 11661,
+        "callStart": 11618,
+        "callEnd": 11662,
+        "line": 287
       },
       {
         "kind": "require",
         "request": "../data/railgun-private-results.js",
-        "start": 12022,
-        "end": 12058,
-        "callStart": 12014,
-        "callEnd": 12059,
-        "line": 313
+        "start": 12781,
+        "end": 12817,
+        "callStart": 12773,
+        "callEnd": 12818,
+        "line": 325
       },
       {
         "kind": "require",
         "request": "./railgun-private-operation.js",
-        "start": 12269,
-        "end": 12301,
-        "callStart": 12261,
-        "callEnd": 12302,
-        "line": 318
+        "start": 13028,
+        "end": 13060,
+        "callStart": 13020,
+        "callEnd": 13061,
+        "line": 330
       },
       {
         "kind": "require",
         "request": "../execution/railgun-relay-intent.js",
-        "start": 16267,
-        "end": 16305,
-        "callStart": 16259,
-        "callEnd": 16306,
-        "line": 434
+        "start": 17183,
+        "end": 17221,
+        "callStart": 17175,
+        "callEnd": 17222,
+        "line": 447
       },
       {
         "kind": "require",
         "request": "util",
-        "start": 17945,
-        "end": 17951,
-        "callStart": 17937,
-        "callEnd": 17952,
-        "line": 486
+        "start": 18861,
+        "end": 18867,
+        "callStart": 18853,
+        "callEnd": 18868,
+        "line": 499
       },
       {
         "kind": "require",
         "request": "../execution/railgun-relay-quote-data.js",
-        "start": 18949,
-        "end": 18991,
-        "callStart": 18941,
-        "callEnd": 18992,
-        "line": 526
+        "start": 19865,
+        "end": 19907,
+        "callStart": 19857,
+        "callEnd": 19908,
+        "line": 539
       },
       {
         "kind": "require",
         "request": "./railgun-relay-operation.js",
-        "start": 19693,
-        "end": 19723,
-        "callStart": 19685,
-        "callEnd": 19724,
-        "line": 541
+        "start": 20609,
+        "end": 20639,
+        "callStart": 20601,
+        "callEnd": 20640,
+        "line": 554
       },
       {
         "kind": "require",
         "request": "util",
-        "start": 20940,
-        "end": 20946,
-        "callStart": 20932,
-        "callEnd": 20947,
-        "line": 570
+        "start": 21761,
+        "end": 21767,
+        "callStart": 21753,
+        "callEnd": 21768,
+        "line": 581
       },
       {
         "kind": "require",
         "request": "../execution/railgun-engine-manifest.json",
-        "start": 21921,
-        "end": 21964,
-        "callStart": 21913,
-        "callEnd": 21965,
-        "line": 601
+        "start": 22742,
+        "end": 22785,
+        "callStart": 22734,
+        "callEnd": 22786,
+        "line": 612
       },
       {
         "kind": "require",
         "request": "../data/railgun-private-signature.js",
-        "start": 22605,
-        "end": 22643,
-        "callStart": 22597,
-        "callEnd": 22644,
-        "line": 615
-      },
-      {
-        "kind": "require.resolve",
-        "request": "./railgun-relay-sign-job.js",
-        "start": 23085,
-        "end": 23114,
-        "callStart": 23069,
-        "callEnd": 23115,
-        "line": 633
+        "start": 23426,
+        "end": 23464,
+        "callStart": 23418,
+        "callEnd": 23465,
+        "line": 626
       },
       {
         "kind": "require",
         "request": "../execution/railgun-relay-intent.js",
-        "start": 25566,
-        "end": 25604,
-        "callStart": 25558,
-        "callEnd": 25605,
-        "line": 709
+        "start": 26634,
+        "end": 26672,
+        "callStart": 26626,
+        "callEnd": 26673,
+        "line": 726
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "credentials",
+      "sessions"
+    ],
     "literals": [
       "railgun-partial-unshield",
       "railgun-private-transfer",
@@ -1893,6 +1941,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -2003,6 +2052,7 @@
         "line": 54
       }
     ],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -2091,6 +2141,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -2179,6 +2230,9 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "submissionJournal"
+    ],
     "literals": [
       "freedom:railgun:own-operation-v1\u0000",
       "railgun-partial-unshield",
@@ -2399,6 +2453,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "freedom:railgun:own-poi-membership-v1",
       "railgun-public-sync"
@@ -2490,6 +2545,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "railgun-partial-unshield"
     ],
@@ -2688,6 +2744,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -2785,6 +2842,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "railgun-own-poi-artifacts"
     ],
@@ -2866,6 +2924,9 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "transactionNetwork"
+    ],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -2936,6 +2997,7 @@
         "line": 32
       }
     ],
+    "hostFamilies": [],
     "literals": [
       "railgun-partial-unshield"
     ],
@@ -3017,6 +3079,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "railgun-partial-unshield"
     ],
@@ -3071,6 +3134,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -3123,6 +3187,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "railgun-partial-unshield"
     ],
@@ -3235,6 +3300,7 @@
         "line": 54
       }
     ],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -3323,6 +3389,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -3411,6 +3478,9 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "journalRetention"
+    ],
     "literals": [
       "railgun-partial-unshield"
     ],
@@ -3618,6 +3688,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "railgun-partial-unshield",
       "railgun-public-sync"
@@ -3673,6 +3744,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "railgun-paged-store-v2"
     ],
@@ -3871,6 +3943,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -3968,6 +4041,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -4173,6 +4247,10 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "rpc",
+      "transport"
+    ],
     "literals": [
       "freedom:railgun:retained-poi-submit-v1",
       "railgun-partial-unshield",
@@ -4329,6 +4407,9 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "storage"
+    ],
     "literals": [
       "railgun-poi-intents-v1"
     ],
@@ -4397,6 +4478,7 @@
         "line": 14
       }
     ],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -4458,6 +4540,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -4560,6 +4643,7 @@
         "line": 26
       }
     ],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -4648,6 +4732,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -4862,6 +4947,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -4950,6 +5036,7 @@
         "line": 69
       }
     ],
+    "hostFamilies": [],
     "literals": [
       "railgun-local-poi-proof"
     ],
@@ -5036,6 +5123,7 @@
         "line": 49
       }
     ],
+    "hostFamilies": [],
     "literals": [
       "railgun-partial-unshield",
       "railgun-private-transfer",
@@ -5110,6 +5198,11 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "settings",
+      "tor",
+      "transport"
+    ],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -5185,6 +5278,7 @@
         "line": 18
       }
     ],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -5264,6 +5358,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -5325,6 +5420,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -5377,6 +5473,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -5438,6 +5535,11 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "settings",
+      "tor",
+      "transport"
+    ],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -5522,6 +5624,7 @@
         "line": 22
       }
     ],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -5610,6 +5713,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -5698,6 +5802,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "railgun-keyless-poi-verify"
     ],
@@ -5793,6 +5898,7 @@
         "line": 70
       }
     ],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -5881,6 +5987,9 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "storage"
+    ],
     "literals": [
       "freedom:railgun:recovery-binding-v1\u0000",
       "railgun-private-capsules-v1"
@@ -5945,6 +6054,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -6123,6 +6233,11 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "rpc",
+      "signers",
+      "transactionNetwork"
+    ],
     "literals": [
       "freedom:railgun:private-gates-v1\u0000",
       "railgun-partial-unshield",
@@ -6243,6 +6358,9 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "rpc"
+    ],
     "literals": [
       "railgun-partial-unshield",
       "railgun-private-transfer",
@@ -6327,6 +6445,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -6415,6 +6534,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "railgun-partial-unshield",
       "railgun-private-transfer"
@@ -6533,6 +6653,9 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "storage"
+    ],
     "literals": [
       "railgun-partial-unshield",
       "railgun-private-reservations-v1",
@@ -6627,366 +6750,365 @@
       },
       {
         "kind": "require",
-        "request": "./unbound/eoa-wallet-record-transition",
-        "start": 10649,
-        "end": 10689,
-        "callStart": 10641,
-        "callEnd": 10690,
+        "request": "./host-bindings",
+        "start": 10614,
+        "end": 10631,
+        "callStart": 10606,
+        "callEnd": 10632,
         "line": 250
       },
       {
         "kind": "require",
-        "request": "ethers",
-        "start": 10839,
-        "end": 10847,
-        "callStart": 10831,
-        "callEnd": 10848,
-        "line": 253
+        "request": "./host-bindings",
+        "start": 12377,
+        "end": 12394,
+        "callStart": 12369,
+        "callEnd": 12395,
+        "line": 307
       },
       {
         "kind": "require",
         "request": "./host-bindings",
-        "start": 12710,
-        "end": 12727,
-        "callStart": 12702,
-        "callEnd": 12728,
-        "line": 312
+        "start": 16335,
+        "end": 16352,
+        "callStart": 16327,
+        "callEnd": 16353,
+        "line": 413
       },
       {
         "kind": "require",
         "request": "./host-bindings",
-        "start": 16668,
-        "end": 16685,
-        "callStart": 16660,
-        "callEnd": 16686,
-        "line": 418
-      },
-      {
-        "kind": "require",
-        "request": "./host-bindings",
-        "start": 21140,
-        "end": 21157,
-        "callStart": 21132,
-        "callEnd": 21158,
-        "line": 510
+        "start": 20807,
+        "end": 20824,
+        "callStart": 20799,
+        "callEnd": 20825,
+        "line": 505
       },
       {
         "kind": "require",
         "request": "util",
-        "start": 29561,
-        "end": 29567,
-        "callStart": 29553,
-        "callEnd": 29568,
-        "line": 753
+        "start": 29228,
+        "end": 29234,
+        "callStart": 29220,
+        "callEnd": 29235,
+        "line": 748
       },
       {
         "kind": "require",
         "request": "./railgun-account-enrollment.js",
-        "start": 30586,
-        "end": 30619,
-        "callStart": 30578,
-        "callEnd": 30620,
-        "line": 792
+        "start": 30253,
+        "end": 30286,
+        "callStart": 30245,
+        "callEnd": 30287,
+        "line": 787
       },
       {
         "kind": "require",
         "request": "path",
-        "start": 31224,
-        "end": 31230,
-        "callStart": 31216,
-        "callEnd": 31231,
-        "line": 801
+        "start": 30891,
+        "end": 30897,
+        "callStart": 30883,
+        "callEnd": 30898,
+        "line": 796
       },
       {
         "kind": "require",
         "request": "../execution/railgun-engine-runtime.js",
-        "start": 31292,
-        "end": 31332,
-        "callStart": 31284,
-        "callEnd": 31333,
-        "line": 802
+        "start": 30959,
+        "end": 30999,
+        "callStart": 30951,
+        "callEnd": 31000,
+        "line": 797
       },
       {
         "kind": "require",
         "request": "../execution/railgun-prover-runtime.js",
-        "start": 31413,
-        "end": 31453,
-        "callStart": 31405,
-        "callEnd": 31454,
-        "line": 803
+        "start": 31080,
+        "end": 31120,
+        "callStart": 31072,
+        "callEnd": 31121,
+        "line": 798
       },
       {
         "kind": "require",
         "request": "./railgun-identity.js",
-        "start": 31564,
-        "end": 31587,
-        "callStart": 31556,
-        "callEnd": 31588,
-        "line": 806
+        "start": 31231,
+        "end": 31254,
+        "callStart": 31223,
+        "callEnd": 31255,
+        "line": 801
       },
       {
         "kind": "require",
         "request": "./railgun-account-public.js",
-        "start": 31702,
-        "end": 31731,
-        "callStart": 31694,
-        "callEnd": 31732,
-        "line": 810
+        "start": 31369,
+        "end": 31398,
+        "callStart": 31361,
+        "callEnd": 31399,
+        "line": 805
       },
       {
         "kind": "require",
         "request": "./railgun-public-policy.js",
-        "start": 31767,
-        "end": 31795,
-        "callStart": 31759,
-        "callEnd": 31796,
-        "line": 811
+        "start": 31434,
+        "end": 31462,
+        "callStart": 31426,
+        "callEnd": 31463,
+        "line": 806
       },
       {
         "kind": "require",
         "request": "./railgun-account-wallet.js",
-        "start": 31863,
-        "end": 31892,
-        "callStart": 31855,
-        "callEnd": 31893,
-        "line": 812
+        "start": 31530,
+        "end": 31559,
+        "callStart": 31522,
+        "callEnd": 31560,
+        "line": 807
       },
       {
         "kind": "require",
         "request": "./railgun-txid-policy.js",
-        "start": 32017,
-        "end": 32043,
-        "callStart": 32009,
-        "callEnd": 32044,
-        "line": 817
+        "start": 31684,
+        "end": 31710,
+        "callStart": 31676,
+        "callEnd": 31711,
+        "line": 812
       },
       {
         "kind": "require",
         "request": "../execution/railgun-private-capsule.js",
-        "start": 35910,
-        "end": 35951,
-        "callStart": 35902,
-        "callEnd": 35952,
-        "line": 909
+        "start": 35577,
+        "end": 35618,
+        "callStart": 35569,
+        "callEnd": 35619,
+        "line": 904
       },
       {
         "kind": "require",
         "request": "../data/railgun-private-intent.js",
-        "start": 36082,
-        "end": 36117,
-        "callStart": 36074,
-        "callEnd": 36118,
-        "line": 913
+        "start": 35749,
+        "end": 35784,
+        "callStart": 35741,
+        "callEnd": 35785,
+        "line": 908
       },
       {
         "kind": "require",
         "request": "./host-bindings",
-        "start": 37985,
-        "end": 38002,
-        "callStart": 37977,
-        "callEnd": 38003,
-        "line": 968
+        "start": 37652,
+        "end": 37669,
+        "callStart": 37644,
+        "callEnd": 37670,
+        "line": 963
       },
       {
         "kind": "require",
         "request": "./host-bindings",
-        "start": 39042,
-        "end": 39059,
-        "callStart": 39034,
-        "callEnd": 39060,
-        "line": 998
+        "start": 38709,
+        "end": 38726,
+        "callStart": 38701,
+        "callEnd": 38727,
+        "line": 993
       },
       {
         "kind": "require",
         "request": "./railgun-public-services.js",
-        "start": 39602,
-        "end": 39632,
-        "callStart": 39594,
-        "callEnd": 39633,
-        "line": 1012
+        "start": 39269,
+        "end": 39299,
+        "callStart": 39261,
+        "callEnd": 39300,
+        "line": 1007
       },
       {
         "kind": "require",
         "request": "../data/railgun-poi-records.js",
-        "start": 39692,
-        "end": 39724,
-        "callStart": 39684,
-        "callEnd": 39725,
-        "line": 1013
+        "start": 39359,
+        "end": 39391,
+        "callStart": 39351,
+        "callEnd": 39392,
+        "line": 1008
       },
       {
         "kind": "require",
         "request": "./railgun-account-wallet.js",
-        "start": 42620,
-        "end": 42649,
-        "callStart": 42612,
-        "callEnd": 42650,
-        "line": 1099
+        "start": 42287,
+        "end": 42316,
+        "callStart": 42279,
+        "callEnd": 42317,
+        "line": 1094
       },
       {
         "kind": "require",
         "request": "./railgun-account-wallet.js",
-        "start": 42880,
-        "end": 42909,
-        "callStart": 42872,
-        "callEnd": 42910,
-        "line": 1109
+        "start": 42547,
+        "end": 42576,
+        "callStart": 42539,
+        "callEnd": 42577,
+        "line": 1104
       },
       {
         "kind": "require",
         "request": "../data/railgun-owned-poi-records.js",
-        "start": 43742,
-        "end": 43780,
-        "callStart": 43734,
-        "callEnd": 43781,
-        "line": 1131
+        "start": 43409,
+        "end": 43447,
+        "callStart": 43401,
+        "callEnd": 43448,
+        "line": 1126
       },
       {
         "kind": "require",
         "request": "./railgun-account-txid.js",
-        "start": 44210,
-        "end": 44237,
-        "callStart": 44202,
-        "callEnd": 44238,
-        "line": 1144
+        "start": 43877,
+        "end": 43904,
+        "callStart": 43869,
+        "callEnd": 43905,
+        "line": 1139
       },
       {
         "kind": "require",
         "request": "../data/railgun-txid-note-witness.js",
-        "start": 44955,
-        "end": 44993,
-        "callStart": 44947,
-        "callEnd": 44994,
-        "line": 1164
+        "start": 44622,
+        "end": 44660,
+        "callStart": 44614,
+        "callEnd": 44661,
+        "line": 1159
       },
       {
         "kind": "require",
         "request": "./railgun-wallet-coverage.js",
-        "start": 47085,
-        "end": 47115,
-        "callStart": 47077,
-        "callEnd": 47116,
-        "line": 1216
+        "start": 46752,
+        "end": 46782,
+        "callStart": 46744,
+        "callEnd": 46783,
+        "line": 1211
       },
       {
         "kind": "require",
         "request": "./railgun-private-creator.js",
-        "start": 47446,
-        "end": 47476,
-        "callStart": 47438,
-        "callEnd": 47477,
-        "line": 1223
+        "start": 47113,
+        "end": 47143,
+        "callStart": 47105,
+        "callEnd": 47144,
+        "line": 1218
       },
       {
         "kind": "require",
         "request": "./railgun-scan-coordinator.js",
-        "start": 48144,
-        "end": 48175,
-        "callStart": 48136,
-        "callEnd": 48176,
-        "line": 1240
+        "start": 47811,
+        "end": 47842,
+        "callStart": 47803,
+        "callEnd": 47843,
+        "line": 1235
       },
       {
         "kind": "require",
         "request": "./railgun-wallet-coverage.js",
-        "start": 48624,
-        "end": 48654,
-        "callStart": 48616,
-        "callEnd": 48655,
-        "line": 1252
+        "start": 48291,
+        "end": 48321,
+        "callStart": 48283,
+        "callEnd": 48322,
+        "line": 1247
       },
       {
         "kind": "require",
         "request": "./railgun-note-provenance.js",
-        "start": 49627,
-        "end": 49657,
-        "callStart": 49619,
-        "callEnd": 49658,
-        "line": 1270
+        "start": 49294,
+        "end": 49324,
+        "callStart": 49286,
+        "callEnd": 49325,
+        "line": 1265
       },
       {
         "kind": "require",
         "request": "crypto",
-        "start": 50943,
-        "end": 50951,
-        "callStart": 50935,
-        "callEnd": 50952,
-        "line": 1301
+        "start": 50610,
+        "end": 50618,
+        "callStart": 50602,
+        "callEnd": 50619,
+        "line": 1296
       },
       {
         "kind": "require",
         "request": "crypto",
-        "start": 52181,
-        "end": 52189,
-        "callStart": 52173,
-        "callEnd": 52190,
-        "line": 1334
+        "start": 51848,
+        "end": 51856,
+        "callStart": 51840,
+        "callEnd": 51857,
+        "line": 1329
       },
       {
         "kind": "require",
         "request": "./railgun-poi-source.js",
-        "start": 52650,
-        "end": 52675,
-        "callStart": 52642,
-        "callEnd": 52676,
-        "line": 1345
+        "start": 52317,
+        "end": 52342,
+        "callStart": 52309,
+        "callEnd": 52343,
+        "line": 1340
       },
       {
         "kind": "require",
         "request": "./railgun-poi-membership.js",
-        "start": 53383,
-        "end": 53412,
-        "callStart": 53375,
-        "callEnd": 53413,
-        "line": 1361
+        "start": 53050,
+        "end": 53079,
+        "callStart": 53042,
+        "callEnd": 53080,
+        "line": 1356
       },
       {
         "kind": "require",
         "request": "./railgun-poi-membership.js",
-        "start": 53921,
-        "end": 53950,
-        "callStart": 53913,
-        "callEnd": 53951,
-        "line": 1373
+        "start": 53588,
+        "end": 53617,
+        "callStart": 53580,
+        "callEnd": 53618,
+        "line": 1368
       },
       {
         "kind": "require",
         "request": "./railgun-txid-root.js",
-        "start": 54627,
-        "end": 54651,
-        "callStart": 54619,
-        "callEnd": 54652,
-        "line": 1390
+        "start": 54294,
+        "end": 54318,
+        "callStart": 54286,
+        "callEnd": 54319,
+        "line": 1385
       },
       {
         "kind": "require",
         "request": "./railgun-poi-source.js",
-        "start": 55808,
-        "end": 55833,
-        "callStart": 55800,
-        "callEnd": 55834,
-        "line": 1418
+        "start": 55475,
+        "end": 55500,
+        "callStart": 55467,
+        "callEnd": 55501,
+        "line": 1413
       },
       {
         "kind": "require",
         "request": "./railgun-txid-root.js",
-        "start": 55895,
-        "end": 55919,
-        "callStart": 55887,
-        "callEnd": 55920,
-        "line": 1419
+        "start": 55562,
+        "end": 55586,
+        "callStart": 55554,
+        "callEnd": 55587,
+        "line": 1414
       },
       {
         "kind": "require",
         "request": "./railgun-identity.js",
-        "start": 57740,
-        "end": 57763,
-        "callStart": 57732,
-        "callEnd": 57764,
-        "line": 1470
+        "start": 57407,
+        "end": 57430,
+        "callStart": 57399,
+        "callEnd": 57431,
+        "line": 1465
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "rpc",
+      "signers",
+      "submissionJournal",
+      "submitter",
+      "transactionNetwork",
+      "transactions"
+    ],
     "literals": [
       "railgun-partial-unshield",
       "railgun-private-transfer",
@@ -7033,6 +7155,7 @@
         "line": 120
       }
     ],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -7189,6 +7312,7 @@
         "line": 40
       }
     ],
+    "hostFamilies": [],
     "literals": [
       "Freedom Railgun engine",
       "railgun-identity-job",
@@ -7289,6 +7413,9 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "storage"
+    ],
     "literals": [
       "railgun-public-",
       "railgun-public-catalog-v1"
@@ -7427,6 +7554,7 @@
         "line": 36
       }
     ],
+    "hostFamilies": [],
     "literals": [
       "railgun-engine"
     ],
@@ -7481,6 +7609,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "freedom:railgun:public-policy-v1",
       "railgun-event-projector.js",
@@ -7521,6 +7650,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "freedom:railgun:public-records-v1:"
     ],
@@ -7593,6 +7723,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -7654,6 +7785,11 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "settings",
+      "tor",
+      "transport"
+    ],
     "literals": [
       "railgun-public-sync"
     ],
@@ -7672,6 +7808,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -7886,6 +8023,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "freedom:railgun:relay-local-gates-v4\u0000",
       "railgun-private-reservations-v1:",
@@ -7971,6 +8109,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -8082,6 +8221,7 @@
         "line": 33
       }
     ],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -8184,6 +8324,7 @@
         "line": 75
       }
     ],
+    "hostFamilies": [],
     "literals": [
       "railgun-relay-pre-poi-binding-v1"
     ],
@@ -8319,6 +8460,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -8493,6 +8635,7 @@
         "line": 49
       }
     ],
+    "hostFamilies": [],
     "literals": [
       "railgun-relay-independent-proof"
     ],
@@ -8637,6 +8780,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -8707,6 +8851,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -8890,6 +9035,7 @@
         "line": 61
       }
     ],
+    "hostFamilies": [],
     "literals": [
       "railgun-local-relay-prover"
     ],
@@ -8962,6 +9108,7 @@
         "line": 23
       }
     ],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -9023,6 +9170,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -9107,6 +9255,7 @@
         "line": 41
       }
     ],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -9240,6 +9389,9 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "storage"
+    ],
     "literals": [
       "railgun-relay-local-recovery-v4"
     ],
@@ -9303,6 +9455,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "freedom:railgun:relay-review-summary-v1\u0000",
       "railgun-relay-unsigned-review-v1"
@@ -9376,6 +9529,7 @@
         "line": 41
       }
     ],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -9455,6 +9609,7 @@
         "line": 60
       }
     ],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -9579,6 +9734,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -9667,6 +9823,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "railgun-public-sync"
     ],
@@ -9847,6 +10004,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "railgun-relay-transact-staging-disclosure-v1"
     ],
@@ -9910,6 +10068,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -9971,6 +10130,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -10073,6 +10233,7 @@
         "line": 48
       }
     ],
+    "hostFamilies": [],
     "literals": [
       "railgun-relay-self-transfer",
       "railgun-relay-unsigned-draft-v1"
@@ -10101,6 +10262,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "railgun-partial-unshield",
       "railgun-private-transfer",
@@ -10140,6 +10302,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "railgun-scan-v1"
     ],
@@ -10203,6 +10366,9 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "storage"
+    ],
     "literals": [
       "railgun-scan-v1"
     ],
@@ -10257,6 +10423,9 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "rpc"
+    ],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -10291,6 +10460,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -10325,6 +10495,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "railgun-session-worker-entry.js"
     ],
@@ -10397,6 +10568,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -10484,6 +10656,7 @@
         "line": 40
       }
     ],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -10590,6 +10763,12 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "rpc",
+      "transactionIntent",
+      "transactionNetwork",
+      "transactions"
+    ],
     "literals": [
       "railgun-native-shield"
     ],
@@ -10617,6 +10796,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "railgun-native-shield"
     ],
@@ -10689,6 +10869,9 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "rpc"
+    ],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -10777,6 +10960,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -10820,6 +11004,9 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "transactionIntent"
+    ],
     "literals": [
       "railgun-native-shield"
     ],
@@ -10904,6 +11091,7 @@
         "line": 54
       }
     ],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -10983,6 +11171,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -10999,6 +11188,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -11042,6 +11232,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "freedom:railgun:source-ledger-v1",
       "freedom:railgun:source-ledger-v1:"
@@ -11051,6 +11242,7 @@
   "src/owners/railgun-store-cursor.js": {
     "edges": [],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -11067,6 +11259,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -11119,6 +11312,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "railgun-store-v1"
     ],
@@ -11164,6 +11358,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "railgun-partial-unshield",
       "railgun-private-transfer",
@@ -11240,6 +11435,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "railgun-public-sync"
     ],
@@ -11248,6 +11444,7 @@
   "src/owners/railgun-transact-receipt-policy.js": {
     "edges": [],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "railgun-sepolia-partial-receipt-v1"
     ],
@@ -11311,6 +11508,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "railgun-partial-unshield",
       "railgun-private-transfer"
@@ -11348,6 +11546,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "railgun-partial-unshield",
       "railgun-private-transfer",
@@ -11458,6 +11657,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "railgun-partial-unshield",
       "railgun-private-transfer",
@@ -11478,6 +11678,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -11521,6 +11722,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -11537,6 +11739,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -11674,6 +11877,7 @@
         "line": 83
       }
     ],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -11744,6 +11948,9 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "storage"
+    ],
     "literals": [
       "railgun-txid-v1:"
     ],
@@ -11812,6 +12019,7 @@
         "line": 69
       }
     ],
+    "hostFamilies": [],
     "literals": [
       "freedom:railgun:txid-policy-v1",
       "freedom:railgun:txid-store-v1",
@@ -11857,6 +12065,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -11945,6 +12154,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -12024,6 +12234,9 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "storage"
+    ],
     "literals": [
       "railgun-cache-",
       "railgun-wallet-catalog-v1",
@@ -12071,6 +12284,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "freedom:railgun:wallet-coverage:v1:"
     ],
@@ -12098,6 +12312,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "freedom:railgun:wallet-checkpoint-v1\u0000",
       "freedom:railgun:wallet-coverage-v1:"
@@ -12171,6 +12386,9 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [
+      "storage"
+    ],
     "literals": [
       "railgun-wallet-journal-v1",
       "railgun-wallet-v1:"
@@ -12244,6 +12462,7 @@
         "line": 172
       }
     ],
+    "hostFamilies": [],
     "literals": [
       "freedom:railgun:wallet-policy-v1",
       "railgun-artifacts",
@@ -12338,6 +12557,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -12642,6 +12862,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -12865,6 +13086,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -12881,6 +13103,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [
       "freedom:railgun:wallet-store-v1\u0000"
     ],
@@ -12908,6 +13131,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   },
@@ -12933,6 +13157,7 @@
       }
     ],
     "dynamic": [],
+    "hostFamilies": [],
     "literals": [],
     "syntaxDiagnostics": 0
   }

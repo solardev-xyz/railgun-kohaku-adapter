@@ -10,6 +10,7 @@ const SCHEMA = Object.freeze({
   artifacts: Object.freeze(["createPrivacyArtifactLoader"]),
   credentials: Object.freeze(["currentSession", "withMaterial"]),
   platform: Object.freeze([
+    "applicationLifetime",
     "spawnUtility",
     "createUtilityChannel",
     "memorySamples",
@@ -41,6 +42,7 @@ const SCHEMA = Object.freeze({
   submissionJournal: Object.freeze(["getPrivateSubmissionJournal"]),
   journalRetention: Object.freeze(["validArchive"]),
   transactions: Object.freeze(["signAndSendTransaction"]),
+  submitter: Object.freeze(["readMetadata"]),
 });
 const fail = () =>
   Object.assign(new Error("Railgun owner host unavailable"), {
@@ -84,21 +86,49 @@ function initializeRailgunOwnerHost(input, ...extra) {
     value: Object.freeze({}),
     configurable: false,
   });
-  if (extra.length) throw fail();
-  const families = record(input, Object.keys(SCHEMA));
-  const next = Object.create(null);
-  for (const [family, names] of Object.entries(SCHEMA)) {
-    const receiver = families[family],
-      functions = record(receiver, names),
-      methods = Object.create(null);
-    for (const name of names) {
-      const original = functions[name];
-      if (typeof original !== "function" || isProxy(original)) throw fail();
-      methods[name] = (...args) => Reflect.apply(original, receiver, args);
+  const {
+    initializeRailgunExecutionHost: initializeExecution,
+  } = require("../execution/host-bindings");
+  try {
+    if (extra.length) throw fail();
+    const families = record(input, Object.keys(SCHEMA));
+    const next = Object.create(null);
+    for (const [family, names] of Object.entries(SCHEMA)) {
+      const receiver = families[family],
+        functions = record(receiver, names),
+        methods = Object.create(null);
+      for (const name of names) {
+        const original = functions[name];
+        if (typeof original !== "function" || isProxy(original)) throw fail();
+        methods[name] = (...args) => Reflect.apply(original, receiver, args);
+      }
+      next[family] = Object.freeze(methods);
     }
-    next[family] = Object.freeze(methods);
+    initializeExecution({
+      context: next.context,
+      artifacts: next.artifacts,
+    });
+    captured = Object.freeze(next);
+  } catch (error) {
+    // Even a malformed owner attempt poisons the paired execution bootstrap.
+    // Its existing initializer reserves before validating; no getter/adoption
+    // or extra reservation token crosses either private boundary.
+    try {
+      initializeExecution(undefined);
+    } catch {
+      /* Refusal is the intended reservation. */
+    }
+    throw error;
   }
-  captured = Object.freeze(next);
+}
+function assertRailgunOwnerHost(...args) {
+  if (
+    args.length ||
+    !captured ||
+    !isMainThread ||
+    (process.type !== undefined && process.type !== "browser")
+  )
+    throw fail();
 }
 const exportsByFamily = {};
 for (const [family, names] of Object.entries(SCHEMA)) {
@@ -112,5 +142,6 @@ for (const [family, names] of Object.entries(SCHEMA)) {
 }
 module.exports = Object.freeze({
   initializeRailgunOwnerHost,
+  assertRailgunOwnerHost,
   ...exportsByFamily,
 });

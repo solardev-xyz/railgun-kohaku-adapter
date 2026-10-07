@@ -5,11 +5,11 @@
  */
 const assert = require('assert/strict');
 const { createPrivacyScope, getPrivacyContext } = require('./context-bindings');
-const { createRailgunKeystore, createRailgunViewingKeystore } = require("./unbound/credential-lifetime");
+const { credentials } = require('./host-bindings');
+const { createRailgunCredentialLoan } = require('./credential-loan');
 const { openPrivacySession } = require('./host-bindings').sessions;
 const { verifyRailgunEngineRuntime } = require("../execution/railgun-engine-runtime.js");
 const { startRailgunProcess } = require("./railgun-process.js");
-const vault = require("./unbound/credential-session-transition");
 const identities = new WeakMap(),
   owners = new Set(),
   signers = new WeakMap(),
@@ -61,35 +61,54 @@ function assertRailgunIdentity(identity, expectedHandle) {
     for (const key of ['kind', 'principal', 'protocol', 'deployment', 'chainId'])
       assert.equal(expected.subject[key], context.subject[key]);
   }
-  if (saved.vaultSignal !== vault.getSessionSignal()) throw fail();
+  if (saved.vaultSignal !== credentials.currentSession()) throw fail();
   return identity.descriptor;
+}
+// A private owner alone creates these callbacks. ready is a loan, not closure:
+// original host settlement stays held until the original utility/use is drained.
+async function borrowCredential(saved, handle, purpose, signal, loans) {
+  const loan = createRailgunCredentialLoan({
+    handle, vaultSession: saved.vaultSignal, accountIndex: saved.accountIndex, purpose, signal,
+  });
+  const entry = { loan, wipe: undefined };
+  loans.add(entry);
+  const { bytes } = await loan.ready;
+  entry.wipe = retainLoan(saved.owner, bytes);
+  return bytes;
+}
+async function finishCredentialLoans(loans) {
+  for (const entry of loans) entry.loan.release();
+  const settled = await Promise.allSettled([...loans].map(async (entry) => {
+    try { await entry.loan.closed; } finally { entry.wipe?.(); }
+  }));
+  const failed = settled.find((entry) => entry.status === 'rejected');
+  if (failed) throw failed.reason;
 }
 async function withRailgunViewingCredential(identity, use) {
   assertRailgunIdentity(identity);
   assert.equal(typeof use, 'function');
-  const saved = identities.get(identity),
-    key = await saved.view.deriveBytesAt(`m/420'/1984'/0'/0'/${saved.accountIndex}'`);
-  const releaseLoan = retainLoan(saved.owner, key);
-  const wipe = () => key.fill(0);
-  identity.signal.addEventListener('abort', wipe, { once: true });
+  const saved = identities.get(identity), loans = new Set();
+  let result, error, failed = false;
   try {
+    let key;
+    try { key = await borrowCredential(saved, saved.handle, 'viewing', identity.signal, loans); }
+    catch (error) { assertRailgunIdentity(identity); throw error; }
     assertRailgunIdentity(identity);
-    const result = await use({
-      viewingKey: key,
-      spendingPublicKey: identity.descriptor.spendingPublicKey,
-    });
+    result = await use({ viewingKey: key, spendingPublicKey: identity.descriptor.spendingPublicKey });
     assertRailgunIdentity(identity);
-    return result;
-  } finally {
-    identity.signal.removeEventListener('abort', wipe);
-    releaseLoan();
+  } catch (cause) { failed = true; error = cause; }
+  try { await finishCredentialLoans(loans); } catch (cause) {
+    if (!failed) { failed = true; error = cause; }
   }
+  if (failed) throw error;
+  assertRailgunIdentity(identity);
+  return result;
 }
 async function openRailgunIdentity({ archive, accountIndex = 0 }) {
   assert.ok(Number.isInteger(accountIndex) && accountIndex >= 0 && accountIndex <= 65535);
   archive = verifyRailgunEngineRuntime(archive);
   const parent = openPrivacySession(),
-    vaultSignal = vault.getSessionSignal();
+    vaultSignal = credentials.currentSession();
   const subject = {
     kind: 'private-account',
     principal: `railgun:${accountIndex}`,
@@ -108,7 +127,7 @@ async function openRailgunIdentity({ archive, accountIndex = 0 }) {
     signal: AbortSignal.any([parent.signal, vaultSignal]),
     isCurrent: () => {
       getPrivacyContext(parentHandle);
-      return !quarantinedOwners.has(owner) && vaultSignal === vault.getSessionSignal();
+      return !quarantinedOwners.has(owner) && vaultSignal === credentials.currentSession();
     },
   });
   const handle = scope.getContext(subject);
@@ -124,15 +143,6 @@ async function openRailgunIdentity({ archive, accountIndex = 0 }) {
     { once: true }
   );
   owners.add(owner);
-  let keystore, view;
-  try {
-    keystore = createRailgunKeystore(handle, accountIndex);
-    view = createRailgunViewingKeystore(handle, accountIndex);
-  } catch (error) {
-    scope.close();
-    owners.delete(owner);
-    throw error;
-  }
   let task;
   const close = () => scope.close();
   const releaseOwner = () => {
@@ -144,9 +154,9 @@ async function openRailgunIdentity({ archive, accountIndex = 0 }) {
       result,
       guards;
     const loans = new Set();
-    const keyPath = `m/${purpose === 'spending-public' ? 44 : 420}'/1984'/0'/0'/${accountIndex}'`;
+    const operationHandle = scope.getContext({ ...subject, operation: purpose });
     task = startRailgunProcess({
-      handle: scope.getContext({ ...subject, operation: purpose }),
+      handle: operationHandle,
       executionJob: purpose,
       input: JSON.stringify({
         archive,
@@ -165,11 +175,10 @@ async function openRailgunIdentity({ archive, accountIndex = 0 }) {
           assert.equal(message.id, ++sequence);
           if (message.id === 1) {
             assert.deepEqual(message, { id: 1, method: 'key', purpose });
-            const bytes = await (purpose === 'spending-public' ? keystore : view).deriveBytesAt(
-              keyPath
+            const bytes = await borrowCredential(
+              { vaultSignal, accountIndex, owner }, operationHandle,
+              purpose === 'spending-public' ? 'spending-public' : 'viewing', scope.signal, loans
             );
-            const releaseLoan = retainLoan(owner, bytes);
-            loans.add(releaseLoan);
             try {
               getPrivacyContext(handle);
               // Ownership passes to the supervisor, which wipes even a late
@@ -200,13 +209,16 @@ async function openRailgunIdentity({ archive, accountIndex = 0 }) {
       assert.ok(Array.isArray(guards.hooks) && guards.hooks.length > 0);
       assert.equal(new Set(guards.hooks).size, guards.hooks.length);
       assert.equal(guards.canaries, guards.hooks.length);
+      await finishCredentialLoans(loans);
+      getPrivacyContext(handle);
       return result;
     } finally {
       task.close();
       await task.closed;
-      for (const releaseLoan of loans) releaseLoan();
-      task = null;
-      releaseOwner();
+      try { await finishCredentialLoans(loans); } finally {
+        task = null;
+        releaseOwner();
+      }
     }
   }
   try {
@@ -235,7 +247,7 @@ async function openRailgunIdentity({ archive, accountIndex = 0 }) {
       accountIndex,
     });
     const identity = Object.freeze({ descriptor, signal: scope.signal, close });
-    identities.set(identity, { handle, vaultSignal, view, keystore, accountIndex, owner });
+    identities.set(identity, { handle, vaultSignal, accountIndex, owner });
     assertRailgunIdentity(identity);
     return identity;
   } catch {
@@ -322,9 +334,7 @@ async function signPrivateIntent({
       );
       await gate.assertCurrent();
       current();
-      const bytes = await saved.keystore.deriveBytesAt(`m/44'/1984'/0'/0'/${saved.accountIndex}'`);
-      const releaseLoan = retainLoan(saved.owner, bytes);
-      loans.add(releaseLoan);
+      const bytes = await borrowCredential(saved, handle, 'spending-sign', scope.signal, loans);
       const wipe = () => bytes.fill(0);
       scope.signal.addEventListener('abort', wipe, { once: true });
       try {
@@ -376,6 +386,8 @@ async function signPrivateIntent({
     assert.ok(value && sequence === 2);
     task.close();
     assert.equal((await task.closed).code, 'RAILGUN_PROCESS_CLOSED');
+    await Promise.allSettled([...requests]);
+    await finishCredentialLoans(loans);
     assertRailgunIdentity(identity);
     assert.ok(!scope.signal.aborted);
     return value;
@@ -391,8 +403,9 @@ async function signPrivateIntent({
     // A child can exit while its host durability callback is still pending.
     // Keep identity exclusion until that callback has observed revocation.
     await Promise.allSettled([...requests]);
-    for (const releaseLoan of loans) releaseLoan();
-    signing.delete(identity);
+    // Success already checked host settlement before scope revocation. Here an
+    // ordinary failed operation may make the closed host callback reject too.
+    try { await finishCredentialLoans(loans); } finally { signing.delete(identity); }
   }
 }
 async function signRailgunPrivateIntent(options) {
@@ -550,10 +563,8 @@ async function signRelayIntent({
         await observe(gate.assertCurrent());
         current();
         const bytes = await observe(
-          saved.keystore.deriveBytesAt(`m/44'/1984'/0'/0'/${saved.accountIndex}'`)
+          borrowCredential(saved, handle, 'spending-sign', scope.signal, loans)
         );
-        const releaseLoan = retainLoan(saved.owner, bytes);
-        loans.add(releaseLoan);
         const wipe = () => bytes.fill(0);
         scope.signal.addEventListener('abort', wipe, { once: true });
         try {
@@ -630,9 +641,8 @@ async function signRelayIntent({
   try {
     task = startRailgunProcess({
       handle,
-      filename: require.resolve("./railgun-relay-sign-job.js"),
+      executionJob: 'relay-sign',
       input: JSON.stringify(payload),
-      binaryKey: true,
       startupMs: Math.min(30000, timeoutMs),
       lifetimeMs: timeoutMs,
       heapMb: 128,
@@ -656,6 +666,8 @@ async function signRelayIntent({
     assert.ok(value && sequence === 2 && issued && !brokerFailed);
     task.close();
     assert.equal((await taskClosed).code, 'RAILGUN_PROCESS_CLOSED');
+    await Promise.allSettled([...requests, ...originals]);
+    await finishCredentialLoans(loans);
     assertRailgunIdentity(identity);
     assert.ok(!scope.signal.aborted);
   } catch (error) {
@@ -676,7 +688,12 @@ async function signRelayIntent({
     // Ordinary rejected callback work is settled; an unobservable original or
     // rejected child closure quarantines this owner instead of claiming drain.
     await Promise.allSettled([...requests, ...originals]);
-    for (const releaseLoan of loans) cleanup(releaseLoan);
+    // Unknown child/work retains the host callback, not only a wiped byte view.
+    if (!unobserved) {
+      try { await finishCredentialLoans(loans); } catch (error) {
+        if (!outcomeFailed) { outcomeFailed = true; outcomeError = error; }
+      }
+    }
     if (!unobserved) signing.delete(identity);
   }
   if (unobserved) {

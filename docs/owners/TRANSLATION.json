@@ -199,7 +199,7 @@
         "railgun-relay-local-recovery-v4",
         "railgun-wallet-catalog-v1:"
       ],
-      "destinationSha256": "1bc811f278bceef9e8a1516eb1142dfc725fbfab0b60bb84745ebd62c65b7c11"
+      "destinationSha256": "79ff32c60048d7cde919635568c68144f5cabab64638ce08a2c7a956906a75b7"
     },
     {
       "source": "src/main/wallet/railgun-account-fence.js",
@@ -1063,7 +1063,7 @@
         "railgun-private-transfer",
         "railgun-token-unshield"
       ],
-      "destinationSha256": "c442aa083e5ada0c1b6d39f35bdf398c27c9bf2318a3bbd8b73d8950af079a8c"
+      "destinationSha256": "21dc93c0e148e34be8e66655188bc6a4d0dada44deca42320afeab7a8dca6503"
     },
     {
       "source": "src/main/wallet/railgun-kohaku-read-data.js",
@@ -4323,7 +4323,7 @@
         "railgun-token-unshield",
         "railgun-transact"
       ],
-      "destinationSha256": "37f90bf15fef9e5fe49c5bbce933b02585ade189e744842da274efe5c980752f"
+      "destinationSha256": "6eed619e6c24d7a6e4b54ced4ddb9e444defd5409916da147bce267386434faf"
     },
     {
       "source": "src/main/wallet/railgun-private-verify-job.js",

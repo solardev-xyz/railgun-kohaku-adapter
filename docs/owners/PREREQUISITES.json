@@ -16,8 +16,8 @@
   },
   "newPrivateBindings": {
     "src/owners/host-bindings.js": {
-      "bytes": 4174,
-      "sha256": "3e721abb7e4d43803234a4162be732bf9c02594a58e77c631ee73e647e6ce638"
+      "bytes": 5095,
+      "sha256": "3c03b0ac0bd0301b288f2e6e8258e30a2ab7df914a999f8d34f0c0cf034eef43"
     },
     "src/owners/worker-host-bindings.js": {
       "bytes": 2223,
@@ -26,6 +26,10 @@
     "src/owners/context-bindings.js": {
       "bytes": 677,
       "sha256": "4120da76f6d1a6bd83d2d7d8c23c50b97f010ab271650aa3cab777ef6b45900d"
+    },
+    "src/owners/credential-loan.js": {
+      "bytes": 4804,
+      "sha256": "fd7d930854102271ce1bec8b8f07bd74b9b4a8fd5f5a6a58e7c076e4463e894e"
     }
   },
   "activation": false,
@@ -34,5 +38,13 @@
   "dependencyObligations": {
     "better-sqlite3": "13.0.3 exact peer approved; declaration/lock/runtime validation pending actual activation",
     "ethers": "existing ^6.17.0 peer unchanged"
+  },
+  "submitter": {
+    "revision": "394a9c3ea3def305d8770e5a4d690786910b7941",
+    "source": "src/main/identity/railgun-submitter-host.js",
+    "file": {
+      "bytes": 1345,
+      "sha256": "cc246e30082e56db6fd7da7d967207034fde284eb519265fda765afd3da2d2dd"
+    }
   }
 }
