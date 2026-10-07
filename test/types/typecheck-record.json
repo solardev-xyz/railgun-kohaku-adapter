@@ -45,7 +45,10 @@
     "types/index.d.ts": "ee3aa1076f192ab9af3546c3a49e3352d6a087fc804dbd2ff8e71480b01c3a8c",
     "types/railgun-kohaku-private-contract.d.ts": "349a7daa4dcb22d65ad3db5cd184d9a2620c428c7cadffbcd0d0ff33af20a439",
     "types/railgun-kohaku-public-contract.d.ts": "08769e3485a50a9bd63c936df870df16afb66318c0f40f6b8c23fff964858492",
-    "types/railgun-kohaku-snapshot-contract.d.ts": "72230958335021c87c1513e311754a6eaa0a7df80a8bc959e93b585af11c3d81"
+    "types/railgun-kohaku-read-contract.d.ts": "bd42421245b79b91300d6943832ff4f0ffeb18f4a6d450538edb4a1bd707d610",
+    "types/railgun-kohaku-snapshot-contract.d.ts": "72230958335021c87c1513e311754a6eaa0a7df80a8bc959e93b585af11c3d81",
+    "types/read.d.mts": "5ce4a59d320887e90e2b95fb5943f67d80e0ebc7e28880da8f61d2941ed1bc5b",
+    "types/read.d.ts": "44ffd7206458a14fb4bf963806dfbcf5d4283b235e0da44513aada8c319705e6"
   },
   "resolution": {
     "portableRequire": {
@@ -56,6 +59,16 @@
       "file": "types/index.d.mts",
       "package": "@freedom/railgun-kohaku-adapter@0.1.0"
     },
+    "portableReadRequire": {
+      "file": "types/read.d.ts",
+      "package": "@freedom/railgun-kohaku-adapter@0.1.0"
+    },
+    "portableReadImport": {
+      "file": "types/read.d.mts",
+      "package": "@freedom/railgun-kohaku-adapter@0.1.0"
+    },
+    "sourceSubpathRequire": null,
+    "sourceSubpathImport": null,
     "bridgeSelf": {
       "file": "types/index.d.mts",
       "package": "@freedom/railgun-kohaku-adapter@0.1.0"
@@ -113,6 +126,25 @@
       "createRailgunKohakuSnapshotPlugin"
     ]
   },
+  "readExports": {
+    "count": 9,
+    "sameNames": true,
+    "sameIdentity": true,
+    "declaredIn": [
+      "types/railgun-kohaku-read-contract.d.ts"
+    ],
+    "names": [
+      "ReadDispatchPorts",
+      "ReadDispatchView",
+      "ReadFilter",
+      "ReadFilterKey",
+      "ReadMethod",
+      "dispatchRailgunKohakuRead",
+      "normalizeRailgunKohakuReadFilter",
+      "projectRailgunKohakuBalance",
+      "projectRailgunKohakuNotes"
+    ]
+  },
   "portable": [
     {
       "file": "test/types/consumer-cjs.cts",
@@ -123,6 +155,20 @@
     },
     {
       "file": "test/types/consumer-esm.mts",
+      "expected": [],
+      "diagnostics": [],
+      "pass": true,
+      "nodeModulesFiles": []
+    },
+    {
+      "file": "test/types/consumer-read-cjs.cts",
+      "expected": [],
+      "diagnostics": [],
+      "pass": true,
+      "nodeModulesFiles": []
+    },
+    {
+      "file": "test/types/consumer-read-esm.mts",
       "expected": [],
       "diagnostics": [],
       "pass": true,
@@ -185,6 +231,89 @@
         {
           "key": "test/types/negative/private-host-missing-broadcast.cts:15 TS2741",
           "message": "Property 'broadcast' is missing in type '{ signal: AbortSignal; closed: Promise<void>; instanceId: () => Promise<string>; balance: () => Promise<never[]>; notes: () => Promise<never[]>; prepareTransfer: () => Promise<...>; prepareUnshield: () => Promise<...>; close: () => undefined; }' but required in type 'RestrictedPrivateHost'."
+        }
+      ],
+      "pass": true,
+      "nodeModulesFiles": []
+    },
+    {
+      "file": "test/types/negative/read-helper-arguments.cts",
+      "expected": [
+        "test/types/negative/read-helper-arguments.cts:25 TS2769",
+        "test/types/negative/read-helper-arguments.cts:26 TS2322",
+        "test/types/negative/read-helper-arguments.cts:27 TS2322",
+        "test/types/negative/read-helper-arguments.cts:28 TS2554",
+        "test/types/negative/read-helper-arguments.cts:29 TS2345",
+        "test/types/negative/read-helper-arguments.cts:30 TS2345",
+        "test/types/negative/read-helper-arguments.cts:31 TS2322",
+        "test/types/negative/read-helper-arguments.cts:33 TS2322"
+      ],
+      "diagnostics": [
+        {
+          "key": "test/types/negative/read-helper-arguments.cts:25 TS2769",
+          "message": "No overload matches this call."
+        },
+        {
+          "key": "test/types/negative/read-helper-arguments.cts:26 TS2322",
+          "message": "Type 'readonly ReadFilterKey[] | null' is not assignable to type 'readonly string[]'."
+        },
+        {
+          "key": "test/types/negative/read-helper-arguments.cts:27 TS2322",
+          "message": "Type '{ __type: string; }' is not assignable to type 'string'."
+        },
+        {
+          "key": "test/types/negative/read-helper-arguments.cts:28 TS2554",
+          "message": "Expected 3 arguments, but got 2."
+        },
+        {
+          "key": "test/types/negative/read-helper-arguments.cts:29 TS2345",
+          "message": "Argument of type 'string' is not assignable to parameter of type 'boolean'."
+        },
+        {
+          "key": "test/types/negative/read-helper-arguments.cts:30 TS2345",
+          "message": "Argument of type '\"prepareTransfer\"' is not assignable to parameter of type 'ReadMethod'."
+        },
+        {
+          "key": "test/types/negative/read-helper-arguments.cts:31 TS2322",
+          "message": "Type 'string' is not assignable to type 'boolean | undefined'."
+        },
+        {
+          "key": "test/types/negative/read-helper-arguments.cts:33 TS2322",
+          "message": "Type 'bigint' is not assignable to type 'string'."
+        }
+      ],
+      "pass": true,
+      "nodeModulesFiles": []
+    },
+    {
+      "file": "test/types/negative/read-subpath-boundary.mts",
+      "expected": [
+        "test/types/negative/read-subpath-boundary.mts:4 TS2307",
+        "test/types/negative/read-subpath-boundary.mts:5 TS2307",
+        "test/types/negative/read-subpath-boundary.mts:6 TS2307",
+        "test/types/negative/read-subpath-boundary.mts:7 TS2305",
+        "test/types/negative/read-subpath-boundary.mts:8 TS1192"
+      ],
+      "diagnostics": [
+        {
+          "key": "test/types/negative/read-subpath-boundary.mts:4 TS2307",
+          "message": "Cannot find module '@freedom/railgun-kohaku-adapter/src/railgun-kohaku-read-dispatch.js' or its corresponding type declarations."
+        },
+        {
+          "key": "test/types/negative/read-subpath-boundary.mts:5 TS2307",
+          "message": "Cannot find module '@freedom/railgun-kohaku-adapter/read.cjs' or its corresponding type declarations."
+        },
+        {
+          "key": "test/types/negative/read-subpath-boundary.mts:6 TS2307",
+          "message": "Cannot find module '@freedom/railgun-kohaku-adapter/types/read' or its corresponding type declarations."
+        },
+        {
+          "key": "test/types/negative/read-subpath-boundary.mts:7 TS2305",
+          "message": "Module '\"@freedom/railgun-kohaku-adapter\"' has no exported member 'normalizeRailgunKohakuReadFilter'."
+        },
+        {
+          "key": "test/types/negative/read-subpath-boundary.mts:8 TS1192",
+          "message": "Module '\"<root>/types/read\"' has no default export."
         }
       ],
       "pass": true,

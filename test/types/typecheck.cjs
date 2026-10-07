@@ -3,7 +3,8 @@
 // this package: TYPESCRIPT_PATH must name an installed `typescript` package
 // directory, or its lib/typescript.js. Programs are compiled, never emitted or run.
 //
-// - Portable: consumer-cjs.cts, consumer-esm.mts and negative/* under strict
+// - Portable: consumer-cjs.cts, consumer-esm.mts, the "./read" subpath consumers
+//   consumer-read-cjs.cts and consumer-read-esm.mts, and negative/* under strict
 //   NodeNext, with no skipLibCheck, no paths and no ambient types. They import
 //   the package by its own name and must load no file from node_modules.
 // - Upstream bridge: upstream/* against the installed @kohaku-eth/plugins
@@ -36,6 +37,9 @@ const CONTRACTS = [
   'types/railgun-kohaku-public-contract.d.ts',
 ];
 const EXPORT_COUNT = 32; // five factories and 27 types
+const READ_CONTRACTS = ['types/railgun-kohaku-read-contract.d.ts'];
+const READ_EXPORT_COUNT = 9; // four read helpers and five types
+const SOURCE_SUBPATH = `${SELF}/src/railgun-kohaku-read-dispatch.js`;
 
 // Diagnostics of the bridge's positive program without the bridge setup.
 const CONTROLS = {
@@ -216,6 +220,30 @@ function main() {
       portable,
       ts.ModuleKind.ESNext
     ),
+    portableReadRequire: resolve(
+      `${SELF}/read`,
+      path.join(HERE, 'consumer-read-cjs.cts'),
+      portable,
+      ts.ModuleKind.CommonJS
+    ),
+    portableReadImport: resolve(
+      `${SELF}/read`,
+      path.join(HERE, 'consumer-read-esm.mts'),
+      portable,
+      ts.ModuleKind.ESNext
+    ),
+    sourceSubpathRequire: resolve(
+      SOURCE_SUBPATH,
+      path.join(HERE, 'consumer-read-cjs.cts'),
+      portable,
+      ts.ModuleKind.CommonJS
+    ),
+    sourceSubpathImport: resolve(
+      SOURCE_SUBPATH,
+      path.join(HERE, 'consumer-read-esm.mts'),
+      portable,
+      ts.ModuleKind.ESNext
+    ),
     bridgeSelf: resolve(SELF, path.join(HERE, 'upstream', 'conformance.ts'), bridge),
     bridgeUpstream: resolve(UPSTREAM, path.join(HERE, 'upstream', 'conformance.ts'), bridge),
     bridgeBroadcaster: resolve(
@@ -227,6 +255,8 @@ function main() {
   const expectedResolution = {
     portableRequire: 'types/index.d.ts',
     portableImport: 'types/index.d.mts',
+    portableReadRequire: 'types/read.d.ts',
+    portableReadImport: 'types/read.d.mts',
     bridgeSelf: 'types/index.d.mts',
     bridgeUpstream: 'node_modules/@kohaku-eth/plugins/dist/index.d.ts',
     bridgeBroadcaster: 'node_modules/@kohaku-eth/plugins/dist/broadcaster/base.d.ts',
@@ -238,6 +268,12 @@ function main() {
       JSON.stringify(resolution[key])
     );
   }
+  // Only "." and "./read" are exported: a source file is not a subpath.
+  check(
+    'resolution source subpath refused',
+    resolution.sourceSubpathRequire === null && resolution.sourceSubpathImport === null,
+    JSON.stringify([resolution.sourceSubpathRequire, resolution.sourceSubpathImport])
+  );
   check(
     'resolution upstream version',
     resolution.bridgeUpstream &&
@@ -246,10 +282,16 @@ function main() {
   );
 
   // Portable campaign.
-  const positives = [path.join(HERE, 'consumer-cjs.cts'), path.join(HERE, 'consumer-esm.mts')];
+  const positives = [
+    'consumer-cjs.cts',
+    'consumer-esm.mts',
+    'consumer-read-cjs.cts',
+    'consumer-read-esm.mts',
+  ].map((name) => path.join(HERE, name));
   const negatives = listPrograms(path.join(HERE, 'negative'), ['.cts', '.mts', '.ts']);
   const portableResults = [];
-  let entryProgram = null;
+  let entryProgram = null,
+    readProgram = null;
   for (const file of [...positives, ...negatives]) {
     const expected = positives.includes(file) ? [] : expectedDiagnostics(file);
     if (!positives.includes(file))
@@ -263,47 +305,58 @@ function main() {
     check(`portable ${rel(file)} self-contained`, external.length === 0, external.join(', '));
     portableResults.push(result);
     if (file === positives[0]) entryProgram = program;
+    if (file === positives[2]) readProgram = program;
   }
 
-  // Both entries export the same 32 names with one declaration identity each.
-  const checker = entryProgram.getTypeChecker();
-  const entryExports = (relative) => {
-    const sourceFile = entryProgram.getSourceFile(path.join(ROOT, relative));
-    if (!sourceFile) return new Map();
-    const symbols = checker.getExportsOfModule(checker.getSymbolAtLocation(sourceFile));
-    return new Map(
-      symbols.map((symbol) => [
-        symbol.getName(),
-        symbol.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(symbol) : symbol,
-      ])
-    );
-  };
-  const cjsExports = entryExports('types/index.d.ts');
-  const esmExports = entryExports('types/index.d.mts');
-  const names = [...cjsExports.keys()].sort();
-  const parity = {
-    count: names.length,
-    sameNames: JSON.stringify(names) === JSON.stringify([...esmExports.keys()].sort()),
-    sameIdentity: names.every((name) => cjsExports.get(name) === esmExports.get(name)),
-    declaredIn: [
-      ...new Set(
-        names.flatMap((name) =>
-          (cjsExports.get(name).declarations || []).map((declaration) =>
-            rel(declaration.getSourceFile().fileName)
+  // Both conditions of each entry export the same names with one declaration
+  // identity each: 32 for ".", 9 for "./read".
+  function entryParity(program, cjsFile, esmFile) {
+    const checker = program.getTypeChecker();
+    const entryExports = (relative) => {
+      const sourceFile = program.getSourceFile(path.join(ROOT, relative));
+      if (!sourceFile) return new Map();
+      const symbols = checker.getExportsOfModule(checker.getSymbolAtLocation(sourceFile));
+      return new Map(
+        symbols.map((symbol) => [
+          symbol.getName(),
+          symbol.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(symbol) : symbol,
+        ])
+      );
+    };
+    const cjsExports = entryExports(cjsFile);
+    const esmExports = entryExports(esmFile);
+    const names = [...cjsExports.keys()].sort();
+    return {
+      count: names.length,
+      sameNames: JSON.stringify(names) === JSON.stringify([...esmExports.keys()].sort()),
+      sameIdentity: names.every((name) => cjsExports.get(name) === esmExports.get(name)),
+      declaredIn: [
+        ...new Set(
+          names.flatMap((name) =>
+            (cjsExports.get(name).declarations || []).map((declaration) =>
+              rel(declaration.getSourceFile().fileName)
+            )
           )
-        )
-      ),
-    ].sort(),
-    names,
-  };
-  check('exports count', parity.count === EXPORT_COUNT, String(parity.count));
-  check('exports names', parity.sameNames, 'index.d.ts and index.d.mts differ');
-  check('exports identity', parity.sameIdentity, 'an export has two declaration identities');
-  check(
-    'exports origin',
-    JSON.stringify(parity.declaredIn) === JSON.stringify([...CONTRACTS].sort()),
-    JSON.stringify(parity.declaredIn)
-  );
+        ),
+      ].sort(),
+      names,
+    };
+  }
+  const parity = entryParity(entryProgram, 'types/index.d.ts', 'types/index.d.mts');
+  const readParity = entryParity(readProgram, 'types/read.d.ts', 'types/read.d.mts');
+  for (const [label, entry, count, contracts] of [
+    ['exports', parity, EXPORT_COUNT, CONTRACTS],
+    ['read exports', readParity, READ_EXPORT_COUNT, READ_CONTRACTS],
+  ]) {
+    check(`${label} count`, entry.count === count, String(entry.count));
+    check(`${label} names`, entry.sameNames, 'the CommonJS and ESM declarations differ');
+    check(`${label} identity`, entry.sameIdentity, 'an export has two declaration identities');
+    check(
+      `${label} origin`,
+      JSON.stringify(entry.declaredIn) === JSON.stringify([...contracts].sort()),
+      JSON.stringify(entry.declaredIn)
+    );
+  }
 
   // Upstream bridge.
   const upstreamManifest = JSON.parse(
@@ -393,6 +446,7 @@ function main() {
     shippedDeclarations: shipped,
     resolution,
     exports: parity,
+    readExports: readParity,
     portable: portableResults,
     upstream: {
       package: `${UPSTREAM}@${upstreamManifest.version}`,
@@ -411,7 +465,7 @@ function main() {
   console.log(
     `portable: ${positives.length} positive, ${negativeCount} negative programs; ` +
       `bridge: ${bridgeResults.length - bridgeNegatives} positive, ${bridgeNegatives} negative; ` +
-      `controls: ${controlResults.length}; exports: ${parity.count}`
+      `controls: ${controlResults.length}; exports: ${parity.count}, read: ${readParity.count}`
   );
   if (args.record) {
     fs.writeFileSync(args.record, JSON.stringify(record, null, 2) + '\n');
