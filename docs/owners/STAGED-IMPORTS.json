@@ -1801,101 +1801,110 @@
       {
         "kind": "require",
         "request": "../data/railgun-private-intent.js",
-        "start": 11626,
-        "end": 11661,
-        "callStart": 11618,
-        "callEnd": 11662,
-        "line": 287
+        "start": 11663,
+        "end": 11698,
+        "callStart": 11655,
+        "callEnd": 11699,
+        "line": 288
       },
       {
         "kind": "require",
         "request": "../data/railgun-private-results.js",
-        "start": 12781,
-        "end": 12817,
-        "callStart": 12773,
-        "callEnd": 12818,
-        "line": 325
-      },
-      {
-        "kind": "require",
-        "request": "./railgun-private-operation.js",
-        "start": 13028,
-        "end": 13060,
-        "callStart": 13020,
-        "callEnd": 13061,
+        "start": 12907,
+        "end": 12943,
+        "callStart": 12899,
+        "callEnd": 12944,
         "line": 330
       },
       {
         "kind": "require",
-        "request": "../execution/railgun-relay-intent.js",
-        "start": 17183,
-        "end": 17221,
-        "callStart": 17175,
-        "callEnd": 17222,
-        "line": 447
+        "request": "./railgun-private-operation.js",
+        "start": 13154,
+        "end": 13186,
+        "callStart": 13146,
+        "callEnd": 13187,
+        "line": 335
       },
       {
         "kind": "require",
         "request": "util",
-        "start": 18861,
-        "end": 18867,
-        "callStart": 18853,
-        "callEnd": 18868,
-        "line": 499
+        "start": 15403,
+        "end": 15409,
+        "callStart": 15395,
+        "callEnd": 15410,
+        "line": 399
+      },
+      {
+        "kind": "require",
+        "request": "../execution/railgun-relay-intent.js",
+        "start": 18381,
+        "end": 18419,
+        "callStart": 18373,
+        "callEnd": 18420,
+        "line": 478
+      },
+      {
+        "kind": "require",
+        "request": "util",
+        "start": 20059,
+        "end": 20065,
+        "callStart": 20051,
+        "callEnd": 20066,
+        "line": 530
       },
       {
         "kind": "require",
         "request": "../execution/railgun-relay-quote-data.js",
-        "start": 19865,
-        "end": 19907,
-        "callStart": 19857,
-        "callEnd": 19908,
-        "line": 539
+        "start": 21063,
+        "end": 21105,
+        "callStart": 21055,
+        "callEnd": 21106,
+        "line": 570
       },
       {
         "kind": "require",
         "request": "./railgun-relay-operation.js",
-        "start": 20609,
-        "end": 20639,
-        "callStart": 20601,
-        "callEnd": 20640,
-        "line": 554
+        "start": 21807,
+        "end": 21837,
+        "callStart": 21799,
+        "callEnd": 21838,
+        "line": 585
       },
       {
         "kind": "require",
         "request": "util",
-        "start": 21761,
-        "end": 21767,
-        "callStart": 21753,
-        "callEnd": 21768,
-        "line": 581
-      },
-      {
-        "kind": "require",
-        "request": "../execution/railgun-engine-manifest.json",
-        "start": 22742,
-        "end": 22785,
-        "callStart": 22734,
-        "callEnd": 22786,
+        "start": 22959,
+        "end": 22965,
+        "callStart": 22951,
+        "callEnd": 22966,
         "line": 612
       },
       {
         "kind": "require",
+        "request": "../execution/railgun-engine-manifest.json",
+        "start": 23940,
+        "end": 23983,
+        "callStart": 23932,
+        "callEnd": 23984,
+        "line": 643
+      },
+      {
+        "kind": "require",
         "request": "../data/railgun-private-signature.js",
-        "start": 23426,
-        "end": 23464,
-        "callStart": 23418,
-        "callEnd": 23465,
-        "line": 626
+        "start": 24624,
+        "end": 24662,
+        "callStart": 24616,
+        "callEnd": 24663,
+        "line": 657
       },
       {
         "kind": "require",
         "request": "../execution/railgun-relay-intent.js",
-        "start": 26634,
-        "end": 26672,
-        "callStart": 26626,
-        "callEnd": 26673,
-        "line": 726
+        "start": 27832,
+        "end": 27870,
+        "callStart": 27824,
+        "callEnd": 27871,
+        "line": 757
       }
     ],
     "dynamic": [],

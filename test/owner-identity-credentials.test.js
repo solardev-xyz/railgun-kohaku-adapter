@@ -1584,3 +1584,65 @@ test("late host completion keeps relay signing exclusion after the child has clo
   await work;
   expect(mockHostActive).toBe(0);
 });
+
+describe("private signer stable-account quarantine", () => {
+  let profile;
+  beforeEach(() => {
+    mockParent.close();
+    profile = `private-unknown-${++quarantineProfile}`;
+    mockParent = createPrivacyScope({
+      profileId: profile,
+      signal: mockVault.signal,
+    });
+  });
+  test.each(["closed identity", "replaced vault"])(
+    "%s cannot reopen the same account after an unobserved original signer closure",
+    async (mode) => {
+      const options = await signingFixture();
+      mockPermitConsume = () => ({ assertCurrent: async () => {} });
+      let reject;
+      const lost = new Promise((_resolve, no) => {
+        reject = no;
+      });
+      lost.catch(() => {});
+      const job = mockSignJob;
+      mockSignJob = async (task) => {
+        await job(task);
+        reject(Error("controlled unknown exit"));
+      };
+      mockSignTask = (task) => {
+        task.closed = lost;
+      };
+      await expect(signRailgunPrivateIntent(options)).rejects.toMatchObject({
+        code: "RAILGUN_PRIVATE_SIGNING_REFUSED",
+      });
+      expect(identity.signal.aborted).toBe(true);
+      expect(mockHostActive).toBe(1);
+      expect(mockDerived[0].key.equals(Buffer.alloc(32))).toBe(true);
+      identity.close();
+      if (mode === "replaced vault") {
+        mockVault.abort();
+        mockParent.close();
+        mockVault = new AbortController();
+        mockParent = createPrivacyScope({
+          profileId: profile,
+          signal: mockVault.signal,
+        });
+      }
+      mockSignTask = undefined;
+      const before = mockInputs.length;
+      await expect(
+        openRailgunIdentity({ archive: "/fixture.asar" }),
+      ).rejects.toMatchObject({ code: "RAILGUN_IDENTITY_REFUSED" });
+      expect(mockInputs).toHaveLength(before);
+      // A separate account does not share the quarantined owner; the original
+      // callback stays held and no drain is inferred from this successful open.
+      identity = await openRailgunIdentity({
+        archive: "/fixture.asar",
+        accountIndex: 1,
+      });
+      expect(identity.descriptor.accountIndex).toBe(1);
+      expect(mockHostActive).toBe(1);
+    },
+  );
+});
