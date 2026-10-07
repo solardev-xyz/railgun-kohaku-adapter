@@ -4,6 +4,7 @@ const fs = require("fs"),
   vm = require("vm"),
   { createHash } = require("crypto");
 const root = path.join(__dirname, "..");
+const policyTransitions = require("../docs/owners/POLICY-TRANSITIONS.json");
 const signerTransitions = require("../docs/owners/SIGNER-LIFETIME-TRANSITIONS.json");
 const callerTransitions = require("../docs/owners/CALLER-TRANSITIONS.json");
 const processTransitions = require("../docs/owners/PROCESS-TRANSITIONS.json");
@@ -12,12 +13,17 @@ const transitions = require("../docs/owners/CREDENTIAL-TRANSITIONS.json");
 const narrowing = require("../docs/owners/KEY-NARROWING.json");
 const staged = {
   ...require("../docs/owners/STAGED-IMPORTS.json"),
+  ...require("../docs/owners/POLICY-STAGED-IMPORTS.json"),
   ...require("../docs/owners/SIGNER-LIFETIME-STAGED-IMPORTS.json"),
 };
 const persisted = require("../docs/owners/PERSISTED-LITERALS.json");
 const imports = require("../docs/owners/IMPORTS.json");
 const retired = require("../docs/owners/RETIRED-RUNTIME.json");
-const sourceFile = (file) => path.join(root, retired.find((row) => row.source === file)?.preserved || file);
+const sourceFile = (file) =>
+  path.join(
+    root,
+    retired.find((row) => row.source === file)?.preserved || file,
+  );
 const sha = (value) => createHash("sha256").update(value).digest("hex");
 function undo(text, edits) {
   for (const edit of [...edits].reverse()) {
@@ -62,6 +68,14 @@ test("every translated algorithm reconstructs its exact immutable original bytes
     reused = 0;
   for (const row of translation.files) {
     let text = fs.readFileSync(sourceFile(row.destination), "utf8");
+    const policyTransition = policyTransitions.changes.find(
+      (change) => change.file === row.destination,
+    );
+    if (policyTransition) {
+      expect(sha(text)).toBe(policyTransition.afterSha256);
+      text = undo(text, policyTransition.replacements);
+      expect(sha(text)).toBe(policyTransition.beforeSha256);
+    }
     const signerTransition = signerTransitions.changes.find(
       (change) => change.file === row.destination,
     );
@@ -381,14 +395,15 @@ test("all19 reviewed reverse owners move privately with immutable source pins an
   }
 });
 
-
 test("generic filename loader is preserved as historical text and absent from runtime", () => {
   expect(retired).toHaveLength(1);
   const row = retired[0];
   expect(row.source).toBe("src/owners/railgun-process-entry.js");
   expect(fs.existsSync(path.join(root, row.source))).toBe(false);
   expect(sha(fs.readFileSync(sourceFile(row.source)))).toBe(row.sha256);
-  expect(row.preserved).toBe("docs/owners/historical/railgun-process-entry.source.txt");
+  expect(row.preserved).toBe(
+    "docs/owners/historical/railgun-process-entry.source.txt",
+  );
   const manifest = require("../package.json");
   expect(manifest.files).not.toContain("docs/owners/");
 });

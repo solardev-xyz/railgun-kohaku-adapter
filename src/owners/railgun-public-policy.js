@@ -1,27 +1,12 @@
 /** Cache compatibility for the pinned Sepolia public-state planner/apply pair.
  * Governance after the qualified historical capture requires fresh review.
  */
-const fs = require('fs'),
-  path = require('path');
 const { createHash } = require('crypto');
 const { verifyRailgunEngineRuntime } = require("../execution/railgun-engine-runtime.js");
 const manifest = require("../execution/railgun-engine-manifest.json");
 const QUALIFIED_THROUGH = 11829346;
-const SOURCES = Object.freeze([
-  'railgun-public-policy.js',
-  'railgun-public-run.js',
-  'railgun-source-feed.js',
-  'railgun-public-job.js',
-  'railgun-event-projector.js',
-  'railgun-public-records.js',
-  'railgun-frontier.js',
-  'railgun-tree-transactions.js',
-  'railgun-remote.js',
-  'railgun-scan-journal.js',
-  'railgun-scan-coordinator.js',
-  'railgun-scan-source.js',
-  'railgun-source-ledger.js',
-]);
+const { readRailgunPolicySourceIdentity } = require('./source-identity');
+const SOURCES = Object.freeze(require('./source-files.json'));
 function getRailgunPublicPolicy(archive) {
   verifyRailgunEngineRuntime(archive);
   const sha = (v) => createHash('sha256').update(v).digest('hex');
@@ -32,7 +17,7 @@ function getRailgunPublicPolicy(archive) {
       qualifiedThrough: QUALIFIED_THROUGH,
       engine: manifest.sha256,
       inventory: manifest.inventory.sha256,
-      sources: SOURCES.map((name) => [name, sha(fs.readFileSync(path.join(__dirname, name)))]),
+      sources: readRailgunPolicySourceIdentity(),
     })
   );
 }

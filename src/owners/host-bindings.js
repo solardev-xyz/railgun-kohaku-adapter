@@ -8,6 +8,7 @@ const { isMainThread } = require("worker_threads");
 const SCHEMA = Object.freeze({
   context: Object.freeze(["getPrivacyContext", "createPrivacyScope"]),
   artifacts: Object.freeze(["createPrivacyArtifactLoader"]),
+  sourceIdentity: Object.freeze(["readDigest"]),
   credentials: Object.freeze(["currentSession", "withMaterial"]),
   platform: Object.freeze([
     "applicationLifetime",
@@ -108,6 +109,11 @@ function initializeRailgunOwnerHost(input, ...extra) {
       }
       next[family] = Object.freeze(methods);
     }
+    // Snapshot once before publishing either owner binding. Files on disk may
+    // later change, but this process must never silently rotate generations.
+    require("./source-identity").captureRailgunPolicySourceIdentity(
+      next.sourceIdentity.readDigest(),
+    );
     initializeExecution({
       context: next.context,
       artifacts: next.artifacts,
