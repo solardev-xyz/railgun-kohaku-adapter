@@ -16,11 +16,23 @@
         "types": "./types/index.d.ts",
         "default": "./index.cjs"
       }
+    },
+    "./read": {
+      "import": {
+        "types": "./types/read.d.mts",
+        "default": "./read.mjs"
+      },
+      "require": {
+        "types": "./types/read.d.ts",
+        "default": "./read.cjs"
+      }
     }
   },
   "files": [
     "index.cjs",
     "index.mjs",
+    "read.cjs",
+    "read.mjs",
     "src/",
     "types/",
     "LICENSE",
