@@ -31,7 +31,8 @@
     "node": ">=24"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "typecheck": "node test/types/typecheck.cjs"
   },
   "peerDependencies": {
     "ethers": "^6.17.0"

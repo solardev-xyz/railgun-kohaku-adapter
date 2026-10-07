@@ -1,0 +1,430 @@
+{
+  "compiler": {
+    "version": "5.9.3",
+    "path": "<TYPESCRIPT_PATH>/lib/typescript.js",
+    "sha256": "3ae902c92cc44dace175c0e69e13a4b0899f6983c6121d76b9ab8dd5795e7675"
+  },
+  "node": "v24.18.1",
+  "options": {
+    "portable": {
+      "strict": true,
+      "noEmit": true,
+      "skipLibCheck": false,
+      "module": "NodeNext",
+      "moduleResolution": "NodeNext",
+      "target": "ES2022",
+      "types": []
+    },
+    "bridge": {
+      "strict": true,
+      "noEmit": true,
+      "skipLibCheck": false,
+      "module": "ESNext",
+      "moduleResolution": "Bundler",
+      "target": "ES2022",
+      "types": [],
+      "paths": {
+        "~/*": [
+          "node_modules/@kohaku-eth/plugins/dist/*"
+        ]
+      }
+    },
+    "bundlerWithoutAlias": {
+      "strict": true,
+      "noEmit": true,
+      "skipLibCheck": false,
+      "module": "ESNext",
+      "moduleResolution": "Bundler",
+      "target": "ES2022",
+      "types": []
+    }
+  },
+  "defaultLib": "lib.es2022.full.d.ts",
+  "shippedDeclarations": {
+    "types/index.d.mts": "d0b8219062b13646230f02b849895515635912dc780ec8c3efa152554b67037e",
+    "types/index.d.ts": "ee3aa1076f192ab9af3546c3a49e3352d6a087fc804dbd2ff8e71480b01c3a8c",
+    "types/railgun-kohaku-private-contract.d.ts": "349a7daa4dcb22d65ad3db5cd184d9a2620c428c7cadffbcd0d0ff33af20a439",
+    "types/railgun-kohaku-public-contract.d.ts": "08769e3485a50a9bd63c936df870df16afb66318c0f40f6b8c23fff964858492",
+    "types/railgun-kohaku-snapshot-contract.d.ts": "72230958335021c87c1513e311754a6eaa0a7df80a8bc959e93b585af11c3d81"
+  },
+  "resolution": {
+    "portableRequire": {
+      "file": "types/index.d.ts",
+      "package": "@freedom/railgun-kohaku-adapter@0.1.0"
+    },
+    "portableImport": {
+      "file": "types/index.d.mts",
+      "package": "@freedom/railgun-kohaku-adapter@0.1.0"
+    },
+    "bridgeSelf": {
+      "file": "types/index.d.mts",
+      "package": "@freedom/railgun-kohaku-adapter@0.1.0"
+    },
+    "bridgeUpstream": {
+      "file": "node_modules/@kohaku-eth/plugins/dist/index.d.ts",
+      "package": "@kohaku-eth/plugins@0.0.1-alpha.16"
+    },
+    "bridgeBroadcaster": {
+      "file": "node_modules/@kohaku-eth/plugins/dist/broadcaster/base.d.ts",
+      "package": "@kohaku-eth/plugins@0.0.1-alpha.16"
+    }
+  },
+  "exports": {
+    "count": 32,
+    "sameNames": true,
+    "sameIdentity": true,
+    "declaredIn": [
+      "types/railgun-kohaku-private-contract.d.ts",
+      "types/railgun-kohaku-public-contract.d.ts",
+      "types/railgun-kohaku-snapshot-contract.d.ts"
+    ],
+    "names": [
+      "PrivateAdapter",
+      "PrivateAdapterBroadcaster",
+      "PrivateAdapterExtras",
+      "PrivateCapabilities",
+      "PrivateHostHandle",
+      "PrivateInput",
+      "PrivateOperation",
+      "PrivateSubmissionOutcome",
+      "PrivateUnshieldOptions",
+      "PublicAdapter",
+      "PublicAdapterExtras",
+      "PublicAdapterSubmitter",
+      "PublicCapabilities",
+      "PublicHostHandle",
+      "PublicShieldAcknowledgement",
+      "PublicShieldInput",
+      "PublicShieldOperation",
+      "ReadAmount",
+      "ReadAsset",
+      "ReadNote",
+      "RestrictedPrivateHost",
+      "RestrictedPublicHost",
+      "SnapshotAsset",
+      "SnapshotExtras",
+      "SnapshotHost",
+      "SnapshotNote",
+      "SnapshotReadPlugin",
+      "createRailgunKohakuPrivateAdapter",
+      "createRailgunKohakuPrivateAdapterBroadcaster",
+      "createRailgunKohakuPublicAdapter",
+      "createRailgunKohakuPublicAdapterSubmitter",
+      "createRailgunKohakuSnapshotPlugin"
+    ]
+  },
+  "portable": [
+    {
+      "file": "test/types/consumer-cjs.cts",
+      "expected": [],
+      "diagnostics": [],
+      "pass": true,
+      "nodeModulesFiles": []
+    },
+    {
+      "file": "test/types/consumer-esm.mts",
+      "expected": [],
+      "diagnostics": [],
+      "pass": true,
+      "nodeModulesFiles": []
+    },
+    {
+      "file": "test/types/negative/cross-kind-operation.mts",
+      "expected": [
+        "test/types/negative/cross-kind-operation.mts:19 TS2345",
+        "test/types/negative/cross-kind-operation.mts:20 TS2345",
+        "test/types/negative/cross-kind-operation.mts:21 TS2345",
+        "test/types/negative/cross-kind-operation.mts:22 TS2345",
+        "test/types/negative/cross-kind-operation.mts:23 TS2345"
+      ],
+      "diagnostics": [
+        {
+          "key": "test/types/negative/cross-kind-operation.mts:19 TS2345",
+          "message": "Argument of type 'PublicShieldOperation' is not assignable to parameter of type 'PrivateOperation'."
+        },
+        {
+          "key": "test/types/negative/cross-kind-operation.mts:20 TS2345",
+          "message": "Argument of type '{ __type: \"privateOperation\"; }' is not assignable to parameter of type 'PrivateOperation'."
+        },
+        {
+          "key": "test/types/negative/cross-kind-operation.mts:21 TS2345",
+          "message": "Argument of type '{ __type: \"publicOperation\"; }' is not assignable to parameter of type 'PublicShieldOperation'."
+        },
+        {
+          "key": "test/types/negative/cross-kind-operation.mts:22 TS2345",
+          "message": "Argument of type 'PublicAdapter' is not assignable to parameter of type 'PrivateAdapter'."
+        },
+        {
+          "key": "test/types/negative/cross-kind-operation.mts:23 TS2345",
+          "message": "Argument of type 'PrivateAdapter' is not assignable to parameter of type 'PublicAdapter'."
+        }
+      ],
+      "pass": true,
+      "nodeModulesFiles": []
+    },
+    {
+      "file": "test/types/negative/esm-default-import.mts",
+      "expected": [
+        "test/types/negative/esm-default-import.mts:3 TS1192"
+      ],
+      "diagnostics": [
+        {
+          "key": "test/types/negative/esm-default-import.mts:3 TS1192",
+          "message": "Module '\"<root>/types/index\"' has no default export."
+        }
+      ],
+      "pass": true,
+      "nodeModulesFiles": []
+    },
+    {
+      "file": "test/types/negative/private-host-missing-broadcast.cts",
+      "expected": [
+        "test/types/negative/private-host-missing-broadcast.cts:15 TS2741"
+      ],
+      "diagnostics": [
+        {
+          "key": "test/types/negative/private-host-missing-broadcast.cts:15 TS2741",
+          "message": "Property 'broadcast' is missing in type '{ signal: AbortSignal; closed: Promise<void>; instanceId: () => Promise<string>; balance: () => Promise<never[]>; notes: () => Promise<never[]>; prepareTransfer: () => Promise<...>; prepareUnshield: () => Promise<...>; close: () => undefined; }' but required in type 'RestrictedPrivateHost'."
+        }
+      ],
+      "pass": true,
+      "nodeModulesFiles": []
+    },
+    {
+      "file": "test/types/negative/snapshot-assert-current-result.mts",
+      "expected": [
+        "test/types/negative/snapshot-assert-current-result.mts:11 TS2322",
+        "test/types/negative/snapshot-assert-current-result.mts:22 TS2322"
+      ],
+      "diagnostics": [
+        {
+          "key": "test/types/negative/snapshot-assert-current-result.mts:11 TS2322",
+          "message": "Type 'boolean' is not assignable to type 'undefined'."
+        },
+        {
+          "key": "test/types/negative/snapshot-assert-current-result.mts:22 TS2322",
+          "message": "Type '{ signal: AbortSignal; capture: () => Promise<{ snapshot: { instanceId: string; received: never[]; }; assertCurrent: () => undefined; }>; }' is not assignable to type 'SnapshotHost'."
+        }
+      ],
+      "pass": true,
+      "nodeModulesFiles": []
+    },
+    {
+      "file": "test/types/negative/unnarrowed-private-outcome.cts",
+      "expected": [
+        "test/types/negative/unnarrowed-private-outcome.cts:15 TS2339",
+        "test/types/negative/unnarrowed-private-outcome.cts:16 TS2322"
+      ],
+      "diagnostics": [
+        {
+          "key": "test/types/negative/unnarrowed-private-outcome.cts:15 TS2339",
+          "message": "Property 'hash' does not exist on type 'PrivateSubmissionOutcome'."
+        },
+        {
+          "key": "test/types/negative/unnarrowed-private-outcome.cts:16 TS2322",
+          "message": "Type 'PrivateSubmissionOutcome' is not assignable to type 'PublicShieldAcknowledgement'."
+        }
+      ],
+      "pass": true,
+      "nodeModulesFiles": []
+    },
+    {
+      "file": "test/types/negative/unshield-tail-calls.cts",
+      "expected": [
+        "test/types/negative/unshield-tail-calls.cts:14 TS2322",
+        "test/types/negative/unshield-tail-calls.cts:15 TS2345",
+        "test/types/negative/unshield-tail-calls.cts:17 TS2345"
+      ],
+      "diagnostics": [
+        {
+          "key": "test/types/negative/unshield-tail-calls.cts:14 TS2322",
+          "message": "Type '() => Promise<never[]>' is not assignable to type 'undefined'."
+        },
+        {
+          "key": "test/types/negative/unshield-tail-calls.cts:15 TS2345",
+          "message": "Argument of type '\"0zk1qexample\"' is not assignable to parameter of type '`0x${string}`'."
+        },
+        {
+          "key": "test/types/negative/unshield-tail-calls.cts:17 TS2345",
+          "message": "Argument of type '{ asset: { __type: \"native\"; }; amount: bigint; noteId: string; }' is not assignable to parameter of type 'PrivateInput'."
+        }
+      ],
+      "pass": true,
+      "nodeModulesFiles": []
+    }
+  ],
+  "upstream": {
+    "package": "@kohaku-eth/plugins@0.0.1-alpha.16",
+    "lockfileIntegrity": "sha512-7QrlLeds2pX2mB/5d1BKnpFSPQI4fUyY0i2DPUlvnPxGyqnrR0HfDzfFVsZd07DpmEze8Q2KmaBQVks1Ltmwrg==",
+    "declarations": {
+      "node_modules/@kohaku-eth/plugins/dist/base.d.ts": "156902baad510c83b2addf70022e2c4155e94a3ebb476c9d1f7511c2717bfc0a",
+      "node_modules/@kohaku-eth/plugins/dist/broadcaster/base.d.ts": "826938efcd34c764ad4cf606548e200dffc6db3aa079bfaef9905b38f4ddbfa0",
+      "node_modules/@kohaku-eth/plugins/dist/errors.d.ts": "8dbe44be3fdc705a1452d7756b240e09f3b976bb4876612c2c8cc627e4c566d0",
+      "node_modules/@kohaku-eth/plugins/dist/host/index.d.ts": "798c2175bac8a27bf44327bd1ee62b8edc2fc9956d00ac7ddd91cc13c0b802e0",
+      "node_modules/@kohaku-eth/plugins/dist/host/memory-storage.d.ts": "c6a5a8215f38e8c29867ed0752df5591c13abaa07bbf287144d92b0162e80450",
+      "node_modules/@kohaku-eth/plugins/dist/host/mnemonic-keystore.d.ts": "711ed7779c55048b5aa739335a78c8fbfcef91af22512dc1d970167bd3eb6f3c",
+      "node_modules/@kohaku-eth/plugins/dist/index.d.ts": "69f6f75f89510e2337e321241d6f7b6db4157a353d1fd5d40d833266b3c222d5",
+      "node_modules/@kohaku-eth/plugins/dist/shared.d.ts": "a88fa6dc1f688c5b0b0bb0ef9711b327814a411709dda3a0ebddd8a0a5bb97f4"
+    },
+    "aliasUses": [
+      {
+        "from": "node_modules/@kohaku-eth/plugins/dist/base.d.ts",
+        "specifier": "~/host",
+        "to": "node_modules/@kohaku-eth/plugins/dist/host/index.d.ts"
+      },
+      {
+        "from": "node_modules/@kohaku-eth/plugins/dist/base.d.ts",
+        "specifier": "~/shared",
+        "to": "node_modules/@kohaku-eth/plugins/dist/shared.d.ts"
+      },
+      {
+        "from": "node_modules/@kohaku-eth/plugins/dist/broadcaster/base.d.ts",
+        "specifier": "~/shared",
+        "to": "node_modules/@kohaku-eth/plugins/dist/shared.d.ts"
+      },
+      {
+        "from": "node_modules/@kohaku-eth/plugins/dist/errors.d.ts",
+        "specifier": "~/shared",
+        "to": "node_modules/@kohaku-eth/plugins/dist/shared.d.ts"
+      }
+    ],
+    "results": [
+      {
+        "file": "test/types/upstream/conformance.ts",
+        "expected": [],
+        "diagnostics": [],
+        "pass": true,
+        "loadedUpstreamFiles": 8
+      },
+      {
+        "file": "test/types/upstream/generic-host.ts",
+        "expected": [
+          "test/types/upstream/generic-host.ts:13 TS2739",
+          "test/types/upstream/generic-host.ts:14 TS2740",
+          "test/types/upstream/generic-host.ts:15 TS2740"
+        ],
+        "diagnostics": [
+          {
+            "key": "test/types/upstream/generic-host.ts:13 TS2739",
+            "message": "Type 'Host' is missing the following properties from type 'SnapshotHost': signal, capture"
+          },
+          {
+            "key": "test/types/upstream/generic-host.ts:14 TS2740",
+            "message": "Type 'Host' is missing the following properties from type 'RestrictedPrivateHost': signal, closed, instanceId, balance, and 5 more."
+          },
+          {
+            "key": "test/types/upstream/generic-host.ts:15 TS2740",
+            "message": "Type 'Host' is missing the following properties from type 'RestrictedPublicHost': signal, closed, instanceId, balance, and 4 more."
+          }
+        ],
+        "pass": true,
+        "loadedUpstreamFiles": 7
+      },
+      {
+        "file": "test/types/upstream/generic-plugin.ts",
+        "expected": [
+          "test/types/upstream/generic-plugin.ts:22 TS2345",
+          "test/types/upstream/generic-plugin.ts:23 TS2345",
+          "test/types/upstream/generic-plugin.ts:24 TS2345"
+        ],
+        "diagnostics": [
+          {
+            "key": "test/types/upstream/generic-plugin.ts:22 TS2345",
+            "message": "Argument of type 'PluginInstance<string, PrivateCapabilities>' is not assignable to parameter of type 'PrivateAdapter'."
+          },
+          {
+            "key": "test/types/upstream/generic-plugin.ts:23 TS2345",
+            "message": "Argument of type 'PluginInstance<string, PublicCapabilities>' is not assignable to parameter of type 'PublicAdapter'."
+          },
+          {
+            "key": "test/types/upstream/generic-plugin.ts:24 TS2345",
+            "message": "Argument of type 'UnshieldOptions' is not assignable to parameter of type 'PrivateUnshieldOptions'."
+          }
+        ],
+        "pass": true,
+        "loadedUpstreamFiles": 7
+      }
+    ]
+  },
+  "controls": [
+    {
+      "name": "nodenext-without-alias",
+      "file": "test/types/upstream/conformance.ts",
+      "expected": [
+        "node_modules/@kohaku-eth/plugins/dist/broadcaster/base.d.ts:1 TS2307",
+        "node_modules/@kohaku-eth/plugins/dist/index.d.ts:1 TS2835",
+        "node_modules/@kohaku-eth/plugins/dist/index.d.ts:2 TS2834",
+        "node_modules/@kohaku-eth/plugins/dist/index.d.ts:3 TS2835",
+        "node_modules/@kohaku-eth/plugins/dist/index.d.ts:4 TS2835",
+        "test/types/upstream/conformance.ts:59 TS2344",
+        "test/types/upstream/conformance.ts:6 TS2305",
+        "test/types/upstream/conformance.ts:61 TS2344"
+      ],
+      "diagnostics": [
+        {
+          "key": "node_modules/@kohaku-eth/plugins/dist/broadcaster/base.d.ts:1 TS2307",
+          "message": "Cannot find module '~/shared' or its corresponding type declarations."
+        },
+        {
+          "key": "node_modules/@kohaku-eth/plugins/dist/index.d.ts:1 TS2835",
+          "message": "Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './base.js'?"
+        },
+        {
+          "key": "node_modules/@kohaku-eth/plugins/dist/index.d.ts:2 TS2834",
+          "message": "Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Consider adding an extension to the import path."
+        },
+        {
+          "key": "node_modules/@kohaku-eth/plugins/dist/index.d.ts:3 TS2835",
+          "message": "Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './errors.js'?"
+        },
+        {
+          "key": "node_modules/@kohaku-eth/plugins/dist/index.d.ts:4 TS2835",
+          "message": "Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './shared.js'?"
+        },
+        {
+          "key": "test/types/upstream/conformance.ts:59 TS2344",
+          "message": "Type 'false' does not satisfy the constraint 'true'."
+        },
+        {
+          "key": "test/types/upstream/conformance.ts:6 TS2305",
+          "message": "Module '\"@kohaku-eth/plugins\"' has no exported member 'PluginInstance'."
+        },
+        {
+          "key": "test/types/upstream/conformance.ts:61 TS2344",
+          "message": "Type 'false' does not satisfy the constraint 'true'."
+        }
+      ],
+      "pass": true
+    },
+    {
+      "name": "bundler-without-alias",
+      "file": "test/types/upstream/conformance.ts",
+      "expected": [
+        "node_modules/@kohaku-eth/plugins/dist/base.d.ts:1 TS2307",
+        "node_modules/@kohaku-eth/plugins/dist/base.d.ts:2 TS2307",
+        "node_modules/@kohaku-eth/plugins/dist/broadcaster/base.d.ts:1 TS2307",
+        "node_modules/@kohaku-eth/plugins/dist/errors.d.ts:1 TS2307"
+      ],
+      "diagnostics": [
+        {
+          "key": "node_modules/@kohaku-eth/plugins/dist/base.d.ts:1 TS2307",
+          "message": "Cannot find module '~/host' or its corresponding type declarations."
+        },
+        {
+          "key": "node_modules/@kohaku-eth/plugins/dist/base.d.ts:2 TS2307",
+          "message": "Cannot find module '~/shared' or its corresponding type declarations."
+        },
+        {
+          "key": "node_modules/@kohaku-eth/plugins/dist/broadcaster/base.d.ts:1 TS2307",
+          "message": "Cannot find module '~/shared' or its corresponding type declarations."
+        },
+        {
+          "key": "node_modules/@kohaku-eth/plugins/dist/errors.d.ts:1 TS2307",
+          "message": "Cannot find module '~/shared' or its corresponding type declarations."
+        }
+      ],
+      "pass": true
+    }
+  ],
+  "failures": []
+}
