@@ -40,6 +40,7 @@ string bytes; structural checks impose much tighter limits on accepted records.
 The frozen compatibility descriptor describes the policy actually enforced:
 
 - Version 1: one-input self or explicitly marked foreign transfer, or full unshield.
+  In the descriptor, `self` means the record has no marker; a literal `self` marker is refused.
 - Version 2: one-input partial unshield with one change output.
 - Sepolia chain 11155111 and the pinned Railgun proxy only. The 0.01 ETH input
   ceiling is **Freedom's qualification policy**, not a protocol limit.
@@ -136,7 +137,7 @@ A projection's `filter` must be `null` or a frozen array of strings, as `normali
 3. passes the pending result to `ports.retain()` synchronously and returns whatever `retain` returns, so `retain` must return the promise it receives;
 4. once the view's result fulfils, calls `ports.recheck(captured)` and then fulfils with the view's original value, not a copy.
 
-Every failure rejects with the value that `ports.refused()` returns, and the original reason is discarded. Failures include an unknown method, a throw from `capture`, the view lookup or the view call, a rejected result and a throw from `recheck`. A failure before `retain` is not retained, and an exception from `refused` itself escapes instead. The helper detects no stale read of its own: currentness is exactly what `recheck` asserts. Unlike the adapters, it applies no shape or native-Promise checks, so a thenable result is adopted. Its stale-read, exception, retention and rejection behavior is unchanged from Freedom; the sources under `src/` are byte-identical (see `NOTICE.md`).
+Every failure rejects with the value that `ports.refused()` returns, and the original reason is discarded. Failures include an unknown method, a throw from `capture`, the view lookup or the view call, a rejected result and a throw from `recheck`. A failure before `retain` is not retained, and an exception from `refused` itself escapes instead. The helper detects no stale read of its own: currentness is exactly what `recheck` asserts. Unlike the adapters, it applies no shape or native-Promise checks, so a thenable result is adopted. Its stale-read, exception, retention and rejection behavior is unchanged from Freedom; the five E1 adapter sources under `src/` are byte-identical (see `NOTICE.md`).
 
 ## Restrictions
 
@@ -305,6 +306,8 @@ The same process checks the `./read` subpath:
 - `src/railgun-kohaku-read-data.js`, `src/railgun-kohaku-read-dispatch.js` and `read.cjs` are refused as subpaths with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
 
 ### Type checks
+
+The typecheck harness requires a physical `node_modules` directory under the package root, not a symlink to another checkout.
 
 TypeScript is not a dependency. `npm run typecheck` uses the compiler that the `TYPESCRIPT_PATH` environment variable names, either an installed `typescript` package directory or its `lib/typescript.js`, and fails if the variable is unset:
 

@@ -42,7 +42,7 @@
   "defaultLib": "lib.es2022.full.d.ts",
   "shippedDeclarations": {
     "types/data.d.mts": "e1d2a82402ce6eedb1f691a41d276f83515b8ff733d226ac5b59971890cb45ef",
-    "types/data.d.ts": "58c60a42b6c3d904a668fd386bc6048c561bfd522bd230a2ef586741c946da94",
+    "types/data.d.ts": "37f680e0fde2313d98d075143139e20511c28e05989d5dc972084c0810270eff",
     "types/host-data.d.mts": "694f17d0c242834e05da8e1e772f726e5db0e527110f2c8948c4cc31ec61d6e2",
     "types/host-data.d.ts": "d7495ef03d8b1ab3e12365de748c30a080e23661be7ad545edee3af52a9f132f",
     "types/index.d.mts": "d0b8219062b13646230f02b849895515635912dc780ec8c3efa152554b67037e",

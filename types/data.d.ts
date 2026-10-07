@@ -94,6 +94,8 @@ export function normalizeRailgunPrivateCapsule(input: unknown): RailgunPrivateCa
  * An unkeyed digest alone authenticates neither a record nor its owner.
  */
 export function digestRailgunPrivateCapsule(input: unknown): string;
+/** In supported entries, self means the capsule marker is absent. Records only
+ * admit the explicit foreign marker; a literal self marker is refused. */
 export const railgunPrivateCapsuleCompatibility: Readonly<{
   schema: 'freedom-railgun-private-capsule';
   chainId: 11155111;
