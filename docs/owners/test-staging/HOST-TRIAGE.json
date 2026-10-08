@@ -13,12 +13,12 @@
     "railgun-wallet-catalog.test.js",
     "railgun-wallet-journal.test.js"
   ],
-  "remainingCount": 42,
+  "remainingCount": 41,
   "groups": {
     "credential-and-enrollment-lifetime": 2,
     "genuine-rpc-transport-and-destination": 14,
     "account-storage-composition": 7,
-    "adapter-wrapper-boundary": 2,
+    "adapter-wrapper-boundary": 1,
     "shared-eoa-journal-or-recovery": 13,
     "fixed-utility-or-worker-job": 4
   },
@@ -443,40 +443,6 @@
           "value": "./railgun-kohaku-broadcaster",
           "line": 123,
           "target": "src/main/wallet/railgun-kohaku-broadcaster.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": null,
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        }
-      ],
-      "computedSites": [],
-      "executedInThisSuccessor": false
-    },
-    {
-      "source": "src/main/wallet/railgun-kohaku-snapshot-host.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-kohaku-snapshot-host.test.js",
-      "group": "adapter-wrapper-boundary",
-      "requiredHostFamilies": [],
-      "unresolved": [
-        {
-          "kind": "require",
-          "start": 590,
-          "end": 622,
-          "value": "./railgun-kohaku-snapshot-host",
-          "line": 7,
-          "target": "src/main/wallet/railgun-kohaku-snapshot-host.js",
-          "currentPackageTarget": "src/owners/railgun-kohaku-snapshot-host.js",
-          "currentTargetExists": true,
-          "fixedHostFamily": null,
-          "requirement": "Exact test import relocation and retained assertion/authority audit"
-        },
-        {
-          "kind": "require",
-          "start": 696,
-          "end": 730,
-          "value": "./railgun-kohaku-snapshot-plugin",
-          "line": 10,
-          "target": "src/main/wallet/railgun-kohaku-snapshot-plugin.js",
           "currentPackageTarget": null,
           "currentTargetExists": false,
           "fixedHostFamily": null,
@@ -2975,5 +2941,10 @@
     "src/main/wallet/railgun-poi-transact-selector.test.js",
     "src/main/wallet/railgun-shield-intent.test.js",
     "src/main/wallet/railgun-shield-receipt.test.js"
-  ]
+  ],
+  "qualifiedSnapshotGroup": {
+    "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-kohaku-snapshot-host.test.js",
+    "tests": 19,
+    "controlledOwnerDoubles": true
+  }
 }

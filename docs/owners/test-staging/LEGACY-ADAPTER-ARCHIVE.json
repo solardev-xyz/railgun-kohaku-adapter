@@ -1,0 +1,40 @@
+{
+  "runtimeAdmission": false,
+  "files": [
+    {
+      "source": "src/main/wallet/railgun-kohaku-private-host.js",
+      "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "archive": "docs/owners/historical/railgun-kohaku-private-host.js.txt",
+      "bytes": 3092,
+      "sha256": "c1f4eac3792e174757d24eb5762c719bc4fa0a96ec0c6c5fc3e3bd1aba5e423d"
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-public-host.js",
+      "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "archive": "docs/owners/historical/railgun-kohaku-public-host.js.txt",
+      "bytes": 3336,
+      "sha256": "5264c098a4ca379f3ed69d02c7e46bed3c0252f2bd49f7edae06fc166acc7a2e"
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-public-submitter.js",
+      "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "archive": "docs/owners/historical/railgun-kohaku-public-submitter.js.txt",
+      "bytes": 549,
+      "sha256": "88b060c4ecfd497a3450695ae8e0abca652ff86f491a650a2297c488aaffcbb6"
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-broadcaster.js",
+      "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "archive": "docs/owners/historical/railgun-kohaku-broadcaster.js.txt",
+      "bytes": 537,
+      "sha256": "5754901ec618fdbceef357029261b02f1043691debe580aa09ffd7b257a159c4"
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-plugin.test.js",
+      "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "archive": "docs/owners/historical/railgun-kohaku-plugin.test.js.txt",
+      "bytes": 103249,
+      "sha256": "4aa95244ebdff7efb4dd09d2e586d335e13db60d0a10702894f9c253f237aaec"
+    }
+  ]
+}

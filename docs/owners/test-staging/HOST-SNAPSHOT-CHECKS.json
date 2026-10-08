@@ -1,0 +1,21 @@
+{
+  "baseRevision": "aecd658c274d86bb81087bc56b196229c4bb1e3b",
+  "productionChanges": false,
+  "targeted": {
+    "suites": 1,
+    "tests": 19,
+    "seconds": 0.192,
+    "exitCode": 0,
+    "completion": "afe805"
+  },
+  "finalSnapshotAndProvenance": {
+    "suites": 2,
+    "tests": 25,
+    "seconds": 0.36,
+    "exitCode": 0,
+    "completion": "6b6faf"
+  },
+  "qualifiedAdjacent": 110,
+  "remainingHost": 41,
+  "fullDefaultExecuted": false
+}

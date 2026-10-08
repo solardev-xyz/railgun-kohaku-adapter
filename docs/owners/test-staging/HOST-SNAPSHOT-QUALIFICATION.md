@@ -1,0 +1,9 @@
+# Snapshot bridge and legacy adapter classification
+
+The actual package-private snapshot bridge and existing root-exported `createRailgunKohakuSnapshotPlugin` pass the original 19 snapshot-host checks. Only two import literals changed. Original controlled owner WeakMap doubles remain explicit; this tests snapshot binding, lifetime, detachment and refusal, not genuine account enrollment or installed-host acceptance. The final snapshot/provenance run passes 25 checks in two suites, naturally; strict lint passes. Default discovery now contains 110 qualified adjacent suites, with 41 staged host suites still excluded. The complete new default set has not been rerun at this checkpoint.
+
+The old `railgun-kohaku-{private-host,public-host,public-submitter,broadcaster}` wrappers are superseded host composition. Current supported private/public lanes are `openPrivate`/`openPublic` in the operational facade; they call the same original private plugin methods internally without publishing plugin instances, completion tokens or arbitrary module access. The snapshot plugin remains a supported separate root data API.
+
+The remaining `railgun-kohaku-plugin.test.js` mixes still-relevant private owner assertions with the old broadcaster harness. It is not classified as wholly obsolete or passing. All its original assertions and the four wrapper sources are preserved verbatim as repository-only `.txt` archives, pinned in `LEGACY-ADAPTER-ARCHIVE.json`; the original staged test remains unchanged and excluded. A future test translation must exercise the actual private owner/closed lane or retain explicitly historical coverage; no raw export is justified merely to run the legacy harness. Installed-consumer equivalence remains required before Freedom removals.
+
+Basis remains the test branch from production1972191, not a claim about the parent's newer133e88 declarations. No runtime, export, type or dependency change is included.

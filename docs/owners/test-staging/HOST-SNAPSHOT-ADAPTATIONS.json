@@ -1,0 +1,23 @@
+{
+  "baseRevision": "aecd658c274d86bb81087bc56b196229c4bb1e3b",
+  "productionTransforms": false,
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-kohaku-snapshot-host.test.js",
+      "beforeSha256": "499d85839289368fcca755d8c399cb4a204017f42b9dd9f40a132407cec21b92",
+      "afterSha256": "c390eb4f215c7481f27644b6f9dfa96ae67362c57f36dcbc2cbf7bd6f04c5908",
+      "replacements": [
+        {
+          "start": 804,
+          "before": "} = require('./railgun-kohaku-snapshot-plugin');\n",
+          "after": "} = require('../../../../../../index.cjs');\n"
+        },
+        {
+          "start": 646,
+          "before": "const { createRailgunKohakuSnapshotHost: createHost } = require('./railgun-kohaku-snapshot-host');\n",
+          "after": "const { createRailgunKohakuSnapshotHost: createHost } = require('../../../../../../src/owners/railgun-kohaku-snapshot-host.js');\n"
+        }
+      ]
+    }
+  ]
+}
