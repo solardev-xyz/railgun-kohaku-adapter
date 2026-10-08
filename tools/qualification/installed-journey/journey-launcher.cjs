@@ -111,7 +111,9 @@ function checkRequest(request) {
   const status = execFileSync('/usr/bin/git', ['-C', request.hostRoot, 'status', '--porcelain'])
     .toString()
     .trim();
-  assert.equal(status, 'M vendor/railgun-kohaku-adapter/freedom-railgun-kohaku-adapter-0.6.0.tgz');
+  // A development host carries the candidate tgz uncommitted; an adoption
+  // commit carries it committed. Either way the tgz must equal the pinned tar.
+  assert.ok(['', 'M vendor/railgun-kohaku-adapter/freedom-railgun-kohaku-adapter-0.6.0.tgz'].includes(status));
   assert.deepEqual(
     file(path.join(request.hostRoot, 'vendor/railgun-kohaku-adapter/freedom-railgun-kohaku-adapter-0.6.0.tgz')),
     request.packageTarPin

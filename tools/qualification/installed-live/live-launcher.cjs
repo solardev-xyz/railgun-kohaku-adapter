@@ -82,7 +82,12 @@ function check(request) {
     request.hostCommit
   );
   const status = execFileSync('/usr/bin/git', ['-C', request.hostRoot, 'status', '--porcelain']).toString().trim();
-  assert.equal(status, request.transport === 'live' ? '' : 'M vendor/railgun-kohaku-adapter/freedom-railgun-kohaku-adapter-0.6.0.tgz');
+  if (request.transport === 'live') assert.equal(status, '');
+  else assert.ok(['', 'M vendor/railgun-kohaku-adapter/freedom-railgun-kohaku-adapter-0.6.0.tgz'].includes(status));
+  assert.deepEqual(
+    file(path.join(request.hostRoot, 'vendor/railgun-kohaku-adapter/freedom-railgun-kohaku-adapter-0.6.0.tgz')),
+    request.packageTarPin
+  );
   if (request.transport === 'live') {
     assert.deepEqual(file(request.live.arti), request.live.artiPin);
     assert.equal(request.live.arti, path.join(request.hostRoot, 'arti-bin', 'mac-arm64', 'arti'));
