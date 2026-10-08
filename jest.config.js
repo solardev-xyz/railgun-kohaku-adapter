@@ -29,6 +29,8 @@ module.exports = {
     ...require('./tools/owner-test-staging/jest.host-disclosure.config.cjs').testMatch,
     ...require('./tools/owner-test-staging/jest.host-origin.config.cjs').testMatch,
     ...require('./tools/owner-test-staging/jest.host-operations.config.cjs').testMatch,
+    ...require('./tools/owner-test-staging/jest.host-journal.config.cjs').testMatch,
+    ...require('./tools/owner-test-staging/jest.host-submission.config.cjs').testMatch,
   ],
   // The package ships byte-exact CommonJS sources with no build step, so the
   // tests run those exact bytes rather than a transpiled copy.

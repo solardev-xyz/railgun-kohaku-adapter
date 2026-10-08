@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 /** Preflight refusal diagnostics at the production boundary: the real submission
  * core, private and deployment preflights, privacy contexts, ABI and intent
  * binding. Only RPC replies, local artifact files, the completion claim, the
@@ -42,7 +43,9 @@ jest.mock("../../../../../../src/execution/railgun-artifacts.js", () => ({
   assertRailgunArtifactVerifier: (artifacts, encoded) => mock.verifyArtifacts(artifacts, encoded),
 }));
 // The network boundary: one client per privacy context, validated like the real one.
-jest.mock('../networks/private-rpc', () => ({
+jest.mock("../../../../../../src/owners/host-bindings.js", () => ({
+  ...jest.requireActual("../../../../../../src/owners/host-bindings.js"),
+  rpc: {
   createPrivateRpc: (handle) => {
     const { getPrivacyContext, privacyError } = require("../../../../../../src/owners/context-bindings.js");
     const context = getPrivacyContext(handle);
@@ -63,26 +66,30 @@ jest.mock('../networks/private-rpc', () => ({
       },
     };
   },
-}));
-jest.mock('./signers', () => ({ getSigner: () => mock.signer }));
-// The vault's public wallet-0 record, read by the live probe through production.
-jest.mock('../identity-manager', () => ({
-  getWalletRecord: (index) => (index === 0 ? mock.walletRecord : null),
-  WALLET_TYPES: { MNEMONIC: 'mnemonic' },
-}));
-jest.mock('./private-transaction-network', () => ({
+},
+  signers: { getSigner: () => mock.signer },
+  transactionNetwork: {
   getPrivateTransactionNetwork: () => {
     mock.eoa.push('network');
     if (mock.networkFailure) throw mock.networkFailure;
     return mock.network;
   },
-}));
-jest.mock('./transaction-service', () => ({
+},
+  transactions: {
   signAndSendTransaction: async () => {
     mock.eoa.push('send');
     return { hash: '0x' + 'c'.repeat(64) };
   },
+},
 }));
+
+// The vault's public wallet-0 record, read by the live probe through production.
+jest.mock("../../../../fixtures/host/src/main/identity-manager", () => ({
+  getWalletRecord: (index) => (index === 0 ? mock.walletRecord : null),
+  WALLET_TYPES: { MNEMONIC: 'mnemonic' },
+}), { virtual: true });
+
+
 const { Interface, id, toBeHex } = require('ethers');
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");
 const { fixture } = require("../../../../fixtures/scripts/fixtures/railgun-transact-data.js");
@@ -91,7 +98,7 @@ const {
   submitRailgunPrivateTransaction: submit,
   getRailgunPrivateSubmissionDiagnostic: diagnosticOf,
 } = require("../../../../../../src/owners/railgun-private-submission.js");
-const live = require('../../../scripts/qualify-railgun-private-live');
+const live = require("../../../../fixtures/host/scripts/qualify-railgun-private-live.js");
 const pins = require("../../../../../../src/railgun-shield-pins.json");
 const abi = new Interface([
   'function railgun() view returns (address)',

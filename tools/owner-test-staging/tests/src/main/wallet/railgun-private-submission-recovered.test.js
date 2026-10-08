@@ -1,3 +1,6 @@
+// Explicit journal keys; vault seed acquisition is outside this suite.
+jest.mock('@scure/bip39', () => ({ mnemonicToSeedSync: () => { throw Error('Unexpected journal mnemonic derivation'); } }));
+require('../../../../context-host.cjs');
 /** Offline composition tests: real capsule/calldata binders and privacy/phase
  * owners; controlled store, worker and service receipts. No service acceptance
  * or cryptographic proof validity is established by these fixtures. */
@@ -55,7 +58,9 @@ jest.mock("../../../../../../src/owners/railgun-account-public.js", () => ({
       throw Error('destination');
   },
 }));
-jest.mock('../networks/private-rpc', () => ({
+jest.mock("../../../../../../src/owners/host-bindings.js", () => ({
+  ...jest.requireActual("../../../../../../src/owners/host-bindings.js"),
+  rpc: {
   createPrivateRpc: (h, role) => {
     mock.context(h);
     mock.events.push('preview:' + role);
@@ -82,8 +87,21 @@ jest.mock('../networks/private-rpc', () => ({
     mock.constraints.push(value);
     return value;
   },
+},
+  transactionNetwork: {
+  getPrivateTransactionNetwork: (h, options) => {
+    mock.networkHandle = h;
+    mock.networkOptions = options;
+    mock.events.push('network');
+    return mock.network;
+  },
+},
+  signers: { getSigner: () => mock.signer },
+  transactions: {
+  signAndSendTransaction: (...args) => mock.send(...args),
+},
 }));
-jest.mock('./private-submission-journal', () => ({
+jest.mock("../../../../fixtures/host/src/main/wallet/private-submission-journal.js", () => ({
   getPrivateSubmissionJournal: () => ({
     readSnapshot: async () => {
       await mock.step('journal-read');
@@ -241,22 +259,13 @@ jest.mock("../../../../../../src/owners/railgun-private-preflight.js", () => ({
     return mock.preflightObservation;
   },
 }));
-jest.mock('./private-transaction-network', () => ({
-  getPrivateTransactionNetwork: (h, options) => {
-    mock.networkHandle = h;
-    mock.networkOptions = options;
-    mock.events.push('network');
-    return mock.network;
-  },
-}));
-jest.mock('../identity-manager', () => ({
+
+jest.mock("../../../../fixtures/host/src/main/identity-manager", () => ({
   getWalletRecord: () => mock.walletMetadata,
   WALLET_TYPES: { MNEMONIC: 'mnemonic' },
-}));
-jest.mock('./signers', () => ({ getSigner: () => mock.signer }));
-jest.mock('./transaction-service', () => ({
-  signAndSendTransaction: (...args) => mock.send(...args),
-}));
+}), { virtual: true });
+
+
 const { createPrivacyScope, getPrivacyContext } = require("../../../../../../src/owners/context-bindings.js");
 const { claimRailgunAccountPhase } = require("../../../../../../src/owners/railgun-account-phase.js");
 const {
@@ -852,7 +861,7 @@ test.each([
     'RAILGUN_RPC_REFUSED',
     () =>
       jest
-        .spyOn(require('../networks/private-rpc'), 'createPrivateRpc')
+        .spyOn(require("../../../../../../src/owners/host-bindings.js").rpc, 'createPrivateRpc')
         .mockImplementation(refused('RAILGUN_RPC_REFUSED')),
   ],
 ])('a history refusal at %s names that sub-step (%s)', async (substage, code, change) => {
@@ -863,7 +872,7 @@ test.each([
   expect(diagnosticOf(result)).toEqual(diagnostic);
   // The live report keeps the same closed tuple through its allowlist.
   expect(
-    require('../../../scripts/qualify-railgun-private-live').summarizeSubmissionDiagnostic(
+    require("../../../../fixtures/host/scripts/qualify-railgun-private-live.js").summarizeSubmissionDiagnostic(
       diagnosticOf(result)
     )
   ).toEqual(diagnostic);
@@ -1011,7 +1020,7 @@ test('cold self transfer disclosure summary carries no relationship fields', asy
   expect(mock.summary).not.toHaveProperty('foreignOutputPoiDisclosure');
 });
 test('the live qualifier recover-submit mode pins this exact self-transfer summary', async () => {
-  const live = require('../../../scripts/qualify-railgun-private-live');
+  const live = require("../../../../fixtures/host/scripts/qualify-railgun-private-live.js");
   setup('railgun-private-transfer');
   await submit(options);
   // Any change here refuses at the mode's disclosure review until re-reviewed.
@@ -1388,7 +1397,7 @@ test('late competing attempt is refused by the real encrypted journal before raw
   const fs = require('fs'),
     os = require('os'),
     path = require('path');
-  const { createSubmissionJournal } = jest.requireActual('./private-submission-journal');
+  const { createSubmissionJournal } = jest.requireActual("../../../../fixtures/host/src/main/wallet/private-submission-journal.js");
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'cold-submit-atomic-'));
   const handle = mock.scope.getContext({
     kind: 'public-address',

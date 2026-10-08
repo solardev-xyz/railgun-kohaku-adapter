@@ -1,0 +1,11 @@
+# Recovered submission and timing boundary composition
+
+Test-only successor of `265dc9dfcae1711ce8e8513d836d5ea94799c1c5`; runtime/type basis remains 1972191, not the parent's newer declarations. Preserve parent declarations at merge.
+
+Three original suites pass: private submission boundaries, diagnostic, and recovered (263 cases). They retain real current package submission/phase owners and capsule/calldata binders, the preceding group's exact generic RPC/network/service/journal fixtures, encrypted files/fsync, and the original controlled enrollment/store/proof/service/EOA/Tor responses. The boundary suite drives original production timers with its original deterministic clock, and preserves every monotonic admission mutation control. It does not execute a native engine/prover or establish service acceptance.
+
+The exact c6 live qualifier source is repository-only so its pure report/held-history helpers remain tested; its application entry is never invoked. No profile or live service is used. Original mnemonic derivation is explicitly forbidden in these injected-key cases. Original identity-manager metadata mocks feed the reviewed fixed submitter host fixture, and original signer/network mocks feed named host families.
+
+Jest resets in the boundary suite now retain both the actual initialized host binding and its exact context issuer. This is test isolation, not duplicate-package admission. Error construction uses that issuer's existing pure privacyError helper, which is no longer an exported context port. Original mutant source is still current package/network source: its relative require now resolves against the actual mutated module directory, preserving the same Jest registry and original assertions; no inverse production transformation.
+
+Attempts a/b exposed uninitialized binding and duplicate context issuer respectively; attempt c exposed the obsolete privacyError port assumption (249 passed, 14 failed). All are retained. Final 263/3 passed in 39.656 s with exit 0 and a complete result file; the subsequent one-test diagnostic probe also passed (53 deliberately filtered cases, not extra qualification). Default exact discovery is 145 qualified adjacent suites, six remaining; no full default run. The native GC runner cause remains unknown.

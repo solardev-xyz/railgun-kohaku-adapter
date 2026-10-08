@@ -1,0 +1,229 @@
+{
+  "baseRevision": "98da40c3625f22fba08bc2f5a0515676c97e5690",
+  "productionTransforms": false,
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-receipt-destination.test.js",
+      "beforeSha256": "8b6c804fc8114eb28da6acb4f1263d04831964f4bc82264049ef8b9ca601b22f",
+      "afterSha256": "779fc1b115ba333529255a94f3f1b71e4393f9ab05498db0d522a3ca9c085180",
+      "replacements": [
+        {
+          "start": 3757,
+          "before": "    jest.requireActual('./private-transaction-network').getPrivateTransactionNetwork\n",
+          "after": "    jest.requireActual(\"../../../../fixtures/host/src/main/wallet/private-transaction-network.js\").getPrivateTransactionNetwork\n"
+        },
+        {
+          "start": 1255,
+          "before": "const { getPrivateRpcDestinationDetails } = require('../networks/private-rpc');\n",
+          "after": "const { getPrivateRpcDestinationDetails } = require(\"../../../../fixtures/host/src/main/networks/private-rpc.js\");\n"
+        },
+        {
+          "start": 956,
+          "before": "jest.mock('./private-transaction-network', () => ({\n  ...jest.requireActual('./private-transaction-network'),\n",
+          "after": "jest.mock(\"../../../../fixtures/host/src/main/wallet/private-transaction-network.js\", () => ({\n  ...jest.requireActual(\"../../../../fixtures/host/src/main/wallet/private-transaction-network.js\"),\n"
+        },
+        {
+          "start": 828,
+          "before": "jest.mock('./private-submission-journal', () => ({\n",
+          "after": "jest.mock(\"../../../../fixtures/host/src/main/wallet/private-submission-journal.js\", () => ({\n"
+        },
+        {
+          "start": 696,
+          "before": "jest.mock('../networks/wallet-tor-transport', () => ({\n",
+          "after": "jest.mock(\"../../../../fixtures/host/src/main/networks/wallet-tor-transport.js\", () => ({\n"
+        },
+        {
+          "start": 368,
+          "before": "jest.mock('../settings-store', () => ({ isWalletTorExperimentAvailable: () => true }));\njest.mock('../tor-manager', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));\njest.mock('../networks/network-registry', () => ({\n",
+          "after": "jest.mock(\"../../../../fixtures/host/src/main/settings-store.js\", () => ({ isWalletTorExperimentAvailable: () => true }));\njest.mock(\"../../../../fixtures/host/src/main/tor-manager.js\", () => ({ getWalletSocksEndpoint: () => mockEndpoint }));\njest.mock(\"../../../../fixtures/host/src/main/networks/network-registry.js\", () => ({\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "// These explicit-key journal cases must not obtain mnemonic material.\njest.mock('@scure/bip39', () => ({ mnemonicToSeedSync: () => { throw Error('Unexpected journal mnemonic derivation'); } }));\nrequire('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-shield-operation.test.js",
+      "beforeSha256": "095786282da5a0e49ba0264345b2c04529541500fe0a77d06b23d463a264535a",
+      "afterSha256": "e5ee8ac6b6389219fb4cafa07a4c5d63f349734711af7dd90946f7beb48b3fb4",
+      "replacements": [
+        {
+          "start": 25077,
+          "before": "    const journal = jest.requireActual('./private-submission-journal').createSubmissionJournal({\n",
+          "after": "    const journal = jest.requireActual(\"../../../../fixtures/host/src/main/wallet/private-submission-journal.js\").createSubmissionJournal({\n"
+        },
+        {
+          "start": 12462,
+          "before": "    require('./private-transaction-network')\n",
+          "after": "    require(\"../../../../fixtures/host/src/main/wallet/private-transaction-network.js\")\n"
+        },
+        {
+          "start": 12068,
+          "before": "    require('./transaction-service').signAndSendTransaction(tx, signer, {\n",
+          "after": "    require(\"../../../../fixtures/host/src/main/wallet/transaction-service.js\").signAndSendTransaction(tx, signer, {\n"
+        },
+        {
+          "start": 11935,
+          "before": "  const intent = require('./private-transaction-intent').transactionIntent(\n",
+          "after": "  const intent = require(\"../../../../fixtures/host/src/main/wallet/private-transaction-intent.js\").transactionIntent(\n"
+        },
+        {
+          "start": 3541,
+          "before": "} = require('../networks/private-rpc');\n",
+          "after": "} = require(\"../../../../fixtures/host/src/main/networks/private-rpc.js\");\n"
+        },
+        {
+          "start": 3070,
+          "before": "          .requireActual('./private-submission-journal')\n",
+          "after": "          .requireActual('../../../../fixtures/host/src/main/wallet/private-submission-journal.js')\n"
+        },
+        {
+          "start": 2886,
+          "before": "jest.mock('./private-submission-journal', () => ({\n",
+          "after": "jest.mock(\"../../../../fixtures/host/src/main/wallet/private-submission-journal.js\", () => ({\n"
+        },
+        {
+          "start": 2742,
+          "before": "jest.mock('../networks/wallet-tor-transport', () => ({\n",
+          "after": "jest.mock(\"../../../../fixtures/host/src/main/networks/wallet-tor-transport.js\", () => ({\n"
+        },
+        {
+          "start": 2373,
+          "before": "jest.mock('../settings-store', () => ({ isWalletTorExperimentAvailable: () => true }));\njest.mock('../tor-manager', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));\njest.mock('../networks/network-registry', () => ({\n",
+          "after": "jest.mock(\"../../../../fixtures/host/src/main/settings-store.js\", () => ({ isWalletTorExperimentAvailable: () => true }));\njest.mock(\"../../../../fixtures/host/src/main/tor-manager.js\", () => ({ getWalletSocksEndpoint: () => mockEndpoint }));\njest.mock(\"../../../../fixtures/host/src/main/networks/network-registry.js\", () => ({\n"
+        },
+        {
+          "start": 1675,
+          "before": "        : require('../networks/private-rpc').createPrivateRpc(\n",
+          "after": "        : require(\"../../../../fixtures/host/src/main/networks/private-rpc.js\").createPrivateRpc(\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "// These explicit-key journal cases must not obtain mnemonic material.\njest.mock('@scure/bip39', () => ({ mnemonicToSeedSync: () => { throw Error('Unexpected journal mnemonic derivation'); } }));\nrequire('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-shield-recovery.test.js",
+      "beforeSha256": "58ff2564d16aba98692728f3018571d3d8c890866fafc89dfbb30dc1658dc6a6",
+      "afterSha256": "65e76cae50dfada7eaa2b211e33d486ab171e65e2c1894b2dfb31b591de09f76",
+      "replacements": [
+        {
+          "start": 11932,
+          "before": "  const { validArchive } = require('./privacy-journal-retention');\n",
+          "after": "  const { validArchive } = require(\"../../../../fixtures/host/src/main/wallet/privacy-journal-retention.js\");\n"
+        },
+        {
+          "start": 9081,
+          "before": "  const client = require('./private-transaction-network').getPrivateTransactionNetwork(handle);\n",
+          "after": "  const client = require(\"../../../../fixtures/host/src/main/wallet/private-transaction-network.js\").getPrivateTransactionNetwork(handle);\n"
+        },
+        {
+          "start": 1749,
+          "before": "const { createSubmissionJournal } = jest.requireActual('./private-submission-journal');\nconst { transactionIntent } = require('./private-transaction-intent');\nconst { openRailgunShieldRecovery } = require('./railgun-shield-recovery');\n",
+          "after": "const { createSubmissionJournal } = jest.requireActual(\"../../../../fixtures/host/src/main/wallet/private-submission-journal.js\");\nconst { transactionIntent } = require(\"../../../../fixtures/host/src/main/wallet/private-transaction-intent.js\");\nconst { openRailgunShieldRecovery } = require(\"../../../../../../src/owners/railgun-shield-recovery.js\");\n"
+        },
+        {
+          "start": 1683,
+          "before": "  './private-transaction-network'\n",
+          "after": "  \"../../../../fixtures/host/src/main/wallet/private-transaction-network.js\"\n"
+        },
+        {
+          "start": 1601,
+          "before": "} = require('../networks/private-rpc');\n",
+          "after": "} = require(\"../../../../fixtures/host/src/main/networks/private-rpc.js\");\n"
+        },
+        {
+          "start": 1138,
+          "before": "          .requireActual('./private-submission-journal')\n",
+          "after": "          .requireActual('../../../../fixtures/host/src/main/wallet/private-submission-journal.js')\n"
+        },
+        {
+          "start": 954,
+          "before": "jest.mock('./private-submission-journal', () => ({\n",
+          "after": "jest.mock(\"../../../../fixtures/host/src/main/wallet/private-submission-journal.js\", () => ({\n"
+        },
+        {
+          "start": 832,
+          "before": "jest.mock('../networks/wallet-tor-transport', () => ({\n",
+          "after": "jest.mock(\"../../../../fixtures/host/src/main/networks/wallet-tor-transport.js\", () => ({\n"
+        },
+        {
+          "start": 463,
+          "before": "jest.mock('../settings-store', () => ({ isWalletTorExperimentAvailable: () => true }));\njest.mock('../tor-manager', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));\njest.mock('../networks/network-registry', () => ({\n",
+          "after": "jest.mock(\"../../../../fixtures/host/src/main/settings-store.js\", () => ({ isWalletTorExperimentAvailable: () => true }));\njest.mock(\"../../../../fixtures/host/src/main/tor-manager.js\", () => ({ getWalletSocksEndpoint: () => mockEndpoint }));\njest.mock(\"../../../../fixtures/host/src/main/networks/network-registry.js\", () => ({\n"
+        },
+        {
+          "start": 250,
+          "before": "jest.mock('./privacy-session', () => ({ openPrivacySession: () => mockOpenSession() }));\njest.mock('./private-transaction-network', () => ({\n",
+          "after": "jest.mock(\"../../../../fixtures/host/src/main/wallet/privacy-session.js\", () => ({ openPrivacySession: () => mockOpenSession() }));\njest.mock(\"../../../../fixtures/host/src/main/wallet/private-transaction-network.js\", () => ({\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "// These explicit-key journal cases must not obtain mnemonic material.\njest.mock('@scure/bip39', () => ({ mnemonicToSeedSync: () => { throw Error('Unexpected journal mnemonic derivation'); } }));\nrequire('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-transact-recovery.test.js",
+      "beforeSha256": "f09d1c5f48e1ba767f5960d13962ce9b2efd124b4ccc21cc2761ebe283a16101",
+      "afterSha256": "06c73613275d5fd1e1faadefe8c9fe4a39af5944bd985d4496cdfb47ee1d9959",
+      "replacements": [
+        {
+          "start": 13100,
+          "before": "  const { validArchive } = require('./privacy-journal-retention');\n",
+          "after": "  const { validArchive } = require(\"../../../../fixtures/host/src/main/wallet/privacy-journal-retention.js\");\n"
+        },
+        {
+          "start": 10832,
+          "before": "    require('./transaction-service').signAndSendTransaction(\n",
+          "after": "    require(\"../../../../fixtures/host/src/main/wallet/transaction-service.js\").signAndSendTransaction(\n"
+        },
+        {
+          "start": 10390,
+          "before": "  const network = require('./private-transaction-network').getPrivateTransactionNetwork(handle);\n",
+          "after": "  const network = require(\"../../../../fixtures/host/src/main/wallet/private-transaction-network.js\").getPrivateTransactionNetwork(handle);\n"
+        },
+        {
+          "start": 9682,
+          "before": "  const client = require('./private-transaction-network').getPrivateTransactionNetwork(handle);\n",
+          "after": "  const client = require(\"../../../../fixtures/host/src/main/wallet/private-transaction-network.js\").getPrivateTransactionNetwork(handle);\n"
+        },
+        {
+          "start": 1335,
+          "before": "const { createSubmissionJournal } = jest.requireActual('./private-submission-journal');\nconst { transactionIntent } = require('./private-transaction-intent');\nconst { openRailgunTransactRecovery } = require('./railgun-transact-recovery');\n",
+          "after": "const { createSubmissionJournal } = jest.requireActual(\"../../../../fixtures/host/src/main/wallet/private-submission-journal.js\");\nconst { transactionIntent } = require(\"../../../../fixtures/host/src/main/wallet/private-transaction-intent.js\");\nconst { openRailgunTransactRecovery } = require(\"../../../../../../src/owners/railgun-transact-recovery.js\");\n"
+        },
+        {
+          "start": 969,
+          "before": "          .requireActual('./private-submission-journal')\n",
+          "after": "          .requireActual('../../../../fixtures/host/src/main/wallet/private-submission-journal.js')\n"
+        },
+        {
+          "start": 785,
+          "before": "jest.mock('./private-submission-journal', () => ({\n",
+          "after": "jest.mock(\"../../../../fixtures/host/src/main/wallet/private-submission-journal.js\", () => ({\n"
+        },
+        {
+          "start": 663,
+          "before": "jest.mock('../networks/wallet-tor-transport', () => ({\n",
+          "after": "jest.mock(\"../../../../fixtures/host/src/main/networks/wallet-tor-transport.js\", () => ({\n"
+        },
+        {
+          "start": 183,
+          "before": "jest.mock('./privacy-session', () => ({ openPrivacySession: () => mockSession }));\njest.mock('../settings-store', () => ({ isWalletTorExperimentAvailable: () => true }));\njest.mock('../tor-manager', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));\njest.mock('../networks/network-registry', () => ({\n",
+          "after": "jest.mock(\"../../../../fixtures/host/src/main/wallet/privacy-session.js\", () => ({ openPrivacySession: () => mockSession }));\njest.mock(\"../../../../fixtures/host/src/main/settings-store.js\", () => ({ isWalletTorExperimentAvailable: () => true }));\njest.mock(\"../../../../fixtures/host/src/main/tor-manager.js\", () => ({ getWalletSocksEndpoint: () => mockEndpoint }));\njest.mock(\"../../../../fixtures/host/src/main/networks/network-registry.js\", () => ({\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "// These explicit-key journal cases must not obtain mnemonic material.\njest.mock('@scure/bip39', () => ({ mnemonicToSeedSync: () => { throw Error('Unexpected journal mnemonic derivation'); } }));\nrequire('../../../../context-host.cjs');\n"
+        }
+      ]
+    }
+  ]
+}

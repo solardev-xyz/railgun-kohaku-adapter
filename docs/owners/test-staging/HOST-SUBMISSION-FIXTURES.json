@@ -1,0 +1,13 @@
+{
+  "source": "scripts/qualify-railgun-private-live.js",
+  "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+  "destination": "tools/owner-test-staging/fixtures/host/scripts/qualify-railgun-private-live.js",
+  "bytes": 134981,
+  "sha256": "781dc6f8ab075b73c64fb2f5a7127862380baa1448c1a0e59b09df86941fd684",
+  "entryExecuted": false,
+  "pins": {
+    "destination": "tools/owner-test-staging/fixtures/host/src/main/wallet/railgun-shield-pins.json",
+    "bytes": 723,
+    "sha256": "0f38d69a9acb5ecdaeb7197f4410a1c6068b8896e4204a179631176223e31a75"
+  }
+}

@@ -1,3 +1,6 @@
+// These explicit-key journal cases must not obtain mnemonic material.
+jest.mock('@scure/bip39', () => ({ mnemonicToSeedSync: () => { throw Error('Unexpected journal mnemonic derivation'); } }));
+require('../../../../context-host.cjs');
 const fs = require('fs'),
   os = require('os'),
   path = require('path');
@@ -47,7 +50,7 @@ jest.mock("../../../../../../src/owners/railgun-shield-preflight.js", () => ({
     const rpc =
       options.destinationConstraint === undefined
         ? undefined
-        : require('../networks/private-rpc').createPrivateRpc(
+        : require("../../../../fixtures/host/src/main/networks/private-rpc.js").createPrivateRpc(
             enrollment.getContext('protocol-rpc', 'shield-preflight'),
             'protocol-rpc',
             options
@@ -73,23 +76,23 @@ jest.mock("../../../../../../src/owners/railgun-shield-preflight.js", () => ({
       throw Error('Invalid preflight');
   },
 }));
-jest.mock('../settings-store', () => ({ isWalletTorExperimentAvailable: () => true }));
-jest.mock('../tor-manager', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));
-jest.mock('../networks/network-registry', () => ({
+jest.mock("../../../../fixtures/host/src/main/settings-store.js", () => ({ isWalletTorExperimentAvailable: () => true }));
+jest.mock("../../../../fixtures/host/src/main/tor-manager.js", () => ({ getWalletSocksEndpoint: () => mockEndpoint }));
+jest.mock("../../../../fixtures/host/src/main/networks/network-registry.js", () => ({
   getNetwork: () => ({}),
   getEndpoints: () => [mockUrl],
   getEndpointSources: () => [{ keyed: false, coverage: { 11155111: mockUrl } }],
 }));
-jest.mock('../networks/wallet-tor-transport', () => ({
+jest.mock("../../../../fixtures/host/src/main/networks/wallet-tor-transport.js", () => ({
   createWalletTorTransport: () => ({ request: mockRequest, release: mockRelease }),
 }));
-jest.mock('./private-submission-journal', () => ({
+jest.mock("../../../../fixtures/host/src/main/wallet/private-submission-journal.js", () => ({
   getPrivateSubmissionJournal: (handle) => {
     if (!mockJournals.has(handle))
       mockJournals.set(
         handle,
         jest
-          .requireActual('./private-submission-journal')
+          .requireActual('../../../../fixtures/host/src/main/wallet/private-submission-journal.js')
           .createSubmissionJournal({ handle, directory: mockDirectory, key: Buffer.alloc(32, 3) })
       );
     return mockJournals.get(handle);
@@ -101,7 +104,7 @@ const {
   createPrivateRpc,
   getPrivateRpcDestination,
   createPrivateRpcDestinationConstraint,
-} = require('../networks/private-rpc');
+} = require("../../../../fixtures/host/src/main/networks/private-rpc.js");
 const { openRailgunShieldOperation } = require("../../../../../../src/owners/railgun-shield-operation.js");
 const prepared = require("../../../../fixtures/docs/qualification/railgun-shield-account-2026-10-03.json")
   .prepared[0];
@@ -344,12 +347,12 @@ test('generic private context cannot bypass enrolled operation receipts at signi
     data: prepared.data,
     gasLimit: '500000',
   };
-  const intent = require('./private-transaction-intent').transactionIntent(
+  const intent = require("../../../../fixtures/host/src/main/wallet/private-transaction-intent.js").transactionIntent(
     'railgun-native-shield',
     tx
   );
   await expect(
-    require('./transaction-service').signAndSendTransaction(tx, signer, {
+    require("../../../../fixtures/host/src/main/wallet/transaction-service.js").signAndSendTransaction(tx, signer, {
       privacyContext: handle,
       intent,
       review: async () => true,
@@ -358,7 +361,7 @@ test('generic private context cannot bypass enrolled operation receipts at signi
   expect(signer.signTransaction).not.toHaveBeenCalled();
   const signed = await wallet.signTransaction({ ...tx, gasPrice: 100n, nonce: 0, type: 0 });
   await expect(
-    require('./private-transaction-network')
+    require("../../../../fixtures/host/src/main/wallet/private-transaction-network.js")
       .getPrivateTransactionNetwork(handle)
       .broadcastRawTransaction(11155111, signed, { intent })
   ).rejects.toMatchObject({ code: 'RAILGUN_SHIELD_HANDOFF_REFUSED' });
@@ -708,7 +711,7 @@ test.each(['review', 'getAddress', 'signTransaction'])(
       chainId: 11155111,
       role: 'transaction-rpc',
     });
-    const journal = jest.requireActual('./private-submission-journal').createSubmissionJournal({
+    const journal = jest.requireActual("../../../../fixtures/host/src/main/wallet/private-submission-journal.js").createSubmissionJournal({
       handle: reopenedHandle,
       directory: mockDirectory,
       key: Buffer.alloc(32, 3),
