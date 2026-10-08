@@ -95,5 +95,19 @@ test('default CI discovery includes every qualified closed suite by exact filena
   expect(context.testMatch).toHaveLength(35);
   expect(context.testMatch.every((name) => !/[?*]/.test(name))).toBe(true);
   expect(new Set([...closed.testMatch, ...context.testMatch]).size).toBe(93);
-  expect(config.testMatch).toEqual(['<rootDir>/test/**/*.test.js', ...closed.testMatch, ...context.testMatch]);
+  expect(config.testMatch).toEqual([
+    '<rootDir>/test/**/*.test.js',
+    '<rootDir>/tools/qualification/scripts/fixtures/railgun-relay-wire/policy.test.js',
+    '<rootDir>/tools/qualification/scripts/fixtures/railgun-relay-wire/recipe.test.js',
+    '<rootDir>/tools/qualification/scripts/fixtures/railgun-relay-keys/recipe.test.js',
+    '<rootDir>/tools/qualification/scripts/fixtures/railgun-combined-poi-restart-counts.test.js',
+    '<rootDir>/tools/qualification/scripts/fixtures/railgun-combined-poi-restart-data.test.js',
+    '<rootDir>/tools/qualification/scripts/fixtures/railgun-combined-poi-second-cold-counts.test.js',
+    '<rootDir>/tools/qualification/scripts/fixtures/railgun-combined-poi-second-handoff.test.js',
+    '<rootDir>/tools/qualification/scripts/fixtures/railgun-combined-poi-second-recovery-data.test.js',
+    '<rootDir>/tools/qualification/scripts/fixtures/railgun-combined-poi-second-sign-counts.test.js',
+    '<rootDir>/tools/qualification/scripts/fixtures/railgun-public-cold-counts.test.js',
+    ...closed.testMatch,
+    ...context.testMatch,
+  ]);
 });
