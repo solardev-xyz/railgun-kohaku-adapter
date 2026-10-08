@@ -362,7 +362,9 @@ test("high-authority host family imports have an exact reviewed source allowlist
     ).toEqual(files);
   for (const [file, digest] of Object.entries(audit.files)) {
     let text = fs.readFileSync(path.join(root, file), "utf8");
-    const transition = facadeTransitions.changes.find((row) => row.file === file);
+    const transition = facadeTransitions.changes.find(
+      (row) => row.file === file,
+    );
     if (transition) {
       expect(sha(text)).toBe(transition.afterSha256);
       text = undo(text, transition.replacements);

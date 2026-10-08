@@ -25,6 +25,8 @@ jest.mock("../src/owners/railgun-account-enrollment.js", () => ({
 }));
 jest.mock("../src/owners/railgun-account-public.js", () => ({
   openRailgunAccountPublic: (input) => state.openPublic(input),
+  getRailgunAccountPublicDestination: (coordinator, enrollment) =>
+    state.destination(coordinator, enrollment),
 }));
 jest.mock("../src/owners/railgun-account-wallet.js", () => ({
   openRailgunAccountWallet: (input) => state.openWallet(input),
@@ -35,6 +37,9 @@ jest.mock("../src/owners/railgun-kohaku-plugin.js", () => ({
     state.submit(plugin, operation, "private"),
   submitRailgunKohakuPublicOperation: (plugin, operation) =>
     state.submit(plugin, operation, "public"),
+}));
+jest.mock("../src/owners/railgun-kohaku-recovery.js", () => ({
+  createRailgunKohakuRecovery: (options) => state.createRecovery(options),
 }));
 const deferred = () => {
   let resolve, reject;
@@ -115,6 +120,26 @@ function fixture() {
     openPublic: jest.fn(async () => publicOwner()),
     openWallet: jest.fn(async () => walletOwner()),
     createPlugin: jest.fn(plugin),
+    destination: jest.fn(() => Object.freeze({ genuineDestination: true })),
+    createRecovery: jest.fn((input) => {
+      const drain = deferred(),
+        controller = new AbortController();
+      return {
+        input,
+        signal: controller.signal,
+        closed: drain.promise,
+        drain,
+        close: jest.fn(() => {
+          controller.abort();
+          drain.resolve();
+        }),
+        history: jest.fn(() =>
+          Promise.resolve({ records: [], nextAfter: null }),
+        ),
+        resumeProof: jest.fn(() => Promise.resolve({ status: "proof-stored" })),
+        submitStored: jest.fn(() => Promise.resolve({ status: "submitted" })),
+      };
+    }),
     submit: jest.fn(() => Promise.resolve({ status: "submitted" })),
   };
   const initialize =
@@ -161,6 +186,9 @@ test("closed one-shot initializer and exact account options expose no owner auth
       "closed",
       "describe",
       "openPrivate",
+      "openRecovery",
+      "rebuildPublic",
+      "resumePublic",
       "openPublic",
       "openRead",
       "signal",
@@ -487,4 +515,102 @@ test("reentrant cancellation inside the first opener cannot resolve shutdown bef
   await expect(work).rejects.toThrow();
   await tick();
   expect(late.close).toHaveBeenCalledTimes(1);
+});
+
+test.each([
+  ["rebuildPublic", "new"],
+  ["resumePublic", "pending"],
+])(
+  "%s closes the original public owner before fixed replacement",
+  async (method, mode) => {
+    const f = fixture(),
+      account = await f.api.openAccount(f.options);
+    const previous = await state.openPublic.mock.results[0].value,
+      drain = deferred();
+    previous.close.mockReturnValue(drain.promise);
+    const work = account[method]();
+    expect(state.openPublic).toHaveBeenCalledTimes(1);
+    expect(() => account.openRead(laneOptions(f.options.signal))).toThrow();
+    drain.resolve();
+    await expect(work).resolves.toEqual({ status: "public-cache-open", mode });
+    expect(state.openPublic.mock.calls[1][0]).toEqual({
+      enrollment: state.enrollments[0],
+      archive: runtime.archive,
+      create: false,
+      mode,
+    });
+    expect(() => account[method]({ policy: "arbitrary" })).toThrow();
+    await account.close();
+  },
+);
+test("public replacement original close failure is not converted to a fresh generation", async () => {
+  const f = fixture(),
+    account = await f.api.openAccount(f.options);
+  const previous = await state.openPublic.mock.results[0].value;
+  const failure = Error("public original close failed");
+  previous.close.mockRejectedValue(failure);
+  await expect(account.rebuildPublic()).rejects.toBe(failure);
+  await expect(account.closed).rejects.toBe(failure);
+  expect(state.openPublic).toHaveBeenCalledTimes(1);
+  expect(() => f.api.openAccount(f.options)).toThrow();
+});
+const recoveryOptions = (signal) => ({
+  signal,
+  reviewDisclosures: () => Promise.resolve(true),
+  reviewTransaction: () => Promise.resolve(true),
+  gasLimit: 1500000n,
+  maxGasFee: 1n,
+});
+test("recovery history opens without any wallet and uses only genuine internal destination/owners", async () => {
+  const f = fixture(),
+    account = await f.api.openAccount(f.options);
+  state.openWallet.mockRejectedValue(Error("wallet cache unavailable"));
+  const options = recoveryOptions(f.options.signal);
+  const lane = await account.openRecovery(options);
+  const actual = state.createRecovery.mock.results[0].value;
+  expect(state.openWallet).not.toHaveBeenCalled();
+  expect(actual.input.owners.enrollment).toBe(state.enrollments[0]);
+  expect(actual.input.destination).toBe(
+    state.destination.mock.results[0].value,
+  );
+  expect(actual.input.reviewDisclosures).toBe(options.reviewDisclosures);
+  expect(Object.keys(lane).sort()).toEqual(
+    [
+      "close",
+      "closed",
+      "history",
+      "resumeProof",
+      "signal",
+      "submitStored",
+    ].sort(),
+  );
+  const original = Promise.resolve({ records: [] });
+  actual.history.mockReturnValue(original);
+  expect(lane.history()).toBe(original);
+  expect(actual.history).toHaveBeenCalledWith(null);
+  await lane.resumeProof("a".repeat(64));
+  await lane.submitStored("b".repeat(64));
+  expect(actual.resumeProof).toHaveBeenCalledWith("a".repeat(64));
+  expect(actual.submitStored).toHaveBeenCalledWith("b".repeat(64));
+  await account.close();
+});
+test("recovery close retains original busy work and its independent closed promise", async () => {
+  const f = fixture(),
+    account = await f.api.openAccount(f.options);
+  const lane = await account.openRecovery(recoveryOptions(f.options.signal));
+  const actual = state.createRecovery.mock.results[0].value,
+    held = deferred();
+  actual.resumeProof.mockReturnValue(held.promise);
+  actual.close.mockImplementation(() => {});
+  lane.resumeProof("a".repeat(64));
+  let closed = false;
+  account.close().then(() => {
+    closed = true;
+  });
+  actual.drain.resolve();
+  await tick();
+  expect(closed).toBe(false);
+  held.resolve({ status: "proof-stored" });
+  await account.closed;
+  expect(closed).toBe(true);
 });

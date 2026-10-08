@@ -3,11 +3,6 @@
 const path = require("path");
 const { types } = require("util");
 const host = require("./host-bindings");
-const identityApi = require("./railgun-identity.js");
-const enrollmentApi = require("./railgun-account-enrollment.js");
-const publicApi = require("./railgun-account-public.js");
-const walletApi = require("./railgun-account-wallet.js");
-const pluginApi = require("./railgun-kohaku-plugin.js");
 const fail = () =>
   Object.assign(new Error("Railgun account facade unavailable"), {
     code: "RAILGUN_ACCOUNT_FACADE_REFUSED",
@@ -88,6 +83,13 @@ function initializeRailgunMain(options) {
       !path.isAbsolute(value)
     )
       throw fail();
+  // Capture fixed source identity and paired bindings before loading owners.
+  const identityApi = require("./railgun-identity.js");
+  const enrollmentApi = require("./railgun-account-enrollment.js");
+  const publicApi = require("./railgun-account-public.js");
+  const walletApi = require("./railgun-account-wallet.js");
+  const pluginApi = require("./railgun-kohaku-plugin.js");
+  const recoveryApi = require("./railgun-kohaku-recovery.js");
   const application = signal(host.platform.applicationLifetime());
   const occupied = new Map();
   const sessions = new WeakMap();
@@ -427,6 +429,104 @@ function initializeRailgunMain(options) {
         }
       });
     }
+    function replacePublic(mode, extra) {
+      if (extra.length) throw fail();
+      return run(async () => {
+        try {
+          const previous = state.public;
+          stop(previous, "public");
+          const cleanup = state.cleanup.get(previous);
+          if (state.failure || !cleanup?.work) throw state.failure || fail();
+          await cleanup.work;
+          current();
+          state.public = null;
+          await acquire(
+            "public",
+            publicApi.openRailgunAccountPublic({
+              enrollment: state.enrollment,
+              archive: runtime.archive,
+              create: false,
+              mode,
+            }),
+          );
+          return Object.freeze({ status: "public-cache-open", mode });
+        } catch (error) {
+          close();
+          throw error;
+        }
+      });
+    }
+    function recovery(options) {
+      const data = record(options, [
+        "signal",
+        "reviewDisclosures",
+        "reviewTransaction",
+        "gasLimit",
+        "maxGasFee",
+      ]);
+      signal(data.signal);
+      for (const callback of [data.reviewDisclosures, data.reviewTransaction])
+        if (typeof callback !== "function" || types.isProxy(callback))
+          throw fail();
+      return run(async () => {
+        let companion;
+        try {
+          companion = recoveryApi.createRailgunKohakuRecovery({
+            owners: owners(),
+            destination: publicApi.getRailgunAccountPublicDestination(
+              state.public.coordinator,
+              state.enrollment,
+            ),
+            ...runtime,
+            ...data,
+            signal: AbortSignal.any([lifetime, data.signal]),
+          });
+          state.lane = companion;
+          if (state.closing) stop(companion, "lane");
+          current();
+          let closing = false;
+          const active = () => {
+            current();
+            if (closing || state.lane !== companion || companion.signal.aborted)
+              throw fail();
+          };
+          observe(companion.closed).then(
+            () => {
+              closing = true;
+              if (state.lane === companion) state.lane = null;
+            },
+            (error) => {
+              remember(error);
+              close();
+            },
+          );
+          return Object.freeze({
+            history(after = null) {
+              active();
+              return retain(companion.history(after));
+            },
+            resumeProof(holdId) {
+              active();
+              return retain(companion.resumeProof(holdId));
+            },
+            submitStored(holdId) {
+              active();
+              return retain(companion.submitStored(holdId));
+            },
+            signal: companion.signal,
+            closed: companion.closed,
+            close() {
+              closing = true;
+              stop(companion, "lane");
+            },
+          });
+        } catch (error) {
+          if (companion) stop(companion, "lane");
+          close();
+          throw error;
+        }
+      });
+    }
     const session = Object.freeze({
       describe() {
         current();
@@ -441,6 +541,9 @@ function initializeRailgunMain(options) {
         const data = record(range, ["to", "anchor"]);
         return run(() => state.public.advance(data));
       },
+      rebuildPublic: (...extra) => replacePublic("new", extra),
+      resumePublic: (...extra) => replacePublic("pending", extra),
+      openRecovery: recovery,
       openRead: (options) => lane("read", options),
       openPrivate: (options) => lane("private", options),
       openPublic: (options) => lane("public", options),
