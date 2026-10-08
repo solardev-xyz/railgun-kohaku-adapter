@@ -1,0 +1,8 @@
+{
+  "sourceRevision": "860c680f635fc5941b4b3bad8295bbad9315199f",
+  "source": "src/main/wallet/railgun-kohaku-adapter-package.test.js",
+  "destination": "docs/owners/historical-tests/railgun-kohaku-adapter-package.test.source.txt",
+  "bytes": 15104,
+  "sha256": "25f040a73c60ad84a73f39e4e1de9a7b37899580ce48cc6853a266e047a27169",
+  "status": "historical .5 extraction acceptance; obsolete wrapper identity/source-path assertions. Parent-owned actual .6 full tar/lock/installed-file/exports acceptance remains the active Freedom replacement; not migrated to default package tests."
+}

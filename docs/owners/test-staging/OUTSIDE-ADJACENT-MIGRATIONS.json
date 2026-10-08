@@ -1,0 +1,177 @@
+{
+  "sourceRevision": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+  "outsideOriginal151": true,
+  "productionTransforms": false,
+  "changes": [
+    {
+      "source": "src/main/wallet/railgun-private-proof-recovery.test.js",
+      "destination": "test/owner-private-proof-recovery.test.js",
+      "beforeSha256": "d37c2b9db285cac54607e469c1dae15fbcdc4790de867c19a76e902841742d87",
+      "afterSha256": "0126adcef77e06979619f343e984e56b4a34e36ba6585adc6675141bc6a93bd4",
+      "replacements": [
+        {
+          "start": 3539,
+          "before": "  fixture.capsule.engineSha256 = require('./railgun-engine-manifest.json').sha256;\n",
+          "after": "  fixture.capsule.engineSha256 = require('../src/execution/railgun-engine-manifest.json').sha256;\n"
+        },
+        {
+          "start": 2532,
+          "before": "} = require('../../../scripts/fixtures/railgun-partial-capsule-data');\nconst { resumeRailgunAccountPrivateProof: resume } = require('./railgun-private-proof-recovery');\n",
+          "after": "} = require('../tools/owner-test-staging/fixtures/scripts/fixtures/railgun-partial-capsule-data.js');\nconst { resumeRailgunAccountPrivateProof: resume } = require('../src/owners/railgun-private-proof-recovery.js');\n"
+        },
+        {
+          "start": 2414,
+          "before": "} = require('./railgun-private-intent');\n",
+          "after": "} = require('../src/data/railgun-private-intent.js');\n"
+        },
+        {
+          "start": 2285,
+          "before": "} = require('./railgun-private-capsule');\n",
+          "after": "} = require('../src/execution/railgun-private-capsule.js');\n"
+        },
+        {
+          "start": 2122,
+          "before": "const { createPrivacyScope, getPrivacyContext } = require('../networks/privacy-context');\n",
+          "after": "const { createPrivacyScope, getPrivacyContext } = require('../src/owners/context-bindings.js');\n"
+        },
+        {
+          "start": 1914,
+          "before": "jest.mock('./railgun-private-operation', () => ({\n",
+          "after": "jest.mock('../src/owners/railgun-private-operation.js', () => ({\n"
+        },
+        {
+          "start": 1801,
+          "before": "jest.mock('./railgun-account-txid', () => ({\n",
+          "after": "jest.mock('../src/owners/railgun-account-txid.js', () => ({\n"
+        },
+        {
+          "start": 1674,
+          "before": "jest.mock('./railgun-transact-provenance', () => ({\n",
+          "after": "jest.mock('../src/owners/railgun-transact-provenance.js', () => ({\n"
+        },
+        {
+          "start": 1557,
+          "before": "jest.mock('./railgun-account-poi', () => ({\n",
+          "after": "jest.mock('../src/owners/railgun-account-poi.js', () => ({\n"
+        },
+        {
+          "start": 1432,
+          "before": "jest.mock('./railgun-private-preflight', () => ({\n",
+          "after": "jest.mock('../src/owners/railgun-private-preflight.js', () => ({\n"
+        },
+        {
+          "start": 1290,
+          "before": "jest.mock('./railgun-prover-runtime', () => ({\n",
+          "after": "jest.mock('../src/execution/railgun-prover-runtime.js', () => ({\n"
+        },
+        {
+          "start": 1154,
+          "before": "jest.mock('./railgun-engine-runtime', () => ({\n",
+          "after": "jest.mock('../src/execution/railgun-engine-runtime.js', () => ({\n"
+        },
+        {
+          "start": 970,
+          "before": "jest.mock('./railgun-private-proof', () => ({\n",
+          "after": "jest.mock('../src/owners/railgun-private-proof.js', () => ({\n"
+        },
+        {
+          "start": 693,
+          "before": "jest.mock('./railgun-account-wallet', () => ({\n",
+          "after": "jest.mock('../src/owners/railgun-account-wallet.js', () => ({\n"
+        },
+        {
+          "start": 554,
+          "before": "jest.mock('./railgun-account-public', () => ({\n",
+          "after": "jest.mock('../src/owners/railgun-account-public.js', () => ({\n"
+        },
+        {
+          "start": 375,
+          "before": "jest.mock('./railgun-identity', () => ({\n",
+          "after": "jest.mock('../src/owners/railgun-identity.js', () => ({\n"
+        },
+        {
+          "start": 251,
+          "before": "jest.mock('./railgun-account-enrollment', () => ({\n",
+          "after": "jest.mock('../src/owners/railgun-account-enrollment.js', () => ({\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../tools/owner-test-staging/context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-review.test.js",
+      "destination": "test/owner-relay-review.test.js",
+      "beforeSha256": "3e607a283bc1c3569731c8abd6c3d690747ef6e5fc8a08fa803bc4132c90af17",
+      "afterSha256": "cfa1b27a9eef45764277cd3832c6d697858b48fe37123b06bc834c68160104e7",
+      "replacements": [
+        {
+          "start": 448,
+          "before": "const { createRailgunRelayReview } = require('./railgun-relay-review');\nconst pins = require('./railgun-shield-pins.json');\n",
+          "after": "const { createRailgunRelayReview } = require('../src/owners/railgun-relay-review.js');\nconst pins = require('../src/railgun-shield-pins.json');\n"
+        },
+        {
+          "start": 330,
+          "before": "jest.mock('./railgun-relay-quote-verify', () => ({\n",
+          "after": "jest.mock('../src/owners/railgun-relay-quote-verify.js', () => ({\n"
+        },
+        {
+          "start": 208,
+          "before": "jest.mock('./railgun-account-public', () => ({\n",
+          "after": "jest.mock('../src/owners/railgun-account-public.js', () => ({\n"
+        },
+        {
+          "start": 17,
+          "before": "jest.mock('./railgun-account-wallet', () => ({\n",
+          "after": "jest.mock('../src/owners/railgun-account-wallet.js', () => ({\n"
+        }
+      ]
+    },
+    {
+      "source": "src/main/wallet/railgun-remote.test.js",
+      "destination": "test/execution-remote.test.js",
+      "beforeSha256": "7037caff128533dc50ce73d6f42cbeaf05c1e0fe3abec42a83403a26a4edf4a2",
+      "afterSha256": "ec5387d58123fb3e625be57c97c808aed33520c12760ee16f08f1de92f0acab6",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "const { createRailgunRemote } = require('./railgun-remote');\n",
+          "after": "const { createRailgunRemote } = require('../src/execution/railgun-remote.js');\n"
+        }
+      ]
+    },
+    {
+      "source": "src/main/wallet/railgun-wallet-scan.test.js",
+      "destination": "test/execution-wallet-scan.test.js",
+      "beforeSha256": "2c11a85c87d9bc299107cb086896ccac19cd10e4105831991c8a4a275ffe3280",
+      "afterSha256": "47b9a2dcd1041e44818af4b77eed9e60298462175457b77b0ef79f066ffc4236",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "const { scanRailgunWallet } = require('./railgun-wallet-scan');\n",
+          "after": "const { scanRailgunWallet } = require('../src/execution/railgun-wallet-scan.js');\n"
+        }
+      ]
+    },
+    {
+      "source": "src/main/wallet/railgun-private-intent.test.js",
+      "destination": "test/railgun-private-intent.test.js",
+      "beforeSha256": "c25b0169c782fd921a77ace916a4c575cd92b002373e158ac32e4a0a16a13ad2",
+      "afterSha256": "28226e694c890acc50d38838f588b243619d22a51775c6462d8392e3df1b07d2",
+      "replacements": [
+        {
+          "start": 225,
+          "before": "} = require('./railgun-private-intent');\nconst pins = require('./railgun-shield-pins.json');\n",
+          "after": "} = require('../src/data/railgun-private-intent.js');\nconst pins = require('../src/railgun-shield-pins.json');\n"
+        },
+        {
+          "start": 62,
+          "before": "const { TRANSACT_ABI, BOUND_PARAMS } = require('./railgun-private-policy');\n",
+          "after": "const { TRANSACT_ABI, BOUND_PARAMS } = require('../src/data/railgun-private-policy.js');\n"
+        }
+      ]
+    }
+  ]
+}
