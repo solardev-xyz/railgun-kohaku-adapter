@@ -1,0 +1,101 @@
+{
+  "schema": "railgun-installed-owner-private-publication-v1",
+  "scope": "two original native cases; no fresh-process recovery outcome",
+  "files": {
+    "launcher-freeze.json": {
+      "bytes": 9120,
+      "sha256": "7b1a5f4c5b1498fe10780ad9dcb75df752e11ae2baec28019cba7e18997fe813",
+      "representation": "byte-exact original"
+    },
+    "prepare-report.json": {
+      "bytes": 170211,
+      "sha256": "c4383a1d9035538b845e13683fe8258cce0091f323f89af5cf2345cd4478a0c6",
+      "representation": "derived JSON"
+    },
+    "prepare-result.json": {
+      "bytes": 579,
+      "sha256": "2dabf42df100f0471c241fa28c9c06b388f9ecc81c98878b01b1c3681529bd41",
+      "representation": "byte-exact original"
+    },
+    "prepare-post.json": {
+      "bytes": 113,
+      "sha256": "1c88281144150fba7a8b08303f194cc5952054526b825618f9df138bea836eb9",
+      "representation": "byte-exact original"
+    },
+    "prepare-main-process.json": {
+      "bytes": 219,
+      "sha256": "18ca5152eaadb7c26f374f8ea1c5c67da10f59f8a12455313bc82da2abcf69aa",
+      "representation": "byte-exact original"
+    },
+    "prepare-driver-observation.json": {
+      "bytes": 356,
+      "sha256": "c6e95c921865b67497c39c15b214164cafc3fa1e6fe1d02b553c0f377b17942d",
+      "representation": "byte-exact original"
+    },
+    "prepare-main.log": {
+      "bytes": 141,
+      "sha256": "d2301d5c6ad5b9fcc355660fd3c1f0d333d211be6f41bc1b4e3804888f45938a",
+      "representation": "byte-exact original"
+    },
+    "unchanged-list-report.json": {
+      "bytes": 169922,
+      "sha256": "48780454e67995a68381139ab401c6d4e47fbd9a551ac863eea95e0c778ccc62",
+      "representation": "derived JSON"
+    },
+    "unchanged-list-result.json": {
+      "bytes": 562,
+      "sha256": "03d1a6aa81ae695db93691f53f6cef8d1ef2f46a7dc0d45dcff8aaba86d6cedc",
+      "representation": "byte-exact original"
+    },
+    "unchanged-list-post.json": {
+      "bytes": 113,
+      "sha256": "f45eedb1c81b7d0a9769a0917f46c8b18baea9df9ea177a6887e312edab654b9",
+      "representation": "byte-exact original"
+    },
+    "unchanged-list-main-process.json": {
+      "bytes": 219,
+      "sha256": "87470bf77d5e6b8ad443bfc3511922cff0c31c13ad9ee177180dc94a10ef02a2",
+      "representation": "byte-exact original"
+    },
+    "unchanged-list-driver-observation.json": {
+      "bytes": 356,
+      "sha256": "5b764381eb8e507ddde7466fb49eb90736328570a937a43eb1c868746b5e0af7",
+      "representation": "byte-exact original"
+    },
+    "unchanged-list-main.log": {
+      "bytes": 141,
+      "sha256": "d2301d5c6ad5b9fcc355660fd3c1f0d333d211be6f41bc1b4e3804888f45938a",
+      "representation": "byte-exact original"
+    },
+    "failed-attempt-a.json": {
+      "bytes": 2575,
+      "sha256": "ef09e25f5f1800adeb9ba2a95f142ae03e1ff2be954dd3aa37d549a593e2a33e",
+      "representation": "byte-exact original"
+    },
+    "failed-attempt-b.json": {
+      "bytes": 2913,
+      "sha256": "40d694ceeace6fec1d83e707b4fef33e2e1e7d99d232c546eb651f004e177d0b",
+      "representation": "byte-exact original"
+    },
+    "bindings.json": {
+      "bytes": 11563,
+      "sha256": "3235c3981084f751954e680a8ca1e4642e36c382f98084d01b175610c04bb0cf",
+      "representation": "derived JSON"
+    },
+    "README.md": {
+      "bytes": 5564,
+      "sha256": "98e34234dc575aaaa9444778fb4ee6faa75506516502fbb43ca752f29858ee8a",
+      "representation": "authored archive documentation/control"
+    },
+    "report-contract.cjs": {
+      "bytes": 6218,
+      "sha256": "40bfb093aac389f719d99b19982806d5e11393b24a84eb830075c6e71c6ef3b6",
+      "representation": "byte-exact launcher r4 validator"
+    },
+    "verify.cjs": {
+      "bytes": 2797,
+      "sha256": "9d8873dc4af54e3cb1b180f77f372e2c24ba163f0e11fce9d508a00bcf55a6ed",
+      "representation": "authored archive documentation/control"
+    }
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "schema": "railgun-owner-native-private-failed-attempt-note-v1",
+  "qualified": false,
+  "mode": "prepare",
+  "result": {
+    "schema": "railgun-installed-owner-private-result-v1",
+    "mode": "prepare",
+    "qualified": false,
+    "postUnchanged": true,
+    "requestSha256": "01344b9638b476af4679c46a48846440d21bb7bec16564f71104ba48f37d17c1",
+    "sourceFreezeSha256": "d3a1425c6d0ca91d492cdffedc6251fb8bf449527fdb4787f7b34c49b6a52ac2",
+    "report": null,
+    "nativeScope": "synthetic Shield private preparation, local proof and pure stored-slot read",
+    "utilityModuleCacheObserved": false
+  },
+  "process": {
+    "pid": 97773,
+    "exitObserved": true,
+    "closeObserved": true,
+    "code": 1,
+    "signal": null,
+    "timedOut": false,
+    "interrupted": false,
+    "terminateRequested": false,
+    "killRequested": false,
+    "natural": true
+  },
+  "originalDriver": {
+    "pid": 97012,
+    "exitCode": 1,
+    "signal": null,
+    "natural": true
+  },
+  "observedUtilityRoles": {
+    "spending-public": 1,
+    "viewing-identity": 1,
+    "public-scan:plan": 60,
+    "public-scan:apply": 1,
+    "wallet-viewing": 1,
+    "private-operate": 1,
+    "private-receive": 1,
+    "poi-membership": 1,
+    "spending-sign": 1,
+    "private-verify": 1
+  },
+  "utilityCount": 69,
+  "workerCount": 6,
+  "observationRefusals": 0,
+  "allUtilityExitsObserved": true,
+  "milestones": {
+    "schema": "railgun-installed-owner-private-failure-v1",
+    "milestones": [
+      "prepare-called",
+      "review-entered",
+      "review-accepted",
+      "prepare-returned",
+      "original-closed"
+    ],
+    "originalLaneAndSessionClosed": true,
+    "syntheticRpcMethods": {
+      "eth_chainId": 4,
+      "eth_getBlockByNumber": 1225,
+      "eth_getLogs": 60,
+      "eth_getCode": 5,
+      "eth_getBalance": 1,
+      "ppoi_pois_per_list": 1,
+      "ppoi_merkle_proofs": 1,
+      "ppoi_poi_events": 1,
+      "ppoi_validate_poi_merkleroots": 1,
+      "eth_getStorageAt": 2,
+      "eth_call": 8
+    },
+    "syntheticWireRefusals": 0,
+    "transportRefusals": 0
+  },
+  "cause": "Fixture present() checks Ethereum transactionDigest with unprefixed SHA/hold regex; production matcher returns 0x-prefixed keccak256. Run remains unqualified; no report or cache qualification.",
+  "files": {
+    "RESULT.json": "f66f7cb4ab46bb47b93a36679243a01c7584bd3497e8a4e673098131e240731f",
+    "POST.json": "1c88281144150fba7a8b08303f194cc5952054526b825618f9df138bea836eb9",
+    "process.json": "97520242dc4a0191d1e43b73387e9f6c9ec67fcf9f76547fd6a1dbab8c0114da",
+    "failure-observations.json": "68a8d3eb138fced83d2d6998a6ffaf1e2a4adbf2370a445d3cf3f8395d433ef0",
+    "failure-frames.json": "eae24d283f6d4622e5c4964cefe0b3bae95f60359447562f0173a666b3627596",
+    "failure-milestones.json": "7f8ef0f2c20cfaa0205da3559caa0e03ed3bbb0dbc61ed9da84c35a0cd742e05",
+    "main.log": "495528b67e7b22c42b26470d34984795ef3f06e3a9bec1f4ad5a66d78dabe757"
+  }
+}

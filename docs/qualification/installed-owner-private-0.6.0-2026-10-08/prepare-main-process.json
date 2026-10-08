@@ -1,0 +1,12 @@
+{
+  "pid": 4466,
+  "exitObserved": true,
+  "closeObserved": true,
+  "code": 0,
+  "signal": null,
+  "timedOut": false,
+  "interrupted": false,
+  "terminateRequested": false,
+  "killRequested": false,
+  "natural": true
+}
