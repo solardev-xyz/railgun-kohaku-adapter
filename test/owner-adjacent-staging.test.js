@@ -415,7 +415,7 @@ test('separate real-derivation host conformance has exact fixtures and no defaul
   expect(fixture.liveProfiles).toBe(false);
   expect(fixture.files).toHaveLength(4);
   for (const row of fixture.files) {
-    if (row.sourceCommit) expect(row.sourceCommit).toBe('42d914d361a30a21e9c5c93007724834d20ee62c');
+    if (row.sourceCommit) expect(row.sourceCommit).toBe('8285fb804c82011abd4fcc38ccc00d66b27132e3');
     const file = row.destination || row.fixedTestBinding;
     const bytes = fs.readFileSync(path.join(root, file));
     expect({ bytes: bytes.length, sha256: sha(bytes) }).toEqual({ bytes: row.bytes, sha256: row.sha256 });
