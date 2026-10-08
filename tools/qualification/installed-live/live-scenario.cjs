@@ -40,7 +40,48 @@ async function closeSession(session) {
   session.close();
   await session.closed;
 }
+// The fixed schedule the legacy live qualifier proved (843c0cfc
+// qualify-railgun-live.js): 100000-block windows below block 5700000, where
+// Railgun Sepolia is sparse, and 20000-block windows from there. Windows are
+// aligned to their size from any cursor and capped at the anchor.
+const DENSE_FROM = 5700000,
+  NARROW = 20000;
 function rangesTo(from, anchor) {
+  assert.ok(Number.isSafeInteger(from) && from >= 0);
+  const result = [];
+  for (let start = from; start <= anchor.number; ) {
+    const size = start < DENSE_FROM ? RANGE : NARROW;
+    let to = start - (start % size) + size - 1;
+    if (start < DENSE_FROM) to = Math.min(to, DENSE_FROM - 1);
+    to = Math.min(to, anchor.number);
+    result.push(Object.freeze({ to, anchor: Object.freeze({ ...anchor }) }));
+    start = to + 1;
+  }
+  return result;
+}
+const RANGE_SPACING_MS = 1000;
+// Advances the public scan range by range from the coordinator's checkpoint.
+// Each window is budgeted before it is invoked; each returned checkpoint is
+// recorded durably, so a later resume starts from an exact lower bound.
+async function scanTo(context, session, from, anchor) {
+  // Synthetic only: the stopped continuation's runner (100000-block windows
+  // from 0, no targets or checkpoints recorded), to reproduce its state.
+  const legacy = context.params.legacyPlan === true;
+  if (legacy) assert.equal(context.synthetic, true, 'The legacy plan is synthetic only');
+  const ranges = legacy ? legacyRangesTo(from, anchor) : rangesTo(from, anchor);
+  const statuses = {};
+  for (const [index, range] of ranges.entries()) {
+    if (index > 0 && !context.synthetic) await sleep(RANGE_SPACING_MS, context.signal);
+    budget(context, 'scan-range', legacy ? undefined : { target: range.to });
+    const result = await session.advancePublic(range);
+    assert.equal(result.to?.number, range.to);
+    fault(context, 'exit-after-advance', range.to);
+    if (!legacy) ledger.progress(context.profile, context.header, result.to.number, result.to.hash);
+    statuses[result.status] = (statuses[result.status] || 0) + 1;
+  }
+  return { ranges: ranges.length, statuses };
+}
+function legacyRangesTo(from, anchor) {
   const result = [];
   for (let start = from; start <= anchor.number; ) {
     const to = Math.min(start + RANGE - 1 - (start % RANGE), anchor.number);
@@ -48,6 +89,32 @@ function rangesTo(from, anchor) {
     start = to + 1;
   }
   return result;
+}
+// The exact resume candidates. After the last recorded checkpoint L, the last
+// window attempted (target T) either committed nothing (A: continue from
+// L + 1) or was applied without a recorded checkpoint (B: continue from
+// T + 1). Before any checkpoint the launcher-verified claim supplies L and T.
+// A comes first; B only after a recorded A attempt made no progress. A
+// wrong guess is refused by the coordinator before any request or write.
+function resumePlan(context) {
+  const state = ledger.inspect(context.profile, context.header);
+  const last = state.progress.at(-1);
+  const claim = context.header.binding.resumeFrom;
+  const lower = last ? last.to : claim.checkpoint;
+  const windows = (state.budgets['scan-range'] ?? []).filter((row) => Number.isSafeInteger(row.target));
+  const attempted = windows.at(-1);
+  const upper = last ? (attempted && attempted.target > last.to ? attempted.target : null) : claim.failedTarget;
+  if (upper === null) return { mode: 'exact', from: lower + 1 };
+  const tried = state.attempts.filter((row) => row.lower === lower && row.upper === upper);
+  assert.ok(tried.length < 2, 'Both resume candidates were tried');
+  const mode = tried.length === 0 ? 'A' : 'B';
+  ledger.resumeAttempt(context.profile, context.header, mode, lower, upper);
+  return { mode, from: mode === 'A' ? lower + 1 : upper + 1, lower, upper };
+}
+// The scan continues exactly where the last recorded checkpoint ended.
+function assertCheckpoint(context, number) {
+  const last = ledger.inspect(context.profile, context.header).progress.at(-1);
+  if (last) assert.equal(last.to, number, 'Scan checkpoint');
 }
 // Report projections: hold and note identities leave only as sha256.
 function publicOutput(output) {
@@ -84,19 +151,20 @@ function noteSummary(notes) {
   };
 }
 // Synthetic-only crash points for the reconcile path; a live run refuses any.
-const FAULTS = Object.freeze(['exit-before-finish', 'exit-before-report', 'history-unavailable-after-send']);
-function fault(context, point) {
+const FAULTS = Object.freeze(['exit-before-finish', 'exit-before-report', 'history-unavailable-after-send', 'exit-after-advance']);
+function fault(context, point, target) {
   const requested = context.params.fault ?? null;
   if (requested === null) return;
   assert.ok(FAULTS.includes(requested));
   assert.equal(context.synthetic, true, 'Faults are synthetic only');
   if (requested !== point) return;
+  if (point === 'exit-after-advance' && target !== context.params.faultAt) return;
   if (point === 'history-unavailable-after-send')
     throw Object.assign(Error('Synthetic history read failure'), { code: 'LIVE_SYNTHETIC_HISTORY_UNAVAILABLE' });
   context.crash();
 }
-function budget(context, kind) {
-  return ledger.consume(context.profile, context.header, kind, ledger.policyFor(context.header.caps, kind));
+function budget(context, kind, extra) {
+  return ledger.consume(context.profile, context.header, kind, ledger.policyFor(context.header.caps, kind), Date.now(), extra);
 }
 function heldReviews(owner, milestone, seen, expectedRpc) {
   assert.equal(typeof expectedRpc, 'string');
@@ -240,14 +308,19 @@ async function rebuild(context) {
   try {
     session = await facade.openAccount({ accountIndex: 0, signal, publicCache });
     const anchor = await readFinalized();
-    const ranges = rangesTo(0, anchor);
-    const statuses = {};
-    for (const range of ranges) {
-      budget(context, 'scan-range');
-      const result = await session.advancePublic(range);
-      statuses[result.status] = (statuses[result.status] || 0) + 1;
+    // A resume starts after its exact lower bound: the last recorded
+    // checkpoint, else the evidence-bound claim the launcher verified. The
+    // first window is the schedule's next one; if the failed window had in
+    // fact been applied, the coordinator refuses it before any request.
+    let from = 0,
+      resume = null;
+    if (context.header.name === ledger.RESUME) {
+      assert.equal(publicCache, 'pending');
+      resume = resumePlan(context);
+      from = resume.from;
     }
-    milestone('public-rebuilt:' + ranges.length);
+    const { ranges, statuses } = await scanTo(context, session, from, anchor);
+    milestone('public-rebuilt:' + ranges);
     const facts = heldFacts(context.heldReport, owner);
     lane = await session.openRead({ wallet: 'new', signal });
     const notes = await lane.notes(undefined, true);
@@ -294,7 +367,9 @@ async function rebuild(context) {
       schema: 'railgun-installed-live-rebuild-v1',
       publicCache,
       anchor,
-      ranges: ranges.length,
+      resumedFrom: from,
+      resume,
+      ranges,
       advanceStatuses: statuses,
       notes: noteSummary(notes),
       holds: page.records.length,
@@ -527,12 +602,9 @@ async function poi(context) {
   try {
     session = await facade.openAccount({ accountIndex: 0, signal });
     const anchor = await readFinalized();
-    const ranges = rangesTo(rebuildReport.anchor.number + 1, anchor);
-    for (const range of ranges) {
-      budget(context, 'scan-range');
-      await session.advancePublic(range);
-    }
-    milestone('public-advanced:' + ranges.length);
+    assertCheckpoint(context, rebuildReport.anchor.number);
+    const { ranges } = await scanTo(context, session, rebuildReport.anchor.number + 1, anchor);
+    milestone('public-advanced:' + ranges);
     const notes = await readNotes(session, signal, 'advance');
     const { input, output } = transferJoin(notes, transactionHash);
     assert.equal(output.spentTxid, false);
@@ -588,7 +660,7 @@ async function poi(context) {
       holdIdSha256: previous.holdIdSha256,
       transactionHash,
       anchor,
-      ranges: ranges.length,
+      ranges,
       inputAmount: String(input.amount),
       outputNoteIdSha256: sha(output.id),
       outputAmount: String(output.amount),
@@ -805,12 +877,9 @@ async function summary(context) {
     // Advance through the unshield so residual notes reflect its spend.
     const anchor = await readFinalized();
     assert.ok(previous.final.observation.blockNumber <= anchor.number, 'The unshield is finalized');
-    const ranges = rangesTo(scan.anchor.number + 1, anchor);
-    for (const range of ranges) {
-      budget(context, 'scan-range');
-      await session.advancePublic(range);
-    }
-    milestone('public-advanced:' + ranges.length);
+    assertCheckpoint(context, scan.anchor.number);
+    const { ranges } = await scanTo(context, session, scan.anchor.number + 1, anchor);
+    milestone('public-advanced:' + ranges);
     const notes = await readNotes(session, signal, 'advance');
     const spentOutput = notes.filter((note) => note.spentTxid !== false && bare(note.spentTxid) === bare(previous.transactionHash));
     assert.equal(spentOutput.length, 1, 'The unshield spent exactly the transfer output');
@@ -940,4 +1009,4 @@ const MODES = Object.freeze({
   'live-unshield': unshield,
   'live-summary': summary,
 });
-module.exports = { MODES, rangesTo, sha };
+module.exports = { MODES, rangesTo, resumePlan, sha };

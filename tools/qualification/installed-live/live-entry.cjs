@@ -45,6 +45,18 @@ async function main() {
     overrides.push([object, key, object[key]]);
     object[key] = value;
   };
+  // Sanitized wallet-transport telemetry for diagnosing a refused live scan:
+  // method, HTTP status, closed error code, elapsed time and size only, never
+  // a URL, parameter or body. Local evidence; written only on failure.
+  const transportTrace = { requests: 0, failures: 0, byOutcome: {}, recent: [] };
+  const traceRequest = (entry) => {
+    transportTrace.requests++;
+    if (entry.code || entry.status !== 200) transportTrace.failures++;
+    const key = entry.method + ':' + (entry.code ?? entry.status);
+    transportTrace.byOutcome[key] = (transportTrace.byOutcome[key] || 0) + 1;
+    transportTrace.recent.push(entry);
+    if (transportTrace.recent.length > 64) transportTrace.recent.shift();
+  };
   let report = null,
     client = null,
     chain = null,
@@ -88,6 +100,37 @@ async function main() {
         request.live.rpcSource
       );
       replace(tor, 'getWalletSocksEndpoint', () => client.endpoint);
+      // A pass-through of the genuine transport: same request, close, closed
+      // and release; only the observation above is added.
+      const walletTransport = fixed('networks/wallet-tor-transport.js');
+      const genuine = walletTransport.createWalletTorTransport;
+      replace(walletTransport, 'createWalletTorTransport', (...args) => {
+        const value = genuine(...args);
+        return Object.freeze({
+          close: value.close,
+          closed: value.closed,
+          release: value.release,
+          async request(handle, url, options) {
+            let method = 'other';
+            try {
+              const body = JSON.parse(options?.body ?? 'null');
+              if (typeof body?.method === 'string' && /^[a-z_]{1,40}$/i.test(body.method)) method = body.method;
+            } catch {
+              /* Not JSON-RPC: counted as other. */
+            }
+            const started = Date.now();
+            try {
+              const response = await value.request(handle, url, options);
+              traceRequest({ method, status: response?.status ?? null, ms: Date.now() - started, bytes: response?.body?.length ?? null });
+              return response;
+            } catch (error) {
+              const code = typeof error?.code === 'string' && /^[A-Z0-9_]{1,64}$/.test(error.code) ? error.code : 'REQUEST_FAILED';
+              traceRequest({ method, status: null, code, ms: Date.now() - started });
+              throw error;
+            }
+          },
+        });
+      });
       // The campaign's one frozen endpoint.
       assert.equal(client.metadata.rpc, request.live.rpcUrl);
       expectedRpc = new URL(client.metadata.rpc).href;
@@ -134,6 +177,7 @@ async function main() {
         crypto: worker,
         autoMine: { afterMs: 0 },
         sendMode: request.synthetic.sendMode ?? 'acknowledge',
+        faults: request.synthetic.faults ?? {},
       });
       await chain.init();
       expectedRpc = new URL(ENDPOINT).href;
@@ -266,6 +310,7 @@ async function main() {
           .slice(0, 14),
         ...(live ? {} : { milestones: milestones.map((value) => value.slice(0, 200)) }),
         syntheticChain: chain?.report() ?? null,
+        transportTrace: live ? transportTrace : null,
       });
     } catch {
       /* Diagnostics cannot replace the original failure. */

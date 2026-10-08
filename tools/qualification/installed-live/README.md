@@ -171,6 +171,49 @@ endpoint, run before any funded continuation. It checks the runner's aligned
 100,000-block windows on the proxy address and the known public event, with at
 most 12 requests, and makes one confirming Tenderly window request.
 
+## Scan schedule, checkpoints and the fixed resume
+
+Public scans use the fixed schedule the legacy live qualifier proved: windows
+of 100,000 blocks below block 5,700,000 and of 20,000 blocks from there. They
+are aligned to their size from any cursor and capped at the finalized anchor.
+Live runs pause one second between windows. Each window records its planned
+target in its budget record. Each checkpoint the coordinator returns is
+recorded durably (`scan-progress`).
+
+The Sentio continuation's scan stopped part-way. It ran under the earlier
+runner, which recorded neither targets nor checkpoints. Its k window
+reservations committed k−1 windows of the 100,000-block plan from 0, and the
+k-th failed: each reservation followed the previous `advancePublic` resolving,
+which happens only after the coordinator's journal completes.
+
+Exactly one further ledger exists, `installed-journey-sentio-resume-1`. It
+binds the continuation, and transitively the first ledger, by bytes and header
+hash, with the same scope and endpoint. It carries the chain's budgets forward
+and closes both earlier ledgers. Its header carries:
+
+- the reviewed extension, four pending openers in total instead of two;
+- the claim `resumeFrom {checkpoint, failedTarget}`, which the launcher
+  verifies against the continuation's own reservations before any opener.
+
+The public API returns a checkpoint only from a successful advance. A resume
+therefore takes its candidates from the ledger: the last checkpoint L (or the
+claim's checkpoint) and the last attempted window T beyond it (or the claim's
+failed target). Window T either committed nothing (A: continue from L + 1) or
+was applied without a recorded checkpoint (B: continue from T + 1). A resume
+records an A attempt first and a B attempt only after A made no progress,
+never more. A wrong candidate is refused by the coordinator before any request
+or write.
+
+Live failure records include a sanitized transport trace: method, HTTP status,
+closed error code, elapsed time and size, never a URL, parameter or body.
+
+Synthetic-only scaffolding reproduces the stopped states:
+
+- `legacyPlan` runs the earlier runner's plan;
+- chain faults `failLogsFrom` and `failRefreshTo` model a failure before
+  acquisition, and one after the coordinator persisted an application;
+- `exit-after-advance` models a crash before the checkpoint is recorded.
+
 ## Composition
 
 **Live (`transport: 'live'`)** uses:

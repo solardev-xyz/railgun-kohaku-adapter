@@ -263,3 +263,101 @@ test("the fixed Sentio continuation resumes from a stopped first ledger and neve
   ).toThrow();
   expect(env.launcher.validate(first).budgets["scan-range"]).toHaveLength(1);
 });
+test("the fixed resume verifies its claim against the stopped continuation and carries the reviewed extension", () => {
+  const env = liveEnvironment();
+  const crypto = require("crypto");
+  const hash = (v) => crypto.createHash("sha256").update(v).digest("hex");
+  const ledger = require(
+    env.path.join(env.tools, "installed-live/live-ledger.cjs"),
+  );
+  const first = env.launcher.makeRequest(env.spec());
+  for (const kind of ["scan-open:new", "scan-open:pending", "scan-range"])
+    ledger.consume(
+      first.profileDirectory,
+      first.ledgerHeader,
+      kind,
+      ledger.policyFor(first.ledgerHeader.caps, kind),
+    );
+  const base = JSON.parse(env.fs.readFileSync(env.spec(), "utf8"));
+  const sentio = { source: "sentio", url: ledger.SENTIO };
+  const link = (name, header, file) => ({
+    name,
+    ledgerSha256: hash(env.fs.readFileSync(file)),
+    headerSha256: hash(JSON.stringify(header)),
+    reason: "stopped",
+  });
+  const continuation = env.launcher.makeRequest(
+    env.spec({
+      ledger: ledger.CONTINUATION,
+      params: { publicCache: "pending" },
+      binding: {
+        ...base.binding,
+        rpc: sentio,
+        predecessor: link(
+          ledger.FIRST,
+          first.ledgerHeader,
+          ledger.ledgerFile(first.profileDirectory),
+        ),
+      },
+      live: { ...base.live, rpcSource: "sentio" },
+    }),
+  );
+  ledger.consume(
+    continuation.profileDirectory,
+    continuation.ledgerHeader,
+    "scan-open:pending",
+    ledger.policyFor(continuation.ledgerHeader.caps, "scan-open:pending"),
+  );
+  for (let i = 0; i < 3; i++)
+    ledger.consume(
+      continuation.profileDirectory,
+      continuation.ledgerHeader,
+      "scan-range",
+      ledger.policyFor(continuation.ledgerHeader.caps, "scan-range"),
+    );
+  const resume = (resumeFrom, params = { publicCache: "pending" }) =>
+    env.launcher.makeRequest(
+      env.spec({
+        ledger: ledger.RESUME,
+        params,
+        binding: {
+          ...base.binding,
+          rpc: sentio,
+          predecessor: link(
+            ledger.CONTINUATION,
+            continuation.ledgerHeader,
+            ledger.ledgerFile(
+              continuation.profileDirectory,
+              ledger.CONTINUATION,
+            ),
+          ),
+          resumeFrom,
+        },
+        live: { ...base.live, rpcSource: "sentio" },
+      }),
+    );
+  const good = resume({
+    checkpoint: 199999,
+    failedTarget: 299999,
+    evidence: "3 reservations under the 100k plan",
+  });
+  expect(good.ledgerHeader.caps.scanResumes).toBe(4);
+  expect(env.launcher.admit(good)).toBe(0);
+  const budgets = env.launcher.validate(good).budgets;
+  expect(budgets["scan-open:pending"]).toHaveLength(2);
+  expect(budgets["scan-range"]).toHaveLength(4);
+  for (const bad of [
+    { checkpoint: 99999, failedTarget: 199999, evidence: "x" },
+    { checkpoint: 199999, failedTarget: 399999, evidence: "x" },
+  ])
+    expect(() => env.launcher.validate(resume(bad))).toThrow();
+  expect(() =>
+    env.launcher.validate(
+      resume(good.ledgerHeader.binding.resumeFrom, { publicCache: "new" }),
+    ),
+  ).toThrow();
+  // The continuation and first ledger stay readable until the resume writes.
+  expect(
+    env.launcher.validate(continuation).budgets["scan-range"],
+  ).toHaveLength(4);
+});

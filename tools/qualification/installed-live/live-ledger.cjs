@@ -20,6 +20,10 @@ const NAME = 'installed-journey-1.jsonl';
 // its consumed budgets forward and never allows a further continuation.
 const FIRST = 'installed-journey-1';
 const CONTINUATION = 'installed-journey-sentio-1';
+// The one reviewed resume of the Sentio continuation, after its scan stopped
+// part-way: same endpoint, exact predecessor chain, carried budgets.
+const RESUME = 'installed-journey-sentio-resume-1';
+const CHAIN = Object.freeze([FIRST, CONTINUATION, RESUME]);
 const SENTIO = 'https://sepolia.rpc.sentio.xyz';
 const PREDECESSOR_KINDS = Object.freeze(['scan-open:new', 'scan-open:pending', 'scan-range']);
 const sha256 = (value) => createHash('sha256').update(value).digest('hex');
@@ -53,16 +57,19 @@ function policyFor(caps, kind) {
 }
 function ledgerFile(profile, name = FIRST) {
   check(path.isAbsolute(profile) && fs.realpathSync(profile) === profile, 'profile');
-  check([FIRST, CONTINUATION].includes(name), 'name');
+  check(CHAIN.includes(name), 'name');
   return path.join(profile + DIRECTORY_SUFFIX, name + '.jsonl');
 }
-// Read-only: the continuation's predecessor must be exactly the bound, stopped
-// first ledger of the same scope with budget records only. Returns its budgets.
+// Read-only: a later ledger's predecessor must be exactly the bound, stopped
+// ledger before it in the fixed chain, of the same scope, holding scan budgets
+// only, itself admitted the same way. Returns the chain's aggregate budgets.
 function predecessor(directory, header) {
+  const index = CHAIN.indexOf(header.name);
+  check(index > 0, 'predecessor-name');
   const bound = header.binding?.predecessor;
   check(
     bound &&
-      bound.name === FIRST &&
+      bound.name === CHAIN[index - 1] &&
       /^[0-9a-f]{64}$/.test(bound.ledgerSha256) &&
       /^[0-9a-f]{64}$/.test(bound.headerSha256) &&
       typeof bound.reason === 'string' &&
@@ -71,7 +78,7 @@ function predecessor(directory, header) {
   );
   let bytes;
   try {
-    const file = path.join(directory, FIRST + '.jsonl');
+    const file = path.join(directory, bound.name + '.jsonl');
     const stat = fs.lstatSync(file);
     check(stat.isFile() && stat.size <= MAX_BYTES, 'predecessor');
     bytes = fs.readFileSync(file);
@@ -89,17 +96,33 @@ function predecessor(directory, header) {
     if (error?.code === 'INSTALLED_JOURNEY_LEDGER_REFUSED') throw error;
     throw fail('predecessor');
   }
-  const first = records[0];
-  check(sha256(JSON.stringify(first)) === bound.headerSha256 && first.name === FIRST, 'predecessor-header');
-  // Same profile, artifact, host, transport and held operation; only the
-  // endpoint (and the runner that names it) changes.
+  const previous = records[0];
+  check(sha256(JSON.stringify(previous)) === bound.headerSha256 && previous.name === bound.name, 'predecessor-header');
+  // Same profile, artifact, host, transport and held operation. Only the
+  // first continuation changes the endpoint; the resume keeps it.
   for (const key of ['type', 'version', 'transport', 'profile', 'freedomCommit', 'packageTarSha256'])
-    check(same(first[key], header[key]), 'predecessor-scope:' + key);
-  check(first.binding?.heldTransferReportSha256 === header.binding.heldTransferReportSha256, 'predecessor-held');
+    check(same(previous[key], header[key]), 'predecessor-scope:' + key);
+  check(previous.binding?.heldTransferReportSha256 === header.binding.heldTransferReportSha256, 'predecessor-held');
+  if (header.name === RESUME) check(same(previous.binding?.rpc?.url, header.binding?.rpc?.url), 'predecessor-endpoint');
   check(records.slice(1).every((record) => record?.type === 'budget' && PREDECESSOR_KINDS.includes(record.kind)), 'predecessor-events');
-  const state = replay(records, first);
+  const carried = index - 1 > 0 ? predecessor(directory, previous) : {};
+  const state = replay(records, previous, carried);
   check(state.sends.length === 0 && state.poi.pending === null && state.reports.length === 0, 'predecessor-not-empty');
   return state.budgets;
+}
+// The fixed chain's per-ledger record counts of one kind, read-only.
+function chainCounts(profile, header, kind) {
+  const directory = path.dirname(ledgerFile(profile, header.name));
+  const counts = {};
+  let current = header;
+  while (CHAIN.indexOf(current.name) > 0) {
+    predecessor(directory, current);
+    const bytes = fs.readFileSync(path.join(directory, current.binding.predecessor.name + '.jsonl'), 'utf8');
+    const records = bytes.trim().split('\n').map((line) => JSON.parse(line));
+    counts[records[0].name] = records.filter((record) => record.type === 'budget' && record.kind === kind).length;
+    current = records[0];
+  }
+  return counts;
 }
 function syncDirectory(directory) {
   const fd = fs.openSync(directory, 'r');
@@ -115,6 +138,8 @@ function replay(records, header, carried = {}) {
   const sends = [],
     budgets = Object.fromEntries(Object.entries(carried).map(([kind, rows]) => [kind, [...rows]])),
     reports = [],
+    progress = [],
+    attempts = [],
     poi = { pending: null, finished: null };
   for (const record of records.slice(1)) {
     if (record?.type === 'send-pending') {
@@ -130,6 +155,9 @@ function replay(records, header, carried = {}) {
       last.finished = record;
     } else if (record?.type === 'budget') {
       check(typeof record.kind === 'string' && Number.isSafeInteger(record.at), 'budget');
+      // A scan window may name its planned target; nothing else carries extras.
+      if (Object.hasOwn(record, 'target'))
+        check(record.kind === 'scan-range' && Number.isSafeInteger(record.target) && record.target >= 0, 'budget-target');
       const used = (budgets[record.kind] ||= []);
       // Replay re-enforces the header's caps, not only the writer's checks.
       if (header.caps?.observePerSend) {
@@ -148,13 +176,27 @@ function replay(records, header, carried = {}) {
     } else if (record?.type === 'poi-finished') {
       check(poi.pending && !poi.finished && poi.pending.handoffId === record.handoffId, 'poi-finished');
       poi.finished = record;
+    } else if (record?.type === 'resume-attempt') {
+      // At most an A then a B attempt per candidate pair, with no checkpoint
+      // recorded between them: the two states a stopped window can leave.
+      check(['A', 'B'].includes(record.mode) && Number.isSafeInteger(record.lower) && Number.isSafeInteger(record.upper), 'resume-attempt');
+      check(record.lower < record.upper, 'resume-attempt');
+      const same = attempts.filter((row) => row.lower === record.lower && row.upper === record.upper);
+      check(same.length === (record.mode === 'A' ? 0 : 1), 'resume-attempt-order');
+      if (record.mode === 'B') check(same[0].mode === 'A' && same[0].progressAt === progress.length, 'resume-attempt-order');
+      attempts.push({ ...record, progressAt: progress.length });
+    } else if (record?.type === 'scan-progress') {
+      // A durable public checkpoint the coordinator returned, strictly increasing.
+      check(Number.isSafeInteger(record.to) && record.to >= 0 && /^0x[0-9a-f]{64}$/.test(record.hash), 'scan-progress');
+      check(progress.length === 0 || record.to > progress.at(-1).to, 'scan-progress-order');
+      progress.push(record);
     } else if (record?.type === 'report') {
       check(typeof record.mode === 'string' && /^[0-9a-f]{64}$/.test(record.sha256), 'report');
       check(!reports.some((row) => row.sha256 === record.sha256), 'report-duplicate');
       reports.push(record);
     } else throw fail('record');
   }
-  return { sends, budgets, poi, reports };
+  return { sends, budgets, poi, reports, progress, attempts };
 }
 function read(file, header, carried) {
   let records;
@@ -172,32 +214,31 @@ function read(file, header, carried) {
 }
 // Read-only admission: the campaign is absent, or exactly this ledger.
 function inspect(profile, header) {
-  const continuation = header.name === CONTINUATION;
-  check(continuation || (header.name === FIRST && !Object.hasOwn(header.binding ?? {}, 'predecessor')), 'name');
-  if (continuation) check(header.transport === 'synthetic' || header.binding?.rpc?.url === SENTIO, 'continuation-endpoint');
+  const index = CHAIN.indexOf(header.name);
+  check(index >= 0, 'name');
+  check(index > 0 || !Object.hasOwn(header.binding ?? {}, 'predecessor'), 'name');
+  if (index > 0) check(header.transport === 'synthetic' || header.binding?.rpc?.url === SENTIO, 'continuation-endpoint');
   const file = ledgerFile(profile, header.name),
     directory = path.dirname(file);
+  const empty = (budgets) => ({ file, sends: [], budgets, reports: [], progress: [], attempts: [], poi: { pending: null, finished: null } });
   let names;
   try {
     const stat = fs.lstatSync(directory);
     check(stat.isDirectory(), 'directory');
     names = fs.readdirSync(directory).sort();
   } catch (error) {
-    if (error?.code === 'ENOENT' && !continuation)
-      return { file, sends: [], budgets: {}, reports: [], poi: { pending: null, finished: null } };
+    if (error?.code === 'ENOENT' && index === 0) return empty({});
     if (error?.code === 'INSTALLED_JOURNEY_LEDGER_REFUSED') throw error;
     throw fail('directory');
   }
-  if (!continuation) {
-    // Once a continuation exists the first ledger is closed.
-    if (names.length === 0) return { file, sends: [], budgets: {}, reports: [], poi: { pending: null, finished: null } };
-    check(names.length === 1 && names[0] === NAME, 'directory');
-    return { file, ...read(file, header) };
-  }
-  const carried = predecessor(directory, header);
-  const empty = { file, sends: [], budgets: carried, reports: [], poi: { pending: null, finished: null } };
-  if (names.length === 1 && names[0] === NAME) return empty;
-  check(names.length === 2 && names[0] === NAME && names[1] === CONTINUATION + '.jsonl', 'directory');
+  // Exactly the predecessors, plus this ledger once it exists. A later ledger
+  // closes every earlier one.
+  const prefix = CHAIN.slice(0, index).map((name) => name + '.jsonl');
+  const own = header.name + '.jsonl';
+  check(prefix.every((name) => names.includes(name)), 'directory');
+  check(names.every((name) => prefix.includes(name) || name === own), 'directory');
+  const carried = index > 0 ? predecessor(directory, header) : {};
+  if (!names.includes(own)) return empty(carried);
   return { file, ...read(file, header, carried) };
 }
 // Appends one record durably, then re-validates the whole ledger.
@@ -226,7 +267,14 @@ function append(profile, header, record) {
   return inspect(profile, header);
 }
 function predecessorBudgets(profile, header) {
-  return header.name === CONTINUATION ? predecessor(path.dirname(ledgerFile(profile, CONTINUATION)), header) : {};
+  return CHAIN.indexOf(header.name) > 0 ? predecessor(path.dirname(ledgerFile(profile, header.name)), header) : {};
+}
+function resumeAttempt(profile, header, mode, lower, upper) {
+  return append(profile, header, { type: 'resume-attempt', mode, lower, upper, at: Date.now() }).attempts;
+}
+// A durable public checkpoint after a successful advance.
+function progress(profile, header, to, hash) {
+  return append(profile, header, { type: 'scan-progress', to, hash, at: Date.now() }).progress;
 }
 function reserve(profile, header, kind, binding) {
   const attemptId = randomBytes(16).toString('hex');
@@ -247,7 +295,7 @@ function finish(profile, header, attemptId, outcome) {
 }
 // One bounded unit, reserved before its invocation: max total, minimum spacing
 // from the previous unit of this kind and, optionally, a window from the first.
-function consume(profile, header, kind, { max, minSpacingMs = 0, windowMs = null }, now = Date.now()) {
+function consume(profile, header, kind, { max, minSpacingMs = 0, windowMs = null }, now = Date.now(), extra = {}) {
   check(Number.isSafeInteger(max) && max > 0, 'budget-policy');
   const used = inspect(profile, header).budgets[kind] ?? [];
   check(used.length < max, 'budget-exhausted:' + kind);
@@ -255,7 +303,7 @@ function consume(profile, header, kind, { max, minSpacingMs = 0, windowMs = null
     check(now - used.at(-1).at >= minSpacingMs, 'budget-spacing:' + kind);
     if (windowMs !== null) check(now - used[0].at <= windowMs, 'budget-window:' + kind);
   }
-  append(profile, header, { type: 'budget', kind, n: used.length + 1, at: now });
+  append(profile, header, { type: 'budget', kind, n: used.length + 1, at: now, ...extra });
   return used.length + 1;
 }
 function poiReserve(profile, header, binding) {
@@ -273,6 +321,10 @@ function recordReport(profile, header, mode, sha256) {
 module.exports = {
   FIRST,
   CONTINUATION,
+  RESUME,
+  chainCounts,
+  progress,
+  resumeAttempt,
   SENTIO,
   policyFor,
   recordReport,

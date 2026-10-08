@@ -94,7 +94,16 @@ function createJourneyChain({
   // Dry runs of polling callers: pending sends are mined once they are this old.
   assert.ok(autoMine === null || (Number.isSafeInteger(autoMine.afterMs) && autoMine.afterMs >= 0));
   assert.ok(['acknowledge', 'unknown-after-delivery'].includes(sendMode));
-  assert.deepEqual(Object.keys(faults).filter((key) => key !== 'preflightAnchorAfterEstimate'), []);
+  assert.deepEqual(
+    Object.keys(faults).filter((key) => !['preflightAnchorAfterEstimate', 'failLogsFrom', 'failRefreshTo'].includes(key)),
+    []
+  );
+  // Scan faults for resume qualification: a window's eth_getLogs fails before
+  // acquisition completes (failLogsFrom), or the first header refresh of a
+  // window's end after its logs were served fails, after the coordinator has
+  // persisted its application (failRefreshTo). Each fires once per process.
+  const scanFaults = { logsFired: false, refreshFired: false, servedTo: new Set() };
+  const rpcError = () => Object.assign(Error('Synthetic scan fault'), { code: 'SYNTHETIC_RPC_ERROR', rpcError: { code: -32000, message: 'synthetic' } });
   assert.ok(worker && typeof worker.call === 'function');
   const fixture = publicFixture(sourceBytes);
   assert.ok(fixture.logs.every((log) => log.address.toLowerCase() === PROXY));
@@ -516,8 +525,24 @@ function createJourneyChain({
           injected++;
           throw Object.assign(Error('Synthetic Tor request failure'), { code: 'SYNTHETIC_INJECTED_FAULT' });
         }
+        if (
+          Number.isSafeInteger(faults.failRefreshTo) &&
+          !scanFaults.refreshFired &&
+          scanFaults.servedTo.has(faults.failRefreshTo) &&
+          params[0] === '0x' + faults.failRefreshTo.toString(16)
+        ) {
+          scanFaults.refreshFired = true;
+          injected++;
+          throw rpcError();
+        }
         return blockAt(params);
       case 'eth_getLogs': {
+        if (Number.isSafeInteger(faults.failLogsFrom) && !scanFaults.logsFired && Number(BigInt(params[0].fromBlock)) === faults.failLogsFrom) {
+          scanFaults.logsFired = true;
+          injected++;
+          throw rpcError();
+        }
+        if (params[0] && typeof params[0].toBlock === 'string') scanFaults.servedTo.add(Number(BigInt(params[0].toBlock)));
         assert.equal(params.length, 1);
         const filter = params[0];
         assert.deepEqual(Object.keys(filter).sort(), ['address', 'fromBlock', 'toBlock']);

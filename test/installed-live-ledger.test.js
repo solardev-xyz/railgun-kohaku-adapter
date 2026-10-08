@@ -374,3 +374,146 @@ test("the continuation refuses a missing, re-scoped or non-empty predecessor and
   ledger.poiReserve(s.p, s.first, {});
   expect(() => ledger.inspect(s.p, continuationOf(s.p, s.first))).toThrow();
 });
+
+function stoppedContinuation(ranges = 3) {
+  const { p, first } = stoppedFirst();
+  const continuation = continuationOf(p, first);
+  ledger.consume(
+    p,
+    continuation,
+    "scan-open:pending",
+    ledger.policyFor(CAPS, "scan-open:pending"),
+    4000,
+  );
+  for (let i = 0; i < ranges; i++)
+    ledger.consume(
+      p,
+      continuation,
+      "scan-range",
+      ledger.policyFor(CAPS, "scan-range"),
+      5000 + i,
+    );
+  return { p, first, continuation };
+}
+function resumeOf(p, continuation, overrides = {}) {
+  const crypto = require("crypto");
+  const hash = (v) => crypto.createHash("sha256").update(v).digest("hex");
+  return {
+    ...continuation,
+    name: ledger.RESUME,
+    runnerSha256: "3".repeat(64),
+    caps: { ...CAPS, scanResumes: 4 },
+    binding: {
+      ...continuation.binding,
+      predecessor: {
+        name: ledger.CONTINUATION,
+        ledgerSha256: hash(
+          fs.readFileSync(ledger.ledgerFile(p, ledger.CONTINUATION)),
+        ),
+        headerSha256: hash(JSON.stringify(continuation)),
+        reason: "continuation scan stopped part-way",
+      },
+    },
+    ...overrides,
+  };
+}
+test("the resume binds the continuation transitively and carries the whole chain's budgets", () => {
+  const { p, first, continuation } = stoppedContinuation(3);
+  const resume = resumeOf(p, continuation);
+  const counts = (state) =>
+    Object.fromEntries(
+      Object.entries(state.budgets).map(([k, v]) => [k, v.length]),
+    );
+  expect(counts(ledger.inspect(p, resume))).toEqual({
+    "scan-open:new": 1,
+    "scan-open:pending": 2,
+    "scan-range": 4,
+  });
+  expect(ledger.chainCounts(p, resume, "scan-range")).toEqual({
+    [ledger.CONTINUATION]: 3,
+    [ledger.FIRST]: 1,
+  });
+  // The reviewed extension: two more resumes, never a new generation.
+  expect(() =>
+    ledger.consume(
+      p,
+      resume,
+      "scan-open:new",
+      ledger.policyFor(resume.caps, "scan-open:new"),
+      9000,
+    ),
+  ).toThrow();
+  expect(
+    ledger.consume(
+      p,
+      resume,
+      "scan-open:pending",
+      ledger.policyFor(resume.caps, "scan-open:pending"),
+      9000,
+    ),
+  ).toBe(3);
+  // Durable progress is strictly increasing.
+  expect(
+    ledger.progress(p, resume, 9019999, "0x" + "a".repeat(64)),
+  ).toHaveLength(1);
+  expect(() =>
+    ledger.progress(p, resume, 9019999, "0x" + "b".repeat(64)),
+  ).toThrow();
+  expect(() => ledger.progress(p, resume, 9039999, "0xnot")).toThrow();
+  expect(
+    ledger.progress(p, resume, 9039999, "0x" + "c".repeat(64)),
+  ).toHaveLength(2);
+  expect(
+    ledger.consume(
+      p,
+      resume,
+      "scan-open:pending",
+      ledger.policyFor(resume.caps, "scan-open:pending"),
+      9100,
+    ),
+  ).toBe(4);
+  expect(() =>
+    ledger.consume(
+      p,
+      resume,
+      "scan-open:pending",
+      ledger.policyFor(resume.caps, "scan-open:pending"),
+      9200,
+    ),
+  ).toThrow();
+  // Every earlier ledger is closed, and a changed predecessor byte refuses.
+  expect(() => ledger.inspect(p, continuation)).toThrow();
+  expect(() => ledger.inspect(p, first)).toThrow();
+  const file = ledger.ledgerFile(p, ledger.CONTINUATION);
+  const original = fs.readFileSync(file);
+  fs.writeFileSync(file, Buffer.concat([original, Buffer.from(" ")]));
+  expect(() => ledger.inspect(p, resume)).toThrow();
+  fs.writeFileSync(file, original);
+  expect(ledger.inspect(p, resume).progress).toHaveLength(2);
+});
+test("the resume refuses a changed endpoint, a skipped link or a continuation that sent", () => {
+  const { p, continuation } = stoppedContinuation(2);
+  const good = resumeOf(p, continuation);
+  for (const bad of [
+    {
+      ...good,
+      binding: { ...good.binding, rpc: { url: "https://other.example" } },
+    },
+    {
+      ...good,
+      binding: {
+        ...good.binding,
+        predecessor: { ...good.binding.predecessor, name: ledger.FIRST },
+      },
+    },
+    { ...good, freedomCommit: "e".repeat(40) },
+  ])
+    expect(() => ledger.inspect(p, bad)).toThrow();
+  expect(ledger.inspect(p, good).sends).toEqual([]);
+  const s = stoppedContinuation(1);
+  ledger.reserve(s.p, s.continuation, "transfer", {});
+  expect(() => ledger.inspect(s.p, resumeOf(s.p, s.continuation))).toThrow();
+  const t = stoppedContinuation(1);
+  ledger.progress(t.p, t.continuation, 99999, "0x" + "d".repeat(64));
+  expect(() => ledger.inspect(t.p, resumeOf(t.p, t.continuation))).toThrow();
+});

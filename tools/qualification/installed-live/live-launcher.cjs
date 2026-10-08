@@ -86,10 +86,17 @@ const SYNTHETIC_CAP_KEYS = Object.keys(LIVE_CAPS).sort();
 function headerFor(request, binding, syntheticCaps) {
   assert.ok(binding && typeof binding === 'object' && !Array.isArray(binding));
   const name = request.ledger ?? ledger.FIRST;
-  assert.ok([ledger.FIRST, ledger.CONTINUATION].includes(name));
-  // The one reviewed continuation binds its stopped predecessor; nothing else does.
-  assert.equal(Object.hasOwn(binding, 'predecessor'), name === ledger.CONTINUATION);
-  if (request.transport === 'live' && name === ledger.CONTINUATION) assert.equal(binding.rpc?.url, ledger.SENTIO);
+  assert.ok([ledger.FIRST, ledger.CONTINUATION, ledger.RESUME].includes(name));
+  // Each later ledger of the fixed chain binds its stopped predecessor.
+  assert.equal(Object.hasOwn(binding, 'predecessor'), name !== ledger.FIRST);
+  if (request.transport === 'live' && name !== ledger.FIRST) assert.equal(binding.rpc?.url, ledger.SENTIO);
+  // The resume carries its evidence-bound starting checkpoint.
+  assert.equal(Object.hasOwn(binding, 'resumeFrom'), name === ledger.RESUME);
+  if (name === ledger.RESUME) {
+    const { checkpoint, failedTarget, evidence } = binding.resumeFrom;
+    assert.ok(Number.isSafeInteger(checkpoint) && Number.isSafeInteger(failedTarget) && failedTarget > checkpoint);
+    assert.ok(typeof evidence === 'string' && evidence.length > 0);
+  }
   if (request.transport === 'live') {
     assert.equal(syntheticCaps, null);
     for (const key of ['heldTransferReportSha256', 'previousLedgers', 'finalRecoveryOutcomeSha256', 'authorizationSha256', 'rpc'])
@@ -108,8 +115,25 @@ function headerFor(request, binding, syntheticCaps) {
     packageTarSha256: request.packageTarPin.sha256,
     runnerSha256: sha(Buffer.from(JSON.stringify(Object.fromEntries(RECIPE.map((name) => [name, file(name)]))))),
     binding,
-    caps: { ...FIXED_CAPS, ...(request.transport === 'live' ? LIVE_CAPS : syntheticCaps) },
+    caps: {
+      ...FIXED_CAPS,
+      ...(request.transport === 'live' ? LIVE_CAPS : syntheticCaps),
+      // The reviewed resume extension: two more pending openers, nothing else.
+      ...(name === ledger.RESUME ? { scanResumes: RESUME_SCAN_RESUMES } : {}),
+    },
   };
+}
+const RESUME_SCAN_RESUMES = 4;
+// The continuation's plan under the pinned old runner (eeb7734a): 100000-block
+// windows from block 0, each reserved only after the previous one resolved.
+// Its k reservations therefore committed k-1 windows and failed the k-th.
+function assertResumeClaim(request) {
+  const counts = ledger.chainCounts(request.profileDirectory, request.ledgerHeader, 'scan-range');
+  const k = counts[ledger.CONTINUATION];
+  const { checkpoint, failedTarget } = request.ledgerHeader.binding.resumeFrom;
+  assert.ok(Number.isSafeInteger(k) && k >= 1, 'Resume claim: no continuation ranges');
+  assert.equal(checkpoint, (k - 1) * 100000 - 1, 'Resume claim checkpoint');
+  assert.equal(failedTarget, k * 100000 - 1, 'Resume claim failed target');
 }
 // Immutable request facts, valid before and after the process alike.
 function validate(request) {
@@ -129,8 +153,8 @@ function validate(request) {
     for (const key of Object.keys(request.params)) assert.ok(['publicCache', 'maxMs', 'poiStatusMaxAgeMs'].includes(key), 'Live parameter ' + key);
     if (Object.hasOwn(request.params, 'publicCache')) assert.equal(request.mode, 'live-rebuild');
   }
-  // The continuation resumes the existing generation; it never begins one.
-  if (request.ledgerHeader.name === ledger.CONTINUATION) assert.notEqual(request.params.publicCache, 'new');
+  // Later ledgers resume the existing generation; they never begin one.
+  if (request.ledgerHeader.name !== ledger.FIRST) assert.notEqual(request.params.publicCache, 'new');
   assert.ok(Object.hasOwn(MODES, request.mode));
   assert.ok(['live', 'synthetic'].includes(request.transport));
   assert.deepEqual(Object.keys(request.recipeFiles).sort(), [...RECIPE].sort());
@@ -156,11 +180,15 @@ function validate(request) {
       assert.deepEqual(file(path.join(request.synthetic.engineModules, name)), pin);
     assert.equal(file(request.synthetic.publicSource).sha256, request.synthetic.publicSourceSha256);
     assert.ok(['primary', 'limited'].includes(request.synthetic.endpoint));
+    for (const [key, value] of Object.entries(request.synthetic.faults))
+      assert.ok(['failLogsFrom', 'failRefreshTo'].includes(key) && Number.isSafeInteger(value), 'Synthetic fault ' + key);
   }
   assert.equal(fs.realpathSync(request.profileDirectory), request.profileDirectory);
   assert.equal(file(request.heldReport.file).sha256, request.heldReport.sha256);
   assert.equal(request.heldReport.sha256, request.ledgerHeader.binding.heldTransferReportSha256);
-  return ledger.inspect(request.profileDirectory, request.ledgerHeader);
+  const state = ledger.inspect(request.profileDirectory, request.ledgerHeader);
+  if (request.ledgerHeader.name === ledger.RESUME) assertResumeClaim(request);
+  return state;
 }
 // Pre-run admission, read-only: predecessor reports must be this campaign's
 // recorded reports (recorded only after a successful, postchecked run); an
@@ -244,6 +272,7 @@ function makeRequest(spec) {
             publicSourceSha256: file(value.synthetic.publicSource).sha256,
             sendMode: value.synthetic.sendMode ?? 'acknowledge',
             endpoint: value.synthetic.endpoint ?? 'primary',
+            faults: value.synthetic.faults ?? {},
             chainState: value.synthetic.chainState
               ? { file: value.synthetic.chainState, sha256: sha(fs.readFileSync(value.synthetic.chainState)) }
               : null,
