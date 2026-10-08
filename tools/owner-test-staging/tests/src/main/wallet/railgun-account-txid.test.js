@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 let mockEnrollment, mockCoordinator, mockRunner, mockJournal, mockRoots, mockServices, mockSession;
 const mockCreateRoots = jest.fn(),
   mockOpen = jest.fn(),
@@ -35,7 +36,7 @@ const fs = require('fs'),
   path = require('path');
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");
 const { claimRailgunAccountPhase } = require("../../../../../../src/owners/railgun-account-phase.js");
-const { getPrivacyStoragePath } = require('./privacy-storage');
+const { getPrivacyStoragePath } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');
 const { openRailgunAccountTxid } = require("../../../../../../src/owners/railgun-account-txid.js");
 let scope, opened, events, state, directory, publicController, finishWorker;
 beforeEach(() => {

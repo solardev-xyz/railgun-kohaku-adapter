@@ -1,8 +1,25 @@
+require('../../../../context-host.cjs');
 let mockEnrollment, mockCreateCoordinator, mockSource, mockJobs;
 const mockOpen = jest.fn(),
   mockAuthorities = new WeakSet();
 jest.mock("../../../../../../src/owners/railgun-account-enrollment.js", () => ({
   isRailgunAccountEnrollment: (v) => v === mockEnrollment,
+  withRailgunEnrollmentPublicKeys: (enrollment, ...args) => {
+    if (enrollment !== mockEnrollment) throw Error('enrollment');
+    return mockEnrollment.withPublicKeys(...args);
+  },
+  withRailgunEnrollmentPublicCatalogKey: (enrollment, ...args) => {
+    if (enrollment !== mockEnrollment) throw Error('enrollment');
+    return mockEnrollment.withPublicCatalogKey(...args);
+  },
+  withRailgunEnrollmentPublicGenerationKeys: (enrollment, ...args) => {
+    if (enrollment !== mockEnrollment) throw Error('enrollment');
+    return mockEnrollment.withPublicGenerationKeys(...args);
+  },
+  withRailgunEnrollmentTxidGenerationKeys: (enrollment, ...args) => {
+    if (enrollment !== mockEnrollment) throw Error('enrollment');
+    return mockEnrollment.withTxidGenerationKeys(...args);
+  },
 }));
 jest.mock("../../../../../../src/owners/railgun-account-store.js", () => ({
   openRailgunAccountStore: (...args) => mockOpen(...args),
@@ -30,7 +47,7 @@ const fs = require('fs'),
   os = require('os'),
   path = require('path');
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");
-const { getPrivacyStoragePath } = require('./privacy-storage');
+const { getPrivacyStoragePath } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');
 const {
   openRailgunAccountPublic,
   assertRailgunAccountPublic,

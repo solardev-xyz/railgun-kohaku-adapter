@@ -13,11 +13,11 @@
     "railgun-wallet-catalog.test.js",
     "railgun-wallet-journal.test.js"
   ],
-  "remainingCount": 34,
+  "remainingCount": 31,
   "groups": {
     "credential-and-enrollment-lifetime": 2,
     "genuine-rpc-transport-and-destination": 12,
-    "account-storage-composition": 7,
+    "account-storage-composition": 4,
     "adapter-wrapper-boundary": 1,
     "shared-eoa-journal-or-recovery": 11,
     "fixed-utility-or-worker-job": 1
@@ -214,54 +214,6 @@
           "currentPackageTarget": null,
           "currentTargetExists": false,
           "fixedHostFamily": "rpc",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        }
-      ],
-      "computedSites": [],
-      "executedInThisSuccessor": false
-    },
-    {
-      "source": "src/main/wallet/railgun-account-public.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-account-public.test.js",
-      "group": "account-storage-composition",
-      "requiredHostFamilies": [
-        "storage"
-      ],
-      "unresolved": [
-        {
-          "kind": "require",
-          "start": 1238,
-          "end": 1257,
-          "value": "./privacy-storage",
-          "line": 33,
-          "target": "src/main/wallet/privacy-storage.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "storage",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        }
-      ],
-      "computedSites": [],
-      "executedInThisSuccessor": false
-    },
-    {
-      "source": "src/main/wallet/railgun-account-txid.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-account-txid.test.js",
-      "group": "account-storage-composition",
-      "requiredHostFamilies": [
-        "storage"
-      ],
-      "unresolved": [
-        {
-          "kind": "require",
-          "start": 1745,
-          "end": 1764,
-          "value": "./privacy-storage",
-          "line": 38,
-          "target": "src/main/wallet/privacy-storage.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "storage",
           "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
         }
       ],
@@ -1614,42 +1566,6 @@
       "executedInThisSuccessor": false
     },
     {
-      "source": "src/main/wallet/railgun-relay-operation-cold.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-operation-cold.test.js",
-      "group": "account-storage-composition",
-      "requiredHostFamilies": [
-        "storage"
-      ],
-      "unresolved": [
-        {
-          "kind": "require",
-          "start": 1023,
-          "end": 1042,
-          "value": "./privacy-storage",
-          "line": 23,
-          "target": "src/main/wallet/privacy-storage.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "storage",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "require",
-          "start": 1091,
-          "end": 1116,
-          "value": "./privacy-profile-guard",
-          "line": 24,
-          "target": "src/main/wallet/privacy-profile-guard.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": null,
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        }
-      ],
-      "computedSites": [],
-      "executedInThisSuccessor": false
-    },
-    {
       "source": "src/main/wallet/railgun-scan-coordinator-completed.test.js",
       "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-scan-coordinator-completed.test.js",
       "group": "genuine-rpc-transport-and-destination",
@@ -2759,5 +2675,14 @@
     ],
     "tests": 252,
     "hostResponses": "original controlled mocks, unchanged"
+  },
+  "qualifiedAccountGroup": {
+    "names": [
+      "railgun-account-public",
+      "railgun-account-txid",
+      "railgun-relay-operation-cold"
+    ],
+    "tests": 138,
+    "enrollmentAuthority": "original controlled enrollment/fence doubles"
   }
 }

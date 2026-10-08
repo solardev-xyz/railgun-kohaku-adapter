@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 // Real encrypted paired ledger/recovery/floor storage and their actual mutation
 // capabilities. Only enrollment/account issuers and crypto job completion are
 // structural seams. Disposable public fixture keys; no runtime or native fence.
@@ -20,8 +21,8 @@ const fs = require('fs'),
   path = require('path');
 const { createHash } = require('crypto');
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");
-const { createPrivacyStorage, getPrivacyStoragePath } = require('./privacy-storage');
-const { createPrivacyProfileGuard } = require('./privacy-profile-guard');
+const { createPrivacyStorage, getPrivacyStoragePath } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');
+const { createPrivacyProfileGuard } = require('../../../../fixtures/host/src/main/wallet/privacy-profile-guard.js');
 const { createRailgunPrivateReservations } = require("../../../../../../src/owners/railgun-private-reservations.js");
 const { createRailgunRelayRecoveryStore } = require("../../../../../../src/owners/railgun-relay-recovery-store.js");
 const {
