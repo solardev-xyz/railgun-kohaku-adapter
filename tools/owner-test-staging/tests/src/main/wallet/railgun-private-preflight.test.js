@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 // Real preflight receipts, privacy contexts and ABI; deployment, artifact
 // verification and RPC replies are simulated boundary dependencies.
 let mockEnrollment,
@@ -41,7 +42,9 @@ jest.mock("../../../../../../src/execution/railgun-artifacts.js", () => ({
   loadRailgunArtifacts: (...args) => mockLoad(...args),
   assertRailgunArtifactVerifier: (...args) => mockVerifier(...args),
 }));
-jest.mock('../networks/private-rpc', () => ({
+jest.mock('../../../../../../src/owners/host-bindings.js', () => ({
+  ...jest.requireActual('../../../../../../src/owners/host-bindings.js'),
+  rpc: {
   createPrivateRpc: (handle, role, options) => {
     mockRpcOptions(options);
     const { getPrivacyContext } = require("../../../../../../src/owners/context-bindings.js");
@@ -57,6 +60,7 @@ jest.mock('../networks/private-rpc', () => ({
         if (mockEndpoint.signal.aborted) throw Error('endpoint');
       },
     };
+  },
   },
 }));
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");

@@ -1,0 +1,94 @@
+{
+  "baseRevision": "6d389b10af4478cf9b9fe37d6c8814cc11ec7757",
+  "productionTransforms": false,
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-operation.test.js",
+      "beforeSha256": "efbe91a5ca7c61c4de2557c8fa98b2e0f02d4a4187d5224f6933481c92fc3c45",
+      "afterSha256": "eac1795cdcb7a7236dd9c3bb93cae95818a0ff82b5d472f0b2274bb8aaa39e89",
+      "replacements": [
+        {
+          "start": 883,
+          "before": "",
+          "after": "  },\n"
+        },
+        {
+          "start": 647,
+          "before": "jest.mock('./private-submission-journal', () => ({\n",
+          "after": "jest.mock('../../../../../../src/owners/host-bindings.js', () => ({\n  ...jest.requireActual('../../../../../../src/owners/host-bindings.js'),\n  submissionJournal: {\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-receipt.test.js",
+      "beforeSha256": "4aec045526c9494e2ee42a463ce79e45a3acc41b0a4dde7843d7c1ee3ccb4dbd",
+      "afterSha256": "9f4ee9c284219cf89f5bc5401be47671507b2686cb33f6b69992a372f25acc1c",
+      "replacements": [
+        {
+          "start": 760,
+          "before": "",
+          "after": "  },\n"
+        },
+        {
+          "start": 276,
+          "before": "jest.mock('./private-transaction-network', () => ({\n",
+          "after": "jest.mock('../../../../../../src/owners/host-bindings.js', () => ({\n  ...jest.requireActual('../../../../../../src/owners/host-bindings.js'),\n  transactionNetwork: {\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-preflight.test.js",
+      "beforeSha256": "5cbf2cb1ae296b2d320d103971e139d31bc1436299a75ff42a100e70f6abbedf",
+      "afterSha256": "45fe04589d437d4a3c6f0e1bf9db2dbeb39d12d20f5e968d4c1f806db5af1fa8",
+      "replacements": [
+        {
+          "start": 2158,
+          "before": "",
+          "after": "  },\n"
+        },
+        {
+          "start": 1477,
+          "before": "jest.mock('../networks/private-rpc', () => ({\n",
+          "after": "jest.mock('../../../../../../src/owners/host-bindings.js', () => ({\n  ...jest.requireActual('../../../../../../src/owners/host-bindings.js'),\n  rpc: {\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-shield-preflight.test.js",
+      "beforeSha256": "897d201e6b631acaf6038c6adf4ada716a4f0afedd3f1168646617e22359cdb5",
+      "afterSha256": "f5321bc008bf3fa3d764244d72d6071d1311bff87d637a12aa7ab2d70f163bfc",
+      "replacements": [
+        {
+          "start": 1282,
+          "before": "",
+          "after": "  },\n"
+        },
+        {
+          "start": 621,
+          "before": "jest.mock('../networks/private-rpc', () => ({\n",
+          "after": "jest.mock('../../../../../../src/owners/host-bindings.js', () => ({\n  ...jest.requireActual('../../../../../../src/owners/host-bindings.js'),\n  rpc: {\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    }
+  ]
+}

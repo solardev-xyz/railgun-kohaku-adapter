@@ -1,9 +1,12 @@
+require('../../../../context-host.cjs');
 let mockEnrollment, mockEnrollments, mockHandle, mockNetwork, mockDestinationCurrent;
 const mockDestination = Object.freeze({});
 jest.mock("../../../../../../src/owners/railgun-account-enrollment.js", () => ({
   isRailgunAccountEnrollment: (v) => mockEnrollments.has(v),
 }));
-jest.mock('./private-transaction-network', () => ({
+jest.mock('../../../../../../src/owners/host-bindings.js', () => ({
+  ...jest.requireActual('../../../../../../src/owners/host-bindings.js'),
+  transactionNetwork: {
   getPrivateTransactionNetwork: (handle) => {
     mockHandle = handle;
     return mockNetwork;
@@ -17,6 +20,7 @@ jest.mock('./private-transaction-network', () => ({
       destination !== mockDestination
     )
       throw Error('destination');
+  },
   },
 }));
 const { createPrivacyScope, getPrivacyContext } = require("../../../../../../src/owners/context-bindings.js");
