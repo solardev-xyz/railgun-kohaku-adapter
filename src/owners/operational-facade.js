@@ -606,6 +606,12 @@ function initializeRailgunMain(options) {
                     active();
                     return retain(companion.recoverOutput(capsuleDigest));
                   },
+                  recoverAttemptedOutput(capsuleDigest) {
+                    active();
+                    return retain(
+                      companion.recoverAttemptedOutput(capsuleDigest),
+                    );
+                  },
                 }
               : {
                   history(after = null) {

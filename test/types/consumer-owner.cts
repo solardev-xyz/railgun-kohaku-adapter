@@ -139,6 +139,13 @@ async function poi(session: owner.AccountSession) {
       const unavailable: false = outcome.membershipAuthenticated;
       void unavailable;
     }
+    const attempted = await lane.recoverAttemptedOutput(prepared.capsuleDigest);
+    if (attempted.status === "matched") {
+      const retry: false = attempted.retryEnabled;
+      const uncertain: false = attempted.attemptOutcomeKnown;
+      void retry;
+      void uncertain;
+    }
     await lane.submit(prepared.capsuleDigest);
   }
   lane.close();

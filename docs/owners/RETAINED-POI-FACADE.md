@@ -47,7 +47,18 @@ owner with the captured public destination after explicit read-disclosure review
 Only a bounded matched/refused projection leaves the lane. In particular,
 `membershipAuthenticated`, `sourceAuthenticated`, `proofVerified`,
 `originalInputReconstructed`, `originalRootsAccepted`, `disclosureEnabled` and
-`spendingEnabled` remain false. It is not an acceptance observer or spend gate.
+`spendingEnabled` remain false. It is not an acceptance observer or spend gate. This method accepts prepared
+records only; an already attempted record is refused by that genuine owner.
+
+`recoverAttemptedOutput(capsuleDigest)` is a separate fixed diagnostic route to
+`recoverRailgunAttemptedPoiOutput`. It accepts attempted records only, preserves
+the original owner's authenticated attempted-record/attempt-body binding and
+shared exclusion, and passes no caller state flag or destination override. The
+bounded matched projection includes `recordState: "attempted"`, the original
+attempt-body digest, and false `eligibilityEstablished`, `attemptOutcomeKnown`,
+`submissionAccepted`, and `retryEnabled`. It does not claim success or failure of
+the prior submission and cannot resend it. Both routes have explicit read review
+and original completion/close requirements.
 
 Every lane belongs to the same private identity/enrollment/coordinator tuple and
 session lifetime. Session machinery retains the companion's original methods and

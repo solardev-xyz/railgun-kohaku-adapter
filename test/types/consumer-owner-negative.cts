@@ -99,3 +99,13 @@ declare const output: Extract<owner.PoiOutputOutcome, { status: "matched" }>;
 // @ts-expect-error output matching cannot grant membership acceptance
 const acceptedMembership: true = output.membershipAuthenticated;
 void acceptedMembership;
+
+declare const attempted: Extract<
+  owner.PoiAttemptedOutputOutcome,
+  { status: "matched" }
+>;
+// @ts-expect-error attempted output matching cannot establish safe retry
+const retry: true = attempted.retryEnabled;
+void retry;
+// @ts-expect-error attempted state is selected by a fixed method, not options
+poi.recoverOutput("id", { attempted: true });

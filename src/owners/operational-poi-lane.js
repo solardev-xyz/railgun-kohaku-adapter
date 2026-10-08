@@ -21,6 +21,7 @@ const {
 } = require("./railgun-poi-disclosure-plan.js");
 const {
   recoverRailgunPoiOutputCompleted,
+  recoverRailgunAttemptedPoiOutput,
 } = require("./railgun-poi-output-recovery.js");
 const fail = () =>
   Object.assign(new Error("Railgun retained POI unavailable"), {
@@ -470,22 +471,31 @@ function createRailgunPoiLane(options) {
       return outcome;
     }, true);
   }
-  function recoverOutput(capsuleDigest) {
+  function recoverOutput(capsuleDigest, attempted) {
     try {
       id(capsuleDigest);
     } catch {
       return Promise.reject(fail());
     }
     return invoke(async () => {
-      await review(disclosure("recover-output", capsuleDigest));
+      await review(
+        disclosure(
+          attempted ? "recover-attempted-output" : "recover-output",
+          capsuleDigest,
+        ),
+      );
       current();
-      const result = await recoverRailgunPoiOutputCompleted({
+      const result = await (
+        attempted
+          ? recoverRailgunAttemptedPoiOutput
+          : recoverRailgunPoiOutputCompleted
+      )({
         identity,
         enrollment,
         coordinator,
         archive,
         capsuleDigest,
-        sourceDestination: destination,
+        ...(attempted ? {} : { sourceDestination: destination }),
         signal: lifetime,
       });
       current();
@@ -495,8 +505,29 @@ function createRailgunPoiLane(options) {
       assert.equal(result.outputMatched, true);
       assert.equal(result.membershipAuthenticated, false);
       assert.equal(result.spendingEnabled, false);
+      if (attempted) {
+        assert.equal(result.recordState, "attempted");
+        id(result.attemptBodySha256);
+        for (const key of [
+          "eligibilityEstablished",
+          "attemptOutcomeKnown",
+          "submissionAccepted",
+          "retryEnabled",
+        ])
+          assert.equal(result[key], false);
+      }
       return Object.freeze({
         status: "matched",
+        ...(attempted
+          ? {
+              recordState: "attempted",
+              attemptBodySha256: result.attemptBodySha256,
+              eligibilityEstablished: false,
+              attemptOutcomeKnown: false,
+              submissionAccepted: false,
+              retryEnabled: false,
+            }
+          : {}),
         capsuleDigest: result.capsuleDigest,
         revision: result.revision,
         payloadSha256: result.payloadSha256,
@@ -517,7 +548,9 @@ function createRailgunPoiLane(options) {
     prepareShield: (holdId) => prepare(holdId, "Shield"),
     prepareTransact: (holdId) => prepare(holdId, "Transact"),
     submit,
-    recoverOutput,
+    recoverOutput: (capsuleDigest) => recoverOutput(capsuleDigest, false),
+    recoverAttemptedOutput: (capsuleDigest) =>
+      recoverOutput(capsuleDigest, true),
     close,
     closed,
     signal: lifetime,

@@ -39,7 +39,9 @@ jest.mock("../src/owners/railgun-poi-disclosure-plan.js", () => ({
   submitRailgunRetainedPoi: (input) => state.submit(input),
 }));
 jest.mock("../src/owners/railgun-poi-output-recovery.js", () => ({
-  recoverRailgunPoiOutputCompleted: (input) => state.recover(input),
+  recoverRailgunPoiOutputCompleted: (input) => state.recover(input, "prepared"),
+  recoverRailgunAttemptedPoiOutput: (input) =>
+    state.recover(input, "attempted"),
 }));
 const hex = (character) => character.repeat(64);
 const deferred = () => {
@@ -502,4 +504,97 @@ test("private companion is not an exported package authority surface", () => {
   expect(source).not.toContain("withSpendingKey");
   expect(source).not.toContain("withViewingKey");
   expect(source).not.toContain("host-bindings");
+});
+
+test("prepared and attempted output diagnostics invoke distinct fixed owners, never a caller state override", async () => {
+  const f = fixture(),
+    lane = f.createRailgunPoiLane(f.input);
+  let savedState = "prepared";
+  state.recover.mockImplementation(async (input, mode) =>
+    mode !== savedState
+      ? { status: "refused", stage: "stored" }
+      : {
+          status: "matched",
+          capsuleDigest: hex("4"),
+          revision: mode === "attempted" ? 2 : 1,
+          payloadSha256: hex("5"),
+          outputMatched: true,
+          membershipAuthenticated: false,
+          spendingEnabled: false,
+          ...(mode === "attempted"
+            ? {
+                recordState: "attempted",
+                attemptBodySha256: hex("6"),
+                eligibilityEstablished: false,
+                attemptOutcomeKnown: false,
+                submissionAccepted: false,
+                retryEnabled: false,
+              }
+            : {}),
+        },
+  );
+  await expect(lane.recoverAttemptedOutput(hex("4"))).resolves.toEqual({
+    status: "refused",
+    stage: "stored",
+  });
+  await expect(lane.recoverOutput(hex("4"))).resolves.toHaveProperty(
+    "status",
+    "matched",
+  );
+  savedState = "attempted";
+  await expect(lane.recoverOutput(hex("4"))).resolves.toEqual({
+    status: "refused",
+    stage: "stored",
+  });
+  const result = await lane.recoverAttemptedOutput(hex("4"));
+  expect(result).toMatchObject({
+    status: "matched",
+    recordState: "attempted",
+    attemptOutcomeKnown: false,
+    submissionAccepted: false,
+    retryEnabled: false,
+    eligibilityEstablished: false,
+    membershipAuthenticated: false,
+  });
+  expect(state.recover.mock.calls.map((call) => call[1])).toEqual([
+    "attempted",
+    "prepared",
+    "prepared",
+    "attempted",
+  ]);
+  for (const [input, mode] of state.recover.mock.calls) {
+    expect(Object.hasOwn(input, "sourceDestination")).toBe(mode === "prepared");
+    expect(Object.hasOwn(input, "attempted")).toBe(false);
+    expect(Object.hasOwn(input, "state")).toBe(false);
+  }
+  expect(state.submit).not.toHaveBeenCalled();
+  expect(state.prove).not.toHaveBeenCalled();
+  lane.close();
+  await lane.closed;
+});
+test.each([
+  "retryEnabled",
+  "submissionAccepted",
+  "attemptOutcomeKnown",
+  "eligibilityEstablished",
+])("attempted diagnostic cannot upgrade %s", async (key) => {
+  const f = fixture(),
+    lane = f.createRailgunPoiLane(f.input);
+  state.recover.mockResolvedValue({
+    status: "matched",
+    capsuleDigest: hex("4"),
+    outputMatched: true,
+    recordState: "attempted",
+    attemptBodySha256: hex("6"),
+    membershipAuthenticated: false,
+    spendingEnabled: false,
+    eligibilityEstablished: false,
+    attemptOutcomeKnown: false,
+    submissionAccepted: false,
+    retryEnabled: false,
+    [key]: true,
+  });
+  await expect(lane.recoverAttemptedOutput(hex("4"))).rejects.toThrow();
+  lane.close();
+  await lane.closed;
 });

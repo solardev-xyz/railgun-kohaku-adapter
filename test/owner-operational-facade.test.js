@@ -227,6 +227,7 @@ function fixture() {
         "prepareTransact",
         "submit",
         "recoverOutput",
+        "recoverAttemptedOutput",
       ])
         value[name] = jest.fn(() =>
           Promise.resolve({ status: "refused", stage: "controlled" }),
@@ -1242,6 +1243,7 @@ test("retained POI companion uses fixed owners and excludes simultaneous lanes",
       "prepareTransact",
       "submit",
       "recoverOutput",
+      "recoverAttemptedOutput",
       "signal",
       "closed",
       "close",

@@ -438,7 +438,11 @@ export interface RecoveryLane extends LaneLifetime {
 /** Read-only disclosure inventories. Neither summary is an authorization receipt. */
 export interface PoiPreparationDisclosure {
   readonly purpose: "railgun-retained-poi-facade-disclosure-v1";
-  readonly operation: "prepare-shield" | "prepare-transact" | "recover-output";
+  readonly operation:
+    | "prepare-shield"
+    | "prepare-transact"
+    | "recover-output"
+    | "recover-attempted-output";
   readonly chainId: 11155111;
   readonly selection: string;
   readonly destinationSource: "authenticated-account-public-destination";
@@ -524,6 +528,17 @@ export type PoiOutputOutcome =
       disclosureEnabled: false;
       spendingEnabled: false;
     }>;
+export type PoiAttemptedOutputOutcome =
+  | PoiRefusal
+  | (Extract<PoiOutputOutcome, { status: "matched" }> &
+      Readonly<{
+        recordState: "attempted";
+        attemptBodySha256: string;
+        eligibilityEstablished: false;
+        attemptOutcomeKnown: false;
+        submissionAccepted: false;
+        retryEnabled: false;
+      }>);
 /** Exclusive companion. Type-specific routes reauthenticate actual creators;
  * a mismatched route can disclose before source classification refuses it.
  * submit is terminal for this lane, including refusal/uncertain delivery. */
@@ -533,6 +548,10 @@ export interface PoiRecoveryLane extends LaneLifetime {
   submit(capsuleDigest: string): Promise<PoiSubmissionOutcome>;
   /** Existing output matching only, never list acceptance or spend eligibility. */
   recoverOutput(capsuleDigest: string): Promise<PoiOutputOutcome>;
+  /** Attempted-state diagnostic only; never delivery acceptance or retry permission. */
+  recoverAttemptedOutput(
+    capsuleDigest: string,
+  ): Promise<PoiAttemptedOutputOutcome>;
 }
 export interface RelayQuote {
   data: string;
