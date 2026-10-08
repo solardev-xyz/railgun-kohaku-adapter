@@ -47,22 +47,57 @@ function record(value, keys) {
 }
 // Owned settlement promise; ignore the species-selected result of intrinsic then.
 // Fulfillment values are intentionally not assimilated into a shutdown barrier.
-function observe(value, unknown = () => {}) {
+function observe(value, unknown = () => {}, settled = () => {}) {
   if (!types.isPromise(value)) throw fail();
   return new Promise((resolve, reject) => {
+    const finish = (fulfilled, error) => {
+      try {
+        settled(fulfilled, error);
+      } catch (failure) {
+        try {
+          unknown(failure);
+        } catch {
+          /* Still reject the owned barrier. */
+        }
+        reject(failure);
+        return;
+      }
+      if (fulfilled) resolve();
+      else reject(error);
+    };
     try {
       Promise.prototype.then.call(
         value,
         () => {
-          resolve();
+          finish(true);
         },
-        reject,
+        (error) => {
+          finish(false, error);
+        },
       );
     } catch (error) {
-      unknown(error);
+      try {
+        unknown(error);
+      } catch {
+        /* The original remains unobserved. */
+      }
       reject(error);
     }
   });
+}
+function errorCode(error) {
+  if (
+    !error ||
+    (typeof error !== "object" && typeof error !== "function") ||
+    types.isProxy(error)
+  )
+    return undefined;
+  const descriptor = Object.getOwnPropertyDescriptor(error, "code");
+  return descriptor &&
+    Object.hasOwn(descriptor, "value") &&
+    typeof descriptor.value === "string"
+    ? descriptor.value
+    : undefined;
 }
 let initialized = false;
 function initializeRailgunMain(options) {
@@ -90,6 +125,13 @@ function initializeRailgunMain(options) {
   const walletApi = require("./railgun-account-wallet.js");
   const pluginApi = require("./railgun-kohaku-plugin.js");
   const recoveryApi = require("./railgun-kohaku-recovery.js");
+  const txidApi = require("./railgun-account-txid.js");
+  const publicServices = require("./railgun-public-services.js");
+  const relayApi = require("./railgun-relay-operation.js");
+  const relayStaging = require("./railgun-relay-transact-staging.js");
+  const {
+    normalizeRailgunRelayQuote,
+  } = require("../execution/railgun-relay-quote-data.js");
   const application = signal(host.platform.applicationLifetime());
   const occupied = new Map();
   const sessions = new WeakMap();
@@ -120,6 +162,7 @@ function initializeRailgunMain(options) {
       identity: null,
       enrollment: null,
       public: null,
+      txid: null,
       account: null,
       lane: null,
       closing: false,
@@ -128,6 +171,7 @@ function initializeRailgunMain(options) {
       unknown: false,
       pending: new Set(),
       cleanup: new Map(),
+      watched: new Map(),
     };
     occupied.set(key, state);
     const controller = new AbortController();
@@ -142,40 +186,39 @@ function initializeRailgunMain(options) {
     });
     closed.catch(() => {});
     function remember(error) {
-      state.failure ||= error;
+      state.failure ||= error || fail();
     }
     function retain(original, onSettled = () => {}) {
       let observed;
       try {
-        observed = observe(original, (error) => {
-          state.unknown = true;
-          remember(error);
-        });
+        observed = observe(
+          original,
+          (error) => {
+            state.unknown = true;
+            remember(error);
+          },
+          (fulfilled, error) => {
+            state.pending.delete(observed);
+            onSettled();
+            if (
+              !fulfilled &&
+              (errorCode(error)?.endsWith("_EXIT_UNOBSERVED") ||
+                errorCode(error)?.endsWith("_DRAIN_UNOBSERVED"))
+            ) {
+              state.unknown = true;
+              remember(error);
+            }
+          },
+        );
       } catch (error) {
         state.unknown = true;
         remember(error);
         throw error;
       }
       state.pending.add(observed);
-      observed.then(
-        () => {
-          state.pending.delete(observed);
-          onSettled();
-        },
-        (error) => {
-          state.pending.delete(observed);
-          onSettled();
-          // Ordinary operation refusal is not unknown closure. Its owning lane
-          // retains the independent original closed barrier.
-          if (
-            error?.code?.endsWith("_EXIT_UNOBSERVED") ||
-            error?.code?.endsWith("_DRAIN_UNOBSERVED")
-          ) {
-            state.unknown = true;
-            remember(error);
-          }
-        },
-      );
+      observed.catch(() => {
+        state.pending.delete(observed);
+      });
       return original;
     }
     function current() {
@@ -188,14 +231,30 @@ function initializeRailgunMain(options) {
       )
         throw fail();
       host.assertRailgunOwnerHost();
+      for (const owner of [state.identity, state.enrollment, state.public])
+        if (owner && Reflect.apply(aborted, owner.signal, [])) throw fail();
       if (host.profiles.getActiveProfile().userDataDir !== profile.userDataDir)
         throw fail();
+    }
+    function watchOwner(value) {
+      const originalSignal = signal(value.signal);
+      const revoked = () => {
+        if (Reflect.apply(aborted, originalSignal, [])) close();
+      };
+      state.watched.set(value, { signal: originalSignal, revoked });
+      originalSignal.addEventListener("abort", revoked);
+      if (originalSignal.aborted) close();
     }
     function stop(value, kind) {
       if (!value || state.cleanup.has(value)) return;
       // Install before invoking a reentrant abort listener.
       const slot = { work: null };
       state.cleanup.set(value, slot);
+      const watch = state.watched.get(value);
+      if (watch) {
+        watch.signal.removeEventListener("abort", watch.revoked);
+        state.watched.delete(value);
+      }
       try {
         const returned = value.close();
         const original =
@@ -215,6 +274,7 @@ function initializeRailgunMain(options) {
     function stopAll() {
       stop(state.lane, "lane");
       stop(state.account, "account");
+      stop(state.txid, "txid");
       stop(state.public, "public");
       stop(state.enrollment, "enrollment");
       stop(state.identity, "identity");
@@ -248,6 +308,8 @@ function initializeRailgunMain(options) {
       const value = await work;
       state[kind] = value;
       if (state.closing) stop(value, kind);
+      else if (["identity", "enrollment", "public"].includes(kind))
+        watchOwner(value);
       current();
       return value;
     }
@@ -379,17 +441,18 @@ function initializeRailgunMain(options) {
                   ),
             );
           }
-          const laneClosed = observe(plugin.closed);
-          laneClosed.then(
-            () => {
-              laneClosing = true;
-              if (state.lane === plugin) state.lane = null;
-            },
-            (error) => {
-              remember(error);
-              close();
-            },
-          );
+          const failedClosure = (error) => {
+            remember(error);
+            close();
+          };
+          observe(plugin.closed, failedClosure, (fulfilled, error) => {
+            if (!fulfilled) {
+              failedClosure(error);
+              return;
+            }
+            laneClosing = true;
+            if (state.lane === plugin) state.lane = null;
+          }).catch(() => {});
           return Object.freeze({
             instanceId: () => invoke("instanceId", []),
             balance: (assets) => invoke("balance", [assets]),
@@ -438,8 +501,8 @@ function initializeRailgunMain(options) {
           const cleanup = state.cleanup.get(previous);
           if (state.failure || !cleanup?.work) throw state.failure || fail();
           await cleanup.work;
-          current();
           state.public = null;
+          current();
           await acquire(
             "public",
             publicApi.openRailgunAccountPublic({
@@ -490,16 +553,18 @@ function initializeRailgunMain(options) {
             if (closing || state.lane !== companion || companion.signal.aborted)
               throw fail();
           };
-          observe(companion.closed).then(
-            () => {
-              closing = true;
-              if (state.lane === companion) state.lane = null;
-            },
-            (error) => {
-              remember(error);
-              close();
-            },
-          );
+          const failedClosure = (error) => {
+            remember(error);
+            close();
+          };
+          observe(companion.closed, failedClosure, (fulfilled, error) => {
+            if (!fulfilled) {
+              failedClosure(error);
+              return;
+            }
+            closing = true;
+            if (state.lane === companion) state.lane = null;
+          }).catch(() => {});
           return Object.freeze({
             history(after = null) {
               active();
@@ -527,6 +592,453 @@ function initializeRailgunMain(options) {
         }
       });
     }
+    function relay(options, cold) {
+      const keys = cold
+        ? ["signal"]
+        : [
+            "wallet",
+            "signal",
+            "review",
+            "reviewDisclosure",
+            "reviewStagingDisclosure",
+            "reviewRootDisclosure",
+          ];
+      const data = record(options, keys);
+      signal(data.signal);
+      if (!cold) {
+        if (!["active", "advance", "new", "pending"].includes(data.wallet))
+          throw fail();
+        for (const name of [
+          "review",
+          "reviewDisclosure",
+          "reviewStagingDisclosure",
+          "reviewRootDisclosure",
+        ])
+          if (typeof data[name] !== "function" || types.isProxy(data[name]))
+            throw fail();
+      }
+      return run(async () => {
+        enrollmentApi.assertRailgunFencedAccountEnrollment(state.enrollment);
+        const controller = new AbortController();
+        const lifetimeSignal = AbortSignal.any([
+          lifetime,
+          data.signal,
+          controller.signal,
+        ]);
+        let finishSetup,
+          resolve,
+          reject,
+          original,
+          staged,
+          adoptedAccount,
+          closing = false,
+          busy = false,
+          used = false,
+          closeFailure;
+        const setup = new Promise((done) => {
+          finishSetup = done;
+        });
+        const drained = new Promise((yes, no) => {
+          resolve = yes;
+          reject = no;
+        });
+        drained.catch(() => {});
+        let watchedSignal = lifetimeSignal;
+        const abort = () => {
+          if (Reflect.apply(aborted, watchedSignal, [])) closeRelay();
+        };
+        function closeRelay() {
+          if (closing) return;
+          closing = true;
+          controller.abort();
+          if (adoptedAccount) stop(adoptedAccount, "account");
+          (async () => {
+            await setup;
+            if (original) await Promise.allSettled([original]);
+            // Staging close revokes its evidence scope; it does not reassert
+            // pre-key freshness after an actual credential was issued.
+            try {
+              staged?.close();
+            } catch (error) {
+              closeFailure ||= error;
+            }
+            if (adoptedAccount) {
+              stop(adoptedAccount, "account");
+              const cleanup = state.cleanup.get(adoptedAccount);
+              if (cleanup?.work) await cleanup.work;
+              else if (state.failure) throw state.failure;
+            }
+            watchedSignal.removeEventListener("abort", abort);
+            if (closeFailure || state.unknown || state.failure)
+              throw closeFailure || state.failure || fail();
+            if (state.account === adoptedAccount) state.account = null;
+            if (state.lane === owner) state.lane = null;
+          })().then(resolve, (error) => {
+            remember(error);
+            reject(error);
+          });
+        }
+        const owner = Object.freeze({
+          signal: lifetimeSignal,
+          closed: drained,
+          close: closeRelay,
+        });
+        state.lane = owner;
+        lifetimeSignal.addEventListener("abort", abort);
+        function active() {
+          current();
+          if (closing || busy || lifetimeSignal.aborted || state.lane !== owner)
+            throw fail();
+        }
+        function invoke(action) {
+          active();
+          busy = true;
+          try {
+            original = retain(action());
+            observe(
+              original,
+              (error) => {
+                state.unknown = true;
+                remember(error);
+              },
+              (fulfilled, error) => {
+                busy = false;
+                if (
+                  !fulfilled &&
+                  [
+                    "RAILGUN_RELAY_TRANSACT_STAGING_DRAIN_FAILED",
+                    "RAILGUN_RELAY_REVIEW_DRAIN_FAILED",
+                    "RAILGUN_RELAY_CONTINUATION_DRAIN_FAILED",
+                  ].includes(errorCode(error))
+                ) {
+                  state.unknown = true;
+                  remember(error);
+                }
+                if (!cold || !fulfilled) closeRelay();
+              },
+            ).catch(() => {});
+            return original;
+          } catch (error) {
+            busy = false;
+            closeRelay();
+            throw error;
+          }
+        }
+        try {
+          const bound = owners();
+          adoptedAccount = await (cold
+            ? walletApi.openRailgunCompletedAccountWallet({
+                ...bound,
+                archive: runtime.archive,
+                destination: publicApi.getRailgunAccountPublicDestination(
+                  bound.coordinator,
+                  bound.enrollment,
+                ),
+                signal: lifetimeSignal,
+              })
+            : walletApi.openRailgunAccountWallet({
+                ...bound,
+                archive: runtime.archive,
+                mode: data.wallet,
+              }));
+          state.account = adoptedAccount;
+          if (closing || state.closing) stop(adoptedAccount, "account");
+          if (cold) {
+            lifetimeSignal.removeEventListener("abort", abort);
+            watchedSignal = AbortSignal.any([
+              lifetimeSignal,
+              adoptedAccount.signal,
+            ]);
+            watchedSignal.addEventListener("abort", abort);
+          }
+          signal(watchedSignal);
+          current();
+          const common = () => ({
+            account: adoptedAccount,
+            owners: bound,
+            signal: lifetimeSignal,
+          });
+          if (cold)
+            return Object.freeze({
+              list(after = null) {
+                return invoke(() =>
+                  relayApi.listRailgunAccountRelayOperations({
+                    ...common(),
+                    after,
+                  }),
+                );
+              },
+              resume(operationId) {
+                return invoke(() =>
+                  relayApi.resumeRailgunAccountRelayOperation({
+                    ...common(),
+                    ...runtime,
+                    operationId,
+                  }),
+                );
+              },
+              discard(operationId) {
+                return invoke(() =>
+                  relayApi.discardRailgunAccountRelayOperation({
+                    ...common(),
+                    operationId,
+                  }),
+                );
+              },
+              signal: watchedSignal,
+              closed: drained,
+              close: closeRelay,
+            });
+          return Object.freeze({
+            prepare(request) {
+              const input = record(request, [
+                "noteId",
+                "quote",
+                "gas",
+                "maxFee",
+                "signal",
+              ]);
+              signal(input.signal);
+              const normalized = normalizeRailgunRelayQuote(
+                input.quote,
+                input.gas,
+              );
+              const captured = Object.freeze({
+                ...input,
+                quote: normalized.quote,
+                gas: normalized.gas,
+              });
+              if (used) throw fail();
+              return invoke(async () => {
+                used = true;
+                const notes = walletApi.readRailgunAccountOwnedNotes(
+                  adoptedAccount,
+                  bound,
+                ).ownedPoi;
+                const selected = notes.filter(
+                  (note) => note.id === captured.noteId,
+                );
+                if (
+                  selected.length !== 1 ||
+                  !["Shield", "Transact"].includes(selected[0].type)
+                )
+                  throw fail();
+                if (selected[0].type === "Transact") {
+                  const result =
+                    await relayStaging.stageRailgunRelayTransactInput({
+                      account: adoptedAccount,
+                      owners: bound,
+                      request: captured,
+                      archive: runtime.archive,
+                      signal: AbortSignal.any([
+                        lifetimeSignal,
+                        captured.signal,
+                      ]),
+                      reviewStagingDisclosure: data.reviewStagingDisclosure,
+                    });
+                  if (result.status !== "staged") return result;
+                  // Preserve genuine replacement and receipt before any currency
+                  // check, including late staging return after cancellation.
+                  staged = result;
+                  adoptedAccount = state.account = result.account;
+                  if (closing) stop(adoptedAccount, "account");
+                  if (closing || lifetimeSignal.aborted) throw fail();
+                }
+                return relayApi.proveRailgunAccountRelayOperation({
+                  account: adoptedAccount,
+                  owners: bound,
+                  request: captured,
+                  ...runtime,
+                  review: data.review,
+                  reviewDisclosure: data.reviewDisclosure,
+                  ...(staged
+                    ? {
+                        stagingReceipt: staged.receipt,
+                        reviewRootDisclosure: data.reviewRootDisclosure,
+                      }
+                    : {}),
+                });
+              });
+            },
+            signal: lifetimeSignal,
+            closed: drained,
+            close: closeRelay,
+          });
+        } catch (error) {
+          closeRelay();
+          throw error;
+        } finally {
+          finishSetup();
+          if (state.closing || watchedSignal.aborted) closeRelay();
+        }
+      });
+    }
+    function synchronizeTxid(options) {
+      const data = record(options, ["mode", "signal", "reviewDisclosure"]);
+      if (
+        !["initialize", "advance", "checkpoint"].includes(data.mode) ||
+        typeof data.reviewDisclosure !== "function" ||
+        types.isProxy(data.reviewDisclosure)
+      )
+        throw fail();
+      signal(data.signal);
+      return run(async () => {
+        const controller = new AbortController();
+        const workSignal = AbortSignal.any([
+          lifetime,
+          data.signal,
+          controller.signal,
+        ]);
+        const queries = [
+          Object.freeze({
+            method: "latestTxid",
+            wireMethod: "ppoi_validated_txid",
+            endpoint: publicServices.POI_URL,
+          }),
+          Object.freeze({
+            method: "validateTxidRoot",
+            wireMethod: "ppoi_validate_txid_merkleroot",
+            endpoint: publicServices.POI_URL,
+            tree: 0,
+            pointSource:
+              "authenticated-local-checkpoint-or-computed-public-page",
+            exactPointAvailableBeforeOpen: false,
+          }),
+          ...(data.mode === "checkpoint"
+            ? []
+            : [
+                Object.freeze({
+                  method: "txidPage",
+                  wireMethod: "RailgunPublicTxids",
+                  endpoint: publicServices.INDEXER_URL,
+                  maximumPageRows: 100,
+                  cursorSource: "authenticated-local-public-txid-state",
+                  exactCursorAvailableBeforeOpen: false,
+                }),
+              ]),
+        ];
+        const summary = Object.freeze({
+          purpose: "railgun-public-txid-synchronization-disclosure-v1",
+          mode: data.mode,
+          chainId: 11155111,
+          txidVersion: "V2_PoseidonMerkle",
+          queries: Object.freeze(queries),
+          createIfMissing: data.mode === "initialize",
+          maximumAdvancePages: data.mode === "checkpoint" ? 0 : 1,
+          mayResumeAuthenticatedPendingPage: data.mode !== "checkpoint",
+          selectedMembershipPermitted: false,
+          selectedNullifierQueryPermitted: false,
+          signingEnabled: false,
+          relaySendPermitted: false,
+        });
+        const started = performance.now(),
+          deadline = started + 30000;
+        const timer = setTimeout(() => controller.abort(), 30000);
+        timer.unref?.();
+        let txid;
+        const unknownReview = () => {
+          const error = Object.assign(fail(), {
+            code: "RAILGUN_WALLET_EXIT_UNOBSERVED",
+          });
+          state.unknown = true;
+          remember(error);
+          close();
+          return error;
+        };
+        try {
+          current();
+          signal(workSignal);
+          let decision = data.reviewDisclosure(
+            summary,
+            Object.freeze({ signal: workSignal }),
+          );
+          if (types.isPromise(decision) && !types.isProxy(decision)) {
+            const originalReview = decision;
+            decision = (
+              await new Promise((resolve, reject) => {
+                try {
+                  Promise.prototype.then.call(
+                    originalReview,
+                    (value) =>
+                      resolve(Object.freeze({ __proto__: null, value })),
+                    reject,
+                  );
+                } catch {
+                  reject(unknownReview());
+                }
+              })
+            ).value;
+          } else if (
+            decision !== null &&
+            ["object", "function"].includes(typeof decision)
+          )
+            throw unknownReview();
+          const now = performance.now();
+          if (decision !== true || now < started || now >= deadline)
+            throw fail();
+          current();
+          signal(workSignal);
+          clearTimeout(timer);
+          txid = await acquire(
+            "txid",
+            txidApi.openRailgunAccountTxid({
+              enrollment: state.enrollment,
+              coordinator: state.public.coordinator,
+              archive: runtime.archive,
+              create: data.mode === "initialize",
+              checkpointOnly: data.mode === "checkpoint",
+              signal: workSignal,
+            }),
+          );
+          const result = await (data.mode === "checkpoint"
+            ? txid.inspect()
+            : txid.advance());
+          current();
+          signal(workSignal);
+          const count = result.checkpoint?.state.count ?? 0,
+            root = result.checkpoint?.state.root ?? null,
+            latest = result.serviceLatestIndex;
+          if (
+            result.pending ||
+            !Number.isSafeInteger(count) ||
+            count < 0 ||
+            count > 8000 ||
+            (root !== null &&
+              (typeof root !== "string" || !/^[a-f0-9]{64}$/.test(root))) ||
+            (latest !== null && (!Number.isSafeInteger(latest) || latest < 0))
+          )
+            throw fail();
+          return Object.freeze({
+            count,
+            root,
+            checkpointAvailable: !!result.checkpoint,
+            capacityReached: count === 8000,
+            serviceLatestIndex: latest,
+            pending: false,
+            unverified: true,
+            spendingEnabled: false,
+          });
+        } finally {
+          clearTimeout(timer);
+          controller.abort();
+          // acquire() retains a late owner even when cancellation rejects before
+          // assignment to txid; the session owns that exact original as well.
+          const owned = txid || state.txid;
+          if (owned) {
+            stop(owned, "txid");
+            const cleanup = state.cleanup.get(owned);
+            try {
+              if (cleanup?.work) await cleanup.work;
+              if (state.failure) throw state.failure;
+              if (state.txid === owned) state.txid = null;
+            } catch (error) {
+              close();
+              throw error;
+            }
+          }
+        }
+      });
+    }
     const session = Object.freeze({
       describe() {
         current();
@@ -543,7 +1055,10 @@ function initializeRailgunMain(options) {
       },
       rebuildPublic: (...extra) => replacePublic("new", extra),
       resumePublic: (...extra) => replacePublic("pending", extra),
+      synchronizeTxid,
       openRecovery: recovery,
+      openRelayLocal: (options) => relay(options, false),
+      openRelayRecovery: (options) => relay(options, true),
       openRead: (options) => lane("read", options),
       openPrivate: (options) => lane("private", options),
       openPublic: (options) => lane("public", options),
@@ -582,8 +1097,8 @@ function initializeRailgunMain(options) {
         return session;
       } catch (error) {
         if (
-          error?.code?.endsWith("_EXIT_UNOBSERVED") ||
-          error?.code?.endsWith("_DRAIN_UNOBSERVED")
+          errorCode(error)?.endsWith("_EXIT_UNOBSERVED") ||
+          errorCode(error)?.endsWith("_DRAIN_UNOBSERVED")
         ) {
           state.unknown = true;
           remember(error);

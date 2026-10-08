@@ -18,6 +18,10 @@ jest.mock("../src/owners/railgun-account-enrollment.js", () => ({
   openRailgunAccountEnrollment: (input) => state.openEnrollment(input, false),
   openRailgunCooperativeAccountEnrollment: (input) =>
     state.openEnrollment(input, true),
+  assertRailgunFencedAccountEnrollment: (value) => {
+    if (!state.enrollments.includes(value) || state.unfenced)
+      throw Error("unfenced");
+  },
   observeRailgunEnrollmentClosure: (value) => {
     if (!state.enrollments.includes(value)) throw Error("foreign enrollment");
     return value.originalClosed;
@@ -30,6 +34,9 @@ jest.mock("../src/owners/railgun-account-public.js", () => ({
 }));
 jest.mock("../src/owners/railgun-account-wallet.js", () => ({
   openRailgunAccountWallet: (input) => state.openWallet(input),
+  openRailgunCompletedAccountWallet: (input) => state.openCompleted(input),
+  readRailgunAccountOwnedNotes: (account, owners) =>
+    state.ownedNotes(account, owners),
 }));
 jest.mock("../src/owners/railgun-kohaku-plugin.js", () => ({
   createRailgunKohakuPlugin: (input) => state.createPlugin(input),
@@ -40,6 +47,29 @@ jest.mock("../src/owners/railgun-kohaku-plugin.js", () => ({
 }));
 jest.mock("../src/owners/railgun-kohaku-recovery.js", () => ({
   createRailgunKohakuRecovery: (options) => state.createRecovery(options),
+}));
+jest.mock("../src/owners/railgun-relay-operation.js", () => ({
+  proveRailgunAccountRelayOperation: (options) => state.proveRelay(options),
+  listRailgunAccountRelayOperations: (options) => state.listRelay(options),
+  resumeRailgunAccountRelayOperation: (options) => state.resumeRelay(options),
+  discardRailgunAccountRelayOperation: (options) => state.discardRelay(options),
+}));
+jest.mock("../src/owners/railgun-relay-transact-staging.js", () => ({
+  stageRailgunRelayTransactInput: (options) => state.stageRelay(options),
+}));
+jest.mock("../src/execution/railgun-relay-quote-data.js", () => ({
+  normalizeRailgunRelayQuote: (quote, gas) => ({
+    quote: structuredClone(quote),
+    gas: structuredClone(gas),
+  }),
+}));
+jest.mock("../src/owners/railgun-account-txid.js", () => ({
+  openRailgunAccountTxid: (options) => state.openTxid(options),
+}));
+jest.mock("../src/owners/railgun-public-services.js", () => ({
+  POI_URL: "https://ppoi.fdi.network",
+  INDEXER_URL:
+    "https://rail-squid.squids.live/squid-railgun-eth-sepolia-v2/graphql",
 }));
 const deferred = () => {
   let resolve, reject;
@@ -62,19 +92,31 @@ function identity(index) {
   };
 }
 function enrollment() {
-  const drain = deferred();
+  const drain = deferred(),
+    controller = new AbortController();
   const value = {
+    signal: controller.signal,
+    controller,
     originalClosed: drain.promise,
-    close: jest.fn(() => drain.resolve()),
+    close: jest.fn(() => {
+      controller.abort();
+      drain.resolve();
+    }),
     drain,
   };
   state.enrollments.push(value);
   return value;
 }
 function publicOwner() {
+  const controller = new AbortController();
   return {
+    signal: controller.signal,
+    controller,
     coordinator: Object.freeze({}),
-    close: jest.fn(() => Promise.resolve()),
+    close: jest.fn(() => {
+      controller.abort();
+      return Promise.resolve();
+    }),
     advance: jest.fn((range) => Promise.resolve(range)),
   };
 }
@@ -118,7 +160,42 @@ function fixture() {
     openIdentity: jest.fn(async ({ accountIndex }) => identity(accountIndex)),
     openEnrollment: jest.fn(async () => enrollment()),
     openPublic: jest.fn(async () => publicOwner()),
+    openTxid: jest.fn(async () => {
+      const result = {
+        checkpoint: { state: { count: 4, root: "a".repeat(64) } },
+        pending: null,
+        serviceLatestIndex: 3,
+      };
+      return {
+        close: jest.fn(() => Promise.resolve()),
+        inspect: jest.fn(() => Promise.resolve(result)),
+        advance: jest.fn(() => Promise.resolve(result)),
+      };
+    }),
     openWallet: jest.fn(async () => walletOwner()),
+    openCompleted: jest.fn(async () => {
+      const controller = new AbortController();
+      return { ...walletOwner(), signal: controller.signal, controller };
+    }),
+    ownedNotes: jest.fn(() => ({
+      ownedPoi: [{ id: "selected", type: "Shield" }],
+    })),
+    proveRelay: jest.fn(() =>
+      Promise.resolve({ status: "ready-local", operationId: "a".repeat(64) }),
+    ),
+    stageRelay: jest.fn(async () => ({
+      status: "staged",
+      account: walletOwner(),
+      receipt: Object.freeze({}),
+      close: jest.fn(),
+    })),
+    listRelay: jest.fn(() => Promise.resolve({ records: [], nextAfter: null })),
+    resumeRelay: jest.fn(() =>
+      Promise.resolve({ status: "ready-local", operationId: "a".repeat(64) }),
+    ),
+    discardRelay: jest.fn(() =>
+      Promise.resolve({ status: "discarded", operationId: "a".repeat(64) }),
+    ),
     createPlugin: jest.fn(plugin),
     destination: jest.fn(() => Object.freeze({ genuineDestination: true })),
     createRecovery: jest.fn((input) => {
@@ -186,7 +263,10 @@ test("closed one-shot initializer and exact account options expose no owner auth
       "closed",
       "describe",
       "openPrivate",
+      "synchronizeTxid",
       "openRecovery",
+      "openRelayLocal",
+      "openRelayRecovery",
       "rebuildPublic",
       "resumePublic",
       "openPublic",
@@ -614,3 +694,445 @@ test("recovery close retains original busy work and its independent closed promi
   await account.closed;
   expect(closed).toBe(true);
 });
+
+const relayOptions = (signal) => ({
+  signal,
+  wallet: "active",
+  review: () => Promise.resolve(true),
+  reviewDisclosure: () => Promise.resolve(true),
+  reviewStagingDisclosure: () => Promise.resolve(true),
+  reviewRootDisclosure: () => Promise.resolve(true),
+});
+const relayRequest = (signal) => ({
+  signal,
+  noteId: "selected",
+  quote: { original: 1 },
+  gas: { price: 1 },
+  maxFee: "1",
+});
+test("Shield local relay keeps all proof ownership private and never stages a Transact receipt", async () => {
+  const f = fixture(),
+    account = await f.api.openAccount(f.options);
+  const options = relayOptions(f.options.signal),
+    lane = await account.openRelayLocal(options);
+  const request = relayRequest(f.options.signal),
+    result = await lane.prepare(request);
+  expect(result).toEqual({
+    status: "ready-local",
+    operationId: "a".repeat(64),
+  });
+  expect(Object.keys(lane).sort()).toEqual([
+    "close",
+    "closed",
+    "prepare",
+    "signal",
+  ]);
+  expect(state.stageRelay).not.toHaveBeenCalled();
+  const input = state.proveRelay.mock.calls[0][0];
+  expect(input.account).toBe(await state.openWallet.mock.results[0].value);
+  expect(input.owners.enrollment).toBe(state.enrollments[0]);
+  expect(input.request.signal).toBe(request.signal);
+  expect(input.review).toBe(options.review);
+  expect(input).not.toHaveProperty("stagingReceipt");
+  expect(input).not.toHaveProperty("reviewRootDisclosure");
+  expect(() => lane.prepare(request)).toThrow();
+  await lane.closed;
+  await account.close();
+});
+test("Transact relay retains the exact replacement account, receipt and original request signal", async () => {
+  const f = fixture(),
+    account = await f.api.openAccount(f.options);
+  state.ownedNotes.mockReturnValue({
+    ownedPoi: [{ id: "selected", type: "Transact" }],
+  });
+  const options = relayOptions(f.options.signal),
+    lane = await account.openRelayLocal(options);
+  const request = relayRequest(f.options.signal),
+    proof = deferred();
+  state.proveRelay.mockReturnValue(proof.promise);
+  const work = lane.prepare(request);
+  await tick();
+  const staged = await state.stageRelay.mock.results[0].value;
+  const input = state.proveRelay.mock.calls[0][0];
+  expect(input.account).toBe(staged.account);
+  expect(input.stagingReceipt).toBe(staged.receipt);
+  expect(input.request).toBe(state.stageRelay.mock.calls[0][0].request);
+  expect(input.request.signal).toBe(request.signal);
+  expect(input.reviewRootDisclosure).toBe(options.reviewRootDisclosure);
+  request.quote.original = 2;
+  expect(input.request.quote.original).toBe(1);
+  expect(staged.close).not.toHaveBeenCalled();
+  proof.resolve({ status: "ready-local", operationId: "b".repeat(64) });
+  await work;
+  await lane.closed;
+  expect(staged.close).toHaveBeenCalledTimes(1);
+  expect(staged.account.close).toHaveBeenCalledTimes(1);
+  await account.close();
+});
+test("late Transact replacement after cancellation is closed without proof or lost drain", async () => {
+  const f = fixture(),
+    account = await f.api.openAccount(f.options);
+  state.ownedNotes.mockReturnValue({
+    ownedPoi: [{ id: "selected", type: "Transact" }],
+  });
+  const lane = await account.openRelayLocal(relayOptions(f.options.signal));
+  const staging = deferred(),
+    closing = deferred();
+  state.stageRelay.mockReturnValue(staging.promise);
+  const work = lane.prepare(relayRequest(f.options.signal));
+  work.catch(() => {});
+  lane.close();
+  let closed = false;
+  lane.closed.then(() => {
+    closed = true;
+  });
+  const late = {
+    status: "staged",
+    account: { close: jest.fn(() => closing.promise) },
+    receipt: Object.freeze({}),
+    close: jest.fn(),
+  };
+  staging.resolve(late);
+  await expect(work).rejects.toThrow();
+  await tick();
+  expect(state.proveRelay).not.toHaveBeenCalled();
+  expect(closed).toBe(false);
+  expect(late.account.close).toHaveBeenCalledTimes(1);
+  closing.resolve();
+  await lane.closed;
+  expect(closed).toBe(true);
+  await account.close();
+});
+test("typed staging drain failure remains exclusion, with no proof or automatic retry", async () => {
+  const f = fixture(),
+    account = await f.api.openAccount(f.options);
+  state.ownedNotes.mockReturnValue({
+    ownedPoi: [{ id: "selected", type: "Transact" }],
+  });
+  const lane = await account.openRelayLocal(relayOptions(f.options.signal));
+  const failure = Object.assign(Error("original staging drain"), {
+    code: "RAILGUN_RELAY_TRANSACT_STAGING_DRAIN_FAILED",
+  });
+  state.stageRelay.mockRejectedValue(failure);
+  await expect(lane.prepare(relayRequest(f.options.signal))).rejects.toBe(
+    failure,
+  );
+  await expect(lane.closed).rejects.toBe(failure);
+  expect(state.proveRelay).not.toHaveBeenCalled();
+  await expect(account.close()).rejects.toBe(failure);
+  expect(() => f.api.openAccount(f.options)).toThrow();
+});
+test("completed relay uses one original account and no new quote, disclosure, stage or lifetime option", async () => {
+  const f = fixture(),
+    account = await f.api.openAccount(f.options);
+  const lane = await account.openRelayRecovery({ signal: f.options.signal });
+  const actual = await state.openCompleted.mock.results[0].value;
+  expect(state.openWallet).not.toHaveBeenCalled();
+  const opening = state.openCompleted.mock.calls[0][0];
+  expect(opening).not.toHaveProperty("timeoutMs");
+  expect(opening).not.toHaveProperty("mode");
+  expect(opening.destination).toBe(state.destination.mock.results[0].value);
+  const original = Promise.resolve({ records: [] });
+  state.listRelay.mockReturnValue(original);
+  expect(lane.list()).toBe(original);
+  await original;
+  await tick();
+  await lane.resume("a".repeat(64));
+  await tick();
+  await lane.discard("b".repeat(64));
+  await tick();
+  expect(state.openCompleted).toHaveBeenCalledTimes(1);
+  for (const spy of [state.listRelay, state.resumeRelay, state.discardRelay]) {
+    expect(spy.mock.calls[0][0].account).toBe(actual);
+    expect(spy.mock.calls[0][0]).not.toHaveProperty("quote");
+    expect(spy.mock.calls[0][0]).not.toHaveProperty("review");
+    expect(spy.mock.calls[0][0]).not.toHaveProperty("timeoutMs");
+  }
+  expect(state.stageRelay).not.toHaveBeenCalled();
+  expect(state.proveRelay).not.toHaveBeenCalled();
+  actual.controller.abort();
+  await lane.closed;
+  expect(() => lane.list()).toThrow();
+  await account.close();
+});
+test("legacy unfenced enrollment cannot acquire either relay lane", async () => {
+  const f = fixture(),
+    account = await f.api.openAccount(f.options);
+  state.unfenced = true;
+  await expect(
+    account.openRelayLocal(relayOptions(f.options.signal)),
+  ).rejects.toThrow("unfenced");
+  await expect(
+    account.openRelayRecovery({ signal: f.options.signal }),
+  ).rejects.toThrow("unfenced");
+  expect(state.openWallet).not.toHaveBeenCalled();
+  expect(state.openCompleted).not.toHaveBeenCalled();
+  await account.close();
+});
+
+test("await-then-action sees the original settled lane and cold method immediately", async () => {
+  const f = fixture(),
+    account = await f.api.openAccount(f.options);
+  const read = await account.openRead(laneOptions(f.options.signal));
+  read.close();
+  await read.closed;
+  const recovery = await account.openRecovery(
+    recoveryOptions(f.options.signal),
+  );
+  recovery.close();
+  await recovery.closed;
+  const cold = await account.openRelayRecovery({ signal: f.options.signal });
+  await cold.list();
+  await cold.resume("a".repeat(64));
+  await cold.discard("b".repeat(64));
+  cold.close();
+  await cold.closed;
+  await account.advancePublic({ to: 1, anchor: "public" });
+  await account.close();
+});
+
+test.each([
+  ["initialize", true, false],
+  ["advance", false, false],
+  ["checkpoint", false, true],
+])(
+  "TXID %s reviews before opening and delegates exact fixed mode once",
+  async (mode, create, checkpointOnly) => {
+    const f = fixture(),
+      account = await f.api.openAccount(f.options);
+    const review = jest.fn((summary) => {
+      expect(state.openTxid).not.toHaveBeenCalled();
+      expect(summary).toMatchObject({
+        purpose: "railgun-public-txid-synchronization-disclosure-v1",
+        mode,
+        createIfMissing: create,
+        selectedMembershipPermitted: false,
+        selectedNullifierQueryPermitted: false,
+      });
+      expect(summary.queries[1].exactPointAvailableBeforeOpen).toBe(false);
+      expect(summary.queries.some((v) => v.method === "txidPage")).toBe(
+        !checkpointOnly,
+      );
+      return Promise.resolve(true);
+    });
+    const outcome = await account.synchronizeTxid({
+      mode,
+      signal: f.options.signal,
+      reviewDisclosure: review,
+    });
+    expect(outcome).toEqual({
+      count: 4,
+      root: "a".repeat(64),
+      checkpointAvailable: true,
+      capacityReached: false,
+      serviceLatestIndex: 3,
+      pending: false,
+      unverified: true,
+      spendingEnabled: false,
+    });
+    const input = state.openTxid.mock.calls[0][0],
+      actual = await state.openTxid.mock.results[0].value;
+    expect(input).toMatchObject({
+      enrollment: state.enrollments[0],
+      archive: runtime.archive,
+      create,
+      checkpointOnly,
+    });
+    expect(Object.keys(input).sort()).toEqual(
+      [
+        "archive",
+        "checkpointOnly",
+        "coordinator",
+        "create",
+        "enrollment",
+        "signal",
+      ].sort(),
+    );
+    expect(
+      actual[checkpointOnly ? "inspect" : "advance"],
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      actual[checkpointOnly ? "advance" : "inspect"],
+    ).not.toHaveBeenCalled();
+    expect(actual.close).toHaveBeenCalledTimes(1);
+    await account.close();
+  },
+);
+test("declined TXID consent does not open storage/services and leaves account reusable", async () => {
+  const f = fixture(),
+    account = await f.api.openAccount(f.options);
+  await expect(
+    account.synchronizeTxid({
+      mode: "initialize",
+      signal: f.options.signal,
+      reviewDisclosure: () => Promise.resolve(false),
+    }),
+  ).rejects.toThrow();
+  expect(state.openTxid).not.toHaveBeenCalled();
+  expect(account.describe().accountIndex).toBe(0);
+  const lane = await account.openRead(laneOptions(f.options.signal));
+  lane.close();
+  await lane.closed;
+  await account.close();
+});
+test("TXID original review promise holds close and exclusion until it actually settles", async () => {
+  const f = fixture(),
+    account = await f.api.openAccount(f.options),
+    held = deferred();
+  const work = account.synchronizeTxid({
+    mode: "advance",
+    signal: f.options.signal,
+    reviewDisclosure: () => held.promise,
+  });
+  work.catch(() => {});
+  let closed = false;
+  account.close().then(() => {
+    closed = true;
+  });
+  await tick();
+  expect(closed).toBe(false);
+  expect(state.openTxid).not.toHaveBeenCalled();
+  expect(() => f.api.openAccount(f.options)).toThrow();
+  held.resolve(true);
+  await expect(work).rejects.toThrow();
+  await account.closed;
+  expect(closed).toBe(true);
+});
+test("late native true cannot bypass actual 30-second TXID review deadline when timer is delayed", async () => {
+  const f = fixture(),
+    account = await f.api.openAccount(f.options);
+  let now = 100;
+  const clock = jest.spyOn(performance, "now").mockImplementation(() => now);
+  try {
+    await expect(
+      account.synchronizeTxid({
+        mode: "checkpoint",
+        signal: f.options.signal,
+        reviewDisclosure: () => {
+          now = 30100;
+          return Promise.resolve(true);
+        },
+      }),
+    ).rejects.toThrow();
+    expect(state.openTxid).not.toHaveBeenCalled();
+  } finally {
+    clock.mockRestore();
+    await account.close();
+  }
+});
+test("already fulfilled object with a later then cannot turn into TXID approval", async () => {
+  const f = fixture(),
+    account = await f.api.openAccount(f.options),
+    value = {},
+    original = Promise.resolve(value),
+    called = jest.fn();
+  await expect(
+    account.synchronizeTxid({
+      mode: "advance",
+      signal: f.options.signal,
+      reviewDisclosure: () => {
+        value.then = called;
+        return original;
+      },
+    }),
+  ).rejects.toThrow();
+  expect(called).not.toHaveBeenCalled();
+  expect(state.openTxid).not.toHaveBeenCalled();
+  await account.close();
+});
+test("unknown thenable review quarantines facade admission without opening TXID", async () => {
+  const f = fixture(),
+    account = await f.api.openAccount(f.options),
+    called = jest.fn();
+  await expect(
+    account.synchronizeTxid({
+      mode: "advance",
+      signal: f.options.signal,
+      reviewDisclosure: () => ({ then: called }),
+    }),
+  ).rejects.toMatchObject({ code: "RAILGUN_WALLET_EXIT_UNOBSERVED" });
+  await expect(account.closed).rejects.toMatchObject({
+    code: "RAILGUN_WALLET_EXIT_UNOBSERVED",
+  });
+  expect(called).not.toHaveBeenCalled();
+  expect(state.openTxid).not.toHaveBeenCalled();
+  expect(() => f.api.openAccount(f.options)).toThrow();
+});
+test("TXID return waits original worker drain and late cancellation still closes exact owner", async () => {
+  const f = fixture(),
+    account = await f.api.openAccount(f.options),
+    held = deferred(),
+    drain = deferred();
+  state.openTxid.mockReturnValue(held.promise);
+  const work = account.synchronizeTxid({
+    mode: "advance",
+    signal: f.options.signal,
+    reviewDisclosure: () => true,
+  });
+  work.catch(() => {});
+  await tick();
+  let closed = false;
+  account.close().then(() => {
+    closed = true;
+  });
+  const late = { close: jest.fn(() => drain.promise), advance: jest.fn() };
+  held.resolve(late);
+  await tick();
+  expect(late.close).toHaveBeenCalledTimes(1);
+  expect(late.advance).not.toHaveBeenCalled();
+  expect(closed).toBe(false);
+  drain.resolve();
+  await expect(work).rejects.toThrow();
+  await account.closed;
+  expect(closed).toBe(true);
+});
+
+test("an original cleanup rejection without an Error cannot become successful closure", async () => {
+  const f = fixture(),
+    account = await f.api.openAccount(f.options);
+  (await state.openPublic.mock.results[0].value).close.mockImplementation(() =>
+    Promise.reject(undefined),
+  );
+  await expect(account.close()).rejects.toMatchObject({
+    code: "RAILGUN_ACCOUNT_FACADE_REFUSED",
+  });
+  expect(() => f.api.openAccount(f.options)).toThrow();
+});
+test("a rejected review error getter is never executed by bookkeeping", async () => {
+  const f = fixture(),
+    account = await f.api.openAccount(f.options),
+    getter = jest.fn(() => {
+      throw Error("getter");
+    });
+  const error = {};
+  Object.defineProperty(error, "code", { get: getter });
+  await expect(
+    account.synchronizeTxid({
+      mode: "advance",
+      signal: f.options.signal,
+      reviewDisclosure: () => Promise.reject(error),
+    }),
+  ).rejects.toBe(error);
+  expect(getter).not.toHaveBeenCalled();
+  expect(state.openTxid).not.toHaveBeenCalled();
+  await account.close();
+});
+
+test.each(["identity", "enrollment", "public"])(
+  "genuine %s revocation closes the whole session, including its signal",
+  async (kind) => {
+    const f = fixture(),
+      account = await f.api.openAccount(f.options);
+    const owner =
+      kind === "identity"
+        ? await state.openIdentity.mock.results[0].value
+        : kind === "enrollment"
+          ? state.enrollments[0]
+          : await state.openPublic.mock.results[0].value;
+    if (kind === "identity") owner.close();
+    else owner.controller.abort();
+    expect(account.signal.aborted).toBe(true);
+    expect(() => account.describe()).toThrow();
+    await account.closed;
+  },
+);
