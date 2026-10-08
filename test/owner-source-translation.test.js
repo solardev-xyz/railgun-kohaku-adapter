@@ -274,7 +274,7 @@ test("private key entry points refuse forged enrollment before any host activity
     expect(callback).not.toHaveBeenCalled();
   }
 });
-test("no owner facade, raw-key package export or job activation is published", () => {
+test("only fixed owner facade, journal and worker entrypoints are published", () => {
   const manifest = require("../package.json");
   expect(Object.keys(manifest.exports)).toEqual([
     ".",
@@ -284,9 +284,13 @@ test("no owner facade, raw-key package export or job activation is published", (
     "./host/poi",
     "./host/execution",
     "./host/bootstrap",
+    "./host/owner",
+    "./host/journal-data",
+    "./host/owner-authority",
+    "./host/owner-worker-bootstrap",
   ]);
-  expect(fs.existsSync(path.join(root, "host-owner.cjs"))).toBe(false);
-  expect(manifest.version).toBe("0.5.0");
+  expect(fs.existsSync(path.join(root, "host-owner.cjs"))).toBe(true);
+  expect(manifest.version).toBe("0.6.0");
 });
 test("historical dynamic import audit remains immutable after retiring generic filename bootstrap", () => {
   const expressions = imports.dynamicExceptions.map((site) => site.expression);

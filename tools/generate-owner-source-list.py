@@ -6,7 +6,7 @@ Regenerate after source, bootstrap or export membership changes, before packing.
 import hashlib,json,subprocess,sys,re,tempfile
 from pathlib import Path
 root=Path(__file__).resolve().parents[1]
-roots=['data.cjs','data.mjs','host-bootstrap.cjs','host-data.cjs','host-data.mjs','host-execution.cjs','host-execution.mjs','host-journal-data.cjs','host-journal-data.mjs','host-owner-authority.cjs','host-owner-authority.mjs','host-owner-worker-bootstrap.cjs','host-poi.cjs','host-poi.mjs','index.cjs','index.mjs','read.cjs','read.mjs','package.json']
+roots=['data.cjs','data.mjs','host-bootstrap.cjs','host-data.cjs','host-data.mjs','host-execution.cjs','host-execution.mjs','host-journal-data.cjs','host-journal-data.mjs','host-owner-authority.cjs','host-owner-authority.mjs','host-owner.cjs','host-owner.mjs','host-owner-worker-bootstrap.cjs','host-poi.cjs','host-poi.mjs','index.cjs','index.mjs','read.cjs','read.mjs','package.json']
 files=subprocess.check_output(['git','ls-files','--','src'],cwd=root,text=True).splitlines()
 files=[p for p in files if p.endswith(('.js','.cjs','.mjs','.json'))]
 files=sorted(set(files+roots+['src/owners/source-files.json','src/owners/source-identity.js']))

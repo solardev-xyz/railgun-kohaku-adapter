@@ -11,6 +11,8 @@
   "host-owner-authority.cjs",
   "host-owner-authority.mjs",
   "host-owner-worker-bootstrap.cjs",
+  "host-owner.cjs",
+  "host-owner.mjs",
   "host-poi.cjs",
   "host-poi.mjs",
   "index.cjs",

@@ -1,8 +1,8 @@
 {
   "name": "@freedom/railgun-kohaku-adapter",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
-  "description": "Restricted Kohaku adapters, Railgun data helpers and a fixed private utility kernel",
+  "description": "Kohaku Railgun adapters with fixed account owners and private utility execution",
   "license": "MPL-2.0",
   "main": "./index.cjs",
   "types": "./types/index.d.ts",
@@ -70,6 +70,40 @@
     "./host/bootstrap": {
       "types": "./types/host-bootstrap.d.ts",
       "default": "./host-bootstrap.cjs"
+    },
+    "./host/owner": {
+      "import": {
+        "types": "./types/host-owner.d.mts",
+        "default": "./host-owner.mjs"
+      },
+      "require": {
+        "types": "./types/host-owner.d.ts",
+        "default": "./host-owner.cjs"
+      }
+    },
+    "./host/journal-data": {
+      "import": {
+        "types": "./types/host-journal-data.d.mts",
+        "default": "./host-journal-data.mjs"
+      },
+      "require": {
+        "types": "./types/host-journal-data.d.ts",
+        "default": "./host-journal-data.cjs"
+      }
+    },
+    "./host/owner-authority": {
+      "import": {
+        "types": "./types/host-owner-authority.d.mts",
+        "default": "./host-owner-authority.mjs"
+      },
+      "require": {
+        "types": "./types/host-owner-authority.d.ts",
+        "default": "./host-owner-authority.cjs"
+      }
+    },
+    "./host/owner-worker-bootstrap": {
+      "types": "./types/host-owner-worker-bootstrap.d.ts",
+      "default": "./host-owner-worker-bootstrap.cjs"
     }
   },
   "files": [
@@ -91,7 +125,14 @@
     "host-execution.cjs",
     "host-execution.mjs",
     "host-bootstrap.cjs",
-    "docs/execution/"
+    "docs/execution/",
+    "host-owner.cjs",
+    "host-owner.mjs",
+    "host-journal-data.cjs",
+    "host-journal-data.mjs",
+    "host-owner-authority.cjs",
+    "host-owner-authority.mjs",
+    "host-owner-worker-bootstrap.cjs"
   ],
   "engines": {
     "node": ">=24"
@@ -101,11 +142,17 @@
     "typecheck": "node test/types/typecheck.cjs"
   },
   "peerDependencies": {
-    "ethers": "^6.17.0"
+    "ethers": "^6.17.0",
+    "better-sqlite3": "13.0.3"
   },
   "devDependencies": {
     "@kohaku-eth/plugins": "0.0.1-alpha.16",
     "ethers": "6.17.0",
     "jest": "30.5.2"
+  },
+  "peerDependenciesMeta": {
+    "better-sqlite3": {
+      "optional": true
+    }
   }
 }
