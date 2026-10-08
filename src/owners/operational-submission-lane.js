@@ -109,17 +109,17 @@ function assertJournalScope(handle, submitter) {
   const engine = getPrivacyContext(handle);
   assert.equal(engine.subject.chainId, 11155111);
   const parent = require("./host-bindings.js").sessions.openPrivacySession();
-  const journal = getPrivacyContext(
-    parent.getContext({
-      kind: "public-address",
-      principal: submitter,
-      chainId: 11155111,
-      role: "transaction-rpc",
-    }),
-  );
+  const journalHandle = parent.getContext({
+    kind: "public-address",
+    principal: submitter,
+    chainId: 11155111,
+    role: "transaction-rpc",
+  });
+  const journal = getPrivacyContext(journalHandle);
   assert.equal(journal.profileId, engine.profileId);
   assert.equal(journal.subject.principal, submitter);
   assert.equal(journal.subject.chainId, 11155111);
+  return journalHandle;
 }
 // Safe projection of the genuine transaction-RPC destination observation:
 // public endpoint and transport only, never a context or transport authority.
@@ -433,7 +433,7 @@ function createRailgunSubmissionLane(options) {
     id(holdId);
     const hold = await held(holdId);
     assert.equal(hold.submitter, submitterAddress());
-    assertJournalScope(handle, hold.submitter);
+    const journalHandle = assertJournalScope(handle, hold.submitter);
     current();
     assert.equal(recovery, null);
     recovery = openRailgunTransactRecovery(hold.submitter);
@@ -446,8 +446,30 @@ function createRailgunSubmissionLane(options) {
       assert.deepEqual(destinationProjection(opened.destination), destination);
     };
     confirm();
-    const record = bind(await opened.list(), hold);
+    const records = await opened.list();
+    const record = bind(records, hold);
     current();
+    // A complete read includes the archive of resolved, compacted records. A
+    // journal that does not exist yet has neither records nor an archive.
+    let archive = [];
+    try {
+      archive = (
+        await require("./host-bindings.js").submissionJournal.readExistingPrivateSubmissionSnapshot(
+          journalHandle,
+        )
+      ).archive;
+    } catch (error) {
+      const code =
+        error && !types.isProxy(error)
+          ? Object.getOwnPropertyDescriptor(error, "code")?.value
+          : undefined;
+      if (!(records.length === 0 && code === "PRIVATE_JOURNAL_UNAVAILABLE"))
+        throw error;
+    }
+    current();
+    // An archived attempt is already resolved; this lane neither reports it as
+    // absent nor observes it.
+    assert.equal(bind(archive, hold), null);
     return { hold, opened, record, destination, confirm };
   }
   function observe(holdId) {

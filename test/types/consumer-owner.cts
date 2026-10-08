@@ -173,7 +173,13 @@ async function held(session: owner.AccountSession) {
     reviewDisclosures: (summary, context) => {
       if (summary.purpose === "railgun-held-submission-observation-v1") {
         const noSend: false = summary.sendEnabled;
+        const chainRead: "eth_chainId" = summary.requests[1];
+        const nonce: "nonce-reconciliation" = summary.disclosures[2];
+        const url: string = summary.destination.url;
         void noSend;
+        void chainRead;
+        void nonce;
+        void url;
       } else {
         const keepsHold: false = summary.releasesHold;
         void keepsHold;

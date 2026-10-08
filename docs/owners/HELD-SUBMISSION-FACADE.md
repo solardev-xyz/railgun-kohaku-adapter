@@ -27,16 +27,22 @@ The lane then opens `openRailgunTransactRecovery(submitter)` locally. Opening
 creates the transaction client and captures that client's genuine destination
 observation without any request. After exact-true review naming that
 destination, the lane reasserts the identical observation and reads the complete
-journal; the recovery owner reasserts it again before every later request. The only accepted join is a `railgun-transact`
+journal. The recovery owner reasserts it before each of its own request steps.
+Requests inside the reconciler's observation and resolution run on that same
+client, whose endpoint is fixed per client and pinned to the Tor endpoint; they
+are not individually re-checked against the reviewed projection. The only accepted join is a `railgun-transact`
 journal intent whose `intentDigest`, `nullifier`, `tree` and `operation` equal
 the hold's. `intentDigest` is the zero-proof signing digest bound into both the
 reservation and the journal; it is distinct from the journal's outer `digest`
 over chain, sender, target, value and calldata. Never the last row is chosen.
 
 - Exactly one match: that record's hash is observed.
-- No match after a complete successful read: `unjournaled`, with no hash. This is
-  not evidence that nothing was submitted, never proves the input unspent and
-  never enables a submission.
+- No match after a complete successful read: `unjournaled`, with no hash. The
+  read covers the current records and the archive of resolved, compacted
+  records. A journal that does not exist yet has neither. An archived match is
+  already resolved and refuses here. `unjournaled` is not evidence that nothing
+  was submitted, never proves the input unspent and never enables a
+  submission.
 - More than one match, or any open/list/read failure: refused.
 
 This is also how a cold caller recovers the exact attempt after `submitStored`

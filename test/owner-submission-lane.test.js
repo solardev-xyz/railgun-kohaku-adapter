@@ -34,6 +34,9 @@ jest.mock("../src/owners/host-bindings.js", () => ({
     getPrivateRpcDestinationDetails: (observation) =>
       state.destinationDetails(observation),
   },
+  submissionJournal: {
+    readExistingPrivateSubmissionSnapshot: (handle) => state.snapshot(handle),
+  },
   sessions: {
     openPrivacySession: () => ({
       getContext: (subject) => {
@@ -192,6 +195,7 @@ function fixture() {
       profileId: "profile-a",
       subject: { ...subject },
     })),
+    snapshot: jest.fn(async () => ({ records: state.records, archive: [] })),
     destinationDetails: jest.fn((observation) => {
       if (observation !== recovery.destination)
         throw Error("foreign observation");
@@ -918,4 +922,39 @@ test("a destination change during the resolution review never returns the decisi
     lane.resolve(HOLD, { minimumConfirmations: 12 }),
   ).rejects.toThrow();
   expect(state.decision).toBeUndefined();
+});
+
+test("an archived attempt of the exact hold refuses instead of unjournaled", async () => {
+  const f = fixture();
+  state.records = [];
+  state.snapshot.mockResolvedValue({ records: [], archive: [f.sent] });
+  const lane = f.createRailgunSubmissionLane(f.input);
+  await expect(lane.observe(HOLD)).rejects.toMatchObject({
+    code: "RAILGUN_SUBMISSION_FACADE_REFUSED",
+  });
+  expect(f.recovery.observe).not.toHaveBeenCalled();
+});
+
+test("a journal that does not exist yet is unjournaled; an unreadable archive beside records refuses", async () => {
+  const f = fixture();
+  state.records = [];
+  state.snapshot.mockRejectedValue(
+    Object.assign(Error("no existing state"), {
+      code: "PRIVATE_JOURNAL_UNAVAILABLE",
+    }),
+  );
+  const lane = f.createRailgunSubmissionLane(f.input);
+  await expect(lane.observe(HOLD)).resolves.toMatchObject({
+    status: "unjournaled",
+  });
+  const g = fixture();
+  state.snapshot.mockRejectedValue(
+    Object.assign(Error("unavailable"), {
+      code: "PRIVATE_JOURNAL_UNAVAILABLE",
+    }),
+  );
+  const other = g.createRailgunSubmissionLane(g.input);
+  await expect(other.observe(HOLD)).rejects.toMatchObject({
+    code: "RAILGUN_SUBMISSION_FACADE_REFUSED",
+  });
 });

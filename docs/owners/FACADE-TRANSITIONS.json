@@ -42,7 +42,7 @@
     {
       "file": "src/owners/railgun-transact-recovery.js",
       "beforeSha256": "897a0b5886b3fa3775122112f56c82c263a88f13f3a67b7de44540be474a6e3f",
-      "afterSha256": "edfbb0d4d608def44c481f2b11d2ffd355ba55c78f0bd84c3ded06490716d054",
+      "afterSha256": "ef0ca60ce9ad650127e151de44d64a472aa00fa3b49bbae81958ff284b50308c",
       "replacements": [
         {
           "start": 310,
@@ -80,7 +80,12 @@
           "after": ";\n    assertPrivateTransactionNetworkDestination(network, handle, destination);\n  }"
         },
         {
-          "start": 7150,
+          "start": 3129,
+          "before": "",
+          "after": ");\n    active("
+        },
+        {
+          "start": 7164,
           "before": "",
           "after": "destination,\n    assertDestination: () =>\n      assertPrivateTransactionNetworkDestination(network, handle, destination),\n    "
         }

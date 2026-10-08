@@ -86,6 +86,7 @@ function openRailgunTransactRecovery(owner) {
     const { result: transaction } = await network.request(11155111, 'eth_getTransactionByHash', [
       hash,
     ]);
+    active();
     const { result: receipt } = await network.request(11155111, 'eth_getTransactionReceipt', [
       hash,
     ]);

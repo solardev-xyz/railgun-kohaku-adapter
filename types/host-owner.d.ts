@@ -575,6 +575,7 @@ export interface HeldSubmissionDisclosure {
   readonly destination: HeldSubmissionDestination;
   readonly requests: readonly [
     "eth_blockNumber",
+    "eth_chainId",
     "eth_getBlockByNumber",
     "eth_getTransactionByHash",
     "eth_getTransactionCount",
@@ -583,6 +584,7 @@ export interface HeldSubmissionDisclosure {
   readonly disclosures: readonly [
     "public-submitter",
     "journaled-transaction-hash",
+    "nonce-reconciliation",
     "observation-timing",
   ];
   readonly signingEnabled: false;
