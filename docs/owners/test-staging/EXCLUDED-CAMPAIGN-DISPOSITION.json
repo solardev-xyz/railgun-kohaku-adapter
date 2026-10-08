@@ -1,0 +1,353 @@
+{
+  "schema": "railgun-excluded-test-disposition-v1",
+  "originalRevision": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+  "scope": "Exactly29 tests excluded by adjacent staging inventory;27 script/campaign tests and2 shared-host/package tests. Parent broader327-file historical archive is separate, not executed or regenerated here.",
+  "entries": [
+    {
+      "source": "scripts/create-railgun-test-profile.test.js",
+      "bytes": 4367,
+      "sha256": "b0afc834033f0b3c827ae83e14797603378aa1544ee9794f77edf712b2a92c49",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-chain.test.js",
+      "bytes": 7455,
+      "sha256": "77ce17c820cd69a1e3147a809c61699227f0b5da31aef48212b6a5c1e804c814",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-submission.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-change-scan.test.js",
+      "bytes": 9111,
+      "sha256": "ce1714f4509ca65cf23438930d79295932ef8ab7c6859eb243b2042576c881e9",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-submission.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-list-acceptance.test.js",
+      "bytes": 17682,
+      "sha256": "3cc335cfd3bc47d1d972f8948a159b5853717b5dfdae2e2ea08d2658b89125a5",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-submission.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-list-job.test.js",
+      "bytes": 7853,
+      "sha256": "6b850f3af3b60c3c3f23a2bbc50fe4417daf0e7efa8c133b655e7c283c363c61",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-submission.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-restart-chain.test.js",
+      "bytes": 3764,
+      "sha256": "a13c93fc061d18c5cc4ec40dd59ba1d541abd68e263dddfbd932ec54bc8c698e",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-submission.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-restart.test.js",
+      "bytes": 14535,
+      "sha256": "937fe6f3f70a0721721ec065497a3a20545ee7f2062800813a7da33c47908973",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-submission.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-row-job.test.js",
+      "bytes": 4507,
+      "sha256": "19b670006f91a44f5a537564aea3fb8ebd655a4f2cb76e7e701a0d41a85b7d14",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-submission.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-chain.test.js",
+      "bytes": 13942,
+      "sha256": "bb83080aae78f0dce0043be6568002f2d884f96b1f5f3283cd2d432a43938283",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-submission.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-cold-chain.test.js",
+      "bytes": 9689,
+      "sha256": "06748615fc6b5c1dc6ef2dbbdef678a44dcce9bf4a691cff597aa00c5bb608bd",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-submission.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-cold.test.js",
+      "bytes": 19956,
+      "sha256": "d5b644766f11bfd63336a50337be6d4c0f544c2ec3cf5790d8ebd463d66d8423",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-submission.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-prove-stop.test.js",
+      "bytes": 10917,
+      "sha256": "5434e2cf38af3bb1e3f40550c7dee50e7f2791b49c33376ac9d77da233bc798f",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-submission.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-recover-restart.test.js",
+      "bytes": 10044,
+      "sha256": "a28ab5c86436705152a2e063bf7afb7641fbc03f8e261919f7f5695095ba0754",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-submission.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-restart.test.js",
+      "bytes": 10614,
+      "sha256": "38301a95b7c0cb43c6faf8917a48439e76283f443a3e7f7f6419f8e6a5eff9a7",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-submission.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-sign-stop.test.js",
+      "bytes": 10582,
+      "sha256": "bd2453f0d5a96568350c94c6e9cb1bcc1575ed0890968078f054d78ed7ee78d8",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-submission.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-terminal-chain.test.js",
+      "bytes": 7365,
+      "sha256": "f6ba02dea7d6e03c65eda8fc2b4d94e74cd8ab3ee0918d5b0c446fb8ec4f8ebf",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-submission.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-terminal-data.test.js",
+      "bytes": 9213,
+      "sha256": "ba15cd4cc8245c657d6c8367c15122596490225ecd9212603119cbc6a5e56b1f",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-submission.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-terminal-flow.test.js",
+      "bytes": 11894,
+      "sha256": "97c5b82a4d283e17d130cd53ac3d2ea58e38b6409f2741e8e960fbf0df240b98",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-submission.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-terminal-ingest.test.js",
+      "bytes": 5297,
+      "sha256": "5e6a9c3ffbc4adea347afa4486d57ab91c8e9ab352ea0800cbb8fb9ab6614918",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-submission.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/fixtures/railgun-foreign-recipient-job.test.js",
+      "bytes": 15941,
+      "sha256": "8e3cf211f4760558be3b8c9b5a96988abfc04e1136d884ff05d7ac7373075b44",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-second-handoff.test.js",
+      "bytes": 6682,
+      "sha256": "ae78bca5700e298819702eb55ff64aa000a76956be210cc5482e2d255f656726",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/fixtures/railgun-public-cold-data.test.js",
+      "bytes": 6059,
+      "sha256": "7782319fe15b304a334f616a90c9332c426927fd49f93a0c46f10a162cc9b2ac",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-core-data.test.js",
+      "bytes": 11777,
+      "sha256": "4c9a09e2758a1c50d3d39786670cc33de0eb880febfe6d14a33ae5e3888bdf73",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-operation.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-operation-cold.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-positive-audit-job.test.js",
+      "bytes": 18086,
+      "sha256": "f6ed98615fd92ceab043a8e7edd8ddbf240ff8479864b229b2d9579b18ed226e",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-operation.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-operation-cold.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-review-native.test.js",
+      "bytes": 16157,
+      "sha256": "961ca0c29591f186dc5d3905ab4f4b88fcf9248c19acb6d256c3c50aed8e4119",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-operation.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-operation-cold.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/qualify-railgun-private-live.test.js",
+      "bytes": 233390,
+      "sha256": "bd101c046b73ce97f5607ed9e6ec64859fbbe62cf23400b56508f175f14a3557",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-private-submission-boundaries.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "scripts/write-railgun-submitter-metadata.test.js",
+      "bytes": 19824,
+      "sha256": "328b294ea5499311030f6d35b73710c7d0561c1d8b917df094150b21504403e2",
+      "classification": "historical-host-campaign-not-executed-here",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "src/main/wallet/private-submission-journal.test.js",
+      "bytes": 43068,
+      "sha256": "3d3d143ba5465d055c12636ff7190dcd7acfabcc7d57553ccc598dd207ded862",
+      "classification": "retained-shared-host-or-installed-package-acceptance",
+      "relatedActiveCoverage": [
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-private-submission.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-private-submission-recovered.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-adapter-package.test.js",
+      "bytes": 15104,
+      "sha256": "25f040a73c60ad84a73f39e4e1de9a7b37899580ce48cc6853a266e047a27169",
+      "classification": "retained-shared-host-or-installed-package-acceptance",
+      "relatedActiveCoverage": [
+        "test/owner-operational-facade.test.js",
+        "test/owner-authority-bridge.test.js"
+      ],
+      "equivalentCampaignSuccessorQualified": false,
+      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+    }
+  ]
+}

@@ -13,14 +13,9 @@
     "railgun-wallet-catalog.test.js",
     "railgun-wallet-journal.test.js"
   ],
-  "remainingCount": 3,
+  "remainingCount": 1,
   "groups": {
-    "credential-and-enrollment-lifetime": 0,
-    "genuine-rpc-transport-and-destination": 0,
-    "account-storage-composition": 1,
-    "adapter-wrapper-boundary": 0,
-    "shared-eoa-journal-or-recovery": 1,
-    "fixed-utility-or-worker-job": 1
+    "retained-real-vault-host-acceptance": 1
   },
   "remaining": [
     {
@@ -110,114 +105,6 @@
         }
       ],
       "computedSites": [],
-      "executedInThisSuccessor": false
-    },
-    {
-      "source": "src/main/wallet/railgun-process.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-process.test.js",
-      "group": "fixed-utility-or-worker-job",
-      "requiredHostFamilies": [],
-      "unresolved": [
-        {
-          "kind": "require.resolve",
-          "start": 33574,
-          "end": 33598,
-          "value": "./railgun-kernel-entry",
-          "line": 956,
-          "target": "src/main/wallet/railgun-kernel-entry.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": null,
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        }
-      ],
-      "computedSites": [
-        {
-          "kind": "require.resolve",
-          "line": 505
-        },
-        {
-          "kind": "require.resolve",
-          "line": 515
-        },
-        {
-          "kind": "require.resolve",
-          "line": 519
-        },
-        {
-          "kind": "require.resolve",
-          "line": 630
-        },
-        {
-          "kind": "require.resolve",
-          "line": 693
-        },
-        {
-          "kind": "require.resolve",
-          "line": 783
-        },
-        {
-          "kind": "require.resolve",
-          "line": 810
-        },
-        {
-          "kind": "require.resolve",
-          "line": 982
-        }
-      ],
-      "executedInThisSuccessor": false
-    },
-    {
-      "source": "src/main/wallet/railgun-wallet-policy.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-wallet-policy.test.js",
-      "group": "account-storage-composition",
-      "requiredHostFamilies": [
-        "storage"
-      ],
-      "unresolved": [
-        {
-          "kind": "require.resolve",
-          "start": 5125,
-          "end": 5144,
-          "value": "./privacy-storage",
-          "line": 128,
-          "target": "src/main/wallet/privacy-storage.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "storage",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "require.resolve",
-          "start": 5167,
-          "end": 5188,
-          "value": "./privacy-artifacts",
-          "line": 129,
-          "target": "src/main/wallet/privacy-artifacts.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": null,
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        }
-      ],
-      "computedSites": [
-        {
-          "kind": "require.resolve",
-          "line": 142
-        },
-        {
-          "kind": "require.resolve",
-          "line": 143
-        },
-        {
-          "kind": "require.resolve",
-          "line": 166
-        },
-        {
-          "kind": "require.resolve",
-          "line": 270
-        }
-      ],
       "executedInThisSuccessor": false
     }
   ],
@@ -349,5 +236,11 @@
     "qualifiedAdjacentDefault": 146,
     "separateHostConformance": 2,
     "remaining": 3
+  },
+  "semanticSuccessors": {
+    "process": "test/owner-process.test.js",
+    "policy": "test/owner-source-policy.test.js",
+    "originalsExecuted": false,
+    "mapping": "FINAL-SEMANTIC-DISPOSITION.json"
   }
 }
