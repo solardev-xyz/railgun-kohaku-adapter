@@ -217,9 +217,11 @@ successful production result establishes progress.
 **Opener allocation.** The resume has three openers:
 
 - the first and second targets for the stopped window;
-- one more, used only when a later window is left ambiguous, for example by a
-  crash between the coordinator's commit and the checkpoint record. That
-  window gets its first target only. If it fails, the resume stops for review.
+- one more, for a later window left ambiguous, for example by a crash between
+  the coordinator's commit and the checkpoint record.
+
+Openers are spent in order. Each window's pair still gets at most its two
+targets, and once the three are used the resume stops for review.
 
 The 260-range cap counts window invocations only. Recovery re-acquisitions and
 RPC requests are not ranges.
