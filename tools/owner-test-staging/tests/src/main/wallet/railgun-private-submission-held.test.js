@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 /** A proved-unsent hold made by the normal path, then its recovered history.
  * Real: the encrypted reservation and capsule stores on disk, the private
  * operation, both submissions, the capsule and intent binders, the account
@@ -132,7 +133,21 @@ jest.mock("../../../../../../src/owners/railgun-private-proof.js", () => ({
     if (!proof || proof.isClosed) throw Error('C');
   },
 }));
-jest.mock('./signers', () => ({
+
+
+
+jest.mock("../../../../../../src/owners/railgun-public-policy.js", () => ({ getRailgunPublicPolicy: () => 'public-policy' }));
+jest.mock("../../../../../../src/owners/railgun-txid-policy.js", () => ({ getRailgunTxidPolicy: () => 'txid-policy' }));
+jest.mock("../../../../../../src/owners/railgun-account-public.js", () => ({
+  getRailgunAccountPublicIdentity: () => mock.publicIdentity,
+  assertRailgunAccountPublicDestination: () => {},
+}));
+
+
+
+jest.mock("../../../../../../src/owners/host-bindings.js", () => ({
+  ...jest.requireActual("../../../../../../src/owners/host-bindings.js"),
+  signers: {
   getSigner: (index) => {
     if (index !== 0) throw Error('index');
     return {
@@ -142,8 +157,8 @@ jest.mock('./signers', () => ({
       },
     };
   },
-}));
-jest.mock('./private-transaction-network', () => ({
+},
+  transactionNetwork: {
   getPrivateTransactionNetwork: () => ({
     assertCanSubmit: async () => {},
     request: async (_chain, method) => {
@@ -151,19 +166,13 @@ jest.mock('./private-transaction-network', () => ({
       return { result: method === 'eth_getCode' ? '0x' : '0x100000000000000' };
     },
   }),
-}));
-jest.mock('./transaction-service', () => ({
+},
+  transactions: {
   signAndSendTransaction: async () => {
     throw Error('no send in these cases');
   },
-}));
-jest.mock("../../../../../../src/owners/railgun-public-policy.js", () => ({ getRailgunPublicPolicy: () => 'public-policy' }));
-jest.mock("../../../../../../src/owners/railgun-txid-policy.js", () => ({ getRailgunTxidPolicy: () => 'txid-policy' }));
-jest.mock("../../../../../../src/owners/railgun-account-public.js", () => ({
-  getRailgunAccountPublicIdentity: () => mock.publicIdentity,
-  assertRailgunAccountPublicDestination: () => {},
-}));
-jest.mock('../networks/private-rpc', () => ({
+},
+  rpc: {
   createPrivateRpc: (handle, role) => {
     mock.events.push('rpc:' + role);
     return { handle, role, release: () => {} };
@@ -180,14 +189,16 @@ jest.mock('../networks/private-rpc', () => ({
       close: () => controller.abort(),
     };
   },
-}));
-jest.mock('./private-submission-journal', () => ({
+},
+  submissionJournal: {
   getPrivateSubmissionJournal: () => ({
     readSnapshot: async () => {
       mock.events.push('journal-read');
       return { records: [], archive: [] };
     },
   }),
+},
+  submitter: require("railgun-held-real-submitter").createRailgunSubmitterHost(),
 }));
 const fs = require('fs'),
   os = require('os'),
@@ -225,7 +236,7 @@ let root, previousIdentityData, reservations, capsules;
 async function createProfile(metadata) {
   const identity = path.join(root, 'identity');
   process.env.FREEDOM_IDENTITY_DATA = identity;
-  await require('../identity/vault').createVault(identity, 'p'.repeat(32));
+  await require('railgun-held-real-vault').createVault(identity, 'p'.repeat(32));
   if (metadata)
     // The shape identity-manager.createNewVault writes beside an app-made vault.
     fs.writeFileSync(
@@ -513,7 +524,8 @@ test('the same hold passes history once the vault has its public wallet-0 metada
 
 test('public metadata naming another account refuses at the submitter sub-step', async () => {
   await createProfile(getAddress('0x' + '98'.repeat(20)));
-  const { holdId } = await holdProvedUnsent();
+  const { holdId, stored } = await holdProvedUnsent();
+  const before = mock.events.length;
   const { result, disclosures } = await recover(holdId);
   expect(diagnosticOf(result)).toEqual({
     stage: 'history',
@@ -521,4 +533,10 @@ test('public metadata naming another account refuses at the submitter sub-step',
     code: 'ERR_ASSERTION',
   });
   expect(disclosures).toEqual([]);
+  expect(mock.events.slice(before)).toEqual([]);
+  expect(copy(await capsules.get(holdId))).toEqual(stored);
+});
+
+afterAll(() => {
+  require('../../../../held-host-inputs.cjs').observeSources(require.cache);
 });

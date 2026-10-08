@@ -5,8 +5,9 @@
     "defaultAdaptedOriginalSuites": 146,
     "separateCredentialConformance": 2,
     "semanticSuccessorSuites": 2,
-    "retainedHostAcceptanceRequired": 1,
-    "totalOriginalAdjacent": 151
+    "retainedHostAcceptanceRequired": 0,
+    "totalOriginalAdjacent": 151,
+    "separateHeldHistoryConformance": 1
   },
   "entries": [
     {
@@ -77,10 +78,12 @@
       "originalBytes": 18662,
       "originalSha256": "cc367f427ebb893e07bbde5be3750d11ea139caa2c2bd1e5f08f3a20667ee613",
       "originalRevision": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
-      "status": "retained-host-acceptance-required",
-      "activeSuccessors": [],
-      "reason": "Three original real-vault cases require actual Freedom vault and public wallet-0 metadata: absent metadata refuses at history, matching metadata allows same hold, foreign-account metadata refuses at submitter. Exact originals retained; must remain in Freedom until installed-facade adaptation passes. No mock substitute or current installed acceptance claimed.",
-      "migrationGap": "Old private-owner imports will break after removal; fixed actual-host aliases and current private package test composition are specified but not yet implemented/executed in HELD-HISTORY-HOST-MIGRATION.md"
+      "status": "separate-host-conformance",
+      "activeSuccessors": [
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-private-submission-held.test.js"
+      ],
+      "reason": "All3 original real-vault history cases execute with fixed actual8285 vault/submitter-host aliases and current private package controllers/stores; original controlled engine/POI/RPC/signers retained. Separate explicit VM-modules invocation; no installed public-lane or native equivalence.",
+      "migrationGap": "Closed by the concrete repository-only actual-host successor in HOST-HELD-QUALIFICATION.md. Broader installed consumer/native acceptance remains separately scoped."
     }
   ],
   "processOriginalLineMapping": [

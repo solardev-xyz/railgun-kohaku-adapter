@@ -1,0 +1,68 @@
+{
+  "baseRevision": "26deb565a5f69dfd82291a179d9c746056a678f4",
+  "productionTransforms": false,
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-submission-held.test.js",
+      "beforeSha256": "9d46d05dabf1cac9c16eff7a5e4dcc8a8e10d19f6e439a5d6b9ab6a0b8b23694",
+      "afterSha256": "0e480030d17a442e541be141df66785f80fc1b8d834bcc9fdf82ea458affca3f",
+      "replacements": [
+        {
+          "start": 19383,
+          "before": "",
+          "after": "\nafterAll(() => {\n  require('../../../../held-host-inputs.cjs').observeSources(require.cache);\n});\n"
+        },
+        {
+          "start": 19379,
+          "before": "",
+          "after": "  expect(mock.events.slice(before)).toEqual([]);\n  expect(copy(await capsules.get(holdId))).toEqual(stored);\n"
+        },
+        {
+          "start": 19117,
+          "before": "  const { holdId } = await holdProvedUnsent();\n",
+          "after": "  const { holdId, stored } = await holdProvedUnsent();\n  const before = mock.events.length;\n"
+        },
+        {
+          "start": 9080,
+          "before": "  await require('../identity/vault').createVault(identity, 'p'.repeat(32));\n",
+          "after": "  await require('railgun-held-real-vault').createVault(identity, 'p'.repeat(32));\n"
+        },
+        {
+          "start": 7201,
+          "before": "",
+          "after": "},\n  submitter: require(\"railgun-held-real-submitter\").createRailgunSubmitterHost(),\n"
+        },
+        {
+          "start": 6977,
+          "before": "}));\njest.mock('./private-submission-journal', () => ({\n",
+          "after": "},\n  submissionJournal: {\n"
+        },
+        {
+          "start": 5882,
+          "before": "}));\njest.mock(\"../../../../../../src/owners/railgun-public-policy.js\", () => ({ getRailgunPublicPolicy: () => 'public-policy' }));\njest.mock(\"../../../../../../src/owners/railgun-txid-policy.js\", () => ({ getRailgunTxidPolicy: () => 'txid-policy' }));\njest.mock(\"../../../../../../src/owners/railgun-account-public.js\", () => ({\n  getRailgunAccountPublicIdentity: () => mock.publicIdentity,\n  assertRailgunAccountPublicDestination: () => {},\n}));\njest.mock('../networks/private-rpc', () => ({\n",
+          "after": "},\n  rpc: {\n"
+        },
+        {
+          "start": 5745,
+          "before": "}));\njest.mock('./transaction-service', () => ({\n",
+          "after": "},\n  transactions: {\n"
+        },
+        {
+          "start": 5444,
+          "before": "}));\njest.mock('./private-transaction-network', () => ({\n",
+          "after": "},\n  transactionNetwork: {\n"
+        },
+        {
+          "start": 5178,
+          "before": "jest.mock('./signers', () => ({\n",
+          "after": "\n\n\njest.mock(\"../../../../../../src/owners/railgun-public-policy.js\", () => ({ getRailgunPublicPolicy: () => 'public-policy' }));\njest.mock(\"../../../../../../src/owners/railgun-txid-policy.js\", () => ({ getRailgunTxidPolicy: () => 'txid-policy' }));\njest.mock(\"../../../../../../src/owners/railgun-account-public.js\", () => ({\n  getRailgunAccountPublicIdentity: () => mock.publicIdentity,\n  assertRailgunAccountPublicDestination: () => {},\n}));\n\n\n\njest.mock(\"../../../../../../src/owners/host-bindings.js\", () => ({\n  ...jest.requireActual(\"../../../../../../src/owners/host-bindings.js\"),\n  signers: {\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    }
+  ]
+}

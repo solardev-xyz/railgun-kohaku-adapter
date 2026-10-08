@@ -1,0 +1,607 @@
+{
+  "schema": "railgun-held-host-conformance-inputs-v1",
+  "hostRoot": "/private/tmp/freedom-owner-journal-consumers-oct8",
+  "hostRevision": "8285fb804c82011abd4fcc38ccc00d66b27132e3",
+  "files": {
+    "src/main/identity/vault.js": {
+      "bytes": 8340,
+      "sha256": "bb1e55d92b599740b4c2202f6f9397eb187b58a71f7c58f460281814c2b85b07"
+    },
+    "src/main/identity/derivation.js": {
+      "bytes": 6192,
+      "sha256": "05930ae523ce340259653f9a1168bbfd5a2b75cf6ae10f855032230c9642a96c"
+    },
+    "src/main/identity/railgun-submitter-host.js": {
+      "bytes": 1398,
+      "sha256": "cd3ccfc2fa4a4281ad25b18ef4f6f10710aac28d9faf35627da9d00444962016"
+    },
+    "src/main/identity-manager.js": {
+      "bytes": 55550,
+      "sha256": "7353a866af8a2af3ef60d9aee0e9ed15b2c45c62bebb126f9f547c86ec8a67d8"
+    },
+    "src/main/profile-paths.js": {
+      "bytes": 10370,
+      "sha256": "7bf339ad999c75608074c04d8e298ac899c5258764044160047a69bedfb703a4"
+    },
+    "src/main/profile-resolver.js": {
+      "bytes": 13970,
+      "sha256": "9e56928d85ed2ab4b03fed0cb79d34221fcef510799996a400459e0ced33ccf7"
+    },
+    "src/main/profile-catalog.js": {
+      "bytes": 37428,
+      "sha256": "87f78f576ee90b250c6e47c8d15015dd6d8ec4f948160cfe4991db6176de0f5c"
+    },
+    "src/main/profile-lock.js": {
+      "bytes": 3604,
+      "sha256": "8e63a0eabbcd4c5bd8a460e2dbb95db5de7a5d1f3d4a05214a8a49a6b484736c"
+    },
+    "src/main/updater-owner-lock.js": {
+      "bytes": 2934,
+      "sha256": "c5c6fa82d07c1e1f850cbbe93afbb112218b5821b543e1e5156be2f71eda0222"
+    },
+    "src/main/fs-offload.js": {
+      "bytes": 4205,
+      "sha256": "52612e86c91717323ebf1cabe0e6e65b5ba188ceba7d96d8cdceeb181794aa2e"
+    },
+    "src/main/wallet/vault-errors.js": {
+      "bytes": 777,
+      "sha256": "48469031823030ec445590fb6b5c4e5a4d45f7c4eca764fb99165b0c78212360"
+    },
+    "src/shared/ipc-channels.js": {
+      "bytes": 18215,
+      "sha256": "eb1b694f93f46a42128c65a0ab520f3ee9d55b9ada9c062a3292364f890cf33d"
+    },
+    "package.json": {
+      "bytes": 14134,
+      "sha256": "13fa894228db37071730eacd671db3a58bdecfd7a892c121fb3e9ddf3f0031fc"
+    },
+    "package-lock.json": {
+      "bytes": 542913,
+      "sha256": "97f6b49e4304f0049369fc3c8541a0a85026aea1916c8c32688412d60bbe702a"
+    }
+  },
+  "aliases": {
+    "railgun-held-real-vault": "src/main/identity/vault.js",
+    "railgun-held-real-submitter": "src/main/identity/railgun-submitter-host.js"
+  },
+  "scope": "Explicit host source inputs, not runtime graph completeness. ESM dependency inventories and observed CJS source evidence are recorded separately.",
+  "dependencies": [
+    {
+      "root": "host",
+      "path": "node_modules/@adraffy/ens-normalize",
+      "name": "@adraffy/ens-normalize",
+      "version": "1.11.1",
+      "files": 16,
+      "inventorySha256": "2feebbe21614761986bfcaf3ba3f5dc287831fa1254edb92bb7d16143942ea8a"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/@ethereumjs/common",
+      "name": "@ethereumjs/common",
+      "version": "3.2.0",
+      "files": 134,
+      "inventorySha256": "3d017243cf75289d04c39e37b8393fa6b72255c2861c7c7b4ccb11c2fc19592b"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/@ethereumjs/rlp",
+      "name": "@ethereumjs/rlp",
+      "version": "4.0.1",
+      "files": 9,
+      "inventorySha256": "cf4118632a3dfd8b8da19c51d387929efb23ac240cc023058d6631ea75c85ff0"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/@ethereumjs/tx",
+      "name": "@ethereumjs/tx",
+      "version": "4.2.0",
+      "files": 53,
+      "inventorySha256": "f9dd5ad7f8569137439834b58e7ee6a24a70df8c93bfc94de4e5e0e17129ed04"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/@ethereumjs/util",
+      "name": "@ethereumjs/util",
+      "version": "8.1.0",
+      "files": 78,
+      "inventorySha256": "ddbb13ce0e42b5478157ed984610bbf189534ec3cac1be750bfc97fe9d269541"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/@metamask/browser-passworder",
+      "name": "@metamask/browser-passworder",
+      "version": "6.0.0",
+      "files": 6,
+      "inventorySha256": "cccd0666e33224832322b2723af78ba078abcd6f106854aa9163d1a0e9960c79"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/@metamask/scure-bip39",
+      "name": "@metamask/scure-bip39",
+      "version": "2.1.1",
+      "files": 184,
+      "inventorySha256": "75e0f23b171656161547a80ca0b93cc8d9b39f4ae139d8094677bec0c8fec045"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/@metamask/scure-bip39/node_modules/@noble/hashes",
+      "name": "@noble/hashes",
+      "version": "1.3.3",
+      "files": 148,
+      "inventorySha256": "052d3f818793209c23d57d234bfb196332f64b2e0a7294dcbea5833c15108f24"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/@metamask/scure-bip39/node_modules/@scure/base",
+      "name": "@scure/base",
+      "version": "1.1.9",
+      "files": 13,
+      "inventorySha256": "a0ef0c98c31db88e884058c640122042ef76c1e9862d138e4143dcab7c5e92e4"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/@metamask/superstruct",
+      "name": "@metamask/superstruct",
+      "version": "3.4.1",
+      "files": 76,
+      "inventorySha256": "8a481dd267f87a521d094d248fdf725adf5beb5d3223c55004b6cf1ffc1f26d5"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/@metamask/utils",
+      "name": "@metamask/utils",
+      "version": "11.12.1",
+      "files": 220,
+      "inventorySha256": "7958e0160eb619fa92cc304ede400ec2b478bf7b8617925f2a9917f83e6c6808"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/@noble/hashes",
+      "name": "@noble/hashes",
+      "version": "1.8.0",
+      "files": 247,
+      "inventorySha256": "7c7c102f173ff0219bd1dfa2432aff5f7309a0cc07860cdfe69442e5b4a362dd"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/@scure/base",
+      "name": "@scure/base",
+      "version": "1.2.6",
+      "files": 13,
+      "inventorySha256": "9c58ac955b9dc1f0ca7f5ff8e11284db9c7a2a1f51cb3dce591d66c2d12e9d0f"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/@scure/bip32",
+      "name": "@scure/bip32",
+      "version": "1.4.0",
+      "files": 365,
+      "inventorySha256": "06da8bf884fabdfb66a75312847970e584e211a5c5af71171671eea4e0d1d928"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/@scure/bip32/node_modules/@noble/curves",
+      "name": "@noble/curves",
+      "version": "1.4.2",
+      "files": 194,
+      "inventorySha256": "40e806ad28afecb85d4f91fd228f456ed58c58c6efeadca61a8b73ba3c8b2547"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/@scure/bip32/node_modules/@noble/hashes",
+      "name": "@noble/hashes",
+      "version": "1.4.0",
+      "files": 148,
+      "inventorySha256": "52a9c48b47343a0e0d3e8b6bce3157e37495922c385f8b4bd682e1ca73f4dcf8"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/@scure/bip32/node_modules/@scure/base",
+      "name": "@scure/base",
+      "version": "1.1.9",
+      "files": 13,
+      "inventorySha256": "a0ef0c98c31db88e884058c640122042ef76c1e9862d138e4143dcab7c5e92e4"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/@scure/bip39",
+      "name": "@scure/bip39",
+      "version": "2.4.0",
+      "files": 86,
+      "inventorySha256": "fa63634c5f7479e0b70cdac43cc5669aa55f6c6616864278e8d616939681a4b9"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/@scure/bip39/node_modules/@noble/hashes",
+      "name": "@noble/hashes",
+      "version": "2.4.0",
+      "files": 60,
+      "inventorySha256": "0d4d02698470af42b4a39cd0b4c7fc8edc0b4e6751d6911fae78c6cb2435db4b"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/@types/debug",
+      "name": "@types/debug",
+      "version": "4.1.13",
+      "files": 4,
+      "inventorySha256": "de8c75847378b5c196ee0d71f953c5526a138e77953a6baea6f0266d384e5d33"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/@types/lodash",
+      "name": "@types/lodash",
+      "version": "4.17.25",
+      "files": 708,
+      "inventorySha256": "5963ea102f62ddd387273f1f27f8e7390be725be6a09adc8ed86c0573ddc9bde"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/@types/ms",
+      "name": "@types/ms",
+      "version": "2.1.0",
+      "files": 4,
+      "inventorySha256": "82241e731856e17d63b4496bc34cbb248bf00a489d8ad022d70dad410fe59eb4"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/aes-js",
+      "name": "aes-js",
+      "version": "4.0.0-beta.5",
+      "files": 108,
+      "inventorySha256": "2ae1a4ed37475e4b5ca241108bf7c24b42df61d4df516a30b04d81fc31eaba91"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/crc-32",
+      "name": "crc-32",
+      "version": "1.2.2",
+      "files": 9,
+      "inventorySha256": "a51bb6d528193579cc9bd384271d58660689ac0401b2d50ce603f5508a0ce60b"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/debug",
+      "name": "debug",
+      "version": "4.4.3",
+      "files": 7,
+      "inventorySha256": "46bdc6e6a82a1eb2bee43b810de72827131645093cb05b934a847340af3b6513"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/ethereum-cryptography",
+      "name": "ethereum-cryptography",
+      "version": "2.2.1",
+      "files": 469,
+      "inventorySha256": "2fc703f901620bad005e84ec100693cd7eefb1afe4bf5ccc04f4a70e878bc535"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/ethereum-cryptography/node_modules/@noble/curves",
+      "name": "@noble/curves",
+      "version": "1.4.2",
+      "files": 194,
+      "inventorySha256": "40e806ad28afecb85d4f91fd228f456ed58c58c6efeadca61a8b73ba3c8b2547"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/ethereum-cryptography/node_modules/@noble/hashes",
+      "name": "@noble/hashes",
+      "version": "1.4.0",
+      "files": 148,
+      "inventorySha256": "52a9c48b47343a0e0d3e8b6bce3157e37495922c385f8b4bd682e1ca73f4dcf8"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/ethereum-cryptography/node_modules/@scure/base",
+      "name": "@scure/base",
+      "version": "1.1.9",
+      "files": 13,
+      "inventorySha256": "a0ef0c98c31db88e884058c640122042ef76c1e9862d138e4143dcab7c5e92e4"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/ethereum-cryptography/node_modules/@scure/bip39",
+      "name": "@scure/bip39",
+      "version": "1.3.0",
+      "files": 38,
+      "inventorySha256": "dcf3240170a00823a6624e164cefd72f62a8899716eaaff9610d8e735a903648"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/ethers",
+      "name": "ethers",
+      "version": "6.17.0",
+      "files": 1713,
+      "inventorySha256": "b0758c0230b00b34f3b1f0a5d2c93d4647e15be7df98035edd784621d6e4c86c"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/ethers/node_modules/@noble/curves",
+      "name": "@noble/curves",
+      "version": "1.2.0",
+      "files": 151,
+      "inventorySha256": "8a4a3455300329ee04afd201dcf51109788affca489e5256718f1c47c1c42cf3"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/ethers/node_modules/@noble/hashes",
+      "name": "@noble/hashes",
+      "version": "1.3.2",
+      "files": 142,
+      "inventorySha256": "b21d21ba3f0c7e01bfc04339a9da3c0754539f42980bd03049c3aca60f8fbc58"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/ethers/node_modules/@types/node",
+      "name": "@types/node",
+      "version": "22.7.5",
+      "files": 64,
+      "inventorySha256": "77067190fd9b3ee3855509f7a1108350e963562a86ce3c0d555ae62b30998de1"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/ethers/node_modules/tslib",
+      "name": "tslib",
+      "version": "2.7.0",
+      "files": 14,
+      "inventorySha256": "de44dae3ccc8468af13c24165a796170a8edf6a240a2ffdbb39b9a18f81d571e"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/ethers/node_modules/undici-types",
+      "name": "undici-types",
+      "version": "6.19.8",
+      "files": 41,
+      "inventorySha256": "8de75dfc54b889451c873db7e7f9ec4eba5d394521ce0dfe2461c62d18e0959b"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/graceful-fs",
+      "name": "graceful-fs",
+      "version": "4.2.11",
+      "files": 7,
+      "inventorySha256": "b517210ace99c47de9a6e0b09c4a941ec3bad0e58df680d3c6b11d852475ecd4"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/has-flag",
+      "name": "has-flag",
+      "version": "4.0.0",
+      "files": 5,
+      "inventorySha256": "24288c11d8141d2d172a75d3ac362c186a06a009bbc1e434bbfbeb558ae4d192"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/lodash",
+      "name": "lodash",
+      "version": "4.18.1",
+      "files": 1051,
+      "inventorySha256": "a637a2a1474436a53bd707baf9cffdefbede69790c181c59d36f1fb6b3f9f8d6"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/micro-ftch",
+      "name": "micro-ftch",
+      "version": "0.3.1",
+      "files": 5,
+      "inventorySha256": "160615640aa3bde477ab805553271fd65772c11837ec08a405039d4a588025ff"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/micro-key-producer",
+      "name": "micro-key-producer",
+      "version": "0.10.2",
+      "files": 211,
+      "inventorySha256": "37dfd255ec228d59d441544458a14ccab9bd036ad7525c2c237971adb7ee7876"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/micro-key-producer/node_modules/@noble/ciphers",
+      "name": "@noble/ciphers",
+      "version": "2.4.0",
+      "files": 33,
+      "inventorySha256": "aa3609a1b5781722807fcbb75354f430590af5037d57f59e7c0c5e48a0b0d423"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/micro-key-producer/node_modules/@noble/curves",
+      "name": "@noble/curves",
+      "version": "2.4.0",
+      "files": 72,
+      "inventorySha256": "ec492c24eb9a16d0f638626fe3d33473598d0d58d2f5bc5fab44969e171b01fe"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/micro-key-producer/node_modules/@noble/hashes",
+      "name": "@noble/hashes",
+      "version": "2.4.0",
+      "files": 60,
+      "inventorySha256": "0d4d02698470af42b4a39cd0b4c7fc8edc0b4e6751d6911fae78c6cb2435db4b"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/micro-key-producer/node_modules/@scure/base",
+      "name": "@scure/base",
+      "version": "2.4.0",
+      "files": 6,
+      "inventorySha256": "580b4a961f27b26984d9f72a1887a56bbe1475eab4136b93ee88e3d83018977f"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/micro-packed",
+      "name": "micro-packed",
+      "version": "0.11.1",
+      "files": 15,
+      "inventorySha256": "9b8856b5473edc2acdcba411957773330ecdae129e6a1426f74a4878ccbea652"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/micro-packed/node_modules/@scure/base",
+      "name": "@scure/base",
+      "version": "2.4.0",
+      "files": 6,
+      "inventorySha256": "580b4a961f27b26984d9f72a1887a56bbe1475eab4136b93ee88e3d83018977f"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/ms",
+      "name": "ms",
+      "version": "2.1.3",
+      "files": 4,
+      "inventorySha256": "61b7ca21b9644d48c20ce30cf4ebde3d96343417197a1de275c855a79893aed6"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/pony-cause",
+      "name": "pony-cause",
+      "version": "2.1.11",
+      "files": 17,
+      "inventorySha256": "dd987cc47f4dfeda30df217f514908f4e2f54b14a6764f693d97992dc82efb8c"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/proper-lockfile",
+      "name": "proper-lockfile",
+      "version": "4.1.2",
+      "files": 8,
+      "inventorySha256": "a1885922f6c876dc7e7825d9df8c36a480be672c61ca426bbb2a965a3fe0e6e8"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/retry",
+      "name": "retry",
+      "version": "0.12.0",
+      "files": 17,
+      "inventorySha256": "aa71dac3b237e22ec6382658f2e1cb3ba40faa6e535fcc25f32b2c8a47e8fe12"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/semver",
+      "name": "semver",
+      "version": "7.8.5",
+      "files": 53,
+      "inventorySha256": "08192ce56266de05ae70112e283a0e4826d00cadaaf0fc07dcf44b554edec746"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/signal-exit",
+      "name": "signal-exit",
+      "version": "3.0.7",
+      "files": 5,
+      "inventorySha256": "f2bab757d6befff9732ae0925dbc6e718496946b32145043943c6d5293431401"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/supports-color",
+      "name": "supports-color",
+      "version": "7.2.0",
+      "files": 5,
+      "inventorySha256": "14805027012449ed3a58a26174791c173f45e080d4c400407cdbe43b20f7a78a"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/uuid",
+      "name": "uuid",
+      "version": "14.0.2",
+      "files": 70,
+      "inventorySha256": "507f39d2081507fb4047ac01d8f3f1f99f749d5c61bf08de7d045cac52268c3a"
+    },
+    {
+      "root": "host",
+      "path": "node_modules/ws",
+      "name": "ws",
+      "version": "8.22.0",
+      "files": 19,
+      "inventorySha256": "972ee4db286d5421a348044d2168ae1b5534c8171cefd4af6a19b6f5bfc42beb"
+    },
+    {
+      "root": "package",
+      "path": "node_modules/@adraffy/ens-normalize",
+      "name": "@adraffy/ens-normalize",
+      "version": "1.11.1",
+      "files": 16,
+      "inventorySha256": "2feebbe21614761986bfcaf3ba3f5dc287831fa1254edb92bb7d16143942ea8a"
+    },
+    {
+      "root": "package",
+      "path": "node_modules/@noble/curves",
+      "name": "@noble/curves",
+      "version": "1.2.0",
+      "files": 151,
+      "inventorySha256": "8a4a3455300329ee04afd201dcf51109788affca489e5256718f1c47c1c42cf3"
+    },
+    {
+      "root": "package",
+      "path": "node_modules/@noble/hashes",
+      "name": "@noble/hashes",
+      "version": "1.3.2",
+      "files": 142,
+      "inventorySha256": "b21d21ba3f0c7e01bfc04339a9da3c0754539f42980bd03049c3aca60f8fbc58"
+    },
+    {
+      "root": "package",
+      "path": "node_modules/@types/node",
+      "name": "@types/node",
+      "version": "22.7.5",
+      "files": 64,
+      "inventorySha256": "77067190fd9b3ee3855509f7a1108350e963562a86ce3c0d555ae62b30998de1"
+    },
+    {
+      "root": "package",
+      "path": "node_modules/aes-js",
+      "name": "aes-js",
+      "version": "4.0.0-beta.5",
+      "files": 108,
+      "inventorySha256": "2ae1a4ed37475e4b5ca241108bf7c24b42df61d4df516a30b04d81fc31eaba91"
+    },
+    {
+      "root": "package",
+      "path": "node_modules/ethers",
+      "name": "ethers",
+      "version": "6.17.0",
+      "files": 1301,
+      "inventorySha256": "1e75ed464d917fad3466012109ee56afe11614076be925dc6eab379dcf5219a9"
+    },
+    {
+      "root": "package",
+      "path": "node_modules/has-flag",
+      "name": "has-flag",
+      "version": "4.0.0",
+      "files": 5,
+      "inventorySha256": "24288c11d8141d2d172a75d3ac362c186a06a009bbc1e434bbfbeb558ae4d192"
+    },
+    {
+      "root": "package",
+      "path": "node_modules/supports-color",
+      "name": "supports-color",
+      "version": "7.2.0",
+      "files": 5,
+      "inventorySha256": "14805027012449ed3a58a26174791c173f45e080d4c400407cdbe43b20f7a78a"
+    },
+    {
+      "root": "package",
+      "path": "node_modules/tslib",
+      "name": "tslib",
+      "version": "2.7.0",
+      "files": 14,
+      "inventorySha256": "de44dae3ccc8468af13c24165a796170a8edf6a240a2ffdbb39b9a18f81d571e"
+    },
+    {
+      "root": "package",
+      "path": "node_modules/undici-types",
+      "name": "undici-types",
+      "version": "6.19.8",
+      "files": 41,
+      "inventorySha256": "8de75dfc54b889451c873db7e7f9ec4eba5d394521ce0dfe2461c62d18e0959b"
+    },
+    {
+      "root": "package",
+      "path": "node_modules/ws",
+      "name": "ws",
+      "version": "8.21.0",
+      "files": 19,
+      "inventorySha256": "5be3ccb549a2860be8d70fcd0a25eb689f7e740acd66f56d1ad9f6db692da841"
+    }
+  ],
+  "dependencyInventory": "Each tree inventory is lexically sorted [relativePath,bytes,sha256]; its SHA is JSON.stringify(entries). Full entries retained in qualification evidence, no target imports used for collection."
+}
