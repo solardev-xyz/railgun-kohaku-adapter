@@ -87,6 +87,8 @@ test('public host retention fixtures are exact c6 bytes and fixed bindings never
 test('default CI discovery includes every qualified closed suite by exact filename only', () => {
   const config = require('../jest.config.js');
   const closed = require('../tools/owner-test-staging/jest.closed.config.cjs');
+  expect(config.maxWorkers).toBe(2);
+  expect(config.workerIdleMemoryLimit).toBe('256MB');
   expect(closed.testMatch).toHaveLength(58);
   expect(closed.testMatch.every((name) => !/[?*]/.test(name))).toBe(true);
   const context = require('../tools/owner-test-staging/jest.context.config.cjs');
