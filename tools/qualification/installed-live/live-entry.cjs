@@ -205,12 +205,13 @@ async function main() {
       readReceipt,
       expectedRpc,
       synthetic: !live,
-      // Synthetic crash: the network keeps what it received, the process ends.
+      // Synthetic crash: the network keeps what it received, then the process
+      // dies at once. Electron's process.exit would let JavaScript run on.
       crash: live
         ? null
         : () => {
             write(path.join(request.outputDirectory, 'chain-state.json'), chain.state());
-            process.exit(7);
+            process.kill(process.pid, 'SIGKILL');
           },
       params: request.params ?? {},
       profile: request.profileDirectory,

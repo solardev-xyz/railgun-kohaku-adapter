@@ -599,7 +599,11 @@ async function unshield(context) {
     assert.equal(output.spentTxid, false);
     assert.equal(output.asset?.contract?.toLowerCase(), WETH);
     const beforeIds = new Set((await holds(session, signal, owner, milestone)).map((record) => record.holdId));
-    const attemptId = ledger.reserve(profile, header, 'unshield', { outputNoteIdSha256: previous.outputNoteIdSha256 });
+    // The pre-existing holds, hashed, let a later reconcile find the new one.
+    const attemptId = ledger.reserve(profile, header, 'unshield', {
+      outputNoteIdSha256: previous.outputNoteIdSha256,
+      holdIdsBeforeSha256: [...beforeIds].map(sha).sort(),
+    });
     milestone('ledger-reserved:unshield');
     lane = await session.openPrivate({
       wallet: 'advance',
@@ -762,9 +766,11 @@ async function reconcile(context) {
       holdId = only(records, kind).holdId;
       assert.equal(sha(holdId), last.pending.binding.holdIdSha256);
     } else {
-      // The campaign admits one unshield attempt; at most one such hold exists.
-      const rows = records.filter((record) => record.kind === kind);
-      assert.ok(rows.length <= 1);
+      // The new hold is the set difference against the reservation's binding.
+      const before = new Set(last.pending.binding.holdIdsBeforeSha256);
+      const rows = records.filter((record) => !before.has(sha(record.holdId)));
+      assert.ok(rows.length <= 1, 'More than one new held operation');
+      if (rows.length) assert.equal(rows[0].kind, kind);
       holdId = rows[0]?.holdId ?? null;
     }
     let after = null,

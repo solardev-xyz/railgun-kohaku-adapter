@@ -26,7 +26,16 @@ journal readback after it is best effort. If a process ends between the
 reservation and the finish, only `live-reconcile` may follow. A journaled
 attempt then finishes as `unknown` with its hash (observation only). Anything
 else finishes as `unjournaled-after-refusal` and stops the campaign. That label
-records no journaled attempt; it is not proof that nothing was sent.
+records no journaled attempt; it is not proof that nothing was sent. The
+transfer's hold is bound by its hash. The unshield's new hold is found by set
+difference against the hold hashes recorded in its reservation.
+
+Synthetic runs accept `params.fault` (`exit-before-finish` or
+`exit-before-report`). The process writes the synthetic chain state and then
+kills itself with `SIGKILL`, leaving the profile lock to go stale after 30
+seconds, as a real crash would. The launcher refuses any fault, and any
+parameter other than `publicCache` (rebuild only), `maxMs` and
+`poiStatusMaxAgeMs`, for a live request.
 
 An uncertain send (`submissionStatus: 'unknown'`, or a refusal whose journal
 readback shows an attempt) permits only observation. The campaign continues
