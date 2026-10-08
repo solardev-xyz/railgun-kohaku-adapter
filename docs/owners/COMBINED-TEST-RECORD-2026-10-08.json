@@ -1,5 +1,5 @@
 {
-  "scope": "Separate observed runs; passing controls do not relabel the default worker crash or establish its cause. Default Jest configuration is unchanged. Later documentation-only evidence merges during the fb3add6 default-discovery run did not alter its test/runtime inputs; it is not a native source-freeze claim.",
+  "scope": "Separate observed runs; passing controls do not relabel failures or establish the worker-crash cause. Earlier rows retain their then-current configuration. Commit 94b30cc adopts the previously tested 1MB idle worker threshold as the default; 7a6a5ec updates the discovery-contract expectation. Runtime assertions and the frozen tarball are unchanged. Documentation-only merges during ordinary unit runs are noted where applicable; these are not native source-freeze claims.",
   "runs": [
     {
       "commit": "043ac64",
@@ -139,6 +139,64 @@
         "testsPassed": 109,
         "exitCode": 0
       }
+    },
+    {
+      "commit": "0f6866fc34b42151b1167eca0b1277f2c0a97e45",
+      "command": "npm test (256MB idle worker threshold)",
+      "logBytes": 1005,
+      "logSha256": "abe04824408edca00601bf942ae80d94905cde5300097186f5dc9bab3686d88f",
+      "outcome": {
+        "suitesPassed": 249,
+        "suitesFailedToRun": 1,
+        "testsPassed": 11947,
+        "exitCode": 1,
+        "failure": "railgun-own-selector worker SIGSEGV; cause unestablished",
+        "scope": "Only a documentation archive merged during the run; runtime, tests and Jest configuration unchanged."
+      }
+    },
+    {
+      "commit": "018d98a8f68e6d43b99c7a57b97fd7be6f774541",
+      "command": "npm test -- --runInBand tools/owner-test-staging/tests/src/main/wallet/railgun-own-selector.test.js",
+      "logBytes": 354,
+      "logSha256": "0a952fe92da66472b8edc4d8f25a11b1b17f0e1a1ea34058face0c5213223900",
+      "outcome": {
+        "suitesPassed": 1,
+        "testsPassed": 42,
+        "exitCode": 0
+      }
+    },
+    {
+      "commit": "94b30ccf3199a01bb61461284ec278f9e5d0215c",
+      "command": "npm test (1MB idle worker threshold)",
+      "logBytes": 1871,
+      "logSha256": "7faa66919a0a55c7dd8e66d1486c9b572dd15a582d0efacf1a3046883738430c",
+      "outcome": {
+        "suitesPassed": 249,
+        "suitesFailed": 1,
+        "testsPassed": 11988,
+        "testsFailed": 1,
+        "exitCode": 1,
+        "failure": "Discovery contract still expected the previous 256MB worker setting; corrected to 1MB in 7a6a5ec. No worker crash occurred in this run."
+      }
+    },
+    {
+      "commit": "7a6a5ec7266e69f33fcfc8d35edaf47ead358394",
+      "command": "npm test",
+      "configuration": "Default 1MB idle worker threshold; maximum two workers; unchanged test inventory and runtime tarball.",
+      "logBytes": 194,
+      "logSha256": "6a16699044bca70a3c6a6557be5365b09dd5dbbe8316971459d66d04b577d2bd",
+      "outcome": {
+        "suitesPassed": 250,
+        "testsPassed": 11989,
+        "exitCode": 0
+      }
     }
-  ]
+  ],
+  "workerCrashObservation": {
+    "node": "24.18.1",
+    "v8": "13.6.233.17-node.50",
+    "signal": "EXC_BAD_ACCESS",
+    "stack": "ClearStaleLeftTrimmedPoint -> InternalFrame::Iterate -> Isolate::Iterate -> Heap::IterateRoots -> MarkCompactCollector -> Heap::MarkCompact",
+    "interpretation": "Observed V8 GC stack in reused-worker crashes; root cause and production relevance are unestablished. Worker recycling is mitigation, not a demonstrated runtime fix."
+  }
 }
