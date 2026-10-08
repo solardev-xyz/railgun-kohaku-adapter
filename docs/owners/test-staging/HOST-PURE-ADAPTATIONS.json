@@ -1,0 +1,139 @@
+{
+  "baseRevision": "91e8445996947764fa278df855d0c4b29042ed65",
+  "productionTransforms": false,
+  "scope": "Six fixed import/pure-data tests; original assertions retained. Paged-store child gets fixed context bootstrap before private module load; selector asserts closed enum and scans actual package src.",
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-poi-checks.test.js",
+      "beforeSha256": "6642fcaebcdbc7b694d28a2af652695933f72320445d31dd3be5ad27ba661e8e",
+      "afterSha256": "2153f4aa16e3ff65da9cefecebdb25f7e30e48dc44846de801e292df78741a3e",
+      "replacements": [
+        {
+          "start": 3786,
+          "before": "} = require('./railgun-own-poi-checks');\n",
+          "after": "} = require('../../../../../../src/owners/railgun-own-poi-checks.js');\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-transact-poi-membership.test.js",
+      "beforeSha256": "7750ad8213cd9b123b166ce093f2a3407eb3b443e5afe513092af1631e8248f3",
+      "afterSha256": "6ffa2ec41d4da7f43feadedf2f38871ccaeb38b4c5c33b693bec67c67b9f7f11",
+      "replacements": [
+        {
+          "start": 6162,
+          "before": "const { deriveRailgunOwnTransactPoiSelector: derive } = require('./railgun-poi-transact-selector');\n",
+          "after": "const { deriveRailgunOwnTransactPoiSelector: derive } = require('../../../../../../src/owners/railgun-poi-transact-selector.js');\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-paged-store.test.js",
+      "beforeSha256": "69a69600d001ca27d3b5193d996ce7e7185e3ede492a59c0cfbbe36fee1bd5c3",
+      "afterSha256": "77c414cd1cfec7bc35612ff5e0ae5af2c8a9f6ea9a04e730dfe297167b8cfb6f",
+      "replacements": [
+        {
+          "start": 20866,
+          "before": "  const { createRailgunLeveldown } = require('./railgun-leveldown');\n",
+          "after": "  const { createRailgunLeveldown } = require('../../../../../../src/owners/railgun-leveldown.js');\n"
+        },
+        {
+          "start": 19504,
+          "before": "        require.resolve(\"../../../../../../src/owners/context-bindings.js\"),\n",
+          "after": "        require.resolve('../../../../storage-process-context.cjs'),\n"
+        },
+        {
+          "start": 18118,
+          "before": "    const { createPrivacyScope } = require(process.argv[3]);\n",
+          "after": ""
+        },
+        {
+          "start": 18052,
+          "before": "",
+          "after": "    const { createPrivacyScope } = require(process.argv[3]);\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-transact-selector.test.js",
+      "beforeSha256": "9c23e1935f518afa503542d3692c67ffc43635f387311f9ee8f3762263bc1244",
+      "afterSha256": "d6c1e13115c79dd5f836e88b70ac2f59c340a4a78c7ebc74c15d2ce8749bc443",
+      "replacements": [
+        {
+          "start": 21329,
+          "before": "  visit(path.resolve(__dirname, '..'));\n",
+          "after": "  visit(path.resolve(__dirname, '../../../../../../src'));\n"
+        },
+        {
+          "start": 20850,
+          "before": "  expect(Object.keys(require('./railgun-poi-transact-selector'))).toEqual([\n",
+          "after": "  expect(Object.keys(require('../../../../../../src/owners/railgun-poi-transact-selector.js'))).toEqual([\n"
+        },
+        {
+          "start": 11663,
+          "before": "    expect(job.options.filename).toBe(require.resolve(\"../../../../../../src/owners/railgun-poi-transact-selector-job.js\"));\n    expect(job.options.binaryKey).toBe(true);\n",
+          "after": "    expect(job.options.executionJob).toBe('poi-transact-selector');\n    expect(job.options.filename).toBeUndefined();\n    expect(job.options.binaryKey).toBeUndefined();\n    expect(require('../../../../../../src/owners/process-jobs').getProcessJob(job.options.executionJob).key).toBe(true);\n"
+        },
+        {
+          "start": 5220,
+          "before": "const { deriveRailgunOwnTransactPoiSelector: derive } = require('./railgun-poi-transact-selector');\n",
+          "after": "const { deriveRailgunOwnTransactPoiSelector: derive } = require('../../../../../../src/owners/railgun-poi-transact-selector.js');\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-shield-intent.test.js",
+      "beforeSha256": "748a37ae4a6d29c9e0ee30d472af7c15c93054eb57ed1c49e8803cc831b8d0aa",
+      "afterSha256": "745d844506a93f6405bca38d32000ea0ccea0551678810793b731d8487a1bca5",
+      "replacements": [
+        {
+          "start": 62,
+          "before": "const { transactionIntent, validIntent } = require('./private-transaction-intent');\nconst { assertOrdinaryRequest, isClassifiedOrdinary } = require('./ordinary-submission-policy');\n",
+          "after": "const { transactionIntent, validIntent } = require('../../../../fixtures/host/src/main/wallet/private-transaction-intent.js');\nconst { assertOrdinaryRequest, isClassifiedOrdinary } = require('../../../../fixtures/host/src/main/wallet/ordinary-submission-policy.js');\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-shield-receipt.test.js",
+      "beforeSha256": "1c187a6436c9febae933aeb0709d664aa6151c63d7cf2032f97e1ade34c74ba3",
+      "afterSha256": "12aa8f9a86114f661eb371078fd29619803dfb298fc9bd2934428c72ab10bcd7",
+      "replacements": [
+        {
+          "start": 41,
+          "before": "const { transactionIntent } = require('./private-transaction-intent');\n",
+          "after": "const { transactionIntent } = require('../../../../fixtures/host/src/main/wallet/private-transaction-intent.js');\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 const { createHash } = require('crypto');
 let mock;
 jest.mock("../../../../../../src/owners/railgun-account-enrollment.js", () => ({
@@ -159,7 +160,7 @@ jest.mock("../../../../../../src/owners/railgun-poi-intent-store.js", () => {
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");
 const { claimRailgunAccountPhase } = require("../../../../../../src/owners/railgun-account-phase.js");
 const { sample } = require("../../../../fixtures/scripts/fixtures/railgun-own-txid-data.js");
-const { deriveRailgunOwnTransactPoiSelector: derive } = require('./railgun-poi-transact-selector');
+const { deriveRailgunOwnTransactPoiSelector: derive } = require('../../../../../../src/owners/railgun-poi-transact-selector.js');
 const hex = (n) => '0x' + BigInt(n).toString(16).padStart(64, '0');
 const copy = (v) => JSON.parse(JSON.stringify(v));
 const sha = (v) => createHash('sha256').update(v).digest('hex');

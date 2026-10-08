@@ -1,6 +1,6 @@
 # Generic-host storage test composition
 
-Basis: parent `197219144e806474af7eef1987f24a8db978b311`, with the reviewed bounded runner and the parent's exact qualification-tool discovery fix. This is a repository-only test successor; no runtime algorithm, package export, dependency version or owner authority changes.
+Basis: parent `197219144e806474af7eef1987f24a8db978b311`, with the reviewed bounded runner and the parent's exact qualification-tool discovery fix. The discovery fix was cherry-picked; this branch does not contain or qualify the final parent `133e88` type declarations. The historical freeze field `parentEquivalentBasis` denotes a comparison target, not whole-tree or type equivalence. Parent integration must preserve its newer declarations. This is a repository-only test successor; no runtime algorithm, package export, dependency version or owner authority changes.
 
 The first ten remaining host suites cover private capsule/reservation storage, public/wallet catalogs, scan/TXID/wallet journals, private recovery history, relay recovery storage, and POI intent storage. They use the genuine copied context issuer and actual initialized package host bindings. The fixed storage port delegates to exact c6 `privacy-storage.js` and `privacy-profile-guard.js` fixtures. Those generic host fixtures perform real AES-GCM storage, authentication, inventory and filesystem operations on disposable paths using public synthetic keys. No Freedom Railgun owner is imported.
 

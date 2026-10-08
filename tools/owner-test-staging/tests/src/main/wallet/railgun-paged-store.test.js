@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 let mockDatabaseOpens;
 jest.mock('better-sqlite3', () => {
   const Actual = jest.requireActual('better-sqlite3');
@@ -469,8 +470,8 @@ test.each(['page', 'directory', 'collection', 'committed'])(
         '-e',
         `
     const Database = require(process.argv[1]);
-    const { createRailgunPagedStore } = require(process.argv[2]);
     const { createPrivacyScope } = require(process.argv[3]);
+    const { createRailgunPagedStore } = require(process.argv[2]);
     const scope = createPrivacyScope({profileId:'paged-fixture',signal:new AbortController().signal});
     const store = createRailgunPagedStore({handle:scope.getContext({kind:'private-account',principal:'account0',protocol:'railgun',deployment:'fixture',chainId:11155111,role:'storage'}),filename:process.argv[4],key:Buffer.alloc(32,7),binding:'a'.repeat(64),onFatal:()=>{}});
     const phase = process.argv[5];
@@ -487,7 +488,7 @@ test.each(['page', 'directory', 'collection', 'committed'])(
   `,
         require.resolve('better-sqlite3'),
         require.resolve("../../../../../../src/owners/railgun-paged-store.js"),
-        require.resolve("../../../../../../src/owners/context-bindings.js"),
+        require.resolve('../../../../storage-process-context.cjs'),
         options.filename,
         phase,
       ],
@@ -516,7 +517,7 @@ test('stores and cold-reopens more than the old key and byte limits with bounded
 }, 30000);
 
 test('LevelDOWN presentation options stay out of strict paged storage ranges', async () => {
-  const { createRailgunLeveldown } = require('./railgun-leveldown');
+  const { createRailgunLeveldown } = require('../../../../../../src/owners/railgun-leveldown.js');
   const level = createRailgunLeveldown({
     AbstractLevelDOWN: class {},
     AbstractIterator: class {},

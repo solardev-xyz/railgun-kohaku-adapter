@@ -1,6 +1,7 @@
+require('../../../../context-host.cjs');
 const { Wallet, Transaction, Interface } = require('ethers');
-const { transactionIntent, validIntent } = require('./private-transaction-intent');
-const { assertOrdinaryRequest, isClassifiedOrdinary } = require('./ordinary-submission-policy');
+const { transactionIntent, validIntent } = require('../../../../fixtures/host/src/main/wallet/private-transaction-intent.js');
+const { assertOrdinaryRequest, isClassifiedOrdinary } = require('../../../../fixtures/host/src/main/wallet/ordinary-submission-policy.js');
 const { SHIELD_ABI } = require("../../../../../../src/owners/railgun-shield-policy.js");
 const pins = require("../../../../../../src/railgun-shield-pins.json");
 const prepared = require("../../../../fixtures/docs/qualification/railgun-shield-account-2026-10-03.json")

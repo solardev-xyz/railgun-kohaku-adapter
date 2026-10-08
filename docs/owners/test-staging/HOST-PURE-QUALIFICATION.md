@@ -1,0 +1,9 @@
+# Fixed imports, shared metadata and paged storage
+
+This group starts from the qualified storage checkpoint `91e8445996947764fa278df855d0c4b29042ed65`. Six suites pass 304 tests in 15.654 seconds. They cover own-POI checks, Transact membership/selector ownership, paged storage, Shield transaction metadata and Shield receipt parsing. Original test assertions remain in the reversible `HOST-PURE-ADAPTATIONS.json` chain.
+
+Tests import the actual package modules. The fixed host transaction-metadata port delegates to the already pinned generic `private-transaction-intent.js` fixture; its pure validation is real. Original selector/task/credential mocks remain controlled test seams. The selector now asserts the fixed `poi-transact-selector` enum, absence of legacy filename/binaryKey selectors, and the package registry's actual key eligibility. Its import scan reads the actual package `src` tree and retains the original two-consumer expectation.
+
+Paged-store tests use real SQLite 13.0.3. Their four original deliberate subprocess SIGKILL cases remain intact and still verify one complete durable revision after reopening. A fixed repository-only child context bootstrap initializes the genuine owner binding before the private paged-store module loads; it exposes only the existing synthetic context issuer to this test harness. Every unused host capability throws. No production entry, public module getter, vault loan, arbitrary job selector or dependency was added. These process-crash checks do not claim power-loss or rollback protection.
+
+The default adjacent test list contains 109 exact filenames. The remaining 42 host suites stay excluded. This group is package-private unit/composition qualification, not an installed-browser, authentic POI, live network or funded-operation qualification. The earlier native GC crash remains unexplained; the reviewed two-worker/256MB bounded runner is retained.

@@ -1,0 +1,89 @@
+{
+  "baseRevision": "91e8445996947764fa278df855d0c4b29042ed65",
+  "productionChanges": false,
+  "targeted": {
+    "suites": 6,
+    "tests": 304,
+    "seconds": 15.654,
+    "exitCode": 0,
+    "originalSession": 29368,
+    "completion": "b7f63a"
+  },
+  "suites": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-poi-checks.test.js",
+      "bytes": 37876,
+      "sha256": "2153f4aa16e3ff65da9cefecebdb25f7e30e48dc44846de801e292df78741a3e",
+      "tests": 100,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-transact-poi-membership.test.js",
+      "bytes": 34042,
+      "sha256": "6ffa2ec41d4da7f43feadedf2f38871ccaeb38b4c5c33b693bec67c67b9f7f11",
+      "tests": 41,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-transact-selector.test.js",
+      "bytes": 26784,
+      "sha256": "d6c1e13115c79dd5f836e88b70ac2f59c340a4a78c7ebc74c15d2ce8749bc443",
+      "tests": 66,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-shield-receipt.test.js",
+      "bytes": 5186,
+      "sha256": "12aa8f9a86114f661eb371078fd29619803dfb298fc9bd2934428c72ab10bcd7",
+      "tests": 22,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-shield-intent.test.js",
+      "bytes": 3585,
+      "sha256": "745d844506a93f6405bca38d32000ea0ccea0551678810793b731d8487a1bca5",
+      "tests": 10,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-paged-store.test.js",
+      "bytes": 31753,
+      "sha256": "77c414cd1cfec7bc35612ff5e0ae5af2c8a9f6ea9a04e730dfe297167b8cfb6f",
+      "tests": 65,
+      "status": "passed"
+    }
+  ],
+  "adjacentDefaultCount": 109,
+  "remainingHostCount": 42,
+  "boundaries": {
+    "real": "Original context issuer, actual package modules, generic pure host transaction metadata, actual SQLite13.0.3 and disposable original child processes.",
+    "controlled": "Original selector/task/credential mocks retained; fixed test-only child composition provides no vault/engine/RPC capability.",
+    "intentionalCrashCases": 4,
+    "installedHostAcceptance": false
+  },
+  "finalNpmTargeted": {
+    "suites": 6,
+    "tests": 304,
+    "seconds": 15.61,
+    "exitCode": 0,
+    "originalSession": 97327,
+    "completion": "1dab54"
+  },
+  "provenance": {
+    "tests": 5,
+    "exitCode": 0,
+    "originalSession": 76437,
+    "completion": "1e2366"
+  },
+  "discovery": {
+    "suites": 185,
+    "adjacent": 109,
+    "remainingExcluded": 42,
+    "full185ExecutionClaimed": false
+  },
+  "strictLint": {
+    "exitCode": 0,
+    "warnings": 0,
+    "files": 11
+  }
+}

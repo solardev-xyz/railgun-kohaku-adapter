@@ -13,14 +13,13 @@
     "railgun-wallet-catalog.test.js",
     "railgun-wallet-journal.test.js"
   ],
-  "remainingCount": 48,
+  "remainingCount": 42,
   "groups": {
     "credential-and-enrollment-lifetime": 2,
     "genuine-rpc-transport-and-destination": 14,
     "account-storage-composition": 7,
     "adapter-wrapper-boundary": 2,
     "shared-eoa-journal-or-recovery": 13,
-    "fixed-package-import-or-pure-data": 6,
     "fixed-utility-or-worker-job": 4
   },
   "remaining": [
@@ -512,28 +511,6 @@
       "executedInThisSuccessor": false
     },
     {
-      "source": "src/main/wallet/railgun-own-poi-checks.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-poi-checks.test.js",
-      "group": "fixed-package-import-or-pure-data",
-      "requiredHostFamilies": [],
-      "unresolved": [
-        {
-          "kind": "require",
-          "start": 3448,
-          "end": 3474,
-          "value": "./railgun-own-poi-checks",
-          "line": 100,
-          "target": "src/main/wallet/railgun-own-poi-checks.js",
-          "currentPackageTarget": "src/owners/railgun-own-poi-checks.js",
-          "currentTargetExists": true,
-          "fixedHostFamily": null,
-          "requirement": "Exact test import relocation and retained assertion/authority audit"
-        }
-      ],
-      "computedSites": [],
-      "executedInThisSuccessor": false
-    },
-    {
       "source": "src/main/wallet/railgun-own-receipt-destination.test.js",
       "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-receipt-destination.test.js",
       "group": "shared-eoa-journal-or-recovery",
@@ -728,50 +705,6 @@
           "currentTargetExists": false,
           "fixedHostFamily": "transport",
           "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        }
-      ],
-      "computedSites": [],
-      "executedInThisSuccessor": false
-    },
-    {
-      "source": "src/main/wallet/railgun-own-transact-poi-membership.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-transact-poi-membership.test.js",
-      "group": "fixed-package-import-or-pure-data",
-      "requiredHostFamilies": [],
-      "unresolved": [
-        {
-          "kind": "require",
-          "start": 5602,
-          "end": 5635,
-          "value": "./railgun-poi-transact-selector",
-          "line": 162,
-          "target": "src/main/wallet/railgun-poi-transact-selector.js",
-          "currentPackageTarget": "src/owners/railgun-poi-transact-selector.js",
-          "currentTargetExists": true,
-          "fixedHostFamily": null,
-          "requirement": "Exact test import relocation and retained assertion/authority audit"
-        }
-      ],
-      "computedSites": [],
-      "executedInThisSuccessor": false
-    },
-    {
-      "source": "src/main/wallet/railgun-paged-store.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-paged-store.test.js",
-      "group": "fixed-package-import-or-pure-data",
-      "requiredHostFamilies": [],
-      "unresolved": [
-        {
-          "kind": "require",
-          "start": 20809,
-          "end": 20830,
-          "value": "./railgun-leveldown",
-          "line": 519,
-          "target": "src/main/wallet/railgun-leveldown.js",
-          "currentPackageTarget": "src/owners/railgun-leveldown.js",
-          "currentTargetExists": true,
-          "fixedHostFamily": null,
-          "requirement": "Exact test import relocation and retained assertion/authority audit"
         }
       ],
       "computedSites": [],
@@ -1132,40 +1065,6 @@
           "currentTargetExists": false,
           "fixedHostFamily": "rpc",
           "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        }
-      ],
-      "computedSites": [],
-      "executedInThisSuccessor": false
-    },
-    {
-      "source": "src/main/wallet/railgun-poi-transact-selector.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-transact-selector.test.js",
-      "group": "fixed-package-import-or-pure-data",
-      "requiredHostFamilies": [],
-      "unresolved": [
-        {
-          "kind": "require",
-          "start": 4774,
-          "end": 4807,
-          "value": "./railgun-poi-transact-selector",
-          "line": 149,
-          "target": "src/main/wallet/railgun-poi-transact-selector.js",
-          "currentPackageTarget": "src/owners/railgun-poi-transact-selector.js",
-          "currentTargetExists": true,
-          "fixedHostFamily": null,
-          "requirement": "Exact test import relocation and retained assertion/authority audit"
-        },
-        {
-          "kind": "require",
-          "start": 20281,
-          "end": 20314,
-          "value": "./railgun-poi-transact-selector",
-          "line": 606,
-          "target": "src/main/wallet/railgun-poi-transact-selector.js",
-          "currentPackageTarget": "src/owners/railgun-poi-transact-selector.js",
-          "currentTargetExists": true,
-          "fixedHostFamily": null,
-          "requirement": "Exact test import relocation and retained assertion/authority audit"
         }
       ],
       "computedSites": [],
@@ -2218,42 +2117,6 @@
       "executedInThisSuccessor": false
     },
     {
-      "source": "src/main/wallet/railgun-shield-intent.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-shield-intent.test.js",
-      "group": "fixed-package-import-or-pure-data",
-      "requiredHostFamilies": [
-        "transactionIntent"
-      ],
-      "unresolved": [
-        {
-          "kind": "require",
-          "start": 113,
-          "end": 143,
-          "value": "./private-transaction-intent",
-          "line": 2,
-          "target": "src/main/wallet/private-transaction-intent.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "transactionIntent",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "require",
-          "start": 210,
-          "end": 240,
-          "value": "./ordinary-submission-policy",
-          "line": 3,
-          "target": "src/main/wallet/ordinary-submission-policy.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": null,
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        }
-      ],
-      "computedSites": [],
-      "executedInThisSuccessor": false
-    },
-    {
       "source": "src/main/wallet/railgun-shield-operation.test.js",
       "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-shield-operation.test.js",
       "group": "shared-eoa-journal-or-recovery",
@@ -2642,30 +2505,6 @@
           "currentPackageTarget": null,
           "currentTargetExists": false,
           "fixedHostFamily": "rpc",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        }
-      ],
-      "computedSites": [],
-      "executedInThisSuccessor": false
-    },
-    {
-      "source": "src/main/wallet/railgun-shield-receipt.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-shield-receipt.test.js",
-      "group": "fixed-package-import-or-pure-data",
-      "requiredHostFamilies": [
-        "transactionIntent"
-      ],
-      "unresolved": [
-        {
-          "kind": "require",
-          "start": 79,
-          "end": 109,
-          "value": "./private-transaction-intent",
-          "line": 2,
-          "target": "src/main/wallet/private-transaction-intent.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "transactionIntent",
           "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
         }
       ],
@@ -3128,5 +2967,13 @@
       ],
       "executedInThisSuccessor": false
     }
+  ],
+  "qualifiedFixedImportGroup": [
+    "src/main/wallet/railgun-own-poi-checks.test.js",
+    "src/main/wallet/railgun-own-transact-poi-membership.test.js",
+    "src/main/wallet/railgun-paged-store.test.js",
+    "src/main/wallet/railgun-poi-transact-selector.test.js",
+    "src/main/wallet/railgun-shield-intent.test.js",
+    "src/main/wallet/railgun-shield-receipt.test.js"
   ]
 }
