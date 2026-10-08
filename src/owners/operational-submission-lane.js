@@ -472,6 +472,68 @@ function createRailgunSubmissionLane(options) {
     assert.equal(bind(archive, hold), null);
     return { hold, opened, record, destination, confirm };
   }
+  // Local authenticated custody only: the held operation's input note and, for
+  // a transfer, its recipient relationship and amount, read from the capsule
+  // bound to the reservation facts. No RPC, journal, review or disclosure.
+  function describe(holdId) {
+    return invoke(async () => {
+      id(holdId);
+      const { reservations, capsules } =
+        await enrollment.openPrivateRecoveryStores();
+      current();
+      const own = assertRailgunIdentity(identity, handle).instanceId;
+      const value = await reservations.withSigningRecovery(
+        async (records, context) => {
+          const active = () => {
+            context.assertCurrent();
+            current();
+          };
+          active();
+          const rows = records.filter((row) => row.entry.id === holdId);
+          assert.equal(rows.length, 1);
+          const { entry, receipt } = rows[0];
+          reservations.assertReceiptContext(receipt, "recovery");
+          assert.deepEqual(await reservations.assertReceipt(receipt), entry);
+          active();
+          assert.ok(KINDS.includes(entry.facts.kind));
+          let stored;
+          try {
+            stored = await capsules.readSignedUnfinished(receipt);
+          } catch (error) {
+            if (error?.code !== "RAILGUN_CAPSULE_NOT_READY") throw error;
+            active();
+            stored = await capsules.readSigned(receipt);
+          }
+          active();
+          assert.equal(stored.holdId, entry.id);
+          const { selection, preparation } = stored.capsule;
+          assert.equal(selection.kind, entry.facts.kind);
+          assert.equal(selection.tree, entry.facts.tree);
+          assert.equal(selection.position, entry.facts.position);
+          const transfer = entry.facts.kind === "railgun-private-transfer";
+          if (transfer) assert.match(preparation.amount, /^[1-9][0-9]*$/);
+          return freeze({
+            status: "held",
+            holdId,
+            kind: entry.facts.kind,
+            input: { noteId: `${entry.facts.tree}:${entry.facts.position}` },
+            transfer: transfer
+              ? {
+                  recipient:
+                    selection.recipient === own ? "own-instance" : "other",
+                  amount: preparation.amount,
+                }
+              : null,
+            submissionEnabled: false,
+            retryEnabled: false,
+          });
+        },
+        { timeoutMs: 15000 },
+      );
+      current();
+      return value;
+    });
+  }
   function observe(holdId) {
     return invoke(async () => {
       try {
@@ -586,6 +648,7 @@ function createRailgunSubmissionLane(options) {
   lifetime.addEventListener("abort", close);
   current();
   return Object.freeze({
+    describe,
     observe,
     resolve,
     close,

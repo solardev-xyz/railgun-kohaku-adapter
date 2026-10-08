@@ -48,6 +48,21 @@ over chain, sender, target, value and calldata. Never the last row is chosen.
 This is also how a cold caller recovers the exact attempt after `submitStored`
 returned `recovery-required` without a hash: only the hold id is needed.
 
+## Description
+
+`describe(holdId)` reads local authenticated custody only, with no RPC,
+journal, review or disclosure. The reservation must be in signing state, and
+its bound capsule must agree with the reservation facts on kind, tree and
+position. It returns:
+
+- the input note id (`tree:position`);
+- for a transfer, whether the recipient is the account's own instance
+  (`own-instance`) or `other`, and the output amount.
+
+The descriptor lets a caller bind a held operation to an exact input note,
+then check that note in its own scan. It does not prove the note unspent and
+never enables a submission.
+
 ## Disclosure
 
 The single observation review names the hold, operation, public submitter, the

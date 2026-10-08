@@ -958,3 +958,71 @@ test("a journal that does not exist yet is unjournaled; an unreadable archive be
     code: "RAILGUN_SUBMISSION_FACADE_REFUSED",
   });
 });
+
+function withCapsules(f, capsule, ready = "unfinished") {
+  const capsules = {
+    readSignedUnfinished: jest.fn(async () => {
+      if (ready !== "unfinished")
+        throw Object.assign(Error("not ready"), {
+          code: "RAILGUN_CAPSULE_NOT_READY",
+        });
+      return { holdId: HOLD, capsule };
+    }),
+    readSigned: jest.fn(async () => ({ holdId: HOLD, capsule })),
+  };
+  f.input.owners.enrollment.openPrivateRecoveryStores = jest.fn(async () => ({
+    reservations: f.reservations,
+    capsules,
+  }));
+  return capsules;
+}
+const OWN = "0zk1own";
+function transferCapsule(overrides = {}) {
+  return {
+    selection: {
+      kind: "railgun-private-transfer",
+      tree: 0,
+      position: 1,
+      recipient: OWN,
+      ...overrides,
+    },
+    preparation: { amount: "2000" },
+  };
+}
+test("describe returns the held input and self-transfer facts locally, with no RPC or review", async () => {
+  const f = fixture();
+  state.descriptor.instanceId = OWN;
+  const capsules = withCapsules(f, transferCapsule(), "proof-present");
+  const lane = f.createRailgunSubmissionLane(f.input);
+  await expect(lane.describe(HOLD)).resolves.toEqual({
+    status: "held",
+    holdId: HOLD,
+    kind: "railgun-private-transfer",
+    input: { noteId: "0:1" },
+    transfer: { recipient: "own-instance", amount: "2000" },
+    submissionEnabled: false,
+    retryEnabled: false,
+  });
+  expect(capsules.readSigned).toHaveBeenCalledTimes(1);
+  expect(f.input.reviewDisclosures).not.toHaveBeenCalled();
+  expect(f.recovery.list).not.toHaveBeenCalled();
+});
+test("describe marks another recipient and refuses a capsule bound to other facts", async () => {
+  const f = fixture();
+  state.descriptor.instanceId = OWN;
+  withCapsules(f, transferCapsule({ recipient: "0zk1other" }));
+  const lane = f.createRailgunSubmissionLane(f.input);
+  await expect(lane.describe(HOLD)).resolves.toMatchObject({
+    transfer: { recipient: "other" },
+  });
+  const g = fixture();
+  state.descriptor.instanceId = OWN;
+  withCapsules(g, transferCapsule({ position: 2 }));
+  const other = g.createRailgunSubmissionLane(g.input);
+  await expect(other.describe(HOLD)).rejects.toMatchObject({
+    code: "RAILGUN_SUBMISSION_FACADE_REFUSED",
+  });
+  await expect(other.describe("f".repeat(64))).rejects.toMatchObject({
+    code: "RAILGUN_SUBMISSION_FACADE_REFUSED",
+  });
+});

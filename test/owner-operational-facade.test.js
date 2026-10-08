@@ -248,6 +248,7 @@ function fixture() {
         Promise.resolve({ status: "unjournaled", holdId: "a".repeat(64) }),
       );
       value.resolve = jest.fn(() => Promise.resolve({ status: "resolved" }));
+      value.describe = jest.fn(() => Promise.resolve({ status: "held" }));
       return value;
     }),
     submit: jest.fn(() => Promise.resolve({ status: "submitted" })),
@@ -1399,7 +1400,7 @@ test("held-submission companion uses fixed owners, no runtime and excludes simul
     reviewDisclosures,
   });
   expect(Object.keys(lane).sort()).toEqual(
-    ["observe", "resolve", "signal", "closed", "close"].sort(),
+    ["describe", "observe", "resolve", "signal", "closed", "close"].sort(),
   );
   const original = state.createSubmission.mock.results[0].value;
   expect(Object.keys(original.input).sort()).toEqual(
@@ -1420,6 +1421,8 @@ test("held-submission companion uses fixed owners, no runtime and excludes simul
         ...extra,
       }),
     ).toThrow();
+  await lane.describe("a".repeat(64));
+  expect(original.describe).toHaveBeenCalledWith("a".repeat(64));
   await lane.observe("a".repeat(64));
   expect(original.observe).toHaveBeenCalledWith("a".repeat(64));
   await lane.resolve("a".repeat(64), { minimumConfirmations: 3 });

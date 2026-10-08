@@ -685,9 +685,24 @@ export interface HeldSubmissionResolution {
   readonly retryEnabled: false;
   readonly trust: "unverified-rpc";
 }
+/** Local authenticated custody of one held operation: its input note and,
+ * for a transfer, the recipient relationship and amount. No RPC or review. */
+export interface HeldSubmissionDescriptor {
+  readonly status: "held";
+  readonly holdId: string;
+  readonly kind: PrivateKind;
+  readonly input: { readonly noteId: string };
+  readonly transfer: {
+    readonly recipient: "own-instance" | "other";
+    readonly amount: string;
+  } | null;
+  readonly submissionEnabled: false;
+  readonly retryEnabled: false;
+}
 /** Exclusive companion. Binds a held operation to its exact journaled own-EOA
  * submission by signing digest/nullifier/tree/operation; never the last row. */
 export interface SubmissionRecoveryLane extends LaneLifetime {
+  describe(holdId: string): Promise<HeldSubmissionDescriptor>;
   observe(holdId: string): Promise<HeldSubmissionObservation>;
   resolve(
     holdId: string,

@@ -187,6 +187,15 @@ async function held(session: owner.AccountSession) {
       return !context.signal.aborted;
     },
   });
+  const described = await lane.describe("a".repeat(64));
+  const input: string = described.input.noteId;
+  if (described.transfer) {
+    const self: "own-instance" | "other" = described.transfer.recipient;
+    void self;
+  }
+  const noSubmit: false = described.submissionEnabled;
+  void input;
+  void noSubmit;
   const observed = await lane.observe("a".repeat(64));
   if (observed.status === "journaled") {
     const hash: string = observed.transactionHash;

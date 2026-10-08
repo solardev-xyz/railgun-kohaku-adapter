@@ -614,6 +614,10 @@ function initializeRailgunMain(options) {
           }).catch(() => {});
           if (submission)
             return Object.freeze({
+              describe(holdId) {
+                active();
+                return retain(companion.describe(holdId));
+              },
               observe(holdId) {
                 active();
                 return retain(companion.observe(holdId));
