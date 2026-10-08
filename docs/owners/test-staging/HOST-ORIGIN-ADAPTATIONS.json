@@ -1,0 +1,63 @@
+{
+  "baseRevision": "78477be7edc036565f3a61fd7c144eaf5ed8da7e",
+  "productionTransforms": false,
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-shield-origin.test.js",
+      "beforeSha256": "f47c875ca360aa852c07812f15d4d03c0cafd9141b662098e21b8d283d2a8f5d",
+      "afterSha256": "3730f228f5a9c47b9db6cd00b7f3b5b14920ca45bd4e95fdb15da622bf9d9cc7",
+      "replacements": [
+        {
+          "start": 22889,
+          "before": "  const { matchRailgunShieldOrigin: matcher } = require('./railgun-shield-origin-data');\n  const actual = jest.requireActual('./railgun-shield-origin-data').matchRailgunShieldOrigin;\n",
+          "after": "  const { matchRailgunShieldOrigin: matcher } = require('../../../../../../src/owners/railgun-shield-origin-data.js');\n  const actual = jest.requireActual('../../../../../../src/owners/railgun-shield-origin-data.js').matchRailgunShieldOrigin;\n"
+        },
+        {
+          "start": 7701,
+          "before": "    .requireActual('../networks/privacy-context')\n",
+          "after": "    .requireActual('../../../../../../src/owners/context-bindings.js')\n"
+        },
+        {
+          "start": 2219,
+          "before": "const { transactionIntent } = require('./private-transaction-intent');\n",
+          "after": "const { transactionIntent } = require('../../../../fixtures/host/src/main/wallet/private-transaction-intent.js');\n"
+        },
+        {
+          "start": 2010,
+          "before": "const { readExistingPrivateSubmissionSnapshot: reader } = require('./private-submission-journal');\nconst { getWalletRecord } = require('../identity-manager');\n",
+          "after": "const { readExistingPrivateSubmissionSnapshot: reader } = require('../../../../../../src/owners/host-bindings.js').submissionJournal;\nconst { getWalletRecord } = require('../../../../fixtures/host/src/main/identity-manager');\n"
+        },
+        {
+          "start": 1433,
+          "before": "const { diagnoseRailgunShieldOrigin } = require('./railgun-shield-origin');\n",
+          "after": "const { diagnoseRailgunShieldOrigin } = require('../../../../../../src/owners/railgun-shield-origin.js');\n"
+        },
+        {
+          "start": 1124,
+          "before": "}));\n",
+          "after": "}), { virtual: true });\n"
+        },
+        {
+          "start": 1010,
+          "before": "jest.mock('../identity-manager', () => ({\n",
+          "after": "jest.mock('../../../../fixtures/host/src/main/identity-manager', () => ({\n"
+        },
+        {
+          "start": 902,
+          "before": "jest.mock('./private-submission-journal', () => ({\n  readExistingPrivateSubmissionSnapshot: jest.fn(),\n",
+          "after": "jest.mock('../../../../../../src/owners/host-bindings.js', () => ({\n  ...jest.requireActual('../../../../../../src/owners/host-bindings.js'),\n  submissionJournal: { readExistingPrivateSubmissionSnapshot: jest.fn() },\n"
+        },
+        {
+          "start": 155,
+          "before": "    jest.requireActual('./railgun-shield-origin-data').matchRailgunShieldOrigin(input)\n",
+          "after": "    jest.requireActual('../../../../../../src/owners/railgun-shield-origin-data.js').matchRailgunShieldOrigin(input)\n"
+        },
+        {
+          "start": 0,
+          "before": "jest.mock('./railgun-shield-origin-data', () => ({\n  ...jest.requireActual('./railgun-shield-origin-data'),\n",
+          "after": "require('../../../../context-host.cjs');\njest.mock('../../../../../../src/owners/railgun-shield-origin-data.js', () => ({\n  ...jest.requireActual('../../../../../../src/owners/railgun-shield-origin-data.js'),\n"
+        }
+      ]
+    }
+  ]
+}

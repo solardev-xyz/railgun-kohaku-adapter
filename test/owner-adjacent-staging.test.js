@@ -16,6 +16,7 @@ const transportAdaptations = require('../docs/owners/test-staging/HOST-TRANSPORT
 const walletAdaptations = require('../docs/owners/test-staging/HOST-WALLET-ADAPTATIONS.json');
 const rpcAdaptations = require('../docs/owners/test-staging/HOST-RPC-ADAPTATIONS.json');
 const disclosureAdaptations = require('../docs/owners/test-staging/HOST-DISCLOSURE-ADAPTATIONS.json');
+const originAdaptations = require('../docs/owners/test-staging/HOST-ORIGIN-ADAPTATIONS.json');
 const retired = require('../docs/owners/RETIRED-RUNTIME.json');
 const sha = (value) => createHash('sha256').update(value).digest('hex');
 test('all staged tests and fixtures preserve exact c6 bytes through reversible import-only edits', () => {
@@ -28,6 +29,15 @@ test('all staged tests and fixtures preserve exact c6 bytes through reversible i
   expect(new Set(manifest.files.map((row) => row.destination)).size).toBe(168);
   for (const row of manifest.files) {
     let text = fs.readFileSync(path.join(root, row.destination), 'utf8');
+    const origin = originAdaptations.changes.find((entry) => entry.file === row.destination);
+    if (origin) {
+      expect(sha(text)).toBe(origin.afterSha256);
+      for (const edit of [...origin.replacements].reverse()) {
+        expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(edit.after);
+        text = text.slice(0, edit.start) + edit.before + text.slice(edit.start + edit.after.length);
+      }
+      expect(sha(text)).toBe(origin.beforeSha256);
+    }
     const disclosure = disclosureAdaptations.changes.find((entry) => entry.file === row.destination);
     if (disclosure) {
       expect(sha(text)).toBe(disclosure.afterSha256);
@@ -224,7 +234,10 @@ test('default CI discovery includes every qualified closed suite by exact filena
   const disclosure = require('../tools/owner-test-staging/jest.host-disclosure.config.cjs');
   expect(disclosure.testMatch).toHaveLength(1);
   expect(disclosure.testMatch.every((name) => !/[?*]/.test(name))).toBe(true);
-  expect(new Set([...closed.testMatch, ...context.testMatch, ...storage.testMatch, ...pure.testMatch, ...snapshot.testMatch, ...jobs.testMatch, ...receipts.testMatch, ...accounts.testMatch, ...transport.testMatch, ...wallet.testMatch, ...rpc.testMatch, ...disclosure.testMatch]).size).toBe(134);
+  const origin = require('../tools/owner-test-staging/jest.host-origin.config.cjs');
+  expect(origin.testMatch).toHaveLength(1);
+  expect(origin.testMatch.every((name) => !/[?*]/.test(name))).toBe(true);
+  expect(new Set([...closed.testMatch, ...context.testMatch, ...storage.testMatch, ...pure.testMatch, ...snapshot.testMatch, ...jobs.testMatch, ...receipts.testMatch, ...accounts.testMatch, ...transport.testMatch, ...wallet.testMatch, ...rpc.testMatch, ...disclosure.testMatch, ...origin.testMatch]).size).toBe(135);
   expect(config.testMatch).toEqual([
     '<rootDir>/test/**/*.test.js',
     '<rootDir>/tools/qualification/scripts/fixtures/railgun-relay-wire/policy.test.js',
@@ -249,6 +262,7 @@ test('default CI discovery includes every qualified closed suite by exact filena
     ...wallet.testMatch,
     ...rpc.testMatch,
     ...disclosure.testMatch,
+    ...origin.testMatch,
   ]);
 });
 
@@ -294,4 +308,12 @@ test('generic RPC fixture is exact c6 source and aliases bind only fixed test ho
     expect({ bytes: bytes.length, sha256: sha(bytes) }).toEqual({ bytes: row.bytes, sha256: row.sha256 });
     expect(row.file.startsWith('tools/owner-test-staging/fixtures/host/')).toBe(true);
   }
+});
+
+test('fixed submitter metadata fixture preserves its reviewed host implementation', () => {
+  const fixture = require('../docs/owners/test-staging/HOST-SUBMITTER-FIXTURE.json');
+  expect(fixture.sourceCommit.startsWith('394a9c3e')).toBe(true);
+  expect(fixture.destination.startsWith('tools/owner-test-staging/fixtures/host/')).toBe(true);
+  const bytes = fs.readFileSync(path.join(root, fixture.destination));
+  expect({ bytes: bytes.length, sha256: sha(bytes) }).toEqual({ bytes: fixture.bytes, sha256: fixture.sha256 });
 });

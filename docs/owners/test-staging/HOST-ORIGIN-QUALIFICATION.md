@@ -1,0 +1,7 @@
+# Shield-origin diagnostic and genuine fixed metadata validation
+
+The original Shield-origin suite passes66 tests in1.138 seconds, natural exit0. Context, intent, receipt and matcher boundaries remain real; original enrollment/account registries and existing journal-reader doubles remain controlled. The fixed host submitter adapter is copied byte-exact from reviewed commit394a9c3e, pinned in `HOST-SUBMITTER-FIXTURE.json`. It performs actual index/type/address validation and returns the same frozen metadata shape. Its lazy identity-manager dependency is the original per-suite wallet-record mock, explicitly registered as a virtual repository fixture. No actual wallet/profile/vault is read, and no selector or raw owner export is added.
+
+The repository context captures this fixed adapter lazily and privately. The journal reader mock now occupies its existing closed host family; original callback implementations and assertions are unchanged. A multiline `jest.requireActual` context reference missed by the original staging pass caused the first66 setup failures; relocating it to the genuine current context binding passed all66. Original assertions remain reconstructible from the provenance layer.
+
+Default discovery contains135 qualified adjacent suites;16 remain excluded. No production source, type, dependency or runtime entry changed. These tests do not qualify genuine enrollment, installed-browser composition, native crypto or chain ownership; no complete211-suite run is claimed. Parent retains authority over runner configuration experiments.

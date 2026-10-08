@@ -1,7 +1,8 @@
-jest.mock('./railgun-shield-origin-data', () => ({
-  ...jest.requireActual('./railgun-shield-origin-data'),
+require('../../../../context-host.cjs');
+jest.mock('../../../../../../src/owners/railgun-shield-origin-data.js', () => ({
+  ...jest.requireActual('../../../../../../src/owners/railgun-shield-origin-data.js'),
   matchRailgunShieldOrigin: jest.fn((input) =>
-    jest.requireActual('./railgun-shield-origin-data').matchRailgunShieldOrigin(input)
+    jest.requireActual('../../../../../../src/owners/railgun-shield-origin-data.js').matchRailgunShieldOrigin(input)
   ),
 }));
 // Real context, intent, receipt and matcher boundaries; owner registries and the
@@ -10,29 +11,30 @@ jest.mock("../../../../../../src/owners/railgun-account-enrollment.js", () => ({
 jest.mock("../../../../../../src/owners/railgun-identity.js", () => ({ assertRailgunIdentity: jest.fn() }));
 jest.mock("../../../../../../src/owners/railgun-account-wallet.js", () => ({ readRailgunAccountOwnedNotes: jest.fn() }));
 jest.mock("../../../../../../src/owners/railgun-account-public.js", () => ({ getRailgunAccountPublicIdentity: jest.fn() }));
-jest.mock('./private-submission-journal', () => ({
-  readExistingPrivateSubmissionSnapshot: jest.fn(),
+jest.mock('../../../../../../src/owners/host-bindings.js', () => ({
+  ...jest.requireActual('../../../../../../src/owners/host-bindings.js'),
+  submissionJournal: { readExistingPrivateSubmissionSnapshot: jest.fn() },
 }));
-jest.mock('../identity-manager', () => ({
+jest.mock('../../../../fixtures/host/src/main/identity-manager', () => ({
   getWalletRecord: jest.fn(),
   WALLET_TYPES: { MNEMONIC: 'mnemonic' },
-}));
+}), { virtual: true });
 jest.mock("../../../../../../src/owners/context-bindings.js", () => ({
   ...jest.requireActual("../../../../../../src/owners/context-bindings.js"),
   createPrivacyScope: jest.fn((options) =>
     jest.requireActual("../../../../../../src/owners/context-bindings.js").createPrivacyScope(options)
   ),
 }));
-const { diagnoseRailgunShieldOrigin } = require('./railgun-shield-origin');
+const { diagnoseRailgunShieldOrigin } = require('../../../../../../src/owners/railgun-shield-origin.js');
 const context = require("../../../../../../src/owners/context-bindings.js");
 const { isRailgunAccountEnrollment } = require("../../../../../../src/owners/railgun-account-enrollment.js");
 const { assertRailgunIdentity } = require("../../../../../../src/owners/railgun-identity.js");
 const { readRailgunAccountOwnedNotes } = require("../../../../../../src/owners/railgun-account-wallet.js");
 const { getRailgunAccountPublicIdentity } = require("../../../../../../src/owners/railgun-account-public.js");
-const { readExistingPrivateSubmissionSnapshot: reader } = require('./private-submission-journal');
-const { getWalletRecord } = require('../identity-manager');
+const { readExistingPrivateSubmissionSnapshot: reader } = require('../../../../../../src/owners/host-bindings.js').submissionJournal;
+const { getWalletRecord } = require('../../../../fixtures/host/src/main/identity-manager');
 const { Interface, toBeHex } = require('ethers');
-const { transactionIntent } = require('./private-transaction-intent');
+const { transactionIntent } = require('../../../../fixtures/host/src/main/wallet/private-transaction-intent.js');
 const { SHIELD_ABI } = require("../../../../../../src/owners/railgun-shield-policy.js");
 const { SHIELD_EVENT, inspectRailgunShieldReceipt } = require("../../../../../../src/owners/railgun-shield-receipt.js");
 const { checkpointHash } = require("../../../../../../src/owners/railgun-wallet-coverage.js");
@@ -205,7 +207,7 @@ beforeEach(() => {
     ])
   );
   const parent = jest
-    .requireActual('../networks/privacy-context')
+    .requireActual('../../../../../../src/owners/context-bindings.js')
     .createPrivacyScope({ profileId: 'unit-profile', signal: controls.identity.signal });
   const engine = parent.getContext({
     kind: 'private-account',
@@ -626,8 +628,8 @@ test('monotonic deadline refuses when second matching expires budget before dela
   jest.useFakeTimers();
   const { performance } = require('perf_hooks');
   const clock = jest.spyOn(performance, 'now').mockReturnValue(0);
-  const { matchRailgunShieldOrigin: matcher } = require('./railgun-shield-origin-data');
-  const actual = jest.requireActual('./railgun-shield-origin-data').matchRailgunShieldOrigin;
+  const { matchRailgunShieldOrigin: matcher } = require('../../../../../../src/owners/railgun-shield-origin-data.js');
+  const actual = jest.requireActual('../../../../../../src/owners/railgun-shield-origin-data.js').matchRailgunShieldOrigin;
   matcher.mockImplementationOnce(actual).mockImplementationOnce((input) => {
     const matched = actual(input);
     expect(matched.status).toBe('matched');
