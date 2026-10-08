@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 const { createHash } = require('crypto');
 const hex = (n) => '0x' + BigInt(n).toString(16).padStart(64, '0');
 let mockReady, mockReconstruct, mockPosition, mockBlinded;
@@ -30,11 +31,12 @@ jest.mock("../../../../../../src/owners/railgun-poi-prover.js", () => {
 jest.mock("../../../../../../src/execution/railgun-artifacts.js", () => {
   throw Error('No artifacts');
 });
-jest.mock('./privacy-storage', () => {
+jest.mock('../../../../fixtures/host/src/main/wallet/privacy-storage.js', () => {
   throw Error('No stores');
 });
-jest.mock('../networks/private-rpc', () => {
-  throw Error('No RPC');
+jest.mock('../../../../../../src/owners/host-bindings.js', () => {
+  const actual = jest.requireActual('../../../../../../src/owners/host-bindings.js');
+  return { ...actual, get rpc() { throw Error('No RPC'); } };
 });
 let input, text, bytes, caller, request, requestKey, run, guardReport;
 const sha = (v) => createHash('sha256').update(v).digest('hex');
@@ -209,4 +211,10 @@ test('cancelled pending credential response is wiped and never reconstructed', a
   await expect(pending).rejects.toMatchObject(failure);
   expect(bytes.equals(Buffer.alloc(32))).toBe(true);
   expect(mockReconstruct).not.toHaveBeenCalled();
+});
+
+test('fixed host RPC family remains denied while pure retention metadata is available', () => {
+  const host = require('../../../../../../src/owners/host-bindings.js');
+  expect(typeof host.journalRetention.validArchive).toBe('function');
+  expect(() => host.rpc).toThrow(/RPC/);
 });

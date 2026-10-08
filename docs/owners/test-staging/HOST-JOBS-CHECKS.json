@@ -1,0 +1,38 @@
+{
+  "baseRevision": "4f8d67a769b460dd386fc0a624aadee12afc5d82",
+  "productionChanges": false,
+  "firstAttempt": {
+    "suitesPassed": 2,
+    "suitesFailed": 1,
+    "testsPassed": 54,
+    "testsFailed": 49,
+    "exitCode": 1,
+    "completion": "92fbf1"
+  },
+  "correctedOriginals": {
+    "suites": 3,
+    "tests": 103,
+    "seconds": 6.13,
+    "exitCode": 0,
+    "completion": "e54f29"
+  },
+  "finalWithControls": {
+    "suites": 3,
+    "tests": 106,
+    "seconds": 5.885,
+    "exitCode": 0,
+    "originalSession": 62452,
+    "completion": "f59086"
+  },
+  "provenance": {
+    "tests": 6,
+    "exitCode": 0
+  },
+  "strictLint": {
+    "warnings": 0,
+    "exitCode": 0
+  },
+  "qualifiedAdjacent": 113,
+  "remainingHost": 38,
+  "fullDefaultExecuted": false
+}

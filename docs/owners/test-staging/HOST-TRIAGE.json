@@ -13,14 +13,14 @@
     "railgun-wallet-catalog.test.js",
     "railgun-wallet-journal.test.js"
   ],
-  "remainingCount": 41,
+  "remainingCount": 38,
   "groups": {
     "credential-and-enrollment-lifetime": 2,
     "genuine-rpc-transport-and-destination": 14,
     "account-storage-composition": 7,
     "adapter-wrapper-boundary": 1,
     "shared-eoa-journal-or-recovery": 13,
-    "fixed-utility-or-worker-job": 4
+    "fixed-utility-or-worker-job": 1
   },
   "remaining": [
     {
@@ -760,43 +760,6 @@
       "executedInThisSuccessor": false
     },
     {
-      "source": "src/main/wallet/railgun-poi-output-recover-job.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-output-recover-job.test.js",
-      "group": "fixed-utility-or-worker-job",
-      "requiredHostFamilies": [
-        "rpc",
-        "storage"
-      ],
-      "unresolved": [
-        {
-          "kind": "jest.mock",
-          "start": 2184,
-          "end": 2203,
-          "value": "./privacy-storage",
-          "line": 58,
-          "target": "src/main/wallet/privacy-storage.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "storage",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 2283,
-          "end": 2308,
-          "value": "../networks/private-rpc",
-          "line": 61,
-          "target": "src/main/networks/private-rpc.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "rpc",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        }
-      ],
-      "computedSites": [],
-      "executedInThisSuccessor": false
-    },
-    {
       "source": "src/main/wallet/railgun-poi-root.test.js",
       "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-root.test.js",
       "group": "genuine-rpc-transport-and-destination",
@@ -997,43 +960,6 @@
           "line": 418
         }
       ],
-      "executedInThisSuccessor": false
-    },
-    {
-      "source": "src/main/wallet/railgun-poi-transact-selector-job.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-transact-selector-job.test.js",
-      "group": "fixed-utility-or-worker-job",
-      "requiredHostFamilies": [
-        "rpc",
-        "storage"
-      ],
-      "unresolved": [
-        {
-          "kind": "jest.mock",
-          "start": 1206,
-          "end": 1225,
-          "value": "./privacy-storage",
-          "line": 33,
-          "target": "src/main/wallet/privacy-storage.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "storage",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 1277,
-          "end": 1302,
-          "value": "../networks/private-rpc",
-          "line": 36,
-          "target": "src/main/networks/private-rpc.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "rpc",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        }
-      ],
-      "computedSites": [],
       "executedInThisSuccessor": false
     },
     {
@@ -2844,43 +2770,6 @@
       "executedInThisSuccessor": false
     },
     {
-      "source": "src/main/wallet/railgun-txid-job.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-txid-job.test.js",
-      "group": "fixed-utility-or-worker-job",
-      "requiredHostFamilies": [
-        "rpc",
-        "storage"
-      ],
-      "unresolved": [
-        {
-          "kind": "jest.mock",
-          "start": 2690,
-          "end": 2709,
-          "value": "./privacy-storage",
-          "line": 74,
-          "target": "src/main/wallet/privacy-storage.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "storage",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 2789,
-          "end": 2814,
-          "value": "../networks/private-rpc",
-          "line": 77,
-          "target": "src/main/networks/private-rpc.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "rpc",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        }
-      ],
-      "computedSites": [],
-      "executedInThisSuccessor": false
-    },
-    {
       "source": "src/main/wallet/railgun-wallet-policy.test.js",
       "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-wallet-policy.test.js",
       "group": "account-storage-composition",
@@ -2946,5 +2835,15 @@
     "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-kohaku-snapshot-host.test.js",
     "tests": 19,
     "controlledOwnerDoubles": true
+  },
+  "qualifiedFixedJobGroup": {
+    "names": [
+      "railgun-poi-output-recover-job",
+      "railgun-poi-transact-selector-job",
+      "railgun-txid-job"
+    ],
+    "originalTests": 103,
+    "newRefusalControls": 3,
+    "nativeExecution": false
   }
 }
