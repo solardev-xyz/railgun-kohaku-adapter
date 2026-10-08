@@ -1,0 +1,181 @@
+{
+  "basis": "8c55506cef7ecc69f7ac01b2acbbd4386d5ebe1c",
+  "change": "Test runner only; maxWorkers2 and workerIdleMemoryLimit256MB. No forceExit or assertion removal.",
+  "passingPlainDefault": {
+    "command": "npm test",
+    "suites": 154,
+    "tests": 6779,
+    "durationSeconds": 136.018,
+    "exitCode": 0,
+    "originalSession": 18640,
+    "completion": "1a26ba",
+    "noWorkerCrashRetryOrForceExitWarning": true
+  },
+  "precedingPlainDefault": {
+    "configuration": "maxWorkers2, no idle-memory limit",
+    "exitCode": 1,
+    "passedSuites": 153,
+    "passedTests": 6752,
+    "failedSuite": "railgun-relay-proof-results.test.js",
+    "workerPid": 46360,
+    "signal": "SIGSEGV"
+  },
+  "isolatedComparison": {
+    "node": "24.18.1",
+    "jest": "30.5.2",
+    "package": {
+      "tests": 27,
+      "seconds": 2.371,
+      "exitCode": 0
+    },
+    "freedom": {
+      "source": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "tests": 27,
+      "seconds": 2.29,
+      "exitCode": 0
+    }
+  },
+  "crash": {
+    "sourceSha256": "e5980cbf97a2927332cf68ee123533c5c4a1dd59d2aaccd09730db57314107c4",
+    "exception": {
+      "codes": "0x0000000000000001, 0x0000000000000006",
+      "rawCodes": [
+        1,
+        6
+      ],
+      "type": "EXC_BAD_ACCESS",
+      "signal": "SIGSEGV",
+      "subtype": "KERN_INVALID_ADDRESS at 0x0000000000000006"
+    },
+    "topFrames": [
+      {
+        "imageOffset": 6332048,
+        "symbol": "v8::internal::ClearStaleLeftTrimmedPointerVisitor::VisitRootPointers(v8::internal::Root, char const*, v8::internal::FullObjectSlot, v8::internal::FullObjectSlot)",
+        "symbolLocation": 100,
+        "imageIndex": 0,
+        "imageName": "node"
+      },
+      {
+        "imageOffset": 5574916,
+        "symbol": "v8::internal::InternalFrame::Iterate(v8::internal::RootVisitor*) const",
+        "symbolLocation": 240,
+        "imageIndex": 0,
+        "imageName": "node"
+      },
+      {
+        "imageOffset": 5596080,
+        "symbol": "v8::internal::Isolate::Iterate(v8::internal::RootVisitor*, v8::internal::ThreadLocalTop*)",
+        "symbolLocation": 364,
+        "imageIndex": 0,
+        "imageName": "node"
+      },
+      {
+        "imageOffset": 6332584,
+        "symbol": "v8::internal::Heap::IterateRoots(v8::internal::RootVisitor*, v8::base::EnumSet<v8::internal::SkipRoot, int>, v8::internal::Heap::IterateRootsMode)",
+        "symbolLocation": 460,
+        "imageIndex": 0,
+        "imageName": "node"
+      },
+      {
+        "imageOffset": 6458256,
+        "symbol": "v8::internal::MarkCompactCollector::MarkRoots(v8::internal::RootVisitor*)",
+        "symbolLocation": 56,
+        "imageIndex": 0,
+        "imageName": "node"
+      },
+      {
+        "imageOffset": 6440216,
+        "symbol": "v8::internal::MarkCompactCollector::MarkLiveObjects()",
+        "symbolLocation": 968,
+        "imageIndex": 0,
+        "imageName": "node"
+      },
+      {
+        "imageOffset": 6439104,
+        "symbol": "v8::internal::MarkCompactCollector::CollectGarbage()",
+        "symbolLocation": 128,
+        "imageIndex": 0,
+        "imageName": "node"
+      },
+      {
+        "imageOffset": 6303932,
+        "symbol": "v8::internal::Heap::MarkCompact()",
+        "symbolLocation": 420,
+        "imageIndex": 0,
+        "imageName": "node"
+      },
+      {
+        "imageOffset": 6302244,
+        "symbol": "v8::internal::Heap::PerformGarbageCollection(v8::internal::GarbageCollector, v8::internal::GarbageCollectionReason, char const*)",
+        "symbolLocation": 824,
+        "imageIndex": 0,
+        "imageName": "node"
+      },
+      {
+        "imageOffset": 6378608,
+        "symbol": "v8::internal::Heap::CollectGarbage(v8::internal::AllocationSpace, v8::internal::GarbageCollectionReason, v8::GCCallbackFlags)::$_1::operator()() const",
+        "symbolLocation": 1188,
+        "imageIndex": 0,
+        "imageName": "node"
+      },
+      {
+        "imageOffset": 6377396,
+        "symbol": "void heap::base::Stack::SetMarkerAndCallbackImpl<v8::internal::Heap::CollectGarbage(v8::internal::AllocationSpace, v8::internal::GarbageCollectionReason, v8::GCCallbackFlags)::$_1>(heap::base::Stack*, void*, void const*)",
+        "symbolLocation": 40,
+        "imageIndex": 0,
+        "imageName": "node"
+      },
+      {
+        "imageOffset": 16554532,
+        "symbol": "PushAllRegistersAndIterateStack",
+        "symbolLocation": 40,
+        "imageIndex": 0,
+        "imageName": "node"
+      },
+      {
+        "imageOffset": 6286876,
+        "symbol": "v8::internal::Heap::CollectGarbage(v8::internal::AllocationSpace, v8::internal::GarbageCollectionReason, v8::GCCallbackFlags)",
+        "symbolLocation": 748,
+        "imageIndex": 0,
+        "imageName": "node"
+      },
+      {
+        "imageOffset": 5728224,
+        "symbol": "v8::internal::StackGuard::HandleInterrupts(v8::internal::StackGuard::InterruptLevel)",
+        "symbolLocation": 504,
+        "imageIndex": 0,
+        "imageName": "node"
+      },
+      {
+        "imageOffset": 10897332,
+        "symbol": "v8::internal::Runtime_StackGuardWithGap(int, unsigned long*, v8::internal::Isolate*)",
+        "symbolLocation": 312,
+        "imageIndex": 0,
+        "imageName": "node"
+      }
+    ],
+    "loadedNonSystemImageNames": [
+      "node",
+      "resolver.darwin-arm64.node"
+    ],
+    "interpretation": "Observed V8 garbage-collection stack; underlying cause unestablished. No SQLite image at crash time does not establish absence earlier. No production fix claimed."
+  },
+  "logs": {
+    "railgun-owner-context-default-bounded.log": {
+      "bytes": 192,
+      "sha256": "b0a807fe7346b014512338336316f80e1408ca33ca877207cdf89dabc5da4f13"
+    },
+    "railgun-owner-context-default-final.log": {
+      "bytes": 1017,
+      "sha256": "ac4b0e63d524b229cb752081c93d220924a7edd284f17a62ff3648af00a068fc"
+    },
+    "railgun-owner-proof-results-isolated.log": {
+      "bytes": 391,
+      "sha256": "4bc9619623bd4034a807c102a3dea1c9c918e2666b9bc0c5a3f38dda3ef8f308"
+    },
+    "railgun-owner-proof-results-freedom-isolated.log": {
+      "bytes": 193,
+      "sha256": "476c1e6c06792c7133d7105a7eb4b7e5ccc2e189b859d86c1ffa3990c0b635d1"
+    }
+  }
+}

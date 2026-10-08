@@ -1,5 +1,8 @@
 /** @type {import('jest').Config} */
 module.exports = {
+  // Bound disposable worker/native-storage suite resources in local runs and CI.
+  maxWorkers: 2,
+  workerIdleMemoryLimit: '256MB',
   testMatch: [
     '<rootDir>/test/**/*.test.js',
     '<rootDir>/tools/qualification/scripts/fixtures/railgun-relay-wire/policy.test.js',
