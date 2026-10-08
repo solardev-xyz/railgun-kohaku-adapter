@@ -147,10 +147,17 @@ function resumePlan(context) {
   const target = mode === 'first' ? (legacyRule ? upper : windowEnd(lower + 1)) : windowEnd(upper + 1);
   return { mode, lower, upper, from: null, firstTarget: target };
 }
-// The scan continues exactly where the last recorded checkpoint ended.
-function assertCheckpoint(context, number) {
+// A later stage's scan continues from the last recorded checkpoint, which may
+// already lie beyond its lineage anchor after an interrupted attempt of the
+// same stage, but never behind it. The coordinator still chooses each start.
+function scanStart(context, number, anchor) {
   const last = ledger.inspect(context.profile, context.header).progress.at(-1);
-  if (last) assert.equal(last.to, number, 'Scan checkpoint');
+  if (!last) return number + 1;
+  assert.ok(last.to >= number, 'Scan checkpoint behind the lineage anchor');
+  // Never downgrade a stored checkpoint to an older provider head.
+  assert.ok(last.to <= anchor.number, 'Scan checkpoint beyond the finalized anchor');
+  assert.match(last.hash, /^0x[0-9a-f]{64}$/);
+  return last.to + 1;
 }
 // Report projections: hold and note identities leave only as sha256.
 function publicOutput(output) {
@@ -329,8 +336,18 @@ function heldFacts(report, owner) {
 function finishReport(context, value) {
   return { ...value, ledgerHeaderSha256: sha(JSON.stringify(context.header)) };
 }
+// A predecessor report belongs to this ledger, or, on the post-send link only,
+// is one its exactly bound predecessor recorded: same producer header, same
+// digest and mode as a report row of that predecessor. Nothing is relabelled.
 function assertChained(context, previous) {
-  assert.equal(previous.ledgerHeaderSha256, sha(JSON.stringify(context.header)), 'Report from another campaign');
+  if (previous.ledgerHeaderSha256 === sha(JSON.stringify(context.header))) return;
+  assert.equal(context.header.name, ledger.JOURNEY2, 'Report from another campaign');
+  assert.equal(previous.ledgerHeaderSha256, context.header.binding.predecessor.headerSha256, 'Report from another campaign');
+  const rows = ledger.predecessorReports(context.profile, context.header);
+  assert.ok(
+    rows.some((row) => row.sha256 === previous.reportSha256 && row.mode === previous.reportMode),
+    'Report not recorded by the bound predecessor'
+  );
 }
 // Rebuild public and wallet generations for the current package policy, then
 // establish the exact held state without any send.
@@ -638,8 +655,7 @@ async function poi(context) {
   try {
     session = await facade.openAccount({ accountIndex: 0, signal });
     const anchor = await readFinalized();
-    assertCheckpoint(context, rebuildReport.anchor.number);
-    const { ranges } = await scanTo(context, session, rebuildReport.anchor.number + 1, anchor);
+    const { ranges } = await scanTo(context, session, scanStart(context, rebuildReport.anchor.number, anchor), anchor);
     milestone('public-advanced:' + ranges);
     const notes = await readNotes(session, signal, 'advance');
     const { input, output } = transferJoin(notes, transactionHash);
@@ -913,8 +929,7 @@ async function summary(context) {
     // Advance through the unshield so residual notes reflect its spend.
     const anchor = await readFinalized();
     assert.ok(previous.final.observation.blockNumber <= anchor.number, 'The unshield is finalized');
-    assertCheckpoint(context, scan.anchor.number);
-    const { ranges } = await scanTo(context, session, scan.anchor.number + 1, anchor);
+    const { ranges } = await scanTo(context, session, scanStart(context, scan.anchor.number, anchor), anchor);
     milestone('public-advanced:' + ranges);
     const notes = await readNotes(session, signal, 'advance');
     const spentOutput = notes.filter((note) => note.spentTxid !== false && bare(note.spentTxid) === bare(previous.transactionHash));
@@ -1045,4 +1060,4 @@ const MODES = Object.freeze({
   'live-unshield': unshield,
   'live-summary': summary,
 });
-module.exports = { MODES, rangesTo, windowEnd, resumePlan, sha };
+module.exports = { MODES, rangesTo, windowEnd, resumePlan, assertChained, scanStart, sha };

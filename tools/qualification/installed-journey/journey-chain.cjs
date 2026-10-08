@@ -96,7 +96,8 @@ function createJourneyChain({
   assert.ok(['acknowledge', 'unknown-after-delivery'].includes(sendMode));
   assert.deepEqual(
     Object.keys(faults).filter(
-      (key) => !['preflightAnchorAfterEstimate', 'failLogsFrom', 'failApplyRefreshTo', 'denseFrom', 'denseTo', 'latencyMs'].includes(key)
+      (key) =>
+        !['preflightAnchorAfterEstimate', 'failLogsFrom', 'failApplyRefreshTo', 'denseFrom', 'denseTo', 'latencyMs', 'failValidatedTxid'].includes(key)
     ),
     []
   );
@@ -106,7 +107,7 @@ function createJourneyChain({
   //   its end header once more; the next read is the coordinator's refresh
   //   inside apply, after its journal entry is prepared and the window applied.
   //   That read fails, leaving a pending application for recovery.
-  const scanFaults = { logsFired: false, refreshFired: false, servedTo: new Set(), endReads: 0 };
+  const scanFaults = { logsFired: false, refreshFired: false, servedTo: new Set(), endReads: 0, txidReads: 0 };
   const servedLogs = [];
   // A dense interval [denseFrom, denseTo], as Sepolia around 9.0M: a request
   // wider than 20000 blocks covering it answers with 600 well-formed Railgun
@@ -662,6 +663,11 @@ function createJourneyChain({
         return params.poiMerkleroots.every((root) => derived.poiRoots.includes(bare(root)));
       case 'ppoi_validated_txid':
         assert.deepEqual(Object.keys(params).sort(), ['chainID', 'chainType', 'txidVersion']);
+        // A request-level failure of the n-th validated-TXID read, once (as live L14).
+        if (Number.isSafeInteger(faults.failValidatedTxid) && ++scanFaults.txidReads === faults.failValidatedTxid) {
+          injected++;
+          throw Object.assign(Error('Synthetic Tor request failure'), { code: 'SYNTHETIC_INJECTED_FAULT' });
+        }
         assert.ok(derived.rows.length > 0, 'No validated TXID');
         return {
           validatedTxidIndex: derived.rows.length - 1,

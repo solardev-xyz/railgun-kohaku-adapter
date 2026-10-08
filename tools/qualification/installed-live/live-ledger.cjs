@@ -30,7 +30,11 @@ const RESUME2 = 'installed-journey-sentio-resume-2';
 // The one reviewed third link: transient failures ended sessions that were
 // progressing. Its openers are admitted by progress, not by a flat count.
 const RESUME3 = 'installed-journey-sentio-resume-3';
-const CHAIN = Object.freeze([FIRST, CONTINUATION, RESUME, RESUME2, RESUME3]);
+// The one reviewed post-send link: a runner fix after the transfer. It carries
+// its predecessor's complete state (the send, reports, budgets, progress, POI)
+// and changes only the runner identity; it grants no new allowance.
+const JOURNEY2 = 'installed-journey-sentio-journey-2';
+const CHAIN = Object.freeze([FIRST, CONTINUATION, RESUME, RESUME2, RESUME3, JOURNEY2]);
 const NO_PROGRESS_SESSIONS = 2;
 // The third link admits openers within one fixed window from its first opener.
 const RESUME3_WINDOW_MS = 4 * 3600 * 1000;
@@ -123,7 +127,24 @@ function predecessor(directory, header) {
   for (const key of ['type', 'version', 'transport', 'profile', 'freedomCommit', 'packageTarSha256'])
     check(same(previous[key], header[key]), 'predecessor-scope:' + key);
   check(previous.binding?.heldTransferReportSha256 === header.binding.heldTransferReportSha256, 'predecessor-held');
-  if ([RESUME, RESUME2, RESUME3].includes(header.name)) check(same(previous.binding?.rpc?.url, header.binding?.rpc?.url), 'predecessor-endpoint');
+  if ([RESUME, RESUME2, RESUME3, JOURNEY2].includes(header.name))
+    check(same(previous.binding?.rpc?.url, header.binding?.rpc?.url), 'predecessor-endpoint');
+  const carried = index - 1 > 0 ? predecessor(directory, previous) : {};
+  const state = replay(records, previous, carried);
+  if (header.name === JOURNEY2) {
+    // Exactly the resolved transfer and nothing after it: one finished
+    // continuing transfer, no unshield, no POI record; the same caps.
+    check(previous.name === RESUME3 && same(previous.caps, header.caps), 'predecessor-journey');
+    check(
+      state.sends.length === 1 &&
+        state.sends[0].pending.send === 'transfer' &&
+        CONTINUING.includes(state.sends[0].finished?.outcome?.classification),
+      'predecessor-journey-send'
+    );
+    check(state.poi.pending === null && state.poi.finished === null, 'predecessor-journey-poi');
+    check(!records.slice(1).some((record) => record?.type?.startsWith('poi')), 'predecessor-journey-poi');
+    return state;
+  }
   // Scan budgets, and a resume's attempt records; never a checkpoint, send,
   // POI handoff or report.
   check(
@@ -137,8 +158,6 @@ function predecessor(directory, header) {
       ),
     'predecessor-events'
   );
-  const carried = index - 1 > 0 ? predecessor(directory, previous) : {};
-  const state = replay(records, previous, carried);
   check(state.sends.length === 0 && state.poi.pending === null && state.reports.length === 0, 'predecessor-not-empty');
   // The second link binds the first resume exactly: one opener, one attempt
   // (first, at the claimed pair and the claimed failed target, the earlier
@@ -171,7 +190,13 @@ function predecessor(directory, header) {
     const windows = own.filter((record) => record.kind === 'scan-range');
     check(windows.length >= 1 && windows.every((record) => record.target === claim.failedTarget), 'predecessor-windows');
   }
-  return state.budgets;
+  // Scan-only links carry budgets alone.
+  return { budgets: state.budgets };
+}
+// The report rows recorded by the post-send link's bound predecessor.
+function predecessorReports(profile, header) {
+  if (header.name !== JOURNEY2) return [];
+  return predecessor(path.dirname(ledgerFile(profile, header.name)), header).reports;
 }
 // The fixed chain's predecessor records, per ledger name, read-only.
 function chainRecords(profile, header) {
@@ -211,13 +236,14 @@ function syncDirectory(directory) {
 }
 // Replays and validates the whole ledger, from carried-forward budgets.
 function replay(records, header, carried = {}) {
+  const copy = (value) => JSON.parse(JSON.stringify(value));
   check(same(records[0], header), 'header');
-  const sends = [],
-    budgets = Object.fromEntries(Object.entries(carried).map(([kind, rows]) => [kind, [...rows]])),
-    reports = [],
-    progress = [],
+  const sends = copy(carried.sends ?? []),
+    budgets = Object.fromEntries(Object.entries(carried.budgets ?? {}).map(([kind, rows]) => [kind, [...rows]])),
+    reports = copy(carried.reports ?? []),
+    progress = copy(carried.progress ?? []),
     attempts = [],
-    poi = { pending: null, finished: null };
+    poi = copy(carried.poi ?? { pending: null, finished: null });
   const ownSoFar = [];
   for (const record of records.slice(1)) {
     if (record?.type === 'send-pending') {
@@ -310,7 +336,15 @@ function inspect(profile, header) {
   if (index > 0) check(header.transport === 'synthetic' || header.binding?.rpc?.url === SENTIO, 'continuation-endpoint');
   const file = ledgerFile(profile, header.name),
     directory = path.dirname(file);
-  const empty = (budgets) => ({ file, sends: [], budgets, reports: [], progress: [], attempts: [], poi: { pending: null, finished: null } });
+  const empty = (carried) => ({
+    file,
+    sends: carried.sends ?? [],
+    budgets: carried.budgets ?? {},
+    reports: carried.reports ?? [],
+    progress: carried.progress ?? [],
+    attempts: [],
+    poi: carried.poi ?? { pending: null, finished: null },
+  });
   let names;
   try {
     const stat = fs.lstatSync(directory);
@@ -424,6 +458,8 @@ function resumeDeadline(profile, header) {
   return first ? first.at + RESUME3_WINDOW_MS : null;
 }
 module.exports = {
+  JOURNEY2,
+  predecessorReports,
   RESUME3,
   resumeDeadline,
   trailingNoProgress,

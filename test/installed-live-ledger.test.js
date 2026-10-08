@@ -819,3 +819,161 @@ test("third-link openers are admitted by progress: two sessions without a checkp
   expect(() => opener(20000 + 4 * 3600 * 1000 + 1)).toThrow();
   expect(ledger.resumeDeadline(p, next)).toBe(20000 + 4 * 3600 * 1000);
 });
+
+function resolvedResume3() {
+  const s = stoppedResume2();
+  const r3 = resume3Of(s.p, s.resume2);
+  const pol = (kind) => ledger.policyFor(r3.caps, kind);
+  ledger.consume(s.p, r3, "scan-open:pending", pol("scan-open:pending"), 30000);
+  const n = ledger.consume(s.p, r3, "scan-range", pol("scan-range"), 30001, {
+    target: 259999,
+  });
+  ledger.progress(s.p, r3, 259999, "0x" + "4".repeat(64), n);
+  ledger.recordReport(s.p, r3, "live-rebuild", "a".repeat(64));
+  const attempt = ledger.reserve(s.p, r3, "transfer", {
+    holdIdSha256: "h".repeat(64),
+  });
+  ledger.finish(s.p, r3, attempt, {
+    classification: "acknowledged",
+    transactionHash: "0x" + "5".repeat(64),
+  });
+  ledger.recordReport(s.p, r3, "live-submit", "b".repeat(64));
+  ledger.consume(s.p, r3, "observe:transfer", pol("observe:transfer"), 30100);
+  ledger.recordReport(s.p, r3, "live-observe", "c".repeat(64));
+  ledger.consume(s.p, r3, "txid-page", pol("txid-page"), 30200);
+  return { ...s, r3 };
+}
+function journey2Of(p, r3, overrides = {}) {
+  const crypto = require("crypto");
+  const hash = (v) => crypto.createHash("sha256").update(v).digest("hex");
+  const { resumeFrom, ...binding } = r3.binding;
+  void resumeFrom;
+  return {
+    ...r3,
+    name: ledger.JOURNEY2,
+    runnerSha256: "6".repeat(64),
+    binding: {
+      ...binding,
+      predecessor: {
+        name: ledger.RESUME3,
+        ledgerSha256: hash(
+          fs.readFileSync(ledger.ledgerFile(p, ledger.RESUME3)),
+        ),
+        headerSha256: hash(JSON.stringify(r3)),
+        reason: "poi stage not restart-safe",
+      },
+    },
+    ...overrides,
+  };
+}
+test("the post-send link carries the complete state: one send left, budgets and reports kept", () => {
+  const { p, r3 } = resolvedResume3();
+  const next = journey2Of(p, r3);
+  const state = ledger.inspect(p, next);
+  expect(state.sends).toHaveLength(1);
+  expect(state.sends[0].finished.outcome.classification).toBe("acknowledged");
+  expect(state.reports.map((row) => row.sha256)).toEqual([
+    "a".repeat(64),
+    "b".repeat(64),
+    "c".repeat(64),
+  ]);
+  expect(state.budgets["observe:transfer"]).toHaveLength(1);
+  expect(state.budgets["txid-page"]).toHaveLength(1);
+  expect(state.progress.at(-1).to).toBe(259999);
+  expect(ledger.predecessorReports(p, next).map((row) => row.mode)).toEqual([
+    "live-rebuild",
+    "live-submit",
+    "live-observe",
+  ]);
+  // No second transfer; the one remaining send is the unshield; budgets continue.
+  expect(() => ledger.reserve(p, next, "transfer", {})).toThrow();
+  expect(
+    ledger.consume(
+      p,
+      next,
+      "txid-page",
+      ledger.policyFor(next.caps, "txid-page"),
+      30300,
+    ),
+  ).toBe(2);
+  ledger.poiReserve(p, next, {});
+  expect(() => ledger.poiReserve(p, next, {})).toThrow();
+  // The predecessor is closed; its bytes stay bound.
+  expect(() => ledger.inspect(p, r3)).toThrow();
+  const file = ledger.ledgerFile(p, ledger.RESUME3);
+  const original = fs.readFileSync(file);
+  fs.writeFileSync(file, Buffer.concat([original, Buffer.from(" ")]));
+  expect(() => ledger.inspect(p, next)).toThrow();
+  fs.writeFileSync(file, original);
+  expect(ledger.inspect(p, next).poi.pending).not.toBeNull();
+});
+test("the post-send link refuses a predecessor with a pending send, a POI record or an unshield, and changed caps", () => {
+  const pending = stoppedResume2();
+  const r3 = resume3Of(pending.p, pending.resume2);
+  ledger.consume(
+    pending.p,
+    r3,
+    "scan-open:pending",
+    ledger.policyFor(r3.caps, "scan-open:pending"),
+    30000,
+  );
+  ledger.reserve(pending.p, r3, "transfer", {});
+  expect(() => ledger.inspect(pending.p, journey2Of(pending.p, r3))).toThrow();
+  const poi = resolvedResume3();
+  ledger.poiReserve(poi.p, poi.r3, {});
+  expect(() => ledger.inspect(poi.p, journey2Of(poi.p, poi.r3))).toThrow();
+  const unshield = resolvedResume3();
+  ledger.reserve(unshield.p, unshield.r3, "unshield", {});
+  expect(() =>
+    ledger.inspect(unshield.p, journey2Of(unshield.p, unshield.r3)),
+  ).toThrow();
+  const caps = resolvedResume3();
+  expect(() =>
+    ledger.inspect(
+      caps.p,
+      journey2Of(caps.p, caps.r3, { caps: { ...caps.r3.caps, txidPages: 91 } }),
+    ),
+  ).toThrow();
+});
+test("old-header reports are admitted only as the bound predecessor's exact recorded rows", () => {
+  const {
+    assertChained,
+    scanStart,
+  } = require("../tools/qualification/installed-live/live-scenario.cjs");
+  const crypto = require("crypto");
+  const { p, r3 } = resolvedResume3();
+  const next = journey2Of(p, r3);
+  const context = { profile: p, header: next };
+  const report = (header, digest, mode) =>
+    Object.defineProperties(
+      {
+        ledgerHeaderSha256: crypto
+          .createHash("sha256")
+          .update(JSON.stringify(header))
+          .digest("hex"),
+      },
+      { reportSha256: { value: digest }, reportMode: { value: mode } },
+    );
+  expect(() =>
+    assertChained(context, report(r3, "c".repeat(64), "live-observe")),
+  ).not.toThrow();
+  expect(() =>
+    assertChained(context, report(next, "z".repeat(64), "live-poi")),
+  ).not.toThrow();
+  for (const bad of [
+    report(r3, "d".repeat(64), "live-observe"),
+    report(r3, "c".repeat(64), "live-submit"),
+    report({ ...r3, name: "other" }, "c".repeat(64), "live-observe"),
+  ])
+    expect(() => assertChained(context, bad)).toThrow();
+  expect(() =>
+    assertChained(
+      { profile: p, header: r3 },
+      report(next, "c".repeat(64), "live-observe"),
+    ),
+  ).toThrow();
+  // A stage resumes from the last returned checkpoint, within the anchors.
+  expect(scanStart(context, 239999, { number: 300000 })).toBe(260000);
+  expect(() => scanStart(context, 279999, { number: 300000 })).toThrow();
+  expect(() => scanStart(context, 239999, { number: 250000 })).toThrow();
+});

@@ -17,11 +17,18 @@ const FIXTURE_PASSWORD = 'public-fixture-password-not-a-user-credential';
 function write(name, value) {
   fs.writeFileSync(name, JSON.stringify(value, null, 2) + '\n', { flag: 'wx', mode: 0o600 });
 }
+// A verified predecessor report. Its digest and mode travel as non-enumerable
+// properties, so a report chained from an earlier fixed link can be matched to
+// its exact recorded bytes; they never enter a new report.
 function pinned(reference) {
   if (!reference) return null;
   const bytes = fs.readFileSync(reference.report);
   assert.equal(sha(bytes), reference.reportSha256);
-  return JSON.parse(bytes).scenario;
+  const outer = JSON.parse(bytes);
+  return Object.defineProperties(outer.scenario, {
+    reportSha256: { value: reference.reportSha256 },
+    reportMode: { value: outer.mode },
+  });
 }
 async function main() {
   assert.equal(process.type, 'browser');

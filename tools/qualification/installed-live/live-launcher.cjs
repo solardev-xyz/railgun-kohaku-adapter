@@ -87,7 +87,7 @@ const SYNTHETIC_CAP_KEYS = Object.keys(LIVE_CAPS).sort();
 function headerFor(request, binding, syntheticCaps) {
   assert.ok(binding && typeof binding === 'object' && !Array.isArray(binding));
   const name = request.ledger ?? ledger.FIRST;
-  assert.ok([ledger.FIRST, ledger.CONTINUATION, ledger.RESUME, ledger.RESUME2, ledger.RESUME3].includes(name));
+  assert.ok([ledger.FIRST, ledger.CONTINUATION, ledger.RESUME, ledger.RESUME2, ledger.RESUME3, ledger.JOURNEY2].includes(name));
   const resuming = [ledger.RESUME, ledger.RESUME2, ledger.RESUME3].includes(name);
   // Each later ledger of the fixed chain binds its stopped predecessor.
   assert.equal(Object.hasOwn(binding, 'predecessor'), name !== ledger.FIRST);
@@ -125,6 +125,8 @@ function headerFor(request, binding, syntheticCaps) {
       ...(request.transport === 'live' ? LIVE_CAPS : syntheticCaps),
       // The reviewed resume extension: five pending openers in aggregate, nothing else.
       ...(resuming ? { scanResumes: name === ledger.RESUME3 ? RESUME3_SCAN_RESUMES : RESUME_SCAN_RESUMES } : {}),
+      // The post-send link keeps its predecessor's caps exactly.
+      ...(name === ledger.JOURNEY2 ? { scanResumes: RESUME3_SCAN_RESUMES } : {}),
     },
   };
 }
@@ -202,7 +204,8 @@ function validate(request) {
     assert.ok(['primary', 'limited'].includes(request.synthetic.endpoint));
     for (const [key, value] of Object.entries(request.synthetic.faults))
       assert.ok(
-        ['failLogsFrom', 'failApplyRefreshTo', 'denseFrom', 'denseTo', 'latencyMs'].includes(key) && Number.isSafeInteger(value),
+        ['failLogsFrom', 'failApplyRefreshTo', 'denseFrom', 'denseTo', 'latencyMs', 'failValidatedTxid'].includes(key) &&
+          Number.isSafeInteger(value),
         'Synthetic fault ' + key
       );
   }

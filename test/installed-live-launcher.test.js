@@ -474,3 +474,35 @@ test("live polling stays within the vault lifetime and the lifetime override is 
     env.path.join(env.tools, "installed-live/vault-lifetime.cjs"),
   );
 });
+test("the post-send header keeps the third link's caps and carries no resume claim", () => {
+  const ledger = require("../tools/qualification/installed-live/live-ledger.cjs");
+  const sentio = {
+    ...binding,
+    rpc: { url: ledger.SENTIO },
+    predecessor: { name: ledger.RESUME3 },
+  };
+  const header = headerFor(
+    { ...request, ledger: ledger.JOURNEY2 },
+    sentio,
+    null,
+  );
+  expect(header.name).toBe(ledger.JOURNEY2);
+  expect(header.caps.scanResumes).toBe(17);
+  expect(() =>
+    headerFor(
+      { ...request, ledger: ledger.JOURNEY2 },
+      {
+        ...sentio,
+        resumeFrom: { checkpoint: 1, failedTarget: 2, evidence: "x" },
+      },
+      null,
+    ),
+  ).toThrow();
+  expect(() =>
+    headerFor(
+      { ...request, ledger: ledger.JOURNEY2 },
+      { ...binding, predecessor: { name: ledger.RESUME3 } },
+      null,
+    ),
+  ).toThrow();
+});
