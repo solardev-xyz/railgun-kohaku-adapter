@@ -13,9 +13,9 @@
     "railgun-wallet-catalog.test.js",
     "railgun-wallet-journal.test.js"
   ],
-  "remainingCount": 6,
+  "remainingCount": 4,
   "groups": {
-    "credential-and-enrollment-lifetime": 2,
+    "credential-and-enrollment-lifetime": 0,
     "genuine-rpc-transport-and-destination": 0,
     "account-storage-composition": 1,
     "adapter-wrapper-boundary": 1,
@@ -23,175 +23,6 @@
     "fixed-utility-or-worker-job": 1
   },
   "remaining": [
-    {
-      "source": "src/main/wallet/railgun-account-enrollment.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-account-enrollment.test.js",
-      "group": "credential-and-enrollment-lifetime",
-      "requiredHostFamilies": [
-        "credentials",
-        "profiles",
-        "sessions",
-        "storage"
-      ],
-      "unresolved": [
-        {
-          "kind": "jest.mock",
-          "start": 3405,
-          "end": 3426,
-          "value": "../profile-resolver",
-          "line": 85,
-          "target": "src/main/profile-resolver.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "profiles",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 3488,
-          "end": 3507,
-          "value": "./privacy-session",
-          "line": 86,
-          "target": "src/main/wallet/privacy-session.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "sessions",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 3570,
-          "end": 3589,
-          "value": "../identity/vault",
-          "line": 87,
-          "target": "src/main/identity/vault.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "credentials",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "require",
-          "start": 6432,
-          "end": 6451,
-          "value": "./privacy-storage",
-          "line": 176,
-          "target": "src/main/wallet/privacy-storage.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "storage",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "require",
-          "start": 23141,
-          "end": 23160,
-          "value": "./privacy-storage",
-          "line": 586,
-          "target": "src/main/wallet/privacy-storage.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "storage",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "require",
-          "start": 27754,
-          "end": 27773,
-          "value": "./privacy-storage",
-          "line": 701,
-          "target": "src/main/wallet/privacy-storage.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "storage",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "require",
-          "start": 49735,
-          "end": 49754,
-          "value": "./privacy-storage",
-          "line": 1297,
-          "target": "src/main/wallet/privacy-storage.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "storage",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        }
-      ],
-      "computedSites": [
-        {
-          "kind": "jest.doMock",
-          "line": 876
-        },
-        {
-          "kind": "jest.dontMock",
-          "line": 916
-        }
-      ],
-      "executedInThisSuccessor": false
-    },
-    {
-      "source": "src/main/wallet/railgun-identity.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-identity.test.js",
-      "group": "credential-and-enrollment-lifetime",
-      "requiredHostFamilies": [
-        "credentials",
-        "sessions"
-      ],
-      "unresolved": [
-        {
-          "kind": "jest.mock",
-          "start": 603,
-          "end": 622,
-          "value": "../identity/vault",
-          "line": 21,
-          "target": "src/main/identity/vault.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "credentials",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 1114,
-          "end": 1140,
-          "value": "../identity/privacy-keys",
-          "line": 36,
-          "target": "src/main/identity/privacy-keys.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": null,
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.requireActual",
-          "start": 1186,
-          "end": 1212,
-          "value": "../identity/privacy-keys",
-          "line": 37,
-          "target": "src/main/identity/privacy-keys.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": null,
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 2049,
-          "end": 2068,
-          "value": "./privacy-session",
-          "line": 66,
-          "target": "src/main/wallet/privacy-session.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "sessions",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        }
-      ],
-      "computedSites": [],
-      "executedInThisSuccessor": false
-    },
     {
       "source": "src/main/wallet/railgun-kohaku-plugin.test.js",
       "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-kohaku-plugin.test.js",
@@ -587,5 +418,15 @@
     ],
     "qualifiedAdjacent": 145,
     "remaining": 6
+  },
+  "credentialConformanceQualification": {
+    "names": [
+      "railgun-identity.test.js",
+      "railgun-account-enrollment.test.js"
+    ],
+    "defaultQualifiedAdjacent": 145,
+    "separateHostConformance": 2,
+    "remaining": 4,
+    "invocation": "NODE_OPTIONS=--experimental-vm-modules npm test -- --config tools/owner-test-staging/jest.host-credential.config.cjs"
   }
 }

@@ -20,6 +20,7 @@ const originAdaptations = require('../docs/owners/test-staging/HOST-ORIGIN-ADAPT
 const operationAdaptations = require('../docs/owners/test-staging/HOST-OPERATIONS-ADAPTATIONS.json');
 const journalAdaptations = require('../docs/owners/test-staging/HOST-JOURNAL-ADAPTATIONS.json');
 const submissionAdaptations = require('../docs/owners/test-staging/HOST-SUBMISSION-ADAPTATIONS.json');
+const credentialAdaptations = require('../docs/owners/test-staging/HOST-CREDENTIAL-ADAPTATIONS.json');
 const retired = require('../docs/owners/RETIRED-RUNTIME.json');
 const sha = (value) => createHash('sha256').update(value).digest('hex');
 test('all staged tests and fixtures preserve exact c6 bytes through reversible import-only edits', () => {
@@ -32,6 +33,15 @@ test('all staged tests and fixtures preserve exact c6 bytes through reversible i
   expect(new Set(manifest.files.map((row) => row.destination)).size).toBe(168);
   for (const row of manifest.files) {
     let text = fs.readFileSync(path.join(root, row.destination), 'utf8');
+    const credential = credentialAdaptations.changes.find((entry) => entry.file === row.destination);
+    if (credential) {
+      expect(sha(text)).toBe(credential.afterSha256);
+      for (const edit of [...credential.replacements].reverse()) {
+        expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(edit.after);
+        text = text.slice(0, edit.start) + edit.before + text.slice(edit.start + edit.after.length);
+      }
+      expect(sha(text)).toBe(credential.beforeSha256);
+    }
     const submission = submissionAdaptations.changes.find((entry) => entry.file === row.destination);
     if (submission) {
       expect(sha(text)).toBe(submission.afterSha256);
@@ -384,4 +394,19 @@ test('repository-only live qualifier helper retains exact source without executi
     const bytes = fs.readFileSync(path.join(root, row.destination));
     expect({ bytes: bytes.length, sha256: sha(bytes) }).toEqual({ bytes: row.bytes, sha256: row.sha256 });
   }
+});
+
+test('separate real-derivation host conformance has exact fixtures and no default discovery claim', () => {
+  const fixture = require('../docs/owners/test-staging/HOST-CREDENTIAL-FIXTURES.json');
+  expect(fixture.liveProfiles).toBe(false);
+  expect(fixture.files).toHaveLength(4);
+  for (const row of fixture.files) {
+    if (row.sourceCommit) expect(row.sourceCommit).toBe('42d914d361a30a21e9c5c93007724834d20ee62c');
+    const file = row.destination || row.fixedTestBinding;
+    const bytes = fs.readFileSync(path.join(root, file));
+    expect({ bytes: bytes.length, sha256: sha(bytes) }).toEqual({ bytes: row.bytes, sha256: row.sha256 });
+  }
+  const conformance = require('../tools/owner-test-staging/jest.host-credential.config.cjs');
+  expect(conformance.testMatch).toHaveLength(2);
+  expect(conformance.testMatch.every(file => !require('../jest.config.js').testMatch.includes(file))).toBe(true);
 });
