@@ -1,0 +1,36 @@
+{
+  "schema": "railgun-path-free-process-observation-v1",
+  "original": {
+    "bytes": 703,
+    "sha256": "c29fb7665f8f490890b3acb2b152ecc39506ebb29ba0b1f0802d87824d0b2c21"
+  },
+  "representation": "derived; not byte-exact original",
+  "normalizations": [
+    "command paths replaced by packaging-source, unsigned-output and check-directory placeholders; other values unchanged"
+  ],
+  "observation": {
+    "mode": "build",
+    "pid": 37862,
+    "command": [
+      "<packaging-source>/node_modules/.bin/electron-builder",
+      "--mac",
+      "--arm64",
+      "--dir",
+      "--config.mac.identity=null",
+      "--config.mac.notarize=false",
+      "--config.npmRebuild=false",
+      "--config.electronDist=node_modules/electron/dist",
+      "--config.directories.output=<unsigned-output>"
+    ],
+    "exitCode": 0,
+    "signal": null,
+    "natural": true,
+    "timedOut": false,
+    "terminateRequested": false,
+    "killRequested": false,
+    "originalExitObserved": true,
+    "elapsedMs": 13784,
+    "hostCommit": "dcd242f13da2a1e9b49a1ac092ba42ef45f1be20",
+    "scriptSha256": null
+  }
+}

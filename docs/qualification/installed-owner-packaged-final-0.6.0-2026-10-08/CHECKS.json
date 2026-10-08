@@ -1,0 +1,33 @@
+{
+  "schema": "railgun-final-packaged-publication-checks-v1",
+  "exporterSha256": "5bd5f7d0d10fab8882aeea9af85ebef25fda20c31180f81575d2d71314074a51",
+  "checks": [
+    {
+      "name": "original named metadata joins",
+      "exitCode": 0
+    },
+    {
+      "name": "archive verifier",
+      "exitCode": 0
+    },
+    {
+      "name": "strict verifier ESLint",
+      "exitCode": 0
+    },
+    {
+      "name": "wrong-original-build-pid",
+      "manifestRehashed": true,
+      "exitCode": 1,
+      "expectedRefusal": true
+    },
+    {
+      "name": "different-probe-on-retry",
+      "manifestRehashed": true,
+      "exitCode": 1,
+      "expectedRefusal": true
+    }
+  ],
+  "profilePayloadRead": false,
+  "nativeExecutedByPublication": false,
+  "buildPayloadArchived": false
+}
