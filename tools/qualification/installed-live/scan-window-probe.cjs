@@ -5,7 +5,10 @@
  * the runner's 100000-block alignment. No profile, vault, owned root, note,
  * EOA, nullifier or transaction: public deployment data only.
  *
- * node scan-window-probe.cjs FREEDOM_ROOT OUTPUT_DIRECTORY
+ * node scan-window-probe.cjs FREEDOM_ROOT OUTPUT_DIRECTORY [WINDOW_LABELS]
+ *
+ * WINDOW_LABELS (comma-separated) limits a repeat screen to named windows and
+ * then skips the Tenderly confirmation.
  *
  * Bounds: at most 40 explicit requests and 10 minutes after Tor is ready (Tor
  * readiness is counted separately). Every request, closed error code, size and
@@ -30,7 +33,8 @@ const MAX_REQUESTS = 40,
   MAX_MS = 10 * 60 * 1000;
 const hex = (n) => '0x' + n.toString(16);
 async function main() {
-  const [root, output] = process.argv.slice(2);
+  const [root, output, only] = process.argv.slice(2);
+  const selected = only ? new Set(only.split(',')) : null;
   assert.ok(path.isAbsolute(root) && path.isAbsolute(output));
   assert.equal(fs.existsSync(output), false);
   fs.mkdirSync(output, { mode: 0o700 });
@@ -98,11 +102,13 @@ async function main() {
     const known = Math.floor(KNOWN_LOG_BLOCK / RANGE) * RANGE;
     // A fixed recent window: the last complete aligned window below finalized.
     const recent = Math.floor(head / RANGE) * RANGE - RANGE;
+    // As the runner's ranges: aligned starts, capped at the finalized anchor.
     const windows = [
       { label: 'first', from: 0, to: RANGE - 1 },
-      { label: 'known-event', from: known, to: known + RANGE - 1 },
+      { label: 'known-event', from: known, to: Math.min(known + RANGE - 1, head) },
       { label: 'recent-sampled', from: recent, to: recent + RANGE - 1 },
-    ];
+    ].filter((w) => !selected || selected.has(w.label));
+    assert.ok(windows.length > 0 && windows.every((w) => w.to <= head));
     report.finalized = { number: head, hash: finalized.hash };
     report.windows = {};
     for (const w of windows) {
@@ -129,12 +135,13 @@ async function main() {
       }
     }
     report.passed =
-      report.windows.first.count === 0 &&
-      report.windows['known-event'].knownEventPresent === true &&
+      (!report.windows.first || report.windows.first.count === 0) &&
+      (!report.windows['known-event'] || report.windows['known-event'].knownEventPresent === true) &&
       Object.values(report.windows).every(
         (w) => Array.isArray(w.logHeaders) && w.count !== null && w.inRange !== false && Object.values(w.headers).every((h) => h.ok) && w.logHeaders.every((h) => h.ok)
       );
     // The cause of the stopped campaign: one full window on the earlier endpoint.
+    if (selected) return;
     const confirm = await call('tenderly', 'known-event:logs', 'eth_getLogs', [
       { address: PROXY, fromBlock: hex(known), toBlock: hex(known + RANGE - 1) },
     ]);
