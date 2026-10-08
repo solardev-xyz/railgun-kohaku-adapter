@@ -1,0 +1,12 @@
+{
+  "schema": "railgun-installed-owner-private-driver-observation-v1",
+  "requestSha256": "a30fecd41a3dffe408568340e2901609dfd5941f83eb239829c002b35f56e25d",
+  "sourceFreezeSha256": "b2969e1d4c213e8a249d7822605d7e06a58c3a927d0e641f8a02c4d890adb5da",
+  "rootOriginalDriver": {
+    "pid": 10012,
+    "exitCode": 0,
+    "signal": null,
+    "natural": true
+  },
+  "elapsedMs": 197708
+}

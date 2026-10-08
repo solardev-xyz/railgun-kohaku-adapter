@@ -1,0 +1,550 @@
+{
+  "schema": "railgun-installed-owner-private-restart-bindings-v1",
+  "cases": [
+    {
+      "mode": "stored-proof-cold",
+      "firstPins": {
+        "request": {
+          "bytes": 5364805,
+          "sha256": "7c95a517ad5b64191de5c6523405a2c0540f8efa7cd15dcba7e90da26156f5de"
+        },
+        "freeze": {
+          "bytes": 32234910,
+          "sha256": "bff6280ab246e194bb545b0beff1ace20ee5cf8653d01d3c0f7c3260c945029c"
+        },
+        "report": {
+          "bytes": 159521,
+          "sha256": "6bf08d45bbbdeb4710e8b97b02127227ee997beffa7c941b4c804f839c6a1845"
+        },
+        "result": {
+          "bytes": 579,
+          "sha256": "2dabf42df100f0471c241fa28c9c06b388f9ecc81c98878b01b1c3681529bd41"
+        },
+        "post": {
+          "bytes": 113,
+          "sha256": "1c88281144150fba7a8b08303f194cc5952054526b825618f9df138bea836eb9"
+        },
+        "process": {
+          "bytes": 219,
+          "sha256": "18ca5152eaadb7c26f374f8ea1c5c67da10f59f8a12455313bc82da2abcf69aa"
+        },
+        "driverObservation": {
+          "bytes": 356,
+          "sha256": "c6e95c921865b67497c39c15b214164cafc3fa1e6fe1d02b553c0f377b17942d"
+        }
+      },
+      "originalInputs": {
+        "request": {
+          "bytes": 5366120,
+          "sha256": "a30fecd41a3dffe408568340e2901609dfd5941f83eb239829c002b35f56e25d"
+        },
+        "sourceFreeze": {
+          "bytes": 32234907,
+          "sha256": "b2969e1d4c213e8a249d7822605d7e06a58c3a927d0e641f8a02c4d890adb5da"
+        },
+        "preInventory": {
+          "bytes": 30714344,
+          "sha256": "b7d3367f17a1855bcd88b2a12edd7bad54ab8b27a2093c49c9f69dd89f59225b"
+        },
+        "preResolution": {
+          "bytes": 1637887,
+          "sha256": "2dfb76a8e06300a8acb9f5a50a6af8bae50e78717b1aac24d7edbdb56d48bc84"
+        },
+        "postResolution": {
+          "bytes": 1637887,
+          "sha256": "2dfb76a8e06300a8acb9f5a50a6af8bae50e78717b1aac24d7edbdb56d48bc84"
+        },
+        "report": {
+          "bytes": 132493,
+          "sha256": "d0797203c0c1cfbf323455fbb47244a8eb23651a6e227594e51e152479d8048a"
+        }
+      },
+      "packageCommit": "133e88cce2e1a37288e4f0bb61bb6d8c726ed6ef",
+      "hostCommit": "8285fb804c82011abd4fcc38ccc00d66b27132e3",
+      "packageTar": {
+        "bytes": 534753,
+        "sha256": "c0217e23804e9ec3871977fc8a802be5e087565225aa493b217240ac8e9a467c",
+        "mode": 420
+      },
+      "buildSha256": "137ea87c15b6b6912b8e434765ed762605a03f9c4b0cd7ee8b1828e1a18fa0ed",
+      "launcherFreezeSha256": "7b1a5f4c5b1498fe10780ad9dcb75df752e11ae2baec28019cba7e18997fe813",
+      "runtime": {
+        "engine": {
+          "bytes": 81790332,
+          "sha256": "019f10880abf1c448aee02ec77c5c2d68c3561c7b4eef02095d66bb5fecd6a7a",
+          "mode": 420
+        },
+        "prover": {
+          "bytes": 1613882,
+          "sha256": "dd50a29f297867b3bf91cb425066e1d257ea02230a94b02e4cf34c5c70a0c7ab",
+          "mode": 420
+        },
+        "electron": {
+          "bytes": 33968,
+          "sha256": "c9da78c3c79b9e6d6714fbf2a1136c4eb4a93cc5edad0f8ccfb058d681325e7e",
+          "mode": 493
+        },
+        "electronFramework": {
+          "bytes": 202648272,
+          "sha256": "69147ed2f3eb9c95f47c442ae864767fa5a9fc8a2a9700c5ecf86be28c099c7f",
+          "mode": 493
+        },
+        "electronDefaultApp": {
+          "bytes": 110862,
+          "sha256": "0eb2491b0a9ac94790389d39c09dd5005c6c1f0665842943829bbd0193f6cc4f",
+          "mode": 420
+        },
+        "sqliteAddon": {
+          "bytes": 1980736,
+          "sha256": "98e0e8acd01c632fe5615243e1296af0372826f8783b18fc31c506f73c47459c",
+          "mode": 420
+        }
+      },
+      "inventoryCounts": {
+        "hostSource": {
+          "files": 1235,
+          "links": 0,
+          "directories": 46,
+          "canonicalJsonSha256": "fbb6e4e78e2097d2b7a308e94ef03077bbc29b57dec915fecada1fbcf6bdf93b"
+        },
+        "dependencies": {
+          "files": 48071,
+          "links": 95,
+          "directories": 5476,
+          "canonicalJsonSha256": "41da700dac37c7f362325f3469e3c80d6f63f896f88a360a3ae2fa4aeed81849"
+        },
+        "installedPackage": {
+          "files": 278,
+          "links": 0,
+          "directories": 8,
+          "canonicalJsonSha256": "cf396a3b4eecd2c85800e256e51a3c23e0d33d2cf652a8b1e01dd48d06e1384d"
+        },
+        "artifacts": {
+          "files": 25,
+          "links": 0,
+          "directories": 0,
+          "canonicalJsonSha256": "0cb81007d11592f4994d1c77b3fb5f2050aadc2976cce846f4d068491c4dde32"
+        }
+      },
+      "recipeFiles": {
+        "freedom-private.cjs": {
+          "bytes": 9782,
+          "sha256": "970d89bbad1bcd979b676faceadc1b16a0349bc827cd1ce78a93306ad3aa07a1",
+          "mode": 420
+        },
+        "private-scenario.cjs": {
+          "bytes": 8800,
+          "sha256": "a34295eb890dcc8c97ee853d163cce9542467460acb651191bac89a62bf130b0",
+          "mode": 420
+        },
+        "read-scenario.cjs": {
+          "bytes": 6539,
+          "sha256": "6baeecc80a34c99c3b5c417ead4177720f861bc463e712a7009cb285c712a85c",
+          "mode": 420
+        },
+        "wire.cjs": {
+          "bytes": 4485,
+          "sha256": "4d9b1e4440309099a3dfd07ad59f4e8938450bbcc7724de903e8aa9547d49a89",
+          "mode": 420
+        },
+        "VECTOR.json": {
+          "bytes": 7483,
+          "sha256": "e7a4674cb426e4a23bb74da039d3e9b64713dfe06c7026497561dc99a34e6f0f",
+          "mode": 420
+        },
+        "WIRE-MAP.json": {
+          "bytes": 86614,
+          "sha256": "a355469b7e92a8c842cd1c0df76271c52fb6f4aae060a63bf80162265378a947",
+          "mode": 420
+        }
+      },
+      "publicSource": {
+        "bytes": 8466,
+        "sha256": "bfa8684f50b2bb838b026f2c4972653bfc4503d9fd15182c6c5b219ce1bc1e41",
+        "mode": 420
+      },
+      "nativeOutcomes": {
+        "utilities": 2,
+        "workers": 2,
+        "keyReplies": 2,
+        "rpcRequests": 0
+      },
+      "joinsVerified": [
+        "request/source freeze/result SHA",
+        "source freeze equals original PRE inventory",
+        "POST inventory hash equals canonical PRE; unchanged true",
+        "PRE and POST resolution metadata byte equality",
+        "report exact hash and size bound by result",
+        "root original driver observation binds request and result",
+        "original main natural zero and no cleanup intervention",
+        "package expected inventory and runtime metadata pins",
+        "all main CJS cache rows join source/dependency/tool pins",
+        "fixed report validator roles/keys/closures/counters"
+      ],
+      "limits": {
+        "processHistoryAuthority": "parent original-handle observations; not self-authenticating",
+        "postRuntimeInspectionRerun": false,
+        "profilePayloadRead": false,
+        "fullSourceDependencyMapsArchived": false,
+        "utilityModuleCacheObserved": false
+      }
+    },
+    {
+      "mode": "signed-unfinished",
+      "firstPins": null,
+      "originalInputs": {
+        "request": {
+          "bytes": 5365106,
+          "sha256": "b37933b087367280e3f19504d3b19199f4782567b62f18922d2f140c7b15c3fd"
+        },
+        "sourceFreeze": {
+          "bytes": 32234909,
+          "sha256": "d58da4e008b43de20e097dc9ae9380a11b37132be06dbf694203d0769461f744"
+        },
+        "preInventory": {
+          "bytes": 30714344,
+          "sha256": "b7d3367f17a1855bcd88b2a12edd7bad54ab8b27a2093c49c9f69dd89f59225b"
+        },
+        "preResolution": {
+          "bytes": 1637887,
+          "sha256": "2dfb76a8e06300a8acb9f5a50a6af8bae50e78717b1aac24d7edbdb56d48bc84"
+        },
+        "postResolution": {
+          "bytes": 1637887,
+          "sha256": "2dfb76a8e06300a8acb9f5a50a6af8bae50e78717b1aac24d7edbdb56d48bc84"
+        },
+        "report": {
+          "bytes": 161727,
+          "sha256": "463a7b2fd24fafea30b42a7e233247011be35040596c314e0b10a3b85f3d98ce"
+        }
+      },
+      "packageCommit": "133e88cce2e1a37288e4f0bb61bb6d8c726ed6ef",
+      "hostCommit": "8285fb804c82011abd4fcc38ccc00d66b27132e3",
+      "packageTar": {
+        "bytes": 534753,
+        "sha256": "c0217e23804e9ec3871977fc8a802be5e087565225aa493b217240ac8e9a467c",
+        "mode": 420
+      },
+      "buildSha256": "137ea87c15b6b6912b8e434765ed762605a03f9c4b0cd7ee8b1828e1a18fa0ed",
+      "launcherFreezeSha256": "e747444aea7ec472869d64dd7a661fddc1db6f7ae5128af0dd025e66d51fe70e",
+      "runtime": {
+        "engine": {
+          "bytes": 81790332,
+          "sha256": "019f10880abf1c448aee02ec77c5c2d68c3561c7b4eef02095d66bb5fecd6a7a",
+          "mode": 420
+        },
+        "prover": {
+          "bytes": 1613882,
+          "sha256": "dd50a29f297867b3bf91cb425066e1d257ea02230a94b02e4cf34c5c70a0c7ab",
+          "mode": 420
+        },
+        "electron": {
+          "bytes": 33968,
+          "sha256": "c9da78c3c79b9e6d6714fbf2a1136c4eb4a93cc5edad0f8ccfb058d681325e7e",
+          "mode": 493
+        },
+        "electronFramework": {
+          "bytes": 202648272,
+          "sha256": "69147ed2f3eb9c95f47c442ae864767fa5a9fc8a2a9700c5ecf86be28c099c7f",
+          "mode": 493
+        },
+        "electronDefaultApp": {
+          "bytes": 110862,
+          "sha256": "0eb2491b0a9ac94790389d39c09dd5005c6c1f0665842943829bbd0193f6cc4f",
+          "mode": 420
+        },
+        "sqliteAddon": {
+          "bytes": 1980736,
+          "sha256": "98e0e8acd01c632fe5615243e1296af0372826f8783b18fc31c506f73c47459c",
+          "mode": 420
+        }
+      },
+      "inventoryCounts": {
+        "hostSource": {
+          "files": 1235,
+          "links": 0,
+          "directories": 46,
+          "canonicalJsonSha256": "fbb6e4e78e2097d2b7a308e94ef03077bbc29b57dec915fecada1fbcf6bdf93b"
+        },
+        "dependencies": {
+          "files": 48071,
+          "links": 95,
+          "directories": 5476,
+          "canonicalJsonSha256": "41da700dac37c7f362325f3469e3c80d6f63f896f88a360a3ae2fa4aeed81849"
+        },
+        "installedPackage": {
+          "files": 278,
+          "links": 0,
+          "directories": 8,
+          "canonicalJsonSha256": "cf396a3b4eecd2c85800e256e51a3c23e0d33d2cf652a8b1e01dd48d06e1384d"
+        },
+        "artifacts": {
+          "files": 25,
+          "links": 0,
+          "directories": 0,
+          "canonicalJsonSha256": "0cb81007d11592f4994d1c77b3fb5f2050aadc2976cce846f4d068491c4dde32"
+        }
+      },
+      "recipeFiles": {
+        "freedom-private.cjs": {
+          "bytes": 10495,
+          "sha256": "05e702e9d7fce1890db1bd6d4cbd3f92e668a7db7fc808cfb9c697535a00a1a8",
+          "mode": 420
+        },
+        "private-scenario.cjs": {
+          "bytes": 8800,
+          "sha256": "a34295eb890dcc8c97ee853d163cce9542467460acb651191bac89a62bf130b0",
+          "mode": 420
+        },
+        "recovery-scenario.cjs": {
+          "bytes": 7819,
+          "sha256": "38eaa4342e94322ee153c5997b3cd713d9808b6379aad49f31d4a9f714250e28",
+          "mode": 420
+        },
+        "read-scenario.cjs": {
+          "bytes": 6539,
+          "sha256": "6baeecc80a34c99c3b5c417ead4177720f861bc463e712a7009cb285c712a85c",
+          "mode": 420
+        },
+        "wire.cjs": {
+          "bytes": 4485,
+          "sha256": "4d9b1e4440309099a3dfd07ad59f4e8938450bbcc7724de903e8aa9547d49a89",
+          "mode": 420
+        },
+        "VECTOR.json": {
+          "bytes": 7483,
+          "sha256": "e7a4674cb426e4a23bb74da039d3e9b64713dfe06c7026497561dc99a34e6f0f",
+          "mode": 420
+        },
+        "WIRE-MAP.json": {
+          "bytes": 86614,
+          "sha256": "a355469b7e92a8c842cd1c0df76271c52fb6f4aae060a63bf80162265378a947",
+          "mode": 420
+        }
+      },
+      "publicSource": {
+        "bytes": 8466,
+        "sha256": "bfa8684f50b2bb838b026f2c4972653bfc4503d9fd15182c6c5b219ce1bc1e41",
+        "mode": 420
+      },
+      "nativeOutcomes": {
+        "utilities": 68,
+        "workers": 6,
+        "keyReplies": 6,
+        "rpcRequests": 1304
+      },
+      "joinsVerified": [
+        "request/source freeze/result SHA",
+        "source freeze equals original PRE inventory",
+        "POST inventory hash equals canonical PRE; unchanged true",
+        "PRE and POST resolution metadata byte equality",
+        "report exact hash and size bound by result",
+        "root original driver observation binds request and result",
+        "original main natural zero and no cleanup intervention",
+        "package expected inventory and runtime metadata pins",
+        "all main CJS cache rows join source/dependency/tool pins",
+        "fixed report validator roles/keys/closures/counters"
+      ],
+      "limits": {
+        "processHistoryAuthority": "parent original-handle observations; not self-authenticating",
+        "postRuntimeInspectionRerun": false,
+        "profilePayloadRead": false,
+        "fullSourceDependencyMapsArchived": false,
+        "utilityModuleCacheObserved": false
+      }
+    },
+    {
+      "mode": "signed-proof-cold",
+      "firstPins": {
+        "request": {
+          "bytes": 5365106,
+          "sha256": "b37933b087367280e3f19504d3b19199f4782567b62f18922d2f140c7b15c3fd"
+        },
+        "freeze": {
+          "bytes": 32234909,
+          "sha256": "d58da4e008b43de20e097dc9ae9380a11b37132be06dbf694203d0769461f744"
+        },
+        "report": {
+          "bytes": 161727,
+          "sha256": "463a7b2fd24fafea30b42a7e233247011be35040596c314e0b10a3b85f3d98ce"
+        },
+        "result": {
+          "bytes": 588,
+          "sha256": "2ac5e31df6ac21656effeee41fd7b606669ee619b962bde4803515ac86c959d2"
+        },
+        "post": {
+          "bytes": 113,
+          "sha256": "1c88281144150fba7a8b08303f194cc5952054526b825618f9df138bea836eb9"
+        },
+        "process": {
+          "bytes": 220,
+          "sha256": "119d8f800f6eccdd74d820fe8b8899240d661f1c33d5499868eaee3efb9980a5"
+        },
+        "driverObservation": {
+          "bytes": 357,
+          "sha256": "4057a78896bf729264625f7adaebd1b89f90b3a1f675cf4c026cc40f68bb500e"
+        }
+      },
+      "originalInputs": {
+        "request": {
+          "bytes": 5366420,
+          "sha256": "f0ea7a6d9565012c3209564f13363748df971af80e5227b5fcfb6e0042117d2a"
+        },
+        "sourceFreeze": {
+          "bytes": 32234914,
+          "sha256": "593aeea5c60c5d163648437de2c7443209b2e95e6cc1f4801f493222ddfc0996"
+        },
+        "preInventory": {
+          "bytes": 30714344,
+          "sha256": "b7d3367f17a1855bcd88b2a12edd7bad54ab8b27a2093c49c9f69dd89f59225b"
+        },
+        "preResolution": {
+          "bytes": 1637887,
+          "sha256": "2dfb76a8e06300a8acb9f5a50a6af8bae50e78717b1aac24d7edbdb56d48bc84"
+        },
+        "postResolution": {
+          "bytes": 1637887,
+          "sha256": "2dfb76a8e06300a8acb9f5a50a6af8bae50e78717b1aac24d7edbdb56d48bc84"
+        },
+        "report": {
+          "bytes": 136991,
+          "sha256": "5170276f85614ba5f8871af9ab636a5f99566a5437a3cc492e81b3f87d791fd5"
+        }
+      },
+      "packageCommit": "133e88cce2e1a37288e4f0bb61bb6d8c726ed6ef",
+      "hostCommit": "8285fb804c82011abd4fcc38ccc00d66b27132e3",
+      "packageTar": {
+        "bytes": 534753,
+        "sha256": "c0217e23804e9ec3871977fc8a802be5e087565225aa493b217240ac8e9a467c",
+        "mode": 420
+      },
+      "buildSha256": "137ea87c15b6b6912b8e434765ed762605a03f9c4b0cd7ee8b1828e1a18fa0ed",
+      "launcherFreezeSha256": "e747444aea7ec472869d64dd7a661fddc1db6f7ae5128af0dd025e66d51fe70e",
+      "runtime": {
+        "engine": {
+          "bytes": 81790332,
+          "sha256": "019f10880abf1c448aee02ec77c5c2d68c3561c7b4eef02095d66bb5fecd6a7a",
+          "mode": 420
+        },
+        "prover": {
+          "bytes": 1613882,
+          "sha256": "dd50a29f297867b3bf91cb425066e1d257ea02230a94b02e4cf34c5c70a0c7ab",
+          "mode": 420
+        },
+        "electron": {
+          "bytes": 33968,
+          "sha256": "c9da78c3c79b9e6d6714fbf2a1136c4eb4a93cc5edad0f8ccfb058d681325e7e",
+          "mode": 493
+        },
+        "electronFramework": {
+          "bytes": 202648272,
+          "sha256": "69147ed2f3eb9c95f47c442ae864767fa5a9fc8a2a9700c5ecf86be28c099c7f",
+          "mode": 493
+        },
+        "electronDefaultApp": {
+          "bytes": 110862,
+          "sha256": "0eb2491b0a9ac94790389d39c09dd5005c6c1f0665842943829bbd0193f6cc4f",
+          "mode": 420
+        },
+        "sqliteAddon": {
+          "bytes": 1980736,
+          "sha256": "98e0e8acd01c632fe5615243e1296af0372826f8783b18fc31c506f73c47459c",
+          "mode": 420
+        }
+      },
+      "inventoryCounts": {
+        "hostSource": {
+          "files": 1235,
+          "links": 0,
+          "directories": 46,
+          "canonicalJsonSha256": "fbb6e4e78e2097d2b7a308e94ef03077bbc29b57dec915fecada1fbcf6bdf93b"
+        },
+        "dependencies": {
+          "files": 48071,
+          "links": 95,
+          "directories": 5476,
+          "canonicalJsonSha256": "41da700dac37c7f362325f3469e3c80d6f63f896f88a360a3ae2fa4aeed81849"
+        },
+        "installedPackage": {
+          "files": 278,
+          "links": 0,
+          "directories": 8,
+          "canonicalJsonSha256": "cf396a3b4eecd2c85800e256e51a3c23e0d33d2cf652a8b1e01dd48d06e1384d"
+        },
+        "artifacts": {
+          "files": 25,
+          "links": 0,
+          "directories": 0,
+          "canonicalJsonSha256": "0cb81007d11592f4994d1c77b3fb5f2050aadc2976cce846f4d068491c4dde32"
+        }
+      },
+      "recipeFiles": {
+        "freedom-private.cjs": {
+          "bytes": 10495,
+          "sha256": "05e702e9d7fce1890db1bd6d4cbd3f92e668a7db7fc808cfb9c697535a00a1a8",
+          "mode": 420
+        },
+        "private-scenario.cjs": {
+          "bytes": 8800,
+          "sha256": "a34295eb890dcc8c97ee853d163cce9542467460acb651191bac89a62bf130b0",
+          "mode": 420
+        },
+        "recovery-scenario.cjs": {
+          "bytes": 7819,
+          "sha256": "38eaa4342e94322ee153c5997b3cd713d9808b6379aad49f31d4a9f714250e28",
+          "mode": 420
+        },
+        "read-scenario.cjs": {
+          "bytes": 6539,
+          "sha256": "6baeecc80a34c99c3b5c417ead4177720f861bc463e712a7009cb285c712a85c",
+          "mode": 420
+        },
+        "wire.cjs": {
+          "bytes": 4485,
+          "sha256": "4d9b1e4440309099a3dfd07ad59f4e8938450bbcc7724de903e8aa9547d49a89",
+          "mode": 420
+        },
+        "VECTOR.json": {
+          "bytes": 7483,
+          "sha256": "e7a4674cb426e4a23bb74da039d3e9b64713dfe06c7026497561dc99a34e6f0f",
+          "mode": 420
+        },
+        "WIRE-MAP.json": {
+          "bytes": 86614,
+          "sha256": "a355469b7e92a8c842cd1c0df76271c52fb6f4aae060a63bf80162265378a947",
+          "mode": 420
+        }
+      },
+      "publicSource": {
+        "bytes": 8466,
+        "sha256": "bfa8684f50b2bb838b026f2c4972653bfc4503d9fd15182c6c5b219ce1bc1e41",
+        "mode": 420
+      },
+      "nativeOutcomes": {
+        "utilities": 7,
+        "workers": 3,
+        "keyReplies": 4,
+        "rpcRequests": 49
+      },
+      "joinsVerified": [
+        "request/source freeze/result SHA",
+        "source freeze equals original PRE inventory",
+        "POST inventory hash equals canonical PRE; unchanged true",
+        "PRE and POST resolution metadata byte equality",
+        "report exact hash and size bound by result",
+        "root original driver observation binds request and result",
+        "original main natural zero and no cleanup intervention",
+        "package expected inventory and runtime metadata pins",
+        "all main CJS cache rows join source/dependency/tool pins",
+        "fixed report validator roles/keys/closures/counters"
+      ],
+      "limits": {
+        "processHistoryAuthority": "parent original-handle observations; not self-authenticating",
+        "postRuntimeInspectionRerun": false,
+        "profilePayloadRead": false,
+        "fullSourceDependencyMapsArchived": false,
+        "utilityModuleCacheObserved": false
+      }
+    }
+  ]
+}
