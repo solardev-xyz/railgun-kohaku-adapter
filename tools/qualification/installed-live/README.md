@@ -259,11 +259,13 @@ Synthetic-only scaffolding reproduces the stopped states:
 - chain faults `failLogsFrom` and `failApplyRefreshTo` model a failure before
   acquisition completes, and one after the coordinator prepared and applied a
   window, leaving a pending application for recovery;
-- `denseFrom`/`denseTo` mark an interval holding 600 genuine Railgun
-  `Nullified` events in 600 distinct blocks, served to every covering request.
-  A 100,000-block window over it exceeds the 512-block bound, as live Sepolia
-  does around 9.0M, while each 20,000-block part (about 120 blocks) passes.
-  The parts' union equals the window;
+- `denseFrom`/`denseTo` mark an interval where a request wider than 20,000
+  blocks answers with 600 well-formed `Nullified` logs in 600 distinct blocks.
+  The real `normalizeLogs` refuses it at the 512-block bound before any further
+  processing, as live Sepolia does around 9.0M. 20,000-block requests answer
+  with the chain's true logs. Synthetic events that also pass projection would
+  need consistent TXID and tree records, so the split windows' union identity
+  is shown on public Sepolia data instead;
 - `legacyResumeRule` reproduces the first link's whole-window first target;
 - `exit-after-advance` models a crash before the checkpoint is recorded.
 
