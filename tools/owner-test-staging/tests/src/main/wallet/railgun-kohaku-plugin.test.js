@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 let mock;
 jest.mock("../../../../../../src/owners/railgun-account-enrollment.js", () => ({
   isRailgunAccountEnrollment: (value) => value === mock.enrollment,
@@ -58,28 +59,30 @@ jest.mock("../../../../../../src/owners/railgun-private-operation.js", () => ({
 jest.mock("../../../../../../src/owners/railgun-private-submission.js", () => ({
   submitRailgunPrivateTransaction: (...args) => mock.submit(...args),
 }));
-jest.mock('../identity-manager', () => ({
+jest.mock('../../../../fixtures/host/src/main/identity-manager', () => ({
   WALLET_TYPES: { MNEMONIC: 'mnemonic' },
   getWalletRecord: (index) => {
     if (index !== 0) throw Error('index');
     return mock.walletRecord;
   },
-}));
+}), { virtual: true });
 jest.mock("../../../../../../src/owners/railgun-shield-operation.js", () => ({
   openRailgunShieldOperation: (...args) => mock.openShield(...args),
 }));
-jest.mock('./signers', () => ({
+jest.mock("../../../../../../src/owners/host-bindings.js", () => ({
+  ...jest.requireActual("../../../../../../src/owners/host-bindings.js"),
+  signers: {
   getSigner: (index) => {
     if (index !== 0) throw Error('signer index');
     return mock.getSigner();
   },
-}));
-jest.mock('../networks/network-registry', () => ({
+},
+  registry: {
   getNetwork: () => ({ access: { readOrder: ['direct'] } }),
   getEndpointSources: () => [{ keyed: false, coverage: { 11155111: mock.rpcUrl } }],
   getEndpoints: () => [mock.rpcUrl],
-}));
-jest.mock('../networks/private-rpc', () => ({
+},
+  rpc: {
   createPrivateRpc: (handle, role) => {
     require("../../../../../../src/owners/context-bindings.js").getPrivacyContext(handle);
     mock.events.push('preview-client');
@@ -112,15 +115,18 @@ jest.mock('../networks/private-rpc', () => ({
     require("../../../../../../src/owners/context-bindings.js").getPrivacyContext(value.handle);
     return { url: value.url };
   },
+},
 }));
+
+
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");
 const { claimRailgunAccountPhase } = require("../../../../../../src/owners/railgun-account-phase.js");
 const {
   createRailgunKohakuPlugin,
   assertRailgunKohakuPublicPlugin,
   submitRailgunKohakuPublicOperation,
-} = require('./railgun-kohaku-plugin');
-const { createRailgunKohakuBroadcaster } = require('./railgun-kohaku-broadcaster');
+} = require('../../../../../../src/owners/railgun-kohaku-plugin.js');
+const { createRailgunKohakuBroadcaster } = require('../../../../fixtures/host/src/main/wallet/railgun-kohaku-broadcaster.js');
 const pins = require("../../../../../../src/railgun-shield-pins.json");
 const refusal = { code: 'RAILGUN_KOHAKU_REFUSED', message: 'Railgun Kohaku operation unavailable' };
 const deferred = () => {
@@ -574,7 +580,7 @@ test('accessors and proxies in caller amount are rejected without running traps'
 test('internal controller has only the reviewed application importers and one proving caller', () => {
   const fs = require('fs'),
     path = require('path');
-  const base = path.resolve(__dirname, '../..');
+  const base = path.resolve(__dirname, '../../../../../../src');
   const files = [];
   const visit = (directory) => {
     for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
@@ -583,22 +589,22 @@ test('internal controller has only the reviewed application importers and one pr
       else if (entry.name.endsWith('.js') && !entry.name.endsWith('.test.js')) files.push(filename);
     }
   };
-  for (const name of ['main', 'renderer', 'shared']) visit(path.join(base, name));
+  visit(base);
   const importers = [],
     callers = [];
   for (const filename of files) {
-    if (filename === path.join(__dirname, 'railgun-private-operation.js')) continue;
+    if (filename === path.join(base, 'owners/railgun-private-operation.js')) continue;
     const text = fs.readFileSync(filename, 'utf8');
     const relative = path.relative(base, filename);
     if (text.includes('railgun-private-operation')) importers.push(relative);
     if (text.includes('proveRailgunAccountPrivateOperation')) callers.push(relative);
   }
   expect(importers.sort()).toEqual([
-    'main/wallet/railgun-identity.js',
-    'main/wallet/railgun-kohaku-plugin.js',
-    'main/wallet/railgun-private-submission.js',
+    'owners/railgun-identity.js',
+    'owners/railgun-kohaku-plugin.js',
+    'owners/railgun-private-submission.js',
   ]);
-  expect(callers).toEqual(['main/wallet/railgun-kohaku-plugin.js']);
+  expect(callers).toEqual(['owners/railgun-kohaku-plugin.js']);
 });
 test('no malformed transfer destination, foreign unshield recipient or tailCalls callback', async () => {
   const plugin = create(),

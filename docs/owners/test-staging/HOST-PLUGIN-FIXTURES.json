@@ -1,0 +1,12 @@
+{
+  "runtimeAdmission": false,
+  "sourceArchive": "docs/owners/historical/railgun-kohaku-broadcaster.js.txt",
+  "destination": "tools/owner-test-staging/fixtures/host/src/main/wallet/railgun-kohaku-broadcaster.js",
+  "bytes": 537,
+  "sha256": "5754901ec618fdbceef357029261b02f1043691debe580aa09ffd7b257a159c4",
+  "binding": {
+    "file": "tools/owner-test-staging/fixtures/host/src/main/wallet/railgun-kohaku-plugin.js",
+    "bytes": 167,
+    "sha256": "35b7a1aa78beacedf669fe2cba5a9565f21480de52c432ed3b997a69bf7e0f49"
+  }
+}

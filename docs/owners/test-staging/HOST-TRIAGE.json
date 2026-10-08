@@ -13,103 +13,16 @@
     "railgun-wallet-catalog.test.js",
     "railgun-wallet-journal.test.js"
   ],
-  "remainingCount": 4,
+  "remainingCount": 3,
   "groups": {
     "credential-and-enrollment-lifetime": 0,
     "genuine-rpc-transport-and-destination": 0,
     "account-storage-composition": 1,
-    "adapter-wrapper-boundary": 1,
+    "adapter-wrapper-boundary": 0,
     "shared-eoa-journal-or-recovery": 1,
     "fixed-utility-or-worker-job": 1
   },
   "remaining": [
-    {
-      "source": "src/main/wallet/railgun-kohaku-plugin.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-kohaku-plugin.test.js",
-      "group": "adapter-wrapper-boundary",
-      "requiredHostFamilies": [
-        "registry",
-        "rpc",
-        "signers",
-        "submitter/credentials (test-specific exact needs remain)"
-      ],
-      "unresolved": [
-        {
-          "kind": "jest.mock",
-          "start": 2028,
-          "end": 2049,
-          "value": "../identity-manager",
-          "line": 61,
-          "target": "src/main/identity-manager.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "submitter/credentials (test-specific exact needs remain)",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 2350,
-          "end": 2361,
-          "value": "./signers",
-          "line": 71,
-          "target": "src/main/wallet/signers.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "signers",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 2497,
-          "end": 2527,
-          "value": "../networks/network-registry",
-          "line": 77,
-          "target": "src/main/networks/network-registry.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "registry",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 2736,
-          "end": 2761,
-          "value": "../networks/private-rpc",
-          "line": 82,
-          "target": "src/main/networks/private-rpc.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "rpc",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "require",
-          "start": 4457,
-          "end": 4482,
-          "value": "./railgun-kohaku-plugin",
-          "line": 122,
-          "target": "src/main/wallet/railgun-kohaku-plugin.js",
-          "currentPackageTarget": "src/owners/railgun-kohaku-plugin.js",
-          "currentTargetExists": true,
-          "fixedHostFamily": null,
-          "requirement": "Exact test import relocation and retained assertion/authority audit"
-        },
-        {
-          "kind": "require",
-          "start": 4536,
-          "end": 4566,
-          "value": "./railgun-kohaku-broadcaster",
-          "line": 123,
-          "target": "src/main/wallet/railgun-kohaku-broadcaster.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": null,
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        }
-      ],
-      "computedSites": [],
-      "executedInThisSuccessor": false
-    },
     {
       "source": "src/main/wallet/railgun-private-submission-held.test.js",
       "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-submission-held.test.js",
@@ -428,5 +341,13 @@
     "separateHostConformance": 2,
     "remaining": 4,
     "invocation": "NODE_OPTIONS=--experimental-vm-modules npm test -- --config tools/owner-test-staging/jest.host-credential.config.cjs"
+  },
+  "pluginQualification": {
+    "names": [
+      "railgun-kohaku-plugin.test.js"
+    ],
+    "qualifiedAdjacentDefault": 146,
+    "separateHostConformance": 2,
+    "remaining": 3
   }
 }

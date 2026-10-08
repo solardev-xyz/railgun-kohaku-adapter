@@ -1,0 +1,83 @@
+{
+  "baseRevision": "2abc53ee7ef74099f803543289c6a79ec5fc745d",
+  "productionTransforms": false,
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-kohaku-plugin.test.js",
+      "beforeSha256": "5d4c34ff98c376de5996e0deb755c612b4dc8b3cf7a6058beddffe44ed7e4a5b",
+      "afterSha256": "429e59e5999c3afcc544a2ed79b07e504a19c6b18935a89645ab17a66ed120bd",
+      "replacements": [
+        {
+          "start": 21187,
+          "before": "  expect(callers).toEqual(['main/wallet/railgun-kohaku-plugin.js']);\n",
+          "after": "  expect(callers).toEqual(['owners/railgun-kohaku-plugin.js']);\n"
+        },
+        {
+          "start": 21049,
+          "before": "    'main/wallet/railgun-identity.js',\n    'main/wallet/railgun-kohaku-plugin.js',\n    'main/wallet/railgun-private-submission.js',\n",
+          "after": "    'owners/railgun-identity.js',\n    'owners/railgun-kohaku-plugin.js',\n    'owners/railgun-private-submission.js',\n"
+        },
+        {
+          "start": 20655,
+          "before": "    if (filename === path.join(__dirname, 'railgun-private-operation.js')) continue;\n",
+          "after": "    if (filename === path.join(base, 'owners/railgun-private-operation.js')) continue;\n"
+        },
+        {
+          "start": 20496,
+          "before": "  for (const name of ['main', 'renderer', 'shared']) visit(path.join(base, name));\n",
+          "after": "  visit(base);\n"
+        },
+        {
+          "start": 20099,
+          "before": "  const base = path.resolve(__dirname, '../..');\n",
+          "after": "  const base = path.resolve(__dirname, '../../../../../../src');\n"
+        },
+        {
+          "start": 4778,
+          "before": "} = require('./railgun-kohaku-plugin');\nconst { createRailgunKohakuBroadcaster } = require('./railgun-kohaku-broadcaster');\n",
+          "after": "} = require('../../../../../../src/owners/railgun-kohaku-plugin.js');\nconst { createRailgunKohakuBroadcaster } = require('../../../../fixtures/host/src/main/wallet/railgun-kohaku-broadcaster.js');\n"
+        },
+        {
+          "start": 4473,
+          "before": "",
+          "after": "\n\n"
+        },
+        {
+          "start": 4468,
+          "before": "",
+          "after": "},\n"
+        },
+        {
+          "start": 2961,
+          "before": "}));\njest.mock('../networks/private-rpc', () => ({\n",
+          "after": "},\n  rpc: {\n"
+        },
+        {
+          "start": 2722,
+          "before": "}));\njest.mock('../networks/network-registry', () => ({\n",
+          "after": "},\n  registry: {\n"
+        },
+        {
+          "start": 2580,
+          "before": "jest.mock('./signers', () => ({\n",
+          "after": "jest.mock(\"../../../../../../src/owners/host-bindings.js\", () => ({\n  ...jest.requireActual(\"../../../../../../src/owners/host-bindings.js\"),\n  signers: {\n"
+        },
+        {
+          "start": 2422,
+          "before": "}));\n",
+          "after": "}), { virtual: true });\n"
+        },
+        {
+          "start": 2228,
+          "before": "jest.mock('../identity-manager', () => ({\n",
+          "after": "jest.mock('../../../../fixtures/host/src/main/identity-manager', () => ({\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    }
+  ]
+}
