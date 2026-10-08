@@ -274,7 +274,11 @@ async function main() {
       await manager.unlockVault(password);
       password = undefined;
     } else await manager.unlockVault(FIXTURE_PASSWORD);
+    const owner = (await fixed('wallet/signers.js').getSigner(0).getAddress()).toLowerCase();
+    if (live) assert.equal(owner, request.live.enrolledOwner);
     // The one bounded lifetime override (live rebuild only; see vault-lifetime.cjs).
+    // Applied after the owner read: a successful vault key borrow resets the
+    // timer to the host default, which would silently undo an earlier override.
     const identity = fixed('identity/vault.js');
     const unlockedAt = performance.now();
     vaultLifetime = require('./vault-lifetime.cjs').applyRebuildUnlock(identity, {
@@ -292,8 +296,6 @@ async function main() {
       { once: true }
     );
     sessionUnlockedAt = unlockedAt;
-    const owner = (await fixed('wallet/signers.js').getSigner(0).getAddress()).toLowerCase();
-    if (live) assert.equal(owner, request.live.enrolledOwner);
     const facade = fixed('wallet/railgun-owner-host.js').initializeRailgunOwner(request.runtime);
     const scenario = await MODES[request.mode]({
       facade,
