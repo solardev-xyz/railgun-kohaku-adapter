@@ -1,12 +1,16 @@
-/** Bounded public-only Tor screen of the scan windows the runner uses: one
- * eth_getLogs per window on the Railgun proxy, with the runner's 100000-block
- * alignment. No profile, vault, owned root, note, EOA, nullifier or
- * transaction: public deployment data only.
+/** Bounded public-only Tor screen of the scan acquisitions the runner makes,
+ * with the scan source's exact request shapes: the finalized header, the
+ * canonical headers (anchor, from, to, from-1), one address-only eth_getLogs on
+ * the Railgun proxy, and the headers of the returned log blocks. Windows use
+ * the runner's 100000-block alignment. No profile, vault, owned root, note,
+ * EOA, nullifier or transaction: public deployment data only.
  *
  * node scan-window-probe.cjs FREEDOM_ROOT OUTPUT_DIRECTORY
  *
- * Bounds: at most 12 explicit requests and 10 minutes after Tor is ready.
- * Every request, error code, size and timing is recorded; nothing is retried.
+ * Bounds: at most 40 explicit requests and 10 minutes after Tor is ready (Tor
+ * readiness is counted separately). Every request, closed error code, size and
+ * timing is recorded; nothing is retried. An empty or truncated response is
+ * never success: the known public event must be present.
  */
 'use strict';
 const fs = require('fs'),
@@ -21,7 +25,8 @@ const ENDPOINTS = Object.freeze({
   sentio: 'https://sepolia.rpc.sentio.xyz',
   tenderly: 'https://gateway.tenderly.co/public/sepolia',
 });
-const MAX_REQUESTS = 12,
+const MAX_REQUESTS = 40,
+  MAX_LOG_HEADERS = 3,
   MAX_MS = 10 * 60 * 1000;
 const hex = (n) => '0x' + n.toString(16);
 async function main() {
@@ -91,28 +96,61 @@ async function main() {
     assert.ok(finalized, 'No finalized block');
     const head = Number(BigInt(finalized.number));
     const known = Math.floor(KNOWN_LOG_BLOCK / RANGE) * RANGE;
-    const latest = Math.floor(head / RANGE) * RANGE;
+    // A fixed recent window: the last complete aligned window below finalized.
+    const recent = Math.floor(head / RANGE) * RANGE - RANGE;
     const windows = [
       { label: 'first', from: 0, to: RANGE - 1 },
-      { label: 'known-log', from: known, to: known + RANGE - 1 },
-      { label: 'latest', from: latest, to: head },
+      { label: 'known-event', from: known, to: known + RANGE - 1 },
+      { label: 'recent-sampled', from: recent, to: recent + RANGE - 1 },
     ];
     report.finalized = { number: head, hash: finalized.hash };
     report.windows = {};
     for (const w of windows) {
-      const logs = await call('sentio', w.label, 'eth_getLogs', [{ address: PROXY, fromBlock: hex(w.from), toBlock: hex(w.to) }]);
-      report.windows[w.label] = {
-        from: w.from,
-        to: w.to,
-        count: Array.isArray(logs) ? logs.length : null,
-        knownLogPresent: Array.isArray(logs) ? logs.some((l) => Number(BigInt(l.blockNumber)) === KNOWN_LOG_BLOCK) : null,
-      };
+      const row = (report.windows[w.label] = { from: w.from, to: w.to, headers: {}, count: null, logHeaders: [] });
+      // The scan source's canonical boundary reads for this range.
+      const numbers = [...new Set([head, w.from, w.to, ...(w.from ? [w.from - 1] : [])])];
+      for (const number of numbers) {
+        const block = await call('sentio', w.label + ':header', 'eth_getBlockByNumber', [hex(number), false]);
+        row.headers[number] = block ? { ok: Number(BigInt(block.number)) === number && /^0x[0-9a-f]{64}$/.test(block.hash) } : { ok: false };
+      }
+      const logs = await call('sentio', w.label + ':logs', 'eth_getLogs', [{ address: PROXY, fromBlock: hex(w.from), toBlock: hex(w.to) }]);
+      if (!Array.isArray(logs)) continue;
+      row.count = logs.length;
+      row.inRange = logs.every((l) => {
+        const n = Number(BigInt(l.blockNumber));
+        return n >= w.from && n <= w.to && l.address.toLowerCase() === PROXY;
+      });
+      row.knownEventPresent = logs.some((l) => Number(BigInt(l.blockNumber)) === KNOWN_LOG_BLOCK);
+      // The event-header reads, bounded: each must match the log's block hash.
+      const blocks = [...new Map(logs.map((l) => [Number(BigInt(l.blockNumber)), l.blockHash])).entries()].slice(0, MAX_LOG_HEADERS);
+      for (const [number, hash] of blocks) {
+        const block = await call('sentio', w.label + ':event-header', 'eth_getBlockByNumber', [hex(number), false]);
+        row.logHeaders.push({ ok: !!block && block.hash === hash });
+      }
     }
+    report.passed =
+      report.windows.first.count === 0 &&
+      report.windows['known-event'].knownEventPresent === true &&
+      Object.values(report.windows).every(
+        (w) => Array.isArray(w.logHeaders) && w.count !== null && w.inRange !== false && Object.values(w.headers).every((h) => h.ok) && w.logHeaders.every((h) => h.ok)
+      );
     // The cause of the stopped campaign: one full window on the earlier endpoint.
-    const confirm = await call('tenderly', 'known-log', 'eth_getLogs', [
+    const confirm = await call('tenderly', 'known-event:logs', 'eth_getLogs', [
       { address: PROXY, fromBlock: hex(known), toBlock: hex(known + RANGE - 1) },
     ]);
     report.tenderlyFullWindowAccepted = Array.isArray(confirm);
+    report.tenderlyLimitSources = {
+      documentation: {
+        url: 'https://docs.tenderly.co/web3-gateway/references/detailed-json-rpc',
+        excerpt:
+          'A single eth_getLogs call returns at most 3,000 results. A filter that matches more logs is rejected with JSON-RPC error -32602 ... Each IP address gets 1 GB of response data per day.',
+        blockSpanCap: 'not stated',
+      },
+      thirdParty: {
+        url: 'https://github.com/agadgil-sap/aero-bot/pull/43',
+        observation: 'Base public gateway, 2026-10-04: spans of 1024 or more blocks rejected with -32602; spans of 1000 or fewer accepted',
+      },
+    };
   } catch (error) {
     report.failure = { code: typeof error?.code === 'string' ? error.code : null, name: error?.name ?? null };
   } finally {

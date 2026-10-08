@@ -126,11 +126,16 @@ directory is not a way around it.
 
 ## The fixed Sentio continuation
 
-The first live ledger froze `https://gateway.tenderly.co/public/sepolia`.
-Tenderly's public gateway rejects `eth_getLogs` spans above 1,000 blocks, but
-the scan source reads windows of up to 100,000 blocks. The first ledger stopped
-with zero sends, no POI and no report, after consuming one new rebuild, one
-pending resume and one scan range.
+The first live ledger froze `https://gateway.tenderly.co/public/sepolia`. Its
+first 100,000-block scan window was refused, and the coordinator masks the
+inner cause. Tenderly's documentation states a 3,000-result cap per call
+(-32602) and a 1 GB daily response limit per IP. That cap cannot explain an
+empty window. It states no block-span cap. A third-party report observed
+spans above 1,000 blocks rejected with -32602 on Tenderly's Base gateway on
+2026-10-04. This is plausible for Sepolia but unverified; the scan-window probe
+observes it directly. The first ledger stopped with zero sends, no POI and no
+report, after consuming one new rebuild, one pending resume and one scan
+range.
 
 Exactly one continuation exists, `installed-journey-sentio-1`. It freezes
 `https://sepolia.rpc.sentio.xyz`, the endpoint the earlier L-A live scans used.
@@ -157,8 +162,9 @@ process from the current endpoint. Only staged ranges record the provider set
 (`providersSha256`), and the first ledger staged none. This is a reviewed
 endpoint change, never a runtime fallback.
 
-Synthetic runs model the failure with `synthetic.endpoint: 'limited'`, a
-second endpoint that answers spans above 1,000 blocks with JSON-RPC -32602.
+Synthetic runs model that reported behaviour with `synthetic.endpoint:
+'limited'`, a second endpoint that answers spans above 1,000 blocks with
+JSON-RPC -32602.
 
 `scan-window-probe.cjs` is the bounded public screen for the continuation's
 endpoint, run before any funded continuation. It checks the runner's aligned
