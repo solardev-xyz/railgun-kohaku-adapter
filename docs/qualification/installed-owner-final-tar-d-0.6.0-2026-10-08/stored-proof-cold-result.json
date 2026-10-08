@@ -1,0 +1,15 @@
+{
+  "schema": "railgun-installed-owner-private-result-v1",
+  "mode": "stored-proof-cold",
+  "qualified": true,
+  "postUnchanged": true,
+  "requestSha256": "7ae5c4cff7032a6d93a5a24d494f98c2944bc990e75b049d00acbcaa29a9a5de",
+  "sourceFreezeSha256": "6ec7a9a3bf6d1bd6fb52a72b0aa794be658500e3f98b0c9f6c34a5c172bfc0b5",
+  "report": {
+    "bytes": 140044,
+    "sha256": "7e200106c41f5e601474237d3d138c0d1230991c4f9ceb35b41d55c21e01d4c7",
+    "mode": 384
+  },
+  "nativeScope": "fresh-process stored-proof slot read; no reproof or fresh verification",
+  "utilityModuleCacheObserved": false
+}
