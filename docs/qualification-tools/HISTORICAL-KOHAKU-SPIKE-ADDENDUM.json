@@ -1,0 +1,22 @@
+{
+  "schema": "freedom-historical-tool-addendum-v1",
+  "originalManifestSha256": "ef77745f97a96e48288adfbe400a7650114c8ed816b4802027383aa36f8d17cf",
+  "originalManifestUnchanged": true,
+  "originalManifestCountUnchanged": 360,
+  "additionalFiles": [
+    {
+      "originalRepository": "https://github.com/solardev-xyz/freedom-browser",
+      "originalCommit": "860c680f635fc5941b4b3bad8295bbad9315199f",
+      "originalPath": "scripts/spike-kohaku-runtime.js",
+      "originalGitBlob": "98311d1f2ff7e0272ec68214d771523a493df6cb",
+      "path": "tools/freedom-legacy-qualification/scripts/spike-kohaku-runtime.js",
+      "bytes": 4308,
+      "sha256": "6428d99d461eb3c2ec0a543214599427857b3ee97f8b17067360fd7513c64fa4",
+      "mode": "100644",
+      "representation": "byte-exact historical source"
+    }
+  ],
+  "activeQualificationClaim": false,
+  "executed": false,
+  "scope": "Historical Railgun-specific spike omitted by filename-prefix selection; append-only preservation, no runtime/exports/dependency change."
+}
