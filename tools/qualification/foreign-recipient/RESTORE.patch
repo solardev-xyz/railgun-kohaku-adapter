@@ -1,0 +1,150 @@
+--- a/tools/qualification/scripts/fixtures/railgun-foreign-recipient-job.js
++++ b/tools/qualification/scripts/fixtures/railgun-foreign-recipient-job.js
+@@ -11,8 +11,8 @@
+   path = require('path'),
+   { createRequire } = require('module');
+ const { Interface } = require('ethers');
+-const pins = require('../../src/main/wallet/railgun-shield-pins.json');
+-const { TRANSACT_ABI } = require('../../src/main/wallet/railgun-private-policy');
++const pins = require('../../../../src/railgun-shield-pins.json');
++const { TRANSACT_ABI } = require('../../../../src/data/railgun-private-policy');
+ const MNEMONIC =
+   'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about';
+ const CHAIN = Object.freeze({ type: 0, id: pins.chainId });
+@@ -25,7 +25,9 @@
+ };
+ // The genuine identity job's descriptor shape, from the public derivation paths.
+ async function deriveAccounts(imp, signal, indexes) {
+-  const { deriveRailgunKey } = require('../../src/main/identity/railgun-key-derivation');
++  const {
++    deriveRailgunKey,
++  } = require('../../../../tools/owner-test-staging/fixtures/host/src/main/identity/railgun-key-derivation');
+   const { getPublicSpendingKey, getPublicViewingKey } = imp('utils/keys-utils');
+   const { ViewOnlyWallet } = imp('wallet/view-only-wallet');
+   const denied = new Proxy(
+@@ -116,7 +118,7 @@
+   const active = () => assert.ok(!signal.aborted);
+   assert.deepEqual(input.descriptor, sender.descriptor);
+   const capsule =
+-    require('../../src/main/wallet/railgun-private-capsule').normalizeRailgunPrivateCapsule(
++    require('../../../../src/execution/railgun-private-capsule').normalizeRailgunPrivateCapsule(
+       input.capsule
+     );
+   const { selection, preparation } = capsule;
+@@ -141,7 +143,7 @@
+   const sourceAbi = new ethers.Interface(
+     require(path.join(root, 'abi/V2.1/RailgunSmartWallet.json'))
+   );
+-  const { parseRailgunSourceEvent } = require('../../src/main/wallet/railgun-event-projector');
++  const { parseRailgunSourceEvent } = require('../../../../src/owners/railgun-event-projector');
+   const event = parseRailgunSourceEvent(
+     sourceAbi,
+     { topics: [...input.event.topics], data: input.event.data },
+@@ -183,7 +185,7 @@
+   const {
+     createRailgunTokenResolver,
+     inspectRailgunTransact,
+-  } = require('../../src/main/wallet/railgun-wallet-records');
++  } = require('../../../../src/execution/railgun-wallet-records');
+   const msgpack = createRequire(path.join(root, 'wallet/abstract-wallet.js'))('msgpack-lite');
+   const scan = async ({ wallet }) => {
+     const tokenResolver = createRailgunTokenResolver({
+@@ -273,7 +275,7 @@
+   assert.deepEqual(asUnrelated.inspected, { status: 'not-addressed', receive: false, sent: false });
+   assert.equal(asUnrelated.receive.length + asUnrelated.sent.length, 0);
+   // A's POI reconstruction blinds B's received note, not an output of A's own.
+-  const { reconstructRailgunPoiNotes } = require('../../src/main/wallet/railgun-poi-reconstruct');
++  const { reconstructRailgunPoiNotes } = require('../../../../src/owners/railgun-poi-reconstruct');
+   const options = {
+     archive,
+     descriptor: sender.descriptor,
+@@ -350,7 +352,7 @@
+   assert.equal(recipient.descriptor.accountIndex, 1);
+   assert.deepEqual(input.descriptor, recipient.descriptor);
+   const capsule =
+-    require('../../src/main/wallet/railgun-private-capsule').normalizeRailgunPrivateCapsule(
++    require('../../../../src/execution/railgun-private-capsule').normalizeRailgunPrivateCapsule(
+       input.capsule
+     );
+   const { selection, preparation } = capsule;
+@@ -359,7 +361,7 @@
+   assert.equal(input.creator.type, 'Transact');
+   assert.equal(input.creator.tree, selection.tree);
+   assert.equal(input.creator.position, selection.position);
+-  const { reconstructRailgunPoiNotes } = require('../../src/main/wallet/railgun-poi-reconstruct');
++  const { reconstructRailgunPoiNotes } = require('../../../../src/owners/railgun-poi-reconstruct');
+   const options = {
+     archive,
+     descriptor: recipient.descriptor,
+@@ -428,7 +430,7 @@
+           ]
+   );
+   const archive =
+-    require('../../src/main/wallet/railgun-engine-runtime').verifyRailgunEngineRuntime(
++    require('../../../../src/execution/railgun-engine-runtime').verifyRailgunEngineRuntime(
+       input.archive
+     );
+   const imp = (name) =>
+--- a/tools/qualification/scripts/fixtures/railgun-foreign-recipient-job.test.js
++++ b/tools/qualification/scripts/fixtures/railgun-foreign-recipient-job.test.js
+@@ -4,16 +4,25 @@
+  */
+ const path = require('path');
+ const { Interface } = require('ethers');
+-const pins = require('../../src/main/wallet/railgun-shield-pins.json');
+-const { TRANSACT_ABI } = require('../../src/main/wallet/railgun-private-policy');
+-const { PRIVATE_EVENTS } = require('../../src/main/wallet/railgun-transact-receipt');
+-jest.mock('../../src/main/wallet/railgun-engine-runtime', () => ({
++const pins = require('../../../../src/railgun-shield-pins.json');
++const { TRANSACT_ABI } = require('../../../../src/data/railgun-private-policy');
++const { PRIVATE_EVENTS } = require('../../../../src/owners/railgun-transact-receipt');
++jest.mock('../../../../src/execution/railgun-engine-runtime', () => ({
+   verifyRailgunEngineRuntime: (value) => value,
+ }));
+-const ARCHIVE = path.join(__dirname, 'railgun-engine');
++const ARCHIVE = path.join(
++  __dirname,
++  '../../../railgun-runtime-build/scripts/fixtures/railgun-engine'
++);
+ const engine = path.join(ARCHIVE, 'node_modules/@railgun-community/engine/dist');
+ const imp = (name) => require(path.join(engine, name));
+-const wallet = (name) => require(path.join('../../src/main/wallet', name));
++const wallet = (name) =>
++  require(
++    {
++      'railgun-private-witness': '../../../../src/execution/railgun-private-witness',
++      'railgun-private-capsule': '../../../../src/execution/railgun-private-capsule',
++    }[name]
++  );
+ const job = require('./railgun-foreign-recipient-job');
+ const MNEMONIC =
+   'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about';
+@@ -33,7 +42,9 @@
+   }
+ );
+ async function account(accountIndex) {
+-  const { deriveRailgunKey } = require('../../src/main/identity/railgun-key-derivation');
++  const {
++    deriveRailgunKey,
++  } = require('../../../../tools/owner-test-staging/fixtures/host/src/main/identity/railgun-key-derivation');
+   const { getPublicSpendingKey, getPublicViewingKey } = imp('utils/keys-utils');
+   const { ViewOnlyWallet } = imp('wallet/view-only-wallet');
+   const seed = require('@scure/bip39').mnemonicToSeedSync(MNEMONIC);
+@@ -186,7 +197,7 @@
+       wallet('railgun-private-capsule').normalizeRailgunPrivateCapsule({
+         version: 1,
+         walletId: A.descriptor.walletId,
+-        engineSha256: require('../../src/main/wallet/railgun-engine-manifest.json').sha256,
++        engineSha256: require('../../../../src/execution/railgun-engine-manifest.json').sha256,
+         selection,
+         preparation: prepared.publicPreparation,
+         noteHash: hex(received.hash),
+@@ -321,7 +332,7 @@
+ // public test recipient. Path elements are unused selector data here.
+ function recipientUnshieldCapsule() {
+   const { AbiCoder, keccak256 } = require('ethers');
+-  const { BOUND_PARAMS } = require('../../src/main/wallet/railgun-private-policy');
++  const { BOUND_PARAMS } = require('../../../../src/data/railgun-private-policy');
+   const { TransactNote } = imp('note/transact-note');
+   const FIELD = 21888242871839275222246405745257275088548364400416034343698204186575808495617n;
+   const recipient = '0x' + '12'.repeat(20);

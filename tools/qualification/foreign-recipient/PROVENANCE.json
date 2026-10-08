@@ -1,0 +1,130 @@
+{
+  "schema": "railgun-foreign-recipient-test-port-v1",
+  "packageBasis": "75330b5978cd0192d72cbc1803e6bae059271152",
+  "files": [
+    {
+      "originalRepository": "https://github.com/solardev-xyz/freedom-browser",
+      "originalCommit": "860c680f635fc5941b4b3bad8295bbad9315199f",
+      "originalPath": "scripts/fixtures/railgun-foreign-recipient-job.js",
+      "originalSha256": "b9998bf3405a0a627f395aed941983d2e0482d24495a43202ca29a6934368b23",
+      "originalGitBlob": "22f62250a42dcf2305275c7593ed19864e7d63f5",
+      "path": "tools/qualification/scripts/fixtures/railgun-foreign-recipient-job.js",
+      "replacements": [
+        [
+          "../../src/main/wallet/railgun-shield-pins.json",
+          "../../../../src/railgun-shield-pins.json"
+        ],
+        [
+          "../../src/main/wallet/railgun-private-policy",
+          "../../../../src/data/railgun-private-policy"
+        ],
+        [
+          "../../src/main/wallet/railgun-engine-runtime",
+          "../../../../src/execution/railgun-engine-runtime"
+        ],
+        [
+          "../../src/main/wallet/railgun-private-capsule",
+          "../../../../src/execution/railgun-private-capsule"
+        ],
+        [
+          "../../src/main/wallet/railgun-event-projector",
+          "../../../../src/owners/railgun-event-projector"
+        ],
+        [
+          "../../src/main/wallet/railgun-wallet-records",
+          "../../../../src/execution/railgun-wallet-records"
+        ],
+        [
+          "../../src/main/wallet/railgun-poi-reconstruct",
+          "../../../../src/owners/railgun-poi-reconstruct"
+        ],
+        [
+          "../../src/main/identity/railgun-key-derivation",
+          "../../../../tools/owner-test-staging/fixtures/host/src/main/identity/railgun-key-derivation"
+        ]
+      ],
+      "archivalPath": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-foreign-recipient-job.js",
+      "portedSha256": "79ccc3592aea8d619492aabc5e224adfc20db390ef718354a10fff12dc09186b",
+      "portedBytes": 19175
+    },
+    {
+      "originalRepository": "https://github.com/solardev-xyz/freedom-browser",
+      "originalCommit": "860c680f635fc5941b4b3bad8295bbad9315199f",
+      "originalPath": "scripts/fixtures/railgun-foreign-recipient-job.test.js",
+      "originalSha256": "8e3cf211f4760558be3b8c9b5a96988abfc04e1136d884ff05d7ac7373075b44",
+      "originalGitBlob": "3c37fc56979d5a35f43ee755c40ce304aef6daa1",
+      "path": "tools/qualification/scripts/fixtures/railgun-foreign-recipient-job.test.js",
+      "replacements": [
+        [
+          "../../src/main/wallet/railgun-shield-pins.json",
+          "../../../../src/railgun-shield-pins.json"
+        ],
+        [
+          "../../src/main/wallet/railgun-private-policy",
+          "../../../../src/data/railgun-private-policy"
+        ],
+        [
+          "../../src/main/wallet/railgun-transact-receipt",
+          "../../../../src/owners/railgun-transact-receipt"
+        ],
+        [
+          "../../src/main/wallet/railgun-engine-runtime",
+          "../../../../src/execution/railgun-engine-runtime"
+        ],
+        [
+          "../../src/main/wallet/railgun-engine-manifest.json",
+          "../../../../src/execution/railgun-engine-manifest.json"
+        ],
+        [
+          "../../src/main/identity/railgun-key-derivation",
+          "../../../../tools/owner-test-staging/fixtures/host/src/main/identity/railgun-key-derivation"
+        ],
+        [
+          "const ARCHIVE = path.join(__dirname, 'railgun-engine');",
+          "const ARCHIVE = path.join(__dirname, '../../../railgun-runtime-build/scripts/fixtures/railgun-engine');"
+        ],
+        [
+          "const wallet = (name) => require(path.join('../../src/main/wallet', name));",
+          "const wallet = (name) => require({\n  'railgun-private-witness': '../../../../src/execution/railgun-private-witness',\n  'railgun-private-capsule': '../../../../src/execution/railgun-private-capsule',\n}[name]);"
+        ]
+      ],
+      "archivalPath": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-foreign-recipient-job.test.js",
+      "portedSha256": "27ec136b8b7dd102923dc70a55b7681a25b3a5ff544ca71ac404a92da3ce31ed",
+      "portedBytes": 16203
+    }
+  ],
+  "originalTestCount": 4,
+  "nativeExecuted": false,
+  "restorePatchSha256": "0ffe4f5df821bd7b6158f8c47385cfb29e192a9a9f257f59592539bd739f2b31",
+  "engineInventory": {
+    "sha256": "d46dbb16c9161c25baffe12701b2efdb844cb788f7e083d610729973d009e420",
+    "files": 10060,
+    "bytes": 78982588,
+    "nativeFiles": [
+      "@railgun-community/curve25519-scalarmult-wasm/pkg-cjs/curve25519_scalarmult_wasm_bg.wasm",
+      "@railgun-community/curve25519-scalarmult-wasm/pkg-esm/curve25519_scalarmult_wasm_bg.wasm",
+      "@railgun-community/poseidon-hash-wasm/pkg-cjs/poseidon_hash_wasm_bg.wasm",
+      "@railgun-community/poseidon-hash-wasm/pkg-esm/poseidon_hash_wasm_bg.wasm",
+      "blake-hash/prebuilds/darwin-x64/node.napi.node",
+      "blake-hash/prebuilds/linux-x64/node.napi.node",
+      "blake-hash/prebuilds/win32-x64/node.napi.node",
+      "bufferutil/prebuilds/darwin-arm64/bufferutil.node",
+      "bufferutil/prebuilds/darwin-x64/bufferutil.node",
+      "bufferutil/prebuilds/linux-x64/bufferutil.node",
+      "bufferutil/prebuilds/win32-ia32/bufferutil.node",
+      "bufferutil/prebuilds/win32-x64/bufferutil.node",
+      "keccak/prebuilds/darwin-x64/node.napi.node",
+      "keccak/prebuilds/linux-x64/node.napi.glibc.node",
+      "keccak/prebuilds/linux-x64/node.napi.musl.node",
+      "keccak/prebuilds/win32-x64/node.napi.node",
+      "secp256k1/prebuilds/darwin-arm64/secp256k1.node",
+      "secp256k1/prebuilds/linux-x64/secp256k1.glibc.node",
+      "secp256k1/prebuilds/linux-x64/secp256k1.musl.node",
+      "secp256k1/prebuilds/win32-x64/secp256k1.node",
+      "utf-8-validate/prebuilds/darwin-x64+arm64/node.napi.node",
+      "utf-8-validate/prebuilds/linux-x64/node.napi.node",
+      "utf-8-validate/prebuilds/win32-ia32/node.napi.node",
+      "utf-8-validate/prebuilds/win32-x64/node.napi.node"
+    ]
+  }
+}
