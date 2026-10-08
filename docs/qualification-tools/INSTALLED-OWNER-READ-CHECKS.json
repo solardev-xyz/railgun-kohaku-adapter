@@ -1,0 +1,45 @@
+{
+  "schema": "railgun-installed-owner-read-preparation-checks-v1",
+  "sourceReady": false,
+  "nativeReady": false,
+  "tests": {
+    "suites": 1,
+    "passed": 7,
+    "kind": "source-only controlled facade and pure router; no native acceptance",
+    "exitCode": 0
+  },
+  "lint": {
+    "exitCode": 0,
+    "warnings": 0,
+    "npmLintScriptPresent": false,
+    "configuration": "Freedom eslint.config.js"
+  },
+  "logs": {
+    "tests": {
+      "bytes": 291,
+      "sha256": "2dd6011349a2817bda2454af044a6c08d8541043d3ce970233213dad3edf2a54"
+    },
+    "lint": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "candidateSources": {
+    "tools/qualification/owner-facade/read-scenario.cjs": {
+      "bytes": 6539,
+      "sha256": "6baeecc80a34c99c3b5c417ead4177720f861bc463e712a7009cb285c712a85c"
+    },
+    "tools/qualification/owner-facade/freedom-read.cjs": {
+      "bytes": 7305,
+      "sha256": "ec47f3332e256d1c86e5968be7a331ccc7fe1c3929bac1cc3128edd38b7b232b"
+    },
+    "test/owner-native-read-recipe.test.js": {
+      "bytes": 6760,
+      "sha256": "388b66d5f7e33afc31023b1e3ef4a537db852c0ef830670eded688d52feb3467"
+    }
+  },
+  "nativeExecuted": false,
+  "existingProfilesRead": false,
+  "runtimeArtifactsRead": false,
+  "dependenciesInstalled": false
+}

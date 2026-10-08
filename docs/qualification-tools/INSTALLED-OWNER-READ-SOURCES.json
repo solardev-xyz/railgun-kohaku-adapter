@@ -1,0 +1,104 @@
+{
+  "schema": "railgun-installed-owner-read-source-basis-v1",
+  "sourceReady": false,
+  "nativeReady": false,
+  "scope": "source-only acceptance preparation; no imports or execution of pinned source rows",
+  "inputs": [
+    {
+      "commit": "8f7ed18694e4d2b9470e509f356729f177c098c3",
+      "path": "package.json",
+      "gitBlob": "21134f5d97eebf305a32cb2150949e2d96b5a3b4",
+      "sha256": "320ebe9807c00b2c7e8422410fd40a604894f12e796a2c682e2691cfd8d7e1d9",
+      "bytes": 2487
+    },
+    {
+      "commit": "8f7ed18694e4d2b9470e509f356729f177c098c3",
+      "path": "src/owners/operational-facade.js",
+      "gitBlob": "451a89259dd65de30d82395e4e559aa8d364234f",
+      "sha256": "64773006e4c55357f61c3e663bb697c3c54827686d61d2eb4d4674a6aac91b68",
+      "bytes": 19116
+    },
+    {
+      "commit": "8f7ed18694e4d2b9470e509f356729f177c098c3",
+      "path": "src/owners/railgun-kohaku-plugin.js",
+      "gitBlob": "013a543258d19a7c5eacb666a5d820771b8a0416",
+      "sha256": "ecaa2cba7c99b71034395af4fc0602babd63e15773cab6e10bce04df4decba2f",
+      "bytes": 40474
+    },
+    {
+      "commit": "8f7ed18694e4d2b9470e509f356729f177c098c3",
+      "path": "src/owners/railgun-kohaku-recovery.js",
+      "gitBlob": "e01a2f42e6261cf87a458ab95733a18e264b6a13",
+      "sha256": "28c9b9b8505fc6433a3a9baf1fbd189bc0da6d907c03308a4c0c0354e8cd077f",
+      "bytes": 6318
+    },
+    {
+      "commit": "8f7ed18694e4d2b9470e509f356729f177c098c3",
+      "path": "src/railgun-kohaku-read-data.js",
+      "gitBlob": "7e6d2daa26e76e4ac1df3d2991536459366c8c24",
+      "sha256": "21522a816a905382b206acfab0cbfd5a767aefcfbccc82c051d18b952e4d409b",
+      "bytes": 3038
+    },
+    {
+      "commit": "b9798c177fa1d78f30ac96e1d483a6b8d7860edb",
+      "path": "src/main/wallet/railgun-owner-host.js",
+      "gitBlob": "33b3f44ccb94fb525f494743aefa4f6be03aa127",
+      "sha256": "b2e60808925b86d9d9122eccc47f6645df60dace4dd2bd9589cbbf709bf94356",
+      "bytes": 4754
+    },
+    {
+      "commit": "b9798c177fa1d78f30ac96e1d483a6b8d7860edb",
+      "path": "src/main/wallet/railgun-platform-host.js",
+      "gitBlob": "de92f38ea6cea8be8885b6d7c787bcc4770eab46",
+      "sha256": "8ee302361ef623c18797fe8be19a958b7e6d2dffb2404427f475eacff75da90a",
+      "bytes": 8725
+    },
+    {
+      "commit": "b9798c177fa1d78f30ac96e1d483a6b8d7860edb",
+      "path": "src/main/wallet/railgun-source-identity-host.js",
+      "gitBlob": "8bd802f3e70f82335615b06f370905127088e7bd",
+      "sha256": "c1d20d86aff3970839edafadcb7840fec7ed7ffaa61a054fa02880ecb05a037d",
+      "bytes": 2173
+    },
+    {
+      "commit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "path": "scripts/qualify-railgun-proof-recovery.js",
+      "gitBlob": "d66520178c3bb7ee73e9d0d56666fa2e1935b253",
+      "sha256": "aacebd36c6af91f747de30807cb170569938f86edac3e439fce8679181449c13",
+      "bytes": 89948
+    },
+    {
+      "commit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "path": "scripts/fixtures/railgun-partial-controller-services.js",
+      "gitBlob": "e66f3872b0e7a9a622c83cb87385f4c207589f32",
+      "sha256": "aa702f34d68325f3bc2e7531caa5ad52b19f90d3dbc2270d512c40f27a0d0b01",
+      "bytes": 31394
+    },
+    {
+      "commit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "path": "scripts/fixtures/railgun-wallet-source.js",
+      "gitBlob": "0f233387a09627bba2caf57ee9fd460c690a9741",
+      "sha256": "6c01c20ab41fe0e8f7e1e036b6e4291ca3e8a0b382932dfa929b640ed2b04474",
+      "bytes": 7927
+    },
+    {
+      "commit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "path": "scripts/qualify-railgun-wallet-synthetic.js",
+      "gitBlob": "d537f0f65a0e130fdfb340c092d467ac58dc9164",
+      "sha256": "acd90c5ec4beaf905673f63a28449cd23a0e35db2bb9f69031e9a1433fded8cc",
+      "bytes": 12769
+    },
+    {
+      "commit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "path": "docs/qualification/railgun-unsigned-relay-preparation-2026-10-06/public-source.json",
+      "gitBlob": "44628103e0fcaf1dd347327199c51d20d179bdaa",
+      "sha256": "bfa8684f50b2bb838b026f2c4972653bfc4503d9fd15182c6c5b219ce1bc1e41",
+      "bytes": 8466
+    }
+  ],
+  "pending": [
+    "final installed public owner export and tar",
+    "complete final host/package/runtime and source inventory",
+    "original process owner launcher and predeclared utility-role map"
+  ]
+}
