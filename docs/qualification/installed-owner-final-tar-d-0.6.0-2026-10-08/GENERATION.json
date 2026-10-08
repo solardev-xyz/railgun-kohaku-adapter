@@ -1,0 +1,105 @@
+{
+  "schema": "railgun-final-tar-d-archive-generation-v1",
+  "packageArchiveBase": "2d02c480aae4d95d4a9dc6526b283908ca270212",
+  "generatorSourceFreeze": {
+    "bytes": 1985,
+    "sha256": "00891f478889d595210cc401b1aaf206397e76ff57710cee0a9d587e8beb9e77"
+  },
+  "generator": {
+    "bytes": 17489,
+    "sha256": "5518792678d6a2c03df4c9db1b9b848bdcbc2a39b9d21d6ac6623b9e97f432e6"
+  },
+  "approvedGeneratorRequest": {
+    "bytes": 1828,
+    "sha256": "32ddcd9c43c238781c625bdd852ad888e769cd4161c010b159d596257cd77886"
+  },
+  "authorization": "Root explicitly confirmed all five original final tar-D cases qualified with unchanged POST checks and authorized generation.",
+  "generationObserved": {
+    "originalToolSession": 28775,
+    "completionChunk": "b4b442",
+    "exitCode": 0,
+    "outputFilesBeforeThisRecord": 33
+  },
+  "verification": {
+    "publicVerifierPassed": true,
+    "originalRecordsByteExact": 20,
+    "reportNormalizations": {
+      "reports": 5,
+      "onlyField": "cacheAfter.native[0]",
+      "replacement": "better-sqlite3/prebuilds/darwin-arm64.node"
+    },
+    "generatorSyntheticMetadataControls": 63,
+    "copiedArchiveTamperControls": [
+      {
+        "case": "driver-request",
+        "archiveManifestRehashed": true,
+        "expectedRefusal": true,
+        "exitCode": 1
+      },
+      {
+        "case": "signature-continuity",
+        "archiveManifestRehashed": true,
+        "expectedRefusal": true,
+        "exitCode": 1
+      },
+      {
+        "case": "hold-continuity",
+        "archiveManifestRehashed": true,
+        "expectedRefusal": true,
+        "exitCode": 1
+      },
+      {
+        "case": "runtime-continuity",
+        "archiveManifestRehashed": true,
+        "expectedRefusal": true,
+        "exitCode": 1
+      },
+      {
+        "case": "process-escalation",
+        "archiveManifestRehashed": true,
+        "expectedRefusal": true,
+        "exitCode": 1
+      },
+      {
+        "case": "sqlite-normalization",
+        "archiveManifestRehashed": true,
+        "expectedRefusal": true,
+        "exitCode": 1
+      },
+      {
+        "case": "unqualified-result",
+        "archiveManifestRehashed": true,
+        "expectedRefusal": true,
+        "exitCode": 1
+      },
+      {
+        "case": "local-path",
+        "archiveManifestRehashed": true,
+        "expectedRefusal": true,
+        "exitCode": 1
+      },
+      {
+        "case": "missing-package-member",
+        "archiveManifestRehashed": true,
+        "expectedRefusal": true,
+        "exitCode": 1
+      }
+    ],
+    "strictArchivedJavaScriptLint": {
+      "files": 3,
+      "errors": 0,
+      "warnings": 0
+    },
+    "jsonMachinePathsAbsent": true,
+    "knownMnemonicAndPrivateKeyMarkersAbsent": true
+  },
+  "limits": {
+    "nativeRerun": false,
+    "profilePayloadRead": false,
+    "externalInventoryPayloadsRepublished": false,
+    "processHistoryIndependentlyAuthenticated": false,
+    "originalRawReportsByteExactInArchive": false,
+    "nativeFailuresInTheseFiveRuns": 0,
+    "nativeFailureCountAttribution": "root completion confirmation; earlier tar-C failures remain in historical archives"
+  }
+}

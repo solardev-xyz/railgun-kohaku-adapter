@@ -1,0 +1,15 @@
+{
+  "schema": "railgun-installed-owner-private-result-v1",
+  "mode": "unchanged-list",
+  "qualified": true,
+  "postUnchanged": true,
+  "requestSha256": "ebef5c853aca3231cc0979c5ffbb182ce3bfa29b9fb90a7b5786fdd945aef55f",
+  "sourceFreezeSha256": "647de46bc2c428d4dcb5b5fbed92def60143e49fd9d5e17e0a0785c2eb62e0f9",
+  "report": {
+    "bytes": 165234,
+    "sha256": "aa3b3a88df2059bb63cf9380286805d74bbf0ac83746e215d0ae5820f314a12f",
+    "mode": 384
+  },
+  "nativeScope": "unchanged production-list genuine signature refusal",
+  "utilityModuleCacheObserved": false
+}

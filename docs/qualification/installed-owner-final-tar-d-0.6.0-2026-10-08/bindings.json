@@ -1,0 +1,943 @@
+{
+  "schema": "railgun-final-tar-d-evidence-bindings-v1",
+  "originalGeneratorInputs": {
+    "bytes": 1828,
+    "sha256": "32ddcd9c43c238781c625bdd852ad888e769cd4161c010b159d596257cd77886"
+  },
+  "cases": [
+    {
+      "mode": "prepare",
+      "firstMode": null,
+      "originalInputs": {
+        "request": {
+          "bytes": 5674027,
+          "sha256": "546afde1c540534103b309f942d3b765a638cf95292659f7786d09f6dd90d466"
+        },
+        "freeze": {
+          "bytes": 31993157,
+          "sha256": "7039e2247f6565a3f2a7aa49f2542bcbf31326bc6caeb5c3945005cac2c998b1"
+        },
+        "report": {
+          "bytes": 167072,
+          "sha256": "4ad577ac68dfa4b535a6ccae162bfd52f1312830d985bae125b7d306be8ab578"
+        },
+        "result": {
+          "bytes": 579,
+          "sha256": "7f9fc2f334b7495a2aba10e33ef66ef4f0014afb787edd81906a77a1b1ddb4ed"
+        },
+        "post": {
+          "bytes": 113,
+          "sha256": "49d54689b3c3e0ff784782b0ef72b43ec1e538d1cb8a2fb704d1a7f52ec47800"
+        },
+        "process": {
+          "bytes": 220,
+          "sha256": "1ca9d290f6dabe214831e52c347a802f5534e84558c43ed318d06044e92024d8"
+        },
+        "driverObservation": {
+          "bytes": 357,
+          "sha256": "dce93fe4ab13fc4017d595fb09e9c0eab8383494d3defa0bbd794aa80f79882e"
+        },
+        "preInventory": {
+          "bytes": 30484385,
+          "sha256": "4eb089c834fa339307eccb9eb759c9c6c06b0dda28338663a305d8b92347b319"
+        },
+        "build": {
+          "bytes": 19634372,
+          "sha256": "bd10fc28ca17f185257d942959b85c08765a00d122f44e251a8d063181fbc3c6"
+        },
+        "resolutions": {
+          "pre": {
+            "bytes": 1707671,
+            "sha256": "b2d7142334fc6bef2b34bb56992bf26888e80448e5943d858acec1dbc1d2864c"
+          },
+          "post": {
+            "bytes": 1707671,
+            "sha256": "b2d7142334fc6bef2b34bb56992bf26888e80448e5943d858acec1dbc1d2864c"
+          }
+        }
+      },
+      "hostCommit": "dcd242f13da2a1e9b49a1ac092ba42ef45f1be20",
+      "packageCommit": "fb3add6aa411375b42ed84735d4901bbc491c68e",
+      "packageTar": {
+        "bytes": 542263,
+        "sha256": "6169f7445db3306feae9a16f35d6665e9f767e59b071a41a05e5f14fef02c59c",
+        "mode": 420
+      },
+      "launcherFreezeSha256": "4660b18d2b7f6f543988e72da1925ac29fc13806d63a5e642e74682756221a51",
+      "buildSha256": "bd10fc28ca17f185257d942959b85c08765a00d122f44e251a8d063181fbc3c6",
+      "runtime": {
+        "engine": {
+          "bytes": 81790332,
+          "sha256": "019f10880abf1c448aee02ec77c5c2d68c3561c7b4eef02095d66bb5fecd6a7a",
+          "mode": 420
+        },
+        "prover": {
+          "bytes": 1613882,
+          "sha256": "dd50a29f297867b3bf91cb425066e1d257ea02230a94b02e4cf34c5c70a0c7ab",
+          "mode": 420
+        },
+        "electron": {
+          "bytes": 33968,
+          "sha256": "c9da78c3c79b9e6d6714fbf2a1136c4eb4a93cc5edad0f8ccfb058d681325e7e",
+          "mode": 493
+        },
+        "framework": {
+          "bytes": 202648272,
+          "sha256": "69147ed2f3eb9c95f47c442ae864767fa5a9fc8a2a9700c5ecf86be28c099c7f",
+          "mode": 493
+        },
+        "bootstrap": {
+          "bytes": 110862,
+          "sha256": "0eb2491b0a9ac94790389d39c09dd5005c6c1f0665842943829bbd0193f6cc4f",
+          "mode": 420
+        },
+        "sqlite": {
+          "bytes": 1980736,
+          "sha256": "98e0e8acd01c632fe5615243e1296af0372826f8783b18fc31c506f73c47459c",
+          "mode": 420
+        }
+      },
+      "inventories": {
+        "hostSource": {
+          "files": 813,
+          "links": 0,
+          "directories": 45,
+          "canonicalJsonSha256": "c9f37699568042fed74c9159d43ecb540f85d0c0fd5d5260fd5ae09519b9911d"
+        },
+        "dependencies": {
+          "files": 48072,
+          "links": 95,
+          "directories": 5476,
+          "canonicalJsonSha256": "f1f37ca210ed2d8a4600b5213e856bcea426b6c11a17bfbbd3b856cfb84a3255"
+        },
+        "installedPackage": {
+          "files": 279,
+          "links": 0,
+          "directories": 8,
+          "canonicalJsonSha256": "c96bdd1e2cbf5381c07aa4f19c0887dfb8e2c6a87bb29f58f024f3535ae99963"
+        },
+        "artifacts": {
+          "files": 25,
+          "links": 0,
+          "directories": 0,
+          "canonicalJsonSha256": "0cb81007d11592f4994d1c77b3fb5f2050aadc2976cce846f4d068491c4dde32"
+        }
+      },
+      "recipeFiles": {
+        "freedom-private.cjs": {
+          "bytes": 9782,
+          "sha256": "970d89bbad1bcd979b676faceadc1b16a0349bc827cd1ce78a93306ad3aa07a1",
+          "mode": 420
+        },
+        "private-scenario.cjs": {
+          "bytes": 8800,
+          "sha256": "a34295eb890dcc8c97ee853d163cce9542467460acb651191bac89a62bf130b0",
+          "mode": 420
+        },
+        "read-scenario.cjs": {
+          "bytes": 6539,
+          "sha256": "6baeecc80a34c99c3b5c417ead4177720f861bc463e712a7009cb285c712a85c",
+          "mode": 420
+        },
+        "wire.cjs": {
+          "bytes": 4485,
+          "sha256": "4d9b1e4440309099a3dfd07ad59f4e8938450bbcc7724de903e8aa9547d49a89",
+          "mode": 420
+        },
+        "VECTOR.json": {
+          "bytes": 7483,
+          "sha256": "e7a4674cb426e4a23bb74da039d3e9b64713dfe06c7026497561dc99a34e6f0f",
+          "mode": 420
+        },
+        "WIRE-MAP.json": {
+          "bytes": 86614,
+          "sha256": "a355469b7e92a8c842cd1c0df76271c52fb6f4aae060a63bf80162265378a947",
+          "mode": 420
+        }
+      },
+      "publicSource": {
+        "bytes": 8466,
+        "sha256": "bfa8684f50b2bb838b026f2c4972653bfc4503d9fd15182c6c5b219ce1bc1e41",
+        "mode": 420
+      },
+      "originalProcesses": {
+        "driver": {
+          "pid": 38995,
+          "exitCode": 0,
+          "signal": null,
+          "natural": true
+        },
+        "main": {
+          "pid": 39537,
+          "exitObserved": true,
+          "closeObserved": true,
+          "code": 0,
+          "signal": null,
+          "timedOut": false,
+          "interrupted": false,
+          "terminateRequested": false,
+          "killRequested": false,
+          "natural": true
+        }
+      },
+      "limits": {
+        "profilePayloadRead": false,
+        "runtimeReexecuted": false,
+        "utilityModuleCacheObserved": false,
+        "completeDynamicImportCoverage": false,
+        "fullInventoriesPublished": false,
+        "rootProcessObservationIndependentlyAuthenticated": false
+      }
+    },
+    {
+      "mode": "stored-proof-cold",
+      "firstMode": "prepare",
+      "originalInputs": {
+        "request": {
+          "bytes": 5675386,
+          "sha256": "7ae5c4cff7032a6d93a5a24d494f98c2944bc990e75b049d00acbcaa29a9a5de"
+        },
+        "freeze": {
+          "bytes": 31993167,
+          "sha256": "6ec7a9a3bf6d1bd6fb52a72b0aa794be658500e3f98b0c9f6c34a5c172bfc0b5"
+        },
+        "report": {
+          "bytes": 140044,
+          "sha256": "7e200106c41f5e601474237d3d138c0d1230991c4f9ceb35b41d55c21e01d4c7"
+        },
+        "result": {
+          "bytes": 584,
+          "sha256": "f37cd4691253e29f18f6cfd8bdfc48e13a6f837219dd538e042b8654b96f46d1"
+        },
+        "post": {
+          "bytes": 113,
+          "sha256": "49d54689b3c3e0ff784782b0ef72b43ec1e538d1cb8a2fb704d1a7f52ec47800"
+        },
+        "process": {
+          "bytes": 220,
+          "sha256": "dd16fa6d91ef3bcbedd4550a7633057263a403db0fa81763bf19164dcf957d1a"
+        },
+        "driverObservation": {
+          "bytes": 357,
+          "sha256": "3064d076250b0e32a34a1f5ce17ca1f432423b25d6f566debb861b57aa165a55"
+        },
+        "preInventory": {
+          "bytes": 30484385,
+          "sha256": "4eb089c834fa339307eccb9eb759c9c6c06b0dda28338663a305d8b92347b319"
+        },
+        "build": {
+          "bytes": 19634372,
+          "sha256": "bd10fc28ca17f185257d942959b85c08765a00d122f44e251a8d063181fbc3c6"
+        },
+        "resolutions": {
+          "pre": {
+            "bytes": 1707671,
+            "sha256": "b2d7142334fc6bef2b34bb56992bf26888e80448e5943d858acec1dbc1d2864c"
+          },
+          "post": {
+            "bytes": 1707671,
+            "sha256": "b2d7142334fc6bef2b34bb56992bf26888e80448e5943d858acec1dbc1d2864c"
+          }
+        }
+      },
+      "hostCommit": "dcd242f13da2a1e9b49a1ac092ba42ef45f1be20",
+      "packageCommit": "fb3add6aa411375b42ed84735d4901bbc491c68e",
+      "packageTar": {
+        "bytes": 542263,
+        "sha256": "6169f7445db3306feae9a16f35d6665e9f767e59b071a41a05e5f14fef02c59c",
+        "mode": 420
+      },
+      "launcherFreezeSha256": "4660b18d2b7f6f543988e72da1925ac29fc13806d63a5e642e74682756221a51",
+      "buildSha256": "bd10fc28ca17f185257d942959b85c08765a00d122f44e251a8d063181fbc3c6",
+      "runtime": {
+        "engine": {
+          "bytes": 81790332,
+          "sha256": "019f10880abf1c448aee02ec77c5c2d68c3561c7b4eef02095d66bb5fecd6a7a",
+          "mode": 420
+        },
+        "prover": {
+          "bytes": 1613882,
+          "sha256": "dd50a29f297867b3bf91cb425066e1d257ea02230a94b02e4cf34c5c70a0c7ab",
+          "mode": 420
+        },
+        "electron": {
+          "bytes": 33968,
+          "sha256": "c9da78c3c79b9e6d6714fbf2a1136c4eb4a93cc5edad0f8ccfb058d681325e7e",
+          "mode": 493
+        },
+        "framework": {
+          "bytes": 202648272,
+          "sha256": "69147ed2f3eb9c95f47c442ae864767fa5a9fc8a2a9700c5ecf86be28c099c7f",
+          "mode": 493
+        },
+        "bootstrap": {
+          "bytes": 110862,
+          "sha256": "0eb2491b0a9ac94790389d39c09dd5005c6c1f0665842943829bbd0193f6cc4f",
+          "mode": 420
+        },
+        "sqlite": {
+          "bytes": 1980736,
+          "sha256": "98e0e8acd01c632fe5615243e1296af0372826f8783b18fc31c506f73c47459c",
+          "mode": 420
+        }
+      },
+      "inventories": {
+        "hostSource": {
+          "files": 813,
+          "links": 0,
+          "directories": 45,
+          "canonicalJsonSha256": "c9f37699568042fed74c9159d43ecb540f85d0c0fd5d5260fd5ae09519b9911d"
+        },
+        "dependencies": {
+          "files": 48072,
+          "links": 95,
+          "directories": 5476,
+          "canonicalJsonSha256": "f1f37ca210ed2d8a4600b5213e856bcea426b6c11a17bfbbd3b856cfb84a3255"
+        },
+        "installedPackage": {
+          "files": 279,
+          "links": 0,
+          "directories": 8,
+          "canonicalJsonSha256": "c96bdd1e2cbf5381c07aa4f19c0887dfb8e2c6a87bb29f58f024f3535ae99963"
+        },
+        "artifacts": {
+          "files": 25,
+          "links": 0,
+          "directories": 0,
+          "canonicalJsonSha256": "0cb81007d11592f4994d1c77b3fb5f2050aadc2976cce846f4d068491c4dde32"
+        }
+      },
+      "recipeFiles": {
+        "freedom-private.cjs": {
+          "bytes": 9782,
+          "sha256": "970d89bbad1bcd979b676faceadc1b16a0349bc827cd1ce78a93306ad3aa07a1",
+          "mode": 420
+        },
+        "private-scenario.cjs": {
+          "bytes": 8800,
+          "sha256": "a34295eb890dcc8c97ee853d163cce9542467460acb651191bac89a62bf130b0",
+          "mode": 420
+        },
+        "read-scenario.cjs": {
+          "bytes": 6539,
+          "sha256": "6baeecc80a34c99c3b5c417ead4177720f861bc463e712a7009cb285c712a85c",
+          "mode": 420
+        },
+        "wire.cjs": {
+          "bytes": 4485,
+          "sha256": "4d9b1e4440309099a3dfd07ad59f4e8938450bbcc7724de903e8aa9547d49a89",
+          "mode": 420
+        },
+        "VECTOR.json": {
+          "bytes": 7483,
+          "sha256": "e7a4674cb426e4a23bb74da039d3e9b64713dfe06c7026497561dc99a34e6f0f",
+          "mode": 420
+        },
+        "WIRE-MAP.json": {
+          "bytes": 86614,
+          "sha256": "a355469b7e92a8c842cd1c0df76271c52fb6f4aae060a63bf80162265378a947",
+          "mode": 420
+        }
+      },
+      "publicSource": {
+        "bytes": 8466,
+        "sha256": "bfa8684f50b2bb838b026f2c4972653bfc4503d9fd15182c6c5b219ce1bc1e41",
+        "mode": 420
+      },
+      "originalProcesses": {
+        "driver": {
+          "pid": 41695,
+          "exitCode": 0,
+          "signal": null,
+          "natural": true
+        },
+        "main": {
+          "pid": 41935,
+          "exitObserved": true,
+          "closeObserved": true,
+          "code": 0,
+          "signal": null,
+          "timedOut": false,
+          "interrupted": false,
+          "terminateRequested": false,
+          "killRequested": false,
+          "natural": true
+        }
+      },
+      "limits": {
+        "profilePayloadRead": false,
+        "runtimeReexecuted": false,
+        "utilityModuleCacheObserved": false,
+        "completeDynamicImportCoverage": false,
+        "fullInventoriesPublished": false,
+        "rootProcessObservationIndependentlyAuthenticated": false
+      }
+    },
+    {
+      "mode": "unchanged-list",
+      "firstMode": null,
+      "originalInputs": {
+        "request": {
+          "bytes": 5716320,
+          "sha256": "ebef5c853aca3231cc0979c5ffbb182ce3bfa29b9fb90a7b5786fdd945aef55f"
+        },
+        "freeze": {
+          "bytes": 31993168,
+          "sha256": "647de46bc2c428d4dcb5b5fbed92def60143e49fd9d5e17e0a0785c2eb62e0f9"
+        },
+        "report": {
+          "bytes": 165234,
+          "sha256": "aa3b3a88df2059bb63cf9380286805d74bbf0ac83746e215d0ae5820f314a12f"
+        },
+        "result": {
+          "bytes": 562,
+          "sha256": "7e641200767c17d8c9797fe677b8aba359bb12b6d1526450142791c23dd8c303"
+        },
+        "post": {
+          "bytes": 113,
+          "sha256": "7bacd3c2cba799e13dc965160847566fae84ca2da3da49bc0f40a145d7644f9b"
+        },
+        "process": {
+          "bytes": 220,
+          "sha256": "28fcd36b200b457c267408a6458864d43e55567bb8b7a0950bb3591d5bde54a1"
+        },
+        "driverObservation": {
+          "bytes": 357,
+          "sha256": "4db02cc269c14c9a26ea04f1b89057aa00fac51da28656deea9cc858bd2b28b7"
+        },
+        "preInventory": {
+          "bytes": 30484389,
+          "sha256": "c8c5d2f7dcab2742586d08827215f9e89df54ef2077b08ad242a0ba372f055c2"
+        },
+        "build": {
+          "bytes": 19634289,
+          "sha256": "18f72ac8ed045943732a9525880542e94f9849c8a7c1fb45823dbfbb2517b0fe"
+        },
+        "resolutions": {
+          "pre": {
+            "bytes": 1716997,
+            "sha256": "12c0bc7c4ccb467b691812de87896e296f21cb5ad3c5911ae434acbdd8633dc0"
+          },
+          "post": {
+            "bytes": 1716997,
+            "sha256": "12c0bc7c4ccb467b691812de87896e296f21cb5ad3c5911ae434acbdd8633dc0"
+          }
+        }
+      },
+      "hostCommit": "dcd242f13da2a1e9b49a1ac092ba42ef45f1be20",
+      "packageCommit": "fb3add6aa411375b42ed84735d4901bbc491c68e",
+      "packageTar": {
+        "bytes": 542263,
+        "sha256": "6169f7445db3306feae9a16f35d6665e9f767e59b071a41a05e5f14fef02c59c",
+        "mode": 420
+      },
+      "launcherFreezeSha256": "4660b18d2b7f6f543988e72da1925ac29fc13806d63a5e642e74682756221a51",
+      "buildSha256": "18f72ac8ed045943732a9525880542e94f9849c8a7c1fb45823dbfbb2517b0fe",
+      "runtime": {
+        "engine": {
+          "bytes": 81790332,
+          "sha256": "019f10880abf1c448aee02ec77c5c2d68c3561c7b4eef02095d66bb5fecd6a7a",
+          "mode": 420
+        },
+        "prover": {
+          "bytes": 1613882,
+          "sha256": "dd50a29f297867b3bf91cb425066e1d257ea02230a94b02e4cf34c5c70a0c7ab",
+          "mode": 420
+        },
+        "electron": {
+          "bytes": 33968,
+          "sha256": "c9da78c3c79b9e6d6714fbf2a1136c4eb4a93cc5edad0f8ccfb058d681325e7e",
+          "mode": 493
+        },
+        "framework": {
+          "bytes": 202648272,
+          "sha256": "69147ed2f3eb9c95f47c442ae864767fa5a9fc8a2a9700c5ecf86be28c099c7f",
+          "mode": 493
+        },
+        "bootstrap": {
+          "bytes": 110862,
+          "sha256": "0eb2491b0a9ac94790389d39c09dd5005c6c1f0665842943829bbd0193f6cc4f",
+          "mode": 420
+        },
+        "sqlite": {
+          "bytes": 1980736,
+          "sha256": "98e0e8acd01c632fe5615243e1296af0372826f8783b18fc31c506f73c47459c",
+          "mode": 420
+        }
+      },
+      "inventories": {
+        "hostSource": {
+          "files": 813,
+          "links": 0,
+          "directories": 45,
+          "canonicalJsonSha256": "c9f37699568042fed74c9159d43ecb540f85d0c0fd5d5260fd5ae09519b9911d"
+        },
+        "dependencies": {
+          "files": 48072,
+          "links": 95,
+          "directories": 5476,
+          "canonicalJsonSha256": "06c642afa3cc094754a3f99e8feb1ef9d659d9b092b235399c1f6ffc877e713d"
+        },
+        "installedPackage": {
+          "files": 279,
+          "links": 0,
+          "directories": 8,
+          "canonicalJsonSha256": "32ff6b5e76cb9fae6e0308d3dd03ac3454155d8016db781f672cc57ab025a3ed"
+        },
+        "artifacts": {
+          "files": 25,
+          "links": 0,
+          "directories": 0,
+          "canonicalJsonSha256": "0cb81007d11592f4994d1c77b3fb5f2050aadc2976cce846f4d068491c4dde32"
+        }
+      },
+      "recipeFiles": {
+        "freedom-private.cjs": {
+          "bytes": 9782,
+          "sha256": "970d89bbad1bcd979b676faceadc1b16a0349bc827cd1ce78a93306ad3aa07a1",
+          "mode": 420
+        },
+        "private-scenario.cjs": {
+          "bytes": 8800,
+          "sha256": "a34295eb890dcc8c97ee853d163cce9542467460acb651191bac89a62bf130b0",
+          "mode": 420
+        },
+        "read-scenario.cjs": {
+          "bytes": 6539,
+          "sha256": "6baeecc80a34c99c3b5c417ead4177720f861bc463e712a7009cb285c712a85c",
+          "mode": 420
+        },
+        "wire.cjs": {
+          "bytes": 4485,
+          "sha256": "4d9b1e4440309099a3dfd07ad59f4e8938450bbcc7724de903e8aa9547d49a89",
+          "mode": 420
+        },
+        "VECTOR.json": {
+          "bytes": 7483,
+          "sha256": "e7a4674cb426e4a23bb74da039d3e9b64713dfe06c7026497561dc99a34e6f0f",
+          "mode": 420
+        },
+        "WIRE-MAP.json": {
+          "bytes": 86614,
+          "sha256": "a355469b7e92a8c842cd1c0df76271c52fb6f4aae060a63bf80162265378a947",
+          "mode": 420
+        }
+      },
+      "publicSource": {
+        "bytes": 8466,
+        "sha256": "bfa8684f50b2bb838b026f2c4972653bfc4503d9fd15182c6c5b219ce1bc1e41",
+        "mode": 420
+      },
+      "originalProcesses": {
+        "driver": {
+          "pid": 39095,
+          "exitCode": 0,
+          "signal": null,
+          "natural": true
+        },
+        "main": {
+          "pid": 39605,
+          "exitObserved": true,
+          "closeObserved": true,
+          "code": 0,
+          "signal": null,
+          "timedOut": false,
+          "interrupted": false,
+          "terminateRequested": false,
+          "killRequested": false,
+          "natural": true
+        }
+      },
+      "limits": {
+        "profilePayloadRead": false,
+        "runtimeReexecuted": false,
+        "utilityModuleCacheObserved": false,
+        "completeDynamicImportCoverage": false,
+        "fullInventoriesPublished": false,
+        "rootProcessObservationIndependentlyAuthenticated": false
+      }
+    },
+    {
+      "mode": "signed-unfinished",
+      "firstMode": null,
+      "originalInputs": {
+        "request": {
+          "bytes": 5695494,
+          "sha256": "14d5deec3ffd0df2e2c3d425d5c4000e0ae69630d5090f817518fb0ebe0544e1"
+        },
+        "freeze": {
+          "bytes": 31993169,
+          "sha256": "28546d1acbbe537aacebd566c23bf8f912a3ad7b07bce6bc3a24110010ed171f"
+        },
+        "report": {
+          "bytes": 169279,
+          "sha256": "65bdbafd6d0d14a057ba97055f72d1b2a9344eee476473363fd8fab7f909ec95"
+        },
+        "result": {
+          "bytes": 588,
+          "sha256": "4bfa8e9e227cfb83fef571dc4b785e17cd623a0740d899a2e8315e0f89dc1684"
+        },
+        "post": {
+          "bytes": 113,
+          "sha256": "43c58f87e6e375a8c09602777b18bc32bdae8f688b83aafa56bdcdc73805cd0a"
+        },
+        "process": {
+          "bytes": 220,
+          "sha256": "2737729a1bb45c617e813ed09f95bbd9fb9a1a103d4813b663479502c5d183b4"
+        },
+        "driverObservation": {
+          "bytes": 357,
+          "sha256": "e653a7005fb3631c9ba17c1a42caffd2ac9ec4a1a8e95a7b92ff8014be9b3299"
+        },
+        "preInventory": {
+          "bytes": 30484387,
+          "sha256": "23408d502191f7df6dfaf302721dd2819284189f63852aa41fcd83139492ae08"
+        },
+        "build": {
+          "bytes": 19634373,
+          "sha256": "47fe4327d84b11be4c2a0ba6612c27cfbb67d2dd4203e62959208b5130b35aa3"
+        },
+        "resolutions": {
+          "pre": {
+            "bytes": 1712334,
+            "sha256": "b99f973b61866846a58d60ddad4898eb39f094f6474ef89f5dae1e9cf4a990d4"
+          },
+          "post": {
+            "bytes": 1712334,
+            "sha256": "b99f973b61866846a58d60ddad4898eb39f094f6474ef89f5dae1e9cf4a990d4"
+          }
+        }
+      },
+      "hostCommit": "dcd242f13da2a1e9b49a1ac092ba42ef45f1be20",
+      "packageCommit": "fb3add6aa411375b42ed84735d4901bbc491c68e",
+      "packageTar": {
+        "bytes": 542263,
+        "sha256": "6169f7445db3306feae9a16f35d6665e9f767e59b071a41a05e5f14fef02c59c",
+        "mode": 420
+      },
+      "launcherFreezeSha256": "4f58bf66872aa30197513b6c87aefd5366f7fd616532d14137fdcc42a76320c6",
+      "buildSha256": "47fe4327d84b11be4c2a0ba6612c27cfbb67d2dd4203e62959208b5130b35aa3",
+      "runtime": {
+        "engine": {
+          "bytes": 81790332,
+          "sha256": "019f10880abf1c448aee02ec77c5c2d68c3561c7b4eef02095d66bb5fecd6a7a",
+          "mode": 420
+        },
+        "prover": {
+          "bytes": 1613882,
+          "sha256": "dd50a29f297867b3bf91cb425066e1d257ea02230a94b02e4cf34c5c70a0c7ab",
+          "mode": 420
+        },
+        "electron": {
+          "bytes": 33968,
+          "sha256": "c9da78c3c79b9e6d6714fbf2a1136c4eb4a93cc5edad0f8ccfb058d681325e7e",
+          "mode": 493
+        },
+        "framework": {
+          "bytes": 202648272,
+          "sha256": "69147ed2f3eb9c95f47c442ae864767fa5a9fc8a2a9700c5ecf86be28c099c7f",
+          "mode": 493
+        },
+        "bootstrap": {
+          "bytes": 110862,
+          "sha256": "0eb2491b0a9ac94790389d39c09dd5005c6c1f0665842943829bbd0193f6cc4f",
+          "mode": 420
+        },
+        "sqlite": {
+          "bytes": 1980736,
+          "sha256": "98e0e8acd01c632fe5615243e1296af0372826f8783b18fc31c506f73c47459c",
+          "mode": 420
+        }
+      },
+      "inventories": {
+        "hostSource": {
+          "files": 813,
+          "links": 0,
+          "directories": 45,
+          "canonicalJsonSha256": "c9f37699568042fed74c9159d43ecb540f85d0c0fd5d5260fd5ae09519b9911d"
+        },
+        "dependencies": {
+          "files": 48072,
+          "links": 95,
+          "directories": 5476,
+          "canonicalJsonSha256": "f1f37ca210ed2d8a4600b5213e856bcea426b6c11a17bfbbd3b856cfb84a3255"
+        },
+        "installedPackage": {
+          "files": 279,
+          "links": 0,
+          "directories": 8,
+          "canonicalJsonSha256": "c96bdd1e2cbf5381c07aa4f19c0887dfb8e2c6a87bb29f58f024f3535ae99963"
+        },
+        "artifacts": {
+          "files": 25,
+          "links": 0,
+          "directories": 0,
+          "canonicalJsonSha256": "0cb81007d11592f4994d1c77b3fb5f2050aadc2976cce846f4d068491c4dde32"
+        }
+      },
+      "recipeFiles": {
+        "freedom-private.cjs": {
+          "bytes": 10495,
+          "sha256": "05e702e9d7fce1890db1bd6d4cbd3f92e668a7db7fc808cfb9c697535a00a1a8",
+          "mode": 420
+        },
+        "private-scenario.cjs": {
+          "bytes": 8800,
+          "sha256": "a34295eb890dcc8c97ee853d163cce9542467460acb651191bac89a62bf130b0",
+          "mode": 420
+        },
+        "recovery-scenario.cjs": {
+          "bytes": 7819,
+          "sha256": "38eaa4342e94322ee153c5997b3cd713d9808b6379aad49f31d4a9f714250e28",
+          "mode": 420
+        },
+        "read-scenario.cjs": {
+          "bytes": 6539,
+          "sha256": "6baeecc80a34c99c3b5c417ead4177720f861bc463e712a7009cb285c712a85c",
+          "mode": 420
+        },
+        "wire.cjs": {
+          "bytes": 4485,
+          "sha256": "4d9b1e4440309099a3dfd07ad59f4e8938450bbcc7724de903e8aa9547d49a89",
+          "mode": 420
+        },
+        "VECTOR.json": {
+          "bytes": 7483,
+          "sha256": "e7a4674cb426e4a23bb74da039d3e9b64713dfe06c7026497561dc99a34e6f0f",
+          "mode": 420
+        },
+        "WIRE-MAP.json": {
+          "bytes": 86614,
+          "sha256": "a355469b7e92a8c842cd1c0df76271c52fb6f4aae060a63bf80162265378a947",
+          "mode": 420
+        }
+      },
+      "publicSource": {
+        "bytes": 8466,
+        "sha256": "bfa8684f50b2bb838b026f2c4972653bfc4503d9fd15182c6c5b219ce1bc1e41",
+        "mode": 420
+      },
+      "originalProcesses": {
+        "driver": {
+          "pid": 39455,
+          "exitCode": 0,
+          "signal": null,
+          "natural": true
+        },
+        "main": {
+          "pid": 39962,
+          "exitObserved": true,
+          "closeObserved": true,
+          "code": 0,
+          "signal": null,
+          "timedOut": false,
+          "interrupted": false,
+          "terminateRequested": false,
+          "killRequested": false,
+          "natural": true
+        }
+      },
+      "limits": {
+        "profilePayloadRead": false,
+        "runtimeReexecuted": false,
+        "utilityModuleCacheObserved": false,
+        "completeDynamicImportCoverage": false,
+        "fullInventoriesPublished": false,
+        "rootProcessObservationIndependentlyAuthenticated": false
+      }
+    },
+    {
+      "mode": "signed-proof-cold",
+      "firstMode": "signed-unfinished",
+      "originalInputs": {
+        "request": {
+          "bytes": 5696893,
+          "sha256": "453d33147b4334f90d0ee9d9a90bed5b64a91b258d0d31a8fb34714fbee8ac17"
+        },
+        "freeze": {
+          "bytes": 31993169,
+          "sha256": "abee4051e72af8284594b177a7972c9039eb379a06a2e93edc7b3771f163cf45"
+        },
+        "report": {
+          "bytes": 144543,
+          "sha256": "9018be66be2dbb17d2ffcb6778d3d67d34f9114d3279dd6fad5167b50a89ca4b"
+        },
+        "result": {
+          "bytes": 610,
+          "sha256": "cd2755141c26f2d5ad580a2f8eb10a4ca2d87c29b875dce4bc1c78b1e446e2d7"
+        },
+        "post": {
+          "bytes": 113,
+          "sha256": "43c58f87e6e375a8c09602777b18bc32bdae8f688b83aafa56bdcdc73805cd0a"
+        },
+        "process": {
+          "bytes": 220,
+          "sha256": "9c28872a5ecd67d13b323970021e3b6bad6d62ce05a35a3a94c37f8bec54ef7c"
+        },
+        "driverObservation": {
+          "bytes": 357,
+          "sha256": "9273a0517e35e56c8d52205d4648ae2e3855e5391d91f83beb8e8a3308285d31"
+        },
+        "preInventory": {
+          "bytes": 30484387,
+          "sha256": "23408d502191f7df6dfaf302721dd2819284189f63852aa41fcd83139492ae08"
+        },
+        "build": {
+          "bytes": 19634373,
+          "sha256": "47fe4327d84b11be4c2a0ba6612c27cfbb67d2dd4203e62959208b5130b35aa3"
+        },
+        "resolutions": {
+          "pre": {
+            "bytes": 1712334,
+            "sha256": "b99f973b61866846a58d60ddad4898eb39f094f6474ef89f5dae1e9cf4a990d4"
+          },
+          "post": {
+            "bytes": 1712334,
+            "sha256": "b99f973b61866846a58d60ddad4898eb39f094f6474ef89f5dae1e9cf4a990d4"
+          }
+        }
+      },
+      "hostCommit": "dcd242f13da2a1e9b49a1ac092ba42ef45f1be20",
+      "packageCommit": "fb3add6aa411375b42ed84735d4901bbc491c68e",
+      "packageTar": {
+        "bytes": 542263,
+        "sha256": "6169f7445db3306feae9a16f35d6665e9f767e59b071a41a05e5f14fef02c59c",
+        "mode": 420
+      },
+      "launcherFreezeSha256": "4f58bf66872aa30197513b6c87aefd5366f7fd616532d14137fdcc42a76320c6",
+      "buildSha256": "47fe4327d84b11be4c2a0ba6612c27cfbb67d2dd4203e62959208b5130b35aa3",
+      "runtime": {
+        "engine": {
+          "bytes": 81790332,
+          "sha256": "019f10880abf1c448aee02ec77c5c2d68c3561c7b4eef02095d66bb5fecd6a7a",
+          "mode": 420
+        },
+        "prover": {
+          "bytes": 1613882,
+          "sha256": "dd50a29f297867b3bf91cb425066e1d257ea02230a94b02e4cf34c5c70a0c7ab",
+          "mode": 420
+        },
+        "electron": {
+          "bytes": 33968,
+          "sha256": "c9da78c3c79b9e6d6714fbf2a1136c4eb4a93cc5edad0f8ccfb058d681325e7e",
+          "mode": 493
+        },
+        "framework": {
+          "bytes": 202648272,
+          "sha256": "69147ed2f3eb9c95f47c442ae864767fa5a9fc8a2a9700c5ecf86be28c099c7f",
+          "mode": 493
+        },
+        "bootstrap": {
+          "bytes": 110862,
+          "sha256": "0eb2491b0a9ac94790389d39c09dd5005c6c1f0665842943829bbd0193f6cc4f",
+          "mode": 420
+        },
+        "sqlite": {
+          "bytes": 1980736,
+          "sha256": "98e0e8acd01c632fe5615243e1296af0372826f8783b18fc31c506f73c47459c",
+          "mode": 420
+        }
+      },
+      "inventories": {
+        "hostSource": {
+          "files": 813,
+          "links": 0,
+          "directories": 45,
+          "canonicalJsonSha256": "c9f37699568042fed74c9159d43ecb540f85d0c0fd5d5260fd5ae09519b9911d"
+        },
+        "dependencies": {
+          "files": 48072,
+          "links": 95,
+          "directories": 5476,
+          "canonicalJsonSha256": "f1f37ca210ed2d8a4600b5213e856bcea426b6c11a17bfbbd3b856cfb84a3255"
+        },
+        "installedPackage": {
+          "files": 279,
+          "links": 0,
+          "directories": 8,
+          "canonicalJsonSha256": "c96bdd1e2cbf5381c07aa4f19c0887dfb8e2c6a87bb29f58f024f3535ae99963"
+        },
+        "artifacts": {
+          "files": 25,
+          "links": 0,
+          "directories": 0,
+          "canonicalJsonSha256": "0cb81007d11592f4994d1c77b3fb5f2050aadc2976cce846f4d068491c4dde32"
+        }
+      },
+      "recipeFiles": {
+        "freedom-private.cjs": {
+          "bytes": 10495,
+          "sha256": "05e702e9d7fce1890db1bd6d4cbd3f92e668a7db7fc808cfb9c697535a00a1a8",
+          "mode": 420
+        },
+        "private-scenario.cjs": {
+          "bytes": 8800,
+          "sha256": "a34295eb890dcc8c97ee853d163cce9542467460acb651191bac89a62bf130b0",
+          "mode": 420
+        },
+        "recovery-scenario.cjs": {
+          "bytes": 7819,
+          "sha256": "38eaa4342e94322ee153c5997b3cd713d9808b6379aad49f31d4a9f714250e28",
+          "mode": 420
+        },
+        "read-scenario.cjs": {
+          "bytes": 6539,
+          "sha256": "6baeecc80a34c99c3b5c417ead4177720f861bc463e712a7009cb285c712a85c",
+          "mode": 420
+        },
+        "wire.cjs": {
+          "bytes": 4485,
+          "sha256": "4d9b1e4440309099a3dfd07ad59f4e8938450bbcc7724de903e8aa9547d49a89",
+          "mode": 420
+        },
+        "VECTOR.json": {
+          "bytes": 7483,
+          "sha256": "e7a4674cb426e4a23bb74da039d3e9b64713dfe06c7026497561dc99a34e6f0f",
+          "mode": 420
+        },
+        "WIRE-MAP.json": {
+          "bytes": 86614,
+          "sha256": "a355469b7e92a8c842cd1c0df76271c52fb6f4aae060a63bf80162265378a947",
+          "mode": 420
+        }
+      },
+      "publicSource": {
+        "bytes": 8466,
+        "sha256": "bfa8684f50b2bb838b026f2c4972653bfc4503d9fd15182c6c5b219ce1bc1e41",
+        "mode": 420
+      },
+      "originalProcesses": {
+        "driver": {
+          "pid": 41733,
+          "exitCode": 0,
+          "signal": null,
+          "natural": true
+        },
+        "main": {
+          "pid": 41934,
+          "exitObserved": true,
+          "closeObserved": true,
+          "code": 0,
+          "signal": null,
+          "timedOut": false,
+          "interrupted": false,
+          "terminateRequested": false,
+          "killRequested": false,
+          "natural": true
+        }
+      },
+      "limits": {
+        "profilePayloadRead": false,
+        "runtimeReexecuted": false,
+        "utilityModuleCacheObserved": false,
+        "completeDynamicImportCoverage": false,
+        "fullInventoriesPublished": false,
+        "rootProcessObservationIndependentlyAuthenticated": false
+      }
+    }
+  ],
+  "historicalEvidence": [
+    "../installed-owner-private-0.6.0-2026-10-08/",
+    "../installed-owner-private-restart-0.6.0-2026-10-08/"
+  ]
+}
