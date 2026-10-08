@@ -1829,6 +1829,6 @@ test('enrollment revocation refuses immediate reuse until its original root loan
   const originalClosed = observeRailgunEnrollmentClosure(entry);
   entry.close();
   await expect(open()).rejects.toMatchObject({ code: 'RAILGUN_ACCOUNT_ENROLLMENT_REFUSED' });
-  await Promise.allSettled([originalClosed]);
+  await expect(originalClosed).resolves.toBeUndefined();
   expect((await open()).descriptor).toEqual(mockIdentity.descriptor);
 });
