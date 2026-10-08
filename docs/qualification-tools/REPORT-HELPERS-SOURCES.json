@@ -1,0 +1,207 @@
+{
+  "schema": "railgun-private-report-helper-staging-v1",
+  "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+  "packageBase": "d64cb2749f092cea430fd540ea8503624ea91264",
+  "files": [
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-restart-counts.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-combined-poi-restart-counts.js",
+      "mode": "100644",
+      "sourceBlob": "2529193be9d695a6319918455e2c45d232bfb418",
+      "sourceSha256": "10d757589f07788f2ec0f7e24ddcabbf0da1d8b704437fe6ebcd5f63faa7f613",
+      "sourceBytes": 3055,
+      "sourceLines": 84,
+      "destinationSha256": "1861574a4bede47846a4dd6e254312723d446966cecb66197c23477cfad9fba9",
+      "edits": [
+        {
+          "start": 1618,
+          "end": 1666,
+          "before": "'../../src/main/wallet/railgun-shield-pins.json'",
+          "after": "\"../../../../src/railgun-shield-pins.json\"",
+          "target": "src/railgun-shield-pins.json"
+        }
+      ]
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-restart-counts.test.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-combined-poi-restart-counts.test.js",
+      "mode": "100644",
+      "sourceBlob": "b821c4e740f3dc8052e775750973552c6a951616",
+      "sourceSha256": "86ec5efa6995f3ab68eb433e0f7a4104da616f39fd42ea566e4141bbf50a4ff4",
+      "sourceBytes": 3068,
+      "sourceLines": 80,
+      "destinationSha256": "9f3450c49cf6b7c7fc5895e564c18e4b48c5b769f878f968d168a00f79ab9974",
+      "edits": [
+        {
+          "start": 207,
+          "end": 255,
+          "before": "'../../src/main/wallet/railgun-shield-pins.json'",
+          "after": "\"../../../../src/railgun-shield-pins.json\"",
+          "target": "src/railgun-shield-pins.json"
+        }
+      ]
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-restart-data.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-combined-poi-restart-data.js",
+      "mode": "100644",
+      "sourceBlob": "c0984472686aa37881016461d8a5e35847e1a354",
+      "sourceSha256": "2fe8a73a85945e0e9439ca8639ac417678ecf78298b62d4f966852a9da1b469c",
+      "sourceBytes": 7690,
+      "sourceLines": 205,
+      "destinationSha256": "2fe8a73a85945e0e9439ca8639ac417678ecf78298b62d4f966852a9da1b469c",
+      "edits": []
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-restart-data.test.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-combined-poi-restart-data.test.js",
+      "mode": "100644",
+      "sourceBlob": "67678503967d7b82abdc91b49b6e92cb52cc9994",
+      "sourceSha256": "e17cee66a0cb24a38481e49084c4adb0ff89b767f3ee3f6e143be21b5af5f78f",
+      "sourceBytes": 7769,
+      "sourceLines": 197,
+      "destinationSha256": "e17cee66a0cb24a38481e49084c4adb0ff89b767f3ee3f6e143be21b5af5f78f",
+      "edits": []
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-cold-counts.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-combined-poi-second-cold-counts.js",
+      "mode": "100644",
+      "sourceBlob": "bbc067fa96e5e15bb072fd14ecdd474f09b2ea96",
+      "sourceSha256": "11770866c34af0ed4301b30b469d0b4ba9a9e9e48906380f417c5e66436ceed4",
+      "sourceBytes": 9067,
+      "sourceLines": 208,
+      "destinationSha256": "1c5de8a2339a434fe7a2c95e5e5083cde3dc0331c0fa140c7fbd70771e0920d6",
+      "edits": [
+        {
+          "start": 6531,
+          "end": 6579,
+          "before": "'../../src/main/wallet/railgun-shield-pins.json'",
+          "after": "\"../../../../src/railgun-shield-pins.json\"",
+          "target": "src/railgun-shield-pins.json"
+        }
+      ]
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-cold-counts.test.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-combined-poi-second-cold-counts.test.js",
+      "mode": "100644",
+      "sourceBlob": "fc6790e3f72ca7fe21f5551c91aeef2da04f4327",
+      "sourceSha256": "8823274825eb0fb9ca43c2101cc1a8773d5565787bbabf3c711250857338b67d",
+      "sourceBytes": 8221,
+      "sourceLines": 208,
+      "destinationSha256": "8823274825eb0fb9ca43c2101cc1a8773d5565787bbabf3c711250857338b67d",
+      "edits": []
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-handoff.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-combined-poi-second-handoff.js",
+      "mode": "100644",
+      "sourceBlob": "8091b50b0771aca6f22f25bafada9640ab22afa5",
+      "sourceSha256": "ace7da5bcd797c9e72b279525e638ad72e75c71cd35a42a357abdf7ef64b74e4",
+      "sourceBytes": 6992,
+      "sourceLines": 182,
+      "destinationSha256": "ace7da5bcd797c9e72b279525e638ad72e75c71cd35a42a357abdf7ef64b74e4",
+      "edits": []
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-handoff.test.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-combined-poi-second-handoff.test.js",
+      "mode": "100644",
+      "sourceBlob": "016bffbce8ef93d7789706676f139c7a5c9f988b",
+      "sourceSha256": "1f3b76ee9daa1b421ee9afd147df364eee59cac737822e74bb39c5655ce38a02",
+      "sourceBytes": 8536,
+      "sourceLines": 211,
+      "destinationSha256": "1f3b76ee9daa1b421ee9afd147df364eee59cac737822e74bb39c5655ce38a02",
+      "edits": []
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-recovery-data.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-combined-poi-second-recovery-data.js",
+      "mode": "100644",
+      "sourceBlob": "a7a46738a1777e323b6a838dd6a30f69a5cc5248",
+      "sourceSha256": "99c910ac610c15b3ed881d9903b906038c03d496ff38327c1403b27f78aab9cf",
+      "sourceBytes": 11204,
+      "sourceLines": 288,
+      "destinationSha256": "99c910ac610c15b3ed881d9903b906038c03d496ff38327c1403b27f78aab9cf",
+      "edits": []
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-recovery-data.test.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-combined-poi-second-recovery-data.test.js",
+      "mode": "100644",
+      "sourceBlob": "c9b41881a7ce1e352dd16975521a0427224b53c0",
+      "sourceSha256": "adf8998610ffb3c085b0734ba3abc32f5948dcc1852445a8e81ee5e1b06edefc",
+      "sourceBytes": 15418,
+      "sourceLines": 416,
+      "destinationSha256": "adf8998610ffb3c085b0734ba3abc32f5948dcc1852445a8e81ee5e1b06edefc",
+      "edits": []
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-sign-counts.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-combined-poi-second-sign-counts.js",
+      "mode": "100644",
+      "sourceBlob": "1caef2216059a0ab3727673dae4f98047e1727ef",
+      "sourceSha256": "010cb48c8f29a83900b67e62449fa920a7a71d09cb67ef9546b8472efd85ff95",
+      "sourceBytes": 4170,
+      "sourceLines": 95,
+      "destinationSha256": "010cb48c8f29a83900b67e62449fa920a7a71d09cb67ef9546b8472efd85ff95",
+      "edits": []
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-sign-counts.test.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-combined-poi-second-sign-counts.test.js",
+      "mode": "100644",
+      "sourceBlob": "719ff7e004cd2fe6a95d9411aa2954eae5e7347a",
+      "sourceSha256": "05907d7f2e63e20e6c318b15a017504d127c587467906b6b23f591f96265dbd7",
+      "sourceBytes": 7081,
+      "sourceLines": 180,
+      "destinationSha256": "05907d7f2e63e20e6c318b15a017504d127c587467906b6b23f591f96265dbd7",
+      "edits": []
+    },
+    {
+      "source": "scripts/fixtures/railgun-native-assertions.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-native-assertions.js",
+      "mode": "100644",
+      "sourceBlob": "e94d7c983016fc4bdcab6acb66e9e0356fb0a17b",
+      "sourceSha256": "ce0cf713ec4dd0172c7f6d8462ab75003f5296fe3f7f2d2506694341c57e9874",
+      "sourceBytes": 1522,
+      "sourceLines": 55,
+      "destinationSha256": "ce0cf713ec4dd0172c7f6d8462ab75003f5296fe3f7f2d2506694341c57e9874",
+      "edits": []
+    },
+    {
+      "source": "scripts/fixtures/railgun-public-cold-counts.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-public-cold-counts.js",
+      "mode": "100644",
+      "sourceBlob": "0af82e69089cf2dc96e8be39ac20e279c2afa9c9",
+      "sourceSha256": "9e450b20ffd819f7395139245f7b4e8f312c6f03a73a5cc6687281e5f8a9102a",
+      "sourceBytes": 3294,
+      "sourceLines": 106,
+      "destinationSha256": "9e450b20ffd819f7395139245f7b4e8f312c6f03a73a5cc6687281e5f8a9102a",
+      "edits": []
+    },
+    {
+      "source": "scripts/fixtures/railgun-public-cold-counts.test.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-public-cold-counts.test.js",
+      "mode": "100644",
+      "sourceBlob": "62a51874beebb4c40b6125c1ded6e2dc358f4dd3",
+      "sourceSha256": "bf75dce5838c73d6c62477406ab7e2f220d50016486aab4fa5adf85b089ab156",
+      "sourceBytes": 3964,
+      "sourceLines": 105,
+      "destinationSha256": "bf75dce5838c73d6c62477406ab7e2f220d50016486aab4fa5adf85b089ab156",
+      "edits": []
+    }
+  ],
+  "privateCanonicalInputs": {
+    "src/railgun-shield-pins.json": "0f38d69a9acb5ecdaeb7197f4410a1c6068b8896e4204a179631176223e31a75"
+  },
+  "dynamicImports": [],
+  "lazyExternalImport": {
+    "request": "original-fs",
+    "source": "scripts/fixtures/railgun-combined-poi-restart-data.js",
+    "function": "runtimeHashes",
+    "requirement": "Electron built-in, not executed in Node-only source tests; not a Node fallback"
+  },
+  "profileAccess": "Only when explicit future callers invoke handoff/snapshot methods; no import-time access. Original tests use fresh synthetic temporary directories."
+}
