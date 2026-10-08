@@ -1,0 +1,3612 @@
+{
+  "schema": "railgun-historical-freedom-tools-v1",
+  "sourceCommit": "860c680f635fc5941b4b3bad8295bbad9315199f",
+  "sourceRoot": "Freedom Browser repository",
+  "scope": "All tracked scripts paths containing railgun; no profiles, runtime artifacts, dependency trees or generated reports",
+  "sourceCount": 360,
+  "historicalCopies": 327,
+  "existingByteIdentical": 33,
+  "deletionAuthorizedByManifest": false,
+  "files": [
+    {
+      "source": "scripts/capture-railgun-sepolia-logs.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/capture-railgun-sepolia-logs.js",
+      "sourceBlob": "a9fc82a9447e76ffec1ca42b331da23586319cfd",
+      "sha256": "077a6ae0ef84a7df7a45de0e20d915463ba538878b901741278c87e8c7b9ec84",
+      "bytes": 11268,
+      "lines": 291,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/capture-railgun-sepolia-logs.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/capture-railgun-sepolia-logs.test.js",
+      "sourceBlob": "439a6163467d92bc749896061243104c10f7d2c1",
+      "sha256": "f7212e07c8fea2fc1b2b82ac9cb1a43afc3c4abcb0938a9c77ceb14561be47df",
+      "bytes": 7157,
+      "lines": 210,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/create-railgun-test-profile.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/create-railgun-test-profile.js",
+      "sourceBlob": "fe8dcb44ea47b228317733872e7ae85e2f106aa4",
+      "sha256": "24a8e02a5822c23647a93d28d258fd338bf537bb4df6a611d92b108744bc71d6",
+      "bytes": 3779,
+      "lines": 99,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/create-railgun-test-profile.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/create-railgun-test-profile.test.js",
+      "sourceBlob": "e2cf1bd3d599b25f6bbe5f79bdfb08ebed4c8d34",
+      "sha256": "b0afc834033f0b3c827ae83e14797603378aa1544ee9794f77edf712b2a92c49",
+      "bytes": 4367,
+      "lines": 92,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-account-fence-process.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-account-fence-process.js",
+      "sourceBlob": "17d15a9c8e1a0e2feb22aaf4ee40f360727d2876",
+      "sha256": "6107ee0b82972bc95721416668aa4a7fdda2699729dacf7ec04c646e5c8decdb",
+      "bytes": 10076,
+      "lines": 284,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-account-fence-process.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-account-fence-process.test.js",
+      "sourceBlob": "dd32d8b9be4cae636c8c98f74ef2f94f5b929140",
+      "sha256": "2fa20bb99d60e0cb81f08ffef16712130d90df85a5f754e1eaddf5a8f8a5c8c9",
+      "bytes": 5877,
+      "lines": 156,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-capsule-data.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-capsule-data.js",
+      "sourceBlob": "992597609d0e63b5b4363fa51207da65d81c2f4c",
+      "sha256": "7102ae32a28514daff8c73549de904dbb85ea997df3ef47f4656607e7f92d618",
+      "bytes": 2256,
+      "lines": 77,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-cold-submission-eoa.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-cold-submission-eoa.js",
+      "sourceBlob": "8b50cd84714bbe4a9efb47a596b284bf985a895a",
+      "sha256": "a39c0474e1d903aeb8d0e2fa50a9ac87417b7b27ab5edb7eba8afa452252b46b",
+      "bytes": 10145,
+      "lines": 257,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-cold-submission-latency.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-cold-submission-latency.js",
+      "sourceBlob": "8c81907086f6dc2d039ab51bf25e05df33b7899e",
+      "sha256": "c1f1150426a9cafa31f69a2e0465eab211676e80fb4b2aa37f2fa6d6ddac7463",
+      "bytes": 13827,
+      "lines": 378,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-cold-submission-source.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-cold-submission-source.js",
+      "sourceBlob": "bd22c6b9c01d87fb38d231c9ac2854e0cc04de66",
+      "sha256": "e070be0454e4bb1ec67d5f3f599b2c319b4b9555106e5f3a1db3b839bfecf5da",
+      "bytes": 2643,
+      "lines": 66,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-chain.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-chain.js",
+      "sourceBlob": "e107b091b0f1637bbeb763978979ae1a4d5f2829",
+      "sha256": "e45099d35a222d171f087ff44069b8ecb0fb8bd5ad1e63f46190734fbe9b65cb",
+      "bytes": 16365,
+      "lines": 391,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-chain.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-chain.test.js",
+      "sourceBlob": "bc3a2d63da1daac9e3c72e69a79d262607a11fe5",
+      "sha256": "77ce17c820cd69a1e3147a809c61699227f0b5da31aef48212b6a5c1e804c814",
+      "bytes": 7455,
+      "lines": 192,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-change-inventory.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-change-inventory.js",
+      "sourceBlob": "78d4b157fec505ac63c374d9bdb7a342a8879764",
+      "sha256": "b86e94a398c4be38e04e643cffff6c2824db386131e9bec608cbcdbebfb289b3",
+      "bytes": 2815,
+      "lines": 69,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-change-inventory.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-change-inventory.test.js",
+      "sourceBlob": "b1034d0df0f69839e6a69d7a653d1de42d1bee20",
+      "sha256": "2f9b33fa819f1f7120fbf8283519649670454a5438834e9a468d7393a0fc1bc5",
+      "bytes": 1214,
+      "lines": 32,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-change-scan.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-change-scan.js",
+      "sourceBlob": "b06b28bee0e843ce8794219f92532e01d5724b3e",
+      "sha256": "f95d102f52136bdd1e2bb0eb3d7d4e678274e2ec6c119d2e50a6964417a6dc03",
+      "bytes": 7614,
+      "lines": 191,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-change-scan.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-change-scan.test.js",
+      "sourceBlob": "4249fe5edb5c18806010a2063accffe452f41f6d",
+      "sha256": "ce1714f4509ca65cf23438930d79295932ef8ab7c6859eb243b2042576c881e9",
+      "bytes": 9111,
+      "lines": 243,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-lifecycle.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-lifecycle.js",
+      "sourceBlob": "c0f26a7afe9aadd990c039f388536333e48a01cd",
+      "sha256": "e919631e6e183b56d61597bb933605d2899af7dc0964d3a0af03637af0b20f6d",
+      "bytes": 40140,
+      "lines": 1101,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-list-acceptance.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-list-acceptance.js",
+      "sourceBlob": "09015a82fed121c6f3bf3b5e2e3af5365112efd1",
+      "sha256": "30e41a6e6657633bdabce9755c58ab2fd2d87340d65d6f9798cd61c91fe397b2",
+      "bytes": 16585,
+      "lines": 443,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-list-acceptance.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-list-acceptance.test.js",
+      "sourceBlob": "fbd6549e7f31983db5aa01563800ffc7118357a4",
+      "sha256": "3cc335cfd3bc47d1d972f8948a159b5853717b5dfdae2e2ea08d2658b89125a5",
+      "bytes": 17682,
+      "lines": 461,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-list-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-list-job.js",
+      "sourceBlob": "a9dcdbaecd8dcc3b6b40f099eba32054ca15cdf7",
+      "sha256": "6d5dcbed319d593ea3b58c1109ea7a82c502e32277e7c18c2763165958adefb2",
+      "bytes": 5615,
+      "lines": 134,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-list-job.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-list-job.test.js",
+      "sourceBlob": "395ef2f727db9bef0c89bfd7f43ed593cc751fa4",
+      "sha256": "6b850f3af3b60c3c3f23a2bbc50fe4417daf0e7efa8c133b655e7c283c363c61",
+      "bytes": 7853,
+      "lines": 209,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-list-replay.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-list-replay.js",
+      "sourceBlob": "ab2d45dc4a626b3320ff7fa0e20107eb839ea7f9",
+      "sha256": "e5c6058e5a73afc9046f52d7727ea9cc3476823848f165d686c73c0d516f1357",
+      "bytes": 4453,
+      "lines": 122,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-list-replay.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-list-replay.test.js",
+      "sourceBlob": "d24854a1126227685fb2ce0b29822a011fa2f750",
+      "sha256": "4e6c748bfe799c0489595237102906ea9e2c1ecfc0cbbbccdf5c89d50566f18f",
+      "bytes": 4038,
+      "lines": 65,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-restart-chain.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-restart-chain.test.js",
+      "sourceBlob": "d43732c2d80117c484cbd2e9fc16df4f33c029ca",
+      "sha256": "a13c93fc061d18c5cc4ec40dd59ba1d541abd68e263dddfbd932ec54bc8c698e",
+      "bytes": 3764,
+      "lines": 101,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-restart-counts.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-restart-counts.js",
+      "sourceBlob": "2529193be9d695a6319918455e2c45d232bfb418",
+      "sha256": "10d757589f07788f2ec0f7e24ddcabbf0da1d8b704437fe6ebcd5f63faa7f613",
+      "bytes": 3055,
+      "lines": 84,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-restart-counts.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-restart-counts.test.js",
+      "sourceBlob": "b821c4e740f3dc8052e775750973552c6a951616",
+      "sha256": "86ec5efa6995f3ab68eb433e0f7a4104da616f39fd42ea566e4141bbf50a4ff4",
+      "bytes": 3068,
+      "lines": 80,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-restart-data.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-combined-poi-restart-data.js",
+      "sourceBlob": "c0984472686aa37881016461d8a5e35847e1a354",
+      "sha256": "2fe8a73a85945e0e9439ca8639ac417678ecf78298b62d4f966852a9da1b469c",
+      "bytes": 7690,
+      "lines": 205,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-restart-data.test.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-combined-poi-restart-data.test.js",
+      "sourceBlob": "67678503967d7b82abdc91b49b6e92cb52cc9994",
+      "sha256": "e17cee66a0cb24a38481e49084c4adb0ff89b767f3ee3f6e143be21b5af5f78f",
+      "bytes": 7769,
+      "lines": 197,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-restart-storage.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-restart-storage.js",
+      "sourceBlob": "27238ca36b73ead26a8ce89cedd884448b155fcf",
+      "sha256": "cd58f288fe96ce9da67f1a001287c56869c1762467abb7cf0cde6a3c5815a200",
+      "bytes": 5296,
+      "lines": 141,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-restart-storage.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-restart-storage.test.js",
+      "sourceBlob": "b33389c227dc9884b23ac4074799e22cdf31a652",
+      "sha256": "99cf5c1e8ea429bf96fc06edafdd217209e01e4e8e091283ab4f7efb418766cd",
+      "bytes": 11847,
+      "lines": 242,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-restart.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-restart.js",
+      "sourceBlob": "e8ee0b3605171d798b56d2c2ea990b928d8186ee",
+      "sha256": "90902a184eaef50734783d3ce38c2078ac67f3aecad9e4c1eb489f4b56af5758",
+      "bytes": 13194,
+      "lines": 366,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-restart.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-restart.test.js",
+      "sourceBlob": "ad7b6b8759940ae02e53818810b9e003581cbf12",
+      "sha256": "937fe6f3f70a0721721ec065497a3a20545ee7f2062800813a7da33c47908973",
+      "bytes": 14535,
+      "lines": 415,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-row-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-row-job.js",
+      "sourceBlob": "659b503abffca3a6e188d6950e5e3122624d8027",
+      "sha256": "c4d53235a1e4ecb8c9fb394e5537cf8a1eba59d28e5a40a44f69d5bee83687d4",
+      "bytes": 3735,
+      "lines": 84,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-row-job.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-row-job.test.js",
+      "sourceBlob": "37db9e0c041d27616241e51caf033d909813c645",
+      "sha256": "19b670006f91a44f5a537564aea3fb8ebd655a4f2cb76e7e701a0d41a85b7d14",
+      "bytes": 4507,
+      "lines": 132,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-chain.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-second-chain.js",
+      "sourceBlob": "60197a5868c38b498a59cfaf983973dcbbf41962",
+      "sha256": "8aeea298a796fcc2e63f178dc71a35c0628014e1af72573b59e9d82492851cd7",
+      "bytes": 19193,
+      "lines": 465,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-chain.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-second-chain.test.js",
+      "sourceBlob": "524ac8451fe1422795324f293a467aced3fd8593",
+      "sha256": "bb83080aae78f0dce0043be6568002f2d884f96b1f5f3283cd2d432a43938283",
+      "bytes": 13942,
+      "lines": 379,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-cold-chain.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-second-cold-chain.test.js",
+      "sourceBlob": "1c6a76903945039b6a9099f069e3ac9da5928933",
+      "sha256": "06748615fc6b5c1dc6ef2dbbdef678a44dcce9bf4a691cff597aa00c5bb608bd",
+      "bytes": 9689,
+      "lines": 277,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-cold-counts.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-second-cold-counts.js",
+      "sourceBlob": "bbc067fa96e5e15bb072fd14ecdd474f09b2ea96",
+      "sha256": "11770866c34af0ed4301b30b469d0b4ba9a9e9e48906380f417c5e66436ceed4",
+      "bytes": 9067,
+      "lines": 208,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-cold-counts.test.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-combined-poi-second-cold-counts.test.js",
+      "sourceBlob": "fc6790e3f72ca7fe21f5551c91aeef2da04f4327",
+      "sha256": "8823274825eb0fb9ca43c2101cc1a8773d5565787bbabf3c711250857338b67d",
+      "bytes": 8221,
+      "lines": 208,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-cold.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-second-cold.js",
+      "sourceBlob": "8c4be4f43f25d1022306e350803d325f405ce85a",
+      "sha256": "8f2507ab21766f143f8a28451e6db516818bd79fddd9dfea92cf1666e48e2983",
+      "bytes": 15138,
+      "lines": 375,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-cold.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-second-cold.test.js",
+      "sourceBlob": "62b4e9c1b1cb4c2c40951d46b9064bac46b31e13",
+      "sha256": "d5b644766f11bfd63336a50337be6d4c0f544c2ec3cf5790d8ebd463d66d8423",
+      "bytes": 19956,
+      "lines": 529,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-handoff.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-combined-poi-second-handoff.js",
+      "sourceBlob": "8091b50b0771aca6f22f25bafada9640ab22afa5",
+      "sha256": "ace7da5bcd797c9e72b279525e638ad72e75c71cd35a42a357abdf7ef64b74e4",
+      "bytes": 6992,
+      "lines": 182,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-handoff.test.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-combined-poi-second-handoff.test.js",
+      "sourceBlob": "016bffbce8ef93d7789706676f139c7a5c9f988b",
+      "sha256": "1f3b76ee9daa1b421ee9afd147df364eee59cac737822e74bb39c5655ce38a02",
+      "bytes": 8536,
+      "lines": 211,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-prove-stop.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-second-prove-stop.test.js",
+      "sourceBlob": "86036c3a19f515d1fa21a00104c9805a4c5991d8",
+      "sha256": "5434e2cf38af3bb1e3f40550c7dee50e7f2791b49c33376ac9d77da233bc798f",
+      "bytes": 10917,
+      "lines": 297,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-recover-restart.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-second-recover-restart.test.js",
+      "sourceBlob": "25f1a582fcc3e20ea36ac04f637443a7a215f0fd",
+      "sha256": "a28ab5c86436705152a2e063bf7afb7641fbc03f8e261919f7f5695095ba0754",
+      "bytes": 10044,
+      "lines": 290,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-recovery-data.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-combined-poi-second-recovery-data.js",
+      "sourceBlob": "a7a46738a1777e323b6a838dd6a30f69a5cc5248",
+      "sha256": "99c910ac610c15b3ed881d9903b906038c03d496ff38327c1403b27f78aab9cf",
+      "bytes": 11204,
+      "lines": 288,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-recovery-data.test.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-combined-poi-second-recovery-data.test.js",
+      "sourceBlob": "c9b41881a7ce1e352dd16975521a0427224b53c0",
+      "sha256": "adf8998610ffb3c085b0734ba3abc32f5948dcc1852445a8e81ee5e1b06edefc",
+      "bytes": 15418,
+      "lines": 416,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-recovery-storage.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-second-recovery-storage.js",
+      "sourceBlob": "5f3ea08a625fa634b7ea1d68caf694322238d210",
+      "sha256": "15f14bb0be45f2ab9cfc48de957ef335954750e2fe2a81ae16a837dca37e3e7f",
+      "bytes": 2108,
+      "lines": 62,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-recovery-storage.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-second-recovery-storage.test.js",
+      "sourceBlob": "0e310e09be2b22c4a056e347f9cc2edee96c6cb9",
+      "sha256": "717811c4b195a46525ab636e22f09429c473d1c536c0a8bf4b3405bd12638483",
+      "bytes": 3668,
+      "lines": 122,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-recovery.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-second-recovery.js",
+      "sourceBlob": "a27de711f95875dbfabc596e96e137e282cde8ee",
+      "sha256": "80568ce654424a7812c36258b0776173e536dc4226801ee8b4ff0f7d25fe336b",
+      "bytes": 7059,
+      "lines": 173,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-recovery.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-second-recovery.test.js",
+      "sourceBlob": "feeb1f4ce37a46c1d0367ac5ca62b1238a882cc3",
+      "sha256": "3037490c76720fde2850ba54c68e25fb3342d16f729d7d4d4be89b0843094f4b",
+      "bytes": 12768,
+      "lines": 365,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-restart.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-second-restart.test.js",
+      "sourceBlob": "d55b4447e9ff3642d8eebc49a65ef5a526bf2446",
+      "sha256": "38301a95b7c0cb43c6faf8917a48439e76283f443a3e7f7f6419f8e6a5eff9a7",
+      "bytes": 10614,
+      "lines": 298,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-sign-counts.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-combined-poi-second-sign-counts.js",
+      "sourceBlob": "1caef2216059a0ab3727673dae4f98047e1727ef",
+      "sha256": "010cb48c8f29a83900b67e62449fa920a7a71d09cb67ef9546b8472efd85ff95",
+      "bytes": 4170,
+      "lines": 95,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-sign-counts.test.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-combined-poi-second-sign-counts.test.js",
+      "sourceBlob": "719ff7e004cd2fe6a95d9411aa2954eae5e7347a",
+      "sha256": "05907d7f2e63e20e6c318b15a017504d127c587467906b6b23f591f96265dbd7",
+      "bytes": 7081,
+      "lines": 180,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-sign-stop.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-second-sign-stop.test.js",
+      "sourceBlob": "6df3d86757c683dd485471f14b12b5628cabe6ff",
+      "sha256": "bd2453f0d5a96568350c94c6e9cb1bcc1575ed0890968078f054d78ed7ee78d8",
+      "bytes": 10582,
+      "lines": 311,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-signature-stop.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-second-signature-stop.js",
+      "sourceBlob": "024d5f6cae96394686f65eb5ee44ca610405563c",
+      "sha256": "06ada9be29c07b6b60aa1e083873e002fe06a4884b2c95e18dcaf93c375bedb4",
+      "bytes": 1698,
+      "lines": 43,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-signature-stop.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-second-signature-stop.test.js",
+      "sourceBlob": "c93478b33c7d97818ca2ffa429130dbcd033b25e",
+      "sha256": "9b0949a5489458be4a11cd1f944c17e2b00329e83a423da1aaa6b46b0e0f9c5c",
+      "bytes": 3108,
+      "lines": 88,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-spend.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-second-spend.js",
+      "sourceBlob": "ab9d672ed61378b4ea8fa40f4a4ff6d1121a89a8",
+      "sha256": "ed4e93a610b6c7e7130a06532b1a6ffc7dd3b264b05cdf2cc4424911b031c17a",
+      "bytes": 24728,
+      "lines": 606,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-second-spend.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-second-spend.test.js",
+      "sourceBlob": "7cb6fee51cc9f0faf3fa6e102754ce81d45a5ab8",
+      "sha256": "fb4bf2d3ce92b501e53884fa90ddc53df4bebd35c931ea242a3de1a94d72e1c4",
+      "bytes": 2678,
+      "lines": 116,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-store-observer.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-store-observer.js",
+      "sourceBlob": "62f226eee3801a59c6e11f89fc8300daa50a02cd",
+      "sha256": "0d927817eaf8ea7eda11ec1847d35d330b3bcdffba94d3775b7c60e7605874f9",
+      "bytes": 4037,
+      "lines": 117,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-terminal-chain.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-terminal-chain.test.js",
+      "sourceBlob": "a0d19212b2aef625c9f0755383158e3fbfc6c904",
+      "sha256": "f6ba02dea7d6e03c65eda8fc2b4d94e74cd8ab3ee0918d5b0c446fb8ec4f8ebf",
+      "bytes": 7365,
+      "lines": 253,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-terminal-data.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-terminal-data.js",
+      "sourceBlob": "2f7c5426920dbe34eda7af9fa46970371e629151",
+      "sha256": "37fe25b47a1b506eae4c0d85e0f537fc17679dcb375ae00ee196016e509af2a3",
+      "bytes": 9584,
+      "lines": 200,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-terminal-data.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-terminal-data.test.js",
+      "sourceBlob": "d299a72b37b0028e7b5e524b7093da8c8c09cb83",
+      "sha256": "ba15cd4cc8245c657d6c8367c15122596490225ecd9212603119cbc6a5e56b1f",
+      "bytes": 9213,
+      "lines": 250,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-terminal-flow.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-terminal-flow.test.js",
+      "sourceBlob": "bd9976c17468c3b02a60cefc415f18d4de042164",
+      "sha256": "97c5b82a4d283e17d130cd53ac3d2ea58e38b6409f2741e8e960fbf0df240b98",
+      "bytes": 11894,
+      "lines": 323,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-terminal-ingest.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-terminal-ingest.js",
+      "sourceBlob": "d1e70320dcd76939ae9058733ad5e2ebb1061bde",
+      "sha256": "2614284224760b30bde2fc2457c04a569d289a4886a3e304c4a453ab63e5f6b3",
+      "bytes": 12367,
+      "lines": 318,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-terminal-ingest.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-terminal-ingest.test.js",
+      "sourceBlob": "4a3805f40476b14bd28431760072129dca603e76",
+      "sha256": "5e6a9c3ffbc4adea347afa4486d57ab91c8e9ab352ea0800cbb8fb9ab6614918",
+      "bytes": 5297,
+      "lines": 164,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-combined-poi-terminal-test-data.fixture.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-combined-poi-terminal-test-data.fixture.js",
+      "sourceBlob": "8c844e102b7f7d79f2f999ee06e5c11ecdc9b941",
+      "sha256": "57388aa7a8533c8179fa1a9d050469f7d6081fadef67f00ec0618b1a7f13d94e",
+      "bytes": 3704,
+      "lines": 107,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-coordinated-electron-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-coordinated-electron-job.js",
+      "sourceBlob": "2a9dee11fb7f1efad219bd1c9bbd0bf6e79b4945",
+      "sha256": "846f32b213027faa0e959205af8815010c63128a9080a5598757d812eeeb1499",
+      "bytes": 7253,
+      "lines": 190,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-coordinated-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-coordinated-job.js",
+      "sourceBlob": "7fb6e0ce770d33b3dfa95bc6082d0b63341fd757",
+      "sha256": "34573bdb69091fea4106636af710781d3c21f47f3414f9b8a9bd0ad7f4becb36",
+      "bytes": 7627,
+      "lines": 201,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-electron-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-electron-job.js",
+      "sourceBlob": "e0e98495512c534055800a5cce2a800f991f0c09",
+      "sha256": "74018d1012cbd0e43ba1caf5a33eb41196632208e8c4c5fd8e5382b521c2e1eb",
+      "bytes": 4657,
+      "lines": 140,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-electron-tree-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-electron-tree-job.js",
+      "sourceBlob": "0fff4c2ab6d169f166373ecd7a163250d42d4f99",
+      "sha256": "84de4a6f59b4306a93b7f9898561bb62dd2378a6d7566d65fe66c6806c920f2f",
+      "bytes": 5134,
+      "lines": 121,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-electron-volume-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-electron-volume-job.js",
+      "sourceBlob": "32023e76727030900611eeb4578bef7375447a82",
+      "sha256": "b6f9d9036eda9e0985fd935c1f17ca54f9760b7fcf3b884966f5363c605b81c1",
+      "bytes": 4877,
+      "lines": 124,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-engine-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-engine-job.js",
+      "sourceBlob": "b125ad0ebe2616f4103b5dec04be04617e4c751e",
+      "sha256": "a92f2ff781f82365dd11fac722e99fa1fdaf2f7565c3684c33a4123f21d4670b",
+      "bytes": 19048,
+      "lines": 484,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-engine/README.md",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-engine/README.md",
+      "sourceBlob": "2508d212a2d92ed847f213f657cf81fe3bc31b61",
+      "sha256": "4eef73d96a79151dcfc40854afe48bfe8ed1157bc2928ecebcd97968c68ae5d2",
+      "bytes": 2450,
+      "lines": 16,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-engine/package-lock.json",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-engine/package-lock.json",
+      "sourceBlob": "8aabfc70d066e2b14994622de68149da915bdeb6",
+      "sha256": "463826801d2adb2a10911f7f1542431183692a55d9f3b9f1a1cf2a0f563adc31",
+      "bytes": 191972,
+      "lines": 5121,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-engine/package.json",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-engine/package.json",
+      "sourceBlob": "c467c21a23b078c9764fd7d96aee6e2a8d0a5a33",
+      "sha256": "d1f9f6b9d8093701c3ea4bcdb54e6296568facae622c943b5a41f06dc415e56a",
+      "bytes": 264,
+      "lines": 9,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-engine/runtime-integrity.json",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-engine/runtime-integrity.json",
+      "sourceBlob": "810aefd22ac07e889fb467eb6f074473d7b0e636",
+      "sha256": "dd2415c7d64ac3dc848e0d491b3e281fc30a1df54768252f1b42112837454513",
+      "bytes": 1902,
+      "lines": 36,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-enrolled-operation.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-enrolled-operation.js",
+      "sourceBlob": "deb6854015e71c09e78b5e0480867287e4a12455",
+      "sha256": "4dc8fd9541d2685bab13a154bb028fa3956aab3bc6a426a2c90bde129d2b1cda",
+      "bytes": 8826,
+      "lines": 232,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-enrolled-signing.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-enrolled-signing.js",
+      "sourceBlob": "21440c90c7b20252e367ffd314044dc415c58de1",
+      "sha256": "07927d3245f2290afeb6ab7408d482d6549809369ed707cd77962ace5416c399",
+      "bytes": 14504,
+      "lines": 402,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-enrolled-submission.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-enrolled-submission.js",
+      "sourceBlob": "6358840a261816f596348a560c52f8fe7eeafbf1",
+      "sha256": "dab025cd1120ca469a3fd9c8efbbd1d6c692a26fc095df84f22f3e4122dadfb5",
+      "bytes": 8915,
+      "lines": 248,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-enrolled-transact-staging.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-enrolled-transact-staging.js",
+      "sourceBlob": "281c021b873b6953af606abd77207858f1ac731d",
+      "sha256": "2e03a69af7b84169e3375bde51d025d4c64f33a7f612fa5883b2d587feb15bde",
+      "bytes": 11805,
+      "lines": 317,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-foreign-recipient-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-foreign-recipient-job.js",
+      "sourceBlob": "22f62250a42dcf2305275c7593ed19864e7d63f5",
+      "sha256": "b9998bf3405a0a627f395aed941983d2e0482d24495a43202ca29a6934368b23",
+      "bytes": 19111,
+      "lines": 475,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-foreign-recipient-job.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-foreign-recipient-job.test.js",
+      "sourceBlob": "3c37fc56979d5a35f43ee755c40ce304aef6daa1",
+      "sha256": "8e3cf211f4760558be3b8c9b5a96988abfc04e1136d884ff05d7ac7373075b44",
+      "bytes": 15941,
+      "lines": 422,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-foreign-transfer-engine.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-foreign-transfer-engine.test.js",
+      "sourceBlob": "9aa98565fa7cee24c154f529eba63fc7e7d7808f",
+      "sha256": "02e988a6bb2b592a8f261ecdf5f92aff7d9ee9f1fc93e5e765ca7b40c67475a5",
+      "bytes": 19023,
+      "lines": 496,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-history-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-history-job.js",
+      "sourceBlob": "24b9c5f6a733bb8e86271cf52a91f990f7320310",
+      "sha256": "531b11827ab907b87fc8297a043f0690fb97330fea94534ce86df6aeddf7bf65",
+      "bytes": 8407,
+      "lines": 218,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-job-observer.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-job-observer.js",
+      "sourceBlob": "4c7888d6dc9a5d041d5c51fd547bced20c6d4a3b",
+      "sha256": "440e8fd05c8354cf5dbdf73cc8e34452615cae5efc8b19ef6c42c690f4d3c2e5",
+      "bytes": 6527,
+      "lines": 148,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-job-observer.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-job-observer.test.js",
+      "sourceBlob": "5ee9fd28e63b83212614a57edd455f2a2cf9f0ab",
+      "sha256": "8c87d5c32ffa764b7ccf1bbd1d15c88d0a7270a97e8ad3463d426d36d6dd4324",
+      "bytes": 8698,
+      "lines": 200,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-adapter-sources.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-adapter-sources.js",
+      "sourceBlob": "91e55e96497cb885d6f41b5353ad2b662dbdff51",
+      "sha256": "4102eee946e20acc9d6839bbab01d90f84c5414f7ff251c9d0a17a2d7cb7037e",
+      "bytes": 3665,
+      "lines": 85,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-adapter-sources.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-adapter-sources.test.js",
+      "sourceBlob": "3a229626fb40f68bdd6e164d16f6f3852fa82940",
+      "sha256": "8ecd24e9fd9ed7db2735736ca7007ac3b360b65aef9f7c72649132800e3f6986",
+      "bytes": 5811,
+      "lines": 157,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-contract-conformance.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-contract-conformance.js",
+      "sourceBlob": "ba9c354b073a59b44c37611b516fd87703f4cd7f",
+      "sha256": "f4020a785b6e4fa433ceb3d7a39484cd6fe25b8ca00e3ff62fe1881b12561df2",
+      "bytes": 3805,
+      "lines": 98,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-contract-conformance.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-contract-conformance.test.js",
+      "sourceBlob": "0c5e749561f7d5043c19424ad93b055e023ad5ac",
+      "sha256": "d924cacc91cf5b4e4197df4c796b06870cf348f258505b7f061f8740de51b748",
+      "bytes": 8699,
+      "lines": 271,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-contract-observer.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-contract-observer.js",
+      "sourceBlob": "a0310f9c3380a5097db16ddcc21b181da393ef64",
+      "sha256": "53852a91043eb63fb939608e22b8faeced9bdeb9d2eb3d17eb020b67e5ecd8a0",
+      "bytes": 9615,
+      "lines": 272,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-contract-observer.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-contract-observer.test.js",
+      "sourceBlob": "456566a2fc16a04b1931d9aa3a4cb8e0036356e4",
+      "sha256": "94f59fabc3959ca72d71fbc12f70b14df1eb33f83af1479a3090c910cb7b4e7c",
+      "bytes": 32377,
+      "lines": 883,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-contract-oracle.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-contract-oracle.js",
+      "sourceBlob": "f1b9878f8265e16c6d8918a1b4ca36c2ce93e168",
+      "sha256": "4e04b7ea25d858b47ce0466069c5cd0a7030805f2a4100c3108a936f87bb8c91",
+      "bytes": 6001,
+      "lines": 130,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-contract-oracle.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-contract-oracle.test.js",
+      "sourceBlob": "9ba7d3228689fb9a64a53d16ff7494c847197bcc",
+      "sha256": "08eebafe330f480f65ad2c71b479ff9ed2fe17a47ef90be92d43db5476e20c1a",
+      "bytes": 8729,
+      "lines": 224,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-contract-pin.json",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-contract-pin.json",
+      "sourceBlob": "d4f8a97b3a35c4ffa02aa0ba5e227accf7ab37a5",
+      "sha256": "b9fa6285978d5b342e74e0ed7af65d0458de96083957aa09191ffc91f3c99aac",
+      "bytes": 2814,
+      "lines": 65,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-integration.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-integration.js",
+      "sourceBlob": "ed100e224c35eee13c4cf81d90a5a5ab464144b2",
+      "sha256": "ab4d8bbf6f15cf243eba4846b35d82e2332ba528d334f49e4c3c79232fa42c5b",
+      "bytes": 57339,
+      "lines": 1343,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-partial-native.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-partial-native.js",
+      "sourceBlob": "135dcc4c3b11ae823ca2d4502cdb7c5a0b03df14",
+      "sha256": "e5c5f27c264b91f84136e1e24efeb69b953526e3be8e10b9737bd7d6c9dacd4e",
+      "bytes": 12612,
+      "lines": 365,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-partial-native.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-partial-native.test.js",
+      "sourceBlob": "0d8a6a06c2125a5ab64af0166da44aa02b2007ad",
+      "sha256": "19bb6c3eccb8a3b025dcef1550bce92025f85b1f1f46489a2db6d0103aaa0b5d",
+      "bytes": 11037,
+      "lines": 328,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-private-conformance.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-private-conformance.js",
+      "sourceBlob": "ce471f83528e0bc0774de6530e2adafc28953796",
+      "sha256": "98a65575c5f23c277b8953fa95c05c990dec536fc14989860ba27d976fe80ad8",
+      "bytes": 4159,
+      "lines": 133,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-private-contract.d.ts",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-private-contract.d.ts",
+      "sourceBlob": "8fd3b41e1b4c9667127c26e80bb171d175d5c801",
+      "sha256": "ef7f1c9e1b2a8811eb1b5c774e41d53625419deca896e8a03ff8f24f94d4f4f9",
+      "bytes": 3685,
+      "lines": 102,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-private-native.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-private-native.js",
+      "sourceBlob": "75468f7d129df6c7b469397fc446cc08c02cae46",
+      "sha256": "0d602ac97442bee09ce94f8091eabeb4593c02a99a60189a7f0a16f09aa01e6e",
+      "bytes": 8386,
+      "lines": 228,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-private-native.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-private-native.test.js",
+      "sourceBlob": "95164a0e08eda830d4bfb7d52f95cf3f93c0bb28",
+      "sha256": "f7d2eb78a906f47600832939ebe624ebc3a5798220845749af4ae59f1ac662d5",
+      "bytes": 18151,
+      "lines": 477,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-public-conformance.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-public-conformance.js",
+      "sourceBlob": "6c5556dcc6c1f1c7de7ea4af3e9d0b193bdbb415",
+      "sha256": "22e2040e332185da0b1035ab0dc7ffe58db3533d36e96faa2852f8c55113a8de",
+      "bytes": 3332,
+      "lines": 112,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-public-contract.d.ts",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-public-contract.d.ts",
+      "sourceBlob": "76e6ad7dc754b6c064f0f8ad1f7c71d457a845ae",
+      "sha256": "04d6a865e641ea70cb84c489068886340bffc6a0122bbaf1a810c6ba14da4269",
+      "bytes": 3133,
+      "lines": 80,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-public-integration.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-public-integration.js",
+      "sourceBlob": "20c59244aa28e5d2bbd4038836336faa4198cb7d",
+      "sha256": "15497e91f7692d7474f4241727042fd9e404b1708025364de4f554b929e902cf",
+      "bytes": 44778,
+      "lines": 1044,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-public-integration.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-public-integration.test.js",
+      "sourceBlob": "9e1381e65824b9dfd1743ff911f1fe50021dc9ec",
+      "sha256": "1aa4230376e6ff8b0098ea572baacbaf09d9fa6d8a5604a8bccb0c86dbb773bf",
+      "bytes": 3758,
+      "lines": 107,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-second-handoff.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-second-handoff.test.js",
+      "sourceBlob": "cb197352ab78cca9b2933388062a1e11647bd201",
+      "sha256": "ae78bca5700e298819702eb55ff64aa000a76956be210cc5482e2d255f656726",
+      "bytes": 6682,
+      "lines": 165,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-second-instance.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-second-instance.js",
+      "sourceBlob": "b44f98d2a7efb8825c6f8b811c96489cec237982",
+      "sha256": "282eecc9c5f7e4ea6744445eaf3725470eb508a212184099f9cc1a58041b6bd4",
+      "bytes": 10285,
+      "lines": 279,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-second-instance.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-second-instance.test.js",
+      "sourceBlob": "7ffa07a5ea171067274fc036bfb62fb0c9e98c8e",
+      "sha256": "fbb8e128af25fa482a1db1db5474fa5dbfc921284e8704d1d444ed19bcae9a5e",
+      "bytes": 13550,
+      "lines": 346,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-snapshot-conformance.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-snapshot-conformance.js",
+      "sourceBlob": "7fefbbd9eeb08043ea2e0616d00f7243ab3d9643",
+      "sha256": "60ee448d53690e631ed5f3493e91011c7fc06e2e4bf65240292df3cea3d7ebf2",
+      "bytes": 3583,
+      "lines": 116,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-snapshot-contract.d.ts",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-snapshot-contract.d.ts",
+      "sourceBlob": "099bc10c983e6165225b46e710ce4e3741823d2d",
+      "sha256": "e8d17a0c103be64ff2d9e44e6ce0324437cbd73e544da4e784a603b566492792",
+      "bytes": 2296,
+      "lines": 66,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-snapshot-native.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-snapshot-native.js",
+      "sourceBlob": "e583be5dbed149d3226cce299badf5d625622fa8",
+      "sha256": "19740d4d40e0449617e4bad30f003ce702f561c3d62d4d5478371b234655336c",
+      "bytes": 9034,
+      "lines": 260,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-kohaku-snapshot-native.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-kohaku-snapshot-native.test.js",
+      "sourceBlob": "61f31022a9fd17dc2ef28b68f12a2962021b3807",
+      "sha256": "cf85850945b97504c73fbf9749d4945676b4b026098e01645a51c1e7abd595aa",
+      "bytes": 18480,
+      "lines": 484,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-native-assertions.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-native-assertions.js",
+      "sourceBlob": "e94d7c983016fc4bdcab6acb66e9e0356fb0a17b",
+      "sha256": "ce0cf713ec4dd0172c7f6d8462ab75003f5296fe3f7f2d2506694341c57e9874",
+      "bytes": 1522,
+      "lines": 55,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-note-provenance-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-note-provenance-job.js",
+      "sourceBlob": "dcb95fd20f75ae95286c08406eebca6c03dd5978",
+      "sha256": "d54310e5822bfa0a7918a10ed017b953e3dad4718091e04d7ecff09f9614bad8",
+      "bytes": 11377,
+      "lines": 298,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-own-poi-membership-input-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-own-poi-membership-input-job.js",
+      "sourceBlob": "94ee8244d8fef7653bf3b0896e05e9d328fe9609",
+      "sha256": "31f5f84fcc8b30c6360842c37695f8d7559be3ac6621e66fcc592092170daad4",
+      "bytes": 26735,
+      "lines": 675,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-own-poi-membership-signature.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-own-poi-membership-signature.js",
+      "sourceBlob": "9f18a9637eb7ae59ea0e7b84f810771419bdbbfe",
+      "sha256": "29d86022faea9ee29be486a4ae1e2eaa19d57d834ad317f01ea92e888cdf9f69",
+      "bytes": 9969,
+      "lines": 209,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-own-poi-membership-signature.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-own-poi-membership-signature.test.js",
+      "sourceBlob": "900367d7cc3cebf9181329ad5d45611432359401",
+      "sha256": "e799e6c1788de872def85811858635b6584e4c89d95c064ff9b7d542881d0a8a",
+      "bytes": 15182,
+      "lines": 321,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-own-preflight-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-own-preflight-job.js",
+      "sourceBlob": "762d2fd09b91f87c2094acbe8c55c7e20f34a651",
+      "sha256": "71c403e151493712146612fe388f6e8c233be07614a5f5b980e4002486f71b60",
+      "bytes": 1941,
+      "lines": 41,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-own-txid-data.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-own-txid-data.js",
+      "sourceBlob": "e40104690c86587e89a45465eb508768e102c870",
+      "sha256": "f5d56ae07e13815d2c19a14fa4f6cec8b1c2979e80b81461d9705fdb26bf7683",
+      "bytes": 4307,
+      "lines": 138,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-own-txid-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-own-txid-job.js",
+      "sourceBlob": "a70f67cd725466057518c145a7a834459ba486d2",
+      "sha256": "87e5356f1da88f6bb7ee125992e7c5015502a93e4d267b60f90ed55ee4b2751f",
+      "bytes": 3946,
+      "lines": 89,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-own-witness-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-own-witness-job.js",
+      "sourceBlob": "eb8fc2414fb6efebf55881865fae2a2824bc71df",
+      "sha256": "76b90a32f726e066898ea15f1252a984e92dd049500018dbcdfc5d641dfe991c",
+      "bytes": 1684,
+      "lines": 34,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-owned-poi-public-vector.json",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-owned-poi-public-vector.json",
+      "sourceBlob": "e814fcbde5e72865455770cf2fcfe0160733710c",
+      "sha256": "e2f57e9790eaae2af2d824651c369019fed6a9be222ace547c31aadf967ac6e6",
+      "bytes": 867,
+      "lines": 19,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-partial-capsule-data.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-partial-capsule-data.js",
+      "sourceBlob": "88d8effba1f1fce71d33db5ea9639c01f1269de2",
+      "sha256": "2f9bf03d64202bbeb599fc781f3bcee90b80783a9b75e75a7ac52b36e9e1a50c",
+      "bytes": 4223,
+      "lines": 131,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-partial-controller-poi-input-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-partial-controller-poi-input-job.js",
+      "sourceBlob": "aede5be3352e552c690ecf568cf8019120a0f458",
+      "sha256": "650f9168a265004aa53a475586477ffc24fade9fddff3c667c7530d0df617adb",
+      "bytes": 2109,
+      "lines": 56,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-partial-controller-services.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-partial-controller-services.js",
+      "sourceBlob": "e66f3872b0e7a9a622c83cb87385f4c207589f32",
+      "sha256": "aa702f34d68325f3bc2e7531caa5ad52b19f90d3dbc2270d512c40f27a0d0b01",
+      "bytes": 31394,
+      "lines": 754,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-partial-own-txid-data.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-partial-own-txid-data.js",
+      "sourceBlob": "fa7f32f189dd7ef65de1ca3e8819e423ed38cd67",
+      "sha256": "29e4328238e0b9d45457a12a3a40bdea296c5aa99b68e80777f2243bcae92c90",
+      "bytes": 4950,
+      "lines": 155,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-poi-prover-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-poi-prover-job.js",
+      "sourceBlob": "f73922edd63160ce57684aefb5edf70840747444",
+      "sha256": "d8ecc1e512036a555c47096253f883b44959de0da89d1284dd4b41b72f25fb68",
+      "bytes": 15044,
+      "lines": 422,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-poi-reconstruction-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-poi-reconstruction-job.js",
+      "sourceBlob": "330946063b67d2b26ee2ba7f94498d7c8bccaa5d",
+      "sha256": "744c3638e7e5b89eead69cff43e9a36f20b0d3d5da7c193da73557c2ede41369",
+      "bytes": 16456,
+      "lines": 440,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-poi-shield-selector-input-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-poi-shield-selector-input-job.js",
+      "sourceBlob": "d9c457a5c38ea5884c1a94c0f3bdc78f1547f9d8",
+      "sha256": "883386dc5ef80bb5b2359c474aaecf78aec9673d3751cc7eb7961eb586416f63",
+      "bytes": 5448,
+      "lines": 149,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-poi-signed-event.json",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-poi-signed-event.json",
+      "sourceBlob": "74e4b4bbeae50ac70e4732c952e600d5f2a8093f",
+      "sha256": "b5a4fb3822b7870cbe92f5e5eb56cd0c69624ef9a52bc401c7e167e4bc3d9aae",
+      "bytes": 426,
+      "lines": 11,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-poi-verifier-input-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-poi-verifier-input-job.js",
+      "sourceBlob": "80aaaac5d070c7e118c4ef34f16ebd364e24169f",
+      "sha256": "915741c64c83d0f682c050929bd035e9eedcef29cad9fe95063350675a298477",
+      "bytes": 31439,
+      "lines": 845,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-poi-witness-data.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-poi-witness-data.js",
+      "sourceBlob": "1699d360e6bf1ad7118ac104e44b4f2ca2d5ba52",
+      "sha256": "38931fd766f255aea8d5cf13b95a4aa4d78c9893654e10e5eee1fcb36bc47a01",
+      "bytes": 7138,
+      "lines": 199,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-poi-witness-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-poi-witness-job.js",
+      "sourceBlob": "a730679c2b54c0b35575892c0cb23bcd475585ad",
+      "sha256": "901153d42ef264b8e2745302e903696b2df55b07b98a5f6f3fb58942ca1b2a19",
+      "bytes": 14087,
+      "lines": 401,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-private-recovery-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-private-recovery-job.js",
+      "sourceBlob": "a67495c444c487a7d510db725764199686cf1d9a",
+      "sha256": "9cffa66e9506a060d26cde724c99efbc50c3b5aee964686f201f61af9737f613",
+      "bytes": 5182,
+      "lines": 145,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-private-sign-proof-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-private-sign-proof-job.js",
+      "sourceBlob": "cfc75691ca88fdb7bb458c0ac29c9ad757bd544b",
+      "sha256": "6e0c66c302110cf3bb91614c9b15fe52b39b0df01a659db996e86ba6a1fbd79b",
+      "bytes": 15105,
+      "lines": 425,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-proof-artifacts-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-proof-artifacts-job.js",
+      "sourceBlob": "228f825e93066c10e02125eaf3f77b48c52b8899",
+      "sha256": "d06cc9ed4f32ce458c62e24e853da7b0b2c5ec0b83a92e3d4f29232a30468911",
+      "bytes": 5150,
+      "lines": 132,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-proof-inputs.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-proof-inputs.js",
+      "sourceBlob": "ed644ac3e0800680fb1ecb96dd3b7da15db36d33",
+      "sha256": "cc694066b6bfd35a1e53c304fdd506f9a12c8707f30ca003ce09a5ea3b48c7a7",
+      "bytes": 3555,
+      "lines": 97,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-public-cold-chain.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-public-cold-chain.js",
+      "sourceBlob": "f8d976fa65abf3f05e91352d34ef01bc34678737",
+      "sha256": "1450b33fc0a90a2bd5f2dcade4a11657818797359c880fbaecacbf994f63c5f1",
+      "bytes": 13972,
+      "lines": 346,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-public-cold-chain.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-public-cold-chain.test.js",
+      "sourceBlob": "4f9b1205a04d91b015e14cc1e1ae7c863c4c7b78",
+      "sha256": "f1fac38d46bc56e5895b3886a083853d9faa568c1ff458ad28c37417d7b9952b",
+      "bytes": 10998,
+      "lines": 300,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-public-cold-counts.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-public-cold-counts.js",
+      "sourceBlob": "0af82e69089cf2dc96e8be39ac20e279c2afa9c9",
+      "sha256": "9e450b20ffd819f7395139245f7b4e8f312c6f03a73a5cc6687281e5f8a9102a",
+      "bytes": 3294,
+      "lines": 106,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-public-cold-counts.test.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-public-cold-counts.test.js",
+      "sourceBlob": "62a51874beebb4c40b6125c1ded6e2dc358f4dd3",
+      "sha256": "bf75dce5838c73d6c62477406ab7e2f220d50016486aab4fa5adf85b089ab156",
+      "bytes": 3964,
+      "lines": 105,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-public-cold-data.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-public-cold-data.js",
+      "sourceBlob": "6db1db33960ee259b7f1267b610fa5e32d115851",
+      "sha256": "bf75e87b655b85c44c6fde18405c13b6b06f2ca33d21728a2e32239b173b76ca",
+      "bytes": 11052,
+      "lines": 347,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-public-cold-data.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-public-cold-data.test.js",
+      "sourceBlob": "90cdbd4cd0ec6fb23f2d5802b4c2a8a0b8e98e7f",
+      "sha256": "7782319fe15b304a334f616a90c9332c426927fd49f93a0c46f10a162cc9b2ac",
+      "bytes": 6059,
+      "lines": 178,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-public-cold-handoff.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-public-cold-handoff.js",
+      "sourceBlob": "eddff17c3b139c7c1e079d8ce3894b6fa81d965c",
+      "sha256": "a8e9174c972eef90c20355f0bfbb3b7e5a47973b28900268e33daefb4a82ab17",
+      "bytes": 3943,
+      "lines": 97,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-public-cold-handoff.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-public-cold-handoff.test.js",
+      "sourceBlob": "61b3f57dbe8c0ca7845ef9ceaf5a9d1fc4d67567",
+      "sha256": "8ed55511df7782afe763376c932f6e87497577a561c095c00cc98e9ede39c47c",
+      "bytes": 8961,
+      "lines": 242,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-public-cold-observer.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-public-cold-observer.js",
+      "sourceBlob": "03bb1f10bfec562d4831a096d9890a99978ff747",
+      "sha256": "a9af9111d6dc1e32c53d110346e9a6a186e0b009800037c9ba4327e50c39fd30",
+      "bytes": 7706,
+      "lines": 214,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-public-cold-observer.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-public-cold-observer.test.js",
+      "sourceBlob": "df6a77ea8abcbdf1371dd4db8e8cf5d8097ddd58",
+      "sha256": "4cd4c5db98c96f09373118a7a2f9310f172e8382af1d9d363c235935ac2c6889",
+      "bytes": 7977,
+      "lines": 215,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-public-cold-run.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-public-cold-run.js",
+      "sourceBlob": "e8f9c10f380175ead46806f41302729d1fca5818",
+      "sha256": "a4f843e9c3538877c08c62045e4c8e35fe0bdc7383883fc84a7aa31a07525696",
+      "bytes": 17129,
+      "lines": 442,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-public-cold-run.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-public-cold-run.test.js",
+      "sourceBlob": "a87bdb27432805fcb1b8c555ecd140ec4883580a",
+      "sha256": "104188ee4219cf9fd47f2fe29cb1afd7d1a506972977924bb850fcfe614bf982",
+      "bytes": 16962,
+      "lines": 491,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-public-cold-session.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-public-cold-session.js",
+      "sourceBlob": "337a05f31b14d6639a328b69857693e5afa72b2b",
+      "sha256": "ca9e7cf2ecb9e409fceeb9d64e35a88b929e9e3cbbaa9d3d1ffb9cff0d482d94",
+      "bytes": 6609,
+      "lines": 214,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-public-cold-session.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-public-cold-session.test.js",
+      "sourceBlob": "3f26227513fbe89fbd2bce55dc694298265b6170",
+      "sha256": "e3968a009146e60dd524a28ef24f9370c06d69597cb037802a5cfbfd9c0959d7",
+      "bytes": 2314,
+      "lines": 78,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-reconstruction-controls.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-reconstruction-controls.js",
+      "sourceBlob": "c48eb64342da2bcd1f5a84db6f7d336d8110f86f",
+      "sha256": "1983d3fb9dd675c9223646a27ff0c4a13daf5197bf9252697a75320b175dfd5b",
+      "bytes": 13165,
+      "lines": 352,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-recovery-companion-native.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-recovery-companion-native.js",
+      "sourceBlob": "5d831146fc92250ec639e8e067cf2764de3590db",
+      "sha256": "1639a436d4e7f60376f328099f8def488dafc271d6b048320c3fb57ce048357a",
+      "bytes": 13990,
+      "lines": 384,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-recovery-companion-native.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-recovery-companion-native.test.js",
+      "sourceBlob": "6492f3dad537794630aa6d019c81808077512940",
+      "sha256": "2e49e501f6c903836ce2f69394c309435a30f16609d2c2764aba3831bfa96665",
+      "bytes": 16722,
+      "lines": 481,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-recovery-companion-observer.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-recovery-companion-observer.js",
+      "sourceBlob": "f7e6d2254b8aa8c10b38836e40ad65a3e16a3bd9",
+      "sha256": "716ceffd0d2ff422f355b0908869196d512eff358b65fa4b178e2097808ff5f8",
+      "bytes": 4517,
+      "lines": 131,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-recovery-companion-observer.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-recovery-companion-observer.test.js",
+      "sourceBlob": "989d90f8e4f65f6b6a2dbda31140691bce5bd16f",
+      "sha256": "81afe4c894501a3ef6637469643ee403aa63611ef2cb046fd673f09a4fb840ce",
+      "bytes": 4919,
+      "lines": 127,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-broker.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-broker.test.js",
+      "sourceBlob": "e9a94c4fe2c60e041f3aaa326a5e6f4aab24332d",
+      "sha256": "bbeeb87e42ff293931349bfaa47d848bce8b7bb1c7ca7145601bc25121b1ba13",
+      "bytes": 5833,
+      "lines": 144,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-cold-ready-native.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-cold-ready-native.js",
+      "sourceBlob": "bce727446d546426497e5679a4e0b8101e625738",
+      "sha256": "62c5394708bf780d3b5b4ce2eb8dd83aae5d37f1f08881c9b29486994547613f",
+      "bytes": 42653,
+      "lines": 1148,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-cold-ready-native.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-cold-ready-native.test.js",
+      "sourceBlob": "4eab071a49fc7dbd3e29f02bbae503690abcf2a1",
+      "sha256": "88dd172f0b254b7772a3f9bdf82698cb366cee7e805fb48ed6388b878add6806",
+      "bytes": 32710,
+      "lines": 918,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-core-data.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-core-data.js",
+      "sourceBlob": "b0b3e51b1e7886461c6b67878b7ea9fe5a8585bc",
+      "sha256": "bcb4f0d55736b42073fcb6c9bfd24d31cbcf5295a0a05b7faec4040f8627e50c",
+      "bytes": 11871,
+      "lines": 337,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-core-data.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-core-data.test.js",
+      "sourceBlob": "ca614f58512d204fb308058bb6c82834abbcdabb",
+      "sha256": "4c9a09e2758a1c50d3d39786670cc33de0eb880febfe6d14a33ae5e3888bdf73",
+      "bytes": 11777,
+      "lines": 298,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-core-producer-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-core-producer-job.js",
+      "sourceBlob": "0aab27248a58d4cf00242cb1b98a626d99e96db6",
+      "sha256": "5807f9bfb961174f11849935209fbecd22d72e16ac0b78f347b28698607e8a21",
+      "bytes": 1371,
+      "lines": 36,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-core-recovery-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-core-recovery-job.js",
+      "sourceBlob": "3aaa7e28946002c1f83b1b271d9b4148828576a0",
+      "sha256": "33c02f37e06e8fbf33abec5afc525ef80ef07e2b7ee072d06e1ed37f92262774",
+      "bytes": 8989,
+      "lines": 240,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-exact-review-native.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-exact-review-native.js",
+      "sourceBlob": "cdea6fe3831a2b0c908c0b281d7e647da5cba1eb",
+      "sha256": "101c99a49101ae65408ee0f124687e5fb97cc17d244545fff53235525b31f988",
+      "bytes": 24750,
+      "lines": 701,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-exact-review-native.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-exact-review-native.test.js",
+      "sourceBlob": "5ff6b754cc14694fc7039802288401bd8102e197",
+      "sha256": "3fc452c43664d9e840d5611ccc8ba8b19e51437e728f3c8afce8343b2dbde663",
+      "bytes": 18202,
+      "lines": 509,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-handoff-model.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-handoff-model.js",
+      "sourceBlob": "d23355b4a1dd65831eb96cdfc8b29f91345d039a",
+      "sha256": "ebc9b30b5bd1e3f14a46f93db259c4564d513d19ba08599a5755fcfe45d8ce0b",
+      "bytes": 4905,
+      "lines": 168,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-handoff-model.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-handoff-model.test.js",
+      "sourceBlob": "a3e3e74e56479aef6e54022ca467eb782a94fb78",
+      "sha256": "df77fd1dab8c85a8d07d348c56c157c0718c244f4fad38a7c3c08c1384f45e67",
+      "bytes": 19683,
+      "lines": 593,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-keys/README.md",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-keys/README.md",
+      "sourceBlob": "b3caca146e1a92eeba6c94a7ac5c591dcf3e8b15",
+      "sha256": "309e3279e058350db7b5ab8043c94d393e864147556208a7613609226653c416",
+      "bytes": 4240,
+      "lines": 27,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-keys/admission.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-keys/admission.js",
+      "sourceBlob": "7402a0789153e3e14320b2d4e3f990a1446c158c",
+      "sha256": "ea0ee9dec260dfd194ab196b314a4f6141b3083d8038912684d2b637183dfdb0",
+      "bytes": 3927,
+      "lines": 106,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-keys/campaign.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-keys/campaign.js",
+      "sourceBlob": "d9d93f0223f81dbaf13f86e40d1c25d02ceb4b7f",
+      "sha256": "eb702d6a4f3c3c805f745559d026bdae0a56e868a7ef17db8b69506a1aa6df79",
+      "bytes": 17830,
+      "lines": 424,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-keys/cases.json",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-keys/cases.json",
+      "sourceBlob": "325b1143d2a99cf206213f63d89d2a4c50528e04",
+      "sha256": "9064dc82eca9618d1f114716cb09f9b42857acf29dfa944c577874756f6d8fd8",
+      "bytes": 3712,
+      "lines": 90,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-keys/recipe.test.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-keys/recipe.test.js",
+      "sourceBlob": "cd22e388596ca88c6bd4b4ca8bc7a7edd3daf03c",
+      "sha256": "fcdd30737e91e6a7521d42c6af2fd0c92fd883f419695ee593683d1c7d1a0222",
+      "bytes": 7074,
+      "lines": 158,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-keys/vectors.json",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-keys/vectors.json",
+      "sourceBlob": "a97678fb14eb4d81b824821f06645347282caa65",
+      "sha256": "3eeff85d644bcfef361d5b205a2f5855683f8a1f06c4dc197d0a39c4879b23a2",
+      "bytes": 1555,
+      "lines": 19,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-main-proof-data.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-main-proof-data.js",
+      "sourceBlob": "0f5826c6d8207c906d91feb773955e3f8bc5e5a8",
+      "sha256": "f442da69c54a9e6d7853e56b0277ef802a4f90ac4f9cfc28a4e07489e0f98f15",
+      "bytes": 5096,
+      "lines": 152,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-positive-audit-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-positive-audit-job.js",
+      "sourceBlob": "c3818ac6683f1fea10c92a2ff35f9e6a4c0cae54",
+      "sha256": "5cd05bae4337ba1665bf3d6cf7235336b02f8e65fd9b5ce3212fd71d2801e969",
+      "bytes": 13159,
+      "lines": 349,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-positive-audit-job.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-positive-audit-job.test.js",
+      "sourceBlob": "6a5712ccd8f09d37af6da1a4fa47c0930210ca08",
+      "sha256": "f6ed98615fd92ceab043a8e7edd8ddbf240ff8479864b229b2d9579b18ed226e",
+      "bytes": 18086,
+      "lines": 502,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-positive-membership-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-positive-membership-job.js",
+      "sourceBlob": "e8c254a0350fa95a00a0af53d0fafcf07c543f6a",
+      "sha256": "8cbd571fa1ffcf0766a88081f3220c3eee23316b038125e3b7c249104723f7d2",
+      "bytes": 7384,
+      "lines": 178,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-positive-membership-job.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-positive-membership-job.test.js",
+      "sourceBlob": "e5521c7c83690a8cfcae0a4f9fd8f264954990e3",
+      "sha256": "d6e66800e99fb814cb389c2b67765525ed2aab5fbda40baf7af13ca0171baa02",
+      "bytes": 8362,
+      "lines": 224,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-positive-native.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-positive-native.js",
+      "sourceBlob": "3725cf21396edc0491d6aa96c808d1973b770b01",
+      "sha256": "dd3d7cd2fa5b02ec648f8c7e760610cef3daa1ab8d54c6b0cefed08dad9c5f06",
+      "bytes": 95781,
+      "lines": 2593,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-positive-native.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-positive-native.test.js",
+      "sourceBlob": "541c8ff48f54aa90b6af0fdff57a975d05e3ec05",
+      "sha256": "f2ef434ecb31cea591658d623789ea1bfb1bd74eb69260d43e8b4c59859aeb6c",
+      "bytes": 65607,
+      "lines": 1791,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-preparation-native.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-preparation-native.js",
+      "sourceBlob": "80a5d2e68602735689d0d537ff092b96a17dedd4",
+      "sha256": "74a4cc7e5611eb4ee0925b54d45f7d1ba53e2db55f9a7a009533e93ad26642e1",
+      "bytes": 19186,
+      "lines": 513,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-preparation-native.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-preparation-native.test.js",
+      "sourceBlob": "839434923f4f58a348f64650635fe4726a71391d",
+      "sha256": "071b345e8b61530d2f2a7f19950a8d5c29f98b8bf88ed771b47a4b883d2002aa",
+      "bytes": 19699,
+      "lines": 562,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-proof-data.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-proof-data.js",
+      "sourceBlob": "af78d14d2945b019fee972ddabc3f301a2f17d9e",
+      "sha256": "9bdb08af9d5baf5035e624b206cf93fe6a03789169bddf79b92e89484afbd6e0",
+      "bytes": 12376,
+      "lines": 331,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-proof-data.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-proof-data.test.js",
+      "sourceBlob": "3dfd67da24186ee9e7c7a1236606ddc6f1d2d561",
+      "sha256": "2b4114060d44027941d3f75b0bcf8209ee1c5473ed6f9b7356ada6d4117126bb",
+      "bytes": 10697,
+      "lines": 395,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-proof-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-proof-job.js",
+      "sourceBlob": "9a6b236ec3d883d35ff9255f1c28fd9fd01a2dd4",
+      "sha256": "b835ee3e0f0949eab34430279ff90ad57a63199e144bc2ae0c2cb5f2a8acf048",
+      "bytes": 4443,
+      "lines": 134,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-public-data.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-public-data.js",
+      "sourceBlob": "279ab55a98b16a273065641b50677c70e03faed9",
+      "sha256": "a62cda366b3049ea1f4583d8c2b8f4357d875d97a8506d092381e3d764aa1004",
+      "bytes": 9225,
+      "lines": 207,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-quote-native-pins.json",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-quote-native-pins.json",
+      "sourceBlob": "064f94f13bab2ca35b36f314749ede7edfef3cfe",
+      "sha256": "1ae135a24e64b2d839da22776b98cf6125f370516562633dc966b741bbc37c35",
+      "bytes": 329,
+      "lines": 10,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-quote-native-refusal.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-quote-native-refusal.js",
+      "sourceBlob": "f82fc0b1436caa0947fa821cdfe8d98aaf607fd3",
+      "sha256": "a17f6e668657bb33482ceee9501a12b2d86690c0d8aec5a3cb12cb1dbe11da43",
+      "bytes": 3173,
+      "lines": 79,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-quote-native-refusal.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-quote-native-refusal.test.js",
+      "sourceBlob": "6ec0368a3df694e876840dfd42bf129fa41b9bb1",
+      "sha256": "432a7b697778623bff54a654ba2a22eda73de29f0990f5e4507159f3ebd4ac56",
+      "bytes": 10665,
+      "lines": 315,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-quote-native-run.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-quote-native-run.js",
+      "sourceBlob": "2f22fde73b09b41634b00a0cea202bd9f4aae7c0",
+      "sha256": "6232d46038ff3b123135bb608c33538103db45fa8284d91c629d562171912636",
+      "bytes": 7524,
+      "lines": 200,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-quote-native-vectors.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-quote-native-vectors.js",
+      "sourceBlob": "15dd65961ae5f4424dcc19ef76d571019ca0a748",
+      "sha256": "123c91c6cf56c085794e596673a69a9c4a70652038d6c8a9517e9c53134e62c5",
+      "bytes": 3892,
+      "lines": 111,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-refusal-native.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-refusal-native.js",
+      "sourceBlob": "d13b9f0199d8f6b05ceb300eac1765958ce7a54f",
+      "sha256": "748af81296480328532cb0b86585e08d91817b230210203056b335f8af4ed86e",
+      "bytes": 24382,
+      "lines": 701,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-refusal-native.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-refusal-native.test.js",
+      "sourceBlob": "d6b6303b35661fe095573e9ce3ec6a83cdc02a0e",
+      "sha256": "ecfba4c00cd21687d8e4f2992e3b32bc1173318a982f8d1ea20de4333e518652",
+      "bytes": 15062,
+      "lines": 416,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-retained-basis.json",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-retained-basis.json",
+      "sourceBlob": "4e0833af81410f70f10a08d0bb65ccc74abde769",
+      "sha256": "803fef4266c6a1594196046d5da36e57d038f8188e1c469f03a9c3478d6e8eb3",
+      "bytes": 868,
+      "lines": 20,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-retained-inputs.json",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-retained-inputs.json",
+      "sourceBlob": "59d6ad01fd4e214a2e121db41218b9bb42ab99e7",
+      "sha256": "ad80a2743fb0a2a2167e36a56b28a1d66e60a8c60f59b390af68f7cfc5c1b56b",
+      "bytes": 943,
+      "lines": 23,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-retained-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-retained-job.js",
+      "sourceBlob": "050a73422bb574fa917c7b85b8d604079dfaaea6",
+      "sha256": "43e7b9a366c39d261f12b53f3b87d457691118e5e0e6d6908a3fc2278a500dd3",
+      "bytes": 4118,
+      "lines": 112,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-retained-quote.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-retained-quote.js",
+      "sourceBlob": "8a2400c2f1f9dea91e605a8dcdf80ef76ae9d732",
+      "sha256": "809ea5e7dc60cb67c4be649e02522839683fb816a672997231b0e78d89ea23e4",
+      "bytes": 5040,
+      "lines": 114,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-retained-quote.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-retained-quote.test.js",
+      "sourceBlob": "3e9685e3f2aa96bbad2364241b598d9c67631a4c",
+      "sha256": "8d006e4d2123e8cc27bf67ff9e4d5ced986f620501a333a6c25300e96affea7d",
+      "bytes": 11304,
+      "lines": 297,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-retained-run.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-retained-run.js",
+      "sourceBlob": "6dfda14b564e9fbf33604ee6b9d038efadcce192",
+      "sha256": "fa9236c9f43beb6f2ae92bd06cdc24fcb485702d0ad47a0be4117878f7e6b705",
+      "bytes": 11965,
+      "lines": 336,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-retained-run.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-retained-run.test.js",
+      "sourceBlob": "049ee4531bfc7f56a0eb2a2cd6658bac353e8276",
+      "sha256": "98d65a64e5959ac310d1f063f98181654d281e05b2188a56c6c638685bcb1365",
+      "bytes": 10982,
+      "lines": 302,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-review-native.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-review-native.js",
+      "sourceBlob": "a399f370bdeac6e49f1a98a1c84360c042283881",
+      "sha256": "9963f93f3c1d10cb4c711564fc363c245b1ed09de592d7b616b2ab3702a43a45",
+      "bytes": 17893,
+      "lines": 516,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-review-native.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-review-native.test.js",
+      "sourceBlob": "522e712e75e41c5e4abee440c7821e9467e279fe",
+      "sha256": "961ca0c29591f186dc5d3905ab4f4b88fcf9248c19acb6d256c3c50aed8e4119",
+      "bytes": 16157,
+      "lines": 440,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-sender-recovery-data.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-sender-recovery-data.js",
+      "sourceBlob": "58799fd22376abd97eee947ab7233dce257400d6",
+      "sha256": "0cb6ed53c04066afc5fd531d33688e6b3180b83171a90bc38101d3efda6cf8c5",
+      "bytes": 4852,
+      "lines": 133,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-sender-recovery-data.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-sender-recovery-data.test.js",
+      "sourceBlob": "13bb9e4f3b48420476944232a139dd9871527259",
+      "sha256": "4295b6ae07c2871c121f82814bbfc78fa8e435b148d21aece0ce4f5460828618",
+      "bytes": 9343,
+      "lines": 322,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-sender-recovery-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-sender-recovery-job.js",
+      "sourceBlob": "358e16a80670d1cb6efc047693b059585d4103a7",
+      "sha256": "8e2c4e9777970a7f01a79553b77ba1d241caa0819c9d42c327a30efe3469f54a",
+      "bytes": 8851,
+      "lines": 245,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-sender-recovery-run.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-sender-recovery-run.js",
+      "sourceBlob": "e36427c68cf3ac58c2557e1c0e03869d8efcc094",
+      "sha256": "290b5cd3cfddbcbc453827bad74a4a1cc01981e25884d74b8babc23a9bd0010f",
+      "bytes": 6100,
+      "lines": 170,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-unsigned-data.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-unsigned-data.js",
+      "sourceBlob": "c2858d405c9d3ed67c20953b324304d7858a104d",
+      "sha256": "4e7afacea21c0bdcf98bf13449f3fa9fa654c8dc4bd69867c736a768a08d199b",
+      "bytes": 3570,
+      "lines": 110,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-verify-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-verify-job.js",
+      "sourceBlob": "e72ac278f70f5d94b91502bdcde6e698625ca612",
+      "sha256": "5fb57b34fb0a5f1b588367db735f0a8dc1ad5ddfdef4b2e19a213bfb5412da53",
+      "bytes": 3621,
+      "lines": 105,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire-composition.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-wire-composition.js",
+      "sourceBlob": "328c2de0dedf263ef63ab461316aa5d489a8fd02",
+      "sha256": "691d8a02df6dc1ec713f50d6b0aa0fafba8c1736d4532bd5b447bd1f2664ecbb",
+      "bytes": 10283,
+      "lines": 285,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire-composition.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-wire-composition.test.js",
+      "sourceBlob": "4a4366c6cafede9ebed571a3657462aeedacb920",
+      "sha256": "3e210b0e8fb1286528a38b2aefadcbdef4ef3ac798ee02336d3c766e035051e6",
+      "bytes": 10411,
+      "lines": 309,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire-crypto.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-wire-crypto.js",
+      "sourceBlob": "ce4c22c7c0ffffd483caa476ad462389c837528f",
+      "sha256": "655e3f180dfed4170810233014a76bdeb97b455531225cc395aac7f31a9c3ea4",
+      "bytes": 10697,
+      "lines": 277,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire-crypto.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-wire-crypto.test.js",
+      "sourceBlob": "68c49d4ae22b0b58af52552d2f682322acb31162",
+      "sha256": "0ec2eec2e8c8e88383f6783541783eaed82250753080e01cdae127374b153991",
+      "bytes": 6227,
+      "lines": 173,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-wire-job.js",
+      "sourceBlob": "2ac2acf818c968279e190910f03b06985f649378",
+      "sha256": "3b6c8e9848f998c18a38d82f12f5bd3d9933ab6f27d3377588feabf802cff7db",
+      "bytes": 1798,
+      "lines": 40,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire-producer-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-wire-producer-job.js",
+      "sourceBlob": "4f0d5b06afa914f27370ee8bc0e6c55f0a1259f4",
+      "sha256": "9a1f3d91178c37e425c55035316871e6c8be1c59ed392b7fdc7dfebf918ada13",
+      "bytes": 1674,
+      "lines": 46,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire-run.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-wire-run.js",
+      "sourceBlob": "2eb5f3051f9ef2039f1e5da4e309d908fb0981a9",
+      "sha256": "a6816faf70c155e3f31544a670cf5693ec7394387b99877e781a5b61fc5e7565",
+      "bytes": 11919,
+      "lines": 361,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire-run.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-relay-wire-run.test.js",
+      "sourceBlob": "049df27d7e50c5912124831766177191885318d7",
+      "sha256": "2aad043270a398f3cf638cb64d9d29af34fbc4238ea4e1a348d60a86b330ce29",
+      "bytes": 8814,
+      "lines": 273,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/README.md",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/README.md",
+      "sourceBlob": "46cb42cea0c43994c99129648f110d8c1fe7718d",
+      "sha256": "206996047788ead2043c5eadb4e8e4099ad1694c9e9f9d5b9f9db748bf4d2e3f",
+      "bytes": 6413,
+      "lines": 36,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/campaign.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/campaign.js",
+      "sourceBlob": "bcee0fc1c01d7d2607a196217be9786464eac47f",
+      "sha256": "0ae3e99c7fe7c55eae99f17467e23542608b288b7272b13c3666d13320b042c6",
+      "bytes": 29928,
+      "lines": 771,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/cases.json",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/cases.json",
+      "sourceBlob": "67de61e5ec846466242b41b1d3dde6095655fd2c",
+      "sha256": "8a5d24307b9de8d5ea6afd7d48d8e7e9388da43e891f5a4c1dbfe63b73247896",
+      "bytes": 8247,
+      "lines": 181,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/inputs.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/inputs.js",
+      "sourceBlob": "21280687b34639a2032c0a9aef2732d4230ef959",
+      "sha256": "e7238f737fe243449d55170e69660cb28feab7e5b81d00df34034581c2dced3a",
+      "bytes": 7195,
+      "lines": 196,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/inputs.json",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/inputs.json",
+      "sourceBlob": "36eae8decddc6c30f46974ead18a8c2d0fdb4459",
+      "sha256": "65629bc6a6b63585f198cb7ae2603c7c9421f47485f6692c1dde6bf175713dae",
+      "bytes": 68672,
+      "lines": 1616,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/licenses.json",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/licenses.json",
+      "sourceBlob": "0f3f63d4b5ef0d10bdee64e44100a10662e0aa19",
+      "sha256": "915d5eff304f95222f8c0cef1f564df129f890699bb3b085fe687a4590344caf",
+      "bytes": 32527,
+      "lines": 983,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/policy.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/policy.js",
+      "sourceBlob": "741b52ce9cccf3d75151184692247055d109d1fc",
+      "sha256": "6f820f643ac3c0c3649ae1cf84a4780988bde666abc17f7e1f705b8d8933db6b",
+      "bytes": 12183,
+      "lines": 343,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/policy.json",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/policy.json",
+      "sourceBlob": "91809ee3c06f83a51ef486fe23e5e918884b4182",
+      "sha256": "fa04744da4b3cb5d7951c6a5e0e4e241e213123f8b53dc611500cfe05f7a45ef",
+      "bytes": 1844,
+      "lines": 44,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/policy.test.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/policy.test.js",
+      "sourceBlob": "f52107ddcd53eece9dfea25a338ee4340deef6c2",
+      "sha256": "6fca7c682e3b37c4b0de33037c4850ebf65740533269fbdcbaa4af611e333644",
+      "bytes": 10383,
+      "lines": 371,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/prepare.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/prepare.js",
+      "sourceBlob": "1f01c2fde5fddf6c9eff5d4c7223640b3e474746",
+      "sha256": "2bf73a0b603545fe9e6cc8953d25f1195ed62431c73cb978995c54baf4307364",
+      "bytes": 13382,
+      "lines": 341,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/recipe.test.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/recipe.test.js",
+      "sourceBlob": "857715ce84f9112b30e8b3c4e072661418bcaf74",
+      "sha256": "3ba9c8b8e6ad334f7034e15f8b2c0a6404743815117ea812d2db9bf9ad061c68",
+      "bytes": 13575,
+      "lines": 328,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/roots.example.json",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/roots.example.json",
+      "sourceBlob": "32828fff466a0d04278daf26caf04e257ac4299d",
+      "sha256": "d054b38ba2f53fa78a5a498b27e8753dfe5ae327316423b2476e6d66bf706652",
+      "bytes": 380,
+      "lines": 9,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/vectors.json",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/vectors.json",
+      "sourceBlob": "621bd321fab82dda8af73123ad05abe1aa60cc8d",
+      "sha256": "c5e1a0d9a7a68e89d96931609fd26ab5bdb7f2892bbc392b56cee0b0f7a0844f",
+      "bytes": 2290,
+      "lines": 39,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/fixtures/railgun-retained-history-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-retained-history-job.js",
+      "sourceBlob": "f865fd0970ec65a6c843eacb8b99a55b3d407b31",
+      "sha256": "c1031298b8a4cea06cf910275bf2748f93f220c3f43efb7f9a7c336752cceecb",
+      "bytes": 2535,
+      "lines": 60,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-session-child.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-session-child.js",
+      "sourceBlob": "387ff21c548d69a86ba0bfef0ce567da22e0a129",
+      "sha256": "43b52f70e835e16f36b2b61cf71baecbc7e28c959e39d5b84600dc0a3436a5c8",
+      "bytes": 8083,
+      "lines": 226,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-shield-offline-deployment.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-shield-offline-deployment.js",
+      "sourceBlob": "aded55c4c4d7c991dd5054fa836e40a09348c21b",
+      "sha256": "dd4298e9ee0274b2e03958f2f9c588110302312e65e442aa39cf495857505ba2",
+      "bytes": 4436,
+      "lines": 105,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-shield-offline-deployment.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-shield-offline-deployment.test.js",
+      "sourceBlob": "e4e7505d32137fc5f980bf4067e4a05b458c937c",
+      "sha256": "872d4a38cfcf64b4270165dc918ff0dbed3ee4b893d9d5a0ed9a4ba5bb70f18c",
+      "bytes": 6502,
+      "lines": 171,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-shield-receive-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-shield-receive-job.js",
+      "sourceBlob": "97c97dc1f171c68534ae920198e600b951af2b6e",
+      "sha256": "42c2e0092f7e29921318260eb8174494cd33052580d03491021fa261fd0f531a",
+      "bytes": 3269,
+      "lines": 77,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-transact-data.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-transact-data.js",
+      "sourceBlob": "d82877f533708f10307216a3e04cc80745f8e319",
+      "sha256": "eb96647d3e82fe5d6995d125284c8bf43817180184be80890cf5e4c4c7ef0afb",
+      "bytes": 1706,
+      "lines": 49,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-transact-staging-row.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-transact-staging-row.js",
+      "sourceBlob": "74044b687f1b57d5c8238bbc43bc60b2f00529ed",
+      "sha256": "bdd764435dcab8a9387e130d9ded39a70cc15fbc5bf52712a82bf6301e7de730",
+      "bytes": 1720,
+      "lines": 37,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-transact-staging-source.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-transact-staging-source.js",
+      "sourceBlob": "118d268ada55dc074fb44a095ff6528e801e3fad",
+      "sha256": "89c06dcd0c8f2f30384ca407719d9a79f1ef9d06dfd4e0583143b42738a14d62",
+      "bytes": 1676,
+      "lines": 41,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-txid-known-omission.json",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-txid-known-omission.json",
+      "sourceBlob": "ca5c109983394844dcca1f1c17d67127a33848f5",
+      "sha256": "a3b092c693c455e631759a311956df3d5c4be87961e188efb130afa3d68ce07b",
+      "bytes": 1975,
+      "lines": 55,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-txid-projection-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-txid-projection-job.js",
+      "sourceBlob": "f48f818a61d7ab15490db21953c9787dea100b1b",
+      "sha256": "ea84a05be5d2781c406ef1310200a13e50d84af3ae6b1e3b73999fcfee894f94",
+      "bytes": 5904,
+      "lines": 154,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-txid-tree-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-txid-tree-job.js",
+      "sourceBlob": "8c3f48c863e7b840b2dfec5f7843fc0c852277a7",
+      "sha256": "b8ff6e0f1702d6ee684350abd9c19c08e733e721b969519f2006549bed940eb3",
+      "bytes": 3996,
+      "lines": 102,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-wallet-aes-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-wallet-aes-job.js",
+      "sourceBlob": "985bb0364dfe8db51c7a621fbe2399849c83c677",
+      "sha256": "c12af7223f813a2e7a9b9facebf59dadecbed43572dbb34c0a68af380e6a0223",
+      "bytes": 1605,
+      "lines": 45,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-wallet-notes-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-wallet-notes-job.js",
+      "sourceBlob": "40054edeac76a9726dcd6fa4b962b6fb09e701c1",
+      "sha256": "f00d88f72425b594b0a24bd5b532b44988ef8dcf96305d1b95b860db357cd698",
+      "bytes": 17778,
+      "lines": 484,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-wallet-snapshot-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-wallet-snapshot-job.js",
+      "sourceBlob": "84ac52d34c132cc487a089acab36e13e5ac8c4b7",
+      "sha256": "cef44ab37702c838d97ef8de0ce8ea682b30babe0aa06fdb58814a11f35919ad",
+      "bytes": 4489,
+      "lines": 127,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/fixtures/railgun-wallet-source.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/fixtures/railgun-wallet-source.js",
+      "sourceBlob": "0f233387a09627bba2caf57ee9fd460c690a9741",
+      "sha256": "6c01c20ab41fe0e8f7e1e036b6e4291ca3e8a0b382932dfa929b640ed2b04474",
+      "bytes": 7927,
+      "lines": 228,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/inspect-railgun-sepolia.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/inspect-railgun-sepolia.js",
+      "sourceBlob": "493c21c82bfc2f1c453951a92684969adefb850c",
+      "sha256": "f4da918aba664d0d14017bfb798cbb7ed04cd3c4d8a505be5aa5eba1a243bfc4",
+      "bytes": 8343,
+      "lines": 233,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/lib/railgun-funding-plan.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/lib/railgun-funding-plan.js",
+      "sourceBlob": "5bb839d44e8eff0c96c9ba3033fbaac3bb159c6a",
+      "sha256": "f0778d6d03f3292d54b4b614d0fb7fadb6c65ecd7329d8c911164c8ecf0e771b",
+      "bytes": 3073,
+      "lines": 85,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/lib/railgun-funding-plan.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/lib/railgun-funding-plan.test.js",
+      "sourceBlob": "f7f1a27ce0df14aaff3816e292659ed918d1538e",
+      "sha256": "bd1556635c8445f6856edd6de5881ff32b835209c453a5d3387be295e01cdc16",
+      "bytes": 2814,
+      "lines": 79,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/lib/railgun-metadata-continuation.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/lib/railgun-metadata-continuation.js",
+      "sourceBlob": "50610d5532bda1febad403b85f79380d90d0df48",
+      "sha256": "9ca870d85b5348a87fc32cc74c7738b2cb0a69c6b12d7d9c436d0199372733bd",
+      "bytes": 8202,
+      "lines": 190,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/lib/railgun-metadata-continuation.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/lib/railgun-metadata-continuation.test.js",
+      "sourceBlob": "ece40ccf7f10d216fb5a841777c5310042a2929c",
+      "sha256": "a41f8f4b277a824b4d579a7731455d484a8f5bb221c0e919e97f2bd3ecec6421",
+      "bytes": 13486,
+      "lines": 375,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/lib/railgun-vault-meta.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/lib/railgun-vault-meta.js",
+      "sourceBlob": "f7335a2a5ca5a0238e21a949d192d3c864bfe8aa",
+      "sha256": "a4c63fcf0386316708710ab3e74003ed842cb5ee2714eb4509f07cf323b3403e",
+      "bytes": 2450,
+      "lines": 69,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/lib/railgun-vault-meta.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/lib/railgun-vault-meta.test.js",
+      "sourceBlob": "7af0519beaa6dbca4a1a99286d3e1b097694c5d2",
+      "sha256": "ac98ba517159a5464a8a4f157aa22cf6b7872329147275ce0300f8b99d7cd71a",
+      "bytes": 2900,
+      "lines": 74,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/measure-railgun-electron-storage.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/measure-railgun-electron-storage.js",
+      "sourceBlob": "7e1a2cd73a1807c9a4c51afb5eddb9ec2ed3f129",
+      "sha256": "edeb38f50712bc24ac6371d7b0129c3052e74976c177b21f44e499c5a76eeadb",
+      "bytes": 5254,
+      "lines": 161,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/measure-railgun-tree-storage.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/measure-railgun-tree-storage.js",
+      "sourceBlob": "fff173b9e62d314e95c05715e3fdd1e35bb1ab47",
+      "sha256": "9645e9ac2b2421f1d536e5c736a7738c6335f0f3c4371774a25b56c6827f3d61",
+      "bytes": 13945,
+      "lines": 386,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/prepare-railgun-public-history.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/prepare-railgun-public-history.js",
+      "sourceBlob": "6d2f8d92a9bc6f1c1a9bccf56fe4f6377f6b765a",
+      "sha256": "7ee97c9c67445a054ee5c4623817458f89d646e3bf9b7601c4a173d434763354",
+      "bytes": 8369,
+      "lines": 213,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-account-fence.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-account-fence.js",
+      "sourceBlob": "e1c29993d4d9031f5b0d5c6f9273d905073bbf2b",
+      "sha256": "32289015d57151c2130d788d1ef75e2acc4db6a5fa0456bd0ea34bfa0fc88fe7",
+      "bytes": 16194,
+      "lines": 466,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-account-fence.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-account-fence.test.js",
+      "sourceBlob": "3c4359bf732ddf3511f79800da4b149a3ae2dfe9",
+      "sha256": "3c5f33073d2bcefb2013ee2ac92457f8ad51b5ac9add9ad411afd1f3073a2fd6",
+      "bytes": 9767,
+      "lines": 270,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-artifacts.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-artifacts.js",
+      "sourceBlob": "254b82c56eff970e9c24c82b6b915c4500a0a894",
+      "sha256": "2ede7526243b87bd50a236f373511ee1ca9c9ed683e6c6e3438a9a91ff473ec8",
+      "bytes": 5045,
+      "lines": 142,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-cold-submission-matrix.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-cold-submission-matrix.js",
+      "sourceBlob": "c80ed040d3c6dd22c2b343ebf35b005bf4bfc978",
+      "sha256": "e031a1bdeccb07433962a13b32b1159cd12562b2be0eed43ce2522734a6e9518",
+      "bytes": 7767,
+      "lines": 204,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-cold-submission.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-cold-submission.js",
+      "sourceBlob": "1b99142c563357c0f25443aa1a2ce5ab2aa7c872",
+      "sha256": "55fe57fba1391e50cb54be3c0b5f37158aa8dde09bc21eeca1a49f80b06469b2",
+      "bytes": 65211,
+      "lines": 1614,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-combined-poi-lifecycle.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-combined-poi-lifecycle.js",
+      "sourceBlob": "1cce38e4683949f6ea0a2fe55fe6f2072c20cfb6",
+      "sha256": "152e7157004da541f322949fca5273ca57125f389686578722219cda53ca0a3b",
+      "bytes": 79197,
+      "lines": 2014,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-combined-poi-lifecycle.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-combined-poi-lifecycle.test.js",
+      "sourceBlob": "79c9d97514ca94287a312d4254ff92f2d583d11c",
+      "sha256": "358476b94e6d2525dcc012b1013d7a19e07f288abb6f703d102ed0aa59cad54b",
+      "bytes": 3155,
+      "lines": 72,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-combined-poi.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-combined-poi.js",
+      "sourceBlob": "5c8d5201a0e80f8da2a77f7f46ddf9241d7dcd89",
+      "sha256": "5c7e20adba4316e3ae6bd0bb2595ebadb09002fce977d7eb88be81c37423dffd",
+      "bytes": 8414,
+      "lines": 244,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-completed-wallet.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-completed-wallet.js",
+      "sourceBlob": "fcb795637bf860f25a307844fe99c907dcd44c22",
+      "sha256": "7cccb24096fac2e114e5d44d788b16b74ab99806eff2895b32219a6f1878b22b",
+      "bytes": 23792,
+      "lines": 628,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-cooperative-enrollment.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-cooperative-enrollment.js",
+      "sourceBlob": "42b17bb613e7b9ff6c52ca16a6e70194e1285e78",
+      "sha256": "890272a47d202a08844fe03cacba3ab565246add4c9ffa81e95448e1dacd6948",
+      "bytes": 12750,
+      "lines": 336,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-cooperative-enrollment.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-cooperative-enrollment.test.js",
+      "sourceBlob": "f943b785ee34d0931fc9c8a1e7c779a21a871fe5",
+      "sha256": "bd8b9916b5734f898f28c11a4e4da560f769e215ae441ff98a2a061d81e04d2c",
+      "bytes": 12202,
+      "lines": 320,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-coordinated-electron.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-coordinated-electron.js",
+      "sourceBlob": "05aababba161be644e23735909bd921eccfd30df",
+      "sha256": "d82f2096ca6c73668412c46c9ce6bdeba51e69eda0a6ac9c39c628b781c0a761",
+      "bytes": 13159,
+      "lines": 359,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-coordinated-replay.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-coordinated-replay.js",
+      "sourceBlob": "c3954e8014dc9cc6f3c626ba200bf851ed2fd24a",
+      "sha256": "a91ff6123bbbf1b27febd3a4b8ee2ae57efe4ad9aece9e3a2a3da3f2c5576ca9",
+      "bytes": 11847,
+      "lines": 329,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-electron-tree.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-electron-tree.js",
+      "sourceBlob": "b9643b227928e9d7aecc1eb2627fb00284bbb4b9",
+      "sha256": "e0599a9e5f33509e77430ead4670b49d195e0b5682233f092317e052d974999b",
+      "bytes": 7211,
+      "lines": 192,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-electron.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-electron.js",
+      "sourceBlob": "63e3d73230c35afd84ced4b728fcf149b89bb8e0",
+      "sha256": "c5f9cca9fa44bc137cb35045c28fcfa807b3e62e9147729dbf0b1dd0624a92cb",
+      "bytes": 9198,
+      "lines": 255,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-engine.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-engine.js",
+      "sourceBlob": "74184fe1d4baca6fce209e3425a21cc86f1f0b05",
+      "sha256": "865c187f1386b621ddfc0ebd0f9cbaf860c7994c643e67c76c218017c6fb4d60",
+      "bytes": 3104,
+      "lines": 85,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-enrollment.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-enrollment.js",
+      "sourceBlob": "8dda9970e36e43a1a3ca82ffaf09693f22d48c4d",
+      "sha256": "85458bb1972d2d9d6bb63c3db0d9acd2d06e2b6889cf153f132d59f66bd314cd",
+      "bytes": 8602,
+      "lines": 222,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-funding-account.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-funding-account.js",
+      "sourceBlob": "7f69e2b18aaf72eaa263a73a23700e18995a3e34",
+      "sha256": "5d6711bce38a596da86978e66fd242a7fe27c0317ba3a3496faaa2ee2e1bf4d6",
+      "bytes": 2936,
+      "lines": 84,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-funding.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-funding.js",
+      "sourceBlob": "ecd20d56cc3ab6c89e406a64c8392528add0491f",
+      "sha256": "120be19fdfc2ea97dbac7957c4a0b7d62589f5ce2a28d2a5675e2602811d6702",
+      "bytes": 17916,
+      "lines": 454,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-history-replay.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-history-replay.js",
+      "sourceBlob": "283c852b1035597591eadd05fdf997511b8cb078",
+      "sha256": "fa46706ca0ebfe20b070fd59854f3e82612c44e34c12115b98197eb8e7aba0fa",
+      "bytes": 15057,
+      "lines": 422,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-identity.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-identity.js",
+      "sourceBlob": "85ae400093221540bb78463eda4631934d940ec5",
+      "sha256": "5dcb711b464c5ab05789ed936c12654e1d721dbb32e71205b896ee263c8b448e",
+      "bytes": 6926,
+      "lines": 185,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-live.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-live.js",
+      "sourceBlob": "536e53729891b2de5f8e10976711957cfb3582c3",
+      "sha256": "b680288de979c21a8e0cbd4f2f971fcce6b8eb43b1c7e8d60813be3d5d06c006",
+      "bytes": 20329,
+      "lines": 519,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-note-provenance.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-note-provenance.js",
+      "sourceBlob": "348c24040633639aa361c4e48211cede7ba9b5ee",
+      "sha256": "66e38161ae19ac7d47080e98bcb43e3a13ec05f9bd1ba733c9dfffc95fcbd101",
+      "bytes": 15465,
+      "lines": 401,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-own-operation.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-own-operation.js",
+      "sourceBlob": "bfdba71a3afe55ede554eac62d1ada51d1ff8351",
+      "sha256": "53229d8917a1bebda15a2b01c2dc414984cc6b37ff59e513fdd78365ee649d59",
+      "bytes": 20692,
+      "lines": 495,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-own-poi-membership.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-own-poi-membership.js",
+      "sourceBlob": "d9aa4876aac75a45727183f6a8e1b004414de12b",
+      "sha256": "615c8a650592e4299af577fbcddb5890a991bdba49fbc6a0734effc3723274be",
+      "bytes": 215973,
+      "lines": 5170,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-own-preflight.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-own-preflight.js",
+      "sourceBlob": "ff33dede9528caaca43985bb5af0258e38d79d20",
+      "sha256": "f26acdd627ff89f154da5bcfe2df7472617b79c0838201d78eaea021dacb18c4",
+      "bytes": 32452,
+      "lines": 782,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-own-receipt.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-own-receipt.js",
+      "sourceBlob": "16f563d67395d5684c6be86db5eda842b76cd357",
+      "sha256": "a38252e8a55e6ab01a16ed896df2cb506b7de43e60cb5596d26bdbbd13658272",
+      "bytes": 34976,
+      "lines": 841,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-own-selector.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-own-selector.js",
+      "sourceBlob": "34d682f25670f03d64d21dce4e00ec3bcddb0dc7",
+      "sha256": "03396389f9f0b4d2a77f67eea3e64c5d478c82f19b58b3425101006336105108",
+      "bytes": 10127,
+      "lines": 281,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-own-source.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-own-source.js",
+      "sourceBlob": "3dd81ad9672e3a02fd9b8077050137f1d20b4036",
+      "sha256": "b7afc2f93510f9dc27479cefe7965b79accd55ddf062bfed8c1f93d3fcafeca8",
+      "bytes": 40680,
+      "lines": 1056,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-own-transact-creator.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-own-transact-creator.js",
+      "sourceBlob": "80f9ae62210dac12176b7f7c3893869b909473e2",
+      "sha256": "e2ec793ca98c641a682bebd1829a829b0aab0e40ae416190c0bd8574303662b4",
+      "bytes": 139360,
+      "lines": 3316,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-own-txid.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-own-txid.js",
+      "sourceBlob": "9a6a22fa2de4bfb458ed6d9c597333c488f72bf3",
+      "sha256": "f41250b9d3a232bb31084abafbbf09e70d99f81d70fbe1860496fa307998e8c5",
+      "bytes": 9210,
+      "lines": 250,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-own-witness.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-own-witness.js",
+      "sourceBlob": "14a0ea69cc5c7c11dffcfb6d045d3067da0c3752",
+      "sha256": "074227e8774c99833463d371bae4b30be905e22df2897befde529e9dada69110",
+      "bytes": 34751,
+      "lines": 847,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-owned-poi-live.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-owned-poi-live.js",
+      "sourceBlob": "ae65048827f1174fdf5913d11b41719ecb90bb56",
+      "sha256": "41dc5934362b649cb4572d58ef7d30095880d4f7bf4cb21481e72235054847cc",
+      "bytes": 11020,
+      "lines": 296,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-owned-poi-vector.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-owned-poi-vector.js",
+      "sourceBlob": "865bb2af1f4929601b5abb2a7a9529ba50894584",
+      "sha256": "87192a9867f7dcac9c03ad5140586ccd9e11af50fcd1821612c09a496547e870",
+      "bytes": 4553,
+      "lines": 122,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-padding.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-padding.js",
+      "sourceBlob": "cdd940beb20e83b8335d2172c840d9d1fdcd87b5",
+      "sha256": "2a47a9179f5b5bcf690bfd1376fdbddc7b7e0c6b018ec2600cde01342f6d8e36",
+      "bytes": 3935,
+      "lines": 105,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-partial-controller.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-partial-controller.js",
+      "sourceBlob": "56d6ca374a67e8ea4d43a46732596701909183a2",
+      "sha256": "bf01619834b0f7b7ba473f6be1319e717db949fafdd319f87d99304de706cfcd",
+      "bytes": 22679,
+      "lines": 580,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-partial-submission.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-partial-submission.js",
+      "sourceBlob": "387d833591ca9f76781237517d3833ed7f109909",
+      "sha256": "759ad6286a1e40cdb4f7c7b67ff3365573ac13011f9629bf0e17d10234b7f174",
+      "bytes": 70781,
+      "lines": 1817,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-poi-creator.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-poi-creator.js",
+      "sourceBlob": "f13a8542d1fc3816c6d85e34029848f8605eb8e7",
+      "sha256": "0d9403795f7855587f11c3d200afb82b37b13dae24ec2d4a9daca510fdc3b1b9",
+      "bytes": 22342,
+      "lines": 570,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-poi-preflight.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-poi-preflight.js",
+      "sourceBlob": "b338be2d559e32cdc697b216edf490c9bf9af560",
+      "sha256": "1030746b55f53d39f7cba6db09791dfa12009bc00f93bdaa222cf435048d9217",
+      "bytes": 33926,
+      "lines": 811,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-poi-prover.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-poi-prover.js",
+      "sourceBlob": "3a6b6ef6529e8a91ed851ee2b84f82e0c04ec39f",
+      "sha256": "2af516fdab5126694e8ad2fc519683d65632775c41ce8a09060bb58d9b704b5a",
+      "bytes": 7909,
+      "lines": 222,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-poi-read.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-poi-read.js",
+      "sourceBlob": "eb0563fcf0bb93c2da00311b88805e89c7cb6a41",
+      "sha256": "141def0c14bc355804a48b7b580b2fd65627d01d8b697d6d46227e3c012b637e",
+      "bytes": 6805,
+      "lines": 192,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-poi-reconstruction.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-poi-reconstruction.js",
+      "sourceBlob": "7dc1f7fe0ae60609420eef2f8d2221cbf4ef6fe6",
+      "sha256": "bbc7aab1c1396cbb98e3412f886eaf6a648060b9743626f781a07d6c00a2a2bb",
+      "bytes": 7962,
+      "lines": 220,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-poi-root.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-poi-root.js",
+      "sourceBlob": "ff73ca3cf4edefdcb7377647d9f04b2c6cfecd09",
+      "sha256": "dfcffc2461d2d1997719a9dd6343430b1c35feaf9f9ec8f5155055e0d932466b",
+      "bytes": 11178,
+      "lines": 313,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-poi-shield-selector.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-poi-shield-selector.js",
+      "sourceBlob": "83f19162bd2fd67154e9935398566ffdc72633d2",
+      "sha256": "711b39f0fd2c42faa6636d6f3e0961a6d0ea623b5380543fa438d2efac86d149",
+      "bytes": 8786,
+      "lines": 231,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-poi-source.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-poi-source.js",
+      "sourceBlob": "208d03c3936c5145982b70c5c91762d7492226be",
+      "sha256": "dd2502c1ab5c553ce940dd66519d774dc42858c6399dc536245bdc7e60b9bf8b",
+      "bytes": 25033,
+      "lines": 630,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-poi-verifier.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-poi-verifier.js",
+      "sourceBlob": "65cb9c49e974fe9ad6ff1d68a6452112dc1fdaa4",
+      "sha256": "f748f6bfa6297190829b934dbab6cfff8cd61cd4dae1c2aa15c2e4789c5a047d",
+      "bytes": 12785,
+      "lines": 324,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-poi-witness.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-poi-witness.js",
+      "sourceBlob": "17b2552f2d0a60172f3be392c797139a8d2911ab",
+      "sha256": "f8313f705b838e6b72dc8c0cd7b0e8512c6693e4ae265cbc8497a2a66a9c1e15",
+      "bytes": 7526,
+      "lines": 212,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-private-live.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-private-live.js",
+      "sourceBlob": "638e232efbd216753e171c0dc9598e89a827fe5c",
+      "sha256": "781dc6f8ab075b73c64fb2f5a7127862380baa1448c1a0e59b09df86941fd684",
+      "bytes": 134981,
+      "lines": 3363,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-private-live.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-private-live.test.js",
+      "sourceBlob": "1b414c3e5a9bdf5c158e373573c2783ea9df67af",
+      "sha256": "bd101c046b73ce97f5607ed9e6ec64859fbbe62cf23400b56508f175f14a3557",
+      "bytes": 233390,
+      "lines": 6251,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-private-policy.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-private-policy.js",
+      "sourceBlob": "c2377e6891cb80de2ef90a23a727a993a5ca6af1",
+      "sha256": "8bad8dc8c9a5462ece2bf67b629c88af127d4f92d59887698f14de09385a324f",
+      "bytes": 9950,
+      "lines": 264,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-private-sign-proof.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-private-sign-proof.js",
+      "sourceBlob": "fbb40f936cc8846df68eb81b895ba847058d25b4",
+      "sha256": "8fd08903f5a42f6d31c9ec6d9e2b9224158c3b5ec8aae4c36c239e0ed22b93dd",
+      "bytes": 23644,
+      "lines": 612,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-proof-artifacts.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-proof-artifacts.js",
+      "sourceBlob": "3ec77df7c77f629ea0f6a69ef8af5ba2b254bec7",
+      "sha256": "2a90e9fec45ad3b172fe56161cb52e664a79eabce58b998bfc294bd28739655a",
+      "bytes": 4101,
+      "lines": 128,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-proof-recovery.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-proof-recovery.js",
+      "sourceBlob": "d66520178c3bb7ee73e9d0d56666fa2e1935b253",
+      "sha256": "aacebd36c6af91f747de30807cb170569938f86edac3e439fce8679181449c13",
+      "bytes": 89948,
+      "lines": 2143,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-public-facade-cold-credit.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-public-facade-cold-credit.js",
+      "sourceBlob": "44d6f0be2b1bc0a68c986e59e973dc2acb220d77",
+      "sha256": "8ff542b4205629a32403f314eca9cdb5a126191db2460d47cb1dfc1ec642ae6b",
+      "bytes": 9804,
+      "lines": 274,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-public-services.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-public-services.js",
+      "sourceBlob": "dfc5727bf8049d2ee001ed18624c69fa74743f50",
+      "sha256": "d799cfc3aeeb19d938faa8b265d7f2669bbc495f74b02555f31e83fc602f3838",
+      "bytes": 5598,
+      "lines": 160,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-relay-cold-ready.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-relay-cold-ready.js",
+      "sourceBlob": "d42d9187580ded3148fa2275e4ae4b81c43b4f4c",
+      "sha256": "c4da943e217ef85f6a4c21997ec8ae1929bd4afceaa262063df993fef6acc29d",
+      "bytes": 1428,
+      "lines": 35,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-relay-cold-ready.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-relay-cold-ready.test.js",
+      "sourceBlob": "e4219d0640d6c7efd785c63d4dde37033b777c3b",
+      "sha256": "3bb345a39da8bc0dce51032eefece19c6bdd0f7c6fdaca09ccd200a08a26a528",
+      "bytes": 3266,
+      "lines": 74,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-relay-core.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-relay-core.js",
+      "sourceBlob": "9afef112f2948a986fd872b3b4c423cb294a6043",
+      "sha256": "b0e6a0171d5a76a2bb9cbc5ae545d07d46efdb5cc51cec40b0e36214e02d7793",
+      "bytes": 9050,
+      "lines": 264,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-relay-core.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-relay-core.test.js",
+      "sourceBlob": "498688be932862c0fea33ea649fc2a39d40c3c3c",
+      "sha256": "4a6d9bcd0d5f04451bccadf3a8ca2b2764e83ded98286498708ee0ffb831964a",
+      "bytes": 5556,
+      "lines": 153,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-relay-keys.js",
+      "destination": "tools/qualification/scripts/qualify-railgun-relay-keys.js",
+      "sourceBlob": "4d3efeb2d8025697846996f7ce7806d8d889f84d",
+      "sha256": "6949315164cbbb7033398700fc4235fc3a31dd2a40c4fc90197ec33a127fc437",
+      "bytes": 1475,
+      "lines": 42,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/qualify-railgun-relay-positive.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-relay-positive.js",
+      "sourceBlob": "15ec7f93efd301fe05a3de99e9abca5a05cd37e3",
+      "sha256": "2ed1f6309ba9d1e3918f0c1c3402da1b61d601216b56275599b68b238fb26ea2",
+      "bytes": 3358,
+      "lines": 73,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-relay-positive.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-relay-positive.test.js",
+      "sourceBlob": "62797155d877b549755b04be234a60bac88b95b7",
+      "sha256": "19ba906318fbe39e4e7855dc3fd38f1aba8aa35aa7eb503c795eef2038bb0038",
+      "bytes": 8294,
+      "lines": 219,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-relay-proof.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-relay-proof.js",
+      "sourceBlob": "d8c038d161413b687002eb2fba67d34c03d3e153",
+      "sha256": "1ebb61495888f293cc0d289609027e3f936ae8ab6588cc4acc63ee043e2b940d",
+      "bytes": 12020,
+      "lines": 366,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-relay-quote-job.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-relay-quote-job.js",
+      "sourceBlob": "1e359dd7ac1f8bf8c93d2aba95cb230b0f6fa6e5",
+      "sha256": "ced38b4a08db9aed0e8efa95853e782e3ad9358196e15375cd3def51925c4f3b",
+      "bytes": 958,
+      "lines": 28,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-relay-retained.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-relay-retained.js",
+      "sourceBlob": "99073a8fa05df7a8735603cce91353b1ed0c7885",
+      "sha256": "0312330ea5c10123f8678d2710ffc1a0506fb3913e71055a27ec2fea8abd4001",
+      "bytes": 1133,
+      "lines": 36,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-relay-sender-recovery.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-relay-sender-recovery.js",
+      "sourceBlob": "6a04bd1f023b385bb9260914bb2e0cf28c509fb9",
+      "sha256": "2d67f9b7858e9b98965421b42c2b7872af8bcf3e0c53380adf49bda3314ccc56",
+      "bytes": 967,
+      "lines": 28,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-relay-wire.js",
+      "destination": "tools/qualification/scripts/qualify-railgun-relay-wire.js",
+      "sourceBlob": "c0a18364e6d33a6c17ae1fd9773e6176664be112",
+      "sha256": "cf94ab817e4c97d615a781b282d8aa6a3282dfef03ae125c1cffa90f96c5978d",
+      "bytes": 1635,
+      "lines": 47,
+      "mode": "100644",
+      "disposition": "existing byte-identical package recipe"
+    },
+    {
+      "source": "scripts/qualify-railgun-session.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-session.js",
+      "sourceBlob": "8607089731389cb5dce13e1a0b0ea77033ec3adb",
+      "sha256": "1c090eed23396e7dd52941c659ddfaaf178de4fe07f9c5a3824f1094860fdef4",
+      "bytes": 9778,
+      "lines": 285,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-shield-account.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-shield-account.js",
+      "sourceBlob": "887b2d734ae3fbc7e64ca42bac5229782e41b6ad",
+      "sha256": "eab1f1e3d684278fb0943a18143a360e5b9c17226f4bd17cd8fce16b266fd847",
+      "bytes": 8245,
+      "lines": 238,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-shield-build.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-shield-build.js",
+      "sourceBlob": "803f97158f88bb7a6ac6bbb8e848729b1be3a266",
+      "sha256": "082ff25f36dca2407fea4a27df43b9e9a2d35d00aaad58bd00c86709f3010c66",
+      "bytes": 5800,
+      "lines": 176,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-shield-live.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-shield-live.js",
+      "sourceBlob": "2ff02fb11307c4d17cc7447af587353785630e73",
+      "sha256": "656014dab51b187e531ab7a38329fc1737f2a4e34f1d74fed748b14d7c9c4e2f",
+      "bytes": 14849,
+      "lines": 391,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-shield-submission.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-shield-submission.js",
+      "sourceBlob": "3c58bfe3b2cd523d3dbd3f7bdd8470cd2f15cb37",
+      "sha256": "b935009e304bd66bf37152afe726fafb58efc9b0ffd169d6e1223885df421713",
+      "bytes": 28916,
+      "lines": 758,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-storage-asar.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-storage-asar.js",
+      "sourceBlob": "721f9d7c50aa9c31fc24749841acdeef3064c3d2",
+      "sha256": "b2f23754fabac4ff78bfcdf357c22d5da1181758110647ad4cbaa4ad1a8c4c54",
+      "bytes": 5693,
+      "lines": 173,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-transact-classification.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-transact-classification.js",
+      "sourceBlob": "8b275e32866d51ed53596b3129d010806ea83201",
+      "sha256": "18cbda73f744db508f0c42c216f74df5fbcda806453bb1032af13b144cda8504",
+      "bytes": 8167,
+      "lines": 233,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-tree-storage.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-tree-storage.js",
+      "sourceBlob": "ae975166ca6d36d8c83020bfd62a26fb4c18aa4c",
+      "sha256": "fe51ae3bdd156ad132fa69786446c3028c28fad7cce4eb2cd126bbb388bec6a5",
+      "bytes": 20612,
+      "lines": 598,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-txid-coverage.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-txid-coverage.js",
+      "sourceBlob": "3a4266aac9a9bb85136b25f353efe069cb803dd0",
+      "sha256": "1f0f6112400e881b628e4461ede395e584222ff582edc22e4ae9d9451efa363a",
+      "bytes": 7989,
+      "lines": 212,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-txid-historical.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-txid-historical.js",
+      "sourceBlob": "c632ff61747a330925a18b5bd9a55b136f8e01b0",
+      "sha256": "799bbe96994bea58039e3d01ce9293049a04e9e5416fc151a7fce624194e9799",
+      "bytes": 24667,
+      "lines": 658,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-txid-journal.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-txid-journal.js",
+      "sourceBlob": "e30764837e703383e70766dec8ed50922b6d7ada",
+      "sha256": "b90963b0a7db09fe4730d42d3874716442ec0c8ed44232dc5fa99f2ba6c49acf",
+      "bytes": 11497,
+      "lines": 305,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-txid-projection.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-txid-projection.js",
+      "sourceBlob": "1de8c52a3bffc3165eefabc097cfc1c8db5064ed",
+      "sha256": "507ef8d9f5e0ed48d521c3f3051addd24a9ba73f836dc8934286b64e1f623f93",
+      "bytes": 4838,
+      "lines": 138,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-txid-root.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-txid-root.js",
+      "sourceBlob": "2a77455cd2a2608ad5a1bd1bf6cdfaf69f558545",
+      "sha256": "31f96dfb90231e42d843030de3f28cdc4d7a59f75ffcf2bc71b0409a95a01ba5",
+      "bytes": 4913,
+      "lines": 129,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-txid-storage.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-txid-storage.js",
+      "sourceBlob": "22e53b50195f8f0a147618230ab46ef6fb0f7041",
+      "sha256": "4d2c5b93eab853e6a82f3802d484e3b5516299e3b1c551b83ccf3713380310ee",
+      "bytes": 9066,
+      "lines": 264,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-txid-tree.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-txid-tree.js",
+      "sourceBlob": "6da42c8f19414a5504ef587ff3c51b31a008f4cc",
+      "sha256": "4d03b64076eb9f4655edd62540d9e6330f2b1ea9ac97ce953013df52b409c34b",
+      "bytes": 4342,
+      "lines": 122,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-wallet-aes.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-wallet-aes.js",
+      "sourceBlob": "f53d704b2a68f2320faf9ba3e2bcfab8cbc1a80e",
+      "sha256": "f8df182b3b5f5b3943c925625c312d6b48707f6d3ad6776f733e9d3488effa83",
+      "bytes": 2922,
+      "lines": 95,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-wallet-journal.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-wallet-journal.js",
+      "sourceBlob": "2edef73d788820a1e90fd4de4c0b2304339d0211",
+      "sha256": "2b9970cba092d0e0399987adf5fd0520bc665993aca633bf9e9e24f320d9d616",
+      "bytes": 112359,
+      "lines": 2608,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-wallet-journal.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-wallet-journal.test.js",
+      "sourceBlob": "10feccdd2f89ec7e7ed492a7944f7812a949fa87",
+      "sha256": "e53331a8a38156b19b959f79d0de730b4503b58d47060eaf9104293e8bcd8b4d",
+      "bytes": 20386,
+      "lines": 523,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-wallet-notes.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-wallet-notes.js",
+      "sourceBlob": "a244d08ac19c8a79928f2f4f9af979bfd3765f6c",
+      "sha256": "8f303e5d8e4d8908b83a00d1abb24bb9328e893bdff81bec699703a14757ed35",
+      "bytes": 3301,
+      "lines": 109,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-wallet-snapshot.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-wallet-snapshot.js",
+      "sourceBlob": "8eb9791eb70e0de57fc08c599c94807aee12af86",
+      "sha256": "61f0fd21193250f99d37f86801122a41478f227a2e3f10a06c48dafe25643cc6",
+      "bytes": 16475,
+      "lines": 447,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/qualify-railgun-wallet-synthetic.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/qualify-railgun-wallet-synthetic.js",
+      "sourceBlob": "d537f0f65a0e130fdfb340c092d467ac58dc9164",
+      "sha256": "acd90c5ec4beaf905673f63a28449cd23a0e35db2bb9f69031e9a1433fded8cc",
+      "bytes": 12769,
+      "lines": 356,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/railgun-coordinated-child.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/railgun-coordinated-child.js",
+      "sourceBlob": "fd2cfa65f28d96b046367679578b9fb1197056f9",
+      "sha256": "29cc4d17769ca6e2ac6dffef928b0ab0f4b909a982b126328e18fa363815f90c",
+      "bytes": 4846,
+      "lines": 178,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/railgun-coordinated-electron.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/railgun-coordinated-electron.js",
+      "sourceBlob": "36806f3cb17bc88eafd087284a19aae50b91989e",
+      "sha256": "86b0700492fe194c384feef9956994551363ecae9bd00af90c8e84180b94fe57",
+      "bytes": 5673,
+      "lines": 178,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/railgun-coordinated-electron.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/railgun-coordinated-electron.test.js",
+      "sourceBlob": "284e3c62342a8d6c19aa2b59ed62f2f6288fb924",
+      "sha256": "4a1b467c332e86f7f2c924cd0cb52f7425f7966b222ed83888be06b8984a8325",
+      "bytes": 2091,
+      "lines": 57,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/railgun-fixture-integrity.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/railgun-fixture-integrity.js",
+      "sourceBlob": "e4803c307885be80c54ec44c071e93ad8f1fa660",
+      "sha256": "ecb3bdd30ed61572ac14444c9579f978f222c35fd203274c25428d5fb313aa93",
+      "bytes": 2120,
+      "lines": 52,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/railgun-log-capture-data.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/railgun-log-capture-data.js",
+      "sourceBlob": "8fd9badc478a03c0fb16784a8be2acefab55926e",
+      "sha256": "8b1e5d1eb62378f9df347605711a2d315153593d325784094049c7ece0de12ba",
+      "bytes": 4537,
+      "lines": 117,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/railgun-log-capture-data.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/railgun-log-capture-data.test.js",
+      "sourceBlob": "1d5ea6ec72bc6e144e78a3a33918e46e6e17ae05",
+      "sha256": "3e7b3eb310ce29db52ded9133f481b4e238d3c8f289cb1a64160382b7f520e3c",
+      "bytes": 2483,
+      "lines": 76,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/railgun-qualification-archive.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/railgun-qualification-archive.test.js",
+      "sourceBlob": "ed47cad9dd2b61b36bdf334e0cef89d0144a0bbc",
+      "sha256": "c06b51e74754211c92bde76fef0a1f31be5665485eca7391f1f8a3c5fec5baeb",
+      "bytes": 1454,
+      "lines": 32,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/railgun-settings-source-closure.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/railgun-settings-source-closure.test.js",
+      "sourceBlob": "c845e5cdfb53e1514fb28ff353cbc771d1cd6a60",
+      "sha256": "30f588d7317264a7923252685e2f036b295e058a53aca3e6c5346e844cbcf1ce",
+      "bytes": 5043,
+      "lines": 125,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/railgun-wallet-snapshot-electron.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/railgun-wallet-snapshot-electron.js",
+      "sourceBlob": "c8d51f18b335c4a7b02ae769a11b0b9c0bc3cc34",
+      "sha256": "729a4e4d45224dbd4c4702d30a30a5f428e952b2c771b1983c623845b8c545c4",
+      "bytes": 2592,
+      "lines": 83,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/verify-railgun-sepolia-headers.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/verify-railgun-sepolia-headers.js",
+      "sourceBlob": "cffb922ddc493dc44916d3bce41307bb303fa38b",
+      "sha256": "83b0c0d78fd39f301ae3b4d59e25923a7dbdae075ce7cf04d6a934baa7406692",
+      "bytes": 7943,
+      "lines": 189,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/verify-railgun-sepolia-headers.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/verify-railgun-sepolia-headers.test.js",
+      "sourceBlob": "bbc487d630a98ae8d3dfbebc50f9a96f45e8f704",
+      "sha256": "cd48928e34c54af552dab3761a63e14d14f53cfe26de123d6b45c563f74caac8",
+      "bytes": 5613,
+      "lines": 133,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/verify-railgun-sepolia-history.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/verify-railgun-sepolia-history.js",
+      "sourceBlob": "29dd35ad535d85b6d25438ec94e314b0b33f280f",
+      "sha256": "32a1a1842b70d16e5f9ff028b335b864060d04697af64cd8dfee51c74ad0817e",
+      "bytes": 13347,
+      "lines": 336,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/verify-railgun-sepolia-history.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/verify-railgun-sepolia-history.test.js",
+      "sourceBlob": "ab42464016b33fc83ad522afaa90e1331d08c53d",
+      "sha256": "d8695b331cbdfb978892f31deece17c2a68ed43d560fa4bed9e25fd80a13fb19",
+      "bytes": 4944,
+      "lines": 117,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/verify-railgun-txid-history.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/verify-railgun-txid-history.js",
+      "sourceBlob": "51de8ff0bca5eaff58cb460616f44bb1e31ec73d",
+      "sha256": "b1c4a18363fe1540ed27a15fa755aea58f0e4eb4fd0e7745729af3e62c60c621",
+      "bytes": 7633,
+      "lines": 217,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/write-railgun-submitter-metadata.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/write-railgun-submitter-metadata.js",
+      "sourceBlob": "eb3f4f70167b1df34f2df4126e654908765cdd4e",
+      "sha256": "9b1818a37600a505a92e4b1852d36f4e89294a2100a09eaf26c2b7eff5cd3039",
+      "bytes": 16841,
+      "lines": 468,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    },
+    {
+      "source": "scripts/write-railgun-submitter-metadata.test.js",
+      "destination": "tools/freedom-legacy-qualification/scripts/write-railgun-submitter-metadata.test.js",
+      "sourceBlob": "183b2bda90912fb897ff5ff0cf81377c29be3906",
+      "sha256": "328b294ea5499311030f6d35b73710c7d0561c1d8b917df094150b21504403e2",
+      "bytes": 19824,
+      "lines": 491,
+      "mode": "100644",
+      "disposition": "historical Freedom-source-bound tool; not an installed-package qualification"
+    }
+  ]
+}
