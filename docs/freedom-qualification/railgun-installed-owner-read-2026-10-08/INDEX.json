@@ -1,0 +1,22 @@
+{
+  "PROVENANCE.json": {
+    "bytes": 2920,
+    "sha256": "4f546a64b53250e601b7ece5f5f96bd6094517947f37773a0913376637292352"
+  },
+  "README.md": {
+    "bytes": 2557,
+    "sha256": "24e3562ac8087d497a4f343b4738fa705954da6f08d7b2cb376c810ebe0e03e1"
+  },
+  "RESULT.json": {
+    "bytes": 528,
+    "sha256": "82c5c936958e4517f8271fb6043aa61697c4f5bf764bc4c3b7cbb4607e4ed501"
+  },
+  "process.json": {
+    "bytes": 220,
+    "sha256": "96fb42f0ed508cebfb7a4ebc4b32e4d990ca5820b5b17bf5fb9e919738caf31c"
+  },
+  "report.path-free.json": {
+    "bytes": 154036,
+    "sha256": "7f3f761e68a71bf9d5ed01facff7d54def4148057119bb35f4813c53caf752dd"
+  }
+}
