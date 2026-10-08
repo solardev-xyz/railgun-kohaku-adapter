@@ -1,0 +1,33 @@
+{
+  "baseRevision": "08c65b5aeb8ee544dd3c2e62007c9a78c025630b",
+  "productionTransforms": false,
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-disclosure-plan.test.js",
+      "beforeSha256": "d6e866ccb9c0ba66425ad0a7de8736d1033488faebb4d3325ef4486021084960",
+      "afterSha256": "25ad223107b1d8377a98f0a0abf30bf48834ef851cbc0492447694f984ed9243",
+      "replacements": [
+        {
+          "start": 53994,
+          "before": "      './railgun-poi-cold-validation',\n      './railgun-own-receipt',\n      '../networks/wallet-tor-transport',\n",
+          "after": "      '../../../../../../src/owners/railgun-poi-cold-validation.js',\n      '../../../../../../src/owners/railgun-own-receipt.js',\n      '../../../../fixtures/host/src/main/networks/wallet-tor-transport.js',\n"
+        },
+        {
+          "start": 12744,
+          "before": "    ['./railgun-identity', 'withRailgunViewingCredential'],\n    ['./railgun-own-operation', 'captureRailgunOwnOperationSelector'],\n    ['./railgun-public-policy', 'getRailgunPublicPolicy'],\n    ['./railgun-engine-runtime', 'verifyRailgunEngineRuntime'],\n    ['./railgun-prover-runtime', 'verifyRailgunProverRuntime'],\n    ['./railgun-poi-root', 'createRailgunPoiRootSource'],\n    ['./railgun-poi-root', 'createRailgunPoiTxidRootSource'],\n    ['./railgun-process', 'startRailgunProcess'],\n    ['./railgun-own-poi-proof', 'proveRailgunOwnPoi'],\n    ['./railgun-own-witness', 'preflightRailgunOwnPoi'],\n    ['./railgun-own-witness', 'preflightRailgunRetainedPoiCompleted'],\n    ['./railgun-own-witness', 'preflightRailgunRetainedPoiForSubmission'],\n    ['../networks/private-rpc', 'createPrivateRpc'],\n",
+          "after": "    ['../../../../../../src/owners/railgun-identity.js', 'withRailgunViewingCredential'],\n    ['../../../../../../src/owners/railgun-own-operation.js', 'captureRailgunOwnOperationSelector'],\n    ['../../../../../../src/owners/railgun-public-policy.js', 'getRailgunPublicPolicy'],\n    ['../../../../../../src/execution/railgun-engine-runtime.js', 'verifyRailgunEngineRuntime'],\n    ['../../../../../../src/execution/railgun-prover-runtime.js', 'verifyRailgunProverRuntime'],\n    ['../../../../../../src/owners/railgun-poi-root.js', 'createRailgunPoiRootSource'],\n    ['../../../../../../src/owners/railgun-poi-root.js', 'createRailgunPoiTxidRootSource'],\n    ['../../../../../../src/owners/railgun-process.js', 'startRailgunProcess'],\n    ['../../../../../../src/owners/railgun-own-poi-proof.js', 'proveRailgunOwnPoi'],\n    ['../../../../../../src/owners/railgun-own-witness.js', 'preflightRailgunOwnPoi'],\n    ['../../../../../../src/owners/railgun-own-witness.js', 'preflightRailgunRetainedPoiCompleted'],\n    ['../../../../../../src/owners/railgun-own-witness.js', 'preflightRailgunRetainedPoiForSubmission'],\n    ['../../../../fixtures/host/src/main/networks/private-rpc.js', 'createPrivateRpc'],\n"
+        },
+        {
+          "start": 3474,
+          "before": "jest.mock('../networks/private-rpc', () => ({\n",
+          "after": "jest.mock('../../../../fixtures/host/src/main/networks/private-rpc.js', () => ({\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    }
+  ]
+}

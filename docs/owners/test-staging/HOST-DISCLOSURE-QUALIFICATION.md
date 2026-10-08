@@ -1,0 +1,5 @@
+# Disclosure plan lifecycle and import boundaries
+
+The original disclosure-plan suite passes168 tests in20.215 seconds, natural exit0. Real package payload/capsule normalizers, capture comparison, context handles and account-phase exclusions remain. Original authority registries and recovery callbacks remain explicitly controlled seams. No viewing key, proof, root request or transport is admitted; all original noninvocation assertions are retained.
+
+The fixed repository context is initialized and literal paths, including the original computed import tables, now point to actual package owner/execution modules and the pinned generic RPC/transport test fixtures. Two initial failures were unresolved paths in the cold import-order table; those paths were relocated without changing the eager-load or forbidden-authority assertions. Reversible provenance preserves every original test assertion. Default adjacent discovery contains134 exact filenames;17 host suites remain excluded. No runtime/export/dependency change, native or installed-host acceptance, or complete210-suite run is claimed.

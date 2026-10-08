@@ -13,10 +13,10 @@
     "railgun-wallet-catalog.test.js",
     "railgun-wallet-journal.test.js"
   ],
-  "remainingCount": 18,
+  "remainingCount": 17,
   "groups": {
     "credential-and-enrollment-lifetime": 2,
-    "genuine-rpc-transport-and-destination": 1,
+    "genuine-rpc-transport-and-destination": 0,
     "account-storage-composition": 2,
     "adapter-wrapper-boundary": 1,
     "shared-eoa-journal-or-recovery": 11,
@@ -403,39 +403,6 @@
         }
       ],
       "computedSites": [],
-      "executedInThisSuccessor": false
-    },
-    {
-      "source": "src/main/wallet/railgun-poi-disclosure-plan.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-disclosure-plan.test.js",
-      "group": "genuine-rpc-transport-and-destination",
-      "requiredHostFamilies": [
-        "rpc"
-      ],
-      "unresolved": [
-        {
-          "kind": "jest.mock",
-          "start": 3157,
-          "end": 3182,
-          "value": "../networks/private-rpc",
-          "line": 96,
-          "target": "src/main/networks/private-rpc.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "rpc",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        }
-      ],
-      "computedSites": [
-        {
-          "kind": "require",
-          "line": 381
-        },
-        {
-          "kind": "require.resolve",
-          "line": 1433
-        }
-      ],
       "executedInThisSuccessor": false
     },
     {
@@ -1968,5 +1935,9 @@
     "tests": 105,
     "rpcBrands": "actual copied source",
     "liveTransport": false
+  },
+  "qualifiedDisclosureGroup": {
+    "tests": 168,
+    "originalAssertionsChanged": false
   }
 }
