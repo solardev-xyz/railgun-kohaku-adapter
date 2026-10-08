@@ -1,0 +1,47 @@
+{
+  "schema": "railgun-private-qualification-source-checks-v1",
+  "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+  "exactStagedSourceFiles": 21,
+  "sourceLines": 6171,
+  "noRuntimeOrPackageManifestChange": true,
+  "noInstallOrUpstreamCryptoOrNativeRun": true,
+  "originalSuites": {
+    "suites": 3,
+    "testsPassed": 133,
+    "exitCode": 0,
+    "log": {
+      "bytes": 407,
+      "sha256": "a60fccaaf1ee8a171b3d2add9b3e5309f51161ef183938cfc9783af71c3ea591"
+    }
+  },
+  "priorInvocation": {
+    "suitesPassed": 2,
+    "suitesFailed": 1,
+    "testsPassed": 123,
+    "testsFailed": 10,
+    "exitCode": 1,
+    "cause": "Externally supplied NODE_PATH correctly refused by unchanged guard",
+    "log": {
+      "bytes": 9776,
+      "sha256": "f92e795be4db7695ab7522cfea6a840b9f697a320616a7c9fd0ab5635158979f"
+    }
+  },
+  "parityTests": {
+    "suites": 1,
+    "testsPassed": 2,
+    "exitCode": 0,
+    "log": {
+      "bytes": 280,
+      "sha256": "6047836d6feb6712a7cbf91ca7bbcb6de2a63d2effb0b0380810d2f371d74bbd"
+    }
+  },
+  "focusedLint": {
+    "warnings": 0,
+    "exitCode": 0,
+    "log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "tooling": "Existing cached Jest and ESLint; no package installation. Qualification run environment removed NODE_PATH and NODE_OPTIONS."
+}

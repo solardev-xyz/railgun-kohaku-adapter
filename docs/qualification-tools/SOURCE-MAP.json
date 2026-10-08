@@ -1,0 +1,199 @@
+{
+  "schema": "railgun-qualification-tool-source-staging-v1",
+  "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+  "packageBase": "e13016dd3613bdc057a76ed27aef916061d12b0b",
+  "files": [
+    {
+      "source": "scripts/fixtures/railgun-relay-keys/README.md",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-keys/README.md",
+      "mode": "100644",
+      "sourceBlob": "b3caca146e1a92eeba6c94a7ac5c591dcf3e8b15",
+      "sha256": "309e3279e058350db7b5ab8043c94d393e864147556208a7613609226653c416",
+      "bytes": 4240,
+      "lines": 27
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-keys/admission.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-keys/admission.js",
+      "mode": "100644",
+      "sourceBlob": "7402a0789153e3e14320b2d4e3f990a1446c158c",
+      "sha256": "ea0ee9dec260dfd194ab196b314a4f6141b3083d8038912684d2b637183dfdb0",
+      "bytes": 3927,
+      "lines": 106
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-keys/campaign.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-keys/campaign.js",
+      "mode": "100644",
+      "sourceBlob": "d9d93f0223f81dbaf13f86e40d1c25d02ceb4b7f",
+      "sha256": "eb702d6a4f3c3c805f745559d026bdae0a56e868a7ef17db8b69506a1aa6df79",
+      "bytes": 17830,
+      "lines": 424
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-keys/cases.json",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-keys/cases.json",
+      "mode": "100644",
+      "sourceBlob": "325b1143d2a99cf206213f63d89d2a4c50528e04",
+      "sha256": "9064dc82eca9618d1f114716cb09f9b42857acf29dfa944c577874756f6d8fd8",
+      "bytes": 3712,
+      "lines": 90
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-keys/recipe.test.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-keys/recipe.test.js",
+      "mode": "100644",
+      "sourceBlob": "cd22e388596ca88c6bd4b4ca8bc7a7edd3daf03c",
+      "sha256": "fcdd30737e91e6a7521d42c6af2fd0c92fd883f419695ee593683d1c7d1a0222",
+      "bytes": 7074,
+      "lines": 158
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-keys/vectors.json",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-keys/vectors.json",
+      "mode": "100644",
+      "sourceBlob": "a97678fb14eb4d81b824821f06645347282caa65",
+      "sha256": "3eeff85d644bcfef361d5b205a2f5855683f8a1f06c4dc197d0a39c4879b23a2",
+      "bytes": 1555,
+      "lines": 19
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/README.md",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/README.md",
+      "mode": "100644",
+      "sourceBlob": "46cb42cea0c43994c99129648f110d8c1fe7718d",
+      "sha256": "206996047788ead2043c5eadb4e8e4099ad1694c9e9f9d5b9f9db748bf4d2e3f",
+      "bytes": 6413,
+      "lines": 36
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/campaign.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/campaign.js",
+      "mode": "100644",
+      "sourceBlob": "bcee0fc1c01d7d2607a196217be9786464eac47f",
+      "sha256": "0ae3e99c7fe7c55eae99f17467e23542608b288b7272b13c3666d13320b042c6",
+      "bytes": 29928,
+      "lines": 771
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/cases.json",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/cases.json",
+      "mode": "100644",
+      "sourceBlob": "67de61e5ec846466242b41b1d3dde6095655fd2c",
+      "sha256": "8a5d24307b9de8d5ea6afd7d48d8e7e9388da43e891f5a4c1dbfe63b73247896",
+      "bytes": 8247,
+      "lines": 181
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/inputs.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/inputs.js",
+      "mode": "100644",
+      "sourceBlob": "21280687b34639a2032c0a9aef2732d4230ef959",
+      "sha256": "e7238f737fe243449d55170e69660cb28feab7e5b81d00df34034581c2dced3a",
+      "bytes": 7195,
+      "lines": 196
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/inputs.json",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/inputs.json",
+      "mode": "100644",
+      "sourceBlob": "36eae8decddc6c30f46974ead18a8c2d0fdb4459",
+      "sha256": "65629bc6a6b63585f198cb7ae2603c7c9421f47485f6692c1dde6bf175713dae",
+      "bytes": 68672,
+      "lines": 1616
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/licenses.json",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/licenses.json",
+      "mode": "100644",
+      "sourceBlob": "0f3f63d4b5ef0d10bdee64e44100a10662e0aa19",
+      "sha256": "915d5eff304f95222f8c0cef1f564df129f890699bb3b085fe687a4590344caf",
+      "bytes": 32527,
+      "lines": 983
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/policy.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/policy.js",
+      "mode": "100644",
+      "sourceBlob": "741b52ce9cccf3d75151184692247055d109d1fc",
+      "sha256": "6f820f643ac3c0c3649ae1cf84a4780988bde666abc17f7e1f705b8d8933db6b",
+      "bytes": 12183,
+      "lines": 343
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/policy.json",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/policy.json",
+      "mode": "100644",
+      "sourceBlob": "91809ee3c06f83a51ef486fe23e5e918884b4182",
+      "sha256": "fa04744da4b3cb5d7951c6a5e0e4e241e213123f8b53dc611500cfe05f7a45ef",
+      "bytes": 1844,
+      "lines": 44
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/policy.test.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/policy.test.js",
+      "mode": "100644",
+      "sourceBlob": "f52107ddcd53eece9dfea25a338ee4340deef6c2",
+      "sha256": "6fca7c682e3b37c4b0de33037c4850ebf65740533269fbdcbaa4af611e333644",
+      "bytes": 10383,
+      "lines": 371
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/prepare.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/prepare.js",
+      "mode": "100644",
+      "sourceBlob": "1f01c2fde5fddf6c9eff5d4c7223640b3e474746",
+      "sha256": "2bf73a0b603545fe9e6cc8953d25f1195ed62431c73cb978995c54baf4307364",
+      "bytes": 13382,
+      "lines": 341
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/recipe.test.js",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/recipe.test.js",
+      "mode": "100644",
+      "sourceBlob": "857715ce84f9112b30e8b3c4e072661418bcaf74",
+      "sha256": "3ba9c8b8e6ad334f7034e15f8b2c0a6404743815117ea812d2db9bf9ad061c68",
+      "bytes": 13575,
+      "lines": 328
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/roots.example.json",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/roots.example.json",
+      "mode": "100644",
+      "sourceBlob": "32828fff466a0d04278daf26caf04e257ac4299d",
+      "sha256": "d054b38ba2f53fa78a5a498b27e8753dfe5ae327316423b2476e6d66bf706652",
+      "bytes": 380,
+      "lines": 9
+    },
+    {
+      "source": "scripts/fixtures/railgun-relay-wire/vectors.json",
+      "destination": "tools/qualification/scripts/fixtures/railgun-relay-wire/vectors.json",
+      "mode": "100644",
+      "sourceBlob": "621bd321fab82dda8af73123ad05abe1aa60cc8d",
+      "sha256": "c5e1a0d9a7a68e89d96931609fd26ab5bdb7f2892bbc392b56cee0b0f7a0844f",
+      "bytes": 2290,
+      "lines": 39
+    },
+    {
+      "source": "scripts/qualify-railgun-relay-keys.js",
+      "destination": "tools/qualification/scripts/qualify-railgun-relay-keys.js",
+      "mode": "100644",
+      "sourceBlob": "4d3efeb2d8025697846996f7ce7806d8d889f84d",
+      "sha256": "6949315164cbbb7033398700fc4235fc3a31dd2a40c4fc90197ec33a127fc437",
+      "bytes": 1475,
+      "lines": 42
+    },
+    {
+      "source": "scripts/qualify-railgun-relay-wire.js",
+      "destination": "tools/qualification/scripts/qualify-railgun-relay-wire.js",
+      "mode": "100644",
+      "sourceBlob": "c0a18364e6d33a6c17ae1fd9773e6176664be112",
+      "sha256": "cf94ab817e4c97d615a781b282d8aa6a3282dfef03ae125c1cffa90f96c5978d",
+      "bytes": 1635,
+      "lines": 47
+    }
+  ],
+  "literalImportClosureWithinStagedPaths": true,
+  "generatedArtifactsIncluded": false,
+  "exportsOrDependenciesChanged": false
+}
