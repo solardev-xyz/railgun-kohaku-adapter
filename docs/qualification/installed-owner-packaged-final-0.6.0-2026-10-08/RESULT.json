@@ -1,0 +1,125 @@
+{
+  "schema": "railgun-final-installed-owner-packaged-v1",
+  "qualified": true,
+  "hostCommit": "dcd242f13da2a1e9b49a1ac092ba42ef45f1be20",
+  "packageCommit": "fb3add6aa411375b42ed84735d4901bbc491c68e",
+  "packageTarSha256": "6169f7445db3306feae9a16f35d6665e9f767e59b071a41a05e5f14fef02c59c",
+  "asar": {
+    "bytes": 195491857,
+    "sha256": "cd757f6faa5823342ea2880cb272860ff0d90cb04a0b0d3fd57a4af13e5dbbfa"
+  },
+  "npmFiles": 279,
+  "shipped": 263,
+  "omitted": 16,
+  "loadedPackageHashesJoined": 153,
+  "sourceDependenciesResourcesRuntimeAndTarUnchanged": true,
+  "originalBuildNaturalZero": true,
+  "originalProbeNaturalZero": true,
+  "originalBuildPid": 37862,
+  "originalProbePid": 38593,
+  "initialSandboxAttempt": {
+    "qualified": false,
+    "signal": "SIGABRT",
+    "elapsedMs": 1654,
+    "postUnchanged": true,
+    "cause": "not established; identical probe passed outside sandbox"
+  },
+  "checkerMetadataCorrection": "r1 inherited knownWholeRepositoryPackaging=true; preserved. Offline r2 records current explicit source/package-only files patterns; all byte/closure/loaded-package guards unchanged. No repeated native probe for metadata correction.",
+  "scope": "unsigned macOS arm64 app.asar package resolution and genuine main facade initialization only",
+  "limits": [
+    "No account, vault, utility, storage worker, native addon, proof, signing or live service behavior",
+    "No ordinary application startup, distributed executable launch, signing, notarization or publication",
+    "Node network-entrypoint refusal is not OS network confinement",
+    "Real afterPack and actual installed Electron44.6.0; package source identity is compatibility, not authority"
+  ],
+  "files": {
+    "INPUTS.json": {
+      "bytes": 2269,
+      "sha256": "ff4881b3b8cb5783be0f99d96d5754e34a0812c810b134166eacf4addd288ff6"
+    },
+    "PREPARATION.json": {
+      "bytes": 645,
+      "sha256": "313756642fb845a37ccc901b93c6c565fa72884d5ab8565342e4dfd0be034e96"
+    },
+    "PRE.json": {
+      "bytes": 8087757,
+      "sha256": "327cffe613a14c9016e0912aba1414250013dc27e532c4444bec557e63cd6c36"
+    },
+    "POST-INVENTORY.json": {
+      "bytes": 8087757,
+      "sha256": "327cffe613a14c9016e0912aba1414250013dc27e532c4444bec557e63cd6c36"
+    },
+    "POST.json": {
+      "bytes": 357,
+      "sha256": "06167803656d166c887501c12520f83565f53e6e569aaf1be72345832d35b805"
+    },
+    "EXTERNAL-PRE.json": {
+      "bytes": 1615,
+      "sha256": "55a96118f0c9e9f2a292ec8a1278d635ae807da126d7978c3e9999a898a05522"
+    },
+    "build-PROCESS.json": {
+      "bytes": 703,
+      "sha256": "c29fb7665f8f490890b3acb2b152ecc39506ebb29ba0b1f0802d87824d0b2c21"
+    },
+    "initialize-PROCESS.json": {
+      "bytes": 591,
+      "sha256": "de5dd8fee42f248819de3bf1e3992b22ee8f540f51f3a93f7495b66954183608"
+    },
+    "INITIALIZED.json": {
+      "bytes": 17721,
+      "sha256": "6a68a5e514bced707271d6bab682eda767e29804dfd0bd00d10d4eedb0c3cea4"
+    },
+    "INVENTORY-FINAL-r2.json": {
+      "bytes": 12497,
+      "sha256": "81624ca6157975478f190894087e28a3e9ae1e05b84a5b09b90cabd0f7b3457b"
+    },
+    "INVENTORY-FINAL.json": {
+      "bytes": 12362,
+      "sha256": "403a1f7782f8b4be63acea2263b5e84a8a8fc3286912836dc88a44bce722e969"
+    },
+    "RETRY-BASIS.json": {
+      "bytes": 1498,
+      "sha256": "cf200924505d991a20d093e5b92062fec6f5c93e3929c6eb3bd7064490c8c49a"
+    },
+    "initialize.cjs": {
+      "bytes": 4045,
+      "sha256": "defe39a2fb32fd1e94111884ee0d5ce436c6ea44b8e88129f0fda3212b90e37f"
+    },
+    "check-inventory.cjs": {
+      "bytes": 3376,
+      "sha256": "695d99f30decd8aa1ecef291323dd89a07bca89b1423de56086d7a03734af8ed"
+    },
+    "check-inventory-r2.cjs": {
+      "bytes": 3484,
+      "sha256": "501ecf44fa111124f10a831deac2e95c509731c08f5736f86651dcd996fbb9d5"
+    },
+    "run.py": {
+      "bytes": 2264,
+      "sha256": "a25d53ff685fbd8d45f61aaa4009239c69e648dd13902053802b38b095325e2b"
+    },
+    "post.py": {
+      "bytes": 2170,
+      "sha256": "6edb2e7a135e584199da45a37f3deaa4c5d7a7faf355c2f419a5292c65789aee"
+    },
+    "build.log": {
+      "bytes": 3653,
+      "sha256": "fa947dbc83a5378312de828ca7212a699b6e89483fdebf047c502ae6a9c0310a"
+    },
+    "initialize.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "INVENTORY.log": {
+      "bytes": 58,
+      "sha256": "f714d7bcf9a2ab547f677de027db8538f98ffda518bad476d6c2bfebca99a4c8"
+    },
+    "INVENTORY-r2.log": {
+      "bytes": 58,
+      "sha256": "f714d7bcf9a2ab547f677de027db8538f98ffda518bad476d6c2bfebca99a4c8"
+    },
+    "POST.log": {
+      "bytes": 339,
+      "sha256": "4aa8e50f21c445019aa46c1b2116f87ae7ab0bffc613e3ae49b547ad3fc6d1d9"
+    }
+  }
+}

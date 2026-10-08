@@ -1,0 +1,29 @@
+{
+  "schema": "railgun-path-free-process-observation-v1",
+  "original": {
+    "bytes": 601,
+    "sha256": "a3178eed7df42cc2f1ea386a09607c87b1791593d1334d16e20a58820fd96256"
+  },
+  "representation": "derived; not byte-exact original",
+  "normalizations": [
+    "command paths replaced by packaging-source, unsigned-output and check-directory placeholders; other values unchanged"
+  ],
+  "observation": {
+    "mode": "initialize",
+    "pid": 37923,
+    "command": [
+      "<packaging-source>/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron",
+      "<check-directory>/initialize.cjs"
+    ],
+    "exitCode": null,
+    "signal": "SIGABRT",
+    "natural": false,
+    "timedOut": false,
+    "terminateRequested": false,
+    "killRequested": false,
+    "originalExitObserved": true,
+    "elapsedMs": 1654,
+    "hostCommit": "dcd242f13da2a1e9b49a1ac092ba42ef45f1be20",
+    "scriptSha256": "defe39a2fb32fd1e94111884ee0d5ce436c6ea44b8e88129f0fda3212b90e37f"
+  }
+}

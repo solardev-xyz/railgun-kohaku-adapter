@@ -1,0 +1,137 @@
+{
+  "schema": "railgun-final-owner-packaged-publication-v1",
+  "hostCommit": "dcd242f13da2a1e9b49a1ac092ba42ef45f1be20",
+  "packageCommit": "fb3add6aa411375b42ed84735d4901bbc491c68e",
+  "tarSha256": "6169f7445db3306feae9a16f35d6665e9f767e59b071a41a05e5f14fef02c59c",
+  "originalResult": {
+    "bytes": 4689,
+    "sha256": "52faacbc652194ee9fe3279dc8642b293fcb3d8ffa12ad1eff89011bd1106a2b"
+  },
+  "originalInputs": {
+    "INPUTS.json": {
+      "bytes": 2269,
+      "sha256": "ff4881b3b8cb5783be0f99d96d5754e34a0812c810b134166eacf4addd288ff6"
+    },
+    "PREPARATION.json": {
+      "bytes": 645,
+      "sha256": "313756642fb845a37ccc901b93c6c565fa72884d5ab8565342e4dfd0be034e96"
+    },
+    "PRE.json": {
+      "bytes": 8087757,
+      "sha256": "327cffe613a14c9016e0912aba1414250013dc27e532c4444bec557e63cd6c36"
+    },
+    "POST-INVENTORY.json": {
+      "bytes": 8087757,
+      "sha256": "327cffe613a14c9016e0912aba1414250013dc27e532c4444bec557e63cd6c36"
+    },
+    "EXTERNAL-PRE.json": {
+      "bytes": 1615,
+      "sha256": "55a96118f0c9e9f2a292ec8a1278d635ae807da126d7978c3e9999a898a05522"
+    },
+    "RETRY-BASIS.json": {
+      "bytes": 1498,
+      "sha256": "cf200924505d991a20d093e5b92062fec6f5c93e3929c6eb3bd7064490c8c49a"
+    }
+  },
+  "sourceArchive": {
+    "bytes": 74926080,
+    "sha256": "65bfdecc041bd0d421b2704bb9d2978655bdffe1b9775207b9e28e97f720280d",
+    "mode": 420
+  },
+  "physicalCopy": {
+    "files": 49761,
+    "links": 95,
+    "sourceGitParity": true,
+    "independentRegularFileInodes": true,
+    "copiedDependencyAndResourceBytesEqual": true
+  },
+  "runtimePins": {
+    "engine": {
+      "bytes": 81790332,
+      "mode": 420,
+      "sha256": "019f10880abf1c448aee02ec77c5c2d68c3561c7b4eef02095d66bb5fecd6a7a"
+    },
+    "prover": {
+      "bytes": 1613882,
+      "mode": 420,
+      "sha256": "dd50a29f297867b3bf91cb425066e1d257ea02230a94b02e4cf34c5c70a0c7ab"
+    },
+    "electronFramework": {
+      "bytes": 202648272,
+      "mode": 493,
+      "sha256": "69147ed2f3eb9c95f47c442ae864767fa5a9fc8a2a9700c5ecf86be28c099c7f"
+    },
+    "electron": {
+      "bytes": 33968,
+      "mode": 493,
+      "sha256": "c9da78c3c79b9e6d6714fbf2a1136c4eb4a93cc5edad0f8ccfb058d681325e7e"
+    },
+    "electronDefaultApp": {
+      "bytes": 110862,
+      "mode": 420,
+      "sha256": "0eb2491b0a9ac94790389d39c09dd5005c6c1f0665842943829bbd0193f6cc4f"
+    }
+  },
+  "tarPin": {
+    "bytes": 542263,
+    "sha256": "6169f7445db3306feae9a16f35d6665e9f767e59b071a41a05e5f14fef02c59c",
+    "mode": 420
+  },
+  "toolPins": {
+    "initialize.cjs": {
+      "bytes": 4045,
+      "sha256": "defe39a2fb32fd1e94111884ee0d5ce436c6ea44b8e88129f0fda3212b90e37f"
+    },
+    "check-inventory.cjs": {
+      "bytes": 3376,
+      "sha256": "695d99f30decd8aa1ecef291323dd89a07bca89b1423de56086d7a03734af8ed"
+    },
+    "check-inventory-r2.cjs": {
+      "bytes": 3484,
+      "sha256": "501ecf44fa111124f10a831deac2e95c509731c08f5736f86651dcd996fbb9d5"
+    },
+    "run.py": {
+      "bytes": 2264,
+      "sha256": "a25d53ff685fbd8d45f61aaa4009239c69e648dd13902053802b38b095325e2b"
+    },
+    "post.py": {
+      "bytes": 2170,
+      "sha256": "6edb2e7a135e584199da45a37f3deaa4c5d7a7faf355c2f419a5292c65789aee"
+    }
+  },
+  "toolsPublished": false,
+  "toolsOmissionReason": "Fixed local input paths; exact source hashes identify the original local tools.",
+  "firstAttemptOriginalProcess": {
+    "bytes": 601,
+    "sha256": "a3178eed7df42cc2f1ea386a09607c87b1791593d1334d16e20a58820fd96256"
+  },
+  "firstAttemptOriginalPost": {
+    "bytes": 357,
+    "sha256": "06167803656d166c887501c12520f83565f53e6e569aaf1be72345832d35b805"
+  },
+  "retry": {
+    "probeBytesUnchanged": true,
+    "freshDisposableHomeAndUserData": true,
+    "firstCauseEstablished": false,
+    "successfulEnvironment": "outside tool sandbox with explicit native authorization"
+  },
+  "checkerCorrection": {
+    "originalFile": "INVENTORY-FINAL.json",
+    "correctedFile": "INVENTORY-FINAL-r2.json",
+    "onlyChanges": [
+      "knownWholeRepositoryPackaging true -> false",
+      "sourceFilesPattern added from actual final host config"
+    ],
+    "offlineOnly": true,
+    "extraNativeRunForCorrection": false
+  },
+  "limits": [
+    "No account, vault, utility, storage worker, native addon, proof, signing or live service behavior",
+    "No ordinary application startup, distributed executable launch, signing, notarization or publication",
+    "Node network-entrypoint refusal is not OS network confinement",
+    "Real afterPack and actual installed Electron44.6.0; package source identity is compatibility, not authority"
+  ],
+  "processHistoryAuthority": "Original parent-held build and probe processes; archive metadata is not self-authenticating process history.",
+  "sourceAndRuntimeContentsArchived": false,
+  "profilePayloadReadForPublication": false
+}

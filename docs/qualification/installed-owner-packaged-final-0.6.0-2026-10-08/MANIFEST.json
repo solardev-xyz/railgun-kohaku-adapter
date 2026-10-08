@@ -1,0 +1,80 @@
+{
+  "schema": "railgun-final-owner-packaged-publication-manifest-v1",
+  "files": {
+    "RESULT.json": {
+      "bytes": 4689,
+      "sha256": "52faacbc652194ee9fe3279dc8642b293fcb3d8ffa12ad1eff89011bd1106a2b",
+      "representation": "byte-exact original"
+    },
+    "INITIALIZED.json": {
+      "bytes": 17721,
+      "sha256": "6a68a5e514bced707271d6bab682eda767e29804dfd0bd00d10d4eedb0c3cea4",
+      "representation": "byte-exact original"
+    },
+    "INVENTORY-FINAL-r2.json": {
+      "bytes": 12497,
+      "sha256": "81624ca6157975478f190894087e28a3e9ae1e05b84a5b09b90cabd0f7b3457b",
+      "representation": "byte-exact original"
+    },
+    "INVENTORY-FINAL.json": {
+      "bytes": 12362,
+      "sha256": "403a1f7782f8b4be63acea2263b5e84a8a8fc3286912836dc88a44bce722e969",
+      "representation": "byte-exact original"
+    },
+    "POST.json": {
+      "bytes": 357,
+      "sha256": "06167803656d166c887501c12520f83565f53e6e569aaf1be72345832d35b805",
+      "representation": "byte-exact original"
+    },
+    "FIRST-ATTEMPT-POST.json": {
+      "bytes": 357,
+      "sha256": "06167803656d166c887501c12520f83565f53e6e569aaf1be72345832d35b805",
+      "representation": "byte-exact original"
+    },
+    "INITIALIZE.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "representation": "byte-exact original"
+    },
+    "FIRST-ATTEMPT-INITIALIZE.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "representation": "byte-exact original"
+    },
+    "BUILD-PROCESS.json": {
+      "bytes": 1091,
+      "sha256": "f445c1fcbd4e2cc402e358f970878829327ccf88e92fdafaaef59c46e41c10d6",
+      "representation": "derived JSON; not byte-exact original"
+    },
+    "INITIALIZE-PROCESS.json": {
+      "bytes": 959,
+      "sha256": "414ef8612c248d8e3a79198285817c7f91dcaf4e57f741e643facc6928f99929",
+      "representation": "derived JSON; not byte-exact original"
+    },
+    "FIRST-ATTEMPT-PROCESS.json": {
+      "bytes": 969,
+      "sha256": "26504042dc12e675fdf855fec688196585974ef98880a712dce6838f40c938a5",
+      "representation": "derived JSON; not byte-exact original"
+    },
+    "PROVENANCE.json": {
+      "bytes": 4799,
+      "sha256": "c877a7d2efb715440a1dd38f6d586c7d88db2e8209e68bfd59145cc2ef2d769e",
+      "representation": "derived JSON; not byte-exact original"
+    },
+    "README.md": {
+      "bytes": 4524,
+      "sha256": "a25169a95586611dcfbb2ca0500b634f82fa294ee44a963f410cdc05e1332381",
+      "representation": "publication documentation"
+    },
+    "verify.cjs": {
+      "bytes": 6353,
+      "sha256": "a2d30d41893e2fe22029f353b65eb56cbfa4412c9f5575b70a36539f7893ea1d",
+      "representation": "offline metadata verifier"
+    },
+    "CHECKS.json": {
+      "bytes": 769,
+      "sha256": "70b5eb2bd04a3b6ff0a5e53020858af6fe5c4a0560efab4272dd393c6e56b705",
+      "representation": "derived validation record"
+    }
+  }
+}
