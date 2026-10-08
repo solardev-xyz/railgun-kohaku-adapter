@@ -1,0 +1,70 @@
+{
+  "baseRevision": "9d4b19f6a78bce4da5af6e9cbd6e906c8490b40d",
+  "productionTransforms": false,
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-account-wallet.test.js",
+      "beforeSha256": "f8a7cec13bc0beca509c9572ef1f4052e5c2c43eaf99876c8c91dc6968f9e5ad",
+      "afterSha256": "f8414a09d3e6fdf3dce2d08e8372f2e730d403732465d49048270ce91d84fd5d",
+      "replacements": [
+        {
+          "start": 183752,
+          "before": "  const { createPrivacyStorage } = require('./privacy-storage');\n",
+          "after": "  const { createPrivacyStorage } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');\n"
+        },
+        {
+          "start": 34249,
+          "before": "  const checked = require(\"../../../../../../src/data/railgun-private-capsule.js\").normalizeRailgunNewCapsule(capsule, {\n",
+          "after": "  const checked = require(\"../../../../../../src/execution/railgun-private-capsule.js\").normalizeRailgunNewCapsule(capsule, {\n"
+        },
+        {
+          "start": 32920,
+          "before": "  require(\"../../../../../../src/data/railgun-private-capsule.js\").normalizeRailgunNewCapsule.mockImplementationOnce(() => {\n",
+          "after": "  require(\"../../../../../../src/execution/railgun-private-capsule.js\").normalizeRailgunNewCapsule.mockImplementationOnce(() => {\n"
+        },
+        {
+          "start": 14336,
+          "before": "    .spyOn(require(\"../../../../../../src/data/railgun-private-capsule.js\"), 'normalizeRailgunNewCapsule')\n",
+          "after": "    .spyOn(require(\"../../../../../../src/execution/railgun-private-capsule.js\"), 'normalizeRailgunNewCapsule')\n"
+        },
+        {
+          "start": 3595,
+          "before": "const { getPrivacyStoragePath } = require('./privacy-storage');\n",
+          "after": "const { getPrivacyStoragePath } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');\n"
+        },
+        {
+          "start": 2142,
+          "before": "",
+          "after": "  withRailgunEnrollmentGenerationKeys: (enrollment, ...args) => {\n    if (enrollment !== mockEnrollment) throw Error('enrollment');\n    return mockEnrollment.withGenerationKeys(...args);\n  },\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-shield-origin-data.test.js",
+      "beforeSha256": "3ad691175d4823d3d742f8066b168e799ed3279579b63cb6e930315aca43593d",
+      "afterSha256": "1725db99fd97c9ba9ad30aa4f4fce2ec3ce3bae20f181ba11174fa4a684f875e",
+      "replacements": [
+        {
+          "start": 13781,
+          "before": "  const storage = require('./privacy-storage');\n",
+          "after": "  const storage = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');\n"
+        },
+        {
+          "start": 842,
+          "before": "const { matchRailgunShieldOrigin } = require('./railgun-shield-origin-data');\nconst { transactionIntent } = require('./private-transaction-intent');\n",
+          "after": "const { matchRailgunShieldOrigin } = require('../../../../../../src/owners/railgun-shield-origin-data.js');\nconst { transactionIntent } = require('../../../../fixtures/host/src/main/wallet/private-transaction-intent.js');\n"
+        },
+        {
+          "start": 0,
+          "before": "jest.mock('./privacy-storage', () => ({\n  ...jest.requireActual('./privacy-storage'),\n",
+          "after": "require('../../../../context-host.cjs');\njest.mock('../../../../fixtures/host/src/main/wallet/privacy-storage.js', () => ({\n  ...jest.requireActual('../../../../fixtures/host/src/main/wallet/privacy-storage.js'),\n"
+        }
+      ]
+    }
+  ]
+}

@@ -13,6 +13,7 @@ const jobAdaptations = require('../docs/owners/test-staging/HOST-JOBS-ADAPTATION
 const receiptAdaptations = require('../docs/owners/test-staging/HOST-RECEIPTS-ADAPTATIONS.json');
 const accountAdaptations = require('../docs/owners/test-staging/HOST-ACCOUNTS-ADAPTATIONS.json');
 const transportAdaptations = require('../docs/owners/test-staging/HOST-TRANSPORT-ADAPTATIONS.json');
+const walletAdaptations = require('../docs/owners/test-staging/HOST-WALLET-ADAPTATIONS.json');
 const retired = require('../docs/owners/RETIRED-RUNTIME.json');
 const sha = (value) => createHash('sha256').update(value).digest('hex');
 test('all staged tests and fixtures preserve exact c6 bytes through reversible import-only edits', () => {
@@ -25,6 +26,15 @@ test('all staged tests and fixtures preserve exact c6 bytes through reversible i
   expect(new Set(manifest.files.map((row) => row.destination)).size).toBe(168);
   for (const row of manifest.files) {
     let text = fs.readFileSync(path.join(root, row.destination), 'utf8');
+    const wallet = walletAdaptations.changes.find((entry) => entry.file === row.destination);
+    if (wallet) {
+      expect(sha(text)).toBe(wallet.afterSha256);
+      for (const edit of [...wallet.replacements].reverse()) {
+        expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(edit.after);
+        text = text.slice(0, edit.start) + edit.before + text.slice(edit.start + edit.after.length);
+      }
+      expect(sha(text)).toBe(wallet.beforeSha256);
+    }
     const transport = transportAdaptations.changes.find((entry) => entry.file === row.destination);
     if (transport) {
       expect(sha(text)).toBe(transport.afterSha256);
@@ -185,7 +195,10 @@ test('default CI discovery includes every qualified closed suite by exact filena
   const transport = require('../tools/owner-test-staging/jest.host-transport.config.cjs');
   expect(transport.testMatch).toHaveLength(7);
   expect(transport.testMatch.every((name) => !/[?*]/.test(name))).toBe(true);
-  expect(new Set([...closed.testMatch, ...context.testMatch, ...storage.testMatch, ...pure.testMatch, ...snapshot.testMatch, ...jobs.testMatch, ...receipts.testMatch, ...accounts.testMatch, ...transport.testMatch]).size).toBe(127);
+  const wallet = require('../tools/owner-test-staging/jest.host-wallet.config.cjs');
+  expect(wallet.testMatch).toHaveLength(2);
+  expect(wallet.testMatch.every((name) => !/[?*]/.test(name))).toBe(true);
+  expect(new Set([...closed.testMatch, ...context.testMatch, ...storage.testMatch, ...pure.testMatch, ...snapshot.testMatch, ...jobs.testMatch, ...receipts.testMatch, ...accounts.testMatch, ...transport.testMatch, ...wallet.testMatch]).size).toBe(129);
   expect(config.testMatch).toEqual([
     '<rootDir>/test/**/*.test.js',
     '<rootDir>/tools/qualification/scripts/fixtures/railgun-relay-wire/policy.test.js',
@@ -207,6 +220,7 @@ test('default CI discovery includes every qualified closed suite by exact filena
     ...receipts.testMatch,
     ...accounts.testMatch,
     ...transport.testMatch,
+    ...wallet.testMatch,
   ]);
 });
 
