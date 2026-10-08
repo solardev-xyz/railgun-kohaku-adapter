@@ -6,6 +6,7 @@ const root = path.join(__dirname, '..');
 const manifest = require('../docs/owners/test-staging/MANIFEST.json');
 const adaptations = require('../docs/owners/test-staging/CLOSED-ADAPTATIONS.json');
 const contextAdaptations = require('../docs/owners/test-staging/CONTEXT-ADAPTATIONS.json');
+const hostAdaptations = require('../docs/owners/test-staging/HOST-ADAPTATIONS.json');
 const retired = require('../docs/owners/RETIRED-RUNTIME.json');
 const sha = (value) => createHash('sha256').update(value).digest('hex');
 test('all staged tests and fixtures preserve exact c6 bytes through reversible import-only edits', () => {
@@ -18,6 +19,15 @@ test('all staged tests and fixtures preserve exact c6 bytes through reversible i
   expect(new Set(manifest.files.map((row) => row.destination)).size).toBe(168);
   for (const row of manifest.files) {
     let text = fs.readFileSync(path.join(root, row.destination), 'utf8');
+    const hosted = hostAdaptations.changes.find((entry) => entry.file === row.destination);
+    if (hosted) {
+      expect(sha(text)).toBe(hosted.afterSha256);
+      for (const edit of [...hosted.replacements].reverse()) {
+        expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(edit.after);
+        text = text.slice(0, edit.start) + edit.before + text.slice(edit.start + edit.after.length);
+      }
+      expect(sha(text)).toBe(hosted.beforeSha256);
+    }
     const composed = contextAdaptations.changes.find((entry) => entry.file === row.destination);
     if (composed) {
       expect(sha(text)).toBe(composed.afterSha256);
@@ -94,7 +104,10 @@ test('default CI discovery includes every qualified closed suite by exact filena
   const context = require('../tools/owner-test-staging/jest.context.config.cjs');
   expect(context.testMatch).toHaveLength(35);
   expect(context.testMatch.every((name) => !/[?*]/.test(name))).toBe(true);
-  expect(new Set([...closed.testMatch, ...context.testMatch]).size).toBe(93);
+  const storage = require('../tools/owner-test-staging/jest.host-storage.config.cjs');
+  expect(storage.testMatch).toHaveLength(10);
+  expect(storage.testMatch.every((name) => !/[?*]/.test(name))).toBe(true);
+  expect(new Set([...closed.testMatch, ...context.testMatch, ...storage.testMatch]).size).toBe(103);
   expect(config.testMatch).toEqual([
     '<rootDir>/test/**/*.test.js',
     '<rootDir>/tools/qualification/scripts/fixtures/railgun-relay-wire/policy.test.js',
@@ -109,5 +122,21 @@ test('default CI discovery includes every qualified closed suite by exact filena
     '<rootDir>/tools/qualification/scripts/fixtures/railgun-public-cold-counts.test.js',
     ...closed.testMatch,
     ...context.testMatch,
+    ...storage.testMatch,
   ]);
+});
+
+test('generic encrypted storage fixtures and historical reader retain exact source provenance', () => {
+  const fixture = require('../docs/owners/test-staging/HOST-STORAGE-FIXTURES.json');
+  expect(fixture.files).toHaveLength(2);
+  for (const row of fixture.files) {
+    const bytes = fs.readFileSync(path.join(root, row.destination));
+    expect(row.sourceCommit).toBe(manifest.sourceRevision);
+    expect({ bytes: bytes.length, sha256: sha(bytes) }).toEqual({ bytes: row.bytes, sha256: row.sha256 });
+    expect(row.destination.startsWith('tools/owner-test-staging/fixtures/host/')).toBe(true);
+  }
+  const historical = fixture.historicalReader;
+  expect(sha(fs.readFileSync(path.join(root, historical.archive)))).toBe(historical.sha256);
+  expect(sha(fs.readFileSync(path.join(root, historical.executedFixture)))).toBe(historical.executedSha256);
+  expect(historical.sha256).toBe('618bdff954dae9bf31836c8d1ab9b5100d7409b9f7f8e68844afdff4b577fb89');
 });

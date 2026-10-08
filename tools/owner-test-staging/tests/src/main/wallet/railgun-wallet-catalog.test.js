@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 const mockJournals = new WeakSet();
 let mockGenerationOpen = false;
 jest.mock("../../../../../../src/owners/railgun-wallet-journal.js", () => ({
@@ -11,7 +12,7 @@ const fs = require('fs'),
   path = require('path');
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");
 const { createRailgunWalletCatalog } = require("../../../../../../src/owners/railgun-wallet-catalog.js");
-const { createPrivacyStorage } = require('./privacy-storage');
+const { createPrivacyStorage } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');
 const { startRailgunSessionWorker } = require("../../../../../../src/owners/railgun-session-worker.js");
 const { claimRailgunAccountStore } = require("../../../../../../src/owners/railgun-store-owners.js");
 const walletId = '1'.repeat(64),

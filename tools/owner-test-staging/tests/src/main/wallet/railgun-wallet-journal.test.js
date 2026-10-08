@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 const fs = require('fs'),
   os = require('os'),
   path = require('path');
@@ -243,7 +244,7 @@ async function completedReadOnlyFixture() {
   const before = await writer.readState();
   writer.close();
   mode = 'restore';
-  const { getPrivacyStoragePath } = require('./privacy-storage');
+  const { getPrivacyStoragePath } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');
   const filename = getPrivacyStoragePath(options.handle, options.directory);
   const bytes = fs.readFileSync(filename);
   const registered = new Set([filename]);
@@ -312,7 +313,7 @@ test.each(['empty', 'pending'])(
     const writer = await open();
     if (kind === 'pending') await writer.prepare(plan());
     writer.close();
-    const filename = require('./privacy-storage').getPrivacyStoragePath(
+    const filename = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js').getPrivacyStoragePath(
       options.handle,
       options.directory
     );
@@ -342,7 +343,7 @@ test('read-only journal detects a coherently encrypted concurrent lease change',
   const f = await completedReadOnlyFixture();
   const journal = await f.readOnly();
   journals.push(journal);
-  const storage = require('./privacy-storage').createPrivacyStorage(options);
+  const storage = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js').createPrivacyStorage(options);
   await storage.update(require("../../../../../../src/owners/railgun-wallet-journal.js").RECORD_KEY, (text) => {
     const value = JSON.parse(text);
     value.lease = 'a'.repeat(64);

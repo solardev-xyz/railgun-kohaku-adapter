@@ -1,0 +1,13 @@
+# Generic-host storage test composition
+
+Basis: parent `197219144e806474af7eef1987f24a8db978b311`, with the reviewed bounded runner and the parent's exact qualification-tool discovery fix. This is a repository-only test successor; no runtime algorithm, package export, dependency version or owner authority changes.
+
+The first ten remaining host suites cover private capsule/reservation storage, public/wallet catalogs, scan/TXID/wallet journals, private recovery history, relay recovery storage, and POI intent storage. They use the genuine copied context issuer and actual initialized package host bindings. The fixed storage port delegates to exact c6 `privacy-storage.js` and `privacy-profile-guard.js` fixtures. Those generic host fixtures perform real AES-GCM storage, authentication, inventory and filesystem operations on disposable paths using public synthetic keys. No Freedom Railgun owner is imported.
+
+Existing explicit test seams remain explicit: enrolled/fenced owner issuance, isolated relay mutation permits, and fault-injection wrappers are controlled mocks where the original suites used them. Paired store/ledger tests still use actual package reservation and mutation receipts. Passing these tests does not establish real vault loans, an OS writer fence, installed-host composition, network behavior or native engine/prover execution.
+
+The historical POI reader is not a current authority or published API. Its exact original bytes remain in a `.source.txt` archive, preserving the original `618bdff9…` assertion. The actual import-relocated reader is additionally pinned by hash; the outer inverse provenance layer verifies that its body is unchanged. Both migration refusal cases still execute the old reader against mixed current records and assert no writes.
+
+`HOST-ADAPTATIONS.json` preserves every staged-source delta against the parent revision, including original assertions. `HOST-STORAGE-FIXTURES.json` pins both generic host sources and the historical reader. `HOST-TRIAGE.json` gives the exact remaining 48 suites, their fixed host families and unresolved/computed import sites. These 48 remain unqualified and excluded from default discovery.
+
+The ten targeted suites pass 629 tests in 136.568 seconds with natural exit 0. The exact default adjacent list now contains 103 suites; the remaining 48 host suites remain excluded. `HOST-STORAGE-CHECKS.json` pins the executed source and separates genuine from controlled boundaries. The first run exposed the historical reader's missing relocated storage import; the next isolated run exposed its original same-directory source-hash path. Both failures are retained. No assertion was removed or replaced with a permissive result.

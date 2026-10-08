@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -77,7 +78,7 @@ jest.mock("../../../../../../src/owners/railgun-own-operation.js", () => ({
   }),
 }));
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");
-const { createPrivacyStorage, getPrivacyStoragePath } = require('./privacy-storage');
+const { createPrivacyStorage, getPrivacyStoragePath } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');
 const { normalizeRailgunPoiPayload } = require("../../../../../../src/data/railgun-poi-payload.js");
 const { REQUIRED_LIST } = require("../../../../../../src/data/railgun-poi-records.js");
 const { withRailgunOwnOperationRecovery } = require("../../../../../../src/owners/railgun-own-operation.js");
@@ -2470,11 +2471,16 @@ describe('v3 combined POI migration', () => {
     'pinned previous reader refuses entire mixed %s v3 store without writes',
     async (state) => {
       const source = fs.readFileSync(
-        path.join(__dirname, 'railgun-poi-intent-store-old-reader.fixture.js')
+        path.join(__dirname, '../../../../../../docs/owners/historical/railgun-poi-intent-store-old-reader.source.txt')
       );
       expect(createHash('sha256').update(source).digest('hex')).toBe(
         '618bdff954dae9bf31836c8d1ab9b5100d7409b9f7f8e68844afdff4b577fb89'
       );
+      // The imported reader differs only by the audited fixed import relocation.
+      // Keep both original historical bytes and the actual executed copy pinned.
+      expect(createHash('sha256').update(fs.readFileSync(
+        require.resolve('../../../../fixtures/src/main/wallet/railgun-poi-intent-store-old-reader.fixture.js')
+      )).digest('hex')).toBe('f96a6dcb45170fcb879a05cde66b372e078e148f1c2b654758261e1624ec83df');
       const store = await open();
       const partial = combined();
       await prepare(store);
@@ -2819,7 +2825,7 @@ test('previous reader cannot mutate real encrypted floor or authenticated profil
   fs.mkdirSync(options.directory);
   const profileId = sha([profile.id, profile.userDataDir]);
   Object.assign(options, account(profileId));
-  const { createPrivacyProfileGuard } = require('./privacy-profile-guard');
+  const { createPrivacyProfileGuard } = require('../../../../fixtures/host/src/main/wallet/privacy-profile-guard.js');
   options.profileGuard = createPrivacyProfileGuard({
     handle: options.handle,
     profile,

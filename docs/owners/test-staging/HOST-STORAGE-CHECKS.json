@@ -1,0 +1,107 @@
+{
+  "productionBasis": "197219144e806474af7eef1987f24a8db978b311",
+  "parentDiscoveryFix": "03f311a411ed1c41caec1843a8c4519c8c4b39e9",
+  "runtimeChanges": false,
+  "targeted": {
+    "suites": 10,
+    "tests": 629,
+    "durationSeconds": 136.568,
+    "exitCode": 0,
+    "originalSession": 72455,
+    "completion": "d1a4f4"
+  },
+  "discovery": {
+    "adjacentExactSuites": 103,
+    "remainingExcludedHostSuites": 48,
+    "qualifiedToolExactSuites": 10,
+    "noBroadStagedGlob": true
+  },
+  "suites": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-reservations.test.js",
+      "bytes": 42027,
+      "sha256": "00f093ed54fa7b2a06c4956de2db4a662d0eb72970fa6e2aea67546fbc08be89",
+      "tests": 84,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-recovery-store.test.js",
+      "bytes": 53948,
+      "sha256": "fc3351620d3a2ff69b016c3e1ebdacc0a0464e827a1e671da715181468ff1914",
+      "tests": 91,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-recovery-history.test.js",
+      "bytes": 21823,
+      "sha256": "44724409354184a584272621c29567feec9e6fd65d5f16cf52ee8776937e05f0",
+      "tests": 33,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-scan-journal.test.js",
+      "bytes": 20380,
+      "sha256": "48d34a62328aa2ce9009de73d2f53b895401a923dbcbd412a4b90a29a80ccb8e",
+      "tests": 32,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-wallet-journal.test.js",
+      "bytes": 14483,
+      "sha256": "24c0e74c7539925ba754629f57f4898445cdd3e0ac12980c20829832cc727d3f",
+      "tests": 26,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-wallet-catalog.test.js",
+      "bytes": 13736,
+      "sha256": "11f539035fd5283ddd46f34b62a33df9efdbda6fb507471c4212a668422f1f2c",
+      "tests": 19,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-txid-journal.test.js",
+      "bytes": 8304,
+      "sha256": "4f1bb394da9a608f55a1be25403c599182cdfe695cf5d3434d46db95f419db8a",
+      "tests": 9,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-public-catalog.test.js",
+      "bytes": 7256,
+      "sha256": "6ee7d4e73d9b685879253c8f3bfb19f8458acc1a36587a1eb49022aaf58b3c6f",
+      "tests": 13,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-intent-store.test.js",
+      "bytes": 103711,
+      "sha256": "0e397905a4d8664f1b416a76bb5e17bd42480c434cc2404eb9c3c64050df50df",
+      "tests": 279,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-capsule-store.test.js",
+      "bytes": 32068,
+      "sha256": "186af7482c7ede2f8844b54a02bd22f7eec940973fb2624df9ce39c8ab7acfda",
+      "tests": 43,
+      "status": "passed"
+    }
+  ],
+  "boundaries": {
+    "genuine": "Copied original context issuer, actual initialized owner bindings, actual encrypted host storage/inventory and actual package data/store state machines on disposable paths.",
+    "controlled": "Existing enrolled/fenced owner mocks and isolated mutation token seams preserved from original suites; real paired reservation mutation path remains exercised.",
+    "notClaimed": [
+      "vault integration",
+      "OS writer fence",
+      "installed host",
+      "engine/prover/Electron acceptance",
+      "network/Tor/funded behavior"
+    ]
+  },
+  "priorFailures": [
+    "Historical fixture unresolved storage import",
+    "Historical reader original same-directory hash path; original hash retained with exact source archive plus independent executed-copy hash"
+  ],
+  "fullDefault": "pending"
+}

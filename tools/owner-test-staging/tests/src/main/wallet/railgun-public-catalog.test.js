@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 const mockCoordinators = new WeakSet();
 jest.mock("../../../../../../src/owners/railgun-scan-coordinator.js", () => ({
   assertRailgunScanCoordinator: (v) => {
@@ -9,7 +10,7 @@ const fs = require('fs'),
   path = require('path');
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");
 const { createRailgunPublicCatalog } = require("../../../../../../src/owners/railgun-public-catalog.js");
-const { createPrivacyStorage } = require('./privacy-storage');
+const { createPrivacyStorage } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');
 const { claimRailgunAccountStore } = require("../../../../../../src/owners/railgun-store-owners.js");
 let scope, options, opened;
 const policy = '2'.repeat(64);
