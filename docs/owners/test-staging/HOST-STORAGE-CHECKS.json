@@ -103,5 +103,19 @@
     "Historical fixture unresolved storage import",
     "Historical reader original same-directory hash path; original hash retained with exact source archive plus independent executed-copy hash"
   ],
-  "fullDefault": "pending"
+  "fullDefault": {
+    "command": "npm test",
+    "suites": 179,
+    "tests": 7762,
+    "seconds": 264.245,
+    "exitCode": 0,
+    "originalSession": 17400,
+    "completion": "10d939",
+    "logSha256": "afc2b05ec6360cda352344e09bd0a0cc38bb9dd4c5035ddfdd214fffeb475837",
+    "noForcedExit": true
+  },
+  "strictLint": {
+    "exitCode": 0,
+    "maxWarnings": 0
+  }
 }
