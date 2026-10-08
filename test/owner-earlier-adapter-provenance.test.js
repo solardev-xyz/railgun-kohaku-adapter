@@ -34,3 +34,20 @@ test('four removed wrappers and old .5 host acceptance remain byte-exact histori
     expect(sha(bytes)).toBe(row.sha256);
   }
 });
+test('all seven runtime wrapper rows preserve exact sources and concrete existing successors', () => {
+  const rows = require('../docs/owners/test-staging/EARLIER-RUNTIME-WRAPPER-DISPOSITIONS.json').rows;
+  expect(rows).toHaveLength(7);
+  const api = require('../index.cjs');
+  let thin = 0;
+  for (const row of rows) {
+    const bytes = fs.readFileSync(path.join(root, row.archive));
+    expect(bytes.length).toBe(row.bytes); expect(sha(bytes)).toBe(row.sha256);
+    expect(fs.statSync(path.join(root, row.successor)).isFile()).toBe(true);
+    if (row.packageExports.length) {
+      thin++;
+      const implementation = require(path.join(root, row.successor));
+      for (const name of row.packageExports) expect(api[name]).toBe(implementation[name]);
+    } else expect(row.authoritySuccessor).toBe('src/owners/railgun-kohaku-plugin.js');
+  }
+  expect(thin).toBe(3);
+});

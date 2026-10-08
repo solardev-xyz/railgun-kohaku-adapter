@@ -1734,3 +1734,27 @@ test("wrapper successor external plugin abort refuses unused handle and late pre
   expect(actual.close).not.toHaveBeenCalled(); expect(state.submit).not.toHaveBeenCalled();
   await account.close();
 });
+test("wrapper successor public lane accessors and proxies refuse before adoption without hooks", async () => {
+  const f = fixture(), account = await f.api.openAccount(f.options), hook = jest.fn();
+  const options = laneOptions(f.options.signal, "public");
+  const accessor = { ...options };
+  Object.defineProperty(accessor, "reviewPreparation", { get: hook });
+  expect(() => account.openPublic(accessor)).toThrow();
+  expect(() => account.openPublic(new Proxy(options, {
+    getPrototypeOf: hook, ownKeys: hook, get: hook,
+  }))).toThrow();
+  expect(hook).not.toHaveBeenCalled(); expect(state.createPlugin).not.toHaveBeenCalled();
+  expect(state.openWallet).not.toHaveBeenCalled();
+  await account.close();
+});
+test("wrapper successor fixed plugin construction refusal retains original acquired-wallet drain", async () => {
+  const f = fixture(), account = await f.api.openAccount(f.options), drain = deferred();
+  const wallet = walletOwner(), error = Error("original fixed plugin refusal");
+  wallet.close.mockReturnValue(drain.promise); state.openWallet.mockResolvedValue(wallet);
+  state.createPlugin.mockImplementation(() => { throw error; });
+  await expect(account.openPublic(laneOptions(f.options.signal, "public"))).rejects.toBe(error);
+  const observed = jest.fn(); account.closed.then(observed, observed); await tick();
+  expect(wallet.close).toHaveBeenCalledTimes(1); expect(observed).not.toHaveBeenCalled();
+  expect(() => f.api.openAccount(f.options)).toThrow();
+  drain.resolve(); await account.closed;
+});

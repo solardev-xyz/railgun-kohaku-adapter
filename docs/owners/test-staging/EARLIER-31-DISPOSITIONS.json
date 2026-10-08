@@ -1,0 +1,304 @@
+{
+  "schema": "earlier-31-test-dispositions-v1",
+  "originalBasis": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+  "sourceListSha256": "b456d1f65c21059109647048cc56e4574e55f852c11c3a64e329ed1e811a03cc",
+  "counts": {
+    "activePackageSuccessors": 26,
+    "activeSemanticSuccessorsWithHistoricalWrapperApi": 4,
+    "retainedHostAcceptance": 1,
+    "unmappedWithinThis31": 0
+  },
+  "runtimeWrapperMap": "docs/owners/test-staging/EARLIER-RUNTIME-WRAPPER-DISPOSITIONS.json",
+  "limits": "This closes these31 test dispositions and7 wrapper rows only, not the independent complete incoming-edge deletion audit or native host acceptance. No historical script archive is claimed executed. No production changes.",
+  "rows": [
+    {
+      "source": "src/main/wallet/railgun-kohaku-adapter-package.test.js",
+      "sourceSha256": "25f040a73c60ad84a73f39e4e1de9a7b37899580ce48cc6853a266e047a27169",
+      "status": "retained-host-acceptance-with-historical-wrapper-api",
+      "archive": "docs/owners/historical-tests/railgun-kohaku-adapter-package.test.source.txt",
+      "hostRevision": "b0ecd1657362e72c402e9c7e54df6fc4e1959301",
+      "destination": "src/main/wallet/railgun-kohaku-adapter-package.test.js",
+      "destinationSha256": "d4cfd16d41596b36ee3679b8356fca07989c430060570dd07e36f54ef61d8a99",
+      "destinationBytes": 5973,
+      "scope": "Parent-reviewed retained Freedom replacement: four strict .6 full tar/lock/279-member installed bytes/exports/one-copy tests. Parent reports4pass and host10suites166pass; not rerun here. Exact .5 obsolete wrapper checks archived separately."
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-broadcaster.test.js",
+      "sourceSha256": "e340df43fc1a4bd1d8886baa68d1f21f2153696bc90277f6ed8091360ba33fa2",
+      "status": "active-semantic-successor-with-historical-wrapper-api",
+      "archive": "docs/owners/historical-tests/railgun-kohaku-broadcaster.test.source.txt",
+      "destination": "test/owner-operational-facade.test.js",
+      "destinationSha256": "4779cf129fdfff23de5302f2ff05cbbb59f8dc94b126d4f26b3996edfedc665b",
+      "additionalActiveTest": "tools/owner-test-staging/tests/src/main/wallet/railgun-kohaku-plugin.test.js",
+      "provenance": "docs/owners/test-staging/EARLIER-WRAPPER-ORIGINS.json",
+      "scope": "docs/owners/test-staging/EARLIER-WRAPPER-SEMANTICS.md; constructor/borrowed-owner API is obsolete, lifetime/authority/delegation mapped to current owning facade; not byte parity."
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-operation-dispatch.test.js",
+      "sourceSha256": "85ede2ec53f639b70dfc9b90dfd227584f758355a00ee2eb5b6bd48cdaa2bd18",
+      "status": "active-package-successor",
+      "destination": "test/earlier-kohaku-operation-dispatch.test.js",
+      "destinationSha256": "d18770c860489b35f4d040ecfbf57388428ec4bad0ce4c9a710aa526c7c20cf4",
+      "provenance": "docs/owners/test-staging/EARLIER-SECOND-MIGRATIONS.json",
+      "scope": "All original assertions retained; only recorded literal imports and fixed context composition moved."
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-private-adapter.test.js",
+      "sourceSha256": "b8ee978ab88b839df9b91368565877737b9a0b5efc9a413db11b5115a08146f2",
+      "status": "active-package-successor",
+      "destination": "test/railgun-kohaku-private-adapter.test.js",
+      "destinationSha256": "73f66a6fb37c032e1fad754c3ae6fb04c7dcddb11597c9022affba6da1e5afc6",
+      "provenance": "docs/owners/test-staging/EARLIER-ADAPTER-MIGRATIONS.json",
+      "scope": "AST body/assertion equality excluding literal loader arguments/comments/formatting"
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-private-host.test.js",
+      "sourceSha256": "b1429169a4cdad8a0c332a85262fe8a0ef5e466aaca5e3d87c91d96e2df5b6cc",
+      "status": "active-semantic-successor-with-historical-wrapper-api",
+      "archive": "docs/owners/historical-tests/railgun-kohaku-private-host.test.source.txt",
+      "destination": "test/owner-operational-facade.test.js",
+      "destinationSha256": "4779cf129fdfff23de5302f2ff05cbbb59f8dc94b126d4f26b3996edfedc665b",
+      "additionalActiveTest": "tools/owner-test-staging/tests/src/main/wallet/railgun-kohaku-plugin.test.js",
+      "provenance": "docs/owners/test-staging/EARLIER-WRAPPER-ORIGINS.json",
+      "scope": "docs/owners/test-staging/EARLIER-WRAPPER-SEMANTICS.md; constructor/borrowed-owner API is obsolete, lifetime/authority/delegation mapped to current owning facade; not byte parity."
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-public-adapter.test.js",
+      "sourceSha256": "c47486ba00771c52ab24e605b5562aedd26deb54c9e7eda7b8a5d5e710345852",
+      "status": "active-package-successor",
+      "destination": "test/railgun-kohaku-public-adapter.test.js",
+      "destinationSha256": "60a1f8881f57788321f1b77b5039a4c0bf6aae1363a7286fb720ea8e19194195",
+      "provenance": "docs/owners/test-staging/EARLIER-ADAPTER-MIGRATIONS.json",
+      "scope": "AST body/assertion equality excluding literal loader arguments/comments/formatting"
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-public-host.test.js",
+      "sourceSha256": "5977cf638b083ceb749f346f66f6dc1c37592937aa124aeb8293c81e1f93fd33",
+      "status": "active-semantic-successor-with-historical-wrapper-api",
+      "archive": "docs/owners/historical-tests/railgun-kohaku-public-host.test.source.txt",
+      "destination": "test/owner-operational-facade.test.js",
+      "destinationSha256": "4779cf129fdfff23de5302f2ff05cbbb59f8dc94b126d4f26b3996edfedc665b",
+      "additionalActiveTest": "tools/owner-test-staging/tests/src/main/wallet/railgun-kohaku-plugin.test.js",
+      "provenance": "docs/owners/test-staging/EARLIER-WRAPPER-ORIGINS.json",
+      "scope": "docs/owners/test-staging/EARLIER-WRAPPER-SEMANTICS.md; constructor/borrowed-owner API is obsolete, lifetime/authority/delegation mapped to current owning facade; not byte parity."
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-public-submitter.test.js",
+      "sourceSha256": "6c601ed9f1156e4e10a46ae9c6b8f87775a392c1ab81dbcd5c277ea383e424c6",
+      "status": "active-semantic-successor-with-historical-wrapper-api",
+      "archive": "docs/owners/historical-tests/railgun-kohaku-public-submitter.test.source.txt",
+      "destination": "test/owner-operational-facade.test.js",
+      "destinationSha256": "4779cf129fdfff23de5302f2ff05cbbb59f8dc94b126d4f26b3996edfedc665b",
+      "additionalActiveTest": "tools/owner-test-staging/tests/src/main/wallet/railgun-kohaku-plugin.test.js",
+      "provenance": "docs/owners/test-staging/EARLIER-WRAPPER-ORIGINS.json",
+      "scope": "docs/owners/test-staging/EARLIER-WRAPPER-SEMANTICS.md; constructor/borrowed-owner API is obsolete, lifetime/authority/delegation mapped to current owning facade; not byte parity."
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-read-data.test.js",
+      "sourceSha256": "66b780ca2c7c58a80eb704993fe58e615722bc340b1e683c603a6ca8676fe325",
+      "status": "active-package-successor",
+      "destination": "test/railgun-kohaku-read-data.test.js",
+      "destinationSha256": "4c6dcc7739c5a3b60daa4b51d740ab1e942a3621cd5415b3709ccb550dedd68d",
+      "provenance": "docs/owners/test-staging/EARLIER-ADAPTER-MIGRATIONS.json",
+      "scope": "AST body/assertion equality excluding literal loader arguments/comments/formatting"
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-read-dispatch.test.js",
+      "sourceSha256": "19b225200fbc745998130927dab1ce0812f11434bbaf4554d2fcd6d17c9829e7",
+      "status": "active-package-successor",
+      "destination": "test/railgun-kohaku-read-dispatch.test.js",
+      "destinationSha256": "79f6314580ccb9fd2f16c6d8d367ea828518b9d884d94b4a173059380fb62695",
+      "provenance": "docs/owners/test-staging/EARLIER-ADAPTER-MIGRATIONS.json",
+      "scope": "AST body/assertion equality excluding literal loader arguments/comments/formatting"
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-recovery.test.js",
+      "sourceSha256": "2cdd345a9d84248963e8a57926856d21604e04df199dc198363c8b3952d03864",
+      "status": "active-package-successor",
+      "destination": "test/earlier-kohaku-recovery.test.js",
+      "destinationSha256": "b1b75e64a1edd5f642228b4cf7ecd60f9848045ef0e0343395e344984bdf051d",
+      "provenance": "docs/owners/test-staging/EARLIER-SECOND-MIGRATIONS.json",
+      "scope": "All original assertions retained; only recorded literal imports and fixed context composition moved."
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-snapshot-plugin.test.js",
+      "sourceSha256": "230397d28859a4cd96117db402b158b38d275f624e48b913d6430db9c6b26904",
+      "status": "active-package-successor",
+      "destination": "test/railgun-kohaku-snapshot-plugin.test.js",
+      "destinationSha256": "f7ea962ad2ecaa701efc6c860d284ae4e0f0c7568ac08834b1ff0a7273651716",
+      "provenance": "docs/owners/test-staging/EARLIER-ADAPTER-MIGRATIONS.json",
+      "scope": "Original registry refusal restored against current actual private owner in a VM with inert imports; existing package additional snapshot bounds remain active."
+    },
+    {
+      "source": "src/main/wallet/railgun-poi-creator-capture.test.js",
+      "sourceSha256": "caf034a608bdcb514030214b5bbee69f9f6af9f3e5012330d4f418cd398890fe",
+      "status": "active-package-successor",
+      "destination": "test/earlier-poi-creator-capture.test.js",
+      "destinationSha256": "c38800dd642cb3833bed14514a9d4aa3d2348abe13c9e39a46413e1529bf296d",
+      "provenance": "docs/owners/test-staging/EARLIER-SECOND-MIGRATIONS.json",
+      "scope": "All original assertions retained; only recorded literal imports and fixed context composition moved."
+    },
+    {
+      "source": "src/main/wallet/railgun-private-capsule.test.js",
+      "sourceSha256": "7fa7e7759d87aa464699ef1be24b79d55671138ee9ffd654405a3eabbba57996",
+      "status": "active-package-successor",
+      "destination": "test/earlier-private-capsule.test.js",
+      "destinationSha256": "a99c370c22482ea5a45ddc59629872a5efcef6a298f540a904dd3301a7a34ae0",
+      "provenance": "docs/owners/test-staging/EARLIER-SECOND-MIGRATIONS.json",
+      "scope": "All original assertions retained; only recorded literal imports and fixed context composition moved."
+    },
+    {
+      "source": "src/main/wallet/railgun-private-intent.test.js",
+      "sourceSha256": "c25b0169c782fd921a77ace916a4c575cd92b002373e158ac32e4a0a16a13ad2",
+      "status": "active-package-successor",
+      "destination": "test/railgun-private-intent.test.js",
+      "destinationSha256": "28226e694c890acc50d38838f588b243619d22a51775c6462d8392e3df1b07d2",
+      "provenance": "docs/owners/test-staging/OUTSIDE-ADJACENT-MIGRATIONS.json",
+      "scope": "All original assertions retained; only recorded literal imports and fixed context composition moved."
+    },
+    {
+      "source": "src/main/wallet/railgun-private-policy.test.js",
+      "sourceSha256": "4cffac081685cf32ad40f52bff8d5e3091aa8f4d95a49d1d6e1880cfa1b7c5d7",
+      "status": "active-package-successor",
+      "destination": "test/earlier-private-policy.test.js",
+      "destinationSha256": "ce483bdc74df837afe7b4e8590d78d749026b532c88ee014f5a29acdfedbe8a9",
+      "provenance": "docs/owners/test-staging/EARLIER-SECOND-MIGRATIONS.json",
+      "scope": "All original assertions retained; only recorded literal imports and fixed context composition moved."
+    },
+    {
+      "source": "src/main/wallet/railgun-private-proof-recovery.test.js",
+      "sourceSha256": "d37c2b9db285cac54607e469c1dae15fbcdc4790de867c19a76e902841742d87",
+      "status": "active-package-successor",
+      "destination": "test/owner-private-proof-recovery.test.js",
+      "destinationSha256": "0126adcef77e06979619f343e984e56b4a34e36ba6585adc6675141bc6a93bd4",
+      "provenance": "docs/owners/test-staging/OUTSIDE-ADJACENT-MIGRATIONS.json",
+      "scope": "All original assertions retained; only recorded literal imports and fixed context composition moved."
+    },
+    {
+      "source": "src/main/wallet/railgun-private-selection.test.js",
+      "sourceSha256": "50def928a3a621ba5e2da96cab84e32129fc9d78a8c82c5c1b6fb5d7d41b5881",
+      "status": "active-package-successor",
+      "destination": "test/earlier-private-selection.test.js",
+      "destinationSha256": "78599b5b9834a71e33025390a9fc2683212849ef2967f3e0aba5c741b9b0a4a5",
+      "provenance": "docs/owners/test-staging/EARLIER-SECOND-MIGRATIONS.json",
+      "scope": "All original assertions retained; only recorded literal imports and fixed context composition moved."
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-capsule.test.js",
+      "sourceSha256": "5903acc304af8dd6d7d6ed28eebd975b390e351d968abf39f0bbad26b9f18d80",
+      "status": "active-package-successor",
+      "destination": "test/earlier-relay-capsule.test.js",
+      "destinationSha256": "b46d0586a9e4ce02140d7e86a570d40bea7908662b9aeba64bbc0de0e9d7cc63",
+      "provenance": "docs/owners/test-staging/EARLIER-RELAY-DATA-MIGRATIONS.json",
+      "scope": "All original assertions retained; literal imports only."
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-intent.test.js",
+      "sourceSha256": "f27434e70c492f057fdde34e550c21e23f320c43b1d7e574dfe8de0df161896d",
+      "status": "active-package-successor",
+      "destination": "test/earlier-relay-intent.test.js",
+      "destinationSha256": "193967c1503af78da6bb7e0afc0c6a2ac25c305b09538f668b63a798443cdd02",
+      "provenance": "docs/owners/test-staging/EARLIER-RELAY-DATA-MIGRATIONS.json",
+      "scope": "All original assertions retained; literal imports only."
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-poi-history.test.js",
+      "sourceSha256": "16eed3f7fb668eb5460047a247e648d6276a6b012b0f060a78d7b1bca7f81218",
+      "status": "active-package-successor",
+      "destination": "test/earlier-relay-poi-history.test.js",
+      "destinationSha256": "a86f431b1bcb51a7073593652dee0b3426b3b56ed9f41a1b77ca21d875a5215f",
+      "provenance": "docs/owners/test-staging/EARLIER-RELAY-DATA-MIGRATIONS.json",
+      "scope": "All original assertions retained; literal imports only."
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-pre-poi-data.test.js",
+      "sourceSha256": "ecfa20b85836ecef2cc63c24daf3c5786d0fecff1fac9498fd14613d35d6a164",
+      "status": "active-package-successor",
+      "destination": "test/earlier-relay-pre-poi-data.test.js",
+      "destinationSha256": "a2b0cfda4f988695ad247e8f518f61cf01af18fa28f01b950f8f766471c06806",
+      "provenance": "docs/owners/test-staging/EARLIER-RELAY-DATA-MIGRATIONS.json",
+      "scope": "All original assertions retained; literal imports only."
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-quote-data.test.js",
+      "sourceSha256": "fbcaa8166248995a58abdfcf6e6eb54495b835120801fbbc73b1a61fffe97ec4",
+      "status": "active-package-successor",
+      "destination": "test/earlier-relay-quote-data.test.js",
+      "destinationSha256": "2ef9b14968b28641c9feca025cb2d294ba789f5eb91e65e6a899ba933e17b4f1",
+      "provenance": "docs/owners/test-staging/EARLIER-RELAY-DATA-MIGRATIONS.json",
+      "scope": "All original assertions retained; literal imports only."
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-recovery-data.test.js",
+      "sourceSha256": "4f2dab1b7fff0fb49638be50d85d50a574023f06f64e5aa2f534ad8d4a56871f",
+      "status": "active-package-successor",
+      "destination": "test/earlier-relay-recovery-data.test.js",
+      "destinationSha256": "cbd1f36d185ec7a9f5007bee2757677aa0539ee29c06bb3aaae9a9dab2464908",
+      "provenance": "docs/owners/test-staging/EARLIER-RELAY-DATA-MIGRATIONS.json",
+      "scope": "All original assertions retained; literal imports only."
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-review.test.js",
+      "sourceSha256": "3e607a283bc1c3569731c8abd6c3d690747ef6e5fc8a08fa803bc4132c90af17",
+      "status": "active-package-successor",
+      "destination": "test/owner-relay-review.test.js",
+      "destinationSha256": "cfa1b27a9eef45764277cd3832c6d697858b48fe37123b06bc834c68160104e7",
+      "provenance": "docs/owners/test-staging/OUTSIDE-ADJACENT-MIGRATIONS.json",
+      "scope": "All original assertions retained; only recorded literal imports and fixed context composition moved."
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-transaction.test.js",
+      "sourceSha256": "f3b2aac5c28a9d677cf02341f7943860b3b2ff15168a14148874ac10cc8c2a12",
+      "status": "active-package-successor",
+      "destination": "test/earlier-relay-transaction.test.js",
+      "destinationSha256": "0efa28e3a8e9194f93ab2fcbcce0e412f85a06ae2f644f66398ee67d44b78c8a",
+      "provenance": "docs/owners/test-staging/EARLIER-RELAY-DATA-MIGRATIONS.json",
+      "scope": "All original assertions retained; literal imports only."
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-wallet-data.test.js",
+      "sourceSha256": "e3d5a0ac0f09adb4b84a82225736f18f504719eaf3fb656c8a0c927fc1819373",
+      "status": "active-package-successor",
+      "destination": "test/earlier-relay-wallet-data.test.js",
+      "destinationSha256": "a6821aa3203000e55142dcc22553b37958608cca09e1860a946aaa1333d68a61",
+      "provenance": "docs/owners/test-staging/EARLIER-RELAY-DATA-MIGRATIONS.json",
+      "scope": "All original assertions retained; literal imports only."
+    },
+    {
+      "source": "src/main/wallet/railgun-remote.test.js",
+      "sourceSha256": "7037caff128533dc50ce73d6f42cbeaf05c1e0fe3abec42a83403a26a4edf4a2",
+      "status": "active-package-successor",
+      "destination": "test/execution-remote.test.js",
+      "destinationSha256": "ec5387d58123fb3e625be57c97c808aed33520c12760ee16f08f1de92f0acab6",
+      "provenance": "docs/owners/test-staging/OUTSIDE-ADJACENT-MIGRATIONS.json",
+      "scope": "All original assertions retained; only recorded literal imports and fixed context composition moved."
+    },
+    {
+      "source": "src/main/wallet/railgun-spend-sign-job.test.js",
+      "sourceSha256": "044fdedff6792475537ec02214f09c7270ef17f53c70bfec5ae5362555d20f10",
+      "status": "active-package-successor",
+      "destination": "test/earlier-spend-sign-job.test.js",
+      "destinationSha256": "cb5f73feed52361f14c6e56fc1a0072be82b295d0d0cc68357f66716e8bbffee",
+      "provenance": "docs/owners/test-staging/EARLIER-SECOND-MIGRATIONS.json",
+      "scope": "All original assertions retained; only recorded literal imports and fixed context composition moved."
+    },
+    {
+      "source": "src/main/wallet/railgun-wallet-records.test.js",
+      "sourceSha256": "c12a1f8572e3f449a9ff0aabd18e832c347bd4c1ba862088649acbd2cd0df1e8",
+      "status": "active-package-successor",
+      "destination": "test/earlier-wallet-records.test.js",
+      "destinationSha256": "fe074863e1e668520ac16c31f8443ac3b2ec99641333a8615141dccdff15c6a7",
+      "provenance": "docs/owners/test-staging/EARLIER-SECOND-MIGRATIONS.json",
+      "scope": "All original assertions retained; only recorded literal imports and fixed context composition moved."
+    },
+    {
+      "source": "src/main/wallet/railgun-wallet-scan.test.js",
+      "sourceSha256": "2c11a85c87d9bc299107cb086896ccac19cd10e4105831991c8a4a275ffe3280",
+      "status": "active-package-successor",
+      "destination": "test/execution-wallet-scan.test.js",
+      "destinationSha256": "47b9a2dcd1041e44818af4b77eed9e60298462175457b77b0ef79f066ffc4236",
+      "provenance": "docs/owners/test-staging/OUTSIDE-ADJACENT-MIGRATIONS.json",
+      "scope": "All original assertions retained; only recorded literal imports and fixed context composition moved."
+    }
+  ]
+}

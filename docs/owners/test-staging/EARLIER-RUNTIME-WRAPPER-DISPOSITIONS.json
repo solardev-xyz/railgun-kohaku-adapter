@@ -1,0 +1,90 @@
+{
+  "sourceRevision": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+  "rows": [
+    {
+      "source": "src/main/wallet/railgun-kohaku-broadcaster.js",
+      "archive": "docs/owners/historical/railgun-kohaku-broadcaster.js.txt",
+      "bytes": 537,
+      "sha256": "5754901ec618fdbceef357029261b02f1043691debe580aa09ffd7b257a159c4",
+      "status": "superseded borrowed-owner wrapper; current fixed owning facade semantic successor, not byte parity",
+      "packageExports": [],
+      "successor": "src/owners/operational-facade.js",
+      "authoritySuccessor": "src/owners/railgun-kohaku-plugin.js",
+      "testMapping": "docs/owners/test-staging/EARLIER-WRAPPER-SEMANTICS.md"
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-private-adapter.js",
+      "archive": "docs/owners/historical/railgun-kohaku-private-adapter.js.txt",
+      "bytes": 481,
+      "sha256": "02eada1aa6faaddcde82332d51b91499d8cc0a19ffa132bffdfe54c7f9102fa5",
+      "status": "thin re-export retired to same package API",
+      "packageExports": [
+        "createRailgunKohakuPrivateAdapter",
+        "createRailgunKohakuPrivateAdapterBroadcaster"
+      ],
+      "successor": "src/railgun-kohaku-private-adapter.js",
+      "authoritySuccessor": null,
+      "testMapping": "docs/owners/test-staging/EARLIER-WRAPPER-SEMANTICS.md"
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-private-host.js",
+      "archive": "docs/owners/historical/railgun-kohaku-private-host.js.txt",
+      "bytes": 3092,
+      "sha256": "c1f4eac3792e174757d24eb5762c719bc4fa0a96ec0c6c5fc3e3bd1aba5e423d",
+      "status": "superseded borrowed-owner wrapper; current fixed owning facade semantic successor, not byte parity",
+      "packageExports": [],
+      "successor": "src/owners/operational-facade.js",
+      "authoritySuccessor": "src/owners/railgun-kohaku-plugin.js",
+      "testMapping": "docs/owners/test-staging/EARLIER-WRAPPER-SEMANTICS.md"
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-public-adapter.js",
+      "archive": "docs/owners/historical/railgun-kohaku-public-adapter.js.txt",
+      "bytes": 469,
+      "sha256": "5bdffb2a4eea43c184023fd290c0a10d24e2498abfebaa4da705667a45c2106f",
+      "status": "thin re-export retired to same package API",
+      "packageExports": [
+        "createRailgunKohakuPublicAdapter",
+        "createRailgunKohakuPublicAdapterSubmitter"
+      ],
+      "successor": "src/railgun-kohaku-public-adapter.js",
+      "authoritySuccessor": null,
+      "testMapping": "docs/owners/test-staging/EARLIER-WRAPPER-SEMANTICS.md"
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-public-host.js",
+      "archive": "docs/owners/historical/railgun-kohaku-public-host.js.txt",
+      "bytes": 3336,
+      "sha256": "5264c098a4ca379f3ed69d02c7e46bed3c0252f2bd49f7edae06fc166acc7a2e",
+      "status": "superseded borrowed-owner wrapper; current fixed owning facade semantic successor, not byte parity",
+      "packageExports": [],
+      "successor": "src/owners/operational-facade.js",
+      "authoritySuccessor": "src/owners/railgun-kohaku-plugin.js",
+      "testMapping": "docs/owners/test-staging/EARLIER-WRAPPER-SEMANTICS.md"
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-public-submitter.js",
+      "archive": "docs/owners/historical/railgun-kohaku-public-submitter.js.txt",
+      "bytes": 549,
+      "sha256": "88b060c4ecfd497a3450695ae8e0abca652ff86f491a650a2297c488aaffcbb6",
+      "status": "superseded borrowed-owner wrapper; current fixed owning facade semantic successor, not byte parity",
+      "packageExports": [],
+      "successor": "src/owners/operational-facade.js",
+      "authoritySuccessor": "src/owners/railgun-kohaku-plugin.js",
+      "testMapping": "docs/owners/test-staging/EARLIER-WRAPPER-SEMANTICS.md"
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-snapshot-plugin.js",
+      "archive": "docs/owners/historical/railgun-kohaku-snapshot-plugin.js.txt",
+      "bytes": 372,
+      "sha256": "d54e54c3a594d8c21163b46b92cec58e1124ef9b3372ac1fe602bde9d0405ce8",
+      "status": "thin re-export retired to same package API",
+      "packageExports": [
+        "createRailgunKohakuSnapshotPlugin"
+      ],
+      "successor": "src/railgun-kohaku-snapshot-plugin.js",
+      "authoritySuccessor": null,
+      "testMapping": "docs/owners/test-staging/EARLIER-WRAPPER-SEMANTICS.md"
+    }
+  ]
+}

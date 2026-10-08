@@ -1,0 +1,78 @@
+{
+  "schema": "earlier-31-targeted-checks-v1",
+  "packageBasis": "14f5ecd30a16675729666538c57b57b4e6dc4776",
+  "targeted": {
+    "suitesPassed": 31,
+    "testsPassed": 1345,
+    "failed": 0,
+    "exitCode": 0,
+    "paths": [
+      "test/owner-private-proof-recovery.test.js",
+      "test/owner-relay-review.test.js",
+      "test/execution-remote.test.js",
+      "test/execution-wallet-scan.test.js",
+      "test/railgun-private-intent.test.js",
+      "test/earlier-kohaku-operation-dispatch.test.js",
+      "test/earlier-kohaku-recovery.test.js",
+      "test/earlier-poi-creator-capture.test.js",
+      "test/earlier-private-capsule.test.js",
+      "test/earlier-private-policy.test.js",
+      "test/earlier-private-selection.test.js",
+      "test/earlier-spend-sign-job.test.js",
+      "test/earlier-wallet-records.test.js",
+      "test/railgun-kohaku-private-adapter.test.js",
+      "test/railgun-kohaku-public-adapter.test.js",
+      "test/railgun-kohaku-read-data.test.js",
+      "test/railgun-kohaku-read-dispatch.test.js",
+      "test/railgun-kohaku-snapshot-plugin.test.js",
+      "test/earlier-relay-capsule.test.js",
+      "test/earlier-relay-intent.test.js",
+      "test/earlier-relay-poi-history.test.js",
+      "test/earlier-relay-pre-poi-data.test.js",
+      "test/earlier-relay-quote-data.test.js",
+      "test/earlier-relay-recovery-data.test.js",
+      "test/earlier-relay-transaction.test.js",
+      "test/earlier-relay-wallet-data.test.js",
+      "test/owner-earlier-test-provenance.test.js",
+      "test/owner-earlier-adapter-provenance.test.js",
+      "test/earlier-relay-data-provenance.test.js",
+      "test/owner-operational-facade.test.js",
+      "tools/owner-test-staging/tests/src/main/wallet/railgun-kohaku-plugin.test.js"
+    ]
+  },
+  "finalMapping": {
+    "suitesPassed": 1,
+    "testsPassed": 2,
+    "exitCode": 0
+  },
+  "strictLintExitCode": 0,
+  "productionChanges": false,
+  "nativeExecution": false,
+  "scope": "Source/mock unit checks only; original engine/native mocks retained. No funded profile/live service/installation. Parent retains independent full default suite and installed host/native acceptance.",
+  "logs": {
+    "railgun-earlier-final-targeted.log": {
+      "bytes": 2937,
+      "sha256": "4fc30a3fd9e5135ba58f0f15a01b837687dd99582c947bb78aa4d0fa7a2cbdb0"
+    },
+    "railgun-earlier-final-targeted.json": {
+      "bytes": 537942,
+      "sha256": "2a4da203319018b47a395ca742edce47383162c9c7978fcb57486d77c6013831"
+    },
+    "railgun-earlier-final-mapping.log": {
+      "bytes": 293,
+      "sha256": "1517c1d20fb3a205079826fa7cdf030d279454a476ceea9977bf473bd7964cfc"
+    },
+    "railgun-earlier-final-mapping-lint.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "railgun-earlier-wrapper-lint-a.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "railgun-wrapper-seven-b-lint.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}
