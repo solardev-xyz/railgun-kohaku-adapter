@@ -116,6 +116,29 @@
         "hostFamilies": 20,
         "exitCode": 0
       }
+    },
+    {
+      "commit": "5f1886970a2b2c90ba424a65710a358535f89062",
+      "command": "npm test -- --workerIdleMemoryLimit=1MB",
+      "logBytes": 222,
+      "logSha256": "df609af381c48e12a5d93335c538f8cbd815617b5c74eb7d35437d08f8dfb779",
+      "outcome": {
+        "suitesPassed": 249,
+        "testsPassed": 11986,
+        "exitCode": 0,
+        "limitation": "Documentation and final mapping tests changed during this ordinary unit run; later mapping checks recorded separately. Not a native source freeze."
+      }
+    },
+    {
+      "commit": "fcc74898e78d5750e2f0bac98881a30795356251",
+      "command": "targeted final mapping, provenance and operational facade tests",
+      "logBytes": 470,
+      "logSha256": "4a46229ffc06cff5ced05a65bde2f8faec17293c5fdf8a2eedf70a46cfe6ef24",
+      "outcome": {
+        "suitesPassed": 3,
+        "testsPassed": 109,
+        "exitCode": 0
+      }
     }
   ]
 }
