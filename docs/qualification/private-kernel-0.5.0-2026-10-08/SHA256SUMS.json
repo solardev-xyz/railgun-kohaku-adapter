@@ -1,0 +1,50 @@
+{
+  "CLEAN-INVENTORY.json": {
+    "sha256": "685c68375f2a81e62e7569e97facc7b2c9d9a9e7fab5166dcfec172a5d9f2215",
+    "bytes": 244
+  },
+  "PACKAGED.json": {
+    "sha256": "34c5459d20e89335e5c15ac3ce274c74feddff5098b92cc372a5f1014b3dd338",
+    "bytes": 9541
+  },
+  "PROVENANCE.json": {
+    "sha256": "808988c19765c259640d7bcef80f44b55d79800744a511304187f1b7883940b6",
+    "bytes": 18962
+  },
+  "README.md": {
+    "sha256": "c586ac2ea7ac9b9e152f71f62a63f52cf9badd89e1ac175b3e26083931874616",
+    "bytes": 7468
+  },
+  "controller-report.json": {
+    "sha256": "561d810818d2c41b8c07b426aba6234eb3cec1fe8e0ebf4123f86ba9d60e56a3",
+    "bytes": 178893
+  },
+  "handoff-control.json": {
+    "sha256": "7574254a68a8447e496c247dd2bf8337569f54e3d98f9482b7a9fef8021e73bf",
+    "bytes": 185
+  },
+  "native-inputs.json": {
+    "sha256": "a7ca6585ac3659adf9506b75a7220be2f13bcebbf5ad407ca78fbe40250fcb41",
+    "bytes": 255200
+  },
+  "packaged-load.json": {
+    "sha256": "44525d3aed4cedad9e5ad80c88dfa0e4a595d7cbef12c0f434949e97e810fed9",
+    "bytes": 4533
+  },
+  "prior-campaign-outcome.json": {
+    "sha256": "599d7f7ca32938357647794c24d0e83613525d895fce3a42a13ab1bea4abf799",
+    "bytes": 448
+  },
+  "restart-handoff.json": {
+    "sha256": "57b093b16105ea3a123e3be3f3a674180d49f166813bfee8744d4eff5ef1e430",
+    "bytes": 191695
+  },
+  "resume-report.json": {
+    "sha256": "c561d5d96c7dbc56e234bec89588396d327d218b16950028b234f890e9b38739",
+    "bytes": 217017
+  },
+  "warm-report.json": {
+    "sha256": "1b185461d0fbbcf96674f9b8508b65636a7eec380060157e45eec31534d17bc2",
+    "bytes": 271758
+  }
+}
