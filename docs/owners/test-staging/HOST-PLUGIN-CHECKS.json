@@ -1,0 +1,24 @@
+{
+  "baseRevision": "2abc53ee7ef74099f803543289c6a79ec5fc745d",
+  "productionChanges": false,
+  "targeted": {
+    "suites": 1,
+    "tests": 217,
+    "seconds": 0.291,
+    "exitCode": 0,
+    "completion": "af5af0"
+  },
+  "regression": {
+    "suites": 2,
+    "tests": 64,
+    "exitCode": 0,
+    "completion": "1d8603"
+  },
+  "lint": {
+    "exitCode": 0
+  },
+  "defaultQualifiedAdjacent": 146,
+  "separateHostConformance": 2,
+  "remainingHost": 3,
+  "fullDefaultExecuted": false
+}

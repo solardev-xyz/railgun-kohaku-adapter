@@ -1,0 +1,9 @@
+# Mixed Kohaku lane assertions retained
+
+All 217 original mixed private/public Kohaku cases now execute against the current private package owner, with original account/identity/enrollment/RPC/signer/controller mocks and genuine account-phase/context logic. The existing exact reviewed submitter fixture reads original virtual identity-manager metadata. Default discovery includes this one exact filename.
+
+The former 16-line broadcaster wrapper is copied byte-exact from its c6 historical archive into a repository-only fixture. Its sole fixed import binds the actual package-private Kohaku owner, so no second WeakMap issuer is introduced. This preserves all authentic/copy/foreign/public-operation, once-only consumption, handoff, close/drain, review, cancellation, and result-reference assertions. It does not restore or publish the former application API. Supported application entry remains the closed operational facade; its 52 cases ran alongside 12 provenance checks (64/2). The fixture itself is not shipped.
+
+The source import-boundary assertion now scans actual package src and demands the same three relocated private-operation importers and sole proving caller. Other original assertions are unchanged. Two initial import-path setup failures are retained; final 217/1 passed, 0.291 s, exit0. Strict lint passes. `HOST-PLUGIN-ADAPTATIONS.json` reconstructs the prior staged test and exact immutable original through the existing chain.
+
+Default146 adjacent suites plus two separate credential-host suites are qualified; three classifications remain (held vault history, historical process routes, historical policy). No broad default run, native runtime, real service, new dependency, source/export/type change, or current installed host acceptance is claimed. Credential fixture still pins historical42d914d3 until the separately reviewed current-host successor. Native GC cause remains unresolved.
