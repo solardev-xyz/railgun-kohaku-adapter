@@ -646,3 +646,64 @@ test("a first resume that recorded a checkpoint, or a continuation with an attem
   );
   expect(() => ledger.inspect(b.p, resumeOf(b.p, b.continuation))).toThrow();
 });
+test("the second link refuses any first resume that differs from the bound single attempt", () => {
+  const mutations = {
+    checkpoint: (s) => {
+      const n = ledger.consume(
+        s.p,
+        s.resume,
+        "scan-range",
+        ledger.policyFor(s.resume.caps, "scan-range"),
+        9100,
+        { target: 319999 },
+      );
+      ledger.progress(s.p, s.resume, 319999, "0x" + "e".repeat(64), n);
+    },
+    report: (s) =>
+      ledger.recordReport(s.p, s.resume, "live-rebuild", "f".repeat(64)),
+    send: (s) => ledger.reserve(s.p, s.resume, "transfer", {}),
+    "second attempt": (s) =>
+      ledger.resumeAttempt(s.p, s.resume, "second", 199999, 299999, 319999),
+    "other window target": (s) =>
+      ledger.consume(
+        s.p,
+        s.resume,
+        "scan-range",
+        ledger.policyFor(s.resume.caps, "scan-range"),
+        9100,
+        { target: 219999 },
+      ),
+    "second opener": (s) =>
+      ledger.consume(
+        s.p,
+        s.resume,
+        "scan-open:pending",
+        ledger.policyFor(s.resume.caps, "scan-open:pending"),
+        9100,
+      ),
+  };
+  for (const [name, mutate] of Object.entries(mutations)) {
+    const s = stoppedResume();
+    mutate(s);
+    expect(() => ledger.inspect(s.p, resume2Of(s.p, s.resume))).toThrow();
+    void name;
+  }
+  // Changed bytes after binding, and a claim differing from the first resume's.
+  const s = stoppedResume();
+  const next = resume2Of(s.p, s.resume);
+  expect(ledger.inspect(s.p, next).budgets["scan-range"]).toHaveLength(5);
+  const file = ledger.ledgerFile(s.p, ledger.RESUME);
+  const original = fs.readFileSync(file);
+  fs.writeFileSync(file, Buffer.concat([original, Buffer.from(" ")]));
+  expect(() => ledger.inspect(s.p, next)).toThrow();
+  fs.writeFileSync(file, original);
+  expect(() =>
+    ledger.inspect(s.p, {
+      ...next,
+      binding: {
+        ...next.binding,
+        resumeFrom: { checkpoint: 99999, failedTarget: 299999, evidence: "x" },
+      },
+    }),
+  ).toThrow();
+});

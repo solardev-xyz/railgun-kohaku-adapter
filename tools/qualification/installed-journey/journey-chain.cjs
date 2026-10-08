@@ -108,31 +108,32 @@ function createJourneyChain({
   //   That read fails, leaving a pending application for recovery.
   const scanFaults = { logsFired: false, refreshFired: false, servedTo: new Set(), endReads: 0 };
   const servedLogs = [];
-  // A dense interval [denseFrom, denseTo], as Sepolia around 9.0M: any request
-  // wider than 20000 blocks overlapping it answers with logs in 600 distinct
-  // blocks (beyond the scan source's 512-block window bound); 20000-block
-  // requests answer with the true logs.
+  // A dense interval [denseFrom, denseTo], as Sepolia around 9.0M: 600 genuine
+  // Railgun Nullified events in 600 distinct blocks spread evenly across it,
+  // served to every request that covers them. A 100000-block window over the
+  // interval holds 600 distinct blocks (beyond the scan source's 512-block
+  // bound); each 20000-block part holds about 120. Counts and bytes stay far
+  // below their bounds. The nullifiers are random field elements, never a note's.
   const dense = Number.isSafeInteger(faults.denseFrom) && Number.isSafeInteger(faults.denseTo);
-  const denseLogs = (from, to) => {
-    const lo = Math.max(from, faults.denseFrom),
-      hi = Math.min(to, faults.denseTo);
-    if (to - from + 1 <= 20000 || hi - lo + 1 < 600) return null;
-    return Array.from({ length: 600 }, (_, i) => {
-      const n = lo + i;
-      const word = (tag) => '0x' + crypto.createHash('sha256').update(tag + ':' + n).digest('hex');
-      return {
-        address: PROXY,
-        removed: false,
-        blockNumber: '0x' + n.toString(16),
-        blockHash: word('block'),
-        transactionIndex: '0x0',
-        transactionHash: word('tx'),
-        logIndex: '0x0',
-        topics: [word('topic')],
-        data: '0x',
-      };
-    });
-  };
+  const denseBlocks = dense
+    ? Array.from({ length: 600 }, (_, i) => faults.denseFrom + i * Math.floor((faults.denseTo - faults.denseFrom + 1) / 600))
+    : [];
+  const denseLogs = (from, to) =>
+    denseBlocks
+      .filter((n) => n >= from && n <= to)
+      .map((n) => {
+        const hex = (tag) => crypto.createHash('sha256').update(tag + ':' + n).digest('hex');
+        return {
+          ...abi.encodeEventLog('Nullified', [0, ['0x0' + hex('nullifier').slice(1)]]),
+          address: PROXY,
+          blockNumber: q(n),
+          blockHash: blockHash(n),
+          transactionIndex: q(0),
+          transactionHash: '0x' + hex('tx'),
+          logIndex: q(0),
+          removed: false,
+        };
+      });
   const rpcError = () => Object.assign(Error('Synthetic scan fault'), { code: 'SYNTHETIC_RPC_ERROR', rpcError: { code: -32000, message: 'synthetic' } });
   assert.ok(worker && typeof worker.call === 'function');
   const fixture = publicFixture(sourceBytes);
@@ -584,14 +585,7 @@ function createJourneyChain({
         // The windows actually served, for no-gap evidence (bounded).
         servedLogs.push([from, to]);
         if (servedLogs.length > 64) servedLogs.shift();
-        if (dense) {
-          const synthetic = denseLogs(from, to);
-          if (synthetic) {
-            injected++;
-            return synthetic;
-          }
-        }
-        return proxyLogs(from, to);
+        return dense ? [...proxyLogs(from, to), ...denseLogs(from, to)] : proxyLogs(from, to);
       }
       case 'eth_getCode': {
         assert.equal(params.length, 2);

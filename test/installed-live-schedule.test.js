@@ -160,3 +160,27 @@ test("below 5.7M the second target is the next 100000-block boundary", () => {
   expect(windowEnd(5650001)).toBe(5699999);
   expect(windowEnd(9100000)).toBe(9119999);
 });
+test("after a failed smaller first window the second target still derives from the original pair", () => {
+  const context = resumeContext();
+  const policy = ledger.policyFor(context.header.caps, "scan-range");
+  // The first attempt reserved its 20000-block window and made no progress.
+  expect(resumePlan(context)).toMatchObject({
+    mode: "first",
+    firstTarget: 9019999,
+  });
+  ledger.consume(
+    context.profile,
+    context.header,
+    "scan-range",
+    policy,
+    Date.now(),
+    { target: 9019999 },
+  );
+  expect(resumePlan(context)).toMatchObject({
+    mode: "second",
+    lower: 8999999,
+    upper: 9099999,
+    firstTarget: 9119999,
+  });
+  expect(() => resumePlan(context)).toThrow();
+});

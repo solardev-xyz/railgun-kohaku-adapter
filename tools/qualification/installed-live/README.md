@@ -214,7 +214,12 @@ The scan source refuses any window with more than 4,096 logs, more than 4 MiB
 of log JSON, or logs in more than 512 distinct blocks. On live Sepolia,
 [9,000,000, 9,099,999] holds 1,033 logs in 548 distinct blocks, so it can
 never be acquired whole. Its 20,000-block parts hold at most 304. The first
-resume link targeted that whole window under the earlier rule and was refused.
+resume link targeted that whole window under the earlier rule and was refused;
+its transport trace shows a complete `eth_getLogs` answer and no event-header
+read after it. The same bound strongly supports, but did not directly observe,
+the cause of the continuation's earlier stop at that window: its inner error
+was not retained. Resume safety rests on production recovery, never on
+knowing which state a stopped window left.
 
 Exactly one second link exists, `installed-journey-sentio-resume-2`. It binds
 the first resume by bytes and header. That predecessor may hold scan budgets
@@ -254,9 +259,11 @@ Synthetic-only scaffolding reproduces the stopped states:
 - chain faults `failLogsFrom` and `failApplyRefreshTo` model a failure before
   acquisition completes, and one after the coordinator prepared and applied a
   window, leaving a pending application for recovery;
-- `denseFrom`/`denseTo` mark an interval where any request wider than 20,000
-  blocks answers with logs in 600 distinct blocks, as live Sepolia does around
-  9.0M;
+- `denseFrom`/`denseTo` mark an interval holding 600 genuine Railgun
+  `Nullified` events in 600 distinct blocks, served to every covering request.
+  A 100,000-block window over it exceeds the 512-block bound, as live Sepolia
+  does around 9.0M, while each 20,000-block part (about 120 blocks) passes.
+  The parts' union equals the window;
 - `legacyResumeRule` reproduces the first link's whole-window first target;
 - `exit-after-advance` models a crash before the checkpoint is recorded.
 

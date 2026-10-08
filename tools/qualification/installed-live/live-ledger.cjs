@@ -123,6 +123,26 @@ function predecessor(directory, header) {
   const carried = index - 1 > 0 ? predecessor(directory, previous) : {};
   const state = replay(records, previous, carried);
   check(state.sends.length === 0 && state.poi.pending === null && state.reports.length === 0, 'predecessor-not-empty');
+  // The second link binds the first resume exactly: one opener, one attempt
+  // (first, at the claimed pair and the claimed failed target, the earlier
+  // rule) and its windows, all at that target; no checkpoint.
+  if (header.name === RESUME2) {
+    const claim = header.binding.resumeFrom;
+    check(same(previous.binding?.resumeFrom, claim), 'predecessor-claim');
+    const own = records.slice(1);
+    const attempts = own.filter((record) => record.type === 'resume-attempt');
+    check(
+      attempts.length === 1 &&
+        attempts[0].mode === 'first' &&
+        attempts[0].lower === claim.checkpoint &&
+        attempts[0].upper === claim.failedTarget &&
+        attempts[0].target === claim.failedTarget,
+      'predecessor-attempt'
+    );
+    check(own.filter((record) => record.kind === 'scan-open:pending').length === 1, 'predecessor-openers');
+    const windows = own.filter((record) => record.kind === 'scan-range');
+    check(windows.length >= 1 && windows.every((record) => record.target === claim.failedTarget), 'predecessor-windows');
+  }
   return state.budgets;
 }
 // The fixed chain's predecessor records, per ledger name, read-only.
