@@ -143,6 +143,15 @@ input.transactions = {
   signAndSendTransaction: (...args) => require('./fixtures/host/src/main/wallet/transaction-service.js').signAndSendTransaction(...args),
 };
 input.sessions = { openPrivacySession: (...args) => require('./fixtures/host/src/main/wallet/privacy-session.js').openPrivacySession(...args) };
+// Reviewed fixed credential host: only original test vault/profile mocks supply
+// the host state; derivation and original callback/wipe ordering stay actual.
+let credentialHost;
+const credential = () => credentialHost ??= require('./fixtures/host/src/main/identity/railgun-credential-host.js').createRailgunCredentialHost();
+input.credentials = {
+  currentSession: (...args) => credential().currentSession(...args),
+  withMaterial: (...args) => credential().withMaterial(...args),
+};
+input.profiles = { getActiveProfile: (...args) => require('./fixtures/host/src/main/profile-resolver.js').getActiveProfile(...args) };
 let submitterHost;
 input.submitter = {
   readMetadata: (...args) => {

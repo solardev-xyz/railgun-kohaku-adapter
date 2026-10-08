@@ -1,3 +1,6 @@
+require('../../../../context-host.cjs');
+const mockCredentialContext = require('../../../../../../test/fixtures/owner-privacy-context.js');
+jest.doMock('../../../../../../test/fixtures/owner-privacy-context.js', () => mockCredentialContext);
 const mockQuarantine = jest.fn();
 const fs = require('fs'),
   os = require('os'),
@@ -82,12 +85,12 @@ jest.mock("../../../../../../src/owners/railgun-scan-coordinator.js", () => ({
     if (!mockCoordinators.has(v)) throw Error('coordinator');
   },
 }));
-jest.mock('../profile-resolver', () => ({ getActiveProfile: () => mockProfile }));
-jest.mock('./privacy-session', () => ({ openPrivacySession: () => mockParent }));
-jest.mock('../identity/vault', () => ({
+jest.mock("../../../../fixtures/host/src/main/profile-resolver.js", () => ({ getActiveProfile: () => mockProfile }));
+jest.mock("../../../../fixtures/host/src/main/wallet/privacy-session.js", () => ({ openPrivacySession: () => mockParent }));
+jest.mock("../../../../fixtures/host/src/main/identity/vault", () => ({
   getSessionSignal: () => mockVault.signal,
   getMnemonic: () => (mockVault.signal.aborted ? null : mockMnemonic),
-}));
+}), { virtual: true });
 jest.mock("../../../../../../src/owners/railgun-identity.js", () => ({
   quarantineRailgunIdentityCredentials: (...args) => mockQuarantine(...args),
   assertRailgunIdentity: (identity, handle) => {
@@ -102,11 +105,21 @@ jest.mock("../../../../../../src/owners/railgun-identity.js", () => ({
 }));
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");
 const {
+  withRailgunEnrollmentPublicKeys,
+  withRailgunEnrollmentPublicCatalogKey,
+  withRailgunEnrollmentPublicGenerationKeys,
+  withRailgunEnrollmentTxidGenerationKeys,
+  withRailgunEnrollmentGenerationKeys,
+  observeRailgunEnrollmentClosure,
   openRailgunAccountEnrollment,
   openRailgunCooperativeAccountEnrollment,
   assertRailgunFencedAccountEnrollment,
 } = require("../../../../../../src/owners/railgun-account-enrollment.js");
 let enrollments;
+// Synchronous close revokes; the original host root loan settles independently.
+async function drainClosedEnrollments() {
+  await Promise.allSettled(enrollments.filter(value => value.signal.aborted).map(observeRailgunEnrollmentClosure));
+}
 function bind(index = 0) {
   mockVault = new AbortController();
   mockParent = createPrivacyScope({
@@ -141,8 +154,9 @@ beforeEach(() => {
     'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about';
   bind();
 });
-afterEach(() => {
+afterEach(async () => {
   enrollments.forEach((entry) => entry.close());
+  await drainClosedEnrollments();
   mockParent.close();
   jest.restoreAllMocks();
 });
@@ -173,7 +187,7 @@ const reservationRecoveryInput = () => ({
   noteHash: '0x' + '2'.repeat(64),
 });
 const reservationFile = (entry) =>
-  require('./privacy-storage').getPrivacyStoragePath(
+  require("../../../../fixtures/host/src/main/wallet/privacy-storage.js").getPrivacyStoragePath(
     entry.getContext('storage', 'railgun-private-reservations-v1:' + entry.descriptor.walletId),
     entry.directory
   );
@@ -190,6 +204,7 @@ test('account reservations migrate lazily, survive generation replacement and re
   await entry.catalog.begin('7'.repeat(64));
   expect(await store.inspect()).toEqual({ held: 1, signing: 0, abandoned: 0, legacy: 0 });
   entry.close();
+  await drainClosedEnrollments();
   await expect(store.assertReceipt(receipt)).rejects.toThrow();
   const cold = await open(),
     reopened = await cold.openReservations();
@@ -205,6 +220,7 @@ test('account manifest floor rejects an older reservation file across restart', 
   const empty = fs.readFileSync(file);
   await store.reserve(reservationInput());
   entry.close();
+  await drainClosedEnrollments();
   fs.writeFileSync(file, empty);
   const cold = await open();
   await expect(cold.openReservations()).rejects.toThrow();
@@ -214,6 +230,7 @@ test('cold hold recovery excludes active wallet/TXID phases and cannot release s
     store = await entry.openReservations();
   await store.reserve(reservationInput());
   entry.close();
+  await drainClosedEnrollments();
   const cold = await open(),
     restored = await cold.openReservations();
   const { claimRailgunAccountPhase } = require("../../../../../../src/owners/railgun-account-phase.js");
@@ -256,6 +273,7 @@ test('missing reservation file is detected by the profile inventory before enrol
   await entry.openReservations();
   const file = reservationFile(entry);
   entry.close();
+  await drainClosedEnrollments();
   fs.renameSync(file, file + '.retained');
   await expect(open()).rejects.toMatchObject({ code: 'PRIVATE_PROFILE_STORE_MISSING' });
   expect(fs.existsSync(file)).toBe(false);
@@ -275,6 +293,7 @@ test('reservation commit before failed floor write remains held after cold reope
   await expect(store.reserve(reservationInput())).rejects.toThrow();
   expect(store.signal.aborted).toBe(true);
   entry.close();
+  await drainClosedEnrollments();
   const cold = await open(),
     restored = await cold.openReservations();
   expect(await restored.inspect()).toEqual({ held: 1, signing: 0, abandoned: 0, legacy: 0 });
@@ -287,10 +306,10 @@ test('explicit enrollment persists identity/catalog, separates storage keys and 
   const first = await open(true),
     pending = await first.catalog.begin('2'.repeat(64));
   let publicKeys, walletKeys;
-  await first.withPublicKeys((keys) => {
+  await withRailgunEnrollmentPublicKeys(first, (keys) => {
     publicKeys = Object.values(keys).map((k) => k.toString('hex'));
   });
-  await first.withGenerationKeys(pending.id, (keys) => {
+  await withRailgunEnrollmentGenerationKeys(first, pending.id, (keys) => {
     walletKeys = Object.values(keys).map((k) => k.toString('hex'));
   });
   expect(new Set([...publicKeys, ...walletKeys]).size).toBe(5);
@@ -302,15 +321,14 @@ test('explicit enrollment persists identity/catalog, separates storage keys and 
   expect(contents).not.toContain(mockMnemonic);
   const originalDirectory = first.directory;
   first.close();
+  await drainClosedEnrollments();
   const restored = await open();
   expect(restored.directory).toBe(originalDirectory);
   expect((await restored.catalog.inspect()).pending.id).toBe(pending.id);
-  await restored.withPublicKeys((keys) =>
-    expect(Object.values(keys).map((k) => k.toString('hex'))).toEqual(publicKeys)
-  );
-  await restored.withGenerationKeys(pending.id, (keys) =>
-    expect(Object.values(keys).map((k) => k.toString('hex'))).toEqual(walletKeys)
-  );
+  await withRailgunEnrollmentPublicKeys(restored, (keys) =>
+    expect(Object.values(keys).map((k) => k.toString('hex'))).toEqual(publicKeys));
+  await withRailgunEnrollmentGenerationKeys(restored, pending.id, (keys) =>
+    expect(Object.values(keys).map((k) => k.toString('hex'))).toEqual(walletKeys));
 });
 test('duplicate create, concurrent open, forged identity and foreign generations refuse', async () => {
   const entry = await open(true);
@@ -330,34 +348,35 @@ test('duplicate create, concurrent open, forged identity and foreign generations
   expect(() => entry.getContext('prover', 'private-sign')).toThrow();
   expect(() => entry.getContext('keystore')).toThrow();
   await expect(open()).rejects.toThrow();
-  await expect(entry.withGenerationKeys('f'.repeat(64), () => {})).rejects.toThrow();
+  await expect(withRailgunEnrollmentGenerationKeys(entry, 'f'.repeat(64), () => {})).rejects.toThrow();
   await expect(openRailgunAccountEnrollment({ identity: { ...mockIdentity } })).rejects.toThrow();
   entry.close();
+  await drainClosedEnrollments();
   await expect(open(true)).rejects.toThrow();
   expect((await open()).descriptor).toEqual(mockIdentity.descriptor);
 });
 test('borrowed keys wipe on success, exception and vault lock before callback completion', async () => {
   const entry = await open(true);
   let borrowed;
-  await entry.withPublicKeys((keys) => {
+  await withRailgunEnrollmentPublicKeys(entry, (keys) => {
     borrowed = Object.values(keys);
   });
   expect(borrowed.every((k) => k.every((v) => v === 0))).toBe(true);
   await expect(
-    entry.withPublicKeys((keys) => {
+    withRailgunEnrollmentPublicKeys(entry, (keys) => {
       borrowed = Object.values(keys);
       throw Error('callback');
     })
   ).rejects.toThrow('callback');
   expect(borrowed.every((k) => k.every((v) => v === 0))).toBe(true);
   await expect(
-    entry.withPublicKeys(async (keys) => {
+    withRailgunEnrollmentPublicKeys(entry, async (keys) => {
       borrowed = Object.values(keys);
       mockVault.abort();
       expect(borrowed.every((k) => k.every((v) => v === 0))).toBe(true);
     })
   ).rejects.toThrow();
-  await expect(entry.withPublicKeys(() => {})).rejects.toThrow();
+  await expect(withRailgunEnrollmentPublicKeys(entry, () => {})).rejects.toThrow();
 });
 test.each(['manifest', 'catalog', 'directory'])(
   'missing active %s is refused without recreating it',
@@ -374,6 +393,7 @@ test.each(['manifest', 'catalog', 'directory'])(
             )
           );
     entry.close();
+    await drainClosedEnrollments();
     fs.renameSync(target, target + '.preserved');
     await expect(open()).rejects.toThrow();
     await expect(open(true)).rejects.toThrow();
@@ -384,6 +404,7 @@ test.each(['descriptor', 'seed'])(
   'a changed %s cannot silently recreate an enrolled account',
   async (kind) => {
     (await open(true)).close();
+    await drainClosedEnrollments();
     if (kind === 'seed')
       mockMnemonic = 'legal winner thank year wave sausage worth useful legal winner thank yellow';
     else
@@ -427,6 +448,7 @@ test.each(['directory', 'activation'])(
     expect((await restored.catalog.inspect()).active).toBeNull();
     expect(inventory()).toHaveLength(2);
     restored.close();
+    await drainClosedEnrollments();
     expect((await open()).directory).toBe(restored.directory);
   }
 );
@@ -434,25 +456,24 @@ test('generation and account indices separate derived-store keys', async () => {
   const first = await open(true),
     a = await first.catalog.begin('2'.repeat(64));
   let firstKey;
-  await first.withGenerationKeys(a.id, (keys) => {
+  await withRailgunEnrollmentGenerationKeys(first, a.id, (keys) => {
     firstKey = keys['wallet-store'].toString('hex');
   });
   const b = await first.catalog.begin('3'.repeat(64));
-  await first.withGenerationKeys(b.id, (keys) =>
-    expect(keys['wallet-store'].toString('hex')).not.toBe(firstKey)
-  );
-  await expect(first.withGenerationKeys(a.id, () => {})).rejects.toThrow();
+  await withRailgunEnrollmentGenerationKeys(first, b.id, (keys) =>
+    expect(keys['wallet-store'].toString('hex')).not.toBe(firstKey));
+  await expect(withRailgunEnrollmentGenerationKeys(first, a.id, () => {})).rejects.toThrow();
   let publicKey;
-  await first.withPublicKeys((keys) => {
+  await withRailgunEnrollmentPublicKeys(first, (keys) => {
     publicKey = keys['source-ledger'].toString('hex');
   });
   first.close();
+  await drainClosedEnrollments();
   mockParent.close();
   bind(1);
   const second = await open(true);
-  await second.withPublicKeys((keys) =>
-    expect(keys['source-ledger'].toString('hex')).not.toBe(publicKey)
-  );
+  await withRailgunEnrollmentPublicKeys(second, (keys) =>
+    expect(keys['source-ledger'].toString('hex')).not.toBe(publicKey));
   expect(second.directory).not.toBe(first.directory);
 });
 test.each(['manifest', 'catalog', 'directory'])(
@@ -470,6 +491,7 @@ test.each(['manifest', 'catalog', 'directory'])(
             )
           );
     entry.close();
+    await drainClosedEnrollments();
     fs.renameSync(target, target + '.preserved');
     fs.symlinkSync(target + '.preserved', target, kind === 'directory' ? 'dir' : 'file');
     await expect(open()).rejects.toThrow();
@@ -477,6 +499,7 @@ test.each(['manifest', 'catalog', 'directory'])(
 );
 test('moved profile requires recovery instead of deriving a fresh empty slot', async () => {
   (await open(true)).close();
+  await drainClosedEnrollments();
   mockParent.close();
   const moved = mockProfile.userDataDir + '-moved';
   fs.renameSync(mockProfile.userDataDir, moved);
@@ -488,7 +511,7 @@ test('moved profile requires recovery instead of deriving a fresh empty slot', a
 test('public generation keys are catalog-bound, separated from legacy keys and wiped after use', async () => {
   const entry = await open(true);
   const { createRailgunPublicCatalog } = require("../../../../../../src/owners/railgun-public-catalog.js");
-  const catalog = await entry.withPublicCatalogKey((keys) =>
+  const catalog = await withRailgunEnrollmentPublicCatalogKey(entry, (keys) =>
     createRailgunPublicCatalog({
       handle: entry.getContext('storage', 'railgun-public-catalog-v1'),
       directory: entry.directory,
@@ -496,36 +519,36 @@ test('public generation keys are catalog-bound, separated from legacy keys and w
       key: keys['public-catalog'],
       create: true,
       profileGuard: entry.profileGuard,
-    })
-  );
+    }));
   const first = await catalog.begin('2'.repeat(64));
   let legacy, firstKeys, borrowed;
-  await entry.withPublicKeys((keys) => {
+  await withRailgunEnrollmentPublicKeys(entry, (keys) => {
     legacy = Object.values(keys).map((k) => k.toString('hex'));
   });
-  await entry.withPublicGenerationKeys(catalog, first.id, (keys) => {
+  await withRailgunEnrollmentPublicGenerationKeys(entry, catalog, first.id, (keys) => {
     borrowed = Object.values(keys);
     firstKeys = borrowed.map((k) => k.toString('hex'));
   });
   expect(borrowed.every((k) => k.every((v) => v === 0))).toBe(true);
   expect(new Set([...legacy, ...firstKeys]).size).toBe(6);
   await expect(
-    entry.withPublicGenerationKeys({ ...catalog }, first.id, () => {})
+    withRailgunEnrollmentPublicGenerationKeys(entry, { ...catalog }, first.id, () => {})
   ).rejects.toThrow();
   const second = await catalog.begin('3'.repeat(64));
-  await expect(entry.withPublicGenerationKeys(catalog, first.id, () => {})).rejects.toThrow();
-  await entry.withPublicGenerationKeys(catalog, second.id, (keys) => {
+  await expect(withRailgunEnrollmentPublicGenerationKeys(entry, catalog, first.id, () => {})).rejects.toThrow();
+  await withRailgunEnrollmentPublicGenerationKeys(entry, catalog, second.id, (keys) => {
     expect(new Set([...firstKeys, ...Object.values(keys).map((k) => k.toString('hex'))]).size).toBe(
       6
     );
   });
   entry.close();
+  await drainClosedEnrollments();
   expect(catalog.signal.aborted).toBe(true);
 });
 test('TXID keys require active catalog ownership and separate policy, public store and account generation', async () => {
   const entry = await open(true);
   const { createRailgunPublicCatalog } = require("../../../../../../src/owners/railgun-public-catalog.js");
-  const catalog = await entry.withPublicCatalogKey((keys) =>
+  const catalog = await withRailgunEnrollmentPublicCatalogKey(entry, (keys) =>
     createRailgunPublicCatalog({
       handle: entry.getContext('storage', 'railgun-public-catalog-v1'),
       directory: entry.directory,
@@ -533,8 +556,7 @@ test('TXID keys require active catalog ownership and separate policy, public sto
       key: keys['public-catalog'],
       create: true,
       profileGuard: entry.profileGuard,
-    })
-  );
+    }));
   async function publish(generation, storeId) {
     const coordinator = {
       identity: {
@@ -554,36 +576,34 @@ test('TXID keys require active catalog ownership and separate policy, public sto
   }
   const first = await catalog.begin('2'.repeat(64)),
     policy = 'a'.repeat(64);
-  await expect(entry.withTxidGenerationKeys(catalog, first.id, policy, () => {})).rejects.toThrow();
+  await expect(withRailgunEnrollmentTxidGenerationKeys(entry, catalog, first.id, policy, () => {})).rejects.toThrow();
   await publish(first, '5'.repeat(64));
   let firstKeys, buffers;
-  await entry.withTxidGenerationKeys(catalog, first.id, policy, (keys) => {
+  await withRailgunEnrollmentTxidGenerationKeys(entry, catalog, first.id, policy, (keys) => {
     buffers = Object.values(keys);
     firstKeys = buffers.map((k) => k.toString('hex'));
   });
   expect(new Set(firstKeys).size).toBe(2);
   expect(buffers.every((k) => k.every((v) => v === 0))).toBe(true);
-  await entry.withTxidGenerationKeys(catalog, first.id, 'b'.repeat(64), (keys) =>
+  await withRailgunEnrollmentTxidGenerationKeys(entry, catalog, first.id, 'b'.repeat(64), (keys) =>
     expect(new Set([...firstKeys, ...Object.values(keys).map((k) => k.toString('hex'))]).size).toBe(
       4
-    )
-  );
+    ));
   await expect(
-    entry.withTxidGenerationKeys({ ...catalog }, first.id, policy, () => {})
+    withRailgunEnrollmentTxidGenerationKeys(entry, { ...catalog }, first.id, policy, () => {})
   ).rejects.toThrow();
   const second = await catalog.begin('3'.repeat(64));
   await publish(second, '6'.repeat(64));
-  await expect(entry.withTxidGenerationKeys(catalog, first.id, policy, () => {})).rejects.toThrow();
-  await entry.withTxidGenerationKeys(catalog, second.id, policy, (keys) =>
+  await expect(withRailgunEnrollmentTxidGenerationKeys(entry, catalog, first.id, policy, () => {})).rejects.toThrow();
+  await withRailgunEnrollmentTxidGenerationKeys(entry, catalog, second.id, policy, (keys) =>
     expect(new Set([...firstKeys, ...Object.values(keys).map((k) => k.toString('hex'))]).size).toBe(
       4
-    )
-  );
+    ));
   catalog.close();
 });
 
 const capsuleFile = (entry) =>
-  require('./privacy-storage').getPrivacyStoragePath(
+  require("../../../../fixtures/host/src/main/wallet/privacy-storage.js").getPrivacyStoragePath(
     entry.getContext('storage', 'railgun-private-capsules-v1:' + entry.descriptor.walletId),
     entry.directory
   );
@@ -600,6 +620,7 @@ test('capsule storage is enrollment-owned, inventoried once, cold reopenable and
   mockVault.abort();
   await expect(store.inspect()).rejects.toThrow();
   mockParent.close();
+  await drainClosedEnrollments();
   bind();
   const cold = await open();
   expect(await (await cold.openPrivateCapsules()).inspect()).toEqual({
@@ -615,6 +636,7 @@ test('missing capsule file prevents reopening instead of silently resetting reco
   await entry.openPrivateCapsules();
   const file = capsuleFile(entry);
   entry.close();
+  await drainClosedEnrollments();
   fs.renameSync(file, file + '.retained');
   await expect(open()).rejects.toMatchObject({ code: 'PRIVATE_PROFILE_STORE_MISSING' });
   expect(fs.existsSync(file)).toBe(false);
@@ -633,6 +655,7 @@ test('capsule initialization survives its file write before the account floor co
   });
   await expect(entry.openPrivateCapsules()).rejects.toThrow();
   entry.close();
+  await drainClosedEnrollments();
   const cold = await open();
   expect(await (await cold.openPrivateCapsules()).inspect()).toEqual({
     records: 0,
@@ -660,6 +683,7 @@ test('signing requires a persisted capsule and recovery enumerates receipts only
     evidence.gatesDigest
   );
   entry.close();
+  await drainClosedEnrollments();
   const cold = await open(),
     recoveredCapsules = await cold.openPrivateCapsules(),
     recovered = await cold.openReservations();
@@ -698,7 +722,7 @@ test('direct signing without the enrollment-owned capsule permit is refused', as
 });
 
 const poiIntentFile = (entry) =>
-  require('./privacy-storage').getPrivacyStoragePath(
+  require("../../../../fixtures/host/src/main/wallet/privacy-storage.js").getPrivacyStoragePath(
     entry.getContext('storage', 'railgun-poi-intents-v1:' + entry.descriptor.walletId),
     entry.directory
   );
@@ -768,6 +792,7 @@ test('missing POI intent file refuses enrollment reopen without recreating it', 
     store = await entry.openPoiIntents(),
     file = poiIntentFile(entry);
   entry.close();
+  await drainClosedEnrollments();
   await store.closed;
   fs.renameSync(file, file + '.retained');
   await expect(open()).rejects.toMatchObject({ code: 'PRIVATE_PROFILE_STORE_MISSING' });
@@ -793,6 +818,7 @@ test('POI initialization file survives an interrupted manifest floor write and r
   expect(fs.existsSync(file)).toBe(true);
   expect(inventory()).toContain(path.relative(mockProfile.userDataDir, file));
   entry.close();
+  await drainClosedEnrollments();
   const cold = await open(),
     store = await cold.openPoiIntents();
   expect(await store.inspect()).toEqual(emptyPoiIntents);
@@ -839,6 +865,7 @@ test.each(['close', 'vault-lock'])(
         mockParent.close();
         bind();
       }
+      await drainClosedEnrollments();
       const cold = await open(),
         manifest = path.join(
           mockProfile.userDataDir,
@@ -864,11 +891,11 @@ test.each(['close', 'vault-lock'])(
 );
 test('cold enrollment and POI store opening do not import proof, recovery or membership controllers', async () => {
   const forbidden = [
-    './railgun-own-poi-proof',
-    './railgun-own-operation',
-    './railgun-own-poi-checks',
-    './railgun-own-poi-membership',
-    './railgun-own-poi-binding',
+    '../../../../../../src/owners/railgun-own-poi-proof.js',
+    '../../../../../../src/owners/railgun-own-operation.js',
+    '../../../../../../src/owners/railgun-own-poi-checks.js',
+    '../../../../../../src/owners/railgun-own-poi-membership.js',
+    '../../../../../../src/data/railgun-own-poi-binding.js',
   ];
   const loaded = [],
     parent = mockParent;
@@ -973,6 +1000,7 @@ test('private recovery opens existing stores after cold enrollment with creation
   const entry = await open(true);
   await entry.openPrivateCapsules();
   entry.close();
+  await drainClosedEnrollments();
   const cold = await open(),
     beforeInventory = inventory(),
     factories = [];
@@ -1143,6 +1171,7 @@ test('existing-only cold POI reopen authenticates retained state with creation d
   const entry = await open(true),
     store = await entry.openPoiIntents();
   entry.close();
+  await drainClosedEnrollments();
   await store.closed;
   const cold = await open(),
     creations = [];
@@ -1238,6 +1267,7 @@ test('existing-only initialization refuses concurrent opens and wipes borrowed k
   const entry = await open(true),
     previous = await entry.openPoiIntents();
   previous.close();
+  await drainClosedEnrollments();
   await previous.closed;
   const entered = deferredPoi(),
     release = deferredPoi();
@@ -1294,7 +1324,7 @@ function syntheticManifest(entry) {
   // Existing public unit mnemonic only, never an owned profile/runtime payload.
   const { createHmac } = require('crypto');
   const { mnemonicToSeedSync } = require('@scure/bip39');
-  const { createPrivacyStorage } = require('./privacy-storage');
+  const { createPrivacyStorage } = require("../../../../fixtures/host/src/main/wallet/privacy-storage.js");
   const { getPrivacyContext } = require("../../../../../../src/owners/context-bindings.js");
   const handle = entry.getContext('storage', 'railgun-account-enrollment-v1');
   const context = getPrivacyContext(handle),
@@ -1324,6 +1354,7 @@ test('legacy create/reopen never acquires fence and cannot grant fenced provenan
   const first = await open(true);
   expect(() => assertRailgunFencedAccountEnrollment(first)).toThrow();
   first.close();
+  await drainClosedEnrollments();
   const second = await open();
   expect(second.directory).toBe(first.directory);
   expect(mockFenceHistory).toEqual([]);
@@ -1366,6 +1397,7 @@ test.each(['active', 'pending'])(
         JSON.stringify({ ...JSON.parse(text), status })
       );
     entry.close();
+    await drainClosedEnrollments();
     const rename = jest.spyOn(fs, 'renameSync');
     await expect(cooperativeOpen()).rejects.toThrow();
     expect(rename).not.toHaveBeenCalled();
@@ -1380,6 +1412,7 @@ test.each(['generic', 'cooperative'])(
     const entry = await cooperativeOpen(true),
       fence = mockFenceHistory[0].fence;
     entry.close();
+    await drainClosedEnrollments();
     expect(fence.retainUntilExit).toHaveBeenCalledTimes(1);
     expect(fence.close).not.toHaveBeenCalled();
     await expect(kind === 'generic' ? open() : cooperativeOpen()).rejects.toThrow();
@@ -1452,6 +1485,7 @@ test.each(['missing', 'invalid', 'dangling'])(
     const entry = await cooperativeOpen(true),
       file = path.join(entry.directory, 'writer-fence.sqlite');
     entry.close();
+    await drainClosedEnrollments();
     simulateMarkedMainExit();
     fs.renameSync(file, file + '.preserved');
     if (kind === 'invalid') fs.writeFileSync(file, 'wrong protocol');
@@ -1473,6 +1507,7 @@ test.each(['file', 'dangling'])(
       return JSON.stringify(v);
     });
     entry.close();
+    await drainClosedEnrollments();
     simulateMarkedMainExit();
     if (kind === 'dangling') {
       fs.renameSync(file, file + '.preserved');
@@ -1497,6 +1532,7 @@ test('pre-acquisition marked record is reauthenticated before catalog or floor w
   const changed = fs.readFileSync(file);
   fs.writeFileSync(file, original);
   entry.close();
+  await drainClosedEnrollments();
   simulateMarkedMainExit();
   mockFenceOpenHook = () => fs.writeFileSync(file, changed);
   const rename = jest.spyOn(fs, 'renameSync');
@@ -1553,6 +1589,7 @@ test('fenced reservations write typed v4 floor and preserve private receipts thr
   });
   await reservations.abandon(receipt);
   entry.close();
+  await drainClosedEnrollments();
   simulateMarkedMainExit();
   const cold = await open(),
     reopened = await cold.openReservations();
@@ -1603,6 +1640,7 @@ test('fenced relay custody gets a dedicated typed floor and survives cold reopen
     sequence: 0,
   });
   entry.close();
+  await drainClosedEnrollments();
   expect(store.signal.aborted).toBe(true);
   simulateMarkedMainExit();
   const cold = await cooperativeOpen(),
@@ -1780,7 +1818,17 @@ test('reservation existing-only authenticates retained private state on a real l
     store = await entry.openReservations();
   await store.reserve(reservationInput());
   entry.close();
+  await drainClosedEnrollments();
   const cold = await open(),
     restored = await cold.openReservations({ existingOnly: true });
   expect((await restored.inspect()).held).toBe(1);
+});
+
+test('enrollment revocation refuses immediate reuse until its original root loan settles', async () => {
+  const entry = await open(true);
+  const originalClosed = observeRailgunEnrollmentClosure(entry);
+  entry.close();
+  await expect(open()).rejects.toMatchObject({ code: 'RAILGUN_ACCOUNT_ENROLLMENT_REFUSED' });
+  await Promise.allSettled([originalClosed]);
+  expect((await open()).descriptor).toEqual(mockIdentity.descriptor);
 });

@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 let mockSignJob,
   mockPermitConsume,
   mockRelayPermitConsume,
@@ -18,11 +19,11 @@ jest.mock("../../../../../../src/owners/context-bindings.js", () => {
     },
   };
 });
-jest.mock('../identity/vault', () => ({
+jest.mock("../../../../fixtures/host/src/main/identity/vault", () => ({
   getMnemonic: () =>
     'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about',
   getSessionSignal: () => mockVault.signal,
-}));
+}), { virtual: true });
 jest.mock("../../../../../../src/owners/railgun-private-operation.js", () => ({
   consumeRailgunPrivateSigningPermit: (...args) => mockPermitConsume(...args),
 }));
@@ -33,8 +34,8 @@ jest.mock(
   }),
   { virtual: true }
 );
-jest.mock('../identity/privacy-keys', () => {
-  const actual = jest.requireActual('../identity/privacy-keys');
+jest.mock("../../../../fixtures/host/src/main/identity/privacy-keys.js", () => {
+  const actual = jest.requireActual("../../../../fixtures/host/src/main/identity/privacy-keys.js");
   return {
     ...actual,
     createRailgunViewingKeystore: (...args) => {
@@ -63,7 +64,7 @@ jest.mock('../identity/privacy-keys', () => {
     },
   };
 });
-jest.mock('./privacy-session', () => ({ openPrivacySession: () => mockParent }));
+jest.mock("../../../../fixtures/host/src/main/wallet/privacy-session.js", () => ({ openPrivacySession: () => mockParent }));
 jest.mock("../../../../../../src/execution/railgun-engine-runtime.js", () => ({
   verifyRailgunEngineRuntime: (v) => {
     if (v !== '/fixture.asar') throw Error('bad archive');
@@ -79,9 +80,9 @@ jest.mock("../../../../../../src/owners/railgun-process.js", () => ({
       expect(options.filename).toBeUndefined();
       expect(options.binaryKey).toBeUndefined();
     } else {
-      expect(options.executionJob).toBeUndefined();
-      expect(options.filename).toBe(require.resolve("../../../../../../src/owners/railgun-relay-sign-job.js"));
-      expect(options.binaryKey).toBe(true);
+      expect(options.executionJob).toBe('relay-sign');
+      expect(options.filename).toBeUndefined();
+      expect(options.binaryKey).toBeUndefined();
     }
     if (!input.purpose) {
       const controller = new AbortController();
@@ -161,6 +162,12 @@ const {
   assertRailgunRelaySigner,
   assertRailgunRelayCredentialIssuance,
 } = require("../../../../../../src/owners/railgun-identity.js");
+jest.mock('../../../../fixtures/host/src/main/profile-resolver.js', () => ({ getActiveProfile: () => mockProfile }));
+let mockProfile, profileSequence = 0;
+function credentialProfile(id) {
+  mockProfile = { id, userDataDir: '/tmp/identity-unit-unused' };
+  return require('crypto').createHash('sha256').update(JSON.stringify([mockProfile.id, mockProfile.userDataDir])).digest('hex');
+}
 let identity;
 beforeEach(() => {
   mockDerived = [];
@@ -180,8 +187,9 @@ beforeEach(() => {
   mockInputs = [];
   mockClosed = 0;
   mockCurrent = true;
+  mockProfile = { id: 'identity-unit-' + ++profileSequence, userDataDir: '/tmp/identity-unit-unused' };
   mockParent = createPrivacyScope({
-    profileId: 'identity-unit',
+    profileId: require('crypto').createHash('sha256').update(JSON.stringify([mockProfile.id, mockProfile.userDataDir])).digest('hex'),
     signal: mockVault.signal,
     isCurrent: () => mockCurrent,
   });
@@ -293,7 +301,7 @@ test('a vault lock while deriving public keys refuses enrollment and releases af
   mockSignJob = null;
   mockVault = new AbortController();
   mockOnJob = null;
-  mockParent = createPrivacyScope({ profileId: 'identity-unit', signal: mockVault.signal });
+  mockParent = createPrivacyScope({ profileId: credentialProfile(mockProfile.id), signal: mockVault.signal });
   identity = await openRailgunIdentity({ archive: '/fixture.asar' });
   expect(assertRailgunIdentity(identity).accountIndex).toBe(0);
 });
@@ -519,7 +527,7 @@ describe('process-lifetime credential quarantine', () => {
   let profileId;
   beforeEach(() => {
     mockParent.close();
-    profileId = `identity-quarantine-${++quarantineProfile}`;
+    profileId = credentialProfile(`identity-quarantine-${++quarantineProfile}`);
     mockParent = createPrivacyScope({ profileId, signal: mockVault.signal });
   });
   function relock() {
@@ -588,7 +596,7 @@ describe('process-lifetime credential quarantine', () => {
     identity = await openRailgunIdentity({ archive: '/fixture.asar' });
     quarantineRailgunIdentityCredentials(identity);
     mockParent.close();
-    mockParent = createPrivacyScope({ profileId: profileId + '-other', signal: mockVault.signal });
+    mockParent = createPrivacyScope({ profileId: credentialProfile(profileId + '-other'), signal: mockVault.signal });
     identity = await openRailgunIdentity({ archive: '/fixture.asar' });
     expect(assertRailgunIdentity(identity).accountIndex).toBe(0);
   });
@@ -765,8 +773,9 @@ async function relaySigningFixture() {
     inventory: require("../../../../../../src/execution/railgun-engine-manifest.json").inventory.sha256,
   };
   mockSignJob = async (job) => {
-    expect(job.filename).toBe(require.resolve("../../../../../../src/owners/railgun-relay-sign-job.js"));
-    expect(job.binaryKey).toBe(true);
+    expect(job.executionJob).toBe('relay-sign');
+    expect(job.filename).toBeUndefined();
+    expect(job.binaryKey).toBeUndefined();
     expect(JSON.parse(job.input)).toEqual({
       archive: '/fixture.asar',
       intent: checked.data,
@@ -1124,7 +1133,7 @@ describe('relay unknown-original quarantine', () => {
   beforeEach(() => {
     mockParent.close();
     mockParent = createPrivacyScope({
-      profileId: `relay-unknown-${serial++}`,
+      profileId: credentialProfile(`relay-unknown-${serial++}`),
       signal: mockVault.signal,
     });
   });
@@ -1307,7 +1316,7 @@ test('caller error codes cannot forge a relay unknown-exit outcome', async () =>
 test('a forwarded relay unknown error cannot quarantine another healthy owner', async () => {
   mockParent.close();
   mockParent = createPrivacyScope({
-    profileId: 'relay-replayed-unknown-a',
+    profileId: credentialProfile('relay-replayed-unknown-a'),
     signal: mockVault.signal,
   });
   const first = await relaySigningFixture();
@@ -1319,7 +1328,7 @@ test('a forwarded relay unknown error cannot quarantine another healthy owner', 
   identity.close();
   mockParent.close();
   mockParent = createPrivacyScope({
-    profileId: 'relay-replayed-unknown-b',
+    profileId: credentialProfile('relay-replayed-unknown-b'),
     signal: mockVault.signal,
   });
   mockSignTask = undefined;
