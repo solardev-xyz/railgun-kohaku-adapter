@@ -229,11 +229,16 @@ RPC requests are not ranges.
 Live failure records include a sanitized transport trace: method, HTTP status,
 closed error code, elapsed time and size, never a URL, parameter or body.
 
+Synthetic runs need a larger, synthetic-labelled range cap: the fixture's
+finality jumps by about 5.9 million empty blocks at the first mined block. Live
+caps are unchanged.
+
 Synthetic-only scaffolding reproduces the stopped states:
 
 - `legacyPlan` runs the earlier runner's plan;
-- chain faults `failLogsFrom` and `failRefreshTo` model a failure before
-  acquisition, and one after the coordinator persisted an application;
+- chain faults `failLogsFrom` and `failApplyRefreshTo` model a failure before
+  acquisition completes, and one after the coordinator prepared and applied a
+  window, leaving a pending application for recovery;
 - `exit-after-advance` models a crash before the checkpoint is recorded.
 
 ## Composition

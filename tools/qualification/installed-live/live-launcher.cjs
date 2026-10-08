@@ -181,7 +181,7 @@ function validate(request) {
     assert.equal(file(request.synthetic.publicSource).sha256, request.synthetic.publicSourceSha256);
     assert.ok(['primary', 'limited'].includes(request.synthetic.endpoint));
     for (const [key, value] of Object.entries(request.synthetic.faults))
-      assert.ok(['failLogsFrom', 'failRefreshTo'].includes(key) && Number.isSafeInteger(value), 'Synthetic fault ' + key);
+      assert.ok(['failLogsFrom', 'failApplyRefreshTo'].includes(key) && Number.isSafeInteger(value), 'Synthetic fault ' + key);
   }
   assert.equal(fs.realpathSync(request.profileDirectory), request.profileDirectory);
   assert.equal(file(request.heldReport.file).sha256, request.heldReport.sha256);

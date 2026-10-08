@@ -95,14 +95,16 @@ function createJourneyChain({
   assert.ok(autoMine === null || (Number.isSafeInteger(autoMine.afterMs) && autoMine.afterMs >= 0));
   assert.ok(['acknowledge', 'unknown-after-delivery'].includes(sendMode));
   assert.deepEqual(
-    Object.keys(faults).filter((key) => !['preflightAnchorAfterEstimate', 'failLogsFrom', 'failRefreshTo'].includes(key)),
+    Object.keys(faults).filter((key) => !['preflightAnchorAfterEstimate', 'failLogsFrom', 'failApplyRefreshTo'].includes(key)),
     []
   );
-  // Scan faults for resume qualification: a window's eth_getLogs fails before
-  // acquisition completes (failLogsFrom), or the first header refresh of a
-  // window's end after its logs were served fails, after the coordinator has
-  // persisted its application (failRefreshTo). Each fires once per process.
-  const scanFaults = { logsFired: false, refreshFired: false, servedTo: new Set() };
+  // Scan faults for resume qualification, each once per process:
+  // - failLogsFrom: a window's eth_getLogs fails, before acquisition completes;
+  // - failApplyRefreshTo: after a window's logs were served, acquisition reads
+  //   its end header once more; the next read is the coordinator's refresh
+  //   inside apply, after its journal entry is prepared and the window applied.
+  //   That read fails, leaving a pending application for recovery.
+  const scanFaults = { logsFired: false, refreshFired: false, servedTo: new Set(), endReads: 0 };
   const servedLogs = [];
   const rpcError = () => Object.assign(Error('Synthetic scan fault'), { code: 'SYNTHETIC_RPC_ERROR', rpcError: { code: -32000, message: 'synthetic' } });
   assert.ok(worker && typeof worker.call === 'function');
@@ -527,10 +529,11 @@ function createJourneyChain({
           throw Object.assign(Error('Synthetic Tor request failure'), { code: 'SYNTHETIC_INJECTED_FAULT' });
         }
         if (
-          Number.isSafeInteger(faults.failRefreshTo) &&
+          Number.isSafeInteger(faults.failApplyRefreshTo) &&
           !scanFaults.refreshFired &&
-          scanFaults.servedTo.has(faults.failRefreshTo) &&
-          params[0] === '0x' + faults.failRefreshTo.toString(16)
+          scanFaults.servedTo.has(faults.failApplyRefreshTo) &&
+          params[0] === '0x' + faults.failApplyRefreshTo.toString(16) &&
+          ++scanFaults.endReads === 2
         ) {
           scanFaults.refreshFired = true;
           injected++;
