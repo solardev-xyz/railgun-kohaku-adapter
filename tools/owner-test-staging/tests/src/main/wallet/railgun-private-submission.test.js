@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 let mock;
 jest.mock("../../../../../../src/owners/railgun-private-operation.js", () => ({
   claimRailgunPrivateCompletion: (receipt, identity, enrollment) => {
@@ -39,16 +40,21 @@ jest.mock("../../../../../../src/owners/railgun-private-preflight.js", () => ({
     return mock.observed;
   },
 }));
-jest.mock('./signers', () => ({ getSigner: () => mock.signer }));
-jest.mock('./private-transaction-network', () => ({
+jest.mock("../../../../../../src/owners/host-bindings.js", () => ({
+  ...jest.requireActual("../../../../../../src/owners/host-bindings.js"),
+  signers: { getSigner: () => mock.signer },
+  transactionNetwork: {
   getPrivateTransactionNetwork: (_handle, options) => {
     mock.networkOptions = options;
     return mock.networkConstructor(_handle, options);
   },
-}));
-jest.mock('./transaction-service', () => ({
+},
+  transactions: {
   signAndSendTransaction: (...args) => mock.send(...args),
+},
 }));
+
+
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");
 const { fixture } = require("../../../../fixtures/scripts/fixtures/railgun-transact-data.js");
 const { extractRailgunTransactIntent } = require("../../../../../../src/owners/railgun-transact-intent.js");

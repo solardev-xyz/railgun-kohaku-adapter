@@ -1,10 +1,38 @@
+require('../../../../context-host.cjs');
 let mock, mockStep, mockSign;
-jest.mock('../networks/private-rpc', () => ({
+jest.mock("../../../../../../src/owners/host-bindings.js", () => ({
+  ...jest.requireActual("../../../../../../src/owners/host-bindings.js"),
+  rpc: {
   createPrivateRpc: (handle, role, options) => {
     mock.protocolAdmission = { handle, role, options };
     if (options.destinationConstraint !== mock.constraints?.protocol) throw Error('constraint');
     return { assertActive() {}, release() {} };
   },
+},
+  signers: {
+  getSigner: (index) => {
+    if (index !== 0) throw Error('index');
+    return {
+      getAddress: async () => mock.owner,
+      signTransaction() {
+        throw Error('no submission');
+      },
+    };
+  },
+},
+  transactionNetwork: {
+  getPrivateTransactionNetwork: (_handle, options) => {
+    mock.networkOptions = options;
+    mockStep('network');
+    return {
+      assertCanSubmit: async () => mockStep('journal'),
+      request: async (_chain, method) => {
+        mockStep(method);
+        return { result: method === 'eth_getCode' ? '0x' : mock.balance };
+      },
+    };
+  },
+},
 }));
 jest.mock("../../../../../../src/owners/railgun-transact-staging.js", () => ({
   assertRailgunTransactStagingAvailable: (receipt) => {
@@ -143,30 +171,8 @@ jest.mock("../../../../../../src/owners/railgun-private-proof.js", () => ({
     if (receipt !== mock.proof.receipt) throw Error('proof');
   },
 }));
-jest.mock('./signers', () => ({
-  getSigner: (index) => {
-    if (index !== 0) throw Error('index');
-    return {
-      getAddress: async () => mock.owner,
-      signTransaction() {
-        throw Error('no submission');
-      },
-    };
-  },
-}));
-jest.mock('./private-transaction-network', () => ({
-  getPrivateTransactionNetwork: (_handle, options) => {
-    mock.networkOptions = options;
-    mockStep('network');
-    return {
-      assertCanSubmit: async () => mockStep('journal'),
-      request: async (_chain, method) => {
-        mockStep(method);
-        return { result: method === 'eth_getCode' ? '0x' : mock.balance };
-      },
-    };
-  },
-}));
+
+
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");
 const {
   proveRailgunAccountPrivateOperation: prove,

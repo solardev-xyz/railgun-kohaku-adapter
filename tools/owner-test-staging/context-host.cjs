@@ -132,6 +132,13 @@ input.rpc = {
   getPrivateRpcDestinationDetails: (...args) => require('./fixtures/host/src/main/networks/private-rpc.js').getPrivateRpcDestinationDetails(...args),
   getPrivateRpcReadBudgetOutcome: (...args) => require('./fixtures/host/src/main/networks/private-rpc.js').getPrivateRpcReadBudgetOutcome(...args),
 };
+let submitterHost;
+input.submitter = {
+  readMetadata: (...args) => {
+    submitterHost ??= require('./fixtures/host/src/main/identity/railgun-submitter-host.js').createRailgunSubmitterHost();
+    return submitterHost.readMetadata(...args);
+  },
+};
 input.sourceIdentity = { readDigest: () => 'a'.repeat(64) };
 const owner = jest.requireActual('../../src/owners/host-bindings.js');
 owner.initializeRailgunOwnerHost(input);

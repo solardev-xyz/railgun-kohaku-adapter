@@ -1,0 +1,167 @@
+{
+  "baseRevision": "9c5c8db62fc9de66e8269694870d211210fc49e3",
+  "productionTransforms": false,
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-operation.test.js",
+      "beforeSha256": "92e5b29cffb05dc10cd9d37ce0eaffc1e8547fcc3f86b66c85db64cc1ce9516c",
+      "afterSha256": "35f0b3129a34ed382ad68f852555bc5d093ef7bd1251d8286717ea96480ec793",
+      "replacements": [
+        {
+          "start": 5226,
+          "before": "jest.mock('./signers', () => ({\n  getSigner: (index) => {\n    if (index !== 0) throw Error('index');\n    return {\n      getAddress: async () => mock.owner,\n      signTransaction() {\n        throw Error('no submission');\n      },\n    };\n  },\n}));\njest.mock('./private-transaction-network', () => ({\n  getPrivateTransactionNetwork: (_handle, options) => {\n    mock.networkOptions = options;\n    mockStep('network');\n    return {\n      assertCanSubmit: async () => mockStep('journal'),\n      request: async (_chain, method) => {\n        mockStep(method);\n        return { result: method === 'eth_getCode' ? '0x' : mock.balance };\n      },\n    };\n  },\n}));\n",
+          "after": "\n\n"
+        },
+        {
+          "start": 331,
+          "before": "",
+          "after": "},\n  signers: {\n  getSigner: (index) => {\n    if (index !== 0) throw Error('index');\n    return {\n      getAddress: async () => mock.owner,\n      signTransaction() {\n        throw Error('no submission');\n      },\n    };\n  },\n},\n  transactionNetwork: {\n  getPrivateTransactionNetwork: (_handle, options) => {\n    mock.networkOptions = options;\n    mockStep('network');\n    return {\n      assertCanSubmit: async () => mockStep('journal'),\n      request: async (_chain, method) => {\n        mockStep(method);\n        return { result: method === 'eth_getCode' ? '0x' : mock.balance };\n      },\n    };\n  },\n},\n"
+        },
+        {
+          "start": 30,
+          "before": "jest.mock('../networks/private-rpc', () => ({\n",
+          "after": "jest.mock(\"../../../../../../src/owners/host-bindings.js\", () => ({\n  ...jest.requireActual(\"../../../../../../src/owners/host-bindings.js\"),\n  rpc: {\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-submission.test.js",
+      "beforeSha256": "b169111c24eaf2c07cf19fe1696b6dd3fcecd3de774263206bbdfc5bf11aa7e0",
+      "afterSha256": "39e0c94de6ee9dd5c52bdec1a982a110df8ae64591f261c1acf05ecbea17b190",
+      "replacements": [
+        {
+          "start": 1687,
+          "before": "jest.mock('./transaction-service', () => ({\n  signAndSendTransaction: (...args) => mock.send(...args),\n}));\n",
+          "after": "\n\n"
+        },
+        {
+          "start": 1682,
+          "before": "",
+          "after": "},\n  transactions: {\n  signAndSendTransaction: (...args) => mock.send(...args),\n},\n"
+        },
+        {
+          "start": 1414,
+          "before": "jest.mock('./signers', () => ({ getSigner: () => mock.signer }));\njest.mock('./private-transaction-network', () => ({\n",
+          "after": "jest.mock(\"../../../../../../src/owners/host-bindings.js\", () => ({\n  ...jest.requireActual(\"../../../../../../src/owners/host-bindings.js\"),\n  signers: { getSigner: () => mock.signer },\n  transactionNetwork: {\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-submission.test.js",
+      "beforeSha256": "f01a68f53e92025bd91f8561ea0d589e0e8fc02867d6fe94c97821d689c8c3b8",
+      "afterSha256": "5cdf329704b51e21208a032aef54f16a8ce576e0ecd07d50f2a3fdb9da3b365e",
+      "replacements": [
+        {
+          "start": 51559,
+          "before": "        'main/wallet/railgun-own-witness.js',\n        'main/wallet/railgun-poi-output-recovery.js',\n        'main/wallet/railgun-own-poi-checks.js',\n",
+          "after": "        'owners/railgun-own-witness.js',\n        'owners/railgun-poi-output-recovery.js',\n        'owners/railgun-own-poi-checks.js',\n"
+        },
+        {
+          "start": 51400,
+          "before": "      ['main/wallet/railgun-own-witness.js', 'main/wallet/railgun-poi-output-recovery.js'],\n",
+          "after": "      ['owners/railgun-own-witness.js', 'owners/railgun-poi-output-recovery.js'],\n"
+        },
+        {
+          "start": 51259,
+          "before": "    ['preflightRailgunOwnPoiForSubmission', ['main/wallet/railgun-own-witness.js']],\n",
+          "after": "    ['preflightRailgunOwnPoiForSubmission', ['owners/railgun-own-witness.js']],\n"
+        },
+        {
+          "start": 51152,
+          "before": "      ['main/wallet/railgun-poi-cold-validation.js', 'main/wallet/railgun-poi-output-recovery.js'],\n",
+          "after": "      ['owners/railgun-poi-cold-validation.js', 'owners/railgun-poi-output-recovery.js'],\n"
+        },
+        {
+          "start": 50993,
+          "before": "      ['main/wallet/railgun-poi-cold-validation.js', 'main/wallet/railgun-poi-disclosure-plan.js'],\n",
+          "after": "      ['owners/railgun-poi-cold-validation.js', 'owners/railgun-poi-disclosure-plan.js'],\n"
+        },
+        {
+          "start": 50831,
+          "before": "      ['main/wallet/railgun-poi-disclosure-plan.js', 'main/wallet/railgun-poi-output-recovery.js'],\n",
+          "after": "      ['owners/railgun-poi-disclosure-plan.js', 'owners/railgun-poi-output-recovery.js'],\n"
+        },
+        {
+          "start": 50613,
+          "before": "    ['submitRailgunRetainedPoi', ['main/wallet/railgun-poi-disclosure-plan.js']],\n    ['recoverRailgunAttemptedPoiOutput', ['main/wallet/railgun-poi-output-recovery.js']],\n",
+          "after": "    ['submitRailgunRetainedPoi', ['owners/railgun-poi-disclosure-plan.js']],\n    ['recoverRailgunAttemptedPoiOutput', ['owners/railgun-poi-output-recovery.js']],\n"
+        },
+        {
+          "start": 50171,
+          "before": "  const root = path.resolve(__dirname, '../..');\n",
+          "after": "  const root = path.resolve(__dirname, '../../../../../../src');\n"
+        },
+        {
+          "start": 37324,
+          "before": "",
+          "after": "      expect(JSON.stringify(mock.entry)).not.toBe(beforeMutation);\n"
+        },
+        {
+          "start": 36984,
+          "before": "",
+          "after": "      // Canonical normalizers freeze nested values; make the intended corrupt\n      // durable readback mutable and prove that the negative vector changed.\n      mock.entry = copy(mock.entry);\n      const beforeMutation = JSON.stringify(mock.entry);\n"
+        },
+        {
+          "start": 32697,
+          "before": "      require('./private-transaction-network').getPrivateTransactionNetwork\n",
+          "after": "      require(\"../../../../../../src/owners/host-bindings.js\").transactionNetwork.getPrivateTransactionNetwork\n"
+        },
+        {
+          "start": 31513,
+          "before": "  const details = require('../networks/private-rpc').getPrivateRpcDestinationDetails;\n",
+          "after": "  const details = require(\"../../../../../../src/owners/host-bindings.js\").rpc.getPrivateRpcDestinationDetails;\n"
+        },
+        {
+          "start": 25775,
+          "before": "      require('./private-transaction-network').getPrivateTransactionNetwork\n",
+          "after": "      require(\"../../../../../../src/owners/host-bindings.js\").transactionNetwork.getPrivateTransactionNetwork\n"
+        },
+        {
+          "start": 15140,
+          "before": "    expect(require(file)[name]).not.toHaveBeenCalled();\n",
+          "after": "    expect((family ? require(file)[family] : require(file))[name]).not.toHaveBeenCalled();\n"
+        },
+        {
+          "start": 14612,
+          "before": "  for (const [file, name] of [\n    ['./railgun-identity', 'withRailgunViewingCredential'],\n    ['./railgun-own-operation', 'captureRailgunOwnOperationSelector'],\n    ['./railgun-process', 'startRailgunProcess'],\n    ['./railgun-own-poi-proof', 'proveRailgunOwnPoi'],\n    ['./railgun-own-witness', 'preflightRailgunOwnPoi'],\n    ['./railgun-own-witness', 'preflightRailgunRetainedPoiCompleted'],\n    ['./railgun-own-witness', 'preflightRailgunRetainedPoiForSubmission'],\n    ['../networks/private-rpc', 'createPrivateRpc'],\n",
+          "after": "  for (const [file, name, family] of [\n    ['../../../../../../src/owners/railgun-identity.js', 'withRailgunViewingCredential'],\n    ['../../../../../../src/owners/railgun-own-operation.js', 'captureRailgunOwnOperationSelector'],\n    ['../../../../../../src/owners/railgun-process.js', 'startRailgunProcess'],\n    ['../../../../../../src/owners/railgun-own-poi-proof.js', 'proveRailgunOwnPoi'],\n    ['../../../../../../src/owners/railgun-own-witness.js', 'preflightRailgunOwnPoi'],\n    ['../../../../../../src/owners/railgun-own-witness.js', 'preflightRailgunRetainedPoiCompleted'],\n    ['../../../../../../src/owners/railgun-own-witness.js', 'preflightRailgunRetainedPoiForSubmission'],\n    ['../../../../../../src/owners/host-bindings.js', 'createPrivateRpc', 'rpc'],\n"
+        },
+        {
+          "start": 7127,
+          "before": "jest.mock('../networks/wallet-tor-transport', () => ({\n  createWalletTorTransport: jest.fn(() => mock.makeTransport()),\n}));\n",
+          "after": "\n"
+        },
+        {
+          "start": 6384,
+          "before": "jest.mock('./private-transaction-network', () => ({\n  getPrivateTransactionNetwork: jest.fn((handle) => {\n    mock.receiptHandles.add(handle);\n    return mock.network;\n  }),\n  getPrivateTransactionNetworkDestination: jest.fn(() => mock.receiptDestination),\n  assertPrivateTransactionNetworkDestination: jest.fn((network, handle, destination) => {\n    if (\n      network !== mock.network ||\n      !mock.receiptHandles.has(handle) ||\n      destination !== mock.receiptDestination ||\n      !mock.receiptCurrent\n    )\n      throw Error('receipt destination');\n  }),\n}));\n",
+          "after": "\n"
+        },
+        {
+          "start": 4668,
+          "before": "",
+          "after": "},\n  transactionNetwork: {\n  getPrivateTransactionNetwork: jest.fn((handle) => {\n    mock.receiptHandles.add(handle);\n    return mock.network;\n  }),\n  getPrivateTransactionNetworkDestination: jest.fn(() => mock.receiptDestination),\n  assertPrivateTransactionNetworkDestination: jest.fn((network, handle, destination) => {\n    if (\n      network !== mock.network ||\n      !mock.receiptHandles.has(handle) ||\n      destination !== mock.receiptDestination ||\n      !mock.receiptCurrent\n    )\n      throw Error('receipt destination');\n  }),\n},\n  transport: {\n  createWalletTorTransport: jest.fn(() => mock.makeTransport()),\n},\n"
+        },
+        {
+          "start": 3990,
+          "before": "jest.mock('../networks/private-rpc', () => ({\n",
+          "after": "jest.mock(\"../../../../../../src/owners/host-bindings.js\", () => ({\n  ...jest.requireActual(\"../../../../../../src/owners/host-bindings.js\"),\n  rpc: {\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "source": "src/main/identity/railgun-submitter-host.js",
+  "sourceCommit": "394a9c3ea3def305d8770e5a4d690786910b7941",
+  "destination": "tools/owner-test-staging/fixtures/host/src/main/identity/railgun-submitter-host.js",
+  "bytes": 1345,
+  "sha256": "cc246e30082e56db6fd7da7d967207034fde284eb519265fda765afd3da2d2dd",
+  "identityManager": "explicit original per-suite virtual mock; no actual wallet/profile access"
+}

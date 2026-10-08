@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 // Authority boundaries are mocked; real payload/capsule normalizers, capture
 // comparison, privacy handles and account phase exclusions remain in use.
 let mock;
@@ -93,7 +94,7 @@ jest.mock("../../../../../../src/owners/railgun-own-witness.js", () => ({
     throw Error('unexpected preflight');
   }),
 }));
-jest.mock('../networks/private-rpc', () => ({
+jest.mock('../../../../fixtures/host/src/main/networks/private-rpc.js', () => ({
   createPrivateRpc: jest.fn(() => {
     throw Error('unexpected transport');
   }),
@@ -364,19 +365,19 @@ afterEach(async () => {
   expect(mock.store.beginAttempt).not.toHaveBeenCalled();
   expect(mock.store.close).not.toHaveBeenCalled();
   for (const [file, name] of [
-    ['./railgun-identity', 'withRailgunViewingCredential'],
-    ['./railgun-own-operation', 'captureRailgunOwnOperationSelector'],
-    ['./railgun-public-policy', 'getRailgunPublicPolicy'],
-    ['./railgun-engine-runtime', 'verifyRailgunEngineRuntime'],
-    ['./railgun-prover-runtime', 'verifyRailgunProverRuntime'],
-    ['./railgun-poi-root', 'createRailgunPoiRootSource'],
-    ['./railgun-poi-root', 'createRailgunPoiTxidRootSource'],
-    ['./railgun-process', 'startRailgunProcess'],
-    ['./railgun-own-poi-proof', 'proveRailgunOwnPoi'],
-    ['./railgun-own-witness', 'preflightRailgunOwnPoi'],
-    ['./railgun-own-witness', 'preflightRailgunRetainedPoiCompleted'],
-    ['./railgun-own-witness', 'preflightRailgunRetainedPoiForSubmission'],
-    ['../networks/private-rpc', 'createPrivateRpc'],
+    ['../../../../../../src/owners/railgun-identity.js', 'withRailgunViewingCredential'],
+    ['../../../../../../src/owners/railgun-own-operation.js', 'captureRailgunOwnOperationSelector'],
+    ['../../../../../../src/owners/railgun-public-policy.js', 'getRailgunPublicPolicy'],
+    ['../../../../../../src/execution/railgun-engine-runtime.js', 'verifyRailgunEngineRuntime'],
+    ['../../../../../../src/execution/railgun-prover-runtime.js', 'verifyRailgunProverRuntime'],
+    ['../../../../../../src/owners/railgun-poi-root.js', 'createRailgunPoiRootSource'],
+    ['../../../../../../src/owners/railgun-poi-root.js', 'createRailgunPoiTxidRootSource'],
+    ['../../../../../../src/owners/railgun-process.js', 'startRailgunProcess'],
+    ['../../../../../../src/owners/railgun-own-poi-proof.js', 'proveRailgunOwnPoi'],
+    ['../../../../../../src/owners/railgun-own-witness.js', 'preflightRailgunOwnPoi'],
+    ['../../../../../../src/owners/railgun-own-witness.js', 'preflightRailgunRetainedPoiCompleted'],
+    ['../../../../../../src/owners/railgun-own-witness.js', 'preflightRailgunRetainedPoiForSubmission'],
+    ['../../../../fixtures/host/src/main/networks/private-rpc.js', 'createPrivateRpc'],
   ])
     expect(require(file)[name]).not.toHaveBeenCalled();
   mock.scope.close();
@@ -1427,9 +1428,9 @@ test.each(['output-first', 'plan-first'])(
   'cold module import order %s has no eager reverse dependency or authority work',
   (order) => {
     const forbidden = [
-      './railgun-poi-cold-validation',
-      './railgun-own-receipt',
-      '../networks/wallet-tor-transport',
+      '../../../../../../src/owners/railgun-poi-cold-validation.js',
+      '../../../../../../src/owners/railgun-own-receipt.js',
+      '../../../../fixtures/host/src/main/networks/wallet-tor-transport.js',
     ].map((name) => require.resolve(name));
     jest.isolateModules(() => {
       let output, plan;

@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 // Genuine plans, prepared receipt readers, normalizers, comparisons and account
 // phases are real. Cryptographic validation, storage authority and network I/O
 // are mocked; these tests qualify sender composition, not proof or service truth.
@@ -100,7 +101,9 @@ jest.mock("../../../../../../src/owners/railgun-own-witness.js", () => ({
     throw Error('unexpected preflight');
   }),
 }));
-jest.mock('../networks/private-rpc', () => ({
+jest.mock("../../../../../../src/owners/host-bindings.js", () => ({
+  ...jest.requireActual("../../../../../../src/owners/host-bindings.js"),
+  rpc: {
   getPrivateRpcDestinationDetails: jest.fn((destination) => {
     if (![mock.sourceDestination, mock.receiptDestination].includes(destination))
       throw Error('unknown destination');
@@ -118,6 +121,26 @@ jest.mock('../networks/private-rpc', () => ({
   createPrivateRpc: jest.fn(() => {
     throw Error('unexpected transport');
   }),
+},
+  transactionNetwork: {
+  getPrivateTransactionNetwork: jest.fn((handle) => {
+    mock.receiptHandles.add(handle);
+    return mock.network;
+  }),
+  getPrivateTransactionNetworkDestination: jest.fn(() => mock.receiptDestination),
+  assertPrivateTransactionNetworkDestination: jest.fn((network, handle, destination) => {
+    if (
+      network !== mock.network ||
+      !mock.receiptHandles.has(handle) ||
+      destination !== mock.receiptDestination ||
+      !mock.receiptCurrent
+    )
+      throw Error('receipt destination');
+  }),
+},
+  transport: {
+  createWalletTorTransport: jest.fn(() => mock.makeTransport()),
+},
 }));
 jest.mock("../../../../../../src/owners/railgun-own-operation.js", () => ({
   captureRailgunOwnOperationSelector: jest.fn((options) => mock.selector(options)),
@@ -168,28 +191,11 @@ jest.mock("../../../../../../src/owners/railgun-own-operation.js", () => ({
   }),
 }));
 
-jest.mock('./private-transaction-network', () => ({
-  getPrivateTransactionNetwork: jest.fn((handle) => {
-    mock.receiptHandles.add(handle);
-    return mock.network;
-  }),
-  getPrivateTransactionNetworkDestination: jest.fn(() => mock.receiptDestination),
-  assertPrivateTransactionNetworkDestination: jest.fn((network, handle, destination) => {
-    if (
-      network !== mock.network ||
-      !mock.receiptHandles.has(handle) ||
-      destination !== mock.receiptDestination ||
-      !mock.receiptCurrent
-    )
-      throw Error('receipt destination');
-  }),
-}));
+
 jest.mock("../../../../../../src/owners/railgun-poi-cold-validation.js", () => ({
   validateRailgunRetainedPoiForSubmission: jest.fn((...args) => mock.validate(...args)),
 }));
-jest.mock('../networks/wallet-tor-transport', () => ({
-  createWalletTorTransport: jest.fn(() => mock.makeTransport()),
-}));
+
 const { createHash } = require('crypto');
 const { createPrivacyScope, getPrivacyContext } = require("../../../../../../src/owners/context-bindings.js");
 const { projectRailgunOwnRecord } = require("../../../../../../src/owners/railgun-own-txid.js");
@@ -405,17 +411,17 @@ afterEach(async () => {
   await Promise.all(plans.map((plan) => plan.closed));
   expect(mock.store.prepare).not.toHaveBeenCalled();
   expect(mock.store.close).not.toHaveBeenCalled();
-  for (const [file, name] of [
-    ['./railgun-identity', 'withRailgunViewingCredential'],
-    ['./railgun-own-operation', 'captureRailgunOwnOperationSelector'],
-    ['./railgun-process', 'startRailgunProcess'],
-    ['./railgun-own-poi-proof', 'proveRailgunOwnPoi'],
-    ['./railgun-own-witness', 'preflightRailgunOwnPoi'],
-    ['./railgun-own-witness', 'preflightRailgunRetainedPoiCompleted'],
-    ['./railgun-own-witness', 'preflightRailgunRetainedPoiForSubmission'],
-    ['../networks/private-rpc', 'createPrivateRpc'],
+  for (const [file, name, family] of [
+    ['../../../../../../src/owners/railgun-identity.js', 'withRailgunViewingCredential'],
+    ['../../../../../../src/owners/railgun-own-operation.js', 'captureRailgunOwnOperationSelector'],
+    ['../../../../../../src/owners/railgun-process.js', 'startRailgunProcess'],
+    ['../../../../../../src/owners/railgun-own-poi-proof.js', 'proveRailgunOwnPoi'],
+    ['../../../../../../src/owners/railgun-own-witness.js', 'preflightRailgunOwnPoi'],
+    ['../../../../../../src/owners/railgun-own-witness.js', 'preflightRailgunRetainedPoiCompleted'],
+    ['../../../../../../src/owners/railgun-own-witness.js', 'preflightRailgunRetainedPoiForSubmission'],
+    ['../../../../../../src/owners/host-bindings.js', 'createPrivateRpc', 'rpc'],
   ])
-    expect(require(file)[name]).not.toHaveBeenCalled();
+    expect((family ? require(file)[family] : require(file))[name]).not.toHaveBeenCalled();
   mock.scope.close();
   jest.restoreAllMocks();
   jest.useRealTimers();
@@ -708,7 +714,7 @@ test.each([0, -1, 0.5, NaN, Infinity, 1, 60000, 200000, 789999, 840001])(
     expect(mock.review).not.toHaveBeenCalled();
     expect(mock.network.request).not.toHaveBeenCalled();
     expect(
-      require('./private-transaction-network').getPrivateTransactionNetwork
+      require("../../../../../../src/owners/host-bindings.js").transactionNetwork.getPrivateTransactionNetwork
     ).not.toHaveBeenCalled();
     noPost();
   }
@@ -848,7 +854,7 @@ test.each([790000, 840000])(
 );
 test('insufficient total headroom at promotion refuses locally without a receipt query', async () => {
   const plan = await freshPlan();
-  const details = require('../networks/private-rpc').getPrivateRpcDestinationDetails;
+  const details = require("../../../../../../src/owners/host-bindings.js").rpc.getPrivateRpcDestinationDetails;
   const original = details.getMockImplementation();
   details.mockImplementationOnce((...args) => {
     jest.advanceTimersByTime(31000);
@@ -877,7 +883,7 @@ test.each(['source', 'receipt'])(
     expect(mock.network.request).not.toHaveBeenCalled();
     expect(mock.validate).not.toHaveBeenCalled();
     expect(
-      require('./private-transaction-network').getPrivateTransactionNetwork
+      require("../../../../../../src/owners/host-bindings.js").transactionNetwork.getPrivateTransactionNetwork
     ).toHaveBeenCalledTimes(1);
     noPost();
   }
@@ -997,11 +1003,16 @@ test.each(['state', 'payload', 'request-id', 'canonical-body', 'added-field'])(
     const original = mock.begin.getMockImplementation();
     mock.begin.mockImplementationOnce(async (...args) => {
       const result = await original(...args);
+      // Canonical normalizers freeze nested values; make the intended corrupt
+      // durable readback mutable and prove that the negative vector changed.
+      mock.entry = copy(mock.entry);
+      const beforeMutation = JSON.stringify(mock.entry);
       if (field === 'state') mock.entry.state = 'prepared';
       if (field === 'payload') mock.entry.payload.proof.pi_a[0] = '9';
       if (field === 'request-id') mock.entry.attempt.attemptedAt++;
       if (field === 'canonical-body') mock.entry.attempt.submission.body += ' ';
       if (field === 'added-field') mock.entry.extra = true;
+      expect(JSON.stringify(mock.entry)).not.toBe(beforeMutation);
       return result;
     });
     expect((await send(plan)).status).toBe('recovery-required');
@@ -1332,7 +1343,7 @@ test.each(['capture', 'readback', 'outer-recovery'])(
 test('fixed sender and submission cores remain unwired outside their explicit production modules', () => {
   const fs = require('fs'),
     path = require('path');
-  const root = path.resolve(__dirname, '../..');
+  const root = path.resolve(__dirname, '../../../../../../src');
   const files = [];
   const visit = (directory) => {
     for (const item of fs.readdirSync(directory, { withFileTypes: true })) {
@@ -1343,31 +1354,31 @@ test('fixed sender and submission cores remain unwired outside their explicit pr
   };
   visit(root);
   for (const [name, expected] of [
-    ['submitRailgunRetainedPoi', ['main/wallet/railgun-poi-disclosure-plan.js']],
-    ['recoverRailgunAttemptedPoiOutput', ['main/wallet/railgun-poi-output-recovery.js']],
+    ['submitRailgunRetainedPoi', ['owners/railgun-poi-disclosure-plan.js']],
+    ['recoverRailgunAttemptedPoiOutput', ['owners/railgun-poi-output-recovery.js']],
     [
       'claimRailgunAttemptedPoiOutput',
-      ['main/wallet/railgun-poi-disclosure-plan.js', 'main/wallet/railgun-poi-output-recovery.js'],
+      ['owners/railgun-poi-disclosure-plan.js', 'owners/railgun-poi-output-recovery.js'],
     ],
     [
       'validateRailgunRetainedPoiForSubmission',
-      ['main/wallet/railgun-poi-cold-validation.js', 'main/wallet/railgun-poi-disclosure-plan.js'],
+      ['owners/railgun-poi-cold-validation.js', 'owners/railgun-poi-disclosure-plan.js'],
     ],
     [
       'recoverRailgunPoiOutputForSubmission',
-      ['main/wallet/railgun-poi-cold-validation.js', 'main/wallet/railgun-poi-output-recovery.js'],
+      ['owners/railgun-poi-cold-validation.js', 'owners/railgun-poi-output-recovery.js'],
     ],
-    ['preflightRailgunOwnPoiForSubmission', ['main/wallet/railgun-own-witness.js']],
+    ['preflightRailgunOwnPoiForSubmission', ['owners/railgun-own-witness.js']],
     [
       'preflightRailgunRetainedPoiForSubmission',
-      ['main/wallet/railgun-own-witness.js', 'main/wallet/railgun-poi-output-recovery.js'],
+      ['owners/railgun-own-witness.js', 'owners/railgun-poi-output-recovery.js'],
     ],
     [
       'preflightRailgunRetainedPoiCompleted',
       [
-        'main/wallet/railgun-own-witness.js',
-        'main/wallet/railgun-poi-output-recovery.js',
-        'main/wallet/railgun-own-poi-checks.js',
+        'owners/railgun-own-witness.js',
+        'owners/railgun-poi-output-recovery.js',
+        'owners/railgun-own-poi-checks.js',
       ],
     ],
   ]) {
