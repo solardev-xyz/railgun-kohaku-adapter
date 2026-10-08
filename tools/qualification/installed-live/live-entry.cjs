@@ -58,6 +58,10 @@ async function main() {
     application = new AbortController();
   try {
     const previous = pinned(request.previous);
+    // The original held report, pinned by the launcher to the campaign binding.
+    const heldBytes = fs.readFileSync(request.heldReport.file);
+    assert.equal(sha(heldBytes), request.heldReport.sha256);
+    assert.equal(request.heldReport.sha256, request.ledgerHeader.binding.heldTransferReportSha256);
     const lineage = Object.fromEntries(
       Object.entries(request.lineage ?? {}).map(([name, reference]) => [name, pinned(reference)])
     );
@@ -204,6 +208,8 @@ async function main() {
       readFinalized,
       readReceipt,
       expectedRpc,
+      heldReport: JSON.parse(heldBytes),
+      heldReportSha256: sha(heldBytes),
       synthetic: !live,
       // Synthetic crash: the network keeps what it received, then the process
       // dies at once. Electron's process.exit would let JavaScript run on.
@@ -235,12 +241,7 @@ async function main() {
     };
     write(path.join(request.outputDirectory, 'report.json'), report);
     if (chain) write(path.join(request.outputDirectory, 'chain-state.json'), chain.state());
-    require('./live-ledger.cjs').recordReport(
-      request.profileDirectory,
-      request.ledgerHeader,
-      request.mode,
-      sha(fs.readFileSync(path.join(request.outputDirectory, 'report.json')))
-    );
+    // The launcher records the report digest only after exit and postchecks.
   } catch (error) {
     report = null;
     try {

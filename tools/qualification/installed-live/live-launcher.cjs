@@ -21,7 +21,12 @@ const ledger = require('./live-ledger.cjs');
 const { MODES } = require('./live-scenario.cjs');
 const HERE = __dirname;
 const FAMILY = path.join(HERE, '../installed-journey');
+// Every executed runner input: the launcher and its process owner and copy
+// contract decide admission, caps and evidence, so they bind the campaign too.
 const RECIPE = [
+  path.join(HERE, 'live-launcher.cjs'),
+  path.join(FAMILY, 'process-owner.cjs'),
+  path.join(FAMILY, 'synthetic-copy-contract.cjs'),
   path.join(HERE, 'live-entry.cjs'),
   path.join(HERE, 'live-scenario.cjs'),
   path.join(HERE, 'live-ledger.cjs'),
@@ -101,7 +106,8 @@ function headerFor(request, binding, syntheticCaps) {
     caps: { ...FIXED_CAPS, ...(request.transport === 'live' ? LIVE_CAPS : syntheticCaps) },
   };
 }
-function check(request) {
+// Immutable request facts, valid before and after the process alike.
+function validate(request) {
   assert.equal(request.schema, 'railgun-installed-live-request-v1');
   assert.deepEqual(
     request.ledgerHeader,
@@ -144,9 +150,15 @@ function check(request) {
     assert.equal(file(request.synthetic.publicSource).sha256, request.synthetic.publicSourceSha256);
   }
   assert.equal(fs.realpathSync(request.profileDirectory), request.profileDirectory);
-  // Campaign admission, read-only: predecessor reports must be this campaign's
-  // recorded reports; an unfinished send permits observation only.
-  const { sends, reports } = ledger.inspect(request.profileDirectory, request.ledgerHeader);
+  assert.equal(file(request.heldReport.file).sha256, request.heldReport.sha256);
+  assert.equal(request.heldReport.sha256, request.ledgerHeader.binding.heldTransferReportSha256);
+  return ledger.inspect(request.profileDirectory, request.ledgerHeader);
+}
+// Pre-run admission, read-only: predecessor reports must be this campaign's
+// recorded reports (recorded only after a successful, postchecked run); an
+// unfinished send permits observation only.
+function admit(request) {
+  const { sends, reports } = validate(request);
   for (const reference of [request.previous, ...Object.values(request.lineage ?? {})].filter(Boolean)) {
     read(reference.report, reference.reportSha256);
     assert.ok(reports.some((row) => row.sha256 === reference.reportSha256), 'Report not recorded by this campaign');
@@ -194,6 +206,7 @@ function makeRequest(spec) {
       ? Object.fromEntries(Object.entries(value.lineage).map(([name, report]) => [name, reference(report)]))
       : null,
     params: value.params ?? {},
+    heldReport: { file: value.heldReport, sha256: file(value.heldReport).sha256 },
     ledgerHeader: header,
     ...(value.transport === 'live'
       ? {
@@ -223,7 +236,7 @@ function makeRequest(spec) {
 }
 async function run(filename, digest) {
   const request = read(filename, digest);
-  const sendsBefore = check(request);
+  const sendsBefore = admit(request);
   assert.equal(fs.existsSync(request.outputDirectory), false);
   assert.equal(fs.existsSync(request.evidenceDirectory), false);
   fs.mkdirSync(request.evidenceDirectory, { mode: 0o700 });
@@ -259,20 +272,28 @@ async function run(filename, digest) {
   } finally {
     fs.closeSync(log);
   }
-  let sendsAfter = null;
+  let sendsAfter = null,
+    recorded = false;
+  const reportFile = path.join(request.outputDirectory, 'report.json');
   try {
-    sendsAfter = check({ ...request, mode: 'live-observe' });
+    sendsAfter = validate(request).sends.length;
     assert.deepEqual(installed(request, path.join(request.evidenceDirectory, 'tar-post')), before);
+    // Only a natural, successful, postchecked run yields an admissible report.
+    if (!failure) {
+      assert.ok(fs.existsSync(reportFile), 'No report');
+      ledger.recordReport(request.profileDirectory, request.ledgerHeader, request.mode, file(reportFile).sha256);
+      recorded = true;
+    }
   } catch (error) {
     failure ||= error;
   }
   if (observation) write(path.join(request.evidenceDirectory, 'process.json'), observation);
-  const reportFile = path.join(request.outputDirectory, 'report.json');
   write(path.join(request.evidenceDirectory, 'RESULT.json'), {
     schema: 'railgun-installed-live-result-v1',
     mode: request.mode,
     transport: request.transport,
-    passed: !failure && fs.existsSync(reportFile),
+    passed: !failure && recorded,
+    reportRecorded: recorded,
     requestSha256: digest,
     startedAt: started,
     finishedAt: new Date().toISOString(),
@@ -303,4 +324,4 @@ if (require.main === module)
     );
     process.exitCode = 1;
   });
-module.exports = { makeRequest, check, headerFor, RECIPE, LIVE_CAPS };
+module.exports = { makeRequest, validate, admit, headerFor, RECIPE, LIVE_CAPS };

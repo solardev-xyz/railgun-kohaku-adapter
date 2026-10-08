@@ -221,6 +221,12 @@ async function main() {
         liveness: 'proved-unsent',
         estimate: estimate.toString(),
         continuity,
+        // The live L-A report's binding facts: the Shield that created the
+        // held input and the full-value self-transfer request.
+        heldInput: {
+          shieldTransactionHash: '0x' + String(note.txid).replace(/^0x/, '').toLowerCase(),
+          spendRequest: { kind: 'railgun-private-transfer', recipient: 'self', fullInputValue: true },
+        },
         syntheticChain: chainReport,
       };
     } finally {

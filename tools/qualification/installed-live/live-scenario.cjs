@@ -84,13 +84,16 @@ function noteSummary(notes) {
   };
 }
 // Synthetic-only crash points for the reconcile path; a live run refuses any.
-const FAULTS = Object.freeze(['exit-before-finish', 'exit-before-report']);
+const FAULTS = Object.freeze(['exit-before-finish', 'exit-before-report', 'history-unavailable-after-send']);
 function fault(context, point) {
   const requested = context.params.fault ?? null;
   if (requested === null) return;
   assert.ok(FAULTS.includes(requested));
   assert.equal(context.synthetic, true, 'Faults are synthetic only');
-  if (requested === point) context.crash();
+  if (requested !== point) return;
+  if (point === 'history-unavailable-after-send')
+    throw Object.assign(Error('Synthetic history read failure'), { code: 'LIVE_SYNTHETIC_HISTORY_UNAVAILABLE' });
+  context.crash();
 }
 function budget(context, kind) {
   return ledger.consume(context.profile, context.header, kind, ledger.policyFor(context.header.caps, kind));
@@ -173,10 +176,51 @@ async function holds(session, signal, owner, milestone) {
     await closeLane(lane);
   }
 }
-function only(records, kind) {
-  const rows = records.filter((record) => record.kind === kind);
-  assert.equal(rows.length, 1, 'Exactly one held operation of this kind');
+// The one hold of this kind whose id hash was bound earlier in the campaign.
+function bound(records, kind, holdIdSha256) {
+  assert.match(holdIdSha256, /^[0-9a-f]{64}$/);
+  const rows = records.filter((record) => sha(record.holdId) === holdIdSha256);
+  assert.equal(rows.length, 1, 'The bound held operation');
+  assert.equal(rows[0].kind, kind);
   return rows[0];
+}
+// The original held report's facts, normalized from the live L-A report or
+// the synthetic legacy harness report. Identity comes from the report bytes
+// the launcher verified against the campaign binding.
+function heldFacts(report, owner) {
+  const facts =
+    report.journey !== undefined
+      ? {
+          owner: report.owner,
+          mode: report.mode,
+          spendRequest: report.spendRequest,
+          attempted: report.spend.attempted,
+          journaled: report.spend.journaled,
+          state: report.liveness.state,
+          inputHeld: report.liveness.inputHeld,
+          shieldTransactionHash: report.chain.shieldTransactionHash,
+        }
+      : {
+          owner: report.scenario.continuity.submitter,
+          mode: 'transfer',
+          spendRequest: report.scenario.heldInput.spendRequest,
+          attempted: report.scenario.spend.attempted,
+          journaled: report.scenario.spend.journaled,
+          state: report.scenario.liveness,
+          inputHeld: true,
+          shieldTransactionHash: report.scenario.heldInput.shieldTransactionHash,
+        };
+  assert.equal(facts.owner.toLowerCase(), owner);
+  assert.equal(facts.mode, 'transfer');
+  assert.equal(facts.spendRequest.kind, 'railgun-private-transfer');
+  assert.equal(facts.spendRequest.recipient, 'self');
+  assert.equal(facts.spendRequest.fullInputValue, true);
+  assert.equal(facts.attempted, false);
+  assert.equal(facts.journaled, false);
+  assert.equal(facts.state, 'proved-unsent');
+  assert.equal(facts.inputHeld, true);
+  assert.match(facts.shieldTransactionHash, /^0x[0-9a-f]{64}$/);
+  return facts;
 }
 function finishReport(context, value) {
   return { ...value, ledgerHeaderSha256: sha(JSON.stringify(context.header)) };
@@ -204,6 +248,7 @@ async function rebuild(context) {
       statuses[result.status] = (statuses[result.status] || 0) + 1;
     }
     milestone('public-rebuilt:' + ranges.length);
+    const facts = heldFacts(context.heldReport, owner);
     lane = await session.openRead({ wallet: 'new', signal });
     const notes = await lane.notes(undefined, true);
     await closeLane(lane);
@@ -211,8 +256,31 @@ async function rebuild(context) {
     lane = await session.openRecovery({ ...recoveryOptions(owner, 'railgun-private-transfer', milestone, seen, false, context.expectedRpc), signal });
     const page = await lane.history();
     assert.equal(page.nextAfter, null);
-    const hold = only(page.records, 'railgun-private-transfer');
+    await closeLane(lane);
+    lane = null;
+    // Bind the original held report to exactly one current hold: its
+    // authenticated input note must be the note that report's Shield created,
+    // unspent in this wallet scan, spent in full to the account's own instance.
+    // Never by amount, position or the only visible hold.
+    const candidates = page.records.filter((record) => record.kind === 'railgun-private-transfer');
+    const descriptors = await withHeld(session, signal, heldReviews(owner, milestone, [], context.expectedRpc), async (l) => {
+      const rows = [];
+      for (const record of candidates) rows.push(await l.describe(record.holdId));
+      return rows;
+    });
+    const matches = descriptors.filter((descriptor) => {
+      const inputs = notes.filter((note) => note.id === descriptor.input.noteId);
+      return inputs.length === 1 && bare(inputs[0].txid) === bare(facts.shieldTransactionHash);
+    });
+    assert.equal(matches.length, 1, 'Exactly one hold spends the held report input');
+    const descriptor = matches[0];
+    const input = notes.filter((note) => note.id === descriptor.input.noteId)[0];
+    assert.equal(input.spentTxid, false, 'The held input is spent in this scan');
+    assert.equal(input.asset?.contract?.toLowerCase(), WETH);
+    assert.deepEqual(descriptor.transfer, { recipient: 'own-instance', amount: String(input.amount) });
+    const hold = page.records.find((record) => record.holdId === descriptor.holdId);
     assert.equal(hold.localState, 'proof-present');
+    lane = await session.openRecovery({ ...recoveryOptions(owner, 'railgun-private-transfer', milestone, seen, false, context.expectedRpc), signal });
     const proof = await lane.resumeProof(hold.holdId);
     assert.equal(proof.status, 'proof-present');
     await closeLane(lane);
@@ -231,6 +299,15 @@ async function rebuild(context) {
       notes: noteSummary(notes),
       holds: page.records.length,
       holdIdSha256: sha(hold.holdId),
+      heldBinding: {
+        heldReportSha256: context.heldReportSha256,
+        shieldTransactionHash: facts.shieldTransactionHash,
+        inputNoteIdSha256: sha(descriptor.input.noteId),
+        recipient: descriptor.transfer.recipient,
+        amount: descriptor.transfer.amount,
+        fullInputValue: true,
+        unspentThrough: { anchor, source: 'wallet-scan', trust: 'unverified-rpc' },
+      },
       holdState: hold.localState,
       transactionDigest: proof.transactionDigest,
       g1: { status: observed.status, transactionHash: observed.transactionHash ?? null },
@@ -268,8 +345,11 @@ async function submit(context) {
   let session, lane;
   try {
     session = await facade.openAccount({ accountIndex: 0, signal });
-    const hold = only(await holds(session, signal, owner, milestone), 'railgun-private-transfer');
-    assert.equal(sha(hold.holdId), previous.holdIdSha256);
+    const hold = bound(await holds(session, signal, owner, milestone), 'railgun-private-transfer', previous.holdIdSha256);
+    // The same authenticated descriptor the rebuild bound, before any reservation.
+    const described = await withHeld(session, signal, heldReviews(owner, milestone, [], context.expectedRpc), (l) => l.describe(hold.holdId));
+    assert.equal(sha(described.input.noteId), previous.heldBinding.inputNoteIdSha256);
+    assert.deepEqual(described.transfer, { recipient: previous.heldBinding.recipient, amount: previous.heldBinding.amount });
     budget(context, 'readback:transfer');
     const before = await withHeld(session, signal, heldReviews(owner, milestone, held, context.expectedRpc), (l) => l.observe(hold.holdId));
     assert.equal(before.status, 'unjournaled', 'A journaled attempt exists: observation only');
@@ -341,8 +421,7 @@ async function observe(context) {
     attempts = 0;
   try {
     session = await facade.openAccount({ accountIndex: 0, signal });
-    const hold = only(await holds(session, signal, owner, milestone), kind);
-    assert.equal(sha(hold.holdId), previous.holdIdSha256);
+    const hold = bound(await holds(session, signal, owner, milestone), kind, previous.holdIdSha256);
     for (;;) {
       attempts++;
       budget(context, 'observe:' + send);
@@ -472,8 +551,7 @@ async function poi(context) {
     }
     milestone('txid:' + JSON.stringify(txid.at(-1)));
     // One companion lane at a time: identify the hold before the POI lane.
-    const hold = only(await holds(session, signal, owner, milestone), 'railgun-private-transfer');
-    assert.equal(sha(hold.holdId), previous.holdIdSha256);
+    const hold = bound(await holds(session, signal, owner, milestone), 'railgun-private-transfer', previous.holdIdSha256);
     lane = await session.openPoiRecovery({ signal, reviewDisclosures: accept('poi') });
     // The transfer spent a Shield note: the Shield creator route. The owner
     // reauthenticates the actual creator and refuses any mismatch.
@@ -603,6 +681,7 @@ async function unshield(context) {
     const attemptId = ledger.reserve(profile, header, 'unshield', {
       outputNoteIdSha256: previous.outputNoteIdSha256,
       holdIdsBeforeSha256: [...beforeIds].map(sha).sort(),
+      unshield: { amount: String(output.amount), recipient: owner, asset: WETH },
     });
     milestone('ledger-reserved:unshield');
     lane = await session.openPrivate({
@@ -648,18 +727,22 @@ async function unshield(context) {
     await closeLane(lane).catch(() => milestone('lane-close-uncertain'));
     lane = null;
     let after = null,
-      added = [];
-    try {
-      added = (await holds(session, signal, owner, milestone)).filter((record) => !beforeIds.has(record.holdId));
-      assert.ok(added.length <= 1, 'More than one new held operation');
-      if (added.length === 1) {
-        assert.equal(added[0].kind, 'railgun-token-unshield');
+      added;
+    // Without the new hold's binding a hash cannot be observed: the report is
+    // deferred to live-reconcile, which finds the hold by set difference.
+    fault(context, 'history-unavailable-after-send');
+    added = (await holds(session, signal, owner, milestone)).filter((record) => !beforeIds.has(record.holdId));
+    assert.ok(added.length <= 1, 'More than one new held operation');
+    if (immediate.transactionHash) assert.equal(added.length, 1, 'A sent unshield without its hold');
+    if (added.length === 1) {
+      assert.equal(added[0].kind, 'railgun-token-unshield');
+      try {
         budget(context, 'readback:unshield');
         after = await withHeld(session, signal, heldReviews(owner, milestone, held, context.expectedRpc), (l) => l.observe(added[0].holdId));
+      } catch (error) {
+        milestone('readback-unavailable:' + (error?.code ?? 'error'));
+        if (!immediate.transactionHash) throw error;
       }
-    } catch (error) {
-      milestone('readback-unavailable:' + (error?.code ?? 'error'));
-      if (!immediate.transactionHash) throw error;
     }
     const result = immediate.transactionHash ? immediate : readback(immediate, after);
     if (after && immediate.transactionHash && after.status === 'journaled') assert.equal(after.transactionHash, immediate.transactionHash);
@@ -688,20 +771,40 @@ async function unshield(context) {
 }
 // Read-only conservation account of the completed journey.
 async function summary(context) {
-  const { facade, signal, previous, lineage, readReceipt, readFinalized, milestone } = context;
+  const { facade, signal, previous, lineage, readReceipt, readFinalized, milestone, owner } = context;
   assert.equal(previous.schema, 'railgun-installed-live-observe-v1');
   assertChained(context, previous);
   assert.equal(previous.send, 'unshield');
-  const transfer = lineage.transfer,
-    poiReport = lineage.poi,
-    scan = lineage.scan;
-  for (const report of [transfer, poiReport, scan]) assertChained(context, report);
+  // The unshield must be matched, included, resolved and (below) finalized.
+  assert.equal(previous.continuable, true);
+  assert.equal(previous.final.resolved, true);
+  assert.equal(previous.final.observation?.status, 'included');
+  assert.ok(Number.isSafeInteger(previous.final.observation.blockNumber));
+  if (previous.resolution) assert.equal(previous.resolution.outcome, 'matched');
+  const { transfer, poi: poiReport, scan, rebuild: rebuildReport } = lineage;
+  for (const report of [transfer, poiReport, scan, rebuildReport]) assertChained(context, report);
+  assert.equal(rebuildReport.schema, 'railgun-installed-live-rebuild-v1');
+  assert.equal(transfer.schema, 'railgun-installed-live-submit-v1');
+  assert.ok(['acknowledged', 'unknown'].includes(transfer.outcome.classification));
   assert.equal(scan.schema, 'railgun-installed-live-poi-v1');
+  assert.equal(poiReport.schema, 'railgun-installed-live-poi-status-v1');
+  assert.equal(poiReport.continuable, true);
+  assert.equal(transfer.holdIdSha256, rebuildReport.holdIdSha256);
+  // Exact value lineage: full input to the transfer output to the unshield.
+  assert.equal(poiReport.inputAmount, rebuildReport.heldBinding.amount);
+  assert.equal(poiReport.outputAmount, poiReport.inputAmount);
+  assert.deepEqual(previous.unshield, { amount: poiReport.outputAmount, recipient: owner, asset: WETH });
+  const output = previous.resolution?.output ?? previous.final.output;
+  assert.equal(output.kind, 'unshield');
+  assert.equal(output.recipient.toLowerCase(), owner);
+  assert.equal(output.amount, poiReport.outputAmount);
+  assert.equal((BigInt(output.received) + BigInt(output.fee)).toString(), output.amount);
   let session;
   try {
     session = await facade.openAccount({ accountIndex: 0, signal });
     // Advance through the unshield so residual notes reflect its spend.
     const anchor = await readFinalized();
+    assert.ok(previous.final.observation.blockNumber <= anchor.number, 'The unshield is finalized');
     const ranges = rangesTo(scan.anchor.number + 1, anchor);
     for (const range of ranges) {
       budget(context, 'scan-range');
@@ -712,29 +815,44 @@ async function summary(context) {
     const spentOutput = notes.filter((note) => note.spentTxid !== false && bare(note.spentTxid) === bare(previous.transactionHash));
     assert.equal(spentOutput.length, 1, 'The unshield spent exactly the transfer output');
     assert.equal(sha(spentOutput[0].id), scan.outputNoteIdSha256);
+    const spentInput = notes.filter((note) => sha(note.id) === rebuildReport.heldBinding.inputNoteIdSha256);
+    assert.equal(spentInput.length, 1);
+    assert.equal(bare(spentInput[0].spentTxid), bare(transfer.outcome.transactionHash), 'The transfer spent the held input');
     await closeSession(session);
     session = null;
-    const output = previous.resolution?.output ?? previous.final.output;
-    assert.equal(output.kind, 'unshield');
+    // The lineage leaves nothing spendable: residual unspent value is exactly
+    // what the account held besides the input when it was rebuilt.
+    const before = rebuildReport.notes,
+      residual = noteSummary(notes);
+    assert.equal(residual.unspent, before.unspent - 1);
+    assert.equal(residual.unspentAmount, (BigInt(before.unspentAmount) - BigInt(poiReport.inputAmount)).toString());
     const receipts = {};
-    assert.equal(transfer.schema, 'railgun-installed-live-submit-v1');
-    for (const [name, hash] of [['transfer', transfer.outcome.transactionHash], ['unshield', previous.transactionHash]])
+    for (const [name, hash] of [['transfer', transfer.outcome.transactionHash], ['unshield', previous.transactionHash]]) {
       receipts[name] = await readReceipt(hash);
-    const gasWei = Object.values(receipts).reduce((sum, r) => sum + BigInt(r.gasUsed) * BigInt(r.effectiveGasPrice), 0n);
+      assert.equal(receipts[name].status, '0x1', 'Receipt status of ' + name);
+    }
+    const fees = Object.fromEntries(
+      Object.entries(receipts).map(([name, r]) => [name, BigInt(r.gasUsed) * BigInt(r.effectiveGasPrice)])
+    );
+    for (const fee of Object.values(fees)) assert.ok(fee <= MAX_GAS_FEE, 'Per-send fee cap');
+    const gasWei = fees.transfer + fees.unshield;
+    assert.ok(gasWei <= 2n * MAX_GAS_FEE, 'Total fee cap');
     return finishReport(context, {
       schema: 'railgun-installed-live-summary-v1',
       trust: 'unverified-rpc',
       input: { amount: poiReport.inputAmount, spentBy: transfer.outcome.transactionHash },
       transferOutput: { amount: poiReport.outputAmount, spentBy: previous.transactionHash },
       unshield: { amount: output.amount, received: output.received, fee: output.fee, recipient: output.recipient },
-      gas: { transfer: receipts.transfer, unshield: receipts.unshield, totalWei: gasWei.toString(), withinCap: gasWei <= 4000000000000000n },
-      conservation: {
-        transferFullValue: poiReport.inputAmount === poiReport.outputAmount,
-        unshieldFullOutput: output.amount === poiReport.outputAmount,
-        receivedPlusFee: (BigInt(output.received) + BigInt(output.fee)).toString() === output.amount,
+      gas: {
+        transfer: receipts.transfer,
+        unshield: receipts.unshield,
+        feesWei: { transfer: fees.transfer.toString(), unshield: fees.unshield.toString() },
+        totalWei: gasWei.toString(),
+        withinCap: true,
       },
+      conservation: { transferFullValue: true, unshieldFullOutput: true, receivedPlusFee: true, residualAsExpected: true },
       scanAnchor: anchor,
-      residualNotes: noteSummary(notes),
+      residualNotes: residual,
     });
   } finally {
     await closeSession(session);
@@ -763,8 +881,7 @@ async function reconcile(context) {
     const records = await holds(session, signal, owner, milestone);
     let holdId = null;
     if (send === 'transfer') {
-      holdId = only(records, kind).holdId;
-      assert.equal(sha(holdId), last.pending.binding.holdIdSha256);
+      holdId = bound(records, kind, last.pending.binding.holdIdSha256).holdId;
     } else {
       // The new hold is the set difference against the reservation's binding.
       const before = new Set(last.pending.binding.holdIdsBeforeSha256);
@@ -799,7 +916,9 @@ async function reconcile(context) {
       schema: send === 'transfer' ? 'railgun-installed-live-submit-v1' : 'railgun-installed-live-unshield-v1',
       send,
       holdIdSha256: holdId ? sha(holdId) : null,
-      ...(send === 'unshield' ? { outputNoteIdSha256: last.pending.binding.outputNoteIdSha256, unshield: null } : {}),
+      ...(send === 'unshield'
+        ? { outputNoteIdSha256: last.pending.binding.outputNoteIdSha256, unshield: last.pending.binding.unshield }
+        : {}),
       outcome: result,
       reconciled: last.finished ? 'reissued' : 'finished',
       g1: after && { status: after.status, observation: after.observation ?? null },

@@ -10,16 +10,37 @@ campaign ledger.
 
 | Mode | Sends | Main facade calls |
 | ---- | ----- | ----------------- |
-| `live-rebuild` | 0 | `openAccount({publicCache:'new'})`; advance to the finalized anchor; `openRead({wallet:'new'})`; `history`; `resumeProof`; G1 `observe` must be `unjournaled` |
-| `live-submit` | 1 (transfer) | G1 `observe`; ledger reservation; `openRecovery().submitStored(holdId)`; journal readback; ledger finish |
+| `live-rebuild` | 0 | `openAccount({publicCache:'new'})`; advance to the finalized anchor; `openRead({wallet:'new'})`; `history`; G1 `describe` binds the held report; `resumeProof`; G1 `observe` must be `unjournaled` |
+| `live-submit` | 1 (transfer) | G1 `describe` equals the rebuild binding; G1 `observe`; ledger reservation; `openRecovery().submitStored(holdId)`; journal readback; ledger finish |
 | `live-observe` | 0 | Budgeted G1 `observe` until included, matched and 12 confirmations; then `resolve(12)` |
 | `live-poi` | 0 | Scan continuation; transfer join (input spent by H, output created by H); `synchronizeTxid`; `prepareShield`; `recoverOutput`; one durable POI handoff `submit`; `recoverAttemptedOutput` |
 | `live-poi-status` | 0 | One budgeted `observeOwnedPoi(output)` |
 | `live-unshield` | 1 (unshield) | Fresh `allValid` status; ledger reservation; `openPrivate().prepareUnshield(output → enrolled EOA)`; `broadcast`; new hold by set difference; G1 readback |
-| `live-summary` | 0 | Scan through the unshield; residual notes; public receipts of the two hashes; conservation checks |
+| `live-summary` | 0 | Requires a matched, resolved, finalized unshield. Enforces exact value lineage (full input, full output, received plus fee), the held input spent by the transfer, residual unspent value equal to the rebuild's minus the input, successful receipts, and per-send and total fee caps |
 | `live-reconcile` | 0 | Finishes an unfinished send record from the journal: G1 `observe` of the bound hold only |
 
 Run `live-observe` after each send.
+
+## Held transfer binding
+
+The launcher pins the original held report to
+`binding.heldTransferReportSha256`. That is the L-A `s3b` report live, or the
+legacy harness report in synthetic runs. `live-rebuild` reads the report's
+facts:
+
+- owner;
+- a `railgun-private-transfer` to `self` at full input value;
+- `proved-unsent`, never attempted or journaled;
+- the Shield transaction that created the input.
+
+It then binds exactly one current transfer hold through the G1 lane's local
+`describe`. That hold's authenticated input note must be the note the
+reported Shield created (`txid`), unspent in this wallet scan at the finalized
+anchor. It must be spent in full (`amount` equals the note) to the account's
+own instance. Amount, position or being the only visible hold never identifies
+it. The unspent fact is a wallet scan through the frozen remote RPC
+(`unverified-rpc`); `submitStored` checks the nullifier on chain again before
+sending. Later modes select holds only by the bound hold hash.
 
 A send whose broadcast returned a hash finishes its ledger record at once; the
 journal readback after it is best effort. If a process ends between the
@@ -28,7 +49,16 @@ attempt then finishes as `unknown` with its hash (observation only). Anything
 else finishes as `unjournaled-after-refusal` and stops the campaign. That label
 records no journaled attempt; it is not proof that nothing was sent. The
 transfer's hold is bound by its hash. The unshield's new hold is found by set
-difference against the hold hashes recorded in its reservation.
+difference against the hold hashes recorded in its reservation, which also
+records the unshield's amount, recipient and asset.
+
+If an unshield returns a hash but its new hold cannot be identified, the run
+fails after finishing the ledger record, with no report. Only `live-reconcile`
+can follow; it reissues the report once the hold is found.
+
+A crash or lost report after the POI handoff reservation is a terminal stop
+that requires diagnosis: `live-poi` refuses a pending handoff, and POI is never
+submitted twice.
 
 Synthetic runs accept `params.fault` (`exit-before-finish` or
 `exit-before-report`). The process writes the synthetic chain state and then
@@ -76,11 +106,19 @@ Records are fail-closed and append-only:
   - TXID pages: at most 90.
 - **POI:** at most one `poi-pending`/`poi-finished` handoff, and only after a
   continuing transfer.
-- **Reports:** one `report` digest per mode. The launcher accepts a
-  predecessor only if its digest is recorded here.
+- **Reports:** one `report` digest per mode. The launcher records it only
+  after a natural successful exit and its postchecks. A predecessor is
+  admitted only if its digest is recorded here, so a failed invocation is never
+  a predecessor. Crash recovery is the separate `live-reconcile` path, admitted
+  from the ledger alone.
+
+The header's previous-ledger hashes are historical references taken from the
+final recovery outcome. This run neither re-verifies nor touches those files,
+and no earlier ledger can be reset, replaced or used to start another attempt.
 
 The launcher derives the header from the request on every check; a spec cannot
-supply one. Live caps are fixed to the values above. A changed runner, binding,
+supply one. The runner hash covers every executed runner file, including the
+launcher, the process owner and the synthetic copy contract. Live caps are fixed to the values above. A changed runner, binding,
 profile, transport or cap refuses the whole ledger. Replay re-enforces every
 budget record's maximum, spacing and window. A torn, extra or foreign record
 refuses, as does any other file in the ledger directory (including `.DS_Store`). An exhausted budget stops the campaign; a new campaign
@@ -133,6 +171,7 @@ Before Electron starts, the launcher verifies:
 - predecessor report hashes, which must be recorded in the ledger;
 - send admission.
 
-It repeats the checks after exit and writes `RESULT.json`. Live failure
+After exit it repeats the immutable checks (never the pre-run send
+admission), records the report digest on success, and writes `RESULT.json`. Live failure
 records contain only codes and source frames; synthetic ones also keep
 milestones.
