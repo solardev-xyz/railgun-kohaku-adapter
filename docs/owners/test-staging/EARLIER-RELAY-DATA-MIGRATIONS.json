@@ -1,0 +1,258 @@
+{
+  "schema": "earlier-relay-tests-import-migration-v1",
+  "sourceRepository": "https://github.com/solardev-xyz/freedom-browser",
+  "sourceRevision": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+  "packageBasis": "533ed43d636bdc731bf86f8515cc1dee0a00656c",
+  "scope": "Eight previously unjoined relay data suites; literal require specifier changes only. No assertion edits, mocks, engine/jobs or host initialization added.",
+  "files": [
+    {
+      "source": "src/main/wallet/railgun-relay-capsule.test.js",
+      "destination": "test/earlier-relay-capsule.test.js",
+      "sourceSha256": "5903acc304af8dd6d7d6ed28eebd975b390e351d968abf39f0bbad26b9f18d80",
+      "sourceGitBlob": "2f2dd17f5354c9d46f61a33f80c2270bcd118af1",
+      "destinationSha256": "b46d0586a9e4ce02140d7e86a570d40bea7908662b9aeba64bbc0de0e9d7cc63",
+      "replacements": [
+        {
+          "from": "'./railgun-private-policy'",
+          "to": "'../src/data/railgun-private-policy'",
+          "occurrences": 1
+        },
+        {
+          "from": "'./railgun-shield-pins.json'",
+          "to": "'../src/railgun-shield-pins.json'",
+          "occurrences": 1
+        },
+        {
+          "from": "'./railgun-relay-capsule'",
+          "to": "'../src/execution/railgun-relay-capsule'",
+          "occurrences": 1
+        },
+        {
+          "from": "'./railgun-relay-intent'",
+          "to": "'../src/execution/railgun-relay-intent'",
+          "occurrences": 1
+        },
+        {
+          "from": "'./railgun-private-capsule'",
+          "to": "'../src/execution/railgun-private-capsule'",
+          "occurrences": 1
+        }
+      ]
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-intent.test.js",
+      "destination": "test/earlier-relay-intent.test.js",
+      "sourceSha256": "f27434e70c492f057fdde34e550c21e23f320c43b1d7e574dfe8de0df161896d",
+      "sourceGitBlob": "094ab869b5f9384c0f80d0636232bf8fae363ee5",
+      "destinationSha256": "193967c1503af78da6bb7e0afc0c6a2ac25c305b09538f668b63a798443cdd02",
+      "replacements": [
+        {
+          "from": "'./railgun-private-policy'",
+          "to": "'../src/data/railgun-private-policy'",
+          "occurrences": 1
+        },
+        {
+          "from": "'./railgun-shield-pins.json'",
+          "to": "'../src/railgun-shield-pins.json'",
+          "occurrences": 1
+        },
+        {
+          "from": "'./railgun-relay-intent'",
+          "to": "'../src/execution/railgun-relay-intent'",
+          "occurrences": 3
+        },
+        {
+          "from": "'./railgun-private-intent'",
+          "to": "'../src/data/railgun-private-intent'",
+          "occurrences": 1
+        }
+      ]
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-poi-history.test.js",
+      "destination": "test/earlier-relay-poi-history.test.js",
+      "sourceSha256": "16eed3f7fb668eb5460047a247e648d6276a6b012b0f060a78d7b1bca7f81218",
+      "sourceGitBlob": "498033ccc3b6406f78368cedd80b2ac0916b75e4",
+      "destinationSha256": "a86f431b1bcb51a7073593652dee0b3426b3b56ed9f41a1b77ca21d875a5215f",
+      "replacements": [
+        {
+          "from": "'./railgun-poi-records'",
+          "to": "'../src/data/railgun-poi-records'",
+          "occurrences": 1
+        },
+        {
+          "from": "'./railgun-relay-poi-history'",
+          "to": "'../src/execution/railgun-relay-poi-history'",
+          "occurrences": 1
+        }
+      ]
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-pre-poi-data.test.js",
+      "destination": "test/earlier-relay-pre-poi-data.test.js",
+      "sourceSha256": "ecfa20b85836ecef2cc63c24daf3c5786d0fecff1fac9498fd14613d35d6a164",
+      "sourceGitBlob": "ed5f048f7f54b8df4d6898a572396fbdcf4630f2",
+      "destinationSha256": "a2b0cfda4f988695ad247e8f518f61cf01af18fa28f01b950f8f766471c06806",
+      "replacements": [
+        {
+          "from": "'./railgun-relay-pre-poi-data'",
+          "to": "'../src/execution/railgun-relay-pre-poi-data'",
+          "occurrences": 1
+        },
+        {
+          "from": "'./railgun-poi-payload'",
+          "to": "'../src/data/railgun-poi-payload'",
+          "occurrences": 1
+        },
+        {
+          "from": "'./railgun-poi-records'",
+          "to": "'../src/data/railgun-poi-records'",
+          "occurrences": 1
+        },
+        {
+          "from": "'./railgun-shield-pins.json'",
+          "to": "'../src/railgun-shield-pins.json'",
+          "occurrences": 1
+        }
+      ]
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-quote-data.test.js",
+      "destination": "test/earlier-relay-quote-data.test.js",
+      "sourceSha256": "fbcaa8166248995a58abdfcf6e6eb54495b835120801fbbc73b1a61fffe97ec4",
+      "sourceGitBlob": "04c832a663b651977c6ffbe265029e545da59d64",
+      "destinationSha256": "2ef9b14968b28641c9feca025cb2d294ba789f5eb91e65e6a899ba933e17b4f1",
+      "replacements": [
+        {
+          "from": "'./railgun-relay-quote-data'",
+          "to": "'../src/execution/railgun-relay-quote-data'",
+          "occurrences": 1
+        },
+        {
+          "from": "'./railgun-shield-pins.json'",
+          "to": "'../src/railgun-shield-pins.json'",
+          "occurrences": 1
+        },
+        {
+          "from": "'./railgun-engine-manifest.json'",
+          "to": "'../src/execution/railgun-engine-manifest.json'",
+          "occurrences": 1
+        }
+      ]
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-recovery-data.test.js",
+      "destination": "test/earlier-relay-recovery-data.test.js",
+      "sourceSha256": "4f2dab1b7fff0fb49638be50d85d50a574023f06f64e5aa2f534ad8d4a56871f",
+      "sourceGitBlob": "1d9c48570a881843d1ef6a2da861d8e876dede81",
+      "destinationSha256": "cbd1f36d185ec7a9f5007bee2757677aa0539ee29c06bb3aaae9a9dab2464908",
+      "replacements": [
+        {
+          "from": "'../../../scripts/fixtures/railgun-relay-unsigned-data'",
+          "to": "'../tools/owner-test-staging/fixtures/scripts/fixtures/railgun-relay-unsigned-data'",
+          "occurrences": 1
+        },
+        {
+          "from": "'./railgun-relay-capsule'",
+          "to": "'../src/execution/railgun-relay-capsule'",
+          "occurrences": 1
+        },
+        {
+          "from": "'./railgun-poi-records'",
+          "to": "'../src/data/railgun-poi-records'",
+          "occurrences": 1
+        },
+        {
+          "from": "'./railgun-relay-poi-history'",
+          "to": "'../src/execution/railgun-relay-poi-history'",
+          "occurrences": 1
+        },
+        {
+          "from": "'./railgun-relay-pre-poi-data'",
+          "to": "'../src/execution/railgun-relay-pre-poi-data'",
+          "occurrences": 1
+        },
+        {
+          "from": "'./railgun-relay-recovery-data'",
+          "to": "'../src/execution/railgun-relay-recovery-data'",
+          "occurrences": 1
+        }
+      ]
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-transaction.test.js",
+      "destination": "test/earlier-relay-transaction.test.js",
+      "sourceSha256": "f3b2aac5c28a9d677cf02341f7943860b3b2ff15168a14148874ac10cc8c2a12",
+      "sourceGitBlob": "faa9e48643f7d2beb89d1304f55b3da9aed1cf17",
+      "destinationSha256": "0efa28e3a8e9194f93ab2fcbcce0e412f85a06ae2f644f66398ee67d44b78c8a",
+      "replacements": [
+        {
+          "from": "'./railgun-private-policy'",
+          "to": "'../src/data/railgun-private-policy'",
+          "occurrences": 1
+        },
+        {
+          "from": "'./railgun-relay-intent'",
+          "to": "'../src/execution/railgun-relay-intent'",
+          "occurrences": 1
+        },
+        {
+          "from": "'./railgun-relay-transaction'",
+          "to": "'../src/execution/railgun-relay-transaction'",
+          "occurrences": 1
+        },
+        {
+          "from": "'../../../scripts/fixtures/railgun-relay-unsigned-data'",
+          "to": "'../tools/owner-test-staging/fixtures/scripts/fixtures/railgun-relay-unsigned-data'",
+          "occurrences": 1
+        }
+      ]
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-wallet-data.test.js",
+      "destination": "test/earlier-relay-wallet-data.test.js",
+      "sourceSha256": "e3d5a0ac0f09adb4b84a82225736f18f504719eaf3fb656c8a0c927fc1819373",
+      "sourceGitBlob": "5a35af7f971cd7f8bc10b8cff28805e9693d127c",
+      "destinationSha256": "a6821aa3203000e55142dcc22553b37958608cca09e1860a946aaa1333d68a61",
+      "replacements": [
+        {
+          "from": "'../../../scripts/fixtures/railgun-relay-unsigned-data'",
+          "to": "'../tools/owner-test-staging/fixtures/scripts/fixtures/railgun-relay-unsigned-data'",
+          "occurrences": 1
+        },
+        {
+          "from": "'./railgun-relay-wallet-data'",
+          "to": "'../src/execution/railgun-relay-wallet-data'",
+          "occurrences": 3
+        },
+        {
+          "from": "'./railgun-relay-capsule'",
+          "to": "'../src/execution/railgun-relay-capsule'",
+          "occurrences": 1
+        },
+        {
+          "from": "'./railgun-shield-pins.json'",
+          "to": "'../src/railgun-shield-pins.json'",
+          "occurrences": 1
+        },
+        {
+          "from": "'../../../scripts/fixtures/railgun-relay-main-proof-data'",
+          "to": "'../tools/owner-test-staging/fixtures/scripts/fixtures/railgun-relay-main-proof-data'",
+          "occurrences": 1
+        }
+      ]
+    }
+  ],
+  "reusedFixtures": [
+    {
+      "path": "tools/owner-test-staging/fixtures/scripts/fixtures/railgun-relay-unsigned-data.js",
+      "sha256": "a36cc7b4373c622c855d58a201f623dabdeb52c6dadf83af61349f4dd9e762d5",
+      "newFixture": false
+    },
+    {
+      "path": "tools/owner-test-staging/fixtures/scripts/fixtures/railgun-relay-main-proof-data.js",
+      "sha256": "14dc332d9f5420e78f81951e2788b89ab64bcf5ac64a23e508ecc3e8961b61df",
+      "newFixture": false
+    }
+  ]
+}
