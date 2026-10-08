@@ -1,3 +1,5 @@
+const fs = require('fs');
+const vm = require('vm');
 const {
   createRailgunKohakuSnapshotPlugin: create,
 } = require('../src/railgun-kohaku-snapshot-plugin');
@@ -441,8 +443,21 @@ test('constructor snapshots callbacks, enforces exact options and never grants a
   expect(await f.plugin.notes()).toHaveLength(3);
   expect(() => create({ host: { ...f.host, close() {} }, signal: f.outer.signal })).toThrow();
   expect(() => create({ host: f.host, signal: f.outer.signal, mode: 'private' })).toThrow();
-  // Freedom's own private-plugin registry check is not part of this package and
-  // remains in Freedom's copy of this test (see NOTICE.md).
+  // Actual package-private registry, with inert imports only: this checks brand
+  // isolation, not initialized owner construction or native qualification.
+  const sandbox = {
+    module: { exports: {} },
+    require: (name) => {
+      if (['assert/strict', 'path', 'util'].includes(name)) return require(name);
+      if (name === './host-bindings') return { rpc: {} };
+      return {};
+    },
+  };
+  vm.runInNewContext(
+    fs.readFileSync(require.resolve('../src/owners/railgun-kohaku-plugin.js'), 'utf8'),
+    sandbox
+  );
+  expect(() => sandbox.module.exports.assertRailgunKohakuPrivatePlugin(f.plugin)).toThrow();
   expect(Object.keys(f.plugin)).not.toContain('prepareShield');
   f.plugin.close();
   await f.plugin.closed;
