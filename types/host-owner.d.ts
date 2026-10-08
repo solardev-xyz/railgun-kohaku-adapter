@@ -806,6 +806,54 @@ export interface TxidDiagnostic {
   readonly unverified: true;
   readonly spendingEnabled: false;
 }
+/** Reviewed before a completed wallet opens; exact selected type/blind are not
+ * available yet. This consent does not authorize nullifier or transport requests. */
+export interface OwnedPoiDisclosureReview {
+  readonly purpose: "railgun-owned-note-poi-disclosure-v1";
+  readonly noteId: string;
+  readonly chainId: 11155111;
+  readonly txidVersion: "V2_PoseidonMerkle";
+  readonly listKey: string;
+  readonly endpoint: string;
+  readonly sourceDestination: "authenticated-account-public-destination";
+  readonly selectedTypeAndBlindAvailableBeforeOpen: false;
+  readonly requiresCurrentUnspentOwnedNote: true;
+  readonly disclosures: readonly [
+    "completed-wallet-canonical-source-and-timing",
+    "selected-blinded-commitment",
+    "commitment-type",
+    "list",
+    "membership-proof-and-event",
+    "membership-root",
+  ];
+  readonly requests: readonly [
+    "ppoi_pois_per_list",
+    "ppoi_merkle_proofs",
+    "ppoi_poi_events",
+    "ppoi_validate_poi_merkleroots",
+  ];
+  readonly transferJoinEstablished: false;
+  readonly txidProvenanceVerified: false;
+  readonly reservationsChecked: false;
+  readonly spendingEnabled: false;
+}
+/** Snapshot-owned note/list diagnostic only. No prior-transfer join or spending
+ * eligibility follows even when allValid is true. All original work has drained. */
+export interface OwnedPoiObservation {
+  readonly noteId: string;
+  readonly inputType: "Shield" | "Transact";
+  readonly selectedCount: 1;
+  readonly listKey: string;
+  readonly statuses: readonly [string];
+  readonly rootsAccepted: boolean;
+  readonly membershipVerified: boolean;
+  readonly allValid: boolean;
+  readonly ownershipAtSnapshot: true;
+  readonly transferJoinEstablished: false;
+  readonly txidProvenanceVerified: false;
+  readonly reservationsChecked: false;
+  readonly spendingEnabled: false;
+}
 export interface AccountSession {
   describe(): Readonly<{
     accountIndex: number;
@@ -833,6 +881,15 @@ export interface AccountSession {
     signal: AbortSignal;
     reviewDisclosure: Review<TxidDisclosureReview>;
   }): Promise<TxidDiagnostic>;
+  /** Exclusive one-shot diagnostic; its original 180s budget includes review.
+   * Exact true within 30s is required before opening a wallet or contacting POI.
+   * Native callback promises must settle on cancellation; nonnative thenables
+   * are not assimilated and conservatively quarantine this account. */
+  observeOwnedPoi(options: {
+    noteId: string;
+    signal: AbortSignal;
+    reviewDisclosure: Review<OwnedPoiDisclosureReview>;
+  }): Promise<OwnedPoiObservation>;
   openRead(options: ReadLaneOptions): Promise<ReadLane>;
   openPrivate(options: PrivateLaneOptions): Promise<PrivateLane>;
   openPublic(options: PublicLaneOptions): Promise<PublicLane>;

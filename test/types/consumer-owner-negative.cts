@@ -109,3 +109,22 @@ const retry: true = attempted.retryEnabled;
 void retry;
 // @ts-expect-error attempted state is selected by a fixed method, not options
 poi.recoverOutput("id", { attempted: true });
+
+// @ts-expect-error selection requires explicit review before any wallet opens
+session.observeOwnedPoi({ noteId: "0:1", signal });
+session.observeOwnedPoi({
+  noteId: "0:1",
+  signal,
+  reviewDisclosure: () => true,
+  // @ts-expect-error no receipt, policy, store or caller proof selection
+  receipt: {},
+});
+declare const observed: owner.OwnedPoiObservation;
+// @ts-expect-error observation is not a spending permission
+const spendable: true = observed.spendingEnabled;
+void spendable;
+// @ts-expect-error a selected owned note is not authenticated as a prior transfer output
+const transferJoined: true = observed.transferJoinEstablished;
+void transferJoined;
+// @ts-expect-error the private membership receipt never leaves the observer
+observed.receipt;

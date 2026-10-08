@@ -126,6 +126,10 @@ function initializeRailgunMain(options) {
   const pluginApi = require("./railgun-kohaku-plugin.js");
   const recoveryApi = require("./railgun-kohaku-recovery.js");
   const poiApi = require("./operational-poi-lane.js");
+  const ownedPoiApi = require("./railgun-account-poi.js");
+  const {
+    REQUIRED_LIST: requiredPoiList,
+  } = require("../data/railgun-poi-records.js");
   const txidApi = require("./railgun-account-txid.js");
   const publicServices = require("./railgun-public-services.js");
   const relayApi = require("./railgun-relay-operation.js");
@@ -922,6 +926,285 @@ function initializeRailgunMain(options) {
         }
       });
     }
+    function observeOwnedPoi(options) {
+      const data = record(options, ["noteId", "signal", "reviewDisclosure"]);
+      signal(data.signal);
+      if (
+        typeof data.noteId !== "string" ||
+        data.noteId.length > 64 ||
+        !/^(0|[1-9][0-9]*):(0|[1-9][0-9]*)$/.test(data.noteId) ||
+        typeof data.reviewDisclosure !== "function" ||
+        types.isProxy(data.reviewDisclosure)
+      )
+        throw fail();
+      return run(async () => {
+        const started = performance.now(),
+          deadline = started + 180000;
+        const controller = new AbortController();
+        const workSignal = AbortSignal.any([
+          lifetime,
+          data.signal,
+          controller.signal,
+        ]);
+        const timer = setTimeout(() => controller.abort(), 180000);
+        timer.unref?.();
+        let account,
+          operation,
+          poiStopped = false,
+          poiDrain,
+          cleanupFailure,
+          result,
+          operationError,
+          operationFailed = false;
+        const lost = () => {
+          const error = Object.assign(fail(), {
+            code: "RAILGUN_WALLET_EXIT_UNOBSERVED",
+          });
+          state.unknown = true;
+          remember(error);
+          close();
+          return error;
+        };
+        const stopPoi = () => {
+          if (!operation || poiStopped) return;
+          poiStopped = true;
+          try {
+            operation.close();
+          } catch {
+            cleanupFailure ||= lost();
+          }
+          try {
+            poiDrain = observe(operation.closed, () => {
+              cleanupFailure ||= lost();
+            });
+            poiDrain.catch(() => {
+              cleanupFailure ||= lost();
+            });
+          } catch {
+            cleanupFailure ||= lost();
+          }
+        };
+        const cancel = () => {
+          if (!Reflect.apply(aborted, workSignal, [])) return;
+          stopPoi();
+          stop(account || state.account, "account");
+        };
+        workSignal.addEventListener("abort", cancel);
+        const remaining = (maximum) => {
+          current();
+          signal(workSignal);
+          const now = performance.now();
+          if (now < started || now >= deadline) throw fail();
+          return Math.max(1, Math.min(maximum, Math.floor(deadline - now)));
+        };
+        try {
+          remaining(30000);
+          const summary = Object.freeze({
+            purpose: "railgun-owned-note-poi-disclosure-v1",
+            noteId: data.noteId,
+            chainId: 11155111,
+            txidVersion: "V2_PoseidonMerkle",
+            listKey: requiredPoiList,
+            endpoint: publicServices.POI_URL,
+            sourceDestination: "authenticated-account-public-destination",
+            selectedTypeAndBlindAvailableBeforeOpen: false,
+            requiresCurrentUnspentOwnedNote: true,
+            disclosures: Object.freeze([
+              "completed-wallet-canonical-source-and-timing",
+              "selected-blinded-commitment",
+              "commitment-type",
+              "list",
+              "membership-proof-and-event",
+              "membership-root",
+            ]),
+            requests: Object.freeze([
+              "ppoi_pois_per_list",
+              "ppoi_merkle_proofs",
+              "ppoi_poi_events",
+              "ppoi_validate_poi_merkleroots",
+            ]),
+            transferJoinEstablished: false,
+            txidProvenanceVerified: false,
+            reservationsChecked: false,
+            spendingEnabled: false,
+          });
+          const reviewStarted = performance.now(),
+            reviewDeadline = Math.min(deadline, reviewStarted + 30000);
+          const reviewController = new AbortController();
+          const reviewSignal = AbortSignal.any([
+            workSignal,
+            reviewController.signal,
+          ]);
+          const reviewTimer = setTimeout(
+            () => reviewController.abort(),
+            Math.max(1, reviewDeadline - reviewStarted),
+          );
+          reviewTimer.unref?.();
+          try {
+            let decision = data.reviewDisclosure(
+              summary,
+              Object.freeze({ signal: reviewSignal }),
+            );
+            if (types.isPromise(decision) && !types.isProxy(decision)) {
+              const original = decision;
+              decision = (
+                await new Promise((resolve, reject) => {
+                  try {
+                    Promise.prototype.then.call(
+                      original,
+                      (value) =>
+                        resolve(Object.freeze({ __proto__: null, value })),
+                      reject,
+                    );
+                  } catch {
+                    reject(lost());
+                  }
+                })
+              ).value;
+            } else if (
+              decision !== null &&
+              ["object", "function"].includes(typeof decision)
+            )
+              throw lost();
+            const now = performance.now();
+            if (
+              decision !== true ||
+              now < reviewStarted ||
+              now >= reviewDeadline
+            )
+              throw fail();
+            signal(reviewSignal);
+            remaining(180000);
+          } finally {
+            clearTimeout(reviewTimer);
+          }
+          const bound = owners();
+          account = await acquire(
+            "account",
+            walletApi.openRailgunCompletedAccountWallet({
+              ...bound,
+              archive: runtime.archive,
+              destination: publicApi.getRailgunAccountPublicDestination(
+                bound.coordinator,
+                bound.enrollment,
+              ),
+              signal: workSignal,
+              timeoutMs: remaining(180000),
+            }),
+          );
+          remaining(45000);
+          const baseline = walletApi.readRailgunAccountOwnedNotes(
+            account,
+            bound,
+          );
+          const records = baseline.ownedPoi.filter(
+            (value) => value.id === data.noteId,
+          );
+          const notes = baseline.read.received.filter(
+            (value) => value.id === data.noteId,
+          );
+          if (
+            records.length !== 1 ||
+            notes.length !== 1 ||
+            !["Shield", "Transact"].includes(records[0].type) ||
+            notes[0].spentTxid !== false ||
+            typeof notes[0].amount !== "bigint" ||
+            notes[0].amount <= 0n
+          )
+            throw fail();
+          operation = ownedPoiApi.openRailgunAccountPoi({
+            wallet: account,
+            ...bound,
+            archive: runtime.archive,
+            noteIds: [data.noteId],
+          });
+          remaining(45000);
+          const acquired = await operation.acquire({
+            timeoutMs: remaining(45000),
+          });
+          remaining(45000);
+          const value = ownedPoiApi.assertRailgunAccountPoi(
+            operation,
+            acquired.receipt,
+            account,
+            bound,
+          );
+          const after = walletApi.readRailgunAccountOwnedNotes(account, bound);
+          if (
+            after.checkpointHash !== baseline.checkpointHash ||
+            !after.ownedPoi.includes(records[0]) ||
+            !after.read.received.includes(notes[0]) ||
+            notes[0].spentTxid !== false
+          )
+            throw fail();
+          if (
+            value.listKey !== requiredPoiList ||
+            value.ownershipAtSnapshot !== true ||
+            value.txidProvenanceVerified !== false ||
+            value.reservationsChecked !== false ||
+            value.spendingEnabled !== false ||
+            !Array.isArray(value.statuses) ||
+            value.statuses.length !== 1 ||
+            typeof value.statuses[0].status !== "string" ||
+            value.statuses[0].status.length > 128
+          )
+            throw fail();
+          const statuses = Object.freeze([value.statuses[0].status]);
+          result = Object.freeze({
+            noteId: data.noteId,
+            inputType: records[0].type,
+            selectedCount: 1,
+            listKey: value.listKey,
+            statuses,
+            rootsAccepted: value.rootsAccepted === true,
+            membershipVerified: value.membershipVerified === true,
+            allValid:
+              statuses[0] === "Valid" &&
+              value.rootsAccepted === true &&
+              value.membershipVerified === true,
+            ownershipAtSnapshot: true,
+            transferJoinEstablished: false,
+            txidProvenanceVerified: false,
+            reservationsChecked: false,
+            spendingEnabled: false,
+          });
+        } catch (error) {
+          operationFailed = true;
+          operationError = error;
+        }
+        clearTimeout(timer);
+        stopPoi();
+        controller.abort();
+        if (poiDrain) {
+          try {
+            await poiDrain;
+          } catch {
+            cleanupFailure ||= lost();
+          }
+        }
+        const target = account || state.account;
+        if (target) {
+          stop(target, "account");
+          const cleanup = state.cleanup.get(target);
+          if (!cleanup?.work) cleanupFailure ||= lost();
+          else {
+            try {
+              await cleanup.work;
+            } catch {
+              cleanupFailure ||= lost();
+            }
+          }
+          if (!cleanupFailure && state.account === target) state.account = null;
+        }
+        workSignal.removeEventListener("abort", cancel);
+        if (cleanupFailure) throw cleanupFailure;
+        if (operationFailed) throw operationError;
+        current();
+        signal(data.signal);
+        if (performance.now() >= deadline) throw fail();
+        return result;
+      });
+    }
     function synchronizeTxid(options) {
       const data = record(options, ["mode", "signal", "reviewDisclosure"]);
       if (
@@ -1114,6 +1397,7 @@ function initializeRailgunMain(options) {
       rebuildPublic: (...extra) => replacePublic("new", extra),
       resumePublic: (...extra) => replacePublic("pending", extra),
       synchronizeTxid,
+      observeOwnedPoi,
       openRecovery: (options) => recovery(options),
       openPoiRecovery: (options) => recovery(options, true),
       openRelayLocal: (options) => relay(options, false),

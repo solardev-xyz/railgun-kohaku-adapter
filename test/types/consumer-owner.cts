@@ -110,6 +110,20 @@ async function consume() {
     reviewDisclosure: (summary, context) =>
       summary.maximumAdvancePages === 0 && !context.signal.aborted,
   });
+  const observed = await session.observeOwnedPoi({
+    noteId: "0:1",
+    signal,
+    reviewDisclosure: (summary, context) =>
+      summary.selectedTypeAndBlindAvailableBeforeOpen === false &&
+      summary.requiresCurrentUnspentOwnedNote &&
+      !context.signal.aborted,
+  });
+  const selectedCount: 1 = observed.selectedCount;
+  const notJoined: false = observed.transferJoinEstablished;
+  const notSpendable: false = observed.spendingEnabled;
+  void selectedCount;
+  void notJoined;
+  void notSpendable;
   await session.close();
 }
 void consume;

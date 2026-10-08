@@ -68,7 +68,7 @@ held native reviews and membership/plan drains. A failed/unknown original closur
 rejects the session closure and retains same-account exclusion. Rejected work does
 not free an uncertain process or turn a report boolean into authority.
 
-## Separate owned-note observation proposal
+## One-shot owned-note observation
 
 The existing Freedom live qualifier's `status` phase is the source model:
 `qualify-railgun-private-live.js` checks the settled transfer journal, restores a
@@ -80,13 +80,32 @@ status and both rootsAccepted and membershipVerified are true. The underlying
 owner retains `ownershipAtSnapshot: true`, but explicitly leaves
 `txidProvenanceVerified`, `reservationsChecked` and `spendingEnabled` false.
 
-A separate proposed read-lane `observePoi(noteId, {reviewDisclosure})` should reuse
-that exact owned-note owner/acquire/assert/close sequence and fixed current wallet.
-A caller noteId selects data; it does not establish that a prior submitted transfer
-created it. Review must precede the selected commitment/list/root query, and the
-original source/verification job plus POI closure must drain before release.
-Return the precise diagnostic flags and bounded status/root observations, with no
-receipt and no spending-eligibility upgrade. This method is not implemented here.
+`session.observeOwnedPoi({noteId, signal, reviewDisclosure})` is a separate
+exclusive one-shot operation. It reuses that original owner/acquire/assert/close
+sequence with an existing-generation completed wallet. The caller noteId selects
+data; it does not establish that a prior submitted transfer created it. Exact-true
+review occurs **before** the wallet opens, so the summary truthfully identifies the
+phase before authenticated note type/blind are available. It covers completed
+wallet canonical source queries as well as the fixed selected POI query inventory.
+There is no nullifier query, submission or transport authorization.
+
+The 30-second original native review is part of the same 180-second total budget.
+Both limits are checked using monotonic time after original settlement, regardless
+of timer delivery. Callback promises must settle on cancellation. Direct thenables
+are never assimilated and conservatively retain account exclusion. After wallet
+opening, exactly one current unspent positive-value Shield or Transact note must
+match the selector before POI contact. The original operation/receipt/wallet/owner
+tuple is asserted, and original snapshot object identities are rechecked. Original
+source/verification work, POI closure and wallet closure all drain before result
+publication. Pending or unknown original closure keeps same-account exclusion.
+
+The result contains the selected note id/type, one status, root/membership
+booleans and the original false authority flags. `allValid` requires `Valid`,
+`rootsAccepted` and `membershipVerified` together. `transferJoinEstablished`,
+`txidProvenanceVerified`, `reservationsChecked` and `spendingEnabled` remain false.
+No receipt, proof, owner, original observation or store is exposed. This is not an
+extension of a read lane's already-observed closure. It has source/mock coverage;
+no native service acceptance has been established by this successor.
 
 An additional authenticated operation/journal join is needed before a future
 method may label that selected output as the result of a particular prior

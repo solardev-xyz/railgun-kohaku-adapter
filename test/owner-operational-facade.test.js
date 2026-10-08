@@ -74,6 +74,11 @@ jest.mock("../src/owners/railgun-public-services.js", () => ({
 jest.mock("../src/owners/operational-poi-lane.js", () => ({
   createRailgunPoiLane: (input) => state.createPoi(input),
 }));
+jest.mock("../src/owners/railgun-account-poi.js", () => ({
+  openRailgunAccountPoi: (input) => state.openOwnedPoi(input),
+  assertRailgunAccountPoi: (operation, receipt, wallet, owners) =>
+    state.assertOwnedPoi(operation, receipt, wallet, owners),
+}));
 const deferred = () => {
   let resolve, reject;
   const promise = new Promise((a, b) => {
@@ -281,6 +286,7 @@ test("closed one-shot initializer and exact account options expose no owner auth
       "describe",
       "openPrivate",
       "synchronizeTxid",
+      "observeOwnedPoi",
       "openRecovery",
       "openPoiRecovery",
       "openRelayLocal",
@@ -1283,5 +1289,305 @@ test("retained POI unknown original drain preserves account exclusion", async ()
   lane.close();
   await expect(lane.closed).rejects.toThrow("original unknown");
   await expect(session.closed).rejects.toThrow("original unknown");
+  expect(() => f.api.openAccount(f.options)).toThrow();
+});
+
+function observerFixture() {
+  const f = fixture();
+  const record = { id: "0:1", type: "Transact" },
+    note = { id: "0:1", amount: 2000n, spentTxid: false };
+  const baseline = {
+    checkpointHash: "a".repeat(64),
+    ownedPoi: [record],
+    read: { received: [note] },
+  };
+  state.ownedNotes.mockReturnValue(baseline);
+  const drain = deferred(),
+    receipt = {};
+  const value = {
+    listKey: require("../src/data/railgun-poi-records.js").REQUIRED_LIST,
+    statuses: [{ status: "Valid" }],
+    rootsAccepted: true,
+    membershipVerified: true,
+    ownershipAtSnapshot: true,
+    txidProvenanceVerified: false,
+    reservationsChecked: false,
+    spendingEnabled: false,
+  };
+  const operation = {
+    close: jest.fn(() => drain.resolve()),
+    closed: drain.promise,
+    acquire: jest.fn(async () => ({ receipt, observation: value })),
+  };
+  state.openOwnedPoi = jest.fn(() => operation);
+  state.assertOwnedPoi = jest.fn((actual, seen, wallet, owners) => {
+    const opened = state.openOwnedPoi.mock.calls[0][0];
+    if (
+      actual !== operation ||
+      seen !== receipt ||
+      wallet !== opened.wallet ||
+      owners.enrollment !== opened.enrollment ||
+      owners.identity !== opened.identity ||
+      owners.coordinator !== opened.coordinator
+    )
+      throw Error("foreign POI context");
+    return value;
+  });
+  const reviewDisclosure = jest.fn(() => true);
+  return {
+    ...f,
+    record,
+    note,
+    baseline,
+    drain,
+    receipt,
+    value,
+    operation,
+    reviewDisclosure,
+    input: { noteId: "0:1", signal: f.caller.signal, reviewDisclosure },
+  };
+}
+test("one-shot owned POI uses genuine tuple and only returns bounded false-authority data", async () => {
+  const f = observerFixture(),
+    session = await f.api.openAccount(f.options);
+  const result = await session.observeOwnedPoi(f.input);
+  expect(f.reviewDisclosure.mock.invocationCallOrder[0]).toBeLessThan(
+    state.openCompleted.mock.invocationCallOrder[0],
+  );
+  expect(state.openCompleted.mock.calls[0][0].timeoutMs).toBeLessThanOrEqual(
+    180000,
+  );
+  expect(state.openCompleted.mock.calls[0][0].timeoutMs).toBeGreaterThan(0);
+  expect(state.openOwnedPoi.mock.calls[0][0].noteIds).toEqual(["0:1"]);
+  expect(state.assertOwnedPoi).toHaveBeenCalledTimes(1);
+  expect(result).toMatchObject({
+    noteId: "0:1",
+    inputType: "Transact",
+    allValid: true,
+    ownershipAtSnapshot: true,
+    transferJoinEstablished: false,
+    txidProvenanceVerified: false,
+    reservationsChecked: false,
+    spendingEnabled: false,
+  });
+  expect(Object.keys(result)).not.toContain("receipt");
+  expect(Object.keys(result)).not.toContain("observation");
+  expect(f.operation.close).toHaveBeenCalledTimes(1);
+  expect(
+    (await state.openCompleted.mock.results[0].value).close,
+  ).toHaveBeenCalledTimes(1);
+  await session.close();
+});
+test.each([false, null, 1])(
+  "non-true owned POI review %p causes zero opener/contact",
+  async (decision) => {
+    const f = observerFixture(),
+      session = await f.api.openAccount(f.options);
+    f.reviewDisclosure.mockReturnValue(decision);
+    await expect(session.observeOwnedPoi(f.input)).rejects.toThrow();
+    expect(state.openCompleted).not.toHaveBeenCalled();
+    expect(state.openOwnedPoi).not.toHaveBeenCalled();
+    await session.close();
+  },
+);
+test("owned POI late-added then is not assimilated as approval", async () => {
+  const f = observerFixture(),
+    session = await f.api.openAccount(f.options),
+    value = {},
+    then = jest.fn((resolve) => resolve(true)),
+    original = Promise.resolve(value);
+  value.then = then;
+  f.reviewDisclosure.mockReturnValue(original);
+  await expect(session.observeOwnedPoi(f.input)).rejects.toThrow();
+  expect(then).not.toHaveBeenCalled();
+  expect(state.openCompleted).not.toHaveBeenCalled();
+  await session.close();
+});
+test("owned POI original held review retains close and exact late cancellation", async () => {
+  const f = observerFixture(),
+    session = await f.api.openAccount(f.options),
+    review = deferred();
+  f.reviewDisclosure.mockReturnValue(review.promise);
+  const pending = session.observeOwnedPoi(f.input);
+  pending.catch(() => {});
+  await tick();
+  session.close();
+  let closed = false;
+  session.closed.then(() => {
+    closed = true;
+  });
+  await tick();
+  expect(closed).toBe(false);
+  expect(() => f.api.openAccount(f.options)).toThrow();
+  review.resolve(true);
+  await expect(pending).rejects.toThrow();
+  await session.closed;
+  expect(state.openCompleted).not.toHaveBeenCalled();
+});
+test("owned POI 30s review deadline is checked without relying on timer delivery", async () => {
+  const f = observerFixture(),
+    session = await f.api.openAccount(f.options),
+    clock = jest.spyOn(performance, "now").mockReturnValue(100);
+  f.reviewDisclosure.mockImplementation(() => {
+    clock.mockReturnValue(30100);
+    return true;
+  });
+  try {
+    await expect(session.observeOwnedPoi(f.input)).rejects.toThrow();
+    expect(state.openCompleted).not.toHaveBeenCalled();
+  } finally {
+    clock.mockRestore();
+    await session.close();
+  }
+});
+test.each(["spent", "missing", "duplicate", "zero", "type"])(
+  "owned POI %s selection refuses before selected service contact",
+  async (mode) => {
+    const f = observerFixture(),
+      session = await f.api.openAccount(f.options);
+    if (mode === "spent") f.note.spentTxid = "spent";
+    if (mode === "missing") f.baseline.ownedPoi = [];
+    if (mode === "duplicate") f.baseline.ownedPoi.push(f.record);
+    if (mode === "zero") f.note.amount = 0n;
+    if (mode === "type") f.record.type = "Other";
+    await expect(session.observeOwnedPoi(f.input)).rejects.toThrow();
+    expect(state.openOwnedPoi).not.toHaveBeenCalled();
+    expect(
+      (await state.openCompleted.mock.results[0].value).close,
+    ).toHaveBeenCalled();
+    await session.close();
+  },
+);
+test("owned POI cannot cross accounts or overlap another context and never exports its receipt", async () => {
+  const f = observerFixture(),
+    session = await f.api.openAccount(f.options),
+    acquire = deferred();
+  f.operation.acquire.mockReturnValue(acquire.promise);
+  const pending = session.observeOwnedPoi(f.input);
+  pending.catch(() => {});
+  await tick();
+  expect(() => session.observeOwnedPoi(f.input)).toThrow();
+  expect(() => session.openRead(laneOptions(f.caller.signal))).toThrow();
+  const other = await f.api.openAccount({ ...f.options, accountIndex: 1 });
+  expect(() => session.observeOwnedPoi({ ...f.input, owners: {} })).toThrow();
+  acquire.resolve({ receipt: { foreign: true } });
+  await expect(pending).rejects.toThrow("foreign POI context");
+  await session.close();
+  await other.close();
+});
+test("owned POI current snapshot substitution after acquire refuses", async () => {
+  const f = observerFixture(),
+    session = await f.api.openAccount(f.options);
+  f.operation.acquire.mockImplementation(async () => {
+    state.ownedNotes.mockReturnValue({
+      ...f.baseline,
+      ownedPoi: [{ ...f.record }],
+    });
+    return { receipt: f.receipt };
+  });
+  await expect(session.observeOwnedPoi(f.input)).rejects.toThrow();
+  expect(f.operation.close).toHaveBeenCalled();
+  await session.close();
+});
+test("owned POI original drain remains held after caller cancellation", async () => {
+  const f = observerFixture(),
+    session = await f.api.openAccount(f.options),
+    acquire = deferred();
+  f.operation.acquire.mockReturnValue(acquire.promise);
+  f.operation.close.mockImplementation(() => {});
+  const pending = session.observeOwnedPoi(f.input);
+  pending.catch(() => {});
+  await tick();
+  f.caller.abort();
+  acquire.resolve({ receipt: f.receipt });
+  await tick();
+  let finished = false;
+  pending
+    .finally(() => {
+      finished = true;
+    })
+    .catch(() => {});
+  expect(finished).toBe(false);
+  expect(() =>
+    f.api.openAccount({ ...f.options, signal: new AbortController().signal }),
+  ).toThrow();
+  f.drain.resolve();
+  await expect(pending).rejects.toThrow();
+  await session.closed;
+});
+test("owned POI rejected original drain retains session exclusion", async () => {
+  const f = observerFixture(),
+    session = await f.api.openAccount(f.options);
+  f.operation.close.mockImplementation(() =>
+    f.drain.reject(Error("unknown POI closure")),
+  );
+  await expect(session.observeOwnedPoi(f.input)).rejects.toHaveProperty(
+    "code",
+    "RAILGUN_WALLET_EXIT_UNOBSERVED",
+  );
+  await expect(session.closed).rejects.toThrow();
+  expect(() => f.api.openAccount(f.options)).toThrow();
+});
+test("owned POI expired overall window refuses and never renews the wallet budget", async () => {
+  const f = observerFixture(),
+    session = await f.api.openAccount(f.options),
+    clock = jest.spyOn(performance, "now").mockReturnValue(100);
+  f.reviewDisclosure.mockImplementation(() => {
+    clock.mockReturnValue(15100);
+    return true;
+  });
+  f.operation.acquire.mockImplementation(async () => {
+    clock.mockReturnValue(180100);
+    return { receipt: f.receipt };
+  });
+  try {
+    await expect(session.observeOwnedPoi(f.input)).rejects.toThrow();
+    expect(state.openCompleted.mock.calls[0][0].timeoutMs).toBe(165000);
+    expect(f.operation.close).toHaveBeenCalled();
+  } finally {
+    clock.mockRestore();
+    await session.close();
+  }
+});
+test.each(["rootsAccepted", "membershipVerified"])(
+  "Valid text alone does not upgrade missing %s",
+  async (field) => {
+    const f = observerFixture(),
+      session = await f.api.openAccount(f.options);
+    f.value[field] = false;
+    const result = await session.observeOwnedPoi(f.input);
+    expect(result.allValid).toBe(false);
+    expect(result.spendingEnabled).toBe(false);
+    await session.close();
+  },
+);
+
+test("owned POI pre-aborted caller and foreign options refuse before review or wallet", async () => {
+  const f = observerFixture(),
+    session = await f.api.openAccount(f.options);
+  const aborted = new AbortController();
+  aborted.abort();
+  expect(() =>
+    session.observeOwnedPoi({ ...f.input, signal: aborted.signal }),
+  ).toThrow();
+  expect(() => session.observeOwnedPoi({ ...f.input, receipt: {} })).toThrow();
+  expect(() => session.observeOwnedPoi({ ...f.input, policy: {} })).toThrow();
+  expect(f.reviewDisclosure).not.toHaveBeenCalled();
+  expect(state.openCompleted).not.toHaveBeenCalled();
+  expect(state.openOwnedPoi).not.toHaveBeenCalled();
+  await session.close();
+});
+test("owned POI direct thenable is not assimilated and conservatively retains exclusion", async () => {
+  const f = observerFixture(),
+    session = await f.api.openAccount(f.options);
+  const then = jest.fn((resolve) => resolve(true));
+  f.reviewDisclosure.mockReturnValue({ then });
+  await expect(session.observeOwnedPoi(f.input)).rejects.toHaveProperty(
+    "code",
+    "RAILGUN_WALLET_EXIT_UNOBSERVED",
+  );
+  expect(then).not.toHaveBeenCalled();
+  expect(state.openCompleted).not.toHaveBeenCalled();
+  await expect(session.closed).rejects.toThrow();
   expect(() => f.api.openAccount(f.options)).toThrow();
 });
