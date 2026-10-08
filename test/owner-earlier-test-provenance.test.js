@@ -1,12 +1,15 @@
 /** Earlier suites were outside the151 adjacent staging manifest. */
 const fs = require('fs'), path = require('path'), { createHash } = require('crypto');
 const root = path.join(__dirname, '..');
-const manifest = require('../docs/owners/test-staging/OUTSIDE-ADJACENT-MIGRATIONS.json');
+const manifests = [
+  [require('../docs/owners/test-staging/OUTSIDE-ADJACENT-MIGRATIONS.json'), 5],
+  [require('../docs/owners/test-staging/EARLIER-SECOND-MIGRATIONS.json'), 8],
+];
 const sha = (text) => createHash('sha256').update(text).digest('hex');
-test('earlier runtime suites reconstruct exact original source and retain assertions', () => {
+test.each(manifests)('earlier runtime suites reconstruct exact original source and retain assertions %#', (manifest, count) => {
   expect(manifest.sourceRevision).toBe('c6afd0432918d1258c1aafe11117f133cdd21ef4');
   expect(manifest.productionTransforms).toBe(false);
-  expect(manifest.changes).toHaveLength(5);
+  expect(manifest.changes).toHaveLength(count);
   for (const row of manifest.changes) {
     let text = fs.readFileSync(path.join(root, row.destination), 'utf8');
     expect(sha(text)).toBe(row.afterSha256);
@@ -14,7 +17,7 @@ test('earlier runtime suites reconstruct exact original source and retain assert
       expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(edit.after);
       // Only literal import locations or the fixed real-context setup can change.
       if (!edit.before && edit.after === "require('../tools/owner-test-staging/context-host.cjs');\n") {
-        expect(row.destination).toBe('test/owner-private-proof-recovery.test.js');
+        expect(['test/owner-private-proof-recovery.test.js', 'test/earlier-poi-creator-capture.test.js', 'test/earlier-kohaku-recovery.test.js']).toContain(row.destination);
       } else {
         const strip = (value) => value.replace(/'\.\.?\/[^'\n]+'/g, "'FIXED_IMPORT'");
         expect(strip(edit.after)).toBe(strip(edit.before));

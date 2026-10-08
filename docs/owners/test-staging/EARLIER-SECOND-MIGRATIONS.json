@@ -1,0 +1,281 @@
+{
+  "sourceRevision": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+  "outsideOriginal151": true,
+  "productionTransforms": false,
+  "changes": [
+    {
+      "source": "src/main/wallet/railgun-kohaku-operation-dispatch.test.js",
+      "destination": "test/earlier-kohaku-operation-dispatch.test.js",
+      "beforeSha256": "85ede2ec53f639b70dfc9b90dfd227584f758355a00ee2eb5b6bd48cdaa2bd18",
+      "afterSha256": "d18770c860489b35f4d040ecfbf57388428ec4bad0ce4c9a710aa526c7c20cf4",
+      "replacements": [
+        {
+          "start": 60,
+          "before": "} = require('./railgun-kohaku-operation-dispatch');\n",
+          "after": "} = require('../src/owners/railgun-kohaku-operation-dispatch.js');\n"
+        }
+      ]
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-recovery.test.js",
+      "destination": "test/earlier-kohaku-recovery.test.js",
+      "beforeSha256": "2cdd345a9d84248963e8a57926856d21604e04df199dc198363c8b3952d03864",
+      "afterSha256": "b1b75e64a1edd5f642228b4cf7ecd60f9848045ef0e0343395e344984bdf051d",
+      "replacements": [
+        {
+          "start": 940,
+          "before": "const { createRailgunKohakuRecovery: create } = require('./railgun-kohaku-recovery');\n",
+          "after": "const { createRailgunKohakuRecovery: create } = require('../src/owners/railgun-kohaku-recovery.js');\n"
+        },
+        {
+          "start": 805,
+          "before": "jest.mock('./railgun-private-submission', () => ({\n",
+          "after": "jest.mock('../src/owners/railgun-private-submission.js', () => ({\n"
+        },
+        {
+          "start": 674,
+          "before": "jest.mock('./railgun-private-proof-recovery', () => ({\n",
+          "after": "jest.mock('../src/owners/railgun-private-proof-recovery.js', () => ({\n"
+        },
+        {
+          "start": 539,
+          "before": "jest.mock('./railgun-private-recovery-history', () => ({\n",
+          "after": "jest.mock('../src/owners/railgun-private-recovery-history.js', () => ({\n"
+        },
+        {
+          "start": 406,
+          "before": "jest.mock('./railgun-account-public', () => ({\n",
+          "after": "jest.mock('../src/owners/railgun-account-public.js', () => ({\n"
+        },
+        {
+          "start": 298,
+          "before": "jest.mock('./railgun-identity', () => ({\n",
+          "after": "jest.mock('../src/owners/railgun-identity.js', () => ({\n"
+        },
+        {
+          "start": 167,
+          "before": "jest.mock('./railgun-account-enrollment', () => ({\n",
+          "after": "jest.mock('../src/owners/railgun-account-enrollment.js', () => ({\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../tools/owner-test-staging/context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "source": "src/main/wallet/railgun-poi-creator-capture.test.js",
+      "destination": "test/earlier-poi-creator-capture.test.js",
+      "beforeSha256": "caf034a608bdcb514030214b5bbee69f9f6af9f3e5012330d4f418cd398890fe",
+      "afterSha256": "c38800dd642cb3833bed14514a9d4aa3d2348abe13c9e39a46413e1529bf296d",
+      "replacements": [
+        {
+          "start": 894,
+          "before": "} = require('./railgun-poi-creator-capture');\n",
+          "after": "} = require('../src/owners/railgun-poi-creator-capture.js');\n"
+        },
+        {
+          "start": 743,
+          "before": "const { createPrivacyScope } = require('../networks/privacy-context');\n",
+          "after": "const { createPrivacyScope } = require('../src/owners/context-bindings.js');\n"
+        },
+        {
+          "start": 638,
+          "before": "jest.mock('./railgun-wallet-coverage', () => ({\n",
+          "after": "jest.mock('../src/owners/railgun-wallet-coverage.js', () => ({\n"
+        },
+        {
+          "start": 526,
+          "before": "jest.mock('./railgun-poi-creator', () => ({\n",
+          "after": "jest.mock('../src/owners/railgun-poi-creator.js', () => ({\n"
+        },
+        {
+          "start": 84,
+          "before": "jest.mock('./railgun-account-public', () => ({\n",
+          "after": "jest.mock('../src/owners/railgun-account-public.js', () => ({\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../tools/owner-test-staging/context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "source": "src/main/wallet/railgun-private-capsule.test.js",
+      "destination": "test/earlier-private-capsule.test.js",
+      "beforeSha256": "7fa7e7759d87aa464699ef1be24b79d55671138ee9ffd654405a3eabbba57996",
+      "afterSha256": "a99c370c22482ea5a45ddc59629872a5efcef6a298f540a904dd3301a7a34ae0",
+      "replacements": [
+        {
+          "start": 22996,
+          "before": "    f.engineSha256 = require('./railgun-engine-manifest.json').sha256;\n",
+          "after": "    f.engineSha256 = require('../src/railgun-engine-manifest.json').sha256;\n"
+        },
+        {
+          "start": 22890,
+          "before": "    const { normalizeRailgunNewCapsule } = require('./railgun-private-capsule');\n",
+          "after": "    const { normalizeRailgunNewCapsule } = require('../src/execution/railgun-private-capsule.js');\n"
+        },
+        {
+          "start": 19256,
+          "before": "    f.engineSha256 = require('./railgun-engine-manifest.json').sha256;\n",
+          "after": "    f.engineSha256 = require('../src/railgun-engine-manifest.json').sha256;\n"
+        },
+        {
+          "start": 19118,
+          "before": "    const { normalizeRailgunNewCapsule } = require('./railgun-private-capsule');\n",
+          "after": "    const { normalizeRailgunNewCapsule } = require('../src/execution/railgun-private-capsule.js');\n"
+        },
+        {
+          "start": 5237,
+          "before": "} = require('../../../scripts/fixtures/railgun-partial-capsule-data');\n",
+          "after": "} = require('../tools/owner-test-staging/fixtures/scripts/fixtures/railgun-partial-capsule-data.js');\n"
+        },
+        {
+          "start": 4400,
+          "before": "    const { normalizeRailgunNewCapsule } = require('./railgun-private-capsule');\n",
+          "after": "    const { normalizeRailgunNewCapsule } = require('../src/execution/railgun-private-capsule.js');\n"
+        },
+        {
+          "start": 937,
+          "before": "    engineSha256: require('./railgun-engine-manifest.json').sha256,\n",
+          "after": "    engineSha256: require('../src/railgun-engine-manifest.json').sha256,\n"
+        },
+        {
+          "start": 211,
+          "before": "} = require('./railgun-private-capsule');\nconst pins = require('./railgun-shield-pins.json');\n",
+          "after": "} = require('../src/execution/railgun-private-capsule.js');\nconst pins = require('../src/railgun-shield-pins.json');\n"
+        },
+        {
+          "start": 62,
+          "before": "const { TRANSACT_ABI, BOUND_PARAMS } = require('./railgun-private-policy');\n",
+          "after": "const { TRANSACT_ABI, BOUND_PARAMS } = require('../src/data/railgun-private-policy.js');\n"
+        }
+      ]
+    },
+    {
+      "source": "src/main/wallet/railgun-private-policy.test.js",
+      "destination": "test/earlier-private-policy.test.js",
+      "beforeSha256": "4cffac081685cf32ad40f52bff8d5e3091aa8f4d95a49d1d6e1880cfa1b7c5d7",
+      "afterSha256": "ce483bdc74df837afe7b4e8590d78d749026b532c88ee014f5a29acdfedbe8a9",
+      "replacements": [
+        {
+          "start": 5030,
+          "before": "} = require('../../../scripts/fixtures/railgun-partial-capsule-data');\n",
+          "after": "} = require('../tools/owner-test-staging/fixtures/scripts/fixtures/railgun-partial-capsule-data.js');\n"
+        },
+        {
+          "start": 139,
+          "before": "} = require('./railgun-private-policy');\nconst pins = require('./railgun-shield-pins.json');\n",
+          "after": "} = require('../src/data/railgun-private-policy.js');\nconst pins = require('../src/railgun-shield-pins.json');\n"
+        }
+      ]
+    },
+    {
+      "source": "src/main/wallet/railgun-private-selection.test.js",
+      "destination": "test/earlier-private-selection.test.js",
+      "beforeSha256": "50def928a3a621ba5e2da96cab84e32129fc9d78a8c82c5c1b6fb5d7d41b5881",
+      "afterSha256": "78599b5b9834a71e33025390a9fc2683212849ef2967f3e0aba5c741b9b0a4a5",
+      "replacements": [
+        {
+          "start": 8058,
+          "before": "  require('./railgun-private-policy').validateRailgunPrivateTransaction.mockImplementationOnce(\n    jest.requireActual('./railgun-private-policy').validateRailgunPrivateTransaction\n",
+          "after": "  require('../src/data/railgun-private-policy.js').validateRailgunPrivateTransaction.mockImplementationOnce(\n    jest.requireActual('../src/data/railgun-private-policy.js').validateRailgunPrivateTransaction\n"
+        },
+        {
+          "start": 7774,
+          "before": "  } = require('../../../scripts/fixtures/railgun-partial-capsule-data');\n",
+          "after": "  } = require('../tools/owner-test-staging/fixtures/scripts/fixtures/railgun-partial-capsule-data.js');\n"
+        },
+        {
+          "start": 619,
+          "before": "} = require('./railgun-private-selection');\nconst pins = require('./railgun-shield-pins.json');\n",
+          "after": "} = require('../src/owners/railgun-private-selection.js');\nconst pins = require('../src/railgun-shield-pins.json');\n"
+        },
+        {
+          "start": 332,
+          "before": "jest.mock('./railgun-private-policy', () => ({\n  ...jest.requireActual('./railgun-private-policy'),\n",
+          "after": "jest.mock('../src/data/railgun-private-policy.js', () => ({\n  ...jest.requireActual('../src/data/railgun-private-policy.js'),\n"
+        },
+        {
+          "start": 42,
+          "before": "jest.mock('./railgun-account-wallet', () => ({\n",
+          "after": "jest.mock('../src/owners/railgun-account-wallet.js', () => ({\n"
+        }
+      ]
+    },
+    {
+      "source": "src/main/wallet/railgun-spend-sign-job.test.js",
+      "destination": "test/earlier-spend-sign-job.test.js",
+      "beforeSha256": "044fdedff6792475537ec02214f09c7270ef17f53c70bfec5ae5362555d20f10",
+      "afterSha256": "cb5f73feed52361f14c6e56fc1a0072be82b295d0d0cc68357f66716e8bbffee",
+      "replacements": [
+        {
+          "start": 9381,
+          "before": "  expect(require('./railgun-engine-runtime').verifyRailgunEngineRuntime).not.toHaveBeenCalled();\n",
+          "after": "  expect(require('../src/execution/railgun-engine-runtime.js').verifyRailgunEngineRuntime).not.toHaveBeenCalled();\n"
+        },
+        {
+          "start": 6847,
+          "before": "      tokenAddress: require('./railgun-shield-pins.json').wrappedNative,\n",
+          "after": "      tokenAddress: require('../src/railgun-shield-pins.json').wrappedNative,\n"
+        },
+        {
+          "start": 6467,
+          "before": "    jest.requireActual('./railgun-private-intent').validateRailgunPrivateSigningIntent\n",
+          "after": "    jest.requireActual('../src/data/railgun-private-intent.js').validateRailgunPrivateSigningIntent\n"
+        },
+        {
+          "start": 6027,
+          "before": "  } = require('../../../scripts/fixtures/railgun-partial-capsule-data');\n",
+          "after": "  } = require('../tools/owner-test-staging/fixtures/scripts/fixtures/railgun-partial-capsule-data.js');\n"
+        },
+        {
+          "start": 1039,
+          "before": "const { run } = require('./railgun-spend-sign-job');\nconst { validateRailgunPrivateSigningIntent } = require('./railgun-private-intent');\n",
+          "after": "const { run } = require('../src/execution/railgun-spend-sign-job.js');\nconst { validateRailgunPrivateSigningIntent } = require('../src/data/railgun-private-intent.js');\n"
+        },
+        {
+          "start": 249,
+          "before": "jest.mock('./railgun-private-intent', () => ({ validateRailgunPrivateSigningIntent: jest.fn() }));\n",
+          "after": "jest.mock('../src/data/railgun-private-intent.js', () => ({ validateRailgunPrivateSigningIntent: jest.fn() }));\n"
+        },
+        {
+          "start": 136,
+          "before": "jest.mock('./railgun-engine-runtime', () => ({\n",
+          "after": "jest.mock('../src/execution/railgun-engine-runtime.js', () => ({\n"
+        }
+      ]
+    },
+    {
+      "source": "src/main/wallet/railgun-wallet-records.test.js",
+      "destination": "test/earlier-wallet-records.test.js",
+      "beforeSha256": "c12a1f8572e3f449a9ff0aabd18e832c347bd4c1ba862088649acbd2cd0df1e8",
+      "afterSha256": "fe074863e1e668520ac16c31f8443ac3b2ec99641333a8615141dccdff15c6a7",
+      "replacements": [
+        {
+          "start": 8297,
+          "before": "    const { validateRailgunSentRecords } = require('./railgun-wallet-records');\n",
+          "after": "    const { validateRailgunSentRecords } = require('../src/execution/railgun-wallet-records.js');\n"
+        },
+        {
+          "start": 5783,
+          "before": "    const { inspectRailgunTransact } = require('./railgun-wallet-records');\n",
+          "after": "    const { inspectRailgunTransact } = require('../src/execution/railgun-wallet-records.js');\n"
+        },
+        {
+          "start": 4522,
+          "before": "  const { inspectRailgunShield } = require('./railgun-wallet-records');\n",
+          "after": "  const { inspectRailgunShield } = require('../src/execution/railgun-wallet-records.js');\n"
+        },
+        {
+          "start": 70,
+          "before": "} = require('./railgun-wallet-records');\n",
+          "after": "} = require('../src/execution/railgun-wallet-records.js');\n"
+        }
+      ]
+    }
+  ]
+}
