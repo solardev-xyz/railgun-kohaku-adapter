@@ -1,13 +1,12 @@
 # @freedom/railgun-kohaku-adapter
 
-A restricted Kohaku-style facade over **trusted, application-supplied** Railgun hosts. Version 0.4.0 is not published to npm (`"private": true`); its source is public at https://github.com/solardev-xyz/railgun-kohaku-adapter. It was extracted from the Freedom browser (commit `88b2496b`) as the first package of the privacy work ("E1"); see `NOTICE.md` for exact provenance.
+A Kohaku-compatible Railgun integration for trusted wallet applications. The source is public at https://github.com/solardev-xyz/railgun-kohaku-adapter and is not published to npm (`"private": true`). The 0.6 candidate adds fixed account owners to the previously extracted adapters, data helpers and utility kernel. See [the owner integration contract](docs/owners/INTEGRATION.md) and `NOTICE.md` for the boundary and provenance.
 
-This is **not** a self-contained Railgun SDK. It bundles no Railgun engine or prover archive, key management, wallet vault, storage, RPC client, Tor transport or UI. The unreleased execution-kernel candidate adds fixed utility orchestration; it still requires explicit trusted host integration and separately authenticated engine/prover archives. The application's host does the actual work: it owns the account, holds the keys, generates proofs, signs and submits transactions, and keeps durable state. The existing Kohaku facade sits between a consumer and that host and does four things:
+The package owns Railgun enrollment, scanning, account storage, note preparation, proving, recovery, POI/TXID processing and local relay custody. It authenticates separately supplied engine/prover archives; those archives are not bundled. An adopting application supplies its vault-backed credential loans, context and profile identity, filesystem/storage facilities, RPC/Tor transport, EOA signing and journal services, and process launcher. It also supplies the UI. In-process host callbacks are trusted capabilities, not a sandbox.
 
-- It validates the data that crosses the boundary.
-- It copies and freezes that data so neither side can mutate the other's view.
-- It enforces session and one-use operation lifecycles.
-- It preserves the host's original settlement results.
+The existing five root factories retain their restricted data/session contracts. The new trusted-main `/host/owner` entry creates account sessions without exporting internal account objects, keys, receipt constructors or a selectable module loader. Shared transaction hosts use separate data-only and branded-authority entries.
+
+**Candidate status:** the source and controlled compositions are tested. Final installed-host, native and packaged-owner acceptance is in progress; earlier 0.5 kernel evidence is not relabeled as covering the new account-owner boundary. No additional live spend is qualified by this extraction.
 
 Host-shaped objects and readable notes do not establish authority. Host callbacks run in-process and are not sandboxed.
 
@@ -480,13 +479,13 @@ host platform's path rules. This is trusted-host execution input, not portable
 data or proof that the engine/prover archive is authenticated; the execution host
 must still verify and constrain that runtime before use.
 
-## Execution kernel candidate (`/host/execution`, `/host/bootstrap`)
+## Fixed execution kernel (`/host/execution`, `/host/bootstrap`)
 
-The new trusted-host entry points are inactive until explicitly integrated. They
+These trusted-host entry points require explicit integration. They
 provide a closed private-job inventory and a two-stage Electron utility bootstrap
 that installs guards before capturing context and artifact I/O functions once.
-The package owns archive verification and artifact content pins. Main account,
-key, storage and permit ownership remains with the host. No key lease or generic
-job runner is exported. See [the integration contract](docs/execution/INTEGRATION.md)
+The package owns archive verification and artifact content pins. The `/host/owner` initializer captures the same execution bindings together with
+its private account-owner bindings. The host must not initialize a second main
+execution instance. No key lease or generic job runner is exported. See [the integration contract](docs/execution/INTEGRATION.md)
 for exact roles, deferred main changes, provenance, testing limits and packaging
 requirements. Existing qualification archives predate this kernel layout.

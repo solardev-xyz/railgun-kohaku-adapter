@@ -1,0 +1,27 @@
+# Fixed account-owner integration (0.6 candidate)
+
+The main entry is `@freedom/railgun-kohaku-adapter/host/owner`. It exports only `initializeRailgunMain({host,runtime})`, which returns `createAccount` and `openAccount`. It is a one-shot trusted-main initializer; a malformed or preempted attempt remains refused. Initialize before admitting wallet operations and use exactly one physical package instance. Do not separately initialize `/host/execution` in that main realm. Utility and storage-worker realms each have their own fixed bootstraps.
+
+`runtime` contains only absolute `archive`, `proverArchive` and `artifactDirectory` locations. The existing runtime loaders authenticate their actual content before use. The host supplies the exact capability families in `host-bindings.js`, including context, artifacts, source identity, credential loans, platform processes, profile/session/storage, RPC and Tor, signer, transaction and journal services. These are genuine adopting-host functions, not caller-selectable services or renderer input. The source snapshot captures all declared package implementation files and the host's fixed implementation digest once before owner code loads. Later code or host changes require a new process; affected derived caches rebuild under a new generation without migrating signatures or silently rewriting persistent records.
+
+## Account sessions
+
+A session owns its original identity, enrollment, public cache and at most one wallet/operation lane. It exposes describe, public advance/rebuild/resume, reviewed public TXID synchronization, and fixed read/private/public/recovery/local-relay/completed-relay lanes. The exact declarations accompany the root host entry; stage-specific design notes preserve how the interface was reviewed. A recovery companion can inspect retained operations without opening an active wallet. Relay lanes manage local proof/signature custody only; they do not add broadcaster discovery or transport.
+
+Private/public preparation returns one-use opaque tokens bound to the lane. No caller can supply a stored receipt or substitute an account. Completed relay recovery retains one original completed account and its original lifetime. TXID initialization is explicit create-if-missing and a bounded page, never a reset or unbounded sync loop.
+
+Every lane and session has `signal`, `closed` and `close`. Cancellation revokes authority promptly, but reopening remains blocked until the original outstanding work and original child/key-loan closure barriers settle. A failed or unobservable drain keeps the account excluded; a timeout is not proof of exit. Hosts must settle review promises on their supplied cancellation signal. Reviews must return the documented exact result or a native same-realm Promise. Custom thenables are never assimilated; an unobservable review result conservatively quarantines the account until restart. Host callbacks throwing an unknown-exit code can likewise self-lock their account. These are availability limits, not grants of signing or broadcast authority.
+
+## Separate host entries
+
+- `/host/journal-data`: nine shared stateless target/intent/resolution helpers. Ordinary EOA paths can load these without initializing any owner or utility.
+- `/host/owner-authority`: six fixed submission/resolution checks against the same genuine private registries. It is lazy, but refuses until the paired owner initialization succeeds. Data-shaped receipts never authorize a transaction.
+- `/host/owner-worker-bootstrap`: only `installRailgunStorageWorkerBootstrap()`. The fixed worker entry then calls the returned `initialize({context})` with worker-local genuine context functions. No worker-data field selects code or grants main authority.
+
+The existing `better-sqlite3@13.0.3` is an exact optional peer: data-only users need not install it; account owners require it, and the host must provide a compatible genuine native addon. The package development lock pins the same version for storage tests. The package neither downloads an engine nor starts a network service at import time.
+
+## Credentials and acceptance
+
+The vault primitive remains in the adopting application's vault boundary. [The normative schedule](CREDENTIAL-HOST-CONTRACT.md), public vectors and [conformance harness](CREDENTIAL-CONFORMANCE.md) belong here. The package receives owned, limited Railgun key loans; it never receives the wallet master seed or a generic derivation oracle.
+
+The published historical source maps, original test inverses and immutable qualification archives preserve earlier layouts. They are not proof of this installed owner composition. Before a consuming application lands the new boundary, require the exact packed runtime manifest check, clean installed tests, native synthetic account/operation/cold-recovery evidence, genuine host closure and key boundaries, and packaged resolution. Freedom adoption and removal of original files proceed only against those checks. Live POI/relay availability and end-to-end Sepolia spending remain separately qualified milestones.
