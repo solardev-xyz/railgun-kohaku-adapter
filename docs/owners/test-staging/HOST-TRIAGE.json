@@ -155,7 +155,7 @@
     "tests": 3,
     "defaultDiscovery": false,
     "hostRevision": "8285fb804c82011abd4fcc38ccc00d66b27132e3",
-    "invocation": "NODE_OPTIONS=--experimental-vm-modules npm test -- --config tools/owner-test-staging/jest.host-held.config.cjs",
+    "invocation": "RAILGUN_HELD_HOST_ROOT=/canonical/reviewed/freedom-checkout NODE_OPTIONS=--experimental-vm-modules npm test -- --config tools/owner-test-staging/jest.host-held.config.cjs",
     "installedPublicLaneClaimed": false
   }
 }

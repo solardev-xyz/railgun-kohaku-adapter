@@ -2,6 +2,11 @@
 const fs = require('fs'), path = require('path'), { createHash } = require('crypto');
 const input = require('../../docs/owners/test-staging/HELD-HOST-INPUTS.json');
 const root = path.resolve(__dirname, '../..');
+// Capture the explicitly selected test checkout once, before any target load.
+const hostRoot = process.env.RAILGUN_HELD_HOST_ROOT;
+if (typeof hostRoot !== 'string' || !path.isAbsolute(hostRoot) ||
+    path.resolve(hostRoot) !== hostRoot || fs.realpathSync(hostRoot) !== hostRoot)
+  throw Error('Set RAILGUN_HELD_HOST_ROOT to the canonical reviewed host checkout');
 const sha = (bytes) => createHash('sha256').update(bytes).digest('hex');
 function inventory(directory) {
   const entries = [];
@@ -21,14 +26,14 @@ function inventory(directory) {
 }
 function verifyHostInputs() {
   for (const [name, pin] of Object.entries(input.files)) {
-    const file = path.join(input.hostRoot, name);
+    const file = path.join(hostRoot, name);
     if (fs.realpathSync(file) !== file) throw Error('Host source alias refused');
     const bytes = fs.readFileSync(file);
     if (bytes.length !== pin.bytes || sha(bytes) !== pin.sha256)
       throw Error('Reviewed host source drift: ' + name);
   }
   for (const pin of input.dependencies) {
-    const base = pin.root === 'host' ? input.hostRoot : root;
+    const base = pin.root === 'host' ? hostRoot : root;
     const directory = path.join(base, pin.path);
     if (fs.realpathSync(directory) !== directory) throw Error('Dependency root alias refused');
     const entries = inventory(directory);
@@ -39,7 +44,7 @@ function verifyHostInputs() {
 function observeSources(cache) {
   verifyHostInputs();
   const sources = Object.keys(cache).sort().map((file) => {
-    const host = file.startsWith(input.hostRoot + path.sep), base = host ? input.hostRoot : root;
+    const host = file.startsWith(hostRoot + path.sep), base = host ? hostRoot : root;
     if (!file.startsWith(base + path.sep)) throw Error('Undeclared module root: ' + file);
     const name = path.relative(base, file);
     if (host && !name.startsWith('node_modules/') && !Object.hasOwn(input.files, name))
@@ -56,4 +61,10 @@ function observeSources(cache) {
       cjsSources: sources, esmEvidence: 'Declared full dependency tree PRE/POST inventories; ESM is not observed by CJS require.cache',
       prePostUnchanged: true, nativeElectron: false, liveService: false }, null, 2) + '\n');
 }
-module.exports = { verifyHostInputs, observeSources };
+function hostModuleAliases() {
+  verifyHostInputs();
+  return Object.fromEntries(Object.entries(input.aliases).map(([alias, name]) => [
+    '^' + alias + '$', path.join(hostRoot, name),
+  ]));
+}
+module.exports = { verifyHostInputs, observeSources, hostModuleAliases };

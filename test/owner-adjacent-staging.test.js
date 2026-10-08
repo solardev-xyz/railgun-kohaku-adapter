@@ -23,6 +23,7 @@ const submissionAdaptations = require('../docs/owners/test-staging/HOST-SUBMISSI
 const credentialAdaptations = require('../docs/owners/test-staging/HOST-CREDENTIAL-ADAPTATIONS.json');
 const pluginAdaptations = require('../docs/owners/test-staging/HOST-PLUGIN-ADAPTATIONS.json');
 const heldAdaptations = require('../docs/owners/test-staging/HOST-HELD-ADAPTATIONS.json');
+const poiFacadeAdaptations = require('../docs/owners/test-staging/HOST-POI-FACADE-ADAPTATIONS.json');
 const retired = require('../docs/owners/RETIRED-RUNTIME.json');
 const sha = (value) => createHash('sha256').update(value).digest('hex');
 test('all staged tests and fixtures preserve exact c6 bytes through reversible import-only edits', () => {
@@ -35,6 +36,15 @@ test('all staged tests and fixtures preserve exact c6 bytes through reversible i
   expect(new Set(manifest.files.map((row) => row.destination)).size).toBe(168);
   for (const row of manifest.files) {
     let text = fs.readFileSync(path.join(root, row.destination), 'utf8');
+    const poiFacade = poiFacadeAdaptations.changes.find((entry) => entry.file === row.destination);
+    if (poiFacade) {
+      expect(sha(text)).toBe(poiFacade.afterSha256);
+      for (const edit of [...poiFacade.replacements].reverse()) {
+        expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(edit.after);
+        text = text.slice(0, edit.start) + edit.before + text.slice(edit.start + edit.after.length);
+      }
+      expect(sha(text)).toBe(poiFacade.beforeSha256);
+    }
     const held = heldAdaptations.changes.find((entry) => entry.file === row.destination);
     if (held) {
       expect(sha(text)).toBe(held.afterSha256);
@@ -461,6 +471,9 @@ test('held real-vault conformance remains separate with two fixed actual-host al
   }
   const config = fs.readFileSync(path.join(root, 'tools/owner-test-staging/jest.host-held.config.cjs'), 'utf8');
   expect(config).toContain('railgun-private-submission-held.test.js');
-  expect(config).toContain('verifyHostInputs()');
+  expect(config).toContain('hostModuleAliases()');
+  expect(config).toContain('<rootDir>/tools/freedom-legacy-qualification/');
+  expect(inputs.hostRoot).toBeUndefined();
+  expect(inputs.hostRootEnvironment).toBe('RAILGUN_HELD_HOST_ROOT');
   expect(require('../jest.config.js').testMatch.join(' ')).not.toContain('railgun-private-submission-held.test.js');
 });
