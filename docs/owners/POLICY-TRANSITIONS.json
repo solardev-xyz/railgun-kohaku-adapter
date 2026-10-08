@@ -1,0 +1,72 @@
+{
+  "baseRevision": "59c50995c6e2b555f4f217deccf9a234ea018db1",
+  "label": "Conservative new cache-generation policies; existing domain/schema/binding strings and historical qualification limit retained. No encrypted store migration.",
+  "changes": [
+    {
+      "file": "src/owners/railgun-wallet-policy.js",
+      "beforeSha256": "2d08c4791fb2722202bb74aa4d9436c370a7a07d65663cd47ab4c4f41f7688ee",
+      "afterSha256": "f951955ae4e409652098a46a4eaf0b6c6232e879fea0bcef462edc82c0f957c7",
+      "replacements": [
+        {
+          "start": 6066,
+          "before": "      [\n        ...sources.map((name) => [name, hash(fs.readFileSync(require.resolve('./' + name)))]),\n        ...adapterSources.map((name) => [\n          adapter + '/' + name,\n          hash(fs.readFileSync(path.join(path.dirname(require.resolve(adapter + '/read')), name))),\n        ]),\n      ],\n",
+          "after": "      readRailgunPolicySourceIdentity(),\n"
+        },
+        {
+          "start": 572,
+          "before": "const sources = [\n  // Both staged implementations and the new bootstrap/host ports remain pinned.\n  '../networks/privacy-context',\n  'privacy-artifacts',\n  'railgun-engine-manifest.json',\n  'railgun-engine-runtime',\n  'railgun-identity-job',\n  'railgun-kernel-entry',\n  'railgun-private-receive-job',\n  'railgun-private-verify-job',\n  'railgun-process',\n  'railgun-process-entry',\n  'railgun-process-guards',\n  'railgun-spend-sign-job',\n\n  'railgun-wallet-job',\n  'railgun-relay-wallet-job',\n  'railgun-relay-wallet-data',\n  'railgun-relay-witness',\n  'railgun-relay-reconstruct',\n  'railgun-relay-intent',\n  'railgun-relay-capsule',\n  'railgun-relay-quote-data',\n  'railgun-relay-review-summary',\n  'railgun-relay-poi-history',\n  'railgun-poi-records',\n  'railgun-relay-pre-poi-data',\n  'railgun-relay-record-stream',\n  'railgun-relay-recovery-data',\n  'railgun-relay-transaction',\n  'railgun-relay-proof-results',\n  'railgun-relay-pre-poi-job',\n  'railgun-relay-pre-poi-witness',\n  'railgun-relay-prove-job',\n  'railgun-relay-prover',\n  'railgun-relay-verify-job',\n  'railgun-relay-proof-verifier',\n  'railgun-relay-pre-poi-math',\n  'railgun-relay-proof',\n  'railgun-private-prepare-job',\n  'railgun-private-operate-job',\n  'railgun-private-recover-job',\n  'railgun-private-recovery-data',\n  'railgun-private-capsule',\n  'railgun-private-reconstruct',\n  'railgun-private-prover',\n  'railgun-private-signature',\n  'railgun-prover-runtime',\n  'railgun-prover-manifest.json',\n  'railgun-artifacts',\n  'railgun-private-witness',\n  'railgun-private-preparation',\n  'railgun-private-intent',\n  'railgun-private-policy',\n  'railgun-private-destination',\n  'railgun-shield-pins.json',\n  'railgun-wallet-runner',\n  'railgun-wallet-run',\n  'railgun-wallet-scan',\n  'railgun-wallet-records',\n  'railgun-owned-poi-records',\n  'railgun-wallet-coverage',\n  'railgun-wallet-coverage-store',\n  'railgun-wallet-state',\n  'railgun-wallet-read',\n  'railgun-kohaku-read',\n  'railgun-kohaku-read-data',\n  'railgun-wallet-storage',\n  'railgun-remote',\n  'railgun-frontier',\n  'railgun-scan-journal',\n  'railgun-public-records',\n];\n// Read projections and private data validation re-export the installed adapter, so\n// the installed package bytes it loads (and the exports map that selects them)\n// bind host validation just as wallet modules do.\nconst adapter = '@freedom/railgun-kohaku-adapter';\nconst adapterSources = [\n  'host-bootstrap.cjs',\n  'host-execution.cjs',\n  'host-execution.mjs',\n  'src/execution/host-bindings.js',\n  'src/execution/job-locations.js',\n  'src/execution/railgun-artifacts.js',\n  'src/execution/railgun-engine-manifest.json',\n  'src/execution/railgun-engine-runtime.js',\n  'src/execution/railgun-identity-job.js',\n  'src/execution/railgun-private-capsule.js',\n  'src/execution/railgun-private-operate-job.js',\n  'src/execution/railgun-private-prepare-job.js',\n  'src/execution/railgun-private-prover.js',\n  'src/execution/railgun-private-receive-job.js',\n  'src/execution/railgun-private-reconstruct.js',\n  'src/execution/railgun-private-recover-job.js',\n  'src/execution/railgun-private-verify-job.js',\n  'src/execution/railgun-private-witness.js',\n  'src/execution/railgun-process-guards.js',\n  'src/execution/railgun-prover-manifest.json',\n  'src/execution/railgun-prover-runtime.js',\n  'src/execution/railgun-relay-capsule.js',\n  'src/execution/railgun-relay-intent.js',\n  'src/execution/railgun-relay-poi-history.js',\n  'src/execution/railgun-relay-pre-poi-data.js',\n  'src/execution/railgun-relay-quote-data.js',\n  'src/execution/railgun-relay-record-stream.js',\n  'src/execution/railgun-relay-recovery-data.js',\n  'src/execution/railgun-relay-transaction.js',\n  'src/execution/railgun-relay-wallet-data.js',\n  'src/execution/railgun-remote.js',\n  'src/execution/railgun-spend-sign-job.js',\n  'src/execution/railgun-wallet-job.js',\n  'src/execution/railgun-wallet-records.js',\n  'src/execution/railgun-wallet-scan.js',\n\n  'package.json',\n  'read.cjs',\n  'host-data.cjs',\n  'host-poi.cjs',\n  'src/data/railgun-poi-records.js',\n  'src/data/railgun-poi-payload.js',\n  'src/data/railgun-poi-creator-data.js',\n  'src/data/railgun-poi-shield-selector-data.js',\n  'src/data/railgun-poi-transact-selector-data.js',\n  'src/data/railgun-own-poi-binding.js',\n  'src/data/railgun-own-poi-shape-data.js',\n  'src/data/railgun-owned-poi-records.js',\n  'src/data/railgun-poi-submit-data.js',\n  'src/data/railgun-txid-note-witness.js',\n  'src/data/railgun-txid-projection.js',\n  'src/data/railgun-txid-omissions.js',\n  'src/data/railgun-own-poi-payload-binding.js',\n  'src/data/railgun-private-policy.js',\n  'src/data/railgun-private-intent.js',\n  'src/data/railgun-private-offer.js',\n  'src/data/railgun-private-capsule.js',\n  'src/data/railgun-private-destination.js',\n  'src/data/railgun-private-signature.js',\n  'src/data/railgun-private-preparation.js',\n  'src/data/railgun-private-results.js',\n  'src/data/railgun-private-recovery-data.js',\n  'src/railgun-engine-manifest.json',\n  'src/railgun-prover-manifest.json',\n  'src/railgun-shield-pins.json',\n  'src/railgun-kohaku-read-data.js',\n  'src/railgun-kohaku-read-dispatch.js',\n];\n",
+          "after": "const { readRailgunPolicySourceIdentity } = require('./source-identity');\n"
+        },
+        {
+          "start": 241,
+          "before": "const fs = require('fs');\nconst path = require('path');\n",
+          "after": ""
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-public-policy.js",
+      "beforeSha256": "64518bc3fb94e4ac31b473a78fd89de6693850ba4ea3d0b65aa3be929af3e5c2",
+      "afterSha256": "2aa3095194710d41dec99f7c5d82ef02c3d9d79e206ecd9c2c1377e7fd591bed",
+      "replacements": [
+        {
+          "start": 1241,
+          "before": "      sources: SOURCES.map((name) => [name, sha(fs.readFileSync(path.join(__dirname, name)))]),\n",
+          "after": "      sources: readRailgunPolicySourceIdentity(),\n"
+        },
+        {
+          "start": 451,
+          "before": "const SOURCES = Object.freeze([\n  'railgun-public-policy.js',\n  'railgun-public-run.js',\n  'railgun-source-feed.js',\n  'railgun-public-job.js',\n  'railgun-event-projector.js',\n  'railgun-public-records.js',\n  'railgun-frontier.js',\n  'railgun-tree-transactions.js',\n  'railgun-remote.js',\n  'railgun-scan-journal.js',\n  'railgun-scan-coordinator.js',\n  'railgun-scan-source.js',\n  'railgun-source-ledger.js',\n]);\n",
+          "after": "const { readRailgunPolicySourceIdentity } = require('./source-identity');\nconst SOURCES = Object.freeze(require('./source-files.json'));\n"
+        },
+        {
+          "start": 160,
+          "before": "const fs = require('fs'),\n  path = require('path');\n",
+          "after": ""
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-txid-policy.js",
+      "beforeSha256": "6c43388ab7ab968892c62f9be674cef3b3faea840554318666d64a94312e554a",
+      "afterSha256": "03dff0da039fe5ac1c9afd6f8c2376ebb1d8f90f1ba545a5a0fc2c071313024e",
+      "replacements": [
+        {
+          "start": 2381,
+          "before": "      [\n        ...SOURCES.map((name) => [name, sha(fs.readFileSync(require.resolve('./' + name)))]),\n        ...adapterSources.map((name) => [\n          '@freedom/railgun-kohaku-adapter/' + name,\n          sha(\n            fs.readFileSync(\n              path.join(\n                path.dirname(require.resolve(\"../../host-poi.cjs\")),\n                name\n              )\n            )\n          ),\n        ]),\n      ],\n",
+          "after": "      readRailgunPolicySourceIdentity(),\n"
+        },
+        {
+          "start": 411,
+          "before": "const SOURCES = Object.freeze([\n  'railgun-txid-policy',\n  'railgun-txid-projection',\n  'railgun-txid-note-witness',\n  'railgun-txid-omissions',\n  'railgun-txid-events',\n  'railgun-txid-coverage',\n  'railgun-source-feed',\n  'railgun-event-projector',\n  'railgun-public-policy',\n  'railgun-txid-job',\n  'railgun-txid-runner',\n  'railgun-txid-journal',\n  'railgun-txid-root',\n  'railgun-public-services',\n  'railgun-public-records',\n  'railgun-frontier',\n  'railgun-remote',\n]);\nconst adapterSources = Object.freeze([\n  'package.json',\n  'host-poi.cjs',\n  'src/data/railgun-poi-records.js',\n  'src/data/railgun-poi-payload.js',\n  'src/data/railgun-poi-creator-data.js',\n  'src/data/railgun-poi-shield-selector-data.js',\n  'src/data/railgun-poi-transact-selector-data.js',\n  'src/data/railgun-own-poi-binding.js',\n  'src/data/railgun-own-poi-shape-data.js',\n  'src/data/railgun-owned-poi-records.js',\n  'src/data/railgun-poi-submit-data.js',\n  'src/data/railgun-txid-note-witness.js',\n  'src/data/railgun-txid-projection.js',\n  'src/data/railgun-txid-omissions.js',\n  'src/data/railgun-own-poi-payload-binding.js',\n  'src/data/railgun-private-capsule.js',\n  'src/data/railgun-private-offer.js',\n  'src/data/railgun-private-policy.js',\n  'src/data/railgun-private-intent.js',\n  'src/data/railgun-private-destination.js',\n  'src/railgun-shield-pins.json',\n]);\n",
+          "after": "const { readRailgunPolicySourceIdentity } = require('./source-identity');\nconst SOURCES = Object.freeze(require('./source-files.json'));\n"
+        },
+        {
+          "start": 154,
+          "before": "const fs = require('fs');\nconst path = require('path');\n",
+          "after": ""
+        }
+      ]
+    }
+  ]
+}

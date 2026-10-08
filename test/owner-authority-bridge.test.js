@@ -139,3 +139,29 @@ test('real owner binding exposes the complete fixed process and worker platform 
     );
   }
 });
+
+
+test.each(cases)("%s has its actual fixed owner export in the package source", (_name, file, method) => {
+  const text = fs.readFileSync(path.join(__dirname, "../src/owners", file + ".js"), "utf8");
+  const exported = text.slice(text.lastIndexOf("module.exports = {"));
+  expect(exported).toMatch(new RegExp("\\b" + method + "\\b"));
+});
+
+
+test("CJS and ESM expose the same six guarded function objects", () => {
+  const { execFileSync } = require("child_process");
+  const program = `
+    const assert = require('assert/strict');
+    const cjs = require('./host-owner-authority.cjs');
+    import('./host-owner-authority.mjs').then(esm => {
+      assert.deepEqual(Object.keys(esm).sort(), Object.keys(cjs).sort());
+      for (const name of Object.keys(cjs)) {
+        assert.equal(esm[name], cjs[name]);
+        assert.throws(() => esm[name]({}, {}, {}), {code:'RAILGUN_OWNER_HOST_UNAVAILABLE'});
+      }
+    }).catch(error => { console.error(error); process.exitCode = 1; });
+  `;
+  expect(() => execFileSync(process.execPath, ["-e", program], {
+    cwd: path.join(__dirname, ".."), stdio: "pipe", timeout: 10000,
+  })).not.toThrow();
+});

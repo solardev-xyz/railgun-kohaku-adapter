@@ -9,6 +9,7 @@ const source = fs.readFileSync(
 const schema = {
   context: ["getPrivacyContext", "createPrivacyScope"],
   artifacts: ["createPrivacyArtifactLoader"],
+  sourceIdentity: ["readDigest"],
   credentials: ["currentSession", "withMaterial"],
   platform: [
     "applicationLifetime",
@@ -55,11 +56,14 @@ const refused = expect.objectContaining({
 function realm({ type, main = true } = {}) {
   const imports = [];
   let execution;
+  const captureSource = jest.fn();
   const context = vm.createContext({
     Reflect,
     process: { type },
     require(name) {
       imports.push(name);
+      if (name === "./source-identity")
+        return { captureRailgunPolicySourceIdentity: captureSource };
       if (name === "worker_threads") return { isMainThread: main };
       if (name === "../execution/host-bindings") {
         if (!execution)
@@ -76,6 +80,7 @@ function realm({ type, main = true } = {}) {
     context,
     imports,
     execution: () => execution,
+    captureSource,
     copy() {
       return vm.runInContext(
         `(function(){const module={exports:{}};${source}\n;return module.exports;})()`,
@@ -322,8 +327,11 @@ test("private authority assertion exposes no host data and refuses uninitialized
   expect(first.assertRailgunOwnerHost()).toBeUndefined();
   expect(() => first.assertRailgunOwnerHost({})).toThrow(refused);
   expect(() => second.assertRailgunOwnerHost()).toThrow(refused);
-  for (const family of Object.values(input))
-    for (const fn of Object.values(family)) expect(fn).not.toHaveBeenCalled();
+  for (const [name, family] of Object.entries(input))
+    for (const fn of Object.values(family)) {
+      if (name === "sourceIdentity") expect(fn).toHaveBeenCalledTimes(1);
+      else expect(fn).not.toHaveBeenCalled();
+    }
 });
 test("malformed owner registration permanently poisons both initializer domains", () => {
   const r = realm(),
@@ -339,4 +347,72 @@ test("malformed owner registration permanently poisons both initializer domains"
   ).toThrow();
   expect(() => r.execution().getPrivacyContext({})).toThrow();
   expect(() => port.assertRailgunOwnerHost()).toThrow(refused);
+});
+
+test("source identity is captured exactly once before owner publication and source failure poisons both domains", () => {
+  const r = realm(),
+    port = r.copy(),
+    input = bindings(),
+    digest = "a".repeat(64);
+  input.sourceIdentity.readDigest.mockReturnValue(digest);
+  r.captureSource.mockImplementation((value) => {
+    expect(value).toBe(digest);
+    expect(() => port.assertRailgunOwnerHost()).toThrow(refused);
+    expect(r.execution()).toBeDefined();
+  });
+  port.initializeRailgunOwnerHost(input);
+  expect(input.sourceIdentity.readDigest.mock.calls).toEqual([[]]);
+  expect(r.captureSource.mock.calls).toEqual([[digest]]);
+  port.assertRailgunOwnerHost();
+  port.assertRailgunOwnerHost();
+  expect(input.sourceIdentity.readDigest).toHaveBeenCalledTimes(1);
+  const failed = realm(),
+    owner = failed.copy();
+  failed.captureSource.mockImplementation(() => {
+    throw Error("source unavailable");
+  });
+  expect(() => owner.initializeRailgunOwnerHost(bindings())).toThrow(
+    "source unavailable",
+  );
+  expect(() => owner.assertRailgunOwnerHost()).toThrow(refused);
+  expect(() => failed.execution().initializeRailgunExecutionHost({})).toThrow();
+  expect(() => failed.copy().initializeRailgunOwnerHost(bindings())).toThrow(
+    refused,
+  );
+});
+
+test("actual private initializer captures source bytes without loading operational owners", () => {
+  // Disposable plain Node realm: actual source reader/bindings, no Electron,
+  // engine, credential material, storage or profile work.
+  const root = path.join(__dirname, ".."),
+    script = `
+      const path = require('path'), assert = require('assert/strict');
+      const root = process.argv[1], schema = JSON.parse(process.argv[2]);
+      const bindings = require(path.join(root, 'src/owners/host-bindings.js'));
+      let reads = 0;
+      const input = Object.fromEntries(Object.entries(schema).map(([family, names]) =>
+        [family, Object.fromEntries(names.map((name) => [name, () => {
+          if (family !== 'sourceIdentity') throw Error('Unexpected operational host call');
+          reads++; return 'a'.repeat(64);
+        }]))]));
+      bindings.initializeRailgunOwnerHost(input);
+      const sources = require(path.join(root, 'src/owners/source-identity.js'));
+      const first = sources.readRailgunPolicySourceIdentity();
+      assert.equal(first.layout, 'sources-v2');
+      assert.equal(first.hostDigest, 'a'.repeat(64));
+      assert.equal(first, sources.readRailgunPolicySourceIdentity());
+      assert.equal(reads, 1);
+      assert.throws(() => bindings.initializeRailgunOwnerHost(input));
+      const owners = Object.keys(require.cache).filter((file) => file.startsWith(path.join(root, 'src/owners/')));
+      assert.equal(owners.length, 2);
+      process.stdout.write('source-initialization-ok');
+    `;
+  const result = require("child_process").spawnSync(
+    process.execPath,
+    ["-e", script, root, JSON.stringify(schema)],
+    { encoding: "utf8", timeout: 10000 },
+  );
+  expect(result.status).toBe(0);
+  expect(result.stderr).toBe("");
+  expect(result.stdout).toBe("source-initialization-ok");
 });

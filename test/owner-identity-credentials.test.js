@@ -1646,3 +1646,137 @@ describe("private signer stable-account quarantine", () => {
     },
   );
 });
+
+describe("pending signer stable-account ownership", () => {
+  let profile;
+  beforeEach(() => {
+    mockParent.close();
+    profile = `pending-signer-${++quarantineProfile}`;
+    mockParent = createPrivacyScope({
+      profileId: profile,
+      signal: mockVault.signal,
+    });
+  });
+  async function setup(kind) {
+    if (kind === "relay") {
+      mockRelayPermitConsume = relayGate;
+      return {
+        options: (await relaySigningFixture()).options,
+        sign: signRailgunRelayIntent,
+      };
+    }
+    mockPermitConsume = () => ({ assertCurrent: async () => {} });
+    return { options: await signingFixture(), sign: signRailgunPrivateIntent };
+  }
+  async function cannotReopen() {
+    const before = mockInputs.length;
+    await expect(
+      openRailgunIdentity({ archive: "/fixture.asar" }),
+    ).rejects.toMatchObject({
+      code: "RAILGUN_IDENTITY_REFUSED",
+    });
+    expect(mockInputs).toHaveLength(before);
+  }
+  for (const kind of ["private", "relay"]) {
+    test.each(["close", "replace vault"])(
+      `${kind} pending original closure blocks %s, then releases only after original host settlement`,
+      async (mode) => {
+        const { options, sign } = await setup(kind),
+          closed = quarantineDeferred(),
+          host = quarantineDeferred(),
+          entered = quarantineDeferred();
+        mockSignTask = (task) => {
+          task.closed = closed.promise;
+        };
+        const originalJob = mockSignJob;
+        mockSignJob = async (job) => {
+          await originalJob(job);
+          entered.resolve();
+        };
+        let hostFinishing = false,
+          settled = false;
+        mockHostAfter = async (request) => {
+          if (request.purpose === "spending-sign") {
+            hostFinishing = true;
+            await host.promise;
+          }
+        };
+        const work = sign(options).then(
+          (value) => {
+            settled = true;
+            return value;
+          },
+          (error) => {
+            settled = true;
+            return error;
+          },
+        );
+        await entered.promise;
+        // Admission does not invalidate its own genuine live identity.
+        expect(() => assertRailgunIdentity(identity)).not.toThrow();
+        identity.close();
+        if (mode === "replace vault") {
+          mockVault.abort();
+          mockParent.close();
+          mockVault = new AbortController();
+          mockParent = createPrivacyScope({
+            profileId: profile,
+            signal: mockVault.signal,
+          });
+        }
+        await cannotReopen();
+        expect(settled).toBe(false);
+        expect(mockHostActive).toBe(1);
+        expect(hostFinishing).toBe(false);
+        const other = await openRailgunIdentity({
+          archive: "/fixture.asar",
+          accountIndex: 1,
+        });
+        other.close();
+        // No timeout stands in for exit: the original promise is still pending.
+        await cannotReopen();
+        closed.resolve({ code: "RAILGUN_PROCESS_CLOSED" });
+        for (let i = 0; i < 80; i++) await Promise.resolve();
+        expect(hostFinishing).toBe(true);
+        expect(mockHostActive).toBe(1);
+        expect(settled).toBe(false);
+        await cannotReopen();
+        host.resolve();
+        expect(await work).toMatchObject({
+          code:
+            kind === "relay"
+              ? "RAILGUN_RELAY_SIGNING_REFUSED"
+              : "RAILGUN_PRIVATE_SIGNING_REFUSED",
+        });
+        expect(mockHostActive).toBe(0);
+        mockSignTask = undefined;
+        identity = await openRailgunIdentity({ archive: "/fixture.asar" });
+        expect(identity.descriptor.accountIndex).toBe(0);
+      },
+    );
+    test(`${kind} observed child closure does not release a pending original request`, async () => {
+      const { options, sign } = await setup(kind),
+        entered = quarantineDeferred(),
+        callback = quarantineDeferred();
+      options.onKeyRequest = async () => {
+        entered.resolve();
+        await callback.promise;
+        return {};
+      };
+      let settled = false;
+      const work = sign(options).catch((error) => {
+        settled = true;
+        return error;
+      });
+      await entered.promise;
+      identity.close();
+      await cannotReopen();
+      expect(settled).toBe(false);
+      expect(mockHostActive).toBe(0);
+      callback.resolve();
+      expect(await work).toHaveProperty("code");
+      identity = await openRailgunIdentity({ archive: "/fixture.asar" });
+      expect(identity.descriptor.accountIndex).toBe(0);
+    });
+  }
+});

@@ -1,0 +1,9 @@
+[
+  {
+    "label": "Historical translated source only; excluded from runtime src and package files. Original import audit remains historical.",
+    "source": "src/owners/railgun-process-entry.js",
+    "preserved": "docs/owners/historical/railgun-process-entry.source.txt",
+    "sha256": "b8f0fef8ca00504c615d26a00f7eebe14f88bbbf1a7743a904844339dc18fc8f",
+    "reason": "Fixed executionJob dispatch replaces arbitrary filename bootstrap; no production caller remains."
+  }
+]

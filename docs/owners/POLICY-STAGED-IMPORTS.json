@@ -1,0 +1,258 @@
+{
+  "src/owners/railgun-wallet-policy.js": {
+    "edges": [
+      {
+        "kind": "require",
+        "request": "crypto",
+        "start": 272,
+        "end": 280,
+        "callStart": 264,
+        "callEnd": 281,
+        "line": 5
+      },
+      {
+        "kind": "require",
+        "request": "../execution/railgun-engine-runtime.js",
+        "start": 330,
+        "end": 370,
+        "callStart": 322,
+        "callEnd": 371,
+        "line": 6
+      },
+      {
+        "kind": "require",
+        "request": "../execution/railgun-engine-manifest.json",
+        "start": 396,
+        "end": 439,
+        "callStart": 388,
+        "callEnd": 440,
+        "line": 7
+      },
+      {
+        "kind": "require",
+        "request": "./railgun-public-policy.js",
+        "start": 485,
+        "end": 513,
+        "callStart": 477,
+        "callEnd": 514,
+        "line": 8
+      },
+      {
+        "kind": "require",
+        "request": "./source-identity",
+        "start": 568,
+        "end": 587,
+        "callStart": 560,
+        "callEnd": 588,
+        "line": 9
+      }
+    ],
+    "dynamic": [],
+    "hostFamilies": [],
+    "literals": [
+      "freedom:railgun:wallet-policy-v1"
+    ],
+    "syntaxDiagnostics": 0
+  },
+  "src/owners/railgun-public-policy.js": {
+    "edges": [
+      {
+        "kind": "require",
+        "request": "crypto",
+        "start": 191,
+        "end": 199,
+        "callStart": 183,
+        "callEnd": 200,
+        "line": 4
+      },
+      {
+        "kind": "require",
+        "request": "../execution/railgun-engine-runtime.js",
+        "start": 249,
+        "end": 289,
+        "callStart": 241,
+        "callEnd": 290,
+        "line": 5
+      },
+      {
+        "kind": "require",
+        "request": "../execution/railgun-engine-manifest.json",
+        "start": 317,
+        "end": 360,
+        "callStart": 309,
+        "callEnd": 361,
+        "line": 6
+      },
+      {
+        "kind": "require",
+        "request": "./source-identity",
+        "start": 451,
+        "end": 470,
+        "callStart": 443,
+        "callEnd": 471,
+        "line": 8
+      },
+      {
+        "kind": "require",
+        "request": "./source-files.json",
+        "start": 511,
+        "end": 532,
+        "callStart": 503,
+        "callEnd": 533,
+        "line": 9
+      }
+    ],
+    "dynamic": [],
+    "hostFamilies": [],
+    "literals": [
+      "freedom:railgun:public-policy-v1"
+    ],
+    "syntaxDiagnostics": 0
+  },
+  "src/owners/railgun-txid-policy.js": {
+    "edges": [
+      {
+        "kind": "require",
+        "request": "crypto",
+        "start": 185,
+        "end": 193,
+        "callStart": 177,
+        "callEnd": 194,
+        "line": 4
+      },
+      {
+        "kind": "require",
+        "request": "../execution/railgun-engine-runtime.js",
+        "start": 243,
+        "end": 283,
+        "callStart": 235,
+        "callEnd": 284,
+        "line": 5
+      },
+      {
+        "kind": "require",
+        "request": "../execution/railgun-engine-manifest.json",
+        "start": 309,
+        "end": 352,
+        "callStart": 301,
+        "callEnd": 353,
+        "line": 6
+      },
+      {
+        "kind": "require",
+        "request": "./source-identity",
+        "start": 407,
+        "end": 426,
+        "callStart": 399,
+        "callEnd": 427,
+        "line": 7
+      },
+      {
+        "kind": "require",
+        "request": "./source-files.json",
+        "start": 467,
+        "end": 488,
+        "callStart": 459,
+        "callEnd": 489,
+        "line": 8
+      }
+    ],
+    "dynamic": [],
+    "hostFamilies": [],
+    "literals": [
+      "freedom:railgun:txid-policy-v1",
+      "freedom:railgun:txid-store-v1"
+    ],
+    "syntaxDiagnostics": 0
+  },
+  "src/owners/source-identity.js": {
+    "edges": [
+      {
+        "kind": "require",
+        "request": "fs",
+        "start": 282,
+        "end": 286,
+        "callStart": 274,
+        "callEnd": 287,
+        "line": 6
+      },
+      {
+        "kind": "require",
+        "request": "path",
+        "start": 310,
+        "end": 316,
+        "callStart": 302,
+        "callEnd": 317,
+        "line": 7
+      },
+      {
+        "kind": "require",
+        "request": "crypto",
+        "start": 350,
+        "end": 358,
+        "callStart": 342,
+        "callEnd": 359,
+        "line": 8
+      },
+      {
+        "kind": "require",
+        "request": "./host-bindings",
+        "start": 2907,
+        "end": 2924,
+        "callStart": 2899,
+        "callEnd": 2925,
+        "line": 64
+      }
+    ],
+    "dynamic": [],
+    "hostFamilies": [
+      "assertRailgunOwnerHost"
+    ],
+    "literals": [],
+    "syntaxDiagnostics": 0
+  },
+  "src/owners/host-bindings.js": {
+    "edges": [
+      {
+        "kind": "require",
+        "request": "util",
+        "start": 287,
+        "end": 293,
+        "callStart": 279,
+        "callEnd": 294,
+        "line": 6
+      },
+      {
+        "kind": "require",
+        "request": "worker_threads",
+        "start": 335,
+        "end": 351,
+        "callStart": 327,
+        "callEnd": 352,
+        "line": 7
+      },
+      {
+        "kind": "require",
+        "request": "../execution/host-bindings",
+        "start": 3496,
+        "end": 3524,
+        "callStart": 3488,
+        "callEnd": 3525,
+        "line": 96
+      },
+      {
+        "kind": "require",
+        "request": "./source-identity",
+        "start": 4312,
+        "end": 4331,
+        "callStart": 4304,
+        "callEnd": 4332,
+        "line": 114
+      }
+    ],
+    "dynamic": [],
+    "hostFamilies": [],
+    "literals": [],
+    "syntaxDiagnostics": 0
+  }
+}
