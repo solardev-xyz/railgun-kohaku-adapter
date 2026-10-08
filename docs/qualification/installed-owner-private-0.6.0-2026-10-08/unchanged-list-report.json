@@ -1,0 +1,5130 @@
+{
+  "schema": "railgun-installed-owner-path-free-report-v1",
+  "original": {
+    "bytes": 159289,
+    "sha256": "991c84aa822faa08606efe45221217ef2e7e3a86b34b52842e47501583d36a2c"
+  },
+  "representation": "derived; not byte-exact",
+  "normalizations": [
+    {
+      "pointerTokens": [
+        "report",
+        "cacheAfter",
+        "native",
+        0
+      ],
+      "meaning": "path relative to the isolated dependency root; original absolute host path omitted"
+    }
+  ],
+  "report": {
+    "schema": "railgun-installed-owner-private-native-v1",
+    "mode": "unchanged-list",
+    "scenario": {
+      "schema": "railgun-installed-owner-private-unchanged-list-v1",
+      "preparationRefused": true,
+      "independentlyVerifiedSignatureRefusal": true,
+      "normalizedPathAccepted": true,
+      "internalRefusalCauseObserved": false,
+      "originalLaneAndSessionClosed": true,
+      "submissionEnabled": false,
+      "rpcOwner": "genuine-private-rpc",
+      "syntheticRpcMethods": {
+        "eth_chainId": 2,
+        "eth_getBlockByNumber": 1222,
+        "eth_getLogs": 60,
+        "eth_getCode": 1,
+        "eth_getBalance": 1,
+        "ppoi_pois_per_list": 1,
+        "ppoi_merkle_proofs": 1,
+        "ppoi_poi_events": 1
+      },
+      "outerQualificationRequired": true
+    },
+    "observations": {
+      "utilities": [
+        {
+          "job": "spending-public",
+          "mode": null,
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "key": 1,
+            "result": 1
+          },
+          "keyRequests": 1,
+          "keyReplies": 1,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "viewing-identity",
+          "mode": null,
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "key": 1,
+            "result": 1
+          },
+          "keyRequests": 1,
+          "keyReplies": 1,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 1,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "plan",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 2,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "public-scan",
+          "mode": "apply",
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "sourceNext": 2,
+            "get": 19,
+            "open": 1,
+            "nextMany": 1,
+            "end": 1,
+            "txBegin": 1,
+            "txStage": 3,
+            "txRead": 1,
+            "txCommit": 1,
+            "batch": 3,
+            "jobResult": 1
+          },
+          "keyRequests": 0,
+          "keyReplies": 0,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "wallet-viewing",
+          "mode": null,
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "key": 1,
+            "public:get": 14,
+            "public:open": 2,
+            "public:nextMany": 2,
+            "public:end": 2,
+            "wallet:get": 6,
+            "wallet:batch": 3,
+            "wallet:open": 2,
+            "wallet:nextMany": 2,
+            "wallet:end": 2,
+            "result": 1
+          },
+          "keyRequests": 1,
+          "keyReplies": 1,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "private-operate",
+          "mode": null,
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "key": 1,
+            "public:get": 30,
+            "public:open": 2,
+            "public:nextMany": 2,
+            "public:end": 2,
+            "wallet:get": 6,
+            "wallet:open": 2,
+            "wallet:nextMany": 2,
+            "wallet:end": 2,
+            "private-intent": 1,
+            "result": 1
+          },
+          "keyRequests": 1,
+          "keyReplies": 1,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        },
+        {
+          "job": "private-receive",
+          "mode": null,
+          "ready": 1,
+          "results": 1,
+          "methods": {
+            "key": 1,
+            "result": 1
+          },
+          "keyRequests": 1,
+          "keyReplies": 1,
+          "exitCode": 15,
+          "exitObserved": true,
+          "terminations": [
+            "SIGTERM"
+          ]
+        }
+      ],
+      "workers": [
+        {
+          "create": true,
+          "ready": 1,
+          "exitObserved": true,
+          "exitCode": 0
+        },
+        {
+          "create": false,
+          "ready": 1,
+          "exitObserved": true,
+          "exitCode": 0
+        },
+        {
+          "create": true,
+          "ready": 1,
+          "exitObserved": true,
+          "exitCode": 0
+        },
+        {
+          "create": false,
+          "ready": 1,
+          "exitObserved": true,
+          "exitCode": 0
+        },
+        {
+          "create": true,
+          "ready": 1,
+          "exitObserved": true,
+          "exitCode": 0
+        },
+        {
+          "create": false,
+          "ready": 1,
+          "exitObserved": true,
+          "exitCode": 0
+        }
+      ],
+      "observationRefusals": 0
+    },
+    "cacheBefore": {
+      "rows": [
+        {
+          "kind": "launcher",
+          "relative": "cache.cjs",
+          "bytes": 4424,
+          "sha256": "3feede76a3a3d56e27db7ddaeda823939a44a7203a632a93ff7702a3d3e07041",
+          "mode": 420
+        },
+        {
+          "kind": "launcher",
+          "relative": "electron-entry.cjs",
+          "bytes": 4194,
+          "sha256": "385ec6e7cd2cadbeb156f13ca3894a651e82c698550f22e2ac11ec3608da82f9",
+          "mode": 420
+        },
+        {
+          "kind": "launcher",
+          "relative": "inventory.cjs",
+          "bytes": 3309,
+          "sha256": "bc893678a0b5b22f9846eccc3510b2bfc38c213d75928d4657c442dcc4258ab3",
+          "mode": 420
+        },
+        {
+          "kind": "launcher",
+          "relative": "report.cjs",
+          "bytes": 6218,
+          "sha256": "40bfb093aac389f719d99b19982806d5e11393b24a84eb830075c6e71c6ef3b6",
+          "mode": 420
+        },
+        {
+          "kind": "runtime-bootstrap",
+          "relative": "default_app.asar/package.json",
+          "bytes": 95,
+          "sha256": "3688987acbbeeea464615eee547ab4feca1c33e71ff85607e84e5167ebc595fc",
+          "mode": 420
+        }
+      ],
+      "aliases": [
+        "electron",
+        "electron/common",
+        "electron/main"
+      ],
+      "native": []
+    },
+    "cacheAfter": {
+      "rows": [
+        {
+          "kind": "dependency",
+          "relative": "@adraffy/ens-normalize/dist/index.cjs",
+          "bytes": 66173,
+          "sha256": "e9131df7a93064361eb542a9da89422aa5e4f619ad9a64417865d4e07b53c8fa",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/host-data.cjs",
+          "bytes": 757,
+          "sha256": "975e1b85feeb733d055f6009efe77d1ba0fa16c0510475f04416f93d614ac7b9",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/host-journal-data.cjs",
+          "bytes": 1047,
+          "sha256": "39fbe339e3ba4e10837348fe6e0eb05a1d59fde97785384378ea6db96afe31d6",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/host-owner.cjs",
+          "bytes": 225,
+          "sha256": "46f8865337dfdfc1b6913e4070938db70bfadbdb1c027636cee958e426a37ccf",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/host-poi.cjs",
+          "bytes": 824,
+          "sha256": "87a53842aa981072d82e6d298116cd0f1d43b71a5ba3bf25d28b12a3bd672e8b",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/read.cjs",
+          "bytes": 612,
+          "sha256": "9ce5340a9e0c80c88b752e74bb087fe7042d645c714608b8a7415f229fdb5876",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/data/railgun-own-poi-binding.js",
+          "bytes": 1003,
+          "sha256": "1d599d752432eb655acd8008c29d4de019371ecd3c15b9834c368bf64b967a5d",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/data/railgun-own-poi-payload-binding.js",
+          "bytes": 1136,
+          "sha256": "90193d58e168eaba103c16043b8053ac16eaf07193988a62bb25a0bbb0716c63",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/data/railgun-own-poi-shape-data.js",
+          "bytes": 1562,
+          "sha256": "8a15440dd217fdf3f246cc8b50e2f932597b1aa5629ed9129a2c42ffbbc90505",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/data/railgun-owned-poi-records.js",
+          "bytes": 3895,
+          "sha256": "d591d52f31955c00bfa421b8b961d26adb94b2ebdcf709553bea8c4ef34b943f",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/data/railgun-poi-creator-data.js",
+          "bytes": 5934,
+          "sha256": "66ddddcbe9bba48d6491741614d6999ad0f132cc4bb11c5647565efe7d69c7ce",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/data/railgun-poi-payload.js",
+          "bytes": 3107,
+          "sha256": "6e136e7d9f7b40b5d6c970e742b8e80a9a9e46e494d6a4bc16aa0cdbef986348",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/data/railgun-poi-records.js",
+          "bytes": 5116,
+          "sha256": "c4511c0ea185835c67bbbc8b8ba74bec6271e4b3a457a2b6a1576b42593fd1ac",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/data/railgun-poi-shield-selector-data.js",
+          "bytes": 3651,
+          "sha256": "fc61c1a7e85bbb484ffba2e4063751ae6b33f73b92529f27477cd2b536d6d6b6",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/data/railgun-poi-submit-data.js",
+          "bytes": 9540,
+          "sha256": "dc4a0f82586e6245752634bfba70cc0af3d3b21a3b60cb9b99f384a69d818a5f",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/data/railgun-poi-transact-selector-data.js",
+          "bytes": 4910,
+          "sha256": "b68b15ce0948721f6154fa81a4f623e496924fe5e55bd61f870727082971b563",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/data/railgun-private-capsule.js",
+          "bytes": 4626,
+          "sha256": "b5c244d08e5185d52d3ef8e11a8d223df3a3f5e959cdd956a187646f5618b560",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/data/railgun-private-destination.js",
+          "bytes": 7559,
+          "sha256": "cb1e241d166bb11c0874ea59261ac85cdf89f6b7d35d6447fcf0360695467822",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/data/railgun-private-intent.js",
+          "bytes": 1569,
+          "sha256": "5a5ae43e3b7c4384496e1e17caa1ddfb7bc11e555f28eb8df61d3170c94800b0",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/data/railgun-private-offer.js",
+          "bytes": 2828,
+          "sha256": "120f4b1f3ed31206a5311cf36557bb98c48ab14e6fc58dfad6e984cacee30f6d",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/data/railgun-private-policy.js",
+          "bytes": 6148,
+          "sha256": "4fed357312c315250bac7a9b89988881601fe31975a7b267875d709af8e4b7dc",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/data/railgun-private-preparation.js",
+          "bytes": 5219,
+          "sha256": "d88ae9e0ed6b2f3f73b3f534cc96049134cbd4e88353a0f8a3b6ccbc912fec17",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/data/railgun-private-recovery-data.js",
+          "bytes": 4485,
+          "sha256": "77d9f826d80f5a32c78da2ec705e8c4a33d17efab105165412714d826b80496e",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/data/railgun-private-results.js",
+          "bytes": 5587,
+          "sha256": "a17a8009ec28ccef5a22103757682d3aea08021fc3b1c2866d02934d9e7cfe5b",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/data/railgun-private-signature.js",
+          "bytes": 965,
+          "sha256": "4290f00656d5345d7c5301c979c98a2bb755ac5467880c879dd578c221a71777",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/data/railgun-txid-note-witness.js",
+          "bytes": 7090,
+          "sha256": "55c0f4ee08088f648c7030bce9e88c96b2d8c26d48a8b46d57326a104b9a2a6f",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/data/railgun-txid-omissions.js",
+          "bytes": 2584,
+          "sha256": "643940be28f7064ae34ba96d856ec2f6cf37f623bcd5592be81928a11fe83a75",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/data/railgun-txid-projection.js",
+          "bytes": 12438,
+          "sha256": "21bd3aaef4b0b02c274cf5c0b2b1e9d9f49a9e461bfd7a4a2d6f1e5fef7c532f",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/execution/host-bindings.js",
+          "bytes": 2830,
+          "sha256": "acfcd034751f724f3756ba04ee1813bb3e5aa765f1f1aa00fec35a1785558378",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/execution/railgun-artifacts.js",
+          "bytes": 6875,
+          "sha256": "a28017b216b2f51970185751a6a786945cf33a1fa8552074f0cb6d8430bcd229",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/execution/railgun-engine-manifest.json",
+          "bytes": 2254,
+          "sha256": "54a4d63dea94e17a542d7510c08e1f35ea71256c821639ba86da29b89f8c7f2c",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/execution/railgun-engine-runtime.js",
+          "bytes": 2803,
+          "sha256": "3dd0d43fc4cf9a766539986cd0779573ec49d39c261ebaa1c3906c81653bc860",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/execution/railgun-private-capsule.js",
+          "bytes": 1293,
+          "sha256": "3962d8f52223865f216896ee26091dca5aba5956024f995c1b7c3ab6e8912bd5",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/execution/railgun-prover-manifest.json",
+          "bytes": 366,
+          "sha256": "656cbc549444a9d99162fd5ac2359c957e0919f96802ace21aa9250c8de0a877",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/execution/railgun-prover-runtime.js",
+          "bytes": 2970,
+          "sha256": "d5f94132812502d8e48bc273fe17615bd6038a9f0089884954725efe075c6bd8",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/execution/railgun-relay-capsule.js",
+          "bytes": 3248,
+          "sha256": "36f992c05891d50d9a07b8195a5fedc3c1716086e3da5c005d5e7324a1212961",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/execution/railgun-relay-intent.js",
+          "bytes": 6809,
+          "sha256": "af91328bf1a844a15dd8845a4870354368be242d06b2fab21d4acb65fc55c132",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/execution/railgun-relay-poi-history.js",
+          "bytes": 4117,
+          "sha256": "2eed74c53c22974e26dbbfc3ddaf45d3a48e3ab132cbf1ad8365bf2804253c6b",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/execution/railgun-relay-pre-poi-data.js",
+          "bytes": 6415,
+          "sha256": "3d3651ad7a6f18605ac5763d1587dd4b4e91badabb6e74668ab34fd6e04d0526",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/execution/railgun-relay-quote-data.js",
+          "bytes": 9798,
+          "sha256": "2809f671c4391b61cf9116912b60c205bd4a6796666c2255a655c79f9f71513a",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/execution/railgun-relay-recovery-data.js",
+          "bytes": 9945,
+          "sha256": "2ca06009737b3f6a095d1bd59d86bb47a9b527c0186fe138895bdee9bd8bf8c7",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/execution/railgun-relay-transaction.js",
+          "bytes": 2490,
+          "sha256": "3b956b78518469f75af84bfd3a4845bdafcb6e7a0f2e5972d7c428a50d193ded",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/execution/railgun-relay-wallet-data.js",
+          "bytes": 5094,
+          "sha256": "3fa454587f4f99d3e93f9ea735c453a1e501c64e8ceeb46cb3616b7cf1313d73",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/context-bindings.js",
+          "bytes": 677,
+          "sha256": "4120da76f6d1a6bd83d2d7d8c23c50b97f010ab271650aa3cab777ef6b45900d",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/credential-loan.js",
+          "bytes": 4804,
+          "sha256": "fd7d930854102271ce1bec8b8f07bd74b9b4a8fd5f5a6a58e7c076e4463e894e",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/host-bindings.js",
+          "bytes": 5552,
+          "sha256": "456fcea52e04eb99747b626e0e61151d40b41d42e0e75d00d8a9fdc1a0914a1e",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/operational-facade.js",
+          "bytes": 37826,
+          "sha256": "9ee671464932fe53fbd684a626618c70700a01148b71f7f6ca34a50d417a059f",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/process-jobs.js",
+          "bytes": 1827,
+          "sha256": "9a6b403caf026faeb1850608dddc3137e1430d64e9ef96650b8a1fcc607dfa78",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-account-enrollment.js",
+          "bytes": 31260,
+          "sha256": "66583723fc9e3de3d5c155bfe3134f329c513c55a803ad96fb5cadfbb798944c",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-account-fence.js",
+          "bytes": 9617,
+          "sha256": "f324978506f6e88696a8f723e6a88ef996191283202422e728bfc8ce1ac46310",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-account-phase.js",
+          "bytes": 2203,
+          "sha256": "8e37692afca7195776fd849941bbbc4dc6e81a591323eac60c7e5732002624fd",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-account-poi.js",
+          "bytes": 15457,
+          "sha256": "026c76e66bd1d632e1cb4a0db2b92de66b105d1eea9b6d6a88935cdac3d8f392",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-account-public.js",
+          "bytes": 13179,
+          "sha256": "9401e5866d8a2bf6f7491acec050329b9fa1ac39a6d20c925b72a61e380eb826",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-account-store.js",
+          "bytes": 10552,
+          "sha256": "8a75058b0dfa2f8bb0758123db708750ace332cd4f073b80b61e76978757b8a2",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-account-txid.js",
+          "bytes": 16516,
+          "sha256": "7a0c454c6f0d6cb59772bf9eec3407b563e1dfc7e471646d732c9d6c4f37e572",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-account-wallet.js",
+          "bytes": 92586,
+          "sha256": "595f532aa5af6e8267c1b189f4d95984adf8394a05ec7c217aa0ac4d2b4dfa7c",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-frontier.js",
+          "bytes": 8361,
+          "sha256": "dafeb9425f164bb4e14669048c182bc70088d2fb948a2ac040467ead27038a58",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-identity.js",
+          "bytes": 29354,
+          "sha256": "a0e9435a3ed5ac09514d06baa358e851486848b124a219601bb64c6ff4937cad",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-kohaku-operation-dispatch.js",
+          "bytes": 664,
+          "sha256": "22e4f84c12bdf60750582bdadc64d3d47e71f4e962f1b57a8cc793ef2eebaf95",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-kohaku-plugin.js",
+          "bytes": 40474,
+          "sha256": "ecaa2cba7c99b71034395af4fc0602babd63e15773cab6e10bce04df4decba2f",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-kohaku-read-dispatch.js",
+          "bytes": 325,
+          "sha256": "ab64f89d9b6d5fa811a2b137085c954d8d004ced6749b8584211610055554d7c",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-kohaku-read.js",
+          "bytes": 1326,
+          "sha256": "e4a3795697cc3097c7b23c1bade68a8143881848fb4e9e6291a30fb79dccbe36",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-kohaku-recovery.js",
+          "bytes": 6318,
+          "sha256": "28c9b9b8505fc6433a3a9baf1fbd189bc0da6d907c03308a4c0c0354e8cd077f",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-note-provenance.js",
+          "bytes": 7886,
+          "sha256": "11856ba5ca97961c7d57202a88450c2ddf6578febb0e7b998bcf3929a309a2d2",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-paged-store.js",
+          "bytes": 31845,
+          "sha256": "4b7e1930ec1066b3e76f582cd614da2669edb734fad330f654616c34995ce3b0",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-poi-intent-store.js",
+          "bytes": 23762,
+          "sha256": "6d49d0b20b7b3149782ee3a692cdd2b371131eb0cd68c2df2526a10cd28df964",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-poi-membership.js",
+          "bytes": 5936,
+          "sha256": "c8ada751bbdc8f3739d9c9a2054636a12ec24d857b64c6c1eec24b6d62ae30fa",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-poi-source.js",
+          "bytes": 9653,
+          "sha256": "ef00508bf6b774d5ec1796a9234e0d5eaac5e7d5b7ab47cc9a540306273c0fb4",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-private-capsule-store.js",
+          "bytes": 16363,
+          "sha256": "7568e7332ea6febf3b60a1ba5903f25ece2bec6b5ded5f8842c1fc7947466761",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-private-creator.js",
+          "bytes": 7573,
+          "sha256": "62f8b3833081547acb3bd5d3deab315726e9ea8d524728b251ddd885a61329db",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-private-operation.js",
+          "bytes": 28511,
+          "sha256": "17aeaab6031547ab6cf025b6a346d20eb819635164ffa2d502b6b2858f5df8af",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-private-preflight.js",
+          "bytes": 15979,
+          "sha256": "6ed53054d4257ff13a0c3b3436a1cf037b880b2ee37fb1b8d56bbcf422479f0e",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-private-proof-recovery.js",
+          "bytes": 9865,
+          "sha256": "884b5be1060857eb45e5adcda2c6510595025c29b05067de1f8d9078f936026c",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-private-proof.js",
+          "bytes": 5839,
+          "sha256": "78c83eaa8d25761bbe236405af62d47b5754f8f066b52789ca83f30fad8738a4",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-private-receive.js",
+          "bytes": 8239,
+          "sha256": "58cdf83fade0863a449b2fb1459cd73d8c165d58fca8112a7c25c02061a1b972",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-private-recovery-history.js",
+          "bytes": 6076,
+          "sha256": "29499ab93ad097a393ebba22fe1cd64faf07b157c8716bbd67591081c6f0a3be",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-private-reservations.js",
+          "bytes": 34106,
+          "sha256": "8f6d0a0f514d23c50183b3739efcc050de0c74e77101e28a068bc4bae14fc609",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-private-submission.js",
+          "bytes": 59966,
+          "sha256": "6eed619e6c24d7a6e4b54ced4ddb9e444defd5409916da147bce267386434faf",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-process.js",
+          "bytes": 13817,
+          "sha256": "472d39995a22905a3dbd0ea546b5de8da3b60e360ad6a7978041c1509af367ed",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-public-catalog.js",
+          "bytes": 9995,
+          "sha256": "34aee4688c4e74ee765c22eb193b1769e880ff045dcb1cd7a4d7b7ce6851d870",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-public-policy.js",
+          "bytes": 1050,
+          "sha256": "2aa3095194710d41dec99f7c5d82ef02c3d9d79e206ecd9c2c1377e7fd591bed",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-public-records.js",
+          "bytes": 10886,
+          "sha256": "13df9cb251246ebd54e45f9b64f52f96796d4390430b9afd4148ac5e7cb7cedb",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-public-run.js",
+          "bytes": 4974,
+          "sha256": "d1829cd9cf4cc8783f4a2de6c139f9e22ba6055c3f618e952bbec07ea733de82",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-public-services.js",
+          "bytes": 11341,
+          "sha256": "ae7fd25dab9f098406474b85c83b52b0a44019bd2a0f79f23129bceae54efe90",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-recovered-review-budget.json",
+          "bytes": 186,
+          "sha256": "84d9e7c1229572fcb3dafc9bb356d12510a0c079fc5b7a6e93f79fdfb3e542d6",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-relay-operation.js",
+          "bytes": 40413,
+          "sha256": "0d472c46391c3c66103a4cfd641d76d4911c3ffa9a15d56e4a3e28d3fc286f0b",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-relay-signature-verify.js",
+          "bytes": 9820,
+          "sha256": "2423b64b514abbce3e28cf1ce1bb370858060c5d449d250fe1a131e33c0e33f3",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-relay-transact-provenance.js",
+          "bytes": 8452,
+          "sha256": "bcb958a7ee83bf12fdca2a9e037950f3a300a8192b33fa3a125abe7ca0a46eab",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-relay-transact-staging.js",
+          "bytes": 20552,
+          "sha256": "eef6f3f15b663f0872fc3aa46b173df819451f7c0f9e5f7e642565213c731bb6",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-reservation-ledger.js",
+          "bytes": 13162,
+          "sha256": "3dc157cc6e44c42778cdf8aeb91ee3322ce8b0fc16706671831e54ad12648ae6",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-scan-coordinator.js",
+          "bytes": 25626,
+          "sha256": "d45269047e6cdabfec5bdd7c011d2b9e9f83168125247e6b8a841bc21cd6ceda",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-scan-journal.js",
+          "bytes": 17353,
+          "sha256": "7f96a3540420e4253b6f9124a6e293b7aca383790656c8139d5c558f84fea807",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-scan-source.js",
+          "bytes": 29911,
+          "sha256": "0a9a078ff851b0f7b6b762f0bda93b02e7467f2e6af2259e100cd15ad5ebca70",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-session-worker.js",
+          "bytes": 13589,
+          "sha256": "bf564be656aaebd0ed4b5915013f389e805f72ebf176376a7a3fa0876de0f9b8",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-session.js",
+          "bytes": 17453,
+          "sha256": "b7851f6727086ed31bee6617240520ba64997b418f21101e06c27fb1eb414b23",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-shield-intent.js",
+          "bytes": 2137,
+          "sha256": "f2d3d54d5171454d7acaa40378b87de7fb5f86856d237fe8648348f32b724516",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-shield-operation.js",
+          "bytes": 16270,
+          "sha256": "f070078e8f8f947b15ec84fe08d7f525026ac4c10af314d3747127bfa9fbc573",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-shield-policy.js",
+          "bytes": 3848,
+          "sha256": "1d9da61d8da42e37891dbab11932eb1427e43f8549f32179c6683126230d6f49",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-shield-preflight.js",
+          "bytes": 9304,
+          "sha256": "2a3ecd080d8c8470d7d0daf7a52b8c7a45ff6ac8eadf763d204f9c221e75d891",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-shield-prepare.js",
+          "bytes": 7274,
+          "sha256": "58578dbaca5ffc7f43a11f97278df5b4dec48591cd548068877b2bcb3838e4b4",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-shield-receive.js",
+          "bytes": 6944,
+          "sha256": "2fa295b273fa9423b7a938dc6c0de0e7cefe77aadab34865257c335c4f403899",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-shield-resolution.js",
+          "bytes": 2118,
+          "sha256": "3da55173dbfdadf4688e8b4a82b7eabab18a72d08e38f7e853b065bafa319e51",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-source-feed.js",
+          "bytes": 2232,
+          "sha256": "a6b914e50c49542c6500dbeb538c296dacec13b4dc7dc82491142dd730ce0c11",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-source-ledger.js",
+          "bytes": 18192,
+          "sha256": "3b435ad006ba3e731317e33639c4abbfe2439c740beaec53abbc9ad707564383",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-store-cursor.js",
+          "bytes": 1703,
+          "sha256": "03549b879ab8d78aeb0ddd1187815b3898ae250ec08369c8cbe6736e14d5661a",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-store-owners.js",
+          "bytes": 752,
+          "sha256": "f58212448610bf0dc26fa349654b3b34cd82d3d174506fa052b4091d5e8fe46f",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-store.js",
+          "bytes": 12145,
+          "sha256": "95f2da40da785cf5160c8592f48ca4439cacf76ed2bc814b42841449c9363f6c",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-transact-intent.js",
+          "bytes": 6344,
+          "sha256": "e07edb7c2a3210070ac7c95fe7ac9ae446cf96d9e963528e61f2b6170f20f20f",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-transact-provenance.js",
+          "bytes": 9171,
+          "sha256": "0cadcd703a7493b31cfc6faccb83d5b956fccbcd24496c84e34f39964c48fb70",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-transact-receipt-policy.js",
+          "bytes": 561,
+          "sha256": "28c70acef573c94f7f45d16cbc157ab47211073f1c78ea0487476d6609c3006c",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-transact-receipt.js",
+          "bytes": 8952,
+          "sha256": "0781d1a7d73424e1e9284850c4af9ec92d27c81195eda79e276b0c003bc1dd37",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-transact-resolution.js",
+          "bytes": 6169,
+          "sha256": "1f86f7e48b6fea3ccecb3452e3db4d2629c527d90b7909dee15703f6ddca07f7",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-transact-staging.js",
+          "bytes": 11890,
+          "sha256": "23dd5110568c24988ac3220d2a4d19a5908cd8af8778fd826eec3cf3cff4d0ab",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-txid-events.js",
+          "bytes": 6658,
+          "sha256": "8466908993642fcbf739422aa35325c272b82879eb31aa84ffa43b27366480cb",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-txid-journal.js",
+          "bytes": 12990,
+          "sha256": "694cef826fff6548c3347dd49ad458f61b3700d59dad0c38d8aa0380d52f540c",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-txid-policy.js",
+          "bytes": 1234,
+          "sha256": "03dff0da039fe5ac1c9afd6f8c2376ebb1d8f90f1ba545a5a0fc2c071313024e",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-txid-root.js",
+          "bytes": 3688,
+          "sha256": "dd09cd833d1e4392cf9496ba184987bc2b3a056b33e2fc59fbd585596efaf94d",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-txid-runner.js",
+          "bytes": 10920,
+          "sha256": "a3fff3f960ecf797ece753f1c9dbafcb1bc6e9c80dcce06abae739c45c6d0dcf",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-wallet-catalog.js",
+          "bytes": 11477,
+          "sha256": "d6f9d30db8ce0072e6387cef9f0711c06c663479678bac5698eb8f216c812f51",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-wallet-coverage-store.js",
+          "bytes": 15696,
+          "sha256": "a5c12c180356a202456a3f951ee27e185d2a68df335833e7813c1c6235f0bc5b",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-wallet-coverage.js",
+          "bytes": 5165,
+          "sha256": "08460a010b457f20fdd71fe877e83fb1949a72395d7b8c945ec09d1402ffef80",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-wallet-journal.js",
+          "bytes": 14420,
+          "sha256": "4556fa5fb875a4dae248df30e60b051a264f9f2c7ea20ef1cf6ac30d35c60d57",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-wallet-policy.js",
+          "bytes": 1048,
+          "sha256": "f951955ae4e409652098a46a4eaf0b6c6232e879fea0bcef462edc82c0f957c7",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-wallet-read.js",
+          "bytes": 3737,
+          "sha256": "4c1069ca2afc310ec35104d81a926b8c25dcf8e6abf80a8b390f5a7b26027416",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-wallet-run.js",
+          "bytes": 20892,
+          "sha256": "4464c92e96b8e3b3dd6a0716bf70a378b58aa7085cdfa6b7f802352e90c1f5c3",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-wallet-runner.js",
+          "bytes": 16238,
+          "sha256": "2972fd3a2593c1f4deee3bbfa3cf58876ffe1600a32d34859d3acaa56133a11b",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-wallet-state.js",
+          "bytes": 1764,
+          "sha256": "5969ea0bc38c5d8ca9f4563c9a72c39e9bbfb34621f175b6e2d41ac4f6bb9292",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/railgun-wallet-storage.js",
+          "bytes": 8918,
+          "sha256": "0c8c4840f13c3c611866b8bd76047718408ae3168224b929dc6a6dced6f91d8b",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/source-files.json",
+          "bytes": 10067,
+          "sha256": "945cf9beac4a149b5c434d5a173135da524f6076a5c2b35a15e7e0fa9612464a",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/owners/source-identity.js",
+          "bytes": 3094,
+          "sha256": "b24f577a0051d98d9ff42fce70d164b55865b9b9926f391b43bbef308a543746",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/railgun-engine-manifest.json",
+          "bytes": 2254,
+          "sha256": "54a4d63dea94e17a542d7510c08e1f35ea71256c821639ba86da29b89f8c7f2c",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/railgun-kohaku-read-data.js",
+          "bytes": 3038,
+          "sha256": "21522a816a905382b206acfab0cbfd5a767aefcfbccc82c051d18b952e4d409b",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/railgun-kohaku-read-dispatch.js",
+          "bytes": 738,
+          "sha256": "ed930d0517b759f442a6c19a9d250f0203fce5fc229fd9c6a750051fa41bd705",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@freedom/railgun-kohaku-adapter/src/railgun-shield-pins.json",
+          "bytes": 723,
+          "sha256": "0f38d69a9acb5ecdaeb7197f4410a1c6068b8896e4204a179631176223e31a75",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/browser-passworder/dist/index.js",
+          "bytes": 14656,
+          "sha256": "637a7b2ae4726a71c84c7128b7b3c49f81d3bb0b95ae9bd34097e22131f859d2",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/scure-bip39/dist/wordlists/english.js",
+          "bytes": 13254,
+          "sha256": "3e06402e5ee2eccd6b2ded3a888717dc8845a0750eeb73e27a4f7676c356f4ea",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/superstruct/dist/error.cjs",
+          "bytes": 1264,
+          "sha256": "dae72284a9f20f9a9a4d21880c63122962076b9eeeaf5bfea6eda9a996147091",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/superstruct/dist/index.cjs",
+          "bytes": 1179,
+          "sha256": "3746ca017b4d405245be1e0ec1e63a1e44f803134a3a6fb00bf9944cfbe096f6",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/superstruct/dist/struct.cjs",
+          "bytes": 6754,
+          "sha256": "9db7e12ff0cf64a37ffce23ae47ed43e762ee1ecfe0e2423e5af680f769f67db",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/superstruct/dist/structs/coercions.cjs",
+          "bytes": 3396,
+          "sha256": "e10804a60639497112627d72c6e93ca2a2d6c806849525dc4a3fbda4393e0d89",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/superstruct/dist/structs/refinements.cjs",
+          "bytes": 6523,
+          "sha256": "55cfb86a848895685c9e278888af657efb050f35be2c4b3074ee575c938b23d5",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/superstruct/dist/structs/sensitive.cjs",
+          "bytes": 10991,
+          "sha256": "1a00234234bdd82ede081f252ecf152e13cd3b62c637ef9c0e19ed974c7a0b82",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/superstruct/dist/structs/types.cjs",
+          "bytes": 21151,
+          "sha256": "a25b817f261afa67bd86466bf5eb22d7eb115b332231b468ecb533d1f99c06da",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/superstruct/dist/structs/utilities.cjs",
+          "bytes": 6281,
+          "sha256": "ebab2e3b930edffacbf89ead5f0262f0c91bd6cd224c07ca9eb8a17e16b386fe",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/superstruct/dist/utils.cjs",
+          "bytes": 7220,
+          "sha256": "f900b762c89e510108189e544bdc38dd312aa89711e12dde2c8bc70fd317d28d",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/utils/dist/assert.cjs",
+          "bytes": 4291,
+          "sha256": "41dc8d7f566f17db3c2621fc3f956b9a585b8c0dc0ed9d1d490f80298f7906f2",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/utils/dist/base64.cjs",
+          "bytes": 1238,
+          "sha256": "3137f0bf53d38c463e0ae67f9e16a74dff6ef96f80289f13206085390805c26c",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/utils/dist/bytes.cjs",
+          "bytes": 16324,
+          "sha256": "94f7552fddd694e0970658918a5b64c7b5d65e64892536124f83c295dbd821bf",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/utils/dist/caip-types.cjs",
+          "bytes": 17597,
+          "sha256": "de93c695f0711c25b39512411b753613b6090991200cfeca898ee9f5538aa549",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/utils/dist/checksum.cjs",
+          "bytes": 381,
+          "sha256": "ab9036c83b3557686a0a5362335544a074dd362a3b144200721b7b3e866e8477",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/utils/dist/coercers.cjs",
+          "bytes": 6080,
+          "sha256": "f58607d6fbe8f4df4928db9553fa992a54378b83198ecf69794f65259d3334a7",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/utils/dist/collections.cjs",
+          "bytes": 4767,
+          "sha256": "375ea58fb54d4231cf7b8f0e3cc8a397c367de26036c9b4e739366ff230983c5",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/utils/dist/encryption-types.cjs",
+          "bytes": 122,
+          "sha256": "62ea875dffd0c850653ee3bf20a2e829a142aadc04963f230bbf8ad5d5f9258d",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/utils/dist/errors.cjs",
+          "bytes": 4839,
+          "sha256": "58ffe01478e10c114f0e60d3f9c24836a0b6e93141f138b3d8ea7869e3de4df1",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/utils/dist/hashing.cjs",
+          "bytes": 2408,
+          "sha256": "da48f21c42ff3b4b1ee8c0bb2a1744cb3e932536c4ec306d892768b4a5b3fa45",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/utils/dist/hex.cjs",
+          "bytes": 7700,
+          "sha256": "c2cca8c2325ac441b85ea1bff89cdf51f12db4f6e7dec96a96c3659275c2b03c",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/utils/dist/index.cjs",
+          "bytes": 5010,
+          "sha256": "515dd709bb2e2c1599819f86d0a1c9e1ce0fb0f70ba1b80243960ec3f3e653b1",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/utils/dist/json.cjs",
+          "bytes": 17921,
+          "sha256": "30591ec8f24540ee6993349a87e2f7abb3b89d4a5a3e64c65cd3df7638f55dc8",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/utils/dist/keyring.cjs",
+          "bytes": 113,
+          "sha256": "cc5cccfa473b978eecdceeadb48f0b7176e614f6e90d19f9dc182c7ae8f45ff2",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/utils/dist/logging.cjs",
+          "bytes": 2110,
+          "sha256": "a888f44b577c614fd567bd83e474968d06db539721c8138a91d1176a3823b6c8",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/utils/dist/misc.cjs",
+          "bytes": 4988,
+          "sha256": "64b598655521a80eef7d98dc2a6517f0e8958a4a8b511cc70456324c8986eebb",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/utils/dist/mnemonic.cjs",
+          "bytes": 2416,
+          "sha256": "41fafb3fdb0e93618ef97b283bb284043b7e702fca9d9c99e85f3da857aa04b8",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/utils/dist/number.cjs",
+          "bytes": 3837,
+          "sha256": "d639d240c678471d0c55d85f3b9d988337e74665ff325ba874416db18b33f309",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/utils/dist/opaque.cjs",
+          "bytes": 112,
+          "sha256": "17332cedb15f4f10462d892ec900dd2c2b40f7e2fee745f80d282fd6d0491dbb",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/utils/dist/promise.cjs",
+          "bytes": 1867,
+          "sha256": "ae2ea47ca767c2d1590ed5418e20a3b21bbcd426dd05edebc6f28fc7ff778231",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/utils/dist/superstruct.cjs",
+          "bytes": 1073,
+          "sha256": "c706808d75e7e0714ffc2fd3825a624d709e481980fc75a29780e593589f30bd",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/utils/dist/time.cjs",
+          "bytes": 2087,
+          "sha256": "ee2c8e24623d4f845573842cd5ac40d88d84b3ca2cf6e2683949344cb8fe931f",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/utils/dist/transaction-types.cjs",
+          "bytes": 123,
+          "sha256": "a4d6151d77fb71907585b0ad61a8488598c9806fb59952b647b15e4bfe847b59",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/utils/dist/unitsConversion.cjs",
+          "bytes": 7564,
+          "sha256": "882d0f6f14a167b78ea5d259425bf2330d92c5b254b9c9fe5adf83cc4268e914",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@metamask/utils/dist/versions.cjs",
+          "bytes": 3376,
+          "sha256": "100ad7fab60efa7fe4e48406fb53941dc07a5fd43563c2ca9c1dc86c0ecef2e0",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@noble/hashes/_md.js",
+          "bytes": 6470,
+          "sha256": "4eaf0ae8f8191c50acdab7c3de7f335bf24845e4b562bdbc3e9f61cb7a873831",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@noble/hashes/_u64.js",
+          "bytes": 3819,
+          "sha256": "9b109bb57c0d8852bda12136f0f588ffea2a1a3c0f4241bdbb3727cd449976ae",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@noble/hashes/cryptoNode.js",
+          "bytes": 579,
+          "sha256": "7d96258d2ff9da048ceb1fe88fb68172c5f952e461dda65fd08f30e20b5416ae",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@noble/hashes/sha2.js",
+          "bytes": 17868,
+          "sha256": "53b6dc30db76a7c4e4b9370049e7a3c01bbb5507d058c084e97ccb3ee050faa4",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@noble/hashes/sha256.js",
+          "bytes": 975,
+          "sha256": "f2119097d9414c28c9539b0160a33def471c4f78c075e3f8ab06df72dae47938",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@noble/hashes/sha3.js",
+          "bytes": 9109,
+          "sha256": "313da3570150e80b02c3631508ba99099438d2daff641b9cadb2198e0f1d18ec",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@noble/hashes/sha512.js",
+          "bytes": 1411,
+          "sha256": "3864c87085dd6244a3bf1fbb019bd0730054ee895a570f401cb6c38262ed852b",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@noble/hashes/utils.js",
+          "bytes": 11528,
+          "sha256": "7edf19720c345e1cb76e8d3a9306f3344457d4e03576bbb0b3e1ffd0a42d0d30",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@scure/base/lib/index.js",
+          "bytes": 25417,
+          "sha256": "275c5d28b15a773540f4c63b67228b4d563c47ab818d731c43dc5e057db52f34",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@scure/bip39/index.js",
+          "bytes": 12139,
+          "sha256": "c4c8b3e2a23cb8cc30babf2518518b6d7f6f1622b69e2ee6434b327896bdd4f8",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "@scure/bip39/wordlists/english.js",
+          "bytes": 13217,
+          "sha256": "d87a52ebb094d166717691e624aea3a1bcd45dd04e6c7748e8edb7ae10f3c458",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "aes-js/lib.commonjs/aes.js",
+          "bytes": 48718,
+          "sha256": "46335d8424299cd491ccbbe7f34055c278d398ef38e0ef25096382f3b9725fd3",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "aes-js/lib.commonjs/index.js",
+          "bytes": 1634,
+          "sha256": "3ac8fc0354e925a0ccc723ab5119ae3a17518e4ad2ad77ca52a9a3abb6e70a1d",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "aes-js/lib.commonjs/mode-cbc.js",
+          "bytes": 3387,
+          "sha256": "62619a9dacdd091cbd182aa3e5d9cdfdd40cee3f936f0e70d858c8c9ef237bc2",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "aes-js/lib.commonjs/mode-cfb.js",
+          "bytes": 4336,
+          "sha256": "71812548674112ef2b64a459861e0eaa143598c862b7bae36136243709ac316d",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "aes-js/lib.commonjs/mode-ctr.js",
+          "bytes": 4294,
+          "sha256": "ae9d1a10ebe04166ee4a0671174074871f233a7ee3d3505af099dbee2cb48ff9",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "aes-js/lib.commonjs/mode-ecb.js",
+          "bytes": 1128,
+          "sha256": "2f84d199d5f19df0b6ab7550aeccb57646f21109c50868457b5277978bc7623d",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "aes-js/lib.commonjs/mode-ofb.js",
+          "bytes": 3350,
+          "sha256": "f07090831da9f8a7679708b210d49fb30967bd48f9e2bfced3c11e541391d9ce",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "aes-js/lib.commonjs/mode.js",
+          "bytes": 590,
+          "sha256": "848b2fb23df4dee2a62863bd5261f469f5e763a910c2c9f5d6f86b94a3c048c3",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "aes-js/lib.commonjs/padding.js",
+          "bytes": 992,
+          "sha256": "21f1fde759060ec2c34a121c679938610aca05a16edbed19854263db6f0796aa",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "better-sqlite3/lib/binding.js",
+          "bytes": 2123,
+          "sha256": "4fe0f892facc02af7db0a1770150565d2e944e7da3c6493116d8e2a01a0f9b19",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "better-sqlite3/lib/database.js",
+          "bytes": 4729,
+          "sha256": "539315c97591561394d2a0f257632305c3af1e32915a123aa8cc9032056d8ae2",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "better-sqlite3/lib/index.js",
+          "bytes": 149,
+          "sha256": "0d56e190de8623278641b613433e89c4af2e5c90092c9c6e425f873d7fbc7ccf",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "better-sqlite3/lib/methods/aggregate.js",
+          "bytes": 1932,
+          "sha256": "e9f74eb919ec93fe089c95ddf25a98f1f631c80418fa34fb2346ca1bc29f1b82",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "better-sqlite3/lib/methods/backup.js",
+          "bytes": 2380,
+          "sha256": "ea29d34992bb02e006d0fdeda9675ac5d2bb227aaf57468decd997e9fc9c7dbf",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "better-sqlite3/lib/methods/explain.js",
+          "bytes": 292,
+          "sha256": "0bd8cc80ccc7338f1d93058beea0cde924d4e7e652da9f51267e7c0757361be7",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "better-sqlite3/lib/methods/function.js",
+          "bytes": 1396,
+          "sha256": "f431d49303b8bbdc044b1f1b455bdad21fc9b74b007de0acb22f08f25b4febd3",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "better-sqlite3/lib/methods/inspect.js",
+          "bytes": 174,
+          "sha256": "4975a78daee850adee62ba98719d0f223819a0ec135a07c0e302994bd8dbff61",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "better-sqlite3/lib/methods/pragma.js",
+          "bytes": 543,
+          "sha256": "d399bf1dbc85ef8a51f946c5a9505f2c37d0b1bed3f68863b1bf202d53d6524e",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "better-sqlite3/lib/methods/serialize.js",
+          "bytes": 625,
+          "sha256": "7a10ee5c2735384b7f0c361811bc6d017db29f62b203fd3c68a35f667e2c2605",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "better-sqlite3/lib/methods/table.js",
+          "bytes": 7243,
+          "sha256": "2356885ca1ef37d20f2daeed2b82b9dd6e61481e851194174a16d32efa3ae2f0",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "better-sqlite3/lib/methods/transaction.js",
+          "bytes": 2855,
+          "sha256": "40b71d6113f328f96cec8f6f888ffddd98b5926d38fb1e2746939c7daba93e2e",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "better-sqlite3/lib/methods/wrappers.js",
+          "bytes": 1152,
+          "sha256": "b289d339ff56b19ab40d109050080e1c844f2a5d01e62d8cb37a0152b0479a47",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "better-sqlite3/lib/sqlite-error.js",
+          "bytes": 512,
+          "sha256": "903c140bb3d9d4f6256124889f5a820a491299907885d5b9d5ff2c4eaa268a06",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "better-sqlite3/lib/util.js",
+          "bytes": 331,
+          "sha256": "92b2e39e2151b43a2252e10b6d6de876ecaf0008336a4fa1dfe1317b20f1916f",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "better-sqlite3/prebuilds/darwin-arm64.node",
+          "bytes": 1980736,
+          "sha256": "98e0e8acd01c632fe5615243e1296af0372826f8783b18fc31c506f73c47459c",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "debug/src/common.js",
+          "bytes": 6915,
+          "sha256": "dbe83d2bb5837f3c4d7fe537b8004c585987270eceed5b06b8e078deb0ae214a",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "debug/src/index.js",
+          "bytes": 314,
+          "sha256": "aa127ff1752b7d9c7415c5c7bb6994d9aa722b81bcbcab4bd48316b013d23bf3",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "debug/src/node.js",
+          "bytes": 4728,
+          "sha256": "d7b26d7c92f8ea7794b77ce11f3c11cd18c9084df7c357e3c7025344fa28aac6",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "electron-log/src/core/Buffering.js",
+          "bytes": 613,
+          "sha256": "1554b35c7baba7c1d91dee9458e66d5163be59bfc1f2c713589e379d7516983d",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "electron-log/src/core/Logger.js",
+          "bytes": 5471,
+          "sha256": "2572098d75d2737989517b5d27bd37bf6eab1ca846271d69a96d625e60a64255",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "electron-log/src/core/scope.js",
+          "bytes": 854,
+          "sha256": "5a57c42dd543207fd96056b101df00eb97f3f19dffffc17c826b9e2a026a0c04",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "electron-log/src/core/transforms/format.js",
+          "bytes": 4094,
+          "sha256": "2163c8bcaf2e74f8167b4bcb84dd2211d7451f558844721c7944ff884ff1b7f8",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "electron-log/src/core/transforms/style.js",
+          "bytes": 1520,
+          "sha256": "d786b2dbb92743dfdc33bec9a12ce215b911aaef59f8d88d6bb282d4bd593b02",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "electron-log/src/core/transforms/transform.js",
+          "bytes": 372,
+          "sha256": "d41edd15ea18c66efc749f05848357afecfa36b42f65167827f7e795578784d8",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "electron-log/src/index.js",
+          "bytes": 513,
+          "sha256": "9554d4b13d8c2a36378d4853a8e1b28563f03fa3f610a692e755df04d64ba53f",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "electron-log/src/main/ElectronExternalApi.js",
+          "bytes": 4692,
+          "sha256": "1b06b5416e5c874ed8fc6325794599a8bfa6bd524d3a2e266dea4e50faaaa1a7",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "electron-log/src/main/index.js",
+          "bytes": 1204,
+          "sha256": "9232a0dd58735cf11489fb21b35506619faf723b7cb3a1bf699ee0965a929325",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "electron-log/src/main/initialize.js",
+          "bytes": 2459,
+          "sha256": "7d5e6c1d18bd56ef030f12008fdd688c2dc5f40949b9d6fa997caa739a6ed4bf",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "electron-log/src/node/createDefaultLogger.js",
+          "bytes": 1205,
+          "sha256": "832b6e548db30fcf367b7ee5afff2dd7325a377af5ea9f00404cdc083ea54d96",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "electron-log/src/node/ErrorHandler.js",
+          "bytes": 3311,
+          "sha256": "42052a03eda2f33163ea5f46d4d78dac799e801539ae474ab1b730a507a1b7ee",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "electron-log/src/node/EventLogger.js",
+          "bytes": 5836,
+          "sha256": "9f82f44f0dbc60c9ac2276699f1d6fda1a46c605dd28a8e8c32f2af186919e97",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "electron-log/src/node/NodeExternalApi.js",
+          "bytes": 4951,
+          "sha256": "9eb39da5689391cc7fc8a7779967db3186beab3bf241c1611774caf0c486089a",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "electron-log/src/node/packageJson.js",
+          "bytes": 2349,
+          "sha256": "0c2a87c76002dedd9778d04a2e360d10009fc8561dc2d649e41f9196ffa8668e",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "electron-log/src/node/transforms/object.js",
+          "bytes": 2906,
+          "sha256": "990e63a431feef1addad96aa8525fa4d0e797583244a04f527776869a0be6d4d",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "electron-log/src/node/transports/console.js",
+          "bytes": 2517,
+          "sha256": "1225cc6aa07c73f442c75b96c6df2990ac2b7a550d5430910056b114e1608272",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "electron-log/src/node/transports/file/File.js",
+          "bytes": 3299,
+          "sha256": "c993861cbe264159b7d77cf6489ea875e1b248f4cdf95bb8a338fcb63b0b48a4",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "electron-log/src/node/transports/file/FileRegistry.js",
+          "bytes": 1789,
+          "sha256": "e3b6ab7aeb35b08072b3be580dcfb1c0ebbb8e892f2d412f2f22279e129f74a9",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "electron-log/src/node/transports/file/index.js",
+          "bytes": 4417,
+          "sha256": "678db06d5434325ee12f208d6c4de5db12c7a99205812800af664d3993e9c1ec",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "electron-log/src/node/transports/file/NullFile.js",
+          "bytes": 232,
+          "sha256": "f59571c2745779b7ab0c1fb54f2e219964444adac1d1d03de8fbc9e633d78a32",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "electron-log/src/node/transports/ipc.js",
+          "bytes": 808,
+          "sha256": "e9c86603ad45226c86cfb77fd631b93c47df3f76c06312d684c23ac0931e447e",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "electron-log/src/node/transports/remote.js",
+          "bytes": 2114,
+          "sha256": "4d3d566a5cf821a80da7fc5a19748bd47128148f0a44709beb3164e3f95af705",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "electron-log/src/renderer/electron-log-preload.js",
+          "bytes": 2054,
+          "sha256": "6e488d9b11ea738f05f51c2a22cc68c8add00ba5126f797f9192cc92ae899d13",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/_version.js",
+          "bytes": 278,
+          "sha256": "f0e5c3b54fe8023dc46d47b63c568fb396864b5928e5ee6e0a94b1e2f97d860a",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/abi/abi-coder.js",
+          "bytes": 8609,
+          "sha256": "13a2eecdf8f2bcb3b0c65e888f4b37ff791828d9aa6ab346a96da8f59e97fabd",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/abi/bytes32.js",
+          "bytes": 1454,
+          "sha256": "3ad6af4d1b7ca767bfab298b579585e7eebc56023c365f349507b3b3ef23657e",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/abi/coders/abstract-coder.js",
+          "bytes": 16655,
+          "sha256": "fb0661a9ab8bfc713b5c6230a240737a506c8129a100ef34714f5b1ea0571df2",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/abi/coders/address.js",
+          "bytes": 1081,
+          "sha256": "8e7123a934a277af1c259b1569d25750676af41364d5d780022eedcada8b3ec6",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/abi/coders/anonymous.js",
+          "bytes": 756,
+          "sha256": "8dad034d4aaaf1ab8bc0ac0831bc62b8e54555bd583053fa0d278ac93db4dece",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/abi/coders/array.js",
+          "bytes": 6372,
+          "sha256": "37809d12e3c6498a447b64e81d1f6d8626765991578eb9174252f91e90f52a6c",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/abi/coders/boolean.js",
+          "bytes": 710,
+          "sha256": "0818096a027ddf2eadeb1eb45709d504338caf533828a08af43306d741a45195",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/abi/coders/bytes.js",
+          "bytes": 1096,
+          "sha256": "23fb072f86b863f15213beeb0f23a952cdce3ed4faf284d1370d808b6a3c2d29",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/abi/coders/fixed-bytes.js",
+          "bytes": 1175,
+          "sha256": "0f191b350d75279a5e9b4ff6235fb0a83cdc63843dc8e1bde57e3e72f9db8d53",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/abi/coders/null.js",
+          "bytes": 705,
+          "sha256": "f4bbbb587ca6a367cd000876b5477b33b75ec547a75b006d39debcadda99e6ce",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/abi/coders/number.js",
+          "bytes": 1944,
+          "sha256": "f16f33da7e0599a3ca4ce3446428e5edd2221ee40fa391cbc03e8820b6e53d58",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/abi/coders/string.js",
+          "bytes": 749,
+          "sha256": "320975dd997b3cdd8f89afc261f849967d9cd1898f8f82c14196d2d7c6bc9c3c",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/abi/coders/tuple.js",
+          "bytes": 2182,
+          "sha256": "b0a8a65b9932a5e4b4e56454365062ded028b6c0c06d155afa9d025372cd2509",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/abi/fragments.js",
+          "bytes": 47525,
+          "sha256": "dcaebe93b0a7c634a91bfeb57e16cd5653169eaa8f7caec75e5737cd6efe7684",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/abi/index.js",
+          "bytes": 3767,
+          "sha256": "7a24b12137f26db188ff54e18380125f17dd32f9380440278f5f592ee4bbe429",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/abi/interface.js",
+          "bytes": 42771,
+          "sha256": "bc8afe177045695f66582bfeb40838968c73061e9425e134d7056a9ea6818851",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/abi/typed.js",
+          "bytes": 16578,
+          "sha256": "8bb3c0686c5ef2eec79cc452ea6a7df674ab536bbc82116f6c9cadde1595669c",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/address/address.js",
+          "bytes": 6132,
+          "sha256": "6b3aa63e2c8b2367ba06e4428827a87341c1db657b3b5cfa852e8616189becc9",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/address/checks.js",
+          "bytes": 4019,
+          "sha256": "bfae8d9fdcc50248e5c2795dfe690ab08d4502e379922a270ac02ee4b52e1a87",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/address/contract-address.js",
+          "bytes": 2992,
+          "sha256": "9fa1e108e397adb593ab5aa1e86dc22b3ec89cda72194b44030755d625143199",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/address/index.js",
+          "bytes": 1903,
+          "sha256": "af61e8c4aaaf6568209b95c3d7a70bdf645c8c6ca381631d8d6dcde7c7ee3aa1",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/constants/addresses.js",
+          "bytes": 324,
+          "sha256": "5d3ad42a13ab2351bac8ab8547ff427b71ae38d55f4b9da94080c877e627031c",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/constants/hashes.js",
+          "bytes": 360,
+          "sha256": "0019dc68da49851784f99e57f4592fe0477c24f8b5991f781931926e2982968f",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/constants/index.js",
+          "bytes": 1680,
+          "sha256": "bd8a606ece8f8fa3ec7df4d7c918f855d5d6ec102872470ad94bc3d2a2bb6999",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/constants/numbers.js",
+          "bytes": 1388,
+          "sha256": "4dd785d7cc711f099a548e7a8629f3ab1638a0195fc790fdaf10aa2af22d17fb",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/constants/strings.js",
+          "bytes": 553,
+          "sha256": "c6a9fb3a300667ade30855c300af5824f09eb07b30bbfb0ce02f1b4d479095dd",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/contract/contract.js",
+          "bytes": 36247,
+          "sha256": "d2c308a2336f0b89f9e8e91bb72aec79c914c9a9a84bd45c7bcb225945cfa96e",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/contract/factory.js",
+          "bytes": 4459,
+          "sha256": "78fd09abe501222a9a84553d8013da0893a5afc026e87f4f1e81c42327674b4c",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/contract/index.js",
+          "bytes": 2124,
+          "sha256": "5362ede26f9c65db10c64e06e42814c9a6307e846f3ee9315d256f21ac2e7d9a",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/contract/wrappers.js",
+          "bytes": 5644,
+          "sha256": "0c640d904fad10cbd8496687df519ff6d7e072567e7f6b5160e1725264400866",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/crypto/crypto.js",
+          "bytes": 712,
+          "sha256": "0291e2a48dcfbfa996ac688f366daf129541e4d376057983df9bc0d1ef86e39d",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/crypto/hmac.js",
+          "bytes": 1562,
+          "sha256": "2e941a9caffed641f0ebdcac89eff405784638e82a45168483c82ecac42d2374",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/crypto/index.js",
+          "bytes": 2794,
+          "sha256": "ee1887611b9b2266751699f3a11ce0405541443ba1ad3f4ed29f1fde71574e4f",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/crypto/keccak.js",
+          "bytes": 1451,
+          "sha256": "ca68418d92aca22a795dec5856f0823040b077f05eb9c077baf9449c7159475a",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/crypto/pbkdf2.js",
+          "bytes": 1862,
+          "sha256": "23408cee7967d0b3ccdc3649e5df04ab376b0a4e8990ab93dc023390276f19a5",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/crypto/random.js",
+          "bytes": 1158,
+          "sha256": "b671b6118c253366f295ccbeeab5cbe14c2f9838808e307b1b9e34183dfecda5",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/crypto/ripemd160.js",
+          "bytes": 1109,
+          "sha256": "272dccf92bbec09798c68864b4b8758d83940556e529958f927dc60ddcbae993",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/crypto/scrypt.js",
+          "bytes": 4131,
+          "sha256": "c46dd7a68f2905a7a9d23aaf55f28acbda8753642e637e83d827fc457a7f8713",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/crypto/sha2.js",
+          "bytes": 1919,
+          "sha256": "173177e9a1e68da13a347cfdb3e27df1f24305da4a95a1b0f15bc4d865f2325a",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/crypto/signature.js",
+          "bytes": 11911,
+          "sha256": "1b35127577b43c8ee084e2407ec536a0f07059c7f4b904d85f0775156b786734",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/crypto/signing-key.js",
+          "bytes": 6769,
+          "sha256": "4447821501cfe073247cfd730ad745bd19be3736c73cc770f982aa461d1a8b75",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/ethers.js",
+          "bytes": 29692,
+          "sha256": "47f99d7956adc92545bc9475cd1962b9bde40b403c63a4870341d8868f98182a",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/hash/authorization.js",
+          "bytes": 1317,
+          "sha256": "d700cb76449297102c89e8af56013a84d7d8b7d19241e9c01816ec8cc542a28d",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/hash/id.js",
+          "bytes": 602,
+          "sha256": "ab4a5bbcc97e24fa10d2e44611a5790087b25d33853f183a81d08c0c46ec7d43",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/hash/index.js",
+          "bytes": 2749,
+          "sha256": "f24fce8369f3b66ae9854889062f658e6850d145fa68a5b1a480452627cbd1cd",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/hash/message.js",
+          "bytes": 1879,
+          "sha256": "06e6e0e3e5284eef5422ae5a5f495b580f3ebf88ee3f5ac0a6a3f1d512657dca",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/hash/namehash.js",
+          "bytes": 3247,
+          "sha256": "5a4cbcb7aee982353229c705d620a6c46f2d88181d77a37f6b5d44239eb8d4c1",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/hash/solidity.js",
+          "bytes": 4518,
+          "sha256": "a36b79a99cb7894af4b5fc73b7cb88e231027c8d1534944c044f2c8976626102",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/hash/typed-data.js",
+          "bytes": 20748,
+          "sha256": "e7e176b766d887594510706e45c0d1aa7312bd55d8f017d382fd6df3305b7a39",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/index.js",
+          "bytes": 540,
+          "sha256": "17771082edebd848a7e261149bbbbe3221e58825517dc79255a4b9376f21ad82",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/abstract-provider.js",
+          "bytes": 53285,
+          "sha256": "35d3c2a1811529cdaabb5f8f907b75691e5879cbdf0d124b3cfb15a54d2a3beb",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/abstract-signer.js",
+          "bytes": 10420,
+          "sha256": "5e89ed4eb0004e387d981f8ef8c30e05b18289903b665115f5c315d6885dae42",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/community.js",
+          "bytes": 1704,
+          "sha256": "4916ae23218cfa2c53c425ecec53217ad41301562612c927d91079e553b29851",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/default-provider.js",
+          "bytes": 7788,
+          "sha256": "df8ee8bdcbe06877db953f72ba556ca833323516378beabf0b01e86ffcf8ed51",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/ens-resolver.js",
+          "bytes": 25292,
+          "sha256": "3facaf7187a4f91b0578421df86eb38d5bee96f746eb69fb83e27401c680b1c9",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/format.js",
+          "bytes": 10977,
+          "sha256": "9a394f4ea8df2d0c8b00925794b789f33c8e5d228bc74e2224ecb961e3ba1d58",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/index.js",
+          "bytes": 9476,
+          "sha256": "fcffabbf768b7a6ad96c429eb3051d212cfedb8251f50ff7c0c7caa6c31c196d",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/network.js",
+          "bytes": 13922,
+          "sha256": "9992ca65052c69f63beb661400eb77ff227aedbf0479e8f2ef9d42ec69ee02db",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/plugins-network.js",
+          "bytes": 7970,
+          "sha256": "6b973a3935160c7c799d7ebd3a2b6b5df272491dd0d67a157ac520a7d88d4af5",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/provider-alchemy.js",
+          "bytes": 5657,
+          "sha256": "64e3508787dc9f936922d6465f154dfc64e2d4b4814c3c7a796ee7d4c3ba44db",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/provider-ankr.js",
+          "bytes": 5022,
+          "sha256": "7f8215a09a3dc3fb9e3b9c1404ef8131263c02c7dadf9cec37f095f9ba6f2515",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/provider-blockscout.js",
+          "bytes": 5580,
+          "sha256": "85165db11123edb71375bb4e5fcf10221577e7ef828d57e3334539277e5d91ac",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/provider-browser.js",
+          "bytes": 8110,
+          "sha256": "e4addd3e3b9e2607a6c9a7581bc71570e7b1b95a6ca84b194761567ecad1471b",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/provider-chainstack.js",
+          "bytes": 3616,
+          "sha256": "da4e9b617572950cb3c1a2904d436f9a879a94747ede35c2579eadcdd90d683a",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/provider-cloudflare.js",
+          "bytes": 953,
+          "sha256": "4585d9b4e02ef8c9ce88ff94a2157596c0035a82e6de110fa9ac319e96134e40",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/provider-etherscan.js",
+          "bytes": 24945,
+          "sha256": "3dbf08bcf32656baa8c1e0e7cdc1f60891f5b4f68608bfff81446bad851be9e3",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/provider-fallback.js",
+          "bytes": 23731,
+          "sha256": "ca932f54eb323d810f736d94b59e208c829d177374744a92b748d907579d5c07",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/provider-infura.js",
+          "bytes": 7420,
+          "sha256": "b4598207d96155eec218d5f97438410b50edab3211514fab22daac1b876722eb",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/provider-ipcsocket.js",
+          "bytes": 2319,
+          "sha256": "dc4745b6762a43a7130bbb7fe43bf889170a6d774354a12eb618f67305832851",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/provider-jsonrpc.js",
+          "bytes": 40445,
+          "sha256": "56841720d3618689c4de8adbf845e672d59941f8ef8e92b0de6d2e7ebcb95ec2",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/provider-pocket.js",
+          "bytes": 3838,
+          "sha256": "551433b630953806e1c7eba81c010a1734d7e6ad3ea3cc51cecd3b563421e53f",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/provider-quicknode.js",
+          "bytes": 5882,
+          "sha256": "e59396733a902dd0184de8e9cf4a6cc09665d037086a208b8f083b9e548c66ea",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/provider-socket.js",
+          "bytes": 10770,
+          "sha256": "0bf0aba5de79c5f8fcf6238c62ca9b74bfcb72b9e87ee5a583753b91548ba058",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/provider-websocket.js",
+          "bytes": 2801,
+          "sha256": "6c48ce3329492f46269763c86c5f7376f2f4321b200fe3e1a6af0af2cb213db4",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/provider.js",
+          "bytes": 44364,
+          "sha256": "fc0a34ad2916446126b62fcd6f1b5e0cec509ec01fe329a7626e0b7317c77dac",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/signer-noncemanager.js",
+          "bytes": 2471,
+          "sha256": "9ecf421c9498333c40487976be42a6a3ea7ffcef5b4a27ccd681cd0af14e299e",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/subscriber-filterid.js",
+          "bytes": 5830,
+          "sha256": "3fb5855164cb42a85639d4c32263eaf32d80e4561e8b2eadcdf67106d0ab675e",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/subscriber-polling.js",
+          "bytes": 9251,
+          "sha256": "37251d6d6fe068a6f24a83a01fc72ea47a22c86b5129708e8c3e36cf1faaea58",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/providers/ws.js",
+          "bytes": 273,
+          "sha256": "9e06431925686f3be1ba93a5d6ee96c9628c42081b4471e1f63010b455b616b1",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/transaction/accesslist.js",
+          "bytes": 1770,
+          "sha256": "d182799dda06e5af478dd0fc83be279debb7c19e33b84c28bf1ac61031ba12ff",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/transaction/address.js",
+          "bytes": 1056,
+          "sha256": "f22ac0ac700ef45e33d0e16b551608ee67c0bc10003a7c195eb0b1eaa2ae340d",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/transaction/authorization.js",
+          "bytes": 692,
+          "sha256": "31a9a5bc6cfc9a7d662d25afa016fbe1cacfe98a1fb5d43ea44f676e492e6257",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/transaction/index.js",
+          "bytes": 1254,
+          "sha256": "13c635ec15486b4f247c7229a13f1d2fcdbb99a9d00715598d9356d980595efd",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/transaction/transaction.js",
+          "bytes": 48444,
+          "sha256": "5d1ab70f968b852ae4aa168fea8413d694c22723b2182880358fe98f9fefad8f",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/utils/base58.js",
+          "bytes": 2174,
+          "sha256": "bc6901a54f4a72187783c5594fc4c6e21a2f27f94c43c200b107092b09db4566",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/utils/base64.js",
+          "bytes": 1675,
+          "sha256": "1159bf9ded677750169ff7d5b3390742413d2e5c4b24247d1420d8730c2fe973",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/utils/data.js",
+          "bytes": 5701,
+          "sha256": "94218fa9bce8cc557e54dea061144fc60b1448439ca3f15a069cddeaf3adf2e8",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/utils/errors.js",
+          "bytes": 8173,
+          "sha256": "96e0d6db74d5d8e42c5b3c3b158a28bb36538a3f1dd3b091ca1eb4983b7c6557",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/utils/events.js",
+          "bytes": 1288,
+          "sha256": "f9c1b9366193e67e2333679b20a11c53af79a3165501ef9c30cf5dba8ad1eb46",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/utils/fetch.js",
+          "bytes": 29315,
+          "sha256": "b4c1b3a53270b05ed298f28f9a020f9a280ea9d221ea14b5ded28131254d8543",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/utils/fixednumber.js",
+          "bytes": 19962,
+          "sha256": "0f7684f9e65d66346b41d75f1cc2f0772a1f1ec4b4954c485f8c6c1be8dd0975",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/utils/geturl.js",
+          "bytes": 5114,
+          "sha256": "bec24b7f9c274a4d456244475b12928dd2cca07e723604d1e3b8ec86300d3730",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/utils/index.js",
+          "bytes": 8439,
+          "sha256": "9f2ac07d9b9dd29e51e5ac81a18a72da78e739d831ab948bc66bfba20eae69bb",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/utils/maths.js",
+          "bytes": 8480,
+          "sha256": "103a48c11e5305a5f7ff76d7d9cae08b24d82281e46e4bc1466e0b191e66888c",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/utils/properties.js",
+          "bytes": 1821,
+          "sha256": "8a4fd276aaca99e42e848b608d6dfd38dea93f96a026f32999f1986c18ac6413",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/utils/rlp-decode.js",
+          "bytes": 3379,
+          "sha256": "58b756eaf8c85e6169cdb52153090880c33e23f40f76f437ea6601da42e50766",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/utils/rlp-encode.js",
+          "bytes": 1577,
+          "sha256": "ac3bd1e71e0cc0151ebce3f571164c6b82f53aaa37e092328d08a2a195310ea6",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/utils/units.js",
+          "bytes": 3260,
+          "sha256": "b4dab8b090da1b16fa86cc4dcae7ad83d692b218cbbb4631271df297b6174a3a",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/utils/utf8.js",
+          "bytes": 8129,
+          "sha256": "f665552162a67b547b1be04b2d1c559349eb0f489f31edb845a2171e192710f8",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/utils/uuid.js",
+          "bytes": 1037,
+          "sha256": "442a0e3f717a51c58b1dd5b01ae31ebdb5d4d87e95d3cd3a93d5aa5703703370",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/wallet/base-wallet.js",
+          "bytes": 5126,
+          "sha256": "fd16b9463eeb67d5e3e4f63de5bc84c33b6ac9f2d579c4ef3178cb83167d757f",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/wallet/hdwallet.js",
+          "bytes": 19978,
+          "sha256": "4996fee2da550e04de5c6b1f331232eea3f53553d92fec636085071fc36d13d1",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/wallet/index.js",
+          "bytes": 3563,
+          "sha256": "30737258f198ead78d9518cc7ce184db0b876cc6f92eb1007b84d197091b2905",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/wallet/json-crowdsale.js",
+          "bytes": 2487,
+          "sha256": "758f02b090693b153bc8cad9f8ddb7f1176bbc78c9763bdcd493e53388899ec6",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/wallet/json-keystore.js",
+          "bytes": 14479,
+          "sha256": "5cbfaedd50de30f945d520642523061ae9236234160bc9e6b76c4af5e51e3f03",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/wallet/mnemonic.js",
+          "bytes": 6626,
+          "sha256": "575e1e397944e8e77a165d58cfa6d4c5caff139d4a9b2eef34b7687cc3402b61",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/wallet/utils.js",
+          "bytes": 4441,
+          "sha256": "2e64a4fc0f75f869f93e5a0b92e1d6ea9fc90d023b1f81e7f0ca06a2e8e970b6",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/wallet/wallet.js",
+          "bytes": 5997,
+          "sha256": "ea20742e0d885b84d7938b9f7ba12b31b1a0f5a8a8984cf525c8cb65a39a12a3",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/wordlists/bit-reader.js",
+          "bytes": 1145,
+          "sha256": "d67f2bceaa62f1cc4f710e8dde6f818810ec2f8c2b97f68c691dfe71f162249b",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/wordlists/decode-owl.js",
+          "bytes": 1834,
+          "sha256": "a867ed8baf11030b1e5fbe00fdd271edc4d5b95eeec707a2c3ebbe8faa51232f",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/wordlists/decode-owla.js",
+          "bytes": 1255,
+          "sha256": "df490d6b582f6d2713e954661d4504aab0ac7b19d11e70e107a594d27119b59d",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/wordlists/index.js",
+          "bytes": 1866,
+          "sha256": "85b04d9293fa2a6da31fb2a83b7dff469a28056d100531514d1ab5ffb4103c3a",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/wordlists/lang-cz.js",
+          "bytes": 8159,
+          "sha256": "703b812d7fee2dcb9af26a0d1e2375975c439094154e6880a60f680ce9934fa9",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/wordlists/lang-en.js",
+          "bytes": 7038,
+          "sha256": "0110f9f3a909a1d6c45d41bf838f1607e55b6dc8c705e4c0f42bd15c6a76fb87",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/wordlists/lang-es.js",
+          "bytes": 7303,
+          "sha256": "b2828c28c66ca858b73bb9f4d25bcab33804ec09511b8b04ec54c2b9a9570835",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/wordlists/lang-fr.js",
+          "bytes": 9054,
+          "sha256": "a2bbf8a91e1a13a99126e8bffdddf443ab8eaf6436d0b8a1e77becb1a2d9aaad",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/wordlists/lang-it.js",
+          "bytes": 8689,
+          "sha256": "69ea10327285cdb9e454364724c87678f1f088026178c59f2f61618c96f70d87",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/wordlists/lang-ja.js",
+          "bytes": 13007,
+          "sha256": "3b72625736551b9226f515fefede8d1d9859dded84d9889fb7c4c3150320dd85",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/wordlists/lang-ko.js",
+          "bytes": 14535,
+          "sha256": "a2cdde69b4ea1ebef4576d46a6892fd00c5d23d50532113edfc5f300627749d0",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/wordlists/lang-pt.js",
+          "bytes": 8528,
+          "sha256": "e4848e099e22480ce7a84374a4711b9faa747b2489203c7c7a5a860132c949ab",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/wordlists/lang-zh.js",
+          "bytes": 11008,
+          "sha256": "312781a7dc4224e764ec6bf62ef666cb39ee677ca77a9ae5bf9952e3dcbe1522",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/wordlists/wordlist-owl.js",
+          "bytes": 2371,
+          "sha256": "112be914bd4791076e9282341e87531bcfe8568a0b14e5222204ce63e6e7f1b3",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/wordlists/wordlist-owla.js",
+          "bytes": 1316,
+          "sha256": "cfb3feba246d0279368c3141d4f035ce3420b033092167a1731a9efc8c19bc01",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/wordlists/wordlist.js",
+          "bytes": 1564,
+          "sha256": "198d248815ef4c374ce92929886455e17a9627e39f72fd5827089efcdc58869a",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/lib.commonjs/wordlists/wordlists.js",
+          "bytes": 1509,
+          "sha256": "23a03f7f67ccf145d5df5152709dda4a813828d6cc6e34dc495a4a3fd2ae5241",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/node_modules/@noble/curves/_shortw_utils.js",
+          "bytes": 897,
+          "sha256": "0d6180b48356b5244e09fcafe0de640b7d8730796826629982eb24086c2ee02f",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/node_modules/@noble/curves/abstract/curve.js",
+          "bytes": 7155,
+          "sha256": "dd9742efb51072151df3777adc974cee481db106ffd0657683d985a096446a51",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/node_modules/@noble/curves/abstract/hash-to-curve.js",
+          "bytes": 7360,
+          "sha256": "29ff3ec0d01787efac0d2db7dc2c90cf9e8a92302521c1082ec85eb40908f8a1",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/node_modules/@noble/curves/abstract/modular.js",
+          "bytes": 18096,
+          "sha256": "025b510f9ef15c7a97e7a8242801801240fc8a523bf0f898f7a15b56340d4542",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/node_modules/@noble/curves/abstract/utils.js",
+          "bytes": 10740,
+          "sha256": "eb95b7f49abcdb90b68cc24ed967c0cbde82c3c7309a3997106d56628d1f06d8",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/node_modules/@noble/curves/abstract/weierstrass.js",
+          "bytes": 46225,
+          "sha256": "07143ec651d2e2359f6e93b4e66259a5dc925025c98a7231ea0fba6c273b0c71",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/node_modules/@noble/curves/secp256k1.js",
+          "bytes": 12327,
+          "sha256": "84ab892cb82f761c9357edcb9c1a73810a87d6129f5cf3bd7010fe222d2f8c21",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/node_modules/@noble/hashes/_assert.js",
+          "bytes": 1638,
+          "sha256": "0afeca6334bf56255226fae64c7110a7926bcca3d8a8f19830111da33e8f8732",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/node_modules/@noble/hashes/_sha2.js",
+          "bytes": 4588,
+          "sha256": "837814775b82a6719cbc3009caa7c2874cc7e1ce4ec5d5b15324ccd204178614",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/node_modules/@noble/hashes/_u64.js",
+          "bytes": 3752,
+          "sha256": "4e8b58371f1dc83b9fa378285af8d8750d21ec22f837b23df3a35f7ab2abfba4",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/node_modules/@noble/hashes/cryptoNode.js",
+          "bytes": 448,
+          "sha256": "423a864b2d18b2189e5a834f84990095a498e88731a7c25878170e6d09fe4e8d",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/node_modules/@noble/hashes/hmac.js",
+          "bytes": 2968,
+          "sha256": "80bb197d112944848cedc6364e70c67bc29b557cfb422996ba9c5d92ae6ceba8",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/node_modules/@noble/hashes/pbkdf2.js",
+          "bytes": 3818,
+          "sha256": "3c8a9268260af193b3e944b3d8ae03a9ad821dfe158c7e3263cb1e0e2af95592",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/node_modules/@noble/hashes/ripemd160.js",
+          "bytes": 4500,
+          "sha256": "f7e39e95a57cb304a75bd57723036ffa1e2dc33d19b4827e9d913124b7760b76",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/node_modules/@noble/hashes/scrypt.js",
+          "bytes": 10190,
+          "sha256": "3855e55c14b872430ec67ed2c8be1d30318bb93ed4f32f03b956bb2f8e5826f2",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/node_modules/@noble/hashes/sha256.js",
+          "bytes": 5280,
+          "sha256": "85cfee5c78d7e0df16981a848bc081f95385c2464c1e45b0818787f324ceeaa3",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/node_modules/@noble/hashes/sha3.js",
+          "bytes": 8089,
+          "sha256": "2923bdac54647cce5ea06b48b9a12d7471e47d17d8bd22332dcc730b0707665b",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/node_modules/@noble/hashes/utils.js",
+          "bytes": 6966,
+          "sha256": "10699c217e74e7b5fd68ee4f745d9fe41ef674414b52cf860ec7c59a0a924bf4",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ethers/node_modules/tslib/tslib.js",
+          "bytes": 21332,
+          "sha256": "ed9a68aeea93ffe51834bdef70049db9492ded44b8982578b865b767c91e946c",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "graceful-fs/clone.js",
+          "bytes": 496,
+          "sha256": "7258eca52e65d69845759503f9fdd66c252f40e5eafb76db5d481172e31ac9ed",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "graceful-fs/graceful-fs.js",
+          "bytes": 12680,
+          "sha256": "7da35669b6b6b0e4aafee31674c033f2cebb0c8f9ae010f709dcc185d3f17786",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "graceful-fs/legacy-streams.js",
+          "bytes": 2655,
+          "sha256": "60a6a7ecf7c3e55a3ffaae13433b6cff388b7205bba6daf393c863f77a949e36",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "graceful-fs/polyfills.js",
+          "bytes": 10141,
+          "sha256": "66ea1687ed5edf39d67296d26edccc8da695d9a869303a78d0e580cd770aca27",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "has-flag/index.js",
+          "bytes": 330,
+          "sha256": "e9e921d4734fee9405bef5886c010c80a8f10fe958e5d71bd5d8eed5e616e78d",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "lodash/lodash.js",
+          "bytes": 545945,
+          "sha256": "f5465f55566bf544aad0a31c6135889ca1ed81eea8f53ec61c6cbe86926f07cf",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "micro-key-producer/slip10.js",
+          "bytes": 7581,
+          "sha256": "f12cca5ba161e7e159739a2904277c070ba20459f6e6d751c05aa8d2ef0375a5",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ms/index.js",
+          "bytes": 3024,
+          "sha256": "e5f0b6a946a9b2b356a28557728410717df54ea2f599edb619f9839df6b7b0e9",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "pony-cause/index.js",
+          "bytes": 665,
+          "sha256": "af3dd36f49f8922f9fb9456f38ecf2f5b7a33b4914672c3700822ef982c92b6e",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "pony-cause/lib/error-with-cause.js",
+          "bytes": 576,
+          "sha256": "c92463b74bf5b3e6c521e32bdfe1dcc11755a34f5b82388427e48252c4e24d88",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "pony-cause/lib/helpers.js",
+          "bytes": 3388,
+          "sha256": "d36da6c9a3b34765ceaec7642839ff760d792ccb9fff5d529ad7637e6602982e",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "proper-lockfile/index.js",
+          "bytes": 1025,
+          "sha256": "c11869aa340b61757c2e7a6739a1d423495fe627ac0a54cb44f8c47c393e2fdd",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "proper-lockfile/lib/adapter.js",
+          "bytes": 1898,
+          "sha256": "c95e2408b91b70e02c625a9b1a42e0c793140dbe6c1bff8cc183bb88bc267c6c",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "proper-lockfile/lib/lockfile.js",
+          "bytes": 10845,
+          "sha256": "c517a976f7a31c8b1768cb8e7ac9936aee70299ae762548495016a79d64a6434",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "proper-lockfile/lib/mtime-precision.js",
+          "bytes": 1366,
+          "sha256": "eb5adf91a21715b50f39438cdcda52043d551ccb5fe530681364c474c7206218",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "retry/index.js",
+          "bytes": 40,
+          "sha256": "003f04e5fb5913675c886ac938e9b7bbd33754eb17ee8f00e074e1bf888bec1e",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "retry/lib/retry_operation.js",
+          "bytes": 3657,
+          "sha256": "eaca13037da35523326c8870e39c4fd236c4f38b5822a2af0f33d0f4e0b21d02",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "retry/lib/retry.js",
+          "bytes": 2298,
+          "sha256": "4388d78729faa0dea430e2a7fa572aee6a15a407da05097b41ee44106d336616",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/classes/comparator.js",
+          "bytes": 3631,
+          "sha256": "054202956430d63d5ff4599fae09760ce465b489e4f0b5ef5ce7cc7ac21157ac",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/classes/range.js",
+          "bytes": 15647,
+          "sha256": "a6544485aa8575aa9854c67e2caa67726815de18a482d0ceb8a1003244de3bc1",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/classes/semver.js",
+          "bytes": 9891,
+          "sha256": "813b2c185512d30c9b931c2fed8140889d9d7490ceeeedc370da30337dc8ca57",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/functions/clean.js",
+          "bytes": 205,
+          "sha256": "4eadb0892844cf3ae295121a86163a66c73f89acd1b7f0b114ec115b4539512f",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/functions/cmp.js",
+          "bytes": 961,
+          "sha256": "a63d74e87b73788e78e9ce0a4892b5333d6b809c0de88b31e4ed76cbf17f94b3",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/functions/coerce.js",
+          "bytes": 2004,
+          "sha256": "28a251c5ab210ddf9e97551b9f37a53329fcce91f0c3943dcbc02de1a1de915a",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/functions/compare-build.js",
+          "bytes": 281,
+          "sha256": "5ab651d5b40af289bd85c645a92b6d8cfe1a986dc413c797cfcc8d623d7c844c",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/functions/compare-loose.js",
+          "bytes": 132,
+          "sha256": "07b6a3a1db0a5210ceb784c1708bd4679f3a94fc73a9c9eb349349e7070a6f78",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/functions/compare.js",
+          "bytes": 170,
+          "sha256": "d404b5aa48aaddc8a654c5da8fb7d4443404b7948589b21ac4b045d1cee4e34c",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/functions/diff.js",
+          "bytes": 1423,
+          "sha256": "7a11fd39b987cdf06c65e928cb1aca49bec583feb86fb5c8fe47a6fd61d7de31",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/functions/eq.js",
+          "bytes": 126,
+          "sha256": "b6e30a7168e52723216fc163d300e2bbabf92ec0251f9ac5438bb6ccf57c8936",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/functions/gt.js",
+          "bytes": 124,
+          "sha256": "135523704aa48cd98834dd170ee9f74f0e68043b379f32d021db11e6304c5c93",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/functions/gte.js",
+          "bytes": 127,
+          "sha256": "991c5bbe48ecb210a562646872f05862ad9fc0d42186d85aa60bdc6fa323eb9d",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/functions/inc.js",
+          "bytes": 478,
+          "sha256": "952069fc8690b7d3af0fe9d55f7c54fe2ac067b48c5e74f6a54f9ce19a334493",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/functions/lt.js",
+          "bytes": 124,
+          "sha256": "1c897a9bc849320e2e9dc0f6c09555c01ee3ddf30734515d717b88ad7740ea25",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/functions/lte.js",
+          "bytes": 127,
+          "sha256": "3a8d0b1d00423f60cc7cb810b36ab77b61330831ad237dbe73eb5cecfa412800",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/functions/major.js",
+          "bytes": 136,
+          "sha256": "5c678480d882f511200fed2c16ec3847dfedb08a1d70328dc2f031d35d825276",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/functions/minor.js",
+          "bytes": 136,
+          "sha256": "1b051794f1713adec2a236517196691687c35f82e0b596ff3316a78b3cc10ae6",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/functions/neq.js",
+          "bytes": 128,
+          "sha256": "a662883751918822c162183b46b9e20d09489132f82686c92ab78bee67f3a127",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/functions/parse.js",
+          "bytes": 331,
+          "sha256": "29a69e15b6d02fe381d573f861881a89590e9d0f0f0ca740c5f85eaf0234c4ad",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/functions/patch.js",
+          "bytes": 136,
+          "sha256": "f02d3c1b059fe3d96ce124886f7eef321d381a95638fd3c4a8d5ccd8e76ffadd",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/functions/prerelease.js",
+          "bytes": 234,
+          "sha256": "baedbf503d5610ad041bfb56071efa48feb331ca278295c399537d35d3ffb593",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/functions/rcompare.js",
+          "bytes": 132,
+          "sha256": "84fa5e88adf08d15c993cac8cdec6d1a65045b7e95a9c55184230a7f807f4dc0",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/functions/rsort.js",
+          "bytes": 163,
+          "sha256": "6ec659ce3b6c2b173c719286caab04409adba046c0917874ec3b5e36ddfbc7e3",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/functions/satisfies.js",
+          "bytes": 247,
+          "sha256": "8cf5e122b757251671ed6c9d9680904b71cd375845853f05312e608cf2cc2946",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/functions/sort.js",
+          "bytes": 161,
+          "sha256": "c2fe2d3ed0be8a4e9de8f02abdfd5d9c0d3bcc510d88e87af84185592882c4b8",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/functions/truncate.js",
+          "bytes": 1021,
+          "sha256": "e145833a250311927c92f424f56498c52f1b7bb1271ce6afbf006db87773ff43",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/functions/valid.js",
+          "bytes": 176,
+          "sha256": "0de7ea736cb7807179d46dfac09c830a9338e02b6a07db12d7040cde2def6025",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/index.js",
+          "bytes": 2691,
+          "sha256": "4b3e57d3d40e29e0706002eba113d09f35aea593578376bbeec83b777b9912ab",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/internal/constants.js",
+          "bytes": 873,
+          "sha256": "38a112baf27ceca0260082ff26ac2fd7a9861cab1af12dd65e720277f68e6ce9",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/internal/debug.js",
+          "bytes": 240,
+          "sha256": "8a9f420572260f3cf944463b5090d62a60f0730589dc23a7ec4ca25e2ee41bb3",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/internal/identifiers.js",
+          "bytes": 525,
+          "sha256": "b4916b09dc7869ae0eb05e71c855c942a3a7365f7e6e89185d59a9e45a2451d7",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/internal/lrucache.js",
+          "bytes": 802,
+          "sha256": "14d087c87da87b6f5c36fc4cdd7d2d14077874b14a68e20fce5b6138fa2ca34f",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/internal/parse-options.js",
+          "bytes": 338,
+          "sha256": "fdf51d0de8d5442c35a997ef58cd530d239ce206f961d14c5121354451b01d01",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/internal/re.js",
+          "bytes": 8139,
+          "sha256": "5833262888e2b5d843a69193f83c05e374818dbe55379b497819b5bf58e48cd8",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/ranges/gtr.js",
+          "bytes": 231,
+          "sha256": "8fadad28e36d28e93d498ac7ac20badba2a407312845eabc18e82e90a0732b19",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/ranges/intersects.js",
+          "bytes": 224,
+          "sha256": "fe87ac5d3020010ad3ec00636dadbf0c669ff07d0f57e0a8165a8264f79a676f",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/ranges/ltr.js",
+          "bytes": 227,
+          "sha256": "e5186fcc03018acf9be6d968755d4c49727aeb0d981d179eb568ae5fbe983038",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/ranges/max-satisfying.js",
+          "bytes": 593,
+          "sha256": "e1a2c0d6144cc772cd20bbc8ecb9e8a3a4074e9172a3d8e794838b591cdeb416",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/ranges/min-satisfying.js",
+          "bytes": 591,
+          "sha256": "2681abf54098aa670f12826b76a6ec77a2441186ae4243afde3be8ae4908f7ca",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/ranges/min-version.js",
+          "bytes": 1514,
+          "sha256": "fefba0a88c2bf74d5cede504b5ae50a8dc3edfd69cf0174a491e2cf3e442614b",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/ranges/outside.js",
+          "bytes": 2204,
+          "sha256": "3a2b0b23593d2f49419c06af2af75450cab103b0c25d665d48fe5bca495a21ca",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/ranges/simplify.js",
+          "bytes": 1355,
+          "sha256": "7b78581c13322bc68ece2088685386b2a9b51c15b94d0a2063bdf2546bd41934",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/ranges/subset.js",
+          "bytes": 7478,
+          "sha256": "ceb9eb6ed5bfc6c7ac7af7f47e5c3535444a4e66a0e2b58cdad4bd02a35d454d",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/ranges/to-comparators.js",
+          "bytes": 282,
+          "sha256": "6c5e966210cff270fa2850668aaf8460fac7759f8d99f282521ef7a78f4564e9",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "semver/ranges/valid.js",
+          "bytes": 326,
+          "sha256": "5ef6f995af801868925940cf8df5735d565ebabb090b068695cae65218bcd3ac",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "signal-exit/index.js",
+          "bytes": 5708,
+          "sha256": "7cc6f6a1e14dec79dc23f6afd7caca1319189747144e1a33af77616c21d9e9de",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "signal-exit/signals.js",
+          "bytes": 1295,
+          "sha256": "ae538fdae683d6fa2e14579da06df10fb7a66378cfa50971956fb68c2c86c727",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "supports-color/index.js",
+          "bytes": 2748,
+          "sha256": "479fd04f71a0fed642baa7e57c7e0701ae6f4a450bde8179f96815e6a26752b0",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ws/index.js",
+          "bytes": 796,
+          "sha256": "924564d5be26d59b9682c4263f68320e48dde7240bd2d1ad17ec305537429dd2",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ws/lib/buffer-util.js",
+          "bytes": 3056,
+          "sha256": "8b0a45739132f82e25ea13163780abf547ccfe989267f3eb7abb475beec92da3",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ws/lib/constants.js",
+          "bytes": 503,
+          "sha256": "391e823142b8b370e55a2fd32b022deaf03b8415c56000009674ebc86a0b4f86",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ws/lib/event-target.js",
+          "bytes": 7321,
+          "sha256": "c45d3c6e12d170c860c0c3f1a050aa0f864d9806632b609a1e607d675aba128c",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ws/lib/extension.js",
+          "bytes": 6183,
+          "sha256": "852564f0f6b460287043803eae732666fb5610f676874354fc89f06aa4e986ed",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ws/lib/limiter.js",
+          "bytes": 1034,
+          "sha256": "e0469d4b83f6ba764b15f80e1766b75c136fbff68f048f4c050f0b1c7f065f69",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ws/lib/permessage-deflate.js",
+          "bytes": 14669,
+          "sha256": "16a91536988a53c23047ee5882392068728a839a244178c3b09b8c54982f58b0",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ws/lib/receiver.js",
+          "bytes": 17439,
+          "sha256": "a6ada33c9a2d54eaf595824b821ea89ca2c6395f89aa06755c52142148274884",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ws/lib/sender.js",
+          "bytes": 16886,
+          "sha256": "d0791d30c3defd44dcabbddb879a901c757993fea2c00a7ffea01d53b23b4b77",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ws/lib/stream.js",
+          "bytes": 4204,
+          "sha256": "a56fcb6e2b152097ee820b6f5410b1f71e59819b45d08d9f8bda588fe39070ec",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ws/lib/subprotocol.js",
+          "bytes": 1498,
+          "sha256": "be3f6323d6f549568577dcba9004c1479d95c65a7abb0fe0c582875b9fac0b7c",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ws/lib/validation.js",
+          "bytes": 3903,
+          "sha256": "41ce8e83d0d434132e1704895fedb91f6703a701b42d91c80954ab29b2845593",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ws/lib/websocket-server.js",
+          "bytes": 17022,
+          "sha256": "6d8dd89a841748c80445fd5fcdb5ba8005369b53cc3525135e11304c8b9c55e5",
+          "mode": 420
+        },
+        {
+          "kind": "dependency",
+          "relative": "ws/lib/websocket.js",
+          "bytes": 37848,
+          "sha256": "7ccf305925f0cdb74e06b75b4c84de134b1bd771a220ef409b24520def08128f",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/fs-offload.js",
+          "bytes": 4205,
+          "sha256": "52612e86c91717323ebf1cabe0e6e65b5ba188ceba7d96d8cdceeb181794aa2e",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/identity-manager.js",
+          "bytes": 55550,
+          "sha256": "7353a866af8a2af3ef60d9aee0e9ed15b2c45c62bebb126f9f547c86ec8a67d8",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/identity/derivation.js",
+          "bytes": 6192,
+          "sha256": "05930ae523ce340259653f9a1168bbfd5a2b75cf6ae10f855032230c9642a96c",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/identity/formats.js",
+          "bytes": 7733,
+          "sha256": "07d69739528a4bd1389106b6bef054a4b7939c153d165c359f31d3dd175ed869",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/identity/index.js",
+          "bytes": 1526,
+          "sha256": "e2a9e1cb9c97b06905b832709f421a1951256d4699b5c37c2959ba2f328e3c61",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/identity/injection.js",
+          "bytes": 6055,
+          "sha256": "2decd3983b60176fca3319c0d6b62a15d4dc45d50330069f90cddb8ac2d92e64",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/identity/privacy-keys.js",
+          "bytes": 3246,
+          "sha256": "faec4ea9fca115d40caed2459c783c421064552e9475db123d91561e24b6e7e3",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/identity/railgun-credential-host.js",
+          "bytes": 8045,
+          "sha256": "e3fc18ef90447ec6a43bb116a1dc9137edc2a07a20e49b5bcfd95e001b99dab6",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/identity/railgun-key-derivation.js",
+          "bytes": 1355,
+          "sha256": "8976e7ec5ce995cf89c6e5dbd5ddbf9aa7f7f96e405cee387f0eb5c7fe3170e7",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/identity/railgun-submitter-host.js",
+          "bytes": 1398,
+          "sha256": "cd3ccfc2fa4a4281ad25b18ef4f6f10710aac28d9faf35627da9d00444962016",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/identity/vault.js",
+          "bytes": 8340,
+          "sha256": "bb1e55d92b599740b4c2202f6f9397eb187b58a71f7c58f460281814c2b85b07",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/ipc-contract.js",
+          "bytes": 611,
+          "sha256": "2a583c24adc9e2232206659b2a264c1539985890e9e08f78db116133fbf904a9",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/ipfs/ipfs-gateway-probe.js",
+          "bytes": 1899,
+          "sha256": "3712df1e9c3c11d0741c9d4142e3c3359838084ca32ec6090b103bd2eeddbbc3",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/lib/broadcast-to-all-webcontents.js",
+          "bytes": 840,
+          "sha256": "a0caffcd0391943b8a192d15b22f27cceaa0ff8501b53170c73c6db2fd4b9c10",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/log-file-flush.js",
+          "bytes": 9256,
+          "sha256": "3e8b8bd97190c6bfddd6f479caf9eb712b4752ad6130424af406d900fcf991cf",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/logger.js",
+          "bytes": 2582,
+          "sha256": "5b67ffeaf04ffdd7b2e500608a617c69cdf6fd9b868badba5725836e0f24125d",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/myotis/checkpoint-store.js",
+          "bytes": 14285,
+          "sha256": "4805df9fdb6a0ca33c4a6e860a818e4d755c24d7870076712a0ba99ce26aaf36",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/myotis/checkpoint-verifier.js",
+          "bytes": 9888,
+          "sha256": "6a5c8bac774861b737c1d9a16175ee4fabaad9dcdaf1a4894acafbbac47a82a5",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/myotis/myotis-manager.js",
+          "bytes": 40671,
+          "sha256": "29cc894ab1ede0ece9be8601e9b3477c87b19734e4f4ba5965cfd85761715b29",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/myotis/myotis-process.js",
+          "bytes": 17286,
+          "sha256": "17c1dc75e0230f39c3cc1ab527da680485dc0a5c0c8d45b098aad921927cb429",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/myotis/ownership-recovery.js",
+          "bytes": 1074,
+          "sha256": "966fa310974de15e573893de34fb6b420c13561a3bd3c71182e65cef443fe240",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/myotis/seed-pins.js",
+          "bytes": 2151,
+          "sha256": "5166756b2a1d925ace053e095fe1658118483da960d82b87b8ac719a2c01c246",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/networks/blockscout-logs.js",
+          "bytes": 23238,
+          "sha256": "15fa2a5609751a3230ba0d9c711d2b8e8f7f29bfef41b7a4a4410eb0334450b5",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/networks/chain-data-router.js",
+          "bytes": 90116,
+          "sha256": "6b8b9c158a30fb82b73f05ced7f81743dd6d7050c398549639e486846f7261a0",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/networks/isolated-socks.js",
+          "bytes": 5261,
+          "sha256": "c9d39387226747c45de2a4b9abbdcb9018e7e7273d2840070824be245951f117",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/networks/migration.js",
+          "bytes": 6429,
+          "sha256": "ce6d41aa6de87d0b0ccde26e58dec43e4fc8553e6247da42e09cd72f0aab8b18",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/networks/network-registry.js",
+          "bytes": 27355,
+          "sha256": "5d2dc8009d6e24485436eb7c6995c762fa01638500d006541f8676b2b0ff73f0",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/networks/privacy-context.js",
+          "bytes": 7744,
+          "sha256": "10b07e3c4e35044401fde2bf11fe933c96a3fa014d752bb47601ae69954b5133",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/networks/private-rpc.js",
+          "bytes": 26749,
+          "sha256": "5e36ee72f3d9ad78209c9f89c8e88d4cbf127e527d8956f77e0a2cdd4bf0a1a6",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/networks/wallet-tor-transport.js",
+          "bytes": 24738,
+          "sha256": "36eed65f4f15ef177fa48348a7ccce729f38fdf223f646512c7859e6e71da40f",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/profile-catalog.js",
+          "bytes": 37428,
+          "sha256": "87f78f576ee90b250c6e47c8d15015dd6d8ec4f948160cfe4991db6176de0f5c",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/profile-external-candidates.js",
+          "bytes": 12424,
+          "sha256": "53bf94456f528ea220f0c3f44619ab6db41139cbf9644c2ca6c539190ff78f9b",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/profile-lock.js",
+          "bytes": 3604,
+          "sha256": "8e63a0eabbcd4c5bd8a460e2dbb95db5de7a5d1f3d4a05214a8a49a6b484736c",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/profile-paths.js",
+          "bytes": 10370,
+          "sha256": "7bf339ad999c75608074c04d8e298ac899c5258764044160047a69bedfb703a4",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/profile-resolver.js",
+          "bytes": 13970,
+          "sha256": "9e56928d85ed2ab4b03fed0cb79d34221fcef510799996a400459e0ced33ccf7",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/service-registry.js",
+          "bytes": 7167,
+          "sha256": "dedfbf4bf8fb98bbefc8474e0f3f08e2d48e4a8e603bc5343670b30145ee4640",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/settings-store.js",
+          "bytes": 17771,
+          "sha256": "9cf22a846cffa51b0aada2b374fcdda541865a7934675ba2dbdd9da351a25b08",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/socks-probe.js",
+          "bytes": 2699,
+          "sha256": "fa6a2238cc7e05b59e57af4e08a5e191e0d3e0227b125edb603650f8f5a9744f",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/swarm/ant-cache.js",
+          "bytes": 24497,
+          "sha256": "e34a2dfd75392a21dd005d13bfcb43d51b51696de0843bf7e14974c2ef8c2bc1",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/tor-manager.js",
+          "bytes": 29159,
+          "sha256": "a9aef235a974d5f2079b569d21583f93ee39b79cb293c643761ed878fd97557a",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/tor-proxy.js",
+          "bytes": 3640,
+          "sha256": "f52eb5b212f21ecb60b56760fc312709fcd55924e67b8d806f919b1c15ef1f80",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/updater-owner-lock.js",
+          "bytes": 2934,
+          "sha256": "c5c6fa82d07c1e1f850cbbe93afbb112218b5821b543e1e5156be2f71eda0222",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/vault-timer.js",
+          "bytes": 504,
+          "sha256": "dd4b152427f7d92249ad17bf814ea2adf7bedf6830b6c2910ac35f5ae5c80ee4",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/chains.js",
+          "bytes": 3123,
+          "sha256": "34e48aa664e02b278d98a0b85172803bea272b5ecebf15c39e322ce8610f3c5d",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/ledger/errors.js",
+          "bytes": 5448,
+          "sha256": "bdbaeaaec8d52470d053c1ed0b2d73ba26166e751cddf5f0cb29ebbf908f5517",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/ledger/signer.js",
+          "bytes": 4556,
+          "sha256": "6b626b8cc0277f409f5ff2bd1268e97e834717a04eb14fa8b7e9d3a56deb8ab1",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/ledger/transport.js",
+          "bytes": 4824,
+          "sha256": "652fd0187c8fcd89b9999bf30ea9dccf7677aa500f86d07901dd1555aff82d41",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/ordinary-submission-policy.js",
+          "bytes": 2549,
+          "sha256": "5aba1411547dda1cb76f23c0f89d6bf863e2188e07e45004130a4ac7ff803d31",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/ppv2-deposit-policy.js",
+          "bytes": 3012,
+          "sha256": "5ad82515b6daba0aa728552fe9fe5a6fbf37ba4fc4fa615135bb4fd7d12ba5a5",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/ppv2-ragequit-policy.js",
+          "bytes": 1636,
+          "sha256": "3ebef303b860b91841213f5194d25897dd51344b354cacff1d85ee79e28bec7d",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/ppv2-sepolia-pins.json",
+          "bytes": 3009,
+          "sha256": "68badd8f727d0391a0df5c53d41815a9d4605ed7352a461b2d65db1f7e375242",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/privacy-artifacts.js",
+          "bytes": 4089,
+          "sha256": "9facf3b495cfe964a194017a9a5771ea0beb9977b61785ed7c135d4904e5c8eb",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/privacy-journal-archiver.js",
+          "bytes": 6896,
+          "sha256": "e1bccb688c77364641e7bdefee1f3503ece7f0a572533ece98f6ee9d7295de7e",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/privacy-journal-retention.js",
+          "bytes": 5388,
+          "sha256": "e031f6b67ddf1717de9ca928195c765dd3f961f075a5d3ead31da086882e393a",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/privacy-profile-guard.js",
+          "bytes": 9870,
+          "sha256": "7f5d4a71bdcc574728858b8407a47c94bb1b052dec0226c6ecb18f12d289e691",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/privacy-session.js",
+          "bytes": 1806,
+          "sha256": "ea3753aeea9e2ebfb0c497aac264c7e6f289c06cd7271dfb396c78b0d7e0f0c3",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/privacy-storage.js",
+          "bytes": 8240,
+          "sha256": "cf8379a4ab2395538ef009f06ff7edc5b92cf1cf9bf26807cae4f41b9c9887e0",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/private-submission-journal.js",
+          "bytes": 21991,
+          "sha256": "e98318aa57937aa0c9afbf0f07aaed8cc643d3afd2b8801d0af3da8fe376e67d",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/private-submission-reconciler.js",
+          "bytes": 13106,
+          "sha256": "786ce5f69cdf9a491e08687fb95cc169d38c7939d5b9cd59706c9547cbc9f47b",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/private-transaction-intent.js",
+          "bytes": 3686,
+          "sha256": "217b154f5794027e1d3716f9749fe8bd672e9dfc2542272039fea04cac71df71",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/private-transaction-network.js",
+          "bytes": 14307,
+          "sha256": "8318ca393d3d2458af0bb78de874cf8c823171ecb17ec1b8ebfef934e9a7c980",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/railgun-owner-host.js",
+          "bytes": 4754,
+          "sha256": "b2e60808925b86d9d9122eccc47f6645df60dace4dd2bd9589cbbf709bf94356",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/railgun-platform-host.js",
+          "bytes": 8729,
+          "sha256": "48ffbe093ab088d35d10bd586c37fe58540fcfb9c5e6637e98ee174bc5a18004",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/railgun-source-identity-host.js",
+          "bytes": 2173,
+          "sha256": "c1d20d86aff3970839edafadcb7840fec7ed7ffaa61a054fa02880ecb05a037d",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/remote/bridge.js",
+          "bytes": 3776,
+          "sha256": "ca286dae98abe6f63cee4a7677ff178fc0394b131a4f7222f02ccfba75aabe92",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/remote/errors.js",
+          "bytes": 3169,
+          "sha256": "4fd224ec9fecdb3794153d26b296a7a3e26b4929e362957d382575d283d624c3",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/remote/signer.js",
+          "bytes": 5471,
+          "sha256": "f75c9322340d2323e20e0a53cb98265e5eddc650b1a15097f3712e8ab2c4b500",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/signers.js",
+          "bytes": 6474,
+          "sha256": "b76950fa362ddc0d57a6f8cee38a0fbaefbc2f74e7817ff45fc04585306f7487",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/signing-utils.js",
+          "bytes": 2063,
+          "sha256": "67db24b53c66334180402d548afec7cf5a73097d869f019f401eff17a856f4bf",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/transaction-service.js",
+          "bytes": 26321,
+          "sha256": "6c21264cb63c536421e373dc8d3b17e2db17d96efc3a6fcd0b0f1a519ee477b3",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/transaction-submission-coordinator.js",
+          "bytes": 7803,
+          "sha256": "b16e324b5c4aa9a97549eabc1a294d9e2272ca1aca54389588f2d6e610f0f3b3",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/vault-access.js",
+          "bytes": 3364,
+          "sha256": "49e1d0e0cb618a6d7739bfe9a7ee550819f4848c29bdf71a1290f0cacca298db",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "main/wallet/vault-errors.js",
+          "bytes": 777,
+          "sha256": "48469031823030ec445590fb6b5c4e5a4d45f7c4eca764fb99165b0c78212360",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "shared/ipc-channels.js",
+          "bytes": 18215,
+          "sha256": "eb1b694f93f46a42128c65a0ab520f3ee9d55b9ada9c062a3292364f890cf33d",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "shared/shortcuts.js",
+          "bytes": 41729,
+          "sha256": "99e50c20717f1921edc7d9b5434e2831a29ebf1701f49583a80117dc345c578a",
+          "mode": 420
+        },
+        {
+          "kind": "host",
+          "relative": "shared/socks-endpoint.js",
+          "bytes": 1396,
+          "sha256": "37f87bc1d4b7e1e81abd903b53ca2e49676fcb85689b2073fa54b2224d9e0bac",
+          "mode": 420
+        },
+        {
+          "kind": "launcher",
+          "relative": "cache.cjs",
+          "bytes": 4424,
+          "sha256": "3feede76a3a3d56e27db7ddaeda823939a44a7203a632a93ff7702a3d3e07041",
+          "mode": 420
+        },
+        {
+          "kind": "launcher",
+          "relative": "electron-entry.cjs",
+          "bytes": 4194,
+          "sha256": "385ec6e7cd2cadbeb156f13ca3894a651e82c698550f22e2ac11ec3608da82f9",
+          "mode": 420
+        },
+        {
+          "kind": "launcher",
+          "relative": "first.cjs",
+          "bytes": 4774,
+          "sha256": "a68f2161fac21df406fe840fa07145752e3d1d79688a7f16146401c44fdf89c7",
+          "mode": 420
+        },
+        {
+          "kind": "launcher",
+          "relative": "freedom-private.cjs",
+          "bytes": 9782,
+          "sha256": "970d89bbad1bcd979b676faceadc1b16a0349bc827cd1ce78a93306ad3aa07a1",
+          "mode": 420
+        },
+        {
+          "kind": "launcher",
+          "relative": "inventory.cjs",
+          "bytes": 3309,
+          "sha256": "bc893678a0b5b22f9846eccc3510b2bfc38c213d75928d4657c442dcc4258ab3",
+          "mode": 420
+        },
+        {
+          "kind": "launcher",
+          "relative": "platform-observer.cjs",
+          "bytes": 5374,
+          "sha256": "095f83adb9bdac39d59383cf34f813819a54b16a154e2e7cd6b07603b04ad8bc",
+          "mode": 420
+        },
+        {
+          "kind": "launcher",
+          "relative": "private-scenario.cjs",
+          "bytes": 8800,
+          "sha256": "a34295eb890dcc8c97ee853d163cce9542467460acb651191bac89a62bf130b0",
+          "mode": 420
+        },
+        {
+          "kind": "launcher",
+          "relative": "read-scenario.cjs",
+          "bytes": 6539,
+          "sha256": "6baeecc80a34c99c3b5c417ead4177720f861bc463e712a7009cb285c712a85c",
+          "mode": 420
+        },
+        {
+          "kind": "launcher",
+          "relative": "report.cjs",
+          "bytes": 6218,
+          "sha256": "40bfb093aac389f719d99b19982806d5e11393b24a84eb830075c6e71c6ef3b6",
+          "mode": 420
+        },
+        {
+          "kind": "launcher",
+          "relative": "VECTOR.json",
+          "bytes": 7483,
+          "sha256": "e7a4674cb426e4a23bb74da039d3e9b64713dfe06c7026497561dc99a34e6f0f",
+          "mode": 420
+        },
+        {
+          "kind": "launcher",
+          "relative": "WIRE-MAP.json",
+          "bytes": 86614,
+          "sha256": "a355469b7e92a8c842cd1c0df76271c52fb6f4aae060a63bf80162265378a947",
+          "mode": 420
+        },
+        {
+          "kind": "launcher",
+          "relative": "wire.cjs",
+          "bytes": 4485,
+          "sha256": "4d9b1e4440309099a3dfd07ad59f4e8938450bbcc7724de903e8aa9547d49a89",
+          "mode": 420
+        },
+        {
+          "kind": "runtime-bootstrap",
+          "relative": "default_app.asar/package.json",
+          "bytes": 95,
+          "sha256": "3688987acbbeeea464615eee547ab4feca1c33e71ff85607e84e5167ebc595fc",
+          "mode": 420
+        }
+      ],
+      "aliases": [
+        "electron",
+        "electron/common",
+        "electron/main"
+      ],
+      "native": [
+        "better-sqlite3/prebuilds/darwin-arm64.node"
+      ]
+    },
+    "pairedOwnerInitialization": true
+  }
+}

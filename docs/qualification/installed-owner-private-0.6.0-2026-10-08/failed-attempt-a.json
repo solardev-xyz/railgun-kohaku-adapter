@@ -1,0 +1,59 @@
+{
+  "schema": "railgun-owner-native-private-failed-attempt-note-v1",
+  "qualified": false,
+  "mode": "prepare",
+  "requestSha256": "f0f24e03ae088412d799f531e3fcd7c6382a1354c3a6371e2a4eb7bafa7238b2",
+  "sourceFreezeSha256": "ae56c707fdc7a0736ad65abc383d24cffa52b8465c2556a5edcfed5d8ad3cea9",
+  "result": {
+    "schema": "railgun-installed-owner-private-result-v1",
+    "mode": "prepare",
+    "qualified": false,
+    "postUnchanged": true,
+    "requestSha256": "f0f24e03ae088412d799f531e3fcd7c6382a1354c3a6371e2a4eb7bafa7238b2",
+    "sourceFreezeSha256": "ae56c707fdc7a0736ad65abc383d24cffa52b8465c2556a5edcfed5d8ad3cea9",
+    "report": null,
+    "nativeScope": "synthetic Shield private preparation, local proof and pure stored-slot read",
+    "utilityModuleCacheObserved": false
+  },
+  "process": {
+    "pid": 83894,
+    "exitObserved": true,
+    "closeObserved": true,
+    "code": 1,
+    "signal": null,
+    "timedOut": false,
+    "interrupted": false,
+    "terminateRequested": false,
+    "killRequested": false,
+    "natural": true
+  },
+  "originalDriver": {
+    "pid": 83104,
+    "exitCode": 1,
+    "signal": null,
+    "interrupted": false,
+    "elapsedMs": 216145
+  },
+  "driverNote": "Historical driver wrapper labeled natural only for exit zero; original process returned nonzero without interruption. Neither driver nor main is a passing attempt.",
+  "observedUtilityRoles": {
+    "spending-public": 1,
+    "viewing-identity": 1,
+    "public-scan:plan": 60,
+    "public-scan:apply": 1,
+    "wallet-viewing": 1
+  },
+  "utilityCount": 64,
+  "workerCount": 6,
+  "observationRefusals": 0,
+  "allUtilityExitsObserved": true,
+  "cause": "not established; plugin preparation catch returned opaque refusal",
+  "files": {
+    "RESULT.json": "11c01db28918d9bd7a5c3e21fef3e9e6f2e4a21878ee46ebb7d206471fa8bf4c",
+    "POST.json": "1c88281144150fba7a8b08303f194cc5952054526b825618f9df138bea836eb9",
+    "process.json": "e430865d39f819158b0748060af1a71cf03daf64df609971be2a417951602029",
+    "failure-observations.json": "94fd88e2e7dc629713c896685ac5d61209a88d7c38252d25f5e1ae27fb438e66",
+    "failure-frames.json": "082c7cc2af420051842c892a6a45fde9155f4bb7131a50282245fef136801f18",
+    "main.log": "495528b67e7b22c42b26470d34984795ef3f06e3a9bec1f4ad5a66d78dabe757"
+  },
+  "sourceFinding": "The harness transport requires a private-account subject, but real private preparation calls transaction-rpc as public-address before the first private utility. This deterministic fixture rejection is consistent with the observed job boundary; no original inner diagnostic was captured."
+}
