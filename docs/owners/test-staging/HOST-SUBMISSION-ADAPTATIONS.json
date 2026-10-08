@@ -1,0 +1,182 @@
+{
+  "baseRevision": "265dc9dfcae1711ce8e8513d836d5ea94799c1c5",
+  "productionTransforms": false,
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-submission-boundaries.test.js",
+      "beforeSha256": "24d37e521924cb645ede445289e87074b1a61b5e04d0abe79405bdfdcc2f72b4",
+      "afterSha256": "d6fb16f3f5ac7e0a0ed9dc2ed93832745bddb1a899e3cb9322fcd52a768562bd",
+      "replacements": [
+        {
+          "start": 10810,
+          "before": "        journal: jest.requireActual('./private-submission-journal'),\n",
+          "after": "        journal: jest.requireActual(\"../../../../fixtures/host/src/main/wallet/private-submission-journal.js\"),\n"
+        },
+        {
+          "start": 10510,
+          "before": "        privacy: require(\"../../../../../../src/owners/context-bindings.js\"),\n        rpc: require('../networks/private-rpc'),\n",
+          "after": "        privacy: { ...require(\"../../../../../../src/owners/context-bindings.js\"), privacyError: mockFixedContext.privacyError },\n        rpc: require(\"../../../../../../src/owners/host-bindings.js\").rpc,\n"
+        },
+        {
+          "start": 9625,
+          "before": "    require,\n",
+          "after": "    (specifier) => require(specifier.startsWith('.') ? path.resolve(path.dirname(filename), specifier) : specifier),\n"
+        },
+        {
+          "start": 9294,
+          "before": "  submission: './railgun-private-submission',\n  network: './private-transaction-network',\n",
+          "after": "  submission: '../../../../../../src/owners/railgun-private-submission.js',\n  network: '../../../../fixtures/host/src/main/wallet/private-transaction-network.js',\n"
+        },
+        {
+          "start": 8182,
+          "before": "const live = require('../../../scripts/qualify-railgun-private-live');\n",
+          "after": "const live = require(\"../../../../fixtures/host/scripts/qualify-railgun-private-live.js\");\n"
+        },
+        {
+          "start": 6536,
+          "before": "jest.mock('./private-submission-journal', () => {\n  const actual = jest.requireActual('./private-submission-journal');\n",
+          "after": "jest.mock(\"../../../../fixtures/host/src/main/wallet/private-submission-journal.js\", () => {\n  const actual = jest.requireActual(\"../../../../fixtures/host/src/main/wallet/private-submission-journal.js\");\n"
+        },
+        {
+          "start": 6330,
+          "before": "jest.mock('../networks/chain-data-router', () => ({}));\n",
+          "after": "jest.mock(\"../../../../fixtures/host/src/main/networks/chain-data-router.js\", () => ({}));\n"
+        },
+        {
+          "start": 6153,
+          "before": "jest.mock('../networks/wallet-tor-transport', () => ({\n",
+          "after": "jest.mock(\"../../../../fixtures/host/src/main/networks/wallet-tor-transport.js\", () => ({\n"
+        },
+        {
+          "start": 5929,
+          "before": "jest.mock('../networks/network-registry', () => ({\n",
+          "after": "jest.mock(\"../../../../fixtures/host/src/main/networks/network-registry.js\", () => ({\n"
+        },
+        {
+          "start": 5797,
+          "before": "jest.mock('../tor-manager', () => ({\n",
+          "after": "jest.mock(\"../../../../fixtures/host/src/main/tor-manager.js\", () => ({\n"
+        },
+        {
+          "start": 5506,
+          "before": "jest.mock('./signers', () => ({ getSigner: () => mock.signer }));\njest.mock('../settings-store', () => ({ isWalletTorExperimentAvailable: () => true }));\n",
+          "after": "jest.mock(\"../../../../fixtures/host/src/main/settings-store.js\", () => ({ isWalletTorExperimentAvailable: () => true }));\n"
+        },
+        {
+          "start": 5501,
+          "before": "",
+          "after": "}), { virtual: true });\njest.mock(\"../../../../../../src/owners/host-bindings.js\", () => ({\n  ...mockFixedHost,\n  signers: { getSigner: () => mock.signer },\n"
+        },
+        {
+          "start": 5328,
+          "before": "jest.mock('../identity-manager', () => ({\n",
+          "after": "jest.mock(\"../../../../fixtures/host/src/main/identity-manager\", () => ({\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "// Explicit journal keys; vault seed acquisition is outside this suite.\njest.mock('@scure/bip39', () => ({ mnemonicToSeedSync: () => { throw Error('Unexpected journal mnemonic derivation'); } }));\nrequire('../../../../context-host.cjs');\n// Retain the same initialized private binding across this suite's module resets.\nconst mockFixedHost = require('../../../../../../src/owners/host-bindings.js');\nconst mockFixedContext = require('../../../../../../test/fixtures/owner-privacy-context.js');\njest.doMock('../../../../../../test/fixtures/owner-privacy-context.js', () => mockFixedContext);\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-submission-diagnostic.test.js",
+      "beforeSha256": "d0c6dbbacca693d77c0708cb2602ab93d48d9c876e46f2011cc5dbac25547e75",
+      "afterSha256": "9810b1a86e5399adca6b56c1dab5de9247a49d77c114d1c44a04365937467787",
+      "replacements": [
+        {
+          "start": 3956,
+          "before": "const live = require('../../../scripts/qualify-railgun-private-live');\n",
+          "after": "const live = require(\"../../../../fixtures/host/scripts/qualify-railgun-private-live.js\");\n"
+        },
+        {
+          "start": 3425,
+          "before": "",
+          "after": "\n// The vault's public wallet-0 record, read by the live probe through production.\njest.mock(\"../../../../fixtures/host/src/main/identity-manager\", () => ({\n  getWalletRecord: (index) => (index === 0 ? mock.walletRecord : null),\n  WALLET_TYPES: { MNEMONIC: 'mnemonic' },\n}), { virtual: true });\n\n\n"
+        },
+        {
+          "start": 3420,
+          "before": "",
+          "after": "},\n"
+        },
+        {
+          "start": 3255,
+          "before": "}));\njest.mock('./transaction-service', () => ({\n",
+          "after": "},\n  transactions: {\n"
+        },
+        {
+          "start": 2733,
+          "before": "}));\njest.mock('./signers', () => ({ getSigner: () => mock.signer }));\n// The vault's public wallet-0 record, read by the live probe through production.\njest.mock('../identity-manager', () => ({\n  getWalletRecord: (index) => (index === 0 ? mock.walletRecord : null),\n  WALLET_TYPES: { MNEMONIC: 'mnemonic' },\n}));\njest.mock('./private-transaction-network', () => ({\n",
+          "after": "},\n  signers: { getSigner: () => mock.signer },\n  transactionNetwork: {\n"
+        },
+        {
+          "start": 1870,
+          "before": "jest.mock('../networks/private-rpc', () => ({\n",
+          "after": "jest.mock(\"../../../../../../src/owners/host-bindings.js\", () => ({\n  ...jest.requireActual(\"../../../../../../src/owners/host-bindings.js\"),\n  rpc: {\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-submission-recovered.test.js",
+      "beforeSha256": "bd59069dbef87a495755f05ca9f4fd61d66d5383e4daa1c6228e11dffcb50486",
+      "afterSha256": "47800151ab46460011423a6020663a593b0dcaf26c43a7d88dfb7a147da5d7ec",
+      "replacements": [
+        {
+          "start": 50938,
+          "before": "  const { createSubmissionJournal } = jest.requireActual('./private-submission-journal');\n",
+          "after": "  const { createSubmissionJournal } = jest.requireActual(\"../../../../fixtures/host/src/main/wallet/private-submission-journal.js\");\n"
+        },
+        {
+          "start": 35495,
+          "before": "  const live = require('../../../scripts/qualify-railgun-private-live');\n",
+          "after": "  const live = require(\"../../../../fixtures/host/scripts/qualify-railgun-private-live.js\");\n"
+        },
+        {
+          "start": 29897,
+          "before": "    require('../../../scripts/qualify-railgun-private-live').summarizeSubmissionDiagnostic(\n",
+          "after": "    require(\"../../../../fixtures/host/scripts/qualify-railgun-private-live.js\").summarizeSubmissionDiagnostic(\n"
+        },
+        {
+          "start": 29347,
+          "before": "        .spyOn(require('../networks/private-rpc'), 'createPrivateRpc')\n",
+          "after": "        .spyOn(require(\"../../../../../../src/owners/host-bindings.js\").rpc, 'createPrivateRpc')\n"
+        },
+        {
+          "start": 9219,
+          "before": "}));\njest.mock('./signers', () => ({ getSigner: () => mock.signer }));\njest.mock('./transaction-service', () => ({\n  signAndSendTransaction: (...args) => mock.send(...args),\n}));\n",
+          "after": "}), { virtual: true });\n\n\n"
+        },
+        {
+          "start": 8856,
+          "before": "jest.mock('./private-transaction-network', () => ({\n  getPrivateTransactionNetwork: (h, options) => {\n    mock.networkHandle = h;\n    mock.networkOptions = options;\n    mock.events.push('network');\n    return mock.network;\n  },\n}));\njest.mock('../identity-manager', () => ({\n",
+          "after": "\njest.mock(\"../../../../fixtures/host/src/main/identity-manager\", () => ({\n"
+        },
+        {
+          "start": 3146,
+          "before": "jest.mock('./private-submission-journal', () => ({\n",
+          "after": "jest.mock(\"../../../../fixtures/host/src/main/wallet/private-submission-journal.js\", () => ({\n"
+        },
+        {
+          "start": 3141,
+          "before": "",
+          "after": "},\n  transactionNetwork: {\n  getPrivateTransactionNetwork: (h, options) => {\n    mock.networkHandle = h;\n    mock.networkOptions = options;\n    mock.events.push('network');\n    return mock.network;\n  },\n},\n  signers: { getSigner: () => mock.signer },\n  transactions: {\n  signAndSendTransaction: (...args) => mock.send(...args),\n},\n"
+        },
+        {
+          "start": 2268,
+          "before": "jest.mock('../networks/private-rpc', () => ({\n",
+          "after": "jest.mock(\"../../../../../../src/owners/host-bindings.js\", () => ({\n  ...jest.requireActual(\"../../../../../../src/owners/host-bindings.js\"),\n  rpc: {\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "// Explicit journal keys; vault seed acquisition is outside this suite.\njest.mock('@scure/bip39', () => ({ mnemonicToSeedSync: () => { throw Error('Unexpected journal mnemonic derivation'); } }));\nrequire('../../../../context-host.cjs');\n"
+        }
+      ]
+    }
+  ]
+}

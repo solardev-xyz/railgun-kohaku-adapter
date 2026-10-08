@@ -1,0 +1,45 @@
+{
+  "baseRevision": "265dc9dfcae1711ce8e8513d836d5ea94799c1c5",
+  "productionChanges": false,
+  "attempts": [
+    {
+      "label": "a",
+      "passed": 209,
+      "failed": 54,
+      "exitCode": 1,
+      "completion": "208cfb"
+    },
+    {
+      "label": "b",
+      "exitCode": 1,
+      "completion": "0e51b5"
+    },
+    {
+      "label": "c",
+      "passed": 249,
+      "failed": 14,
+      "exitCode": 1,
+      "completion": "ce02c8"
+    }
+  ],
+  "targeted": {
+    "suites": 3,
+    "tests": 263,
+    "seconds": 39.656,
+    "exitCode": 0,
+    "originalSession": 60637,
+    "completion": "42988a",
+    "completeResult": true
+  },
+  "provenance": {
+    "tests": 10,
+    "exitCode": 0
+  },
+  "lint": {
+    "exitCode": 0,
+    "completion": "4ade0b"
+  },
+  "qualifiedAdjacent": 145,
+  "remainingHost": 6,
+  "fullDefaultExecuted": false
+}

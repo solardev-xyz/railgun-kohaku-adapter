@@ -19,6 +19,7 @@ const disclosureAdaptations = require('../docs/owners/test-staging/HOST-DISCLOSU
 const originAdaptations = require('../docs/owners/test-staging/HOST-ORIGIN-ADAPTATIONS.json');
 const operationAdaptations = require('../docs/owners/test-staging/HOST-OPERATIONS-ADAPTATIONS.json');
 const journalAdaptations = require('../docs/owners/test-staging/HOST-JOURNAL-ADAPTATIONS.json');
+const submissionAdaptations = require('../docs/owners/test-staging/HOST-SUBMISSION-ADAPTATIONS.json');
 const retired = require('../docs/owners/RETIRED-RUNTIME.json');
 const sha = (value) => createHash('sha256').update(value).digest('hex');
 test('all staged tests and fixtures preserve exact c6 bytes through reversible import-only edits', () => {
@@ -31,6 +32,15 @@ test('all staged tests and fixtures preserve exact c6 bytes through reversible i
   expect(new Set(manifest.files.map((row) => row.destination)).size).toBe(168);
   for (const row of manifest.files) {
     let text = fs.readFileSync(path.join(root, row.destination), 'utf8');
+    const submission = submissionAdaptations.changes.find((entry) => entry.file === row.destination);
+    if (submission) {
+      expect(sha(text)).toBe(submission.afterSha256);
+      for (const edit of [...submission.replacements].reverse()) {
+        expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(edit.after);
+        text = text.slice(0, edit.start) + edit.before + text.slice(edit.start + edit.after.length);
+      }
+      expect(sha(text)).toBe(submission.beforeSha256);
+    }
     const journal = journalAdaptations.changes.find((entry) => entry.file === row.destination);
     if (journal) {
       expect(sha(text)).toBe(journal.afterSha256);
@@ -263,7 +273,10 @@ test('default CI discovery includes every qualified closed suite by exact filena
   const journal = require('../tools/owner-test-staging/jest.host-journal.config.cjs');
   expect(journal.testMatch).toHaveLength(4);
   expect(journal.testMatch.every((name) => !/[?*]/.test(name))).toBe(true);
-  expect(new Set([...closed.testMatch, ...context.testMatch, ...storage.testMatch, ...pure.testMatch, ...snapshot.testMatch, ...jobs.testMatch, ...receipts.testMatch, ...accounts.testMatch, ...transport.testMatch, ...wallet.testMatch, ...rpc.testMatch, ...disclosure.testMatch, ...origin.testMatch, ...operations.testMatch, ...journal.testMatch]).size).toBe(142);
+  const submission = require('../tools/owner-test-staging/jest.host-submission.config.cjs');
+  expect(submission.testMatch).toHaveLength(3);
+  expect(submission.testMatch.every((name) => !/[?*]/.test(name))).toBe(true);
+  expect(new Set([...closed.testMatch, ...context.testMatch, ...storage.testMatch, ...pure.testMatch, ...snapshot.testMatch, ...jobs.testMatch, ...receipts.testMatch, ...accounts.testMatch, ...transport.testMatch, ...wallet.testMatch, ...rpc.testMatch, ...disclosure.testMatch, ...origin.testMatch, ...operations.testMatch, ...journal.testMatch, ...submission.testMatch]).size).toBe(145);
   expect(config.testMatch).toEqual([
     '<rootDir>/test/**/*.test.js',
     '<rootDir>/tools/qualification/scripts/fixtures/railgun-relay-wire/policy.test.js',
@@ -291,6 +304,7 @@ test('default CI discovery includes every qualified closed suite by exact filena
     ...origin.testMatch,
     ...operations.testMatch,
     ...journal.testMatch,
+    ...submission.testMatch,
   ]);
 });
 
@@ -359,5 +373,15 @@ test('generic journal/network fixtures retain exact source and fixed private own
     const bytes = fs.readFileSync(path.join(root, row.file));
     expect({ bytes: bytes.length, sha256: sha(bytes) }).toEqual({ bytes: row.bytes, sha256: row.sha256 });
     expect(row.file.startsWith('tools/owner-test-staging/fixtures/host/')).toBe(true);
+  }
+});
+
+test('repository-only live qualifier helper retains exact source without executing its entry', () => {
+  const fixture = require('../docs/owners/test-staging/HOST-SUBMISSION-FIXTURES.json');
+  expect(fixture.sourceCommit).toBe(manifest.sourceRevision);
+  expect(fixture.entryExecuted).toBe(false);
+  for (const row of [fixture, fixture.pins]) {
+    const bytes = fs.readFileSync(path.join(root, row.destination));
+    expect({ bytes: bytes.length, sha256: sha(bytes) }).toEqual({ bytes: row.bytes, sha256: row.sha256 });
   }
 });

@@ -1,3 +1,10 @@
+// Explicit journal keys; vault seed acquisition is outside this suite.
+jest.mock('@scure/bip39', () => ({ mnemonicToSeedSync: () => { throw Error('Unexpected journal mnemonic derivation'); } }));
+require('../../../../context-host.cjs');
+// Retain the same initialized private binding across this suite's module resets.
+const mockFixedHost = require('../../../../../../src/owners/host-bindings.js');
+const mockFixedContext = require('../../../../../../test/fixtures/owner-privacy-context.js');
+jest.doMock('../../../../../../test/fixtures/owner-privacy-context.js', () => mockFixedContext);
 /** Real-boundary qualification of the recovered review budget (offline),
  * for a Shield input only: no TXID mirror, creator, note provenance or TXID
  * root receipt runs, so the Transact branch is not covered here.
@@ -98,36 +105,39 @@ jest.mock("../../../../../../src/execution/railgun-artifacts.js", () => ({
     if (encoded !== '0x1234') throw Error('verifier');
   },
 }));
-jest.mock('../identity-manager', () => ({
+jest.mock("../../../../fixtures/host/src/main/identity-manager", () => ({
   getWalletRecord: () => ({ index: 0, type: 'mnemonic', address: mock.wallet.address }),
   WALLET_TYPES: { MNEMONIC: 'mnemonic' },
+}), { virtual: true });
+jest.mock("../../../../../../src/owners/host-bindings.js", () => ({
+  ...mockFixedHost,
+  signers: { getSigner: () => mock.signer },
 }));
-jest.mock('./signers', () => ({ getSigner: () => mock.signer }));
-jest.mock('../settings-store', () => ({ isWalletTorExperimentAvailable: () => true }));
+jest.mock("../../../../fixtures/host/src/main/settings-store.js", () => ({ isWalletTorExperimentAvailable: () => true }));
 // Every private RPC activity check reads the endpoint, so a scenario can
 // place synchronous work inside the RPC's own admission path.
-jest.mock('../tor-manager', () => ({
+jest.mock("../../../../fixtures/host/src/main/tor-manager.js", () => ({
   getWalletSocksEndpoint: () => {
     mock.onEndpoint?.();
     return mock.endpoint;
   },
 }));
-jest.mock('../networks/network-registry', () => ({
+jest.mock("../../../../fixtures/host/src/main/networks/network-registry.js", () => ({
   getNetwork: () => ({}),
   getEndpoints: () => ['https://rpc.example'],
   getEndpointSources: () => [{ keyed: false, coverage: { 11155111: 'https://rpc.example' } }],
 }));
-jest.mock('../networks/wallet-tor-transport', () => ({
+jest.mock("../../../../fixtures/host/src/main/networks/wallet-tor-transport.js", () => ({
   createWalletTorTransport: () => ({
     request: (...args) => mock.transport(...args),
     release: () => {},
   }),
 }));
-jest.mock('../networks/chain-data-router', () => ({}));
+jest.mock("../../../../fixtures/host/src/main/networks/chain-data-router.js", () => ({}));
 // The real journal, on a temporary directory instead of the profile vault.
 // Its writes are labelled only so that the fsync edge can apply latency.
-jest.mock('./private-submission-journal', () => {
-  const actual = jest.requireActual('./private-submission-journal');
+jest.mock("../../../../fixtures/host/src/main/wallet/private-submission-journal.js", () => {
+  const actual = jest.requireActual("../../../../fixtures/host/src/main/wallet/private-submission-journal.js");
   const journals = new WeakMap();
   // Each write is synchronous inside its call, so start and end bracket it.
   const label =
@@ -176,7 +186,7 @@ const BUDGET = require("../../../../../../src/owners/railgun-recovered-review-bu
 const {
   createRailgunLegacyCapsuleData,
 } = require("../../../../fixtures/scripts/fixtures/railgun-partial-capsule-data.js");
-const live = require('../../../scripts/qualify-railgun-private-live');
+const live = require("../../../../fixtures/host/scripts/qualify-railgun-private-live.js");
 
 const realFsync = fs.fsyncSync;
 const WALLET = new Wallet(`0x${'1'.repeat(64)}`); // Public synthetic fixture only.
@@ -202,8 +212,8 @@ const copy = (v) => JSON.parse(JSON.stringify(v));
 // this suite's own require: the test sits beside the module, so its relative
 // requires resolve to the same registry. Never writes a file.
 const MUTABLE = Object.freeze({
-  submission: './railgun-private-submission',
-  network: './private-transaction-network',
+  submission: '../../../../../../src/owners/railgun-private-submission.js',
+  network: '../../../../fixtures/host/src/main/wallet/private-transaction-network.js',
 });
 let mutant = null;
 function loadVariant(name, source) {
@@ -211,7 +221,7 @@ function loadVariant(name, source) {
   const variant = { exports: {} };
   new Function('exports', 'require', 'module', '__filename', '__dirname', source)(
     variant.exports,
-    require,
+    (specifier) => require(specifier.startsWith('.') ? path.resolve(path.dirname(filename), specifier) : specifier),
     variant,
     filename,
     path.dirname(filename)
@@ -235,11 +245,11 @@ function kitFor(budget) {
       mutant,
       kit: {
         submission: require("../../../../../../src/owners/railgun-private-submission.js"),
-        privacy: require("../../../../../../src/owners/context-bindings.js"),
-        rpc: require('../networks/private-rpc'),
+        privacy: { ...require("../../../../../../src/owners/context-bindings.js"), privacyError: mockFixedContext.privacyError },
+        rpc: require("../../../../../../src/owners/host-bindings.js").rpc,
         phase: require("../../../../../../src/owners/railgun-account-phase.js"),
         transactIntent: require("../../../../../../src/owners/railgun-transact-intent.js"),
-        journal: jest.requireActual('./private-submission-journal'),
+        journal: jest.requireActual("../../../../fixtures/host/src/main/wallet/private-submission-journal.js"),
       },
     };
   }
