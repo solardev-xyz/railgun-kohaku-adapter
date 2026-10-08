@@ -1354,8 +1354,8 @@ test('fixed sender and submission cores remain unwired outside their explicit pr
   };
   visit(root);
   for (const [name, expected] of [
-    ['submitRailgunRetainedPoi', ['owners/railgun-poi-disclosure-plan.js']],
-    ['recoverRailgunAttemptedPoiOutput', ['owners/railgun-poi-output-recovery.js']],
+    ['submitRailgunRetainedPoi', ['owners/operational-poi-lane.js', 'owners/railgun-poi-disclosure-plan.js']],
+    ['recoverRailgunAttemptedPoiOutput', ['owners/operational-poi-lane.js', 'owners/railgun-poi-output-recovery.js']],
     [
       'claimRailgunAttemptedPoiOutput',
       ['owners/railgun-poi-disclosure-plan.js', 'owners/railgun-poi-output-recovery.js'],

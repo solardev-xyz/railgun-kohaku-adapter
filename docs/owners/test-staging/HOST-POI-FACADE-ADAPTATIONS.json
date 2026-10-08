@@ -1,0 +1,23 @@
+{
+  "baseRevision": "d274d41546ad580fa2152b993c2c5f56bee82df9",
+  "productionTransforms": false,
+  "reason": "Fixed reviewed retained-POI facade adds exactly submit and attempted-output call sites; original source equality assertion remains exact, not optional or pattern-expanded.",
+  "reviewedSource": {
+    "path": "src/owners/operational-poi-lane.js",
+    "sha256": "3e2525f8ad29ddbdab7f2a0fd48e3724cb731711eaa985746d3350b524c130e8"
+  },
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-submission.test.js",
+      "beforeSha256": "5cdf329704b51e21208a032aef54f16a8ce576e0ecd07d50f2a3fdb9da3b365e",
+      "afterSha256": "b79d100c638e50836ce536456dee0f6f0d95d4f622d8727090f080696bc97b91",
+      "replacements": [
+        {
+          "start": 51404,
+          "before": "    ['submitRailgunRetainedPoi', ['owners/railgun-poi-disclosure-plan.js']],\n    ['recoverRailgunAttemptedPoiOutput', ['owners/railgun-poi-output-recovery.js']],\n",
+          "after": "    ['submitRailgunRetainedPoi', ['owners/operational-poi-lane.js', 'owners/railgun-poi-disclosure-plan.js']],\n    ['recoverRailgunAttemptedPoiOutput', ['owners/operational-poi-lane.js', 'owners/railgun-poi-output-recovery.js']],\n"
+        }
+      ]
+    }
+  ]
+}
