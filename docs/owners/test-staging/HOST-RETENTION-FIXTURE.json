@@ -1,0 +1,61 @@
+{
+  "sourceOnly": true,
+  "purpose": "Exact public host retention algorithms supplied only through fixed test journalRetention port; not installed-host acceptance",
+  "files": [
+    {
+      "source": "src/main/wallet/privacy-journal-retention.js",
+      "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "sourceBlob": "95fc681a6445178325014b0de932a469132c510a",
+      "destination": "tools/owner-test-staging/fixtures/host/src/main/wallet/privacy-journal-retention.js",
+      "bytes": 5346,
+      "sha256": "8c6193e6f403f6ac7cc1b1a4836dd4d1efddba6673922e11338f248baebcdfe6"
+    },
+    {
+      "source": "src/main/wallet/private-transaction-intent.js",
+      "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "sourceBlob": "27289d576fa0a4807b01968fd621788a51ba78de",
+      "destination": "tools/owner-test-staging/fixtures/host/src/main/wallet/private-transaction-intent.js",
+      "bytes": 3636,
+      "sha256": "554fab0536cda77cf2b26a7ce94fd1a63fd45e87c0b0aebbf8b341e442d9e879"
+    },
+    {
+      "source": "src/main/wallet/ordinary-submission-policy.js",
+      "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "sourceBlob": "8514bd984a47e711cfc98c4b1195e652c507f2e7",
+      "destination": "tools/owner-test-staging/fixtures/host/src/main/wallet/ordinary-submission-policy.js",
+      "bytes": 2523,
+      "sha256": "eadf790df92e35233096abc0c92eaffb9d8bf1c754beb035dd3f3c11b07e54d2"
+    },
+    {
+      "source": "src/main/wallet/ppv2-ragequit-policy.js",
+      "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "sourceBlob": "04f89c9a119edf5f3d8c8aaedfc69c7e0a0f5d70",
+      "destination": "tools/owner-test-staging/fixtures/host/src/main/wallet/ppv2-ragequit-policy.js",
+      "bytes": 1636,
+      "sha256": "3ebef303b860b91841213f5194d25897dd51344b354cacff1d85ee79e28bec7d"
+    },
+    {
+      "source": "src/main/wallet/ppv2-deposit-policy.js",
+      "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "sourceBlob": "956b9c7951630c9d0ca65791cea59786d8420e9c",
+      "destination": "tools/owner-test-staging/fixtures/host/src/main/wallet/ppv2-deposit-policy.js",
+      "bytes": 3012,
+      "sha256": "5ad82515b6daba0aa728552fe9fe5a6fbf37ba4fc4fa615135bb4fd7d12ba5a5"
+    },
+    {
+      "source": "src/main/wallet/ppv2-sepolia-pins.json",
+      "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "sourceBlob": "9b97b6cb69b4c435968a611a9f61e89a97d928b3",
+      "destination": "tools/owner-test-staging/fixtures/host/src/main/wallet/ppv2-sepolia-pins.json",
+      "bytes": 3009,
+      "sha256": "68badd8f727d0391a0df5c53d41815a9d4605ed7352a461b2d65db1f7e375242"
+    }
+  ],
+  "fixedTestBindings": {
+    "src/main/networks/privacy-context.js": "test/fixtures/owner-privacy-context.js",
+    "src/main/wallet/railgun-shield-intent.js": "src/owners/railgun-shield-intent.js",
+    "src/main/wallet/railgun-transact-intent.js": "src/owners/railgun-transact-intent.js",
+    "src/main/wallet/railgun-shield-resolution.js": "src/owners/railgun-shield-resolution.js",
+    "src/main/wallet/railgun-transact-resolution.js": "src/owners/railgun-transact-resolution.js"
+  }
+}

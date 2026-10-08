@@ -1,0 +1,320 @@
+{
+  "productionBasis": "90edb634324066c9c18d0fe6db82964466991310",
+  "testBase": "63be312906329d4469749c0b3cb7f9c72060fe85",
+  "implementationCommit": "7a96691e7c5bb7fdd20542769fb2bf50426f2b90",
+  "contextGroup": {
+    "suites": 35,
+    "tests": 2297,
+    "exitCode": 0,
+    "originalSession": 62944,
+    "completion": "6242a3",
+    "durationSeconds": 162.955,
+    "sourceMode": "Current untransformed package runtime; test-only fixed ports with original test crypto/task mocks. Actual disposable SQLite workers."
+  },
+  "sqlite": {
+    "packageVersion": "13.0.3",
+    "node": "24.18.1",
+    "modulesABI": "137",
+    "napi": "10",
+    "sqliteEngine": "3.53.4",
+    "addon": {
+      "bytes": 1980736,
+      "sha256": "98e0e8acd01c632fe5615243e1296af0372826f8783b18fc31c506f73c47459c"
+    },
+    "addonRelative": "prebuilds/darwin-arm64.node",
+    "physicalNodeModulesExceptApprovedSqliteSymlink": true,
+    "noRebuild": true,
+    "noNodePath": true
+  },
+  "suites": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-cold-validation.test.js",
+      "bytes": 92049,
+      "sha256": "e6f7e60e27c9bcd7c137ebf570a332d29a5b2f864ddbde788033c789a8a44a47",
+      "tests": 359,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-poi-shape-data.test.js",
+      "bytes": 10354,
+      "sha256": "c464a61e94fd915382522a9e83703e096883d24fccabe42e0399a5788f1da61f",
+      "tests": 58,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-poi-membership.test.js",
+      "bytes": 34275,
+      "sha256": "9286102bd8e874a3696679132bb1532f6a90330aafd530012a8f2b04682b3979",
+      "tests": 68,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-account-poi.test.js",
+      "bytes": 30109,
+      "sha256": "7344feedfb1e840fb9fb08cc7e468ee007a20d66cac96091e8d96c19d30a9097",
+      "tests": 67,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-txid-runner.test.js",
+      "bytes": 28784,
+      "sha256": "82ec4832ce1763ebdc3b407a6c4a032a583f76a2983f5d6a4a752f0fb5796fc3",
+      "tests": 78,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-wallet-coverage-store.test.js",
+      "bytes": 25992,
+      "sha256": "06cfc90ad505e43c7fd0ea1983792dd047018c5ecbcdc595df78f387ffd65c49",
+      "tests": 58,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-source-capture.test.js",
+      "bytes": 24441,
+      "sha256": "bd1b350afe6cf514cad465d4695558479fb94824bbeed28615cb4893d45e6cb3",
+      "tests": 66,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-transact-staging.test.js",
+      "bytes": 30974,
+      "sha256": "48c50c2237248463c215315a71675e3159a1c883ca40fc07a76b4ccb8b7060f2",
+      "tests": 45,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-note-provenance.test.js",
+      "bytes": 25804,
+      "sha256": "af188e8683566752c590970dadf58331d5036aee0c7b8693aff7eb53777bfed9",
+      "tests": 52,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-shield-prepare.test.js",
+      "bytes": 16398,
+      "sha256": "0b373954f20dc1178789ca487e8d7f2cac2c63e6d8b3d88965b31c563b0a9277",
+      "tests": 41,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-txid-verifier.test.js",
+      "bytes": 12486,
+      "sha256": "17dc632e10d8cee8c60904958c1ce0a3b3078412d869cd3a99addce3cecc7d4e",
+      "tests": 34,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-selector.test.js",
+      "bytes": 13313,
+      "sha256": "6e093905c41f03785654ebddf6256d0f115cd4e95f7834deb56084338f607937",
+      "tests": 42,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-account-store.test.js",
+      "bytes": 25089,
+      "sha256": "2c14ce8bf40284770aae60553b49f7569b8676a72f353a9086a3329feeeb7141",
+      "tests": 38,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-transact-provenance.test.js",
+      "bytes": 20031,
+      "sha256": "c342407826d2ef17c585473b0f9fae94a9c3070fad60ec168018c5623e98b41f",
+      "tests": 36,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-transact-staging.test.js",
+      "bytes": 19302,
+      "sha256": "642f2e88101dc868e2ad5102464f8c4a5cfd726eb7413e2933cfb63d9daec8a6",
+      "tests": 27,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-transact-provenance.test.js",
+      "bytes": 11719,
+      "sha256": "93d45ff9d52ca9683d6262cf9154a8af2a0cb9ee7e76136a811b9a42bf828ec8",
+      "tests": 19,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-proof.test.js",
+      "bytes": 11708,
+      "sha256": "f0869ea4c97501ed905dfbf1cee4a8fccc44258027a839457a739f6774c44ae3",
+      "tests": 23,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-verifier.test.js",
+      "bytes": 10793,
+      "sha256": "1667adee99753f6a3eeffec14066e26f4a64fe58041bb0e36363c43f13d2d18d",
+      "tests": 27,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-txid-root.test.js",
+      "bytes": 6918,
+      "sha256": "6f74afc01b9efa25434c8c47bcbf9b42e67480991a3a5d77a14f5f2250122467",
+      "tests": 21,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-source-ledger.test.js",
+      "bytes": 11313,
+      "sha256": "1011ff8dca96da04d13f007c38b1d882f3139bc30f41b9048273cf0dff8d1ad0",
+      "tests": 14,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-source-capture.test.js",
+      "bytes": 8190,
+      "sha256": "0b0cb1639a19464636f5df8e55d9174153d3cd69e92abd52d0ce7c4e7f923ea4",
+      "tests": 17,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-source-ledger-prefix.test.js",
+      "bytes": 8199,
+      "sha256": "4357e73798186bfb4d806a52e3ec6b1e05eef483c26b0b6c9e1b23d974840c97",
+      "tests": 19,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-session.test.js",
+      "bytes": 21260,
+      "sha256": "901a5465818ef1eaece540d1ce3e88689d3072c817cde0d651c0e029b5ef468b",
+      "tests": 78,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-output-recovery.test.js",
+      "bytes": 108355,
+      "sha256": "ec60e3a1967774ce90983704417015b40e94a6a7408ce9dc471af0e744395de4",
+      "tests": 324,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-witness.test.js",
+      "bytes": 116427,
+      "sha256": "1b14c28437a746820d678d2a8fe3ff1119c464aa89304bd87e9e776ab4b3df5f",
+      "tests": 327,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-session-worker.test.js",
+      "bytes": 23770,
+      "sha256": "1acc156f0b5e0fd7219e5c877afceb96efaaf7a8bfda374b6a96ac377f48d812",
+      "tests": 23,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-proof.test.js",
+      "bytes": 15300,
+      "sha256": "f4d70cfd3e6cbee66520e357941c9119ad6fa0b082bd20fe0c3b4dc90b61de07",
+      "tests": 42,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-shield-selector.test.js",
+      "bytes": 11761,
+      "sha256": "55cf0b4b43edf3b876b58d2d6e2a5865db80170fcbda1995dd4e508b871ef199",
+      "tests": 47,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-run.test.js",
+      "bytes": 25118,
+      "sha256": "7f6043680a45210a85a1546c3258bc02c440fff4a9860ef19ea3ab87042cdaaf",
+      "tests": 62,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-poi-prove-job.test.js",
+      "bytes": 14519,
+      "sha256": "0e294a8b7346d3f7cb0a7d07fa991f1653a425a6e7fc7c2b672467c6f9c2a20b",
+      "tests": 24,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-store.test.js",
+      "bytes": 8468,
+      "sha256": "a4d451952b8d07105512a57bf8b3c8f0d751983d7c89b29df0b77011d6e4fb2d",
+      "tests": 16,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-wallet-run.test.js",
+      "bytes": 34593,
+      "sha256": "585c1eea9a642b7e5ec4c2c4f8c8393161471e93137937e02f8d8fa128345e30",
+      "tests": 69,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-shield-receive.test.js",
+      "bytes": 20059,
+      "sha256": "f324934bf1531811980bfeca711117215151f2a80526412208f44bec5c82ce42",
+      "tests": 52,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-public-run.test.js",
+      "bytes": 6844,
+      "sha256": "9a97fe99466d05be0c854fe6f2d957523bed014d425bf6e64b43432aca68e879",
+      "tests": 11,
+      "status": "passed"
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-prover.test.js",
+      "bytes": 6598,
+      "sha256": "59fb43be07ca5d7250950c80309481d34f1b0a217b41a7e4533779ee920ce111",
+      "tests": 13,
+      "status": "passed"
+    }
+  ],
+  "remainingHostSuites": 58,
+  "default": {
+    "command": "npm test -- --maxWorkers=2 --verbose --json --outputFile /private/tmp/railgun-owner-context-default-r3-results.json",
+    "suites": 154,
+    "tests": 6779,
+    "exitCode": 0,
+    "durationSeconds": 150.507,
+    "originalSession": 67203,
+    "completion": "50182a",
+    "dedicatedSuites": 61,
+    "closedAdjacentSuites": 58,
+    "contextAdjacentSuites": 35,
+    "noWorkerCrashOrRetryWarning": true
+  },
+  "strictLint": {
+    "tool": "Existing Freedom ESLint executable/config; no dependency install",
+    "maxWarnings": 0,
+    "exitCode": 0,
+    "npmRunLint": "No lint script exists in this package; actual command refusal retained."
+  },
+  "failedRuns": [
+    {
+      "label": "initial uncomposed35",
+      "exitCode": 1,
+      "claim": "Diagnostic only; missing initialization"
+    },
+    {
+      "label": "first composed35",
+      "exitCode": 139,
+      "claim": "Unattributed process crash; not qualification"
+    },
+    {
+      "label": "intermediate composed35",
+      "exitCode": 1,
+      "suitesPassed": 34,
+      "testsPassed": 2270,
+      "claim": "Account-store mock missing private loan entrypoints; corrected without production edits"
+    },
+    {
+      "label": "combined default in-band attempts1/2",
+      "exitCode": 139,
+      "claim": "No report; cause unestablished. Passing two-worker invocation does not establish in-band reliability."
+    }
+  ]
+}

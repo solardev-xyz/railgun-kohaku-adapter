@@ -1,0 +1,230 @@
+{
+  "baseRevision": "372343e3521387bc70b10ccd04dfcff65ffebe8e",
+  "productionBasis": "40ef9bda2a596262e143bc3f5616f8139e4bad61",
+  "productionTransforms": false,
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-account-fence.test.js",
+      "beforeSha256": "102902f802ff7e0a86fe04fe73b8118543b7ead17c9151495df66d9ee0340537",
+      "afterSha256": "8b74c4b72ca2a41ac4644ae481d27774ce2acd86ffcc5d3cc289576cf257c017",
+      "reason": "Existing intentionally mocked optional SQLite dependency becomes a virtual Jest mock; actual SQLite is not exercised.",
+      "replacements": [
+        {
+          "start": 2387,
+          "before": "  })\n",
+          "after": "  }),\n  { virtual: true }\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-poi-proof.test.js",
+      "beforeSha256": "0c7888ca75f9c44be71bf9e973c11ef10de4bfbe573f784037eeb9caf3bfcfde",
+      "afterSha256": "38352fc89e8f3b10c372a65134ce18ebe173f1fcd0dc99fa0b2fb0210a65dd4b",
+      "reason": "Fixed enum replaces filename/binaryKey caller authority; assert exact enum, absent legacy fields and private registry key eligibility.",
+      "replacements": [
+        {
+          "start": 15921,
+          "before": "",
+          "after": "    expect(job.filename).toBeUndefined();\n    expect(job.binaryKey).toBeUndefined();\n    expect(require('../../../../../../src/owners/process-jobs.js').getProcessJob(job.executionJob).key).toBe(true);\n"
+        },
+        {
+          "start": 15819,
+          "before": "      filename: require.resolve(\"../../../../../../src/owners/railgun-own-poi-prove-job.js\"),\n",
+          "after": "\n"
+        },
+        {
+          "start": 15708,
+          "before": "      binaryKey: true,\n",
+          "after": "      executionJob: 'poi-prove',\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-txid.test.js",
+      "beforeSha256": "4dd93ed8f626b625ec5b2504465753e4197fc2c11db57479ae10e86e1353b4dd",
+      "afterSha256": "e18c7de1d2651748f71996c0ce9b59726c8b6656fa55c9cee7502a165ef3d80b",
+      "reason": "Fixed journalRetention port receives exact public c6 host validator fixture; installed-host acceptance remains separate.",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "// Exact original public host validator; no authority or production shim.\njest.mock(\"../../../../../../src/owners/host-bindings.js\", () => ({\n  journalRetention: jest.requireActual(\"../../../../fixtures/host/src/main/wallet/privacy-journal-retention.js\"),\n}));\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-reconstruct.test.js",
+      "beforeSha256": "b69300e6083a6d51ea1d8364dafd65e69251a9a976d608b86b8db646a5dc61a8",
+      "afterSha256": "c28011d30402d44bbde22d5a41308f54c01938885d43e95c7abf37b8b7f7d6e3",
+      "reason": "Translate previously missed literal jest.requireActual to same canonical execution capsule wrapper.",
+      "replacements": [
+        {
+          "start": 5162,
+          "before": "    .requireActual('./railgun-private-capsule')\n",
+          "after": "    .requireActual(\"../../../../../../src/execution/railgun-private-capsule.js\")\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-submit-data.test.js",
+      "beforeSha256": "9ee04d08b0369466a6ae8e26194d8d2ac4c780ef5d22f05a32cc3f80d4b34e06",
+      "afterSha256": "f6c7bdc3693954d4186874d4e041a6046f0ff91bbcbb99726bf2567b7e66b59f",
+      "reason": "Forbidden import canaries target actual package host/context/owner boundaries, preserving refusal on load.",
+      "replacements": [
+        {
+          "start": 26226,
+          "before": "    '../networks/private-rpc',\n    './privacy-storage',\n    './railgun-poi-intent-store',\n    './railgun-identity',\n    './railgun-process',\n    './railgun-poi-root',\n",
+          "after": "    '../../../../../../src/owners/host-bindings.js',\n    '../../../../../../src/owners/context-bindings.js',\n    '../../../../../../src/owners/railgun-poi-intent-store.js',\n    '../../../../../../src/owners/railgun-identity.js',\n    '../../../../../../src/owners/railgun-process.js',\n    '../../../../../../src/owners/railgun-poi-root.js',\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-verify-job.test.js",
+      "beforeSha256": "9f6cd196b4930ec04447c263cef412bb5b563cc77b37f103c70ee7d78bc782e1",
+      "afterSha256": "0ef9527814d9d577a26e89884c40b572f3f388eed9f786de05168bfe04ca7430",
+      "reason": "Test-only fixed context binding uses original copied genuine issuer; original artifact/crypto mocks and assertions retained.",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "// Test-only same copied context issuer previously supplied by the browser host.\njest.mock(\"../../../../../../src/owners/context-bindings.js\", () =>\n  jest.requireActual(\"../../../../../../test/fixtures/owner-privacy-context.js\")\n);\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-public-policy.test.js",
+      "beforeSha256": "320c5d04a67805adae6e5dade106a2d160ade9602df8b0c3e517c8cb34125bd6",
+      "afterSha256": "05d17ea61da28718b8f1377fcbb9e8cd1ed92e93e8223d6181ad1024f050c36e",
+      "reason": "Authorized semantic successor: same-process immutable snapshot, fresh-process package/host change, unchanged domain/archive/floor. Source membership replaces obsolete13-file boundary count.",
+      "replacements": [
+        {
+          "start": 3577,
+          "before": "",
+          "after": "test('an unauthenticated archive cannot obtain a public policy or read additional sources', () => {\n  const { f, verify } = fresh(), count = f.reads.length;\n  verify.mockImplementationOnce(() => { throw Error('archive'); });\n  expect(() => f.policy('railgun-public-policy').getRailgunPublicPolicy('/bad/engine.asar')).toThrow('archive');\n  expect(f.reads).toHaveLength(count);\n});\ntest('fixed public source closure is contained in the explicit package snapshot', () => {\n  const included = closedSources(['railgun-public-run', 'railgun-public-job', 'railgun-scan-coordinator', 'railgun-scan-source', 'railgun-source-ledger', 'railgun-account-public']);\n  expect(included.has(path.join(root, 'package.json'))).toBe(true);\n  expect(fresh().f.policy('railgun-public-policy').QUALIFIED_THROUGH).toBe(11829346);\n});\n"
+        },
+        {
+          "start": 3052,
+          "before": "  walk(require.resolve(\"../../../../../../src/owners/railgun-public-run.js\"));\n  walk(require.resolve(\"../../../../../../src/owners/railgun-public-job.js\"));\n  walk(require.resolve(\"../../../../../../src/owners/railgun-scan-coordinator.js\"));\n  walk(require.resolve(\"../../../../../../src/owners/railgun-scan-source.js\"));\n  walk(require.resolve(\"../../../../../../src/owners/railgun-source-ledger.js\"));\n  walk(require.resolve(\"../../../../../../src/owners/railgun-account-public.js\"));\n  expect(visited.size).toBe(13);\n",
+          "after": "  for (const name of seeds) walk(path.join(root, 'src/owners', name + '.js'));\n  expect(visited.size).toBeGreaterThan(seeds.length);\n  return included;\n}\n\ntest('policy is location-independent and fresh initialization binds pinned engine and public validator', () => {\n  const { f } = fresh(), read = (archive) => f.policy('railgun-public-policy').getRailgunPublicPolicy(archive);\n  const first = read('/first/engine.asar');\n  expect(first).toMatch(/^[0-9a-f]{64}$/);\n  expect(read('/other/engine.asar')).toBe(first);\n  const changed = fresh('src/owners/railgun-public-records.js').f;\n  expect(changed.policy('railgun-public-policy').getRailgunPublicPolicy('/first/engine.asar')).not.toBe(first);\n  f.bytes.set('src/owners/railgun-public-records.js', Buffer.from('changed validation'));\n  f.setHost('b'.repeat(64));\n  expect(read('/first/engine.asar')).toBe(first);\n  expect(f.hostRead).toHaveBeenCalledTimes(1);\n  expect(fresh(null, 'b'.repeat(64)).f.policy('railgun-public-policy').getRailgunPublicPolicy('/first/engine.asar')).not.toBe(first);\n  const saved = engine.sha256;\n  try { engine.sha256 = 'f'.repeat(64); expect(read('/first/engine.asar')).not.toBe(first); }\n  finally { engine.sha256 = saved; }\n  expect(read('/first/engine.asar')).toBe(first);\n"
+        },
+        {
+          "start": 2974,
+          "before": "      if (path.dirname(dependency) === __dirname) walk(dependency);\n",
+          "after": "      expect(dependency.startsWith(root + path.sep)).toBe(true);\n      if (dependency.endsWith('.json')) expect(included.has(dependency)).toBe(true);\n      else walk(dependency);\n"
+        },
+        {
+          "start": 2625,
+          "before": "    if (visited.has(filename) || terminals.has(filename)) return;\n    visited.add(filename);\n    expect(included.has(filename)).toBe(true);\n    for (const [, name] of fs\n      .readFileSync(filename, 'utf8')\n      .matchAll(/require\\(['\"](\\.\\/[^'\"]+)['\"]\\)/g)) {\n",
+          "after": "    if (visited.has(filename)) return;\n    visited.add(filename); expect(included.has(filename)).toBe(true);\n    for (const [, name] of fs.readFileSync(filename, 'utf8').matchAll(/require\\(['\"](\\.\\.?\\/[^'\"]+)['\"]\\)/g)) {\n"
+        },
+        {
+          "start": 485,
+          "before": "afterEach(() => {\n  jest.restoreAllMocks();\n  jest.clearAllMocks();\n});\ntest('policy is location-independent but changes when the pinned engine or a public validator changes', () => {\n  const first = getRailgunPublicPolicy('/first/engine.asar');\n  expect(first).toMatch(/^[0-9a-f]{64}$/);\n  expect(getRailgunPublicPolicy('/other/engine.asar')).toBe(first);\n  const original = fs.readFileSync;\n  const read = jest\n    .spyOn(fs, 'readFileSync')\n    .mockImplementation((name, ...args) =>\n      String(name).endsWith('/railgun-public-records.js')\n        ? Buffer.from('changed validation')\n        : original(name, ...args)\n    );\n  expect(getRailgunPublicPolicy('/first/engine.asar')).not.toBe(first);\n  read.mockRestore();\n  const saved = engine.sha256;\n  try {\n    engine.sha256 = 'f'.repeat(64);\n    expect(getRailgunPublicPolicy('/first/engine.asar')).not.toBe(first);\n  } finally {\n    engine.sha256 = saved;\n  }\n  expect(getRailgunPublicPolicy('/first/engine.asar')).toBe(first);\n});\ntest('an unauthenticated archive cannot obtain a public policy', () => {\n  verifyRailgunEngineRuntime.mockImplementationOnce(() => {\n    throw Error('archive');\n  });\n  const read = jest.spyOn(fs, 'readFileSync');\n  expect(() => getRailgunPublicPolicy('/bad/engine.asar')).toThrow('archive');\n  expect(read.mock.calls.filter(([name]) => String(name).includes('/src/main/wallet/'))).toEqual(\n    []\n  );\n});\ntest('public job and host transport dependency closure is pinned with explicit infrastructure terminals', () => {\n  const { SOURCES } = require(\"../../../../../../src/owners/railgun-public-policy.js\");\n  const included = new Set(SOURCES.map((name) => require.resolve('./' + name)));\n  const terminals = new Set(\n    [\n      'railgun-engine-runtime',\n      'railgun-engine-manifest.json',\n      'railgun-process',\n      'privacy-storage',\n      'railgun-session-worker',\n      'railgun-account-store',\n      'railgun-account-enrollment',\n      'railgun-store-owners',\n      'railgun-account-public',\n      'railgun-public-catalog',\n    ].map((name) => require.resolve('./' + name))\n  );\n  const visited = new Set();\n",
+          "after": "function fresh(change, host) {\n  const verify = jest.fn((value) => value), f = fixture(verify);\n  if (change) f.bytes.set(change, Buffer.from('changed validator source'));\n  if (host) f.setHost(host);\n  f.capture();\n  return { f, verify };\n}\nfunction closedSources(seeds) {\n  const included = new Set(files.map((name) => path.join(root, name))), visited = new Set();\n"
+        },
+        {
+          "start": 187,
+          "before": "const { getRailgunPublicPolicy } = require(\"../../../../../../src/owners/railgun-public-policy.js\");\nconst { verifyRailgunEngineRuntime } = require(\"../../../../../../src/execution/railgun-engine-runtime.js\");\n",
+          "after": ""
+        },
+        {
+          "start": 0,
+          "before": "jest.mock(\"../../../../../../src/execution/railgun-engine-runtime.js\", () => ({ verifyRailgunEngineRuntime: jest.fn((p) => p) }));\n",
+          "after": "// Source-only policy composition: actual reader/policy bytes in a fresh VM,\n// fixed mocked archive verifier and context assertion; no native/host authority.\nconst { fixture, files, root } = require(\"../../../../policy-fixture.cjs\");\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-proof-helpers.test.js",
+      "beforeSha256": "6def41055d03d093a6c3a31fa326c0ff315f3e21ec7ed5224b68d0ef8cd2b3c0",
+      "afterSha256": "5ff66480c2a0e333cf0a12c835feb9fe726a77058fed7babb10d34e40a1691e5",
+      "reason": "Same copied genuine context issuer; source-text guards read current verifier/process/bootstrap paths, not retired generic entry.",
+      "replacements": [
+        {
+          "start": 23397,
+          "before": "  for (const name of ['railgun-process.js', 'railgun-process-entry.js'])\n    expect(fs.readFileSync(path.join(__dirname, name), 'utf8')).toContain('> 65536');\n",
+          "after": "  for (const name of ['src/owners/railgun-process.js', 'host-bootstrap.cjs'])\n    expect(fs.readFileSync(path.resolve(__dirname, '../../../../../..', name), 'utf8')).toContain('> 65536');\n"
+        },
+        {
+          "start": 23083,
+          "before": "  const source = fs.readFileSync(path.join(__dirname, 'railgun-relay-proof-verifier.js'), 'utf8');\n",
+          "after": "  const source = fs.readFileSync(require.resolve(\"../../../../../../src/owners/railgun-relay-proof-verifier.js\"), 'utf8');\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "// Test-only same copied context issuer previously supplied by the browser host.\njest.mock(\"../../../../../../src/owners/context-bindings.js\", () =>\n  jest.requireActual(\"../../../../../../test/fixtures/owner-privacy-context.js\")\n);\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-quote-verify.test.js",
+      "beforeSha256": "93a566f85cebb5258c626c45c5c23d95a38854ea3ac5e8538e20fab0a2db3aaf",
+      "afterSha256": "859b78a31dbe893c599425fdd6e0d09a63f83ec60066b8229bd80a288099254f",
+      "reason": "Assert fixed quote enum and absent legacy selectors plus fixed keyless registry admission.",
+      "replacements": [
+        {
+          "start": 3098,
+          "before": "  expect(mock.options).toMatchObject({ binaryKey: false, startupMs: 15000, lifetimeMs: 15000 });\n",
+          "after": "  expect(mock.options.filename).toBeUndefined();\n  expect(mock.options.binaryKey).toBeUndefined();\n  expect(require('../../../../../../src/owners/process-jobs.js').getProcessJob(mock.options.executionJob).key).toBe(false);\n  expect(mock.options).toMatchObject({ executionJob: 'relay-quote-review', startupMs: 15000, lifetimeMs: 15000 });\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-signature-verify.test.js",
+      "beforeSha256": "e13a5a6ccaeb888e8063bb3ad293e4524d45379f11762e4b74ba2a75e957748c",
+      "afterSha256": "71a50ce687f0da2e274e6f697e253c94d9f121dce05a68f3903b27e20f1881ef",
+      "reason": "Assert fixed enum and absent legacy selectors plus fixed keyless registry admission.",
+      "replacements": [
+        {
+          "start": 5556,
+          "before": "  expect(mock.options.filename).toBe(require.resolve(\"../../../../../../src/owners/railgun-relay-signature-verify-job.js\"));\n  expect(mock.options.binaryKey).toBe(false);\n",
+          "after": "  expect(mock.options.executionJob).toBe('relay-signature-verify');\n  expect(mock.options.filename).toBeUndefined();\n  expect(mock.options.binaryKey).toBeUndefined();\n  expect(require('../../../../../../src/owners/process-jobs.js').getProcessJob(mock.options.executionJob).key).toBe(false);\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-txid-policy.test.js",
+      "beforeSha256": "d261f55107bbc38cc75c9dce160b216c6cd2b51e45762825ae6e70e01efc44b5",
+      "afterSha256": "1659bfc9a26797d0a6be2a8b06ec0471d75d9060270eb348859fca09a3e3613f",
+      "reason": "Authorized semantic successor: fresh-init checks all17 historical validators and original21 eager files; same-process stable snapshot, host digest change, exact binding/archive refusal. Explicit package membership replaces obsolete36/20 graph counts.",
+      "replacements": [
+        {
+          "start": 4216,
+          "before": "])('TXID policy binds eagerly loaded package file %s', (name) => {\n  const expected = getRailgunTxidPolicy('/engine.asar');\n  const filename = path.join(\n    path.dirname(require.resolve('@freedom/railgun-kohaku-adapter/host/poi')),\n    name\n  );\n  const original = fs.readFileSync;\n  jest\n    .spyOn(fs, 'readFileSync')\n    .mockImplementation((file, ...args) =>\n      file === filename ? Buffer.from('changed') : original(file, ...args)\n    );\n  expect(getRailgunTxidPolicy('/engine.asar')).not.toBe(expected);\n",
+          "after": "])('TXID policy binds eagerly loaded package file %s at fresh initialization', (name) => {\n  const first = fresh().f.policy('railgun-txid-policy').getRailgunTxidPolicy('/engine.asar');\n  expect(files).toContain(name);\n  expect(fresh(name).f.policy('railgun-txid-policy').getRailgunTxidPolicy('/engine.asar')).not.toBe(first);\n"
+        },
+        {
+          "start": 3368,
+          "before": "\n",
+          "after": ""
+        },
+        {
+          "start": 1703,
+          "before": "test('TXID computation, persistence and service validators have a closed policy dependency set', () => {\n  const adapter = path.dirname(require.resolve('@freedom/railgun-kohaku-adapter/host/poi'));\n  const read = jest.spyOn(fs, 'readFileSync');\n  getRailgunTxidPolicy('/engine.asar');\n  const included = new Set(read.mock.calls.map(([name]) => name));\n  read.mockRestore();\n  expect(included.has(path.join(adapter, 'package.json'))).toBe(true);\n  const terminal = new Set(\n    [\n      'railgun-engine-runtime',\n      'railgun-engine-manifest.json',\n      'railgun-session-worker',\n      'railgun-process',\n      'privacy-storage',\n    ].map((name) => require.resolve('./' + name))\n  );\n  const visited = new Set();\n  function walk(filename) {\n    if (visited.has(filename) || terminal.has(filename)) return;\n    visited.add(filename);\n    expect(included.has(filename)).toBe(true);\n    for (const [, name] of fs\n      .readFileSync(filename, 'utf8')\n      .matchAll(/require\\(['\"]((?:\\.\\.?\\/|@freedom\\/railgun-kohaku-adapter)[^'\"]*)['\"]\\)/g)) {\n      const dependency = name.startsWith('.')\n        ? require.resolve(path.resolve(path.dirname(filename), name))\n        : require.resolve(name, { paths: [path.dirname(filename)] });\n      if (path.dirname(dependency) === __dirname || dependency.startsWith(adapter + path.sep))\n        walk(dependency);\n    }\n  }\n  for (const name of [\n    'railgun-txid-job',\n    'railgun-txid-runner',\n    'railgun-txid-journal',\n    'railgun-txid-root',\n  ])\n    walk(require.resolve('./' + name));\n  expect(visited.size).toBe(36);\n  expect([...visited].filter((name) => name.startsWith(adapter + path.sep)).length).toBe(20);\n",
+          "after": "test('TXID computation, persistence and service validators are included in package source snapshot', () => {\n  const included = closedSources(['railgun-txid-job', 'railgun-txid-runner', 'railgun-txid-journal', 'railgun-txid-root']);\n  expect(included.has(path.join(root, 'package.json'))).toBe(true);\n  expect(files).toContain('host-poi.cjs');\n"
+        },
+        {
+          "start": 1371,
+          "before": "  const input = '1'.repeat(64);\n",
+          "after": "  const { railgunTxidBinding } = fresh().f.policy('railgun-txid-policy'), input = '1'.repeat(64);\n"
+        },
+        {
+          "start": 1116,
+          "before": "  verifyRailgunEngineRuntime.mockImplementationOnce(() => {\n    throw Error('archive');\n  });\n  expect(() => getRailgunTxidPolicy('/bad')).toThrow('archive');\n",
+          "after": "  for (const name of seeds) walk(path.join(root, 'src/owners', name + '.js'));\n  expect(visited.size).toBeGreaterThan(seeds.length);\n  return included;\n}\n\ntest('TXID policy binds each validator at initialization and remains location-independent', () => {\n  const { f, verify } = fresh(), read = (archive) => f.policy('railgun-txid-policy').getRailgunTxidPolicy(archive);\n  const first = read('/fixture/engine.asar');\n  expect(read('/elsewhere/engine.asar')).toBe(first);\n  const oldSource = require('../../../../../../docs/owners/HISTORICAL-POLICY-SOURCES.json').files['railgun-txid-policy.js'];\n  const oldNames = [...oldSource.split('const SOURCES = Object.freeze([')[1].split(']);')[0].matchAll(/'([^']+)'/g)].map((match) => match[1] + '.js');\n  const translation = require('../../../../../../docs/owners/TRANSLATION.json').files;\n  expect(oldNames).toHaveLength(17);\n  for (const name of oldNames) {\n    const row = translation.find((entry) => entry.source === 'src/main/wallet/' + name);\n    expect(row).toBeDefined(); expect(files).toContain(row.destination);\n    const changed = fresh(row.destination).f;\n    expect(changed.policy('railgun-txid-policy').getRailgunTxidPolicy('/fixture/engine.asar')).not.toBe(first);\n  }\n  f.bytes.set('src/owners/railgun-txid-events.js', Buffer.from('changed'));\n  f.setHost('b'.repeat(64)); expect(read('/fixture/engine.asar')).toBe(first);\n  expect(fresh(null, 'b'.repeat(64)).f.policy('railgun-txid-policy').getRailgunTxidPolicy('/fixture/engine.asar')).not.toBe(first);\n  expect(f.hostRead).toHaveBeenCalledTimes(1);\n  verify.mockImplementationOnce(() => { throw Error('archive'); });\n  expect(() => read('/bad')).toThrow('archive');\n"
+        },
+        {
+          "start": 187,
+          "before": "const { getRailgunTxidPolicy, railgunTxidBinding, SOURCES } = require(\"../../../../../../src/owners/railgun-txid-policy.js\");\nconst { verifyRailgunEngineRuntime } = require(\"../../../../../../src/execution/railgun-engine-runtime.js\");\nafterEach(() => jest.restoreAllMocks());\ntest('TXID policy binds every listed validator and authenticated engine independently of location', () => {\n  const expected = getRailgunTxidPolicy('/fixture/engine.asar');\n  expect(getRailgunTxidPolicy('/elsewhere/engine.asar')).toBe(expected);\n  for (const source of SOURCES) {\n    const original = fs.readFileSync;\n    const spy = jest\n      .spyOn(fs, 'readFileSync')\n      .mockImplementation((name, ...args) =>\n        String(name).endsWith('/' + source + '.js')\n          ? Buffer.from('changed')\n          : original(name, ...args)\n      );\n    expect(getRailgunTxidPolicy('/fixture/engine.asar')).not.toBe(expected);\n    spy.mockRestore();\n",
+          "after": "function fresh(change, host) {\n  const verify = jest.fn((value) => value), f = fixture(verify);\n  if (change) f.bytes.set(change, Buffer.from('changed validator source'));\n  if (host) f.setHost(host);\n  f.capture();\n  return { f, verify };\n}\nfunction closedSources(seeds) {\n  const included = new Set(files.map((name) => path.join(root, name))), visited = new Set();\n  function walk(filename) {\n    if (visited.has(filename)) return;\n    visited.add(filename); expect(included.has(filename)).toBe(true);\n    for (const [, name] of fs.readFileSync(filename, 'utf8').matchAll(/require\\(['\"](\\.\\.?\\/[^'\"]+)['\"]\\)/g)) {\n      const dependency = require.resolve(path.resolve(path.dirname(filename), name));\n      expect(dependency.startsWith(root + path.sep)).toBe(true);\n      if (dependency.endsWith('.json')) expect(included.has(dependency)).toBe(true);\n      else walk(dependency);\n    }\n"
+        },
+        {
+          "start": 0,
+          "before": "jest.mock(\"../../../../../../src/execution/railgun-engine-runtime.js\", () => ({ verifyRailgunEngineRuntime: jest.fn((p) => p) }));\n",
+          "after": "// Source-only policy composition: actual reader/policy bytes in a fresh VM,\n// fixed mocked archive verifier and context assertion; no native/host authority.\nconst { fixture, files, root } = require(\"../../../../policy-fixture.cjs\");\n"
+        }
+      ]
+    }
+  ]
+}

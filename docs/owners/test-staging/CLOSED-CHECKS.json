@@ -1,0 +1,525 @@
+{
+  "productionBasis": "40ef9bda2a596262e143bc3f5616f8139e4bad61",
+  "stagingBasis": "372343e3521387bc70b10ccd04dfcff65ffebe8e",
+  "scope": "Current package source with fixed test-only contexts, artifact/crypto/utility mocks inherited from originals. No native/installed host acceptance.",
+  "groups": {
+    "newlyQualified46": {
+      "suites": 46,
+      "tests": 2251
+    },
+    "previous12": {
+      "suites": 12,
+      "tests": 292
+    }
+  },
+  "dedicated": {
+    "command": "npm test -- --runInBand",
+    "suites": 59,
+    "tests": 1912,
+    "exitCode": 0
+  },
+  "adjacent": {
+    "command": "npm test -- --runInBand --config tools/owner-test-staging/jest.closed.config.cjs",
+    "suites": 58,
+    "tests": 2543,
+    "exitCode": 0
+  },
+  "strictLint": {
+    "exitCode": 0,
+    "packageNpmLintScript": "absent; existing Freedom ESLint used, no installation"
+  },
+  "attempts": [
+    {
+      "label": "initial actual58",
+      "passedSuites": 47,
+      "failedSuites": 11,
+      "passedTests": 2436,
+      "failedTests": 60
+    },
+    {
+      "label": "per-suite diagnostic",
+      "limitSeconds": 25,
+      "timeout": "own-poi-proof needs33seconds on original suite; timeout is diagnostic only, final suite completed naturally"
+    },
+    {
+      "label": "first dedicated successor",
+      "failure": "one UTF-16 offset mismatch in test-only inverse provenance; corrected generator retains astral Unicode positions"
+    },
+    {
+      "label": "first strictlint",
+      "failure": "unused sha in copied test helper; removed unused helper binding only"
+    }
+  ],
+  "productionBytesChanged": false,
+  "nativeExecuted": false,
+  "remaining": {
+    "contextSuites": 35,
+    "hostImportSuites": 58
+  },
+  "suites": [
+    {
+      "source": "src/main/networks/railgun-host-provider.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/networks/railgun-host-provider.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 19,
+      "sourceSha256": "59d5d277d626c281e3f809114f009bcc5dbe40afdf43f7cdfd2138666a81dd9c"
+    },
+    {
+      "source": "src/main/wallet/railgun-account-fence.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-account-fence.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 47,
+      "sourceSha256": "8b74c4b72ca2a41ac4644ae481d27774ce2acd86ffcc5d3cc289576cf257c017"
+    },
+    {
+      "source": "src/main/wallet/railgun-account-phase.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-account-phase.test.js",
+      "previousStatus": "passed unchanged assertions",
+      "suitePassed": true,
+      "testsPassed": 7,
+      "sourceSha256": "3c3390bf6850b908a6cc289c4ddb38741198aad63ddd0c52c7ac8586eca839a5"
+    },
+    {
+      "source": "src/main/wallet/railgun-event-projector.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-event-projector.test.js",
+      "previousStatus": "passed unchanged assertions",
+      "suitePassed": true,
+      "testsPassed": 12,
+      "sourceSha256": "05ded7c3db24ef808c84dd2ad86d0cd7a1ff372e660946aa957ab5eab873e4d5"
+    },
+    {
+      "source": "src/main/wallet/railgun-frontier.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-frontier.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 46,
+      "sourceSha256": "6632805100be89b62a4c7f8f473c99e6328281b234046e87597618810d89055b"
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-read.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-kohaku-read.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 14,
+      "sourceSha256": "9d9a7880e45378ed0579a7bcb1e8fe0a3b99c7b3a2327b5b3293ed17766d0a6b"
+    },
+    {
+      "source": "src/main/wallet/railgun-note-provenance-job.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-note-provenance-job.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 30,
+      "sourceSha256": "79d08948ce7c8317034760dcfa84a82bd73dda7c310a23d3f469ba1dc183b9fb"
+    },
+    {
+      "source": "src/main/wallet/railgun-own-poi-proof-data.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-poi-proof-data.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 42,
+      "sourceSha256": "be8e8ebc1605b6d89e630431d0a8b3294737cca80f6f0a0587ea36e0342f38c2"
+    },
+    {
+      "source": "src/main/wallet/railgun-own-poi-proof.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-poi-proof.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 202,
+      "sourceSha256": "38352fc89e8f3b10c372a65134ce18ebe173f1fcd0dc99fa0b2fb0210a65dd4b"
+    },
+    {
+      "source": "src/main/wallet/railgun-own-selector-job.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-selector-job.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 13,
+      "sourceSha256": "40524873748928e281980263b29383b1aca7fe16710739806864fa8115e1f22a"
+    },
+    {
+      "source": "src/main/wallet/railgun-own-source.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-source.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 30,
+      "sourceSha256": "8700c671ac85b7f3e76ac77221dcf9df14df6a7803703ed514c4c39b156c49f2"
+    },
+    {
+      "source": "src/main/wallet/railgun-own-transact-poi-proof-data.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-transact-poi-proof-data.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 38,
+      "sourceSha256": "f9b8f4b0b8e3ac24158e06cdda9939f690f7e88918513e0817667515750c3f0e"
+    },
+    {
+      "source": "src/main/wallet/railgun-own-txid-job.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-txid-job.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 24,
+      "sourceSha256": "a5eeb4a066b379c0f094e8203265c1233e5c3542dddc46b61ed5585e1ada67b7"
+    },
+    {
+      "source": "src/main/wallet/railgun-own-txid.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-txid.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 97,
+      "sourceSha256": "e18c7de1d2651748f71996c0ce9b59726c8b6656fa55c9cee7502a165ef3d80b"
+    },
+    {
+      "source": "src/main/wallet/railgun-poi-creator.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-creator.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 91,
+      "sourceSha256": "a82ba965efbbc86aa0b9ef5cf94c246c5eac55703a7359030401b00522e4a6fd"
+    },
+    {
+      "source": "src/main/wallet/railgun-poi-output-recovery-data.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-output-recovery-data.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 85,
+      "sourceSha256": "1955cdc2f55f9c5c54d74bc6dee0e59928deeff7a6e58e648408d3c8384b18d0"
+    },
+    {
+      "source": "src/main/wallet/railgun-poi-reconstruct.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-reconstruct.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 36,
+      "sourceSha256": "c28011d30402d44bbde22d5a41308f54c01938885d43e95c7abf37b8b7f7d6e3"
+    },
+    {
+      "source": "src/main/wallet/railgun-poi-shield-selector-job.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-shield-selector-job.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 32,
+      "sourceSha256": "4de7185e515ef8871eb6281714bdac761786e53126e8e2f6a629f5d4fbc63206"
+    },
+    {
+      "source": "src/main/wallet/railgun-poi-source-evidence.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-source-evidence.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 37,
+      "sourceSha256": "b5fe38821a07b844ca4eeab40ae8d59893d401877885cd99070d6a7ea9366ff2"
+    },
+    {
+      "source": "src/main/wallet/railgun-poi-submit-data.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-submit-data.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 244,
+      "sourceSha256": "f6c7bdc3693954d4186874d4e041a6046f0ff91bbcbb99726bf2567b7e66b59f"
+    },
+    {
+      "source": "src/main/wallet/railgun-poi-verify-job.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-verify-job.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 16,
+      "sourceSha256": "0ef9527814d9d577a26e89884c40b572f3f388eed9f786de05168bfe04ca7430"
+    },
+    {
+      "source": "src/main/wallet/railgun-poi-witness.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-witness.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 32,
+      "sourceSha256": "a7a1860c8cb5731da4aba0ad85c5ab6881ea50a60830b1dceb7f1ec1bb01da17"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-creator.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-creator.test.js",
+      "previousStatus": "passed unchanged assertions",
+      "suitePassed": true,
+      "testsPassed": 24,
+      "sourceSha256": "34bc0553f152079b60d249849016162eead93795ee2a7a8d68e06daf9a79443c"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-foreign-transfer.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-foreign-transfer.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 31,
+      "sourceSha256": "0ac0d760f10ee11ff74ed67d275e239a35e505dc0d192489e3f4c95c43d2921d"
+    },
+    {
+      "source": "src/main/wallet/railgun-private-receive.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-receive.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 62,
+      "sourceSha256": "be0cf411e37d88362add4e537b6f7642febbf4f3eac31138bc16e6d1553f90b8"
+    },
+    {
+      "source": "src/main/wallet/railgun-public-job.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-public-job.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 7,
+      "sourceSha256": "32f6c98153fadfe8408cf0e4f5084f0f9f38a6d871ababab96b4f0069fa3dad7"
+    },
+    {
+      "source": "src/main/wallet/railgun-public-policy.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-public-policy.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 3,
+      "sourceSha256": "05d17ea61da28718b8f1377fcbb9e8cd1ed92e93e8223d6181ad1024f050c36e"
+    },
+    {
+      "source": "src/main/wallet/railgun-public-records.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-public-records.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 46,
+      "sourceSha256": "c2f35be0f8e4c9f25fdf82a4a1980997ba484d606a287430807bfaaec525a077"
+    },
+    {
+      "source": "src/main/wallet/railgun-recovery-finality.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-recovery-finality.test.js",
+      "previousStatus": "passed unchanged assertions",
+      "suitePassed": true,
+      "testsPassed": 9,
+      "sourceSha256": "df7918cb01936043adafcdf37abbd282456498978b2060b9624e511a5911ab98"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-operation.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-operation.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 81,
+      "sourceSha256": "91baeefc91c9afbbe3aebb22c7e051ec0a74beeae3983899d2084b658cc700f6"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-pre-poi-job.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-pre-poi-job.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 25,
+      "sourceSha256": "9819159b782db4777eeaf2cb04da4c224c2ba15861b9eee92f52fa7d469c2654"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-pre-poi-math.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-pre-poi-math.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 23,
+      "sourceSha256": "8a6ed412cfcc0ac4a840c239d8ca6850ba8f4e1d184c7fae2fbdf20a2f35b720"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-pre-poi-witness.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-pre-poi-witness.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 24,
+      "sourceSha256": "524d535fc9d32c0d49929ce4e0f875d5c89ed06513f6cdb08a2b0f180be648f3"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-proof-helpers.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-proof-helpers.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 62,
+      "sourceSha256": "5ff66480c2a0e333cf0a12c835feb9fe726a77058fed7babb10d34e40a1691e5"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-proof-jobs.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-proof-jobs.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 45,
+      "sourceSha256": "ed75721abc1a0f6e6aa5314702f69df5735b67fd829fe85210be53615e3d7c0b"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-proof-results.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-proof-results.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 27,
+      "sourceSha256": "ab39943e87c6911938b3af9a450c380447fb46027a281b4a871e5d223e5a1f86"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-quote-job.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-quote-job.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 17,
+      "sourceSha256": "43e1319bfda23396d91ff03426b55cb490950a76862a0bf76ebfdace7f1405ca"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-quote-verify.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-quote-verify.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 20,
+      "sourceSha256": "859b78a31dbe893c599425fdd6e0d09a63f83ec60066b8229bd80a288099254f"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-review-summary.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-review-summary.test.js",
+      "previousStatus": "passed unchanged assertions",
+      "suitePassed": true,
+      "testsPassed": 15,
+      "sourceSha256": "1c83030258a69490731414f8f23116a1cafc4b498eb546ea2414880d59386e21"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-runner.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-runner.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 68,
+      "sourceSha256": "69c72a5d4f886d32f8187137574a0a43c56627d728ac0748e6d28d7380ae4ebe"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-sign-job.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-sign-job.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 25,
+      "sourceSha256": "e9dd672d0e6f43ad2683321fea5be02aff1601b7e5f993ae07b82053bf189cb5"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-signature-verify-job.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-signature-verify-job.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 35,
+      "sourceSha256": "169bdc572559fe95fdb3a588589276bdb726a6663e739be994a3f93c48305419"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-signature-verify.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-signature-verify.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 64,
+      "sourceSha256": "71a50ce687f0da2e274e6f697e253c94d9f121dce05a68f3903b27e20f1881ef"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-wallet-job.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-wallet-job.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 14,
+      "sourceSha256": "666d243304b2ef2a2d6ad91e61a41afe00fce839e4971bc9e67ea3b974a39579"
+    },
+    {
+      "source": "src/main/wallet/railgun-relay-witness.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-witness.test.js",
+      "previousStatus": "passed unchanged assertions",
+      "suitePassed": true,
+      "testsPassed": 65,
+      "sourceSha256": "bc1cf96202587daf75e4a44d57d90f3b44e59dd9c8e204eb8216205e885d243e"
+    },
+    {
+      "source": "src/main/wallet/railgun-reservation-ledger.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-reservation-ledger.test.js",
+      "previousStatus": "passed unchanged assertions",
+      "suitePassed": true,
+      "testsPassed": 57,
+      "sourceSha256": "38ba8109d1723eaf8f9f48fcc1c60d6ab0a69a0e978b487e57856edaf7f206db"
+    },
+    {
+      "source": "src/main/wallet/railgun-shield-policy.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-shield-policy.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 33,
+      "sourceSha256": "1f136629cb5cced0611e6086ff933af3678ae7b6ea496fb0b2d018e33231f7bd"
+    },
+    {
+      "source": "src/main/wallet/railgun-transact-intent.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-transact-intent.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 74,
+      "sourceSha256": "dba0a39445a6a025e0519d5cea8f87f315e75e1cb6bc19d138aa316055bee009"
+    },
+    {
+      "source": "src/main/wallet/railgun-transact-receipt.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-transact-receipt.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 100,
+      "sourceSha256": "b52e5614df3400fcbb52fdc734e5bbc568cbaeef751c5825e41309d7110f4a2a"
+    },
+    {
+      "source": "src/main/wallet/railgun-transact-resolution.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-transact-resolution.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 108,
+      "sourceSha256": "f47f3b470914ff617b6387e1034f1052174d0d342ad59aab7f0cf0decb890caa"
+    },
+    {
+      "source": "src/main/wallet/railgun-txid-coverage.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-txid-coverage.test.js",
+      "previousStatus": "passed unchanged assertions",
+      "suitePassed": true,
+      "testsPassed": 8,
+      "sourceSha256": "e8b034270516e804f8874f386a391027fc472bb666b4690716519a24189c9334"
+    },
+    {
+      "source": "src/main/wallet/railgun-txid-events.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-txid-events.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 15,
+      "sourceSha256": "dbe1ff503d77b697678fc8e72684506b568ab5e81fdde457d62a7bfed674c33d"
+    },
+    {
+      "source": "src/main/wallet/railgun-txid-policy.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-txid-policy.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 24,
+      "sourceSha256": "1659bfc9a26797d0a6be2a8b06ec0471d75d9060270eb348859fca09a3e3613f"
+    },
+    {
+      "source": "src/main/wallet/railgun-wallet-coverage.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-wallet-coverage.test.js",
+      "previousStatus": "passed unchanged assertions",
+      "suitePassed": true,
+      "testsPassed": 17,
+      "sourceSha256": "76bcc0ab845249a6b7baab5c49e0bd5a972686fa100f2b090821c536078604f1"
+    },
+    {
+      "source": "src/main/wallet/railgun-wallet-read.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-wallet-read.test.js",
+      "previousStatus": "passed unchanged assertions",
+      "suitePassed": true,
+      "testsPassed": 17,
+      "sourceSha256": "2c15642b49a8695226f094672e074a8b8369616f34f7a0bf8144d4208de55f81"
+    },
+    {
+      "source": "src/main/wallet/railgun-wallet-runner.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-wallet-runner.test.js",
+      "previousStatus": "closed direct imports; runtime not yet tested",
+      "suitePassed": true,
+      "testsPassed": 43,
+      "sourceSha256": "c92de2c617e00735f75db0f394f009639d6e7a6d064da8f7c01d20006eb9bce8"
+    },
+    {
+      "source": "src/main/wallet/railgun-wallet-state.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-wallet-state.test.js",
+      "previousStatus": "passed unchanged assertions",
+      "suitePassed": true,
+      "testsPassed": 7,
+      "sourceSha256": "d0f563d74f74c9c8ee9ecef73ce86020735eb53eb6ef81f5df85523437dbeff9"
+    },
+    {
+      "source": "src/main/wallet/railgun-wallet-storage.test.js",
+      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-wallet-storage.test.js",
+      "previousStatus": "passed unchanged assertions",
+      "suitePassed": true,
+      "testsPassed": 54,
+      "sourceSha256": "c8bcceb331ba53ec328121e17ac527675ab9488ed945700d6ccb8bfb0ededa9b"
+    }
+  ]
+}
