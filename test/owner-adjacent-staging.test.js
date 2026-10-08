@@ -89,5 +89,9 @@ test('default CI discovery includes every qualified closed suite by exact filena
   const closed = require('../tools/owner-test-staging/jest.closed.config.cjs');
   expect(closed.testMatch).toHaveLength(58);
   expect(closed.testMatch.every((name) => !/[?*]/.test(name))).toBe(true);
-  expect(config.testMatch).toEqual(['<rootDir>/test/**/*.test.js', ...closed.testMatch]);
+  const context = require('../tools/owner-test-staging/jest.context.config.cjs');
+  expect(context.testMatch).toHaveLength(35);
+  expect(context.testMatch.every((name) => !/[?*]/.test(name))).toBe(true);
+  expect(new Set([...closed.testMatch, ...context.testMatch]).size).toBe(93);
+  expect(config.testMatch).toEqual(['<rootDir>/test/**/*.test.js', ...closed.testMatch, ...context.testMatch]);
 });
