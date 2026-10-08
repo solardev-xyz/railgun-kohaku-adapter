@@ -7,6 +7,20 @@ const {
   resumePlan,
 } = require("../tools/qualification/installed-live/live-scenario.cjs");
 const ledger = require("../tools/qualification/installed-live/live-ledger.cjs");
+// As the rebuild does: plan, then record the attempt with its opener.
+function resumePlan(context) {
+  const value = plan(context);
+  if (value.mode !== "exact")
+    ledger.resumeAttempt(
+      context.profile,
+      context.header,
+      value.mode,
+      value.lower,
+      value.upper,
+      value.firstTarget,
+    );
+  return value;
+}
 const anchor = (number) => ({ number, hash: "0x" + "a".repeat(64) });
 const targets = (from, n) => rangesTo(from, anchor(n)).map((range) => range.to);
 test("100000-block windows below 5.7M and 20000-block windows from it, contiguous and capped", () => {

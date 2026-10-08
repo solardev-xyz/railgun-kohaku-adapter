@@ -123,7 +123,6 @@ function resumePlan(context) {
   assert.ok(tried.length < 2, 'Both resume targets were tried');
   const mode = tried.length === 0 ? 'first' : 'second';
   const target = mode === 'first' ? upper : windowEnd(upper + 1);
-  ledger.resumeAttempt(context.profile, context.header, mode, lower, upper, target);
   return { mode, lower, upper, from: null, firstTarget: target };
 }
 // The scan continues exactly where the last recorded checkpoint ended.
@@ -317,23 +316,23 @@ async function rebuild(context) {
   const { facade, signal, milestone, owner, readFinalized, params } = context;
   const publicCache = params.publicCache ?? 'new';
   assert.ok(['new', 'pending'].includes(publicCache));
+  // A resume plans its candidates before spending an opener, and records the
+  // attempt only once the opener is reserved (see resumePlan).
+  let from = 0,
+    resume = null;
+  if (context.header.name === ledger.RESUME) {
+    assert.equal(publicCache, 'pending');
+    resume = resumePlan(context);
+    from = resume.from;
+  }
   budget(context, 'scan-open:' + publicCache);
+  if (resume && resume.mode !== 'exact')
+    ledger.resumeAttempt(context.profile, context.header, resume.mode, resume.lower, resume.upper, resume.firstTarget);
   const seen = [];
   let session, lane;
   try {
     session = await facade.openAccount({ accountIndex: 0, signal, publicCache });
     const anchor = await readFinalized();
-    // A resume starts after its exact lower bound: the last recorded
-    // checkpoint, else the evidence-bound claim the launcher verified. The
-    // first window is the schedule's next one; if the failed window had in
-    // fact been applied, the coordinator refuses it before any request.
-    let from = 0,
-      resume = null;
-    if (context.header.name === ledger.RESUME) {
-      assert.equal(publicCache, 'pending');
-      resume = resumePlan(context);
-      from = resume.from;
-    }
     const { ranges, statuses, firstReturned } = await scanTo(context, session, from, anchor, resume?.firstTarget ?? null);
     milestone('public-rebuilt:' + ranges);
     const facts = heldFacts(context.heldReport, owner);
