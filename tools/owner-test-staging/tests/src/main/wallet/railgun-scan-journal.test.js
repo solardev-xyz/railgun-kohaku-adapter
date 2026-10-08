@@ -1,9 +1,10 @@
+require('../../../../context-host.cjs');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
 let mockWrapStorage;
-jest.mock('./privacy-storage', () => {
-  const actual = jest.requireActual('./privacy-storage');
+jest.mock('../../../../fixtures/host/src/main/wallet/privacy-storage.js', () => {
+  const actual = jest.requireActual('../../../../fixtures/host/src/main/wallet/privacy-storage.js');
   return {
     ...actual,
     createPrivacyStorage: (...args) => {
@@ -13,7 +14,7 @@ jest.mock('./privacy-storage', () => {
   };
 });
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");
-const { createPrivacyStorage, getPrivacyStoragePath } = require('./privacy-storage');
+const { createPrivacyStorage, getPrivacyStoragePath } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');
 const { emptyPublicState } = require("../../../../../../src/owners/railgun-public-records.js");
 const { createRailgunScanJournal, RECORD_KEY } = require("../../../../../../src/owners/railgun-scan-journal.js");
 let scope, options, journals;

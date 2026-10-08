@@ -111,6 +111,17 @@ input.platform.spawnStorageWorker = ({ workerData, transferList }) => {
   worker.stderr.resume();
   return worker;
 };
+// Fixed actual generic host storage capability, copied with source provenance.
+// Lazy lookup preserves each original suite's explicit storage fault injection.
+input.storage = {
+  createPrivacyStorage: (...args) => require('./fixtures/host/src/main/wallet/privacy-storage.js').createPrivacyStorage(...args),
+  getPrivacyStoragePath: (...args) => require('./fixtures/host/src/main/wallet/privacy-storage.js').getPrivacyStoragePath(...args),
+};
+// Fixed pure shared transaction metadata, using the pinned generic host fixture.
+input.transactionIntent = {
+  transactionIntent: (...args) => require('./fixtures/host/src/main/wallet/private-transaction-intent.js').transactionIntent(...args),
+  validIntent: (...args) => require('./fixtures/host/src/main/wallet/private-transaction-intent.js').validIntent(...args),
+};
 input.sourceIdentity = { readDigest: () => 'a'.repeat(64) };
 const owner = jest.requireActual('../../src/owners/host-bindings.js');
 owner.initializeRailgunOwnerHost(input);

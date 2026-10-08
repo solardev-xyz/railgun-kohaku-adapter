@@ -4,10 +4,10 @@ jest.mock("../../../../../../src/owners/railgun-account-wallet.js", () => ({ rea
 jest.mock("../../../../../../src/owners/railgun-account-public.js", () => ({ getRailgunAccountPublicIdentity: jest.fn() }));
 const { readRailgunAccountOwnedNotes: readOwned } = require("../../../../../../src/owners/railgun-account-wallet.js");
 const { getRailgunAccountPublicIdentity: publicIdentity } = require("../../../../../../src/owners/railgun-account-public.js");
-const { createRailgunKohakuSnapshotHost: createHost } = require('./railgun-kohaku-snapshot-host');
+const { createRailgunKohakuSnapshotHost: createHost } = require('../../../../../../src/owners/railgun-kohaku-snapshot-host.js');
 const {
   createRailgunKohakuSnapshotPlugin: createPlugin,
-} = require('./railgun-kohaku-snapshot-plugin');
+} = require('../../../../../../index.cjs');
 const {
   snapshotFixture,
   checkSnapshotConformance,

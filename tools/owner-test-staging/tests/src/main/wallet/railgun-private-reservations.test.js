@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 let mockFencedOwners = new WeakSet();
 jest.mock("../../../../../../src/owners/railgun-account-enrollment.js", () => ({
   assertRailgunFencedAccountEnrollment: (owner) => {
@@ -8,7 +9,7 @@ const fs = require('fs'),
   os = require('os'),
   path = require('path');
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");
-const { createPrivacyStorage, getPrivacyStoragePath } = require('./privacy-storage');
+const { createPrivacyStorage, getPrivacyStoragePath } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');
 const {
   createRailgunPrivateReservations,
   isRailgunPrivateReservations,

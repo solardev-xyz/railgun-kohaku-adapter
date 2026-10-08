@@ -1,9 +1,10 @@
+require('../../../../context-host.cjs');
 const fs = require('fs'),
   os = require('os'),
   path = require('path');
 const { Interface, AbiCoder, keccak256 } = require('ethers');
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");
-const { createPrivacyStorage, getPrivacyStoragePath } = require('./privacy-storage');
+const { createPrivacyStorage, getPrivacyStoragePath } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');
 const { createRailgunPrivateReservations } = require("../../../../../../src/owners/railgun-private-reservations.js");
 const {
   createRailgunPrivateCapsuleStore,

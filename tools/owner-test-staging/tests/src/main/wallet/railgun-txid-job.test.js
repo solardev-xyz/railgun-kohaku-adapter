@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 const { createHash } = require('crypto');
 const mockArchive = '/fixture-txid-history.asar';
 const mockHash = (value) => '0' + createHash('sha256').update(value).digest('hex').slice(1);
@@ -71,11 +72,12 @@ jest.mock("../../../../../../src/owners/railgun-poi-prover.js", () => {
 jest.mock("../../../../../../src/execution/railgun-artifacts.js", () => {
   throw Error('historical root must not import artifacts');
 });
-jest.mock('./privacy-storage', () => {
+jest.mock('../../../../fixtures/host/src/main/wallet/privacy-storage.js', () => {
   throw Error('historical root must not open a store');
 });
-jest.mock('../networks/private-rpc', () => {
-  throw Error('historical root must not import RPC');
+jest.mock('../../../../../../src/owners/host-bindings.js', () => {
+  const actual = jest.requireActual('../../../../../../src/owners/host-bindings.js');
+  return { ...actual, get rpc() { throw Error('historical root must not import RPC'); } };
 });
 let run,
   payload,
@@ -349,4 +351,10 @@ test('historical-root cancellation during a borrowed row read never admits a lat
     gate.resolve();
     await refused;
   }
+});
+
+test('fixed host RPC family remains denied while pure retention metadata is available', () => {
+  const host = require('../../../../../../src/owners/host-bindings.js');
+  expect(typeof host.journalRetention.validArchive).toBe('function');
+  expect(() => host.rpc).toThrow(/RPC/);
 });

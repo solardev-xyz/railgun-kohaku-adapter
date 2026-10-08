@@ -1,0 +1,31 @@
+{
+  "purpose": "Repo-only exact generic host encrypted storage and profile inventory. Not Railgun owners or published APIs. Same already-copied context issuer.",
+  "files": [
+    {
+      "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "source": "src/main/wallet/privacy-storage.js",
+      "sourceBlob": "34a22bfebee5048a2d7615427a6236a4dcc04992",
+      "destination": "tools/owner-test-staging/fixtures/host/src/main/wallet/privacy-storage.js",
+      "bytes": 8240,
+      "sha256": "cf8379a4ab2395538ef009f06ff7edc5b92cf1cf9bf26807cae4f41b9c9887e0"
+    },
+    {
+      "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "source": "src/main/wallet/privacy-profile-guard.js",
+      "sourceBlob": "8bcbca5d440ece3596cbc5590a81bcc7229d23c8",
+      "destination": "tools/owner-test-staging/fixtures/host/src/main/wallet/privacy-profile-guard.js",
+      "bytes": 9870,
+      "sha256": "7f5d4a71bdcc574728858b8407a47c94bb1b052dec0226c6ecb18f12d289e691"
+    }
+  ],
+  "historicalReader": {
+    "source": "src/main/wallet/railgun-poi-intent-store-old-reader.fixture.js",
+    "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+    "archive": "docs/owners/historical/railgun-poi-intent-store-old-reader.source.txt",
+    "bytes": 23310,
+    "sha256": "618bdff954dae9bf31836c8d1ab9b5100d7409b9f7f8e68844afdff4b577fb89",
+    "executedFixture": "tools/owner-test-staging/fixtures/src/main/wallet/railgun-poi-intent-store-old-reader.fixture.js",
+    "executedSha256": "f96a6dcb45170fcb879a05cde66b372e078e148f1c2b654758261e1624ec83df",
+    "claim": "Historical reader only. Original bytes and executed import-relocated bytes are independently pinned; inverse source provenance verifies unchanged body."
+  }
+}

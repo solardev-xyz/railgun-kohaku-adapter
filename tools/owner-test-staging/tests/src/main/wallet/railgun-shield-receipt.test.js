@@ -1,5 +1,6 @@
+require('../../../../context-host.cjs');
 const { Interface } = require('ethers');
-const { transactionIntent } = require('./private-transaction-intent');
+const { transactionIntent } = require('../../../../fixtures/host/src/main/wallet/private-transaction-intent.js');
 const { SHIELD_ABI } = require("../../../../../../src/owners/railgun-shield-policy.js");
 const { SHIELD_EVENT, inspectRailgunShieldReceipt } = require("../../../../../../src/owners/railgun-shield-receipt.js");
 const pins = require("../../../../../../src/railgun-shield-pins.json");

@@ -1,10 +1,11 @@
+require('../../../../context-host.cjs');
 const fs = require('fs'),
   os = require('os'),
   path = require('path');
 const { createHash } = require('crypto');
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");
 const { createRailgunTxidJournal } = require("../../../../../../src/owners/railgun-txid-journal.js");
-const { getPrivacyStoragePath } = require('./privacy-storage');
+const { getPrivacyStoragePath } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');
 const { ZERO_NODES } = require("../../../../../../src/owners/railgun-public-records.js");
 const sha = (v) => createHash('sha256').update(v).digest('hex');
 const empty = () => ({

@@ -9,13 +9,13 @@ const assert = require('assert/strict');
 const fs = require('fs');
 const path = require('path');
 const { randomBytes, createHash } = require('crypto');
-const { createPrivacyScope, getPrivacyContext } = require("../../../../../../src/owners/context-bindings.js");
-const { createPrivacyStorage, getPrivacyStoragePath } = require('../../../host/src/main/wallet/privacy-storage.js');
-const { normalizeRailgunPoiPayload } = require("../../../../../../src/data/railgun-poi-payload.js");
+const { createPrivacyScope, getPrivacyContext } = require('../networks/privacy-context');
+const { createPrivacyStorage, getPrivacyStoragePath } = require('./privacy-storage');
+const { normalizeRailgunPoiPayload } = require('./railgun-poi-payload');
 const {
   prepareRailgunPoiSubmission,
   normalizeRailgunPoiSubmission,
-} = require("../../../../../../src/data/railgun-poi-submit-data.js");
+} = require('./railgun-poi-submit-data');
 const RECORD = 'railgun-poi-intents-v1';
 const MAX_RECORDS = 32,
   MAX_SEQUENCE = 128,
@@ -55,7 +55,7 @@ async function createRailgunPoiIntentStore({
 }) {
   // Enrollment imports this store. Proof/recovery modules import enrollment;
   // keep those imports out of initialization to preserve the module boundary.
-  const { isRailgunAccountEnrollment } = require("../../../../../../src/owners/railgun-account-enrollment.js");
+  const { isRailgunAccountEnrollment } = require('./railgun-account-enrollment');
   const context = getPrivacyContext(handle),
     subject = context.subject;
   assert.ok(isRailgunAccountEnrollment(enrollment) && !enrollment.signal.aborted);
@@ -364,10 +364,10 @@ async function createRailgunPoiIntentStore({
       shape(options, ['proof', 'coordinator', 'signal']);
       const { proof, coordinator, signal } = options;
       assert.ok(signal instanceof AbortSignal && !signal.aborted);
-      const { assertRailgunOwnPoiProof } = require("../../../../../../src/owners/railgun-own-poi-proof.js");
-      const { bindRailgunOwnPoiPayload } = require("../../../../../../src/owners/railgun-own-poi-proof-data.js");
-      const { withRailgunOwnOperationRecovery } = require("../../../../../../src/owners/railgun-own-operation.js");
-      const { assertRailgunOwnPoiCapture } = require("../../../../../../src/data/railgun-own-poi-binding.js");
+      const { assertRailgunOwnPoiProof } = require('./railgun-own-poi-proof');
+      const { bindRailgunOwnPoiPayload } = require('./railgun-own-poi-proof-data');
+      const { withRailgunOwnOperationRecovery } = require('./railgun-own-operation');
+      const { assertRailgunOwnPoiCapture } = require('./railgun-own-poi-binding');
       const lifetime = AbortSignal.any([signal, scope.signal]);
       const history = assertRailgunOwnPoiProof(proof, enrollment, coordinator);
       // The genuine proof history supplies the supported input type. Retained
@@ -493,11 +493,11 @@ async function createRailgunPoiIntentStore({
         return record(entry, current.version);
       });
       currentAttempt();
-      const { withRailgunOwnOperationRecovery } = require("../../../../../../src/owners/railgun-own-operation.js");
+      const { withRailgunOwnOperationRecovery } = require('./railgun-own-operation');
       const {
         assertRailgunOwnPoiCapture,
         assertRailgunOwnPoiStableCapture,
-      } = require("../../../../../../src/data/railgun-own-poi-binding.js");
+      } = require('./railgun-own-poi-binding');
       const bind = (capture) => {
         assert.equal(capture.capsuleDigest, baseline.capsuleDigest);
         assert.equal(capture.bindingDigest, baseline.bindingDigest);

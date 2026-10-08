@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 const assert = require('assert/strict');
 jest.mock("../../../../../../src/owners/railgun-public-policy.js", () => ({
   getRailgunPublicPolicy: jest.fn((archive) => {
@@ -97,7 +98,7 @@ const {
 const {
   openRailgunOwnPoiChecks: open,
   assertRailgunOwnPoiChecks: check,
-} = require('./railgun-own-poi-checks');
+} = require('../../../../../../src/owners/railgun-own-poi-checks.js');
 const hex = (n) => BigInt(n).toString(16).padStart(64, '0');
 const clone = (v) => JSON.parse(JSON.stringify(v));
 const deferred = () => {

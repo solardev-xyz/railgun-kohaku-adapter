@@ -1,0 +1,87 @@
+{
+  "baseRevision": "4f8d67a769b460dd386fc0a624aadee12afc5d82",
+  "productionTransforms": false,
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-output-recover-job.test.js",
+      "beforeSha256": "33df35f0b9e1a2f41cee9bbf4ae5ccb8f64949d8aab2c01a2b7209e0d5908ec9",
+      "afterSha256": "5eb95e115660d4fec4ec6a485154bcdba65c0bab1e201d6c1c4183cf9d842195",
+      "replacements": [
+        {
+          "start": 24051,
+          "before": "",
+          "after": "\ntest('fixed host RPC family remains denied while pure retention metadata is available', () => {\n  const host = require('../../../../../../src/owners/host-bindings.js');\n  expect(typeof host.journalRetention.validArchive).toBe('function');\n  expect(() => host.rpc).toThrow(/RPC/);\n});\n"
+        },
+        {
+          "start": 2459,
+          "before": "jest.mock('../networks/private-rpc', () => {\n  throw Error('Output recovery must not load RPC');\n",
+          "after": "jest.mock('../../../../../../src/owners/host-bindings.js', () => {\n  const actual = jest.requireActual('../../../../../../src/owners/host-bindings.js');\n  return { ...actual, get rpc() { throw Error('Output recovery must not load RPC'); } };\n"
+        },
+        {
+          "start": 2360,
+          "before": "jest.mock('./privacy-storage', () => {\n",
+          "after": "jest.mock('../../../../fixtures/host/src/main/wallet/privacy-storage.js', () => {\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-transact-selector-job.test.js",
+      "beforeSha256": "79ead348e448cc8a937a8c0dc21594df0302281dff882a431483ff4aa33da7e9",
+      "afterSha256": "15af9ac972967fccc77be27abae23e578d5fb27d36dc951801e3ae4c8726241d",
+      "replacements": [
+        {
+          "start": 8023,
+          "before": "",
+          "after": "\ntest('fixed host RPC family remains denied while pure retention metadata is available', () => {\n  const host = require('../../../../../../src/owners/host-bindings.js');\n  expect(typeof host.journalRetention.validArchive).toBe('function');\n  expect(() => host.rpc).toThrow(/RPC/);\n});\n"
+        },
+        {
+          "start": 1393,
+          "before": "jest.mock('../networks/private-rpc', () => {\n  throw Error('No RPC');\n",
+          "after": "jest.mock('../../../../../../src/owners/host-bindings.js', () => {\n  const actual = jest.requireActual('../../../../../../src/owners/host-bindings.js');\n  return { ...actual, get rpc() { throw Error('No RPC'); } };\n"
+        },
+        {
+          "start": 1322,
+          "before": "jest.mock('./privacy-storage', () => {\n",
+          "after": "jest.mock('../../../../fixtures/host/src/main/wallet/privacy-storage.js', () => {\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-txid-job.test.js",
+      "beforeSha256": "222bb5817ab9eb29468a79346033c7aaad76011d21b1b8579a2fc7e9891d9506",
+      "afterSha256": "40243f965d79aaa7ead0c7b53a7ea3bc4b6fba9f05672e12f627f5df9a5bbcad",
+      "replacements": [
+        {
+          "start": 12873,
+          "before": "",
+          "after": "\ntest('fixed host RPC family remains denied while pure retention metadata is available', () => {\n  const host = require('../../../../../../src/owners/host-bindings.js');\n  expect(typeof host.journalRetention.validArchive).toBe('function');\n  expect(() => host.rpc).toThrow(/RPC/);\n});\n"
+        },
+        {
+          "start": 2935,
+          "before": "jest.mock('../networks/private-rpc', () => {\n  throw Error('historical root must not import RPC');\n",
+          "after": "jest.mock('../../../../../../src/owners/host-bindings.js', () => {\n  const actual = jest.requireActual('../../../../../../src/owners/host-bindings.js');\n  return { ...actual, get rpc() { throw Error('historical root must not import RPC'); } };\n"
+        },
+        {
+          "start": 2836,
+          "before": "jest.mock('./privacy-storage', () => {\n",
+          "after": "jest.mock('../../../../fixtures/host/src/main/wallet/privacy-storage.js', () => {\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    }
+  ]
+}

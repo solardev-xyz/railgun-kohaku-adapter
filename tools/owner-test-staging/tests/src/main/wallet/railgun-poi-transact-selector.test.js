@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 const { createHash } = require('crypto');
 let mock;
 jest.mock("../../../../../../src/owners/railgun-account-enrollment.js", () => ({
@@ -146,7 +147,7 @@ jest.mock("../../../../../../src/owners/railgun-poi-intent-store.js", () => {
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");
 const { claimRailgunAccountPhase } = require("../../../../../../src/owners/railgun-account-phase.js");
 const { sample } = require("../../../../fixtures/scripts/fixtures/railgun-own-txid-data.js");
-const { deriveRailgunOwnTransactPoiSelector: derive } = require('./railgun-poi-transact-selector');
+const { deriveRailgunOwnTransactPoiSelector: derive } = require('../../../../../../src/owners/railgun-poi-transact-selector.js');
 const hex = (n) => '0x' + BigInt(n).toString(16).padStart(64, '0');
 const copy = (v) => JSON.parse(JSON.stringify(v));
 const sha = (v) => createHash('sha256').update(v).digest('hex');
@@ -350,8 +351,10 @@ test.each([false, true])(
     expect(mock.phase).toBe(false);
     expect(mock.recapture).toHaveBeenCalledTimes(1);
     const job = mock.jobs[0];
-    expect(job.options.filename).toBe(require.resolve("../../../../../../src/owners/railgun-poi-transact-selector-job.js"));
-    expect(job.options.binaryKey).toBe(true);
+    expect(job.options.executionJob).toBe('poi-transact-selector');
+    expect(job.options.filename).toBeUndefined();
+    expect(job.options.binaryKey).toBeUndefined();
+    expect(require('../../../../../../src/owners/process-jobs').getProcessJob(job.options.executionJob).key).toBe(true);
     expect(job.options.lifetimeMs).toBeLessThanOrEqual(15000);
   }
 );
@@ -603,7 +606,7 @@ test.each(['before-key', 'inside-credential'])(
   }
 );
 test('export and production import inventory keep the historical producer unwired elsewhere', () => {
-  expect(Object.keys(require('./railgun-poi-transact-selector'))).toEqual([
+  expect(Object.keys(require('../../../../../../src/owners/railgun-poi-transact-selector.js'))).toEqual([
     'deriveRailgunOwnTransactPoiSelector',
   ]);
   const fs = require('fs'),
@@ -616,7 +619,7 @@ test('export and production import inventory keep the historical producer unwire
       else if (name.endsWith('.js') && !name.endsWith('.test.js')) files.push(name);
     }
   }
-  visit(path.resolve(__dirname, '..'));
+  visit(path.resolve(__dirname, '../../../../../../src'));
   const consumers = files
     .filter((file) =>
       fs.readFileSync(file, 'utf8').includes('captureRailgunOwnTransactPoiMembershipInput')

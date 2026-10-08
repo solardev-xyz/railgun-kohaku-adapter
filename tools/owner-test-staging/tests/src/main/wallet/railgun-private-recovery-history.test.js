@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 /** Real encrypted reservation/capsule stores and receipt binding; enrollment,
  * identity/destination issuers and account phase are explicit structural seams.
  * No genuine wallet enrollment or native cryptographic qualification claimed. */
@@ -15,7 +16,7 @@ const fs = require('fs'),
   os = require('os'),
   path = require('path');
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");
-const { createPrivacyStorage } = require('./privacy-storage');
+const { createPrivacyStorage } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');
 const { createRailgunPrivateReservations } = require("../../../../../../src/owners/railgun-private-reservations.js");
 const {
   createRailgunPrivateCapsuleStore,
@@ -26,7 +27,7 @@ const {
   createRailgunLegacyCapsuleData,
   createRailgunPartialCapsuleData,
 } = require("../../../../fixtures/scripts/fixtures/railgun-partial-capsule-data.js");
-const { readRailgunPrivateRecoveryHistory: read } = require('./railgun-private-recovery-history');
+const { readRailgunPrivateRecoveryHistory: read } = require('../../../../../../src/owners/railgun-private-recovery-history.js');
 const hex = (n) => '0x' + BigInt(n).toString(16).padStart(64, '0');
 const errorCode = 'RAILGUN_PRIVATE_RECOVERY_HISTORY_REFUSED';
 const error = (code) => Object.assign(new Error('private store detail'), { code });

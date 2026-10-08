@@ -1,0 +1,224 @@
+{
+  "baseRevision": "197219144e806474af7eef1987f24a8db978b311",
+  "productionTransforms": false,
+  "scope": "Fixed genuine context and exact generic-host storage fixtures; original test bodies retained. Historical reader keeps original source hash plus added executed-copy hash.",
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-intent-store.test.js",
+      "beforeSha256": "4798131db48e2d42acdc3369eca2581360ef8315f5c493875a834f6d6f9d6448",
+      "afterSha256": "0e397905a4d8664f1b416a76bb5e17bd42480c434cc2404eb9c3c64050df50df",
+      "replacements": [
+        {
+          "start": 100878,
+          "before": "  const { createPrivacyProfileGuard } = require('./privacy-profile-guard');\n",
+          "after": "  const { createPrivacyProfileGuard } = require('../../../../fixtures/host/src/main/wallet/privacy-profile-guard.js');\n"
+        },
+        {
+          "start": 87850,
+          "before": "",
+          "after": "      // The imported reader differs only by the audited fixed import relocation.\n      // Keep both original historical bytes and the actual executed copy pinned.\n      expect(createHash('sha256').update(fs.readFileSync(\n        require.resolve('../../../../fixtures/src/main/wallet/railgun-poi-intent-store-old-reader.fixture.js')\n      )).digest('hex')).toBe('f96a6dcb45170fcb879a05cde66b372e078e148f1c2b654758261e1624ec83df');\n"
+        },
+        {
+          "start": 87608,
+          "before": "        path.join(__dirname, 'railgun-poi-intent-store-old-reader.fixture.js')\n",
+          "after": "        path.join(__dirname, '../../../../../../docs/owners/historical/railgun-poi-intent-store-old-reader.source.txt')\n"
+        },
+        {
+          "start": 2832,
+          "before": "const { createPrivacyStorage, getPrivacyStoragePath } = require('./privacy-storage');\n",
+          "after": "const { createPrivacyStorage, getPrivacyStoragePath } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-capsule-store.test.js",
+      "beforeSha256": "9bb28f8b2a8592b8b931fe6f6a4576da7c6111513a3bb364ed9873c97460af52",
+      "afterSha256": "186af7482c7ede2f8844b54a02bd22f7eec940973fb2624df9ce39c8ab7acfda",
+      "replacements": [
+        {
+          "start": 228,
+          "before": "const { createPrivacyStorage, getPrivacyStoragePath } = require('./privacy-storage');\n",
+          "after": "const { createPrivacyStorage, getPrivacyStoragePath } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-recovery-history.test.js",
+      "beforeSha256": "b6069578dd4abc73843c02d3ac640f5c707a2e425019e334bb6286365a832afd",
+      "afterSha256": "44724409354184a584272621c29567feec9e6fd65d5f16cf52ee8776937e05f0",
+      "replacements": [
+        {
+          "start": 1497,
+          "before": "const { readRailgunPrivateRecoveryHistory: read } = require('./railgun-private-recovery-history');\n",
+          "after": "const { readRailgunPrivateRecoveryHistory: read } = require('../../../../../../src/owners/railgun-private-recovery-history.js');\n"
+        },
+        {
+          "start": 880,
+          "before": "const { createPrivacyStorage } = require('./privacy-storage');\n",
+          "after": "const { createPrivacyStorage } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-reservations.test.js",
+      "beforeSha256": "e0b2676274fe6587b3944b3e8a04ffceee5a3586851a27a3c638de5f42b2f062",
+      "afterSha256": "00f093ed54fa7b2a06c4956de2db4a662d0eb72970fa6e2aea67546fbc08be89",
+      "replacements": [
+        {
+          "start": 428,
+          "before": "const { createPrivacyStorage, getPrivacyStoragePath } = require('./privacy-storage');\n",
+          "after": "const { createPrivacyStorage, getPrivacyStoragePath } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-public-catalog.test.js",
+      "beforeSha256": "f9b679bf3df53685fb8c9c3324f22058a209450443601ca1bf542aea73d2f337",
+      "afterSha256": "6ee7d4e73d9b685879253c8f3bfb19f8458acc1a36587a1eb49022aaf58b3c6f",
+      "replacements": [
+        {
+          "start": 499,
+          "before": "const { createPrivacyStorage } = require('./privacy-storage');\n",
+          "after": "const { createPrivacyStorage } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-recovery-store.test.js",
+      "beforeSha256": "8e348e92945c8f731936663ec2ae6210fae71d67d8a98c6316e7b176de0f24ef",
+      "afterSha256": "fc3351620d3a2ff69b016c3e1ebdacc0a0464e827a1e671da715181468ff1914",
+      "replacements": [
+        {
+          "start": 1890,
+          "before": "const { createPrivacyStorage, getPrivacyStoragePath } = require('./privacy-storage');\nconst { createPrivacyProfileGuard } = require('./privacy-profile-guard');\n",
+          "after": "const { createPrivacyStorage, getPrivacyStoragePath } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');\nconst { createPrivacyProfileGuard } = require('../../../../fixtures/host/src/main/wallet/privacy-profile-guard.js');\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-scan-journal.test.js",
+      "beforeSha256": "33bf6e9e1d8639a636b5f6c9665ef2c035183e0fa1eacc2444307692b1f46dfd",
+      "afterSha256": "48d34a62328aa2ce9009de73d2f53b895401a923dbcbd412a4b90a29a80ccb8e",
+      "replacements": [
+        {
+          "start": 502,
+          "before": "const { createPrivacyStorage, getPrivacyStoragePath } = require('./privacy-storage');\n",
+          "after": "const { createPrivacyStorage, getPrivacyStoragePath } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');\n"
+        },
+        {
+          "start": 103,
+          "before": "jest.mock('./privacy-storage', () => {\n  const actual = jest.requireActual('./privacy-storage');\n",
+          "after": "jest.mock('../../../../fixtures/host/src/main/wallet/privacy-storage.js', () => {\n  const actual = jest.requireActual('../../../../fixtures/host/src/main/wallet/privacy-storage.js');\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-txid-journal.test.js",
+      "beforeSha256": "d34d73ad6a9056106d9fb9da9dcd3e14580c1deab145ac0241977abb66cb077c",
+      "afterSha256": "4f1bb394da9a608f55a1be25403c599182cdfe695cf5d3434d46db95f419db8a",
+      "replacements": [
+        {
+          "start": 310,
+          "before": "const { getPrivacyStoragePath } = require('./privacy-storage');\n",
+          "after": "const { getPrivacyStoragePath } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-wallet-catalog.test.js",
+      "beforeSha256": "05b20e6c6f9501baa8ddaf9ce27dddeaa23d939c090bde31b1dfab03a79eab35",
+      "afterSha256": "11f539035fd5283ddd46f34b62a33df9efdbda6fb507471c4212a668422f1f2c",
+      "replacements": [
+        {
+          "start": 594,
+          "before": "const { createPrivacyStorage } = require('./privacy-storage');\n",
+          "after": "const { createPrivacyStorage } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-wallet-journal.test.js",
+      "beforeSha256": "ae9c484f481a6fc343fddedf4f94c53d2a95159207051ac637880fb11bac50c0",
+      "afterSha256": "24c0e74c7539925ba754629f57f4898445cdd3e0ac12980c20829832cc727d3f",
+      "replacements": [
+        {
+          "start": 12997,
+          "before": "  const storage = require('./privacy-storage').createPrivacyStorage(options);\n",
+          "after": "  const storage = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js').createPrivacyStorage(options);\n"
+        },
+        {
+          "start": 11882,
+          "before": "    const filename = require('./privacy-storage').getPrivacyStoragePath(\n",
+          "after": "    const filename = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js').getPrivacyStoragePath(\n"
+        },
+        {
+          "start": 8971,
+          "before": "  const { getPrivacyStoragePath } = require('./privacy-storage');\n",
+          "after": "  const { getPrivacyStoragePath } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/fixtures/src/main/wallet/railgun-poi-intent-store-old-reader.fixture.js",
+      "beforeSha256": "ef2e0bf862c78eb34228f1c98593d9946e0619c578f359efeb4e6710565d3b88",
+      "afterSha256": "f96a6dcb45170fcb879a05cde66b372e078e148f1c2b654758261e1624ec83df",
+      "replacements": [
+        {
+          "start": 741,
+          "before": "const { createPrivacyStorage, getPrivacyStoragePath } = require('./privacy-storage');\n",
+          "after": "const { createPrivacyStorage, getPrivacyStoragePath } = require('../../../host/src/main/wallet/privacy-storage.js');\n"
+        }
+      ]
+    }
+  ]
+}
