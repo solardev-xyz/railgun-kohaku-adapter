@@ -202,11 +202,26 @@ therefore takes its candidates from the ledger: the last recorded checkpoint L
 (a lower bound until production recovers it), or the claim's checkpoint, and
 the last attempted window T beyond it, or the claim's failed target. Then:
 
-1. The first attempt targets exactly T.
+1. The first attempt targets the schedule's next window after L. For adjacent
+   20,000-block windows this is T itself; a wider earlier window (the old
+   runner's 100,000 blocks) is never retried whole.
 2. If it fails, the outcome is unknown; a refusal is never read as a recovered
-   checkpoint. A second, separately budgeted attempt targets the fixed next
-   schedule boundary after T.
+   checkpoint. A second, separately budgeted attempt targets the schedule's
+   next window after T.
 3. If both fail, the resume stops. There is no third target for the pair.
+
+The scan source refuses any window with more than 4,096 logs, more than 4 MiB
+of log JSON, or logs in more than 512 distinct blocks. On live Sepolia,
+[9,000,000, 9,099,999] holds 1,033 logs in 548 distinct blocks, so it can
+never be acquired whole. Its 20,000-block parts hold at most 304. The first
+resume link targeted that whole window under the earlier rule and was refused.
+
+Exactly one second link exists, `installed-journey-sentio-resume-2`. It binds
+the first resume by bytes and header. That predecessor may hold scan budgets
+and its `resume-attempt` record, but no checkpoint, send, POI or report. The
+link carries the same claim, which the launcher also checks against the first
+resume's windows. It keeps the aggregate caps (five pending openers in total)
+and changes only the target rule.
 
 The coordinator recovers its own checkpoint and chooses each window's start;
 recovery may itself re-acquire, apply and write. A target beyond the
@@ -239,6 +254,10 @@ Synthetic-only scaffolding reproduces the stopped states:
 - chain faults `failLogsFrom` and `failApplyRefreshTo` model a failure before
   acquisition completes, and one after the coordinator prepared and applied a
   window, leaving a pending application for recovery;
+- `denseFrom`/`denseTo` mark an interval where any request wider than 20,000
+  blocks answers with logs in 600 distinct blocks, as live Sepolia does around
+  9.0M;
+- `legacyResumeRule` reproduces the first link's whole-window first target;
 - `exit-after-advance` models a crash before the checkpoint is recorded.
 
 ## Composition

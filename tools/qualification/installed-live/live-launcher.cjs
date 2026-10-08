@@ -86,13 +86,14 @@ const SYNTHETIC_CAP_KEYS = Object.keys(LIVE_CAPS).sort();
 function headerFor(request, binding, syntheticCaps) {
   assert.ok(binding && typeof binding === 'object' && !Array.isArray(binding));
   const name = request.ledger ?? ledger.FIRST;
-  assert.ok([ledger.FIRST, ledger.CONTINUATION, ledger.RESUME].includes(name));
+  assert.ok([ledger.FIRST, ledger.CONTINUATION, ledger.RESUME, ledger.RESUME2].includes(name));
+  const resuming = [ledger.RESUME, ledger.RESUME2].includes(name);
   // Each later ledger of the fixed chain binds its stopped predecessor.
   assert.equal(Object.hasOwn(binding, 'predecessor'), name !== ledger.FIRST);
   if (request.transport === 'live' && name !== ledger.FIRST) assert.equal(binding.rpc?.url, ledger.SENTIO);
   // The resume carries its evidence-bound starting checkpoint.
-  assert.equal(Object.hasOwn(binding, 'resumeFrom'), name === ledger.RESUME);
-  if (name === ledger.RESUME) {
+  assert.equal(Object.hasOwn(binding, 'resumeFrom'), resuming);
+  if (resuming) {
     const { checkpoint, failedTarget, evidence } = binding.resumeFrom;
     assert.ok(Number.isSafeInteger(checkpoint) && Number.isSafeInteger(failedTarget) && failedTarget > checkpoint);
     assert.ok(typeof evidence === 'string' && evidence.length > 0);
@@ -118,8 +119,8 @@ function headerFor(request, binding, syntheticCaps) {
     caps: {
       ...FIXED_CAPS,
       ...(request.transport === 'live' ? LIVE_CAPS : syntheticCaps),
-      // The reviewed resume extension: two more pending openers, nothing else.
-      ...(name === ledger.RESUME ? { scanResumes: RESUME_SCAN_RESUMES } : {}),
+      // The reviewed resume extension: five pending openers in aggregate, nothing else.
+      ...(resuming ? { scanResumes: RESUME_SCAN_RESUMES } : {}),
     },
   };
 }
@@ -134,6 +135,15 @@ function assertResumeClaim(request) {
   assert.ok(Number.isSafeInteger(k) && k >= 1, 'Resume claim: no continuation ranges');
   assert.equal(checkpoint, (k - 1) * 100000 - 1, 'Resume claim checkpoint');
   assert.equal(failedTarget, k * 100000 - 1, 'Resume claim failed target');
+  // A second link carries the same claim: its predecessor resume recorded no
+  // checkpoint, and every window it attempted targeted the claimed window.
+  if (request.ledgerHeader.name === ledger.RESUME2) {
+    const prior = ledger.chainRecords(request.profileDirectory, request.ledgerHeader)[ledger.RESUME];
+    assert.ok(Array.isArray(prior), 'Resume claim: no first resume');
+    assert.ok(!prior.some((record) => record.type === 'scan-progress'), 'Resume claim: first resume progressed');
+    const windows = prior.filter((record) => record.type === 'budget' && record.kind === 'scan-range');
+    assert.ok(windows.every((record) => record.target === failedTarget), 'Resume claim: first resume windows');
+  }
 }
 // Immutable request facts, valid before and after the process alike.
 function validate(request) {
@@ -181,13 +191,13 @@ function validate(request) {
     assert.equal(file(request.synthetic.publicSource).sha256, request.synthetic.publicSourceSha256);
     assert.ok(['primary', 'limited'].includes(request.synthetic.endpoint));
     for (const [key, value] of Object.entries(request.synthetic.faults))
-      assert.ok(['failLogsFrom', 'failApplyRefreshTo'].includes(key) && Number.isSafeInteger(value), 'Synthetic fault ' + key);
+      assert.ok(['failLogsFrom', 'failApplyRefreshTo', 'denseFrom', 'denseTo'].includes(key) && Number.isSafeInteger(value), 'Synthetic fault ' + key);
   }
   assert.equal(fs.realpathSync(request.profileDirectory), request.profileDirectory);
   assert.equal(file(request.heldReport.file).sha256, request.heldReport.sha256);
   assert.equal(request.heldReport.sha256, request.ledgerHeader.binding.heldTransferReportSha256);
   const state = ledger.inspect(request.profileDirectory, request.ledgerHeader);
-  if (request.ledgerHeader.name === ledger.RESUME) assertResumeClaim(request);
+  if ([ledger.RESUME, ledger.RESUME2].includes(request.ledgerHeader.name)) assertResumeClaim(request);
   return state;
 }
 // Pre-run admission, read-only: predecessor reports must be this campaign's

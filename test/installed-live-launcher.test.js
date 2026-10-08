@@ -361,3 +361,93 @@ test("the fixed resume verifies its claim against the stopped continuation and c
     env.launcher.validate(continuation).budgets["scan-range"],
   ).toHaveLength(4);
 });
+test("the second resume link carries the same claim, checked against the first resume's windows", () => {
+  const env = liveEnvironment();
+  const crypto = require("crypto");
+  const hash = (v) => crypto.createHash("sha256").update(v).digest("hex");
+  const ledger = require(
+    env.path.join(env.tools, "installed-live/live-ledger.cjs"),
+  );
+  const base = JSON.parse(env.fs.readFileSync(env.spec(), "utf8"));
+  const sentio = { source: "sentio", url: ledger.SENTIO };
+  const link = (name, request) => ({
+    name,
+    ledgerSha256: hash(
+      env.fs.readFileSync(ledger.ledgerFile(request.profileDirectory, name)),
+    ),
+    headerSha256: hash(JSON.stringify(request.ledgerHeader)),
+    reason: "stopped",
+  });
+  const make = (ledgerName, binding, params = { publicCache: "pending" }) =>
+    env.launcher.makeRequest(
+      env.spec({
+        ledger: ledgerName,
+        params,
+        binding: { ...base.binding, rpc: sentio, ...binding },
+        live: { ...base.live, rpcSource: "sentio" },
+      }),
+    );
+  const consume = (request, kind, extra) =>
+    ledger.consume(
+      request.profileDirectory,
+      request.ledgerHeader,
+      kind,
+      ledger.policyFor(request.ledgerHeader.caps, kind),
+      Date.now(),
+      extra,
+    );
+  const first = env.launcher.makeRequest(env.spec());
+  for (const kind of ["scan-open:new", "scan-open:pending", "scan-range"])
+    consume(first, kind);
+  const continuation = make(ledger.CONTINUATION, {
+    predecessor: link(ledger.FIRST, first),
+  });
+  consume(continuation, "scan-open:pending");
+  for (let i = 0; i < 3; i++) consume(continuation, "scan-range");
+  const claim = {
+    checkpoint: 199999,
+    failedTarget: 299999,
+    evidence: "3 reservations under the 100k plan",
+  };
+  const resume = make(ledger.RESUME, {
+    predecessor: link(ledger.CONTINUATION, continuation),
+    resumeFrom: claim,
+  });
+  consume(resume, "scan-open:pending");
+  ledger.resumeAttempt(
+    resume.profileDirectory,
+    resume.ledgerHeader,
+    "first",
+    199999,
+    299999,
+    299999,
+  );
+  consume(resume, "scan-range", { target: 299999 });
+  const second = make(ledger.RESUME2, {
+    predecessor: link(ledger.RESUME, resume),
+    resumeFrom: claim,
+  });
+  expect(second.ledgerHeader.caps.scanResumes).toBe(5);
+  expect(env.launcher.admit(second)).toBe(0);
+  expect(
+    env.launcher.validate(second).budgets["scan-open:pending"],
+  ).toHaveLength(3);
+  // A different claim, or a first-resume window with another target, refuses.
+  expect(() =>
+    env.launcher.validate(
+      make(ledger.RESUME2, {
+        predecessor: link(ledger.RESUME, resume),
+        resumeFrom: { ...claim, failedTarget: 399999 },
+      }),
+    ),
+  ).toThrow();
+  consume(resume, "scan-range", { target: 319999 });
+  expect(() =>
+    env.launcher.validate(
+      make(ledger.RESUME2, {
+        predecessor: link(ledger.RESUME, resume),
+        resumeFrom: claim,
+      }),
+    ),
+  ).toThrow();
+});

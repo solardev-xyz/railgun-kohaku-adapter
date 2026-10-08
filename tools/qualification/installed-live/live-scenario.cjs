@@ -105,11 +105,14 @@ function legacyRangesTo(from, anchor) {
 // The resume candidates. After the last recorded checkpoint L (a lower bound),
 // the last window attempted beyond it (target T) may or may not have been
 // applied; before any checkpoint, the launcher-verified claim supplies L and T.
-// The first attempt targets exactly T. If it fails the outcome is unknown, and
-// a second, separately budgeted attempt targets the fixed next boundary after
-// T. The coordinator recovers its own checkpoint and chooses each start, so
-// neither target can skip a block: one too far is refused at acquisition. If
-// both fail, the resume stops. Without a window beyond L the plan is exact.
+// The first attempt targets the schedule's next window after L; the second,
+// separately budgeted, the schedule's next window after T. For adjacent 20000-
+// block windows the first target is T itself. A wider T (the earlier runner's
+// 100000-block windows) is never retried whole: it may exceed the scan
+// source's per-window bounds. If an attempt fails the outcome is unknown. The
+// coordinator recovers its own checkpoint and chooses each start, so neither
+// target can skip a block: one too far is refused at acquisition. If both
+// fail, the resume stops. Without a window beyond L the plan is exact.
 function resumePlan(context) {
   const state = ledger.inspect(context.profile, context.header);
   const last = state.progress.at(-1);
@@ -122,7 +125,10 @@ function resumePlan(context) {
   const tried = state.attempts.filter((row) => row.lower === lower && row.upper === upper);
   assert.ok(tried.length < 2, 'Both resume targets were tried');
   const mode = tried.length === 0 ? 'first' : 'second';
-  const target = mode === 'first' ? upper : windowEnd(upper + 1);
+  // Synthetic only: the earlier first-target rule (exactly T), to reproduce it.
+  const legacyRule = context.params.legacyResumeRule === true;
+  if (legacyRule) assert.equal(context.synthetic, true, 'The legacy resume rule is synthetic only');
+  const target = mode === 'first' ? (legacyRule ? upper : windowEnd(lower + 1)) : windowEnd(upper + 1);
   return { mode, lower, upper, from: null, firstTarget: target };
 }
 // The scan continues exactly where the last recorded checkpoint ended.
@@ -320,7 +326,7 @@ async function rebuild(context) {
   // attempt only once the opener is reserved (see resumePlan).
   let from = 0,
     resume = null;
-  if (context.header.name === ledger.RESUME) {
+  if ([ledger.RESUME, ledger.RESUME2].includes(context.header.name)) {
     assert.equal(publicCache, 'pending');
     resume = resumePlan(context);
     from = resume.from;

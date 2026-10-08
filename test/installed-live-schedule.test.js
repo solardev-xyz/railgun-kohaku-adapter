@@ -71,11 +71,12 @@ function resumeContext() {
   // A first ledger stands in for the resume ledger's records here.
   return { profile, header, params: {}, synthetic: true };
 }
-test("a resume targets exactly the failed window, then the fixed next boundary, never a third", () => {
+test("a resume targets the next schedule window after each candidate, never a whole wide window, never a third", () => {
   const context = resumeContext();
+  // Live: L = 8,999,999 and T = 9,099,999 (the earlier runner's 100k window).
   expect(resumePlan(context)).toMatchObject({
     mode: "first",
-    firstTarget: 9099999,
+    firstTarget: 9019999,
     lower: 8999999,
     upper: 9099999,
   });
@@ -84,6 +85,18 @@ test("a resume targets exactly the failed window, then the fixed next boundary, 
     firstTarget: 9119999,
   });
   expect(() => resumePlan(context)).toThrow();
+});
+test("the earlier first-target rule is reproducible in synthetic runs only", () => {
+  const synthetic = resumeContext();
+  synthetic.params = { legacyResumeRule: true };
+  expect(resumePlan(synthetic)).toMatchObject({
+    mode: "first",
+    firstTarget: 9099999,
+  });
+  const live = resumeContext();
+  live.params = { legacyResumeRule: true };
+  live.synthetic = false;
+  expect(() => resumePlan(live)).toThrow();
 });
 test("a recorded checkpoint narrows the candidates to its last attempted window", () => {
   const context = resumeContext();

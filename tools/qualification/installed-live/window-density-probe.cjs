@@ -1,5 +1,6 @@
 /** Bounded public-only Tor diagnostic of one scan window's density against the
- * scan source's per-window bounds (at most 4096 logs and 4 MiB of log JSON):
+ * scan source's per-window bounds (at most 4096 logs, 4 MiB of log JSON and
+ * 512 distinct log blocks):
  * the 100000-block window from FROM and its five aligned 20000-block parts,
  * as address-only eth_getLogs on the Railgun proxy. No profile, vault, owned
  * root, note, EOA, nullifier or transaction: public deployment data only.
@@ -20,7 +21,8 @@ const SENTIO = 'https://sepolia.rpc.sentio.xyz';
 const WINDOW = 100000,
   PART = 20000,
   MAX_LOGS = 4096,
-  MAX_LOG_JSON = 4 * 1024 * 1024;
+  MAX_LOG_JSON = 4 * 1024 * 1024,
+  MAX_BLOCKS = 512;
 const MAX_REQUESTS = 12,
   MAX_MS = 10 * 60 * 1000;
 const hex = (n) => '0x' + n.toString(16);
@@ -40,7 +42,7 @@ async function main() {
       .update(fs.readFileSync(path.join(root, 'scripts/qualify-ppv2-live.js')))
       .digest('hex'),
     endpoint: SENTIO,
-    bounds: { maxLogs: MAX_LOGS, maxLogJsonBytes: MAX_LOG_JSON },
+    bounds: { maxLogs: MAX_LOGS, maxLogJsonBytes: MAX_LOG_JSON, maxDistinctBlocks: MAX_BLOCKS },
     trace,
   };
   let client;
@@ -99,7 +101,10 @@ async function main() {
     const measure = (label, lo, hi, logs) => {
       if (!Array.isArray(logs)) return { from: lo, to: hi, complete: false };
       const json = Buffer.byteLength(JSON.stringify(logs));
+      const distinctBlocks = new Set(logs.map((l) => l.blockNumber)).size;
       return {
+        distinctBlocks,
+        withinBlockBound: distinctBlocks <= MAX_BLOCKS,
         from: lo,
         to: hi,
         complete: true,

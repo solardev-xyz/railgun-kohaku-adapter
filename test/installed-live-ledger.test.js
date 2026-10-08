@@ -538,3 +538,111 @@ test("the resume refuses a changed endpoint, a skipped link or a continuation th
   ledger.progress(t.p, t.continuation, 99999, "0x" + "d".repeat(64), n);
   expect(() => ledger.inspect(t.p, resumeOf(t.p, t.continuation))).toThrow();
 });
+
+function stoppedResume() {
+  const { p, continuation } = stoppedContinuation(3);
+  const resume = resumeOf(p, continuation, {
+    binding: {
+      ...resumeOf(p, continuation).binding,
+      resumeFrom: { checkpoint: 199999, failedTarget: 299999, evidence: "x" },
+    },
+  });
+  ledger.consume(
+    p,
+    resume,
+    "scan-open:pending",
+    ledger.policyFor(resume.caps, "scan-open:pending"),
+    9000,
+  );
+  ledger.resumeAttempt(p, resume, "first", 199999, 299999, 299999);
+  ledger.consume(
+    p,
+    resume,
+    "scan-range",
+    ledger.policyFor(resume.caps, "scan-range"),
+    9001,
+    { target: 299999 },
+  );
+  return { p, continuation, resume };
+}
+function resume2Of(p, resume, overrides = {}) {
+  const crypto = require("crypto");
+  const hash = (v) => crypto.createHash("sha256").update(v).digest("hex");
+  return {
+    ...resume,
+    name: ledger.RESUME2,
+    runnerSha256: "4".repeat(64),
+    binding: {
+      ...resume.binding,
+      predecessor: {
+        name: ledger.RESUME,
+        ledgerSha256: hash(
+          fs.readFileSync(ledger.ledgerFile(p, ledger.RESUME)),
+        ),
+        headerSha256: hash(JSON.stringify(resume)),
+        reason: "first resume target exceeded the per-window block bound",
+      },
+    },
+    ...overrides,
+  };
+}
+test("the second resume link binds the first resume, its attempt record included, and carries all budgets", () => {
+  const { p, continuation, resume } = stoppedResume();
+  const next = resume2Of(p, resume);
+  const state = ledger.inspect(p, next);
+  expect(state.budgets["scan-open:pending"]).toHaveLength(3);
+  expect(state.budgets["scan-range"]).toHaveLength(5);
+  expect(state.attempts).toEqual([]);
+  expect(Object.keys(ledger.chainRecords(p, next)).sort()).toEqual(
+    [ledger.CONTINUATION, ledger.FIRST, ledger.RESUME].sort(),
+  );
+  ledger.consume(
+    p,
+    next,
+    "scan-open:pending",
+    ledger.policyFor(next.caps, "scan-open:pending"),
+    9100,
+  );
+  expect(() => ledger.inspect(p, resume)).toThrow();
+  expect(() => ledger.inspect(p, continuation)).toThrow();
+  for (const bad of [
+    {
+      ...next,
+      binding: { ...next.binding, rpc: { url: "https://other.example" } },
+    },
+    {
+      ...next,
+      binding: {
+        ...next.binding,
+        predecessor: { ...next.binding.predecessor, name: ledger.CONTINUATION },
+      },
+    },
+  ])
+    expect(() => ledger.inspect(p, bad)).toThrow();
+});
+test("a first resume that recorded a checkpoint, or a continuation with an attempt record, never admits a successor", () => {
+  const a = stoppedResume();
+  const n = ledger.consume(
+    a.p,
+    a.resume,
+    "scan-range",
+    ledger.policyFor(a.resume.caps, "scan-range"),
+    9002,
+    { target: 319999 },
+  );
+  ledger.progress(a.p, a.resume, 319999, "0x" + "e".repeat(64), n);
+  expect(() => ledger.inspect(a.p, resume2Of(a.p, a.resume))).toThrow();
+  const b = stoppedContinuation(2);
+  fs.appendFileSync(
+    ledger.ledgerFile(b.p, ledger.CONTINUATION),
+    JSON.stringify({
+      type: "resume-attempt",
+      mode: "first",
+      lower: 1,
+      upper: 2,
+      target: 2,
+      at: 1,
+    }) + "\n",
+  );
+  expect(() => ledger.inspect(b.p, resumeOf(b.p, b.continuation))).toThrow();
+});

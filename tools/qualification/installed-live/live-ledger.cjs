@@ -23,7 +23,11 @@ const CONTINUATION = 'installed-journey-sentio-1';
 // The one reviewed resume of the Sentio continuation, after its scan stopped
 // part-way: same endpoint, exact predecessor chain, carried budgets.
 const RESUME = 'installed-journey-sentio-resume-1';
-const CHAIN = Object.freeze([FIRST, CONTINUATION, RESUME]);
+// The one reviewed second link: the first resume's runner targeted a whole
+// earlier 100000-block window, which can exceed the scan source's per-window
+// bounds; its successor changes only the target rule.
+const RESUME2 = 'installed-journey-sentio-resume-2';
+const CHAIN = Object.freeze([FIRST, CONTINUATION, RESUME, RESUME2]);
 const SENTIO = 'https://sepolia.rpc.sentio.xyz';
 const PREDECESSOR_KINDS = Object.freeze(['scan-open:new', 'scan-open:pending', 'scan-range']);
 const sha256 = (value) => createHash('sha256').update(value).digest('hex');
@@ -103,12 +107,37 @@ function predecessor(directory, header) {
   for (const key of ['type', 'version', 'transport', 'profile', 'freedomCommit', 'packageTarSha256'])
     check(same(previous[key], header[key]), 'predecessor-scope:' + key);
   check(previous.binding?.heldTransferReportSha256 === header.binding.heldTransferReportSha256, 'predecessor-held');
-  if (header.name === RESUME) check(same(previous.binding?.rpc?.url, header.binding?.rpc?.url), 'predecessor-endpoint');
-  check(records.slice(1).every((record) => record?.type === 'budget' && PREDECESSOR_KINDS.includes(record.kind)), 'predecessor-events');
+  if ([RESUME, RESUME2].includes(header.name)) check(same(previous.binding?.rpc?.url, header.binding?.rpc?.url), 'predecessor-endpoint');
+  // Scan budgets, and a resume's attempt records; never a checkpoint, send,
+  // POI handoff or report.
+  check(
+    records
+      .slice(1)
+      .every(
+        (record) =>
+          (record?.type === 'budget' && PREDECESSOR_KINDS.includes(record.kind)) ||
+          (record?.type === 'resume-attempt' && previous.name === RESUME)
+      ),
+    'predecessor-events'
+  );
   const carried = index - 1 > 0 ? predecessor(directory, previous) : {};
   const state = replay(records, previous, carried);
   check(state.sends.length === 0 && state.poi.pending === null && state.reports.length === 0, 'predecessor-not-empty');
   return state.budgets;
+}
+// The fixed chain's predecessor records, per ledger name, read-only.
+function chainRecords(profile, header) {
+  const directory = path.dirname(ledgerFile(profile, header.name));
+  const result = {};
+  let current = header;
+  while (CHAIN.indexOf(current.name) > 0) {
+    predecessor(directory, current);
+    const bytes = fs.readFileSync(path.join(directory, current.binding.predecessor.name + '.jsonl'), 'utf8');
+    const records = bytes.trim().split('\n').map((line) => JSON.parse(line));
+    result[records[0].name] = records.slice(1);
+    current = records[0];
+  }
+  return result;
 }
 // The fixed chain's per-ledger record counts of one kind, read-only.
 function chainCounts(profile, header, kind) {
@@ -181,7 +210,7 @@ function replay(records, header, carried = {}) {
       // checkpoint recorded between them. A failed attempt proves nothing
       // about the checkpoint; the coordinator alone decides.
       check(['first', 'second'].includes(record.mode) && Number.isSafeInteger(record.lower) && Number.isSafeInteger(record.upper), 'resume-attempt');
-      check(record.lower < record.upper && Number.isSafeInteger(record.target) && record.target >= record.upper, 'resume-attempt');
+      check(record.lower < record.upper && Number.isSafeInteger(record.target) && record.target > record.lower, 'resume-attempt');
       const same = attempts.filter((row) => row.lower === record.lower && row.upper === record.upper);
       check(same.length === (record.mode === 'first' ? 0 : 1), 'resume-attempt-order');
       if (record.mode === 'second') check(same[0].progressAt === progress.length, 'resume-attempt-order');
@@ -326,7 +355,9 @@ module.exports = {
   FIRST,
   CONTINUATION,
   RESUME,
+  RESUME2,
   chainCounts,
+  chainRecords,
   progress,
   resumeAttempt,
   SENTIO,

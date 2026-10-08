@@ -95,7 +95,9 @@ function createJourneyChain({
   assert.ok(autoMine === null || (Number.isSafeInteger(autoMine.afterMs) && autoMine.afterMs >= 0));
   assert.ok(['acknowledge', 'unknown-after-delivery'].includes(sendMode));
   assert.deepEqual(
-    Object.keys(faults).filter((key) => !['preflightAnchorAfterEstimate', 'failLogsFrom', 'failApplyRefreshTo'].includes(key)),
+    Object.keys(faults).filter(
+      (key) => !['preflightAnchorAfterEstimate', 'failLogsFrom', 'failApplyRefreshTo', 'denseFrom', 'denseTo'].includes(key)
+    ),
     []
   );
   // Scan faults for resume qualification, each once per process:
@@ -106,6 +108,31 @@ function createJourneyChain({
   //   That read fails, leaving a pending application for recovery.
   const scanFaults = { logsFired: false, refreshFired: false, servedTo: new Set(), endReads: 0 };
   const servedLogs = [];
+  // A dense interval [denseFrom, denseTo], as Sepolia around 9.0M: any request
+  // wider than 20000 blocks overlapping it answers with logs in 600 distinct
+  // blocks (beyond the scan source's 512-block window bound); 20000-block
+  // requests answer with the true logs.
+  const dense = Number.isSafeInteger(faults.denseFrom) && Number.isSafeInteger(faults.denseTo);
+  const denseLogs = (from, to) => {
+    const lo = Math.max(from, faults.denseFrom),
+      hi = Math.min(to, faults.denseTo);
+    if (to - from + 1 <= 20000 || hi - lo + 1 < 600) return null;
+    return Array.from({ length: 600 }, (_, i) => {
+      const n = lo + i;
+      const word = (tag) => '0x' + crypto.createHash('sha256').update(tag + ':' + n).digest('hex');
+      return {
+        address: PROXY,
+        removed: false,
+        blockNumber: '0x' + n.toString(16),
+        blockHash: word('block'),
+        transactionIndex: '0x0',
+        transactionHash: word('tx'),
+        logIndex: '0x0',
+        topics: [word('topic')],
+        data: '0x',
+      };
+    });
+  };
   const rpcError = () => Object.assign(Error('Synthetic scan fault'), { code: 'SYNTHETIC_RPC_ERROR', rpcError: { code: -32000, message: 'synthetic' } });
   assert.ok(worker && typeof worker.call === 'function');
   const fixture = publicFixture(sourceBytes);
@@ -557,6 +584,13 @@ function createJourneyChain({
         // The windows actually served, for no-gap evidence (bounded).
         servedLogs.push([from, to]);
         if (servedLogs.length > 64) servedLogs.shift();
+        if (dense) {
+          const synthetic = denseLogs(from, to);
+          if (synthetic) {
+            injected++;
+            return synthetic;
+          }
+        }
         return proxyLogs(from, to);
       }
       case 'eth_getCode': {
