@@ -259,6 +259,9 @@ async function main() {
     } catch {
       /* Diagnostics cannot replace the original failure. */
     }
+    // The synthetic network keeps what it received even when the run fails.
+    const statePath = path.join(request.outputDirectory, 'chain-state.json');
+    if (chain && fs.existsSync(request.outputDirectory) && !fs.existsSync(statePath)) write(statePath, chain.state());
   } finally {
     application.abort();
     try {
