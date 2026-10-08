@@ -1,5 +1,5 @@
 {
-  "scope": "Separate observed runs; passing controls do not relabel the default worker crash or establish its cause. Default Jest configuration is unchanged.",
+  "scope": "Separate observed runs; passing controls do not relabel the default worker crash or establish its cause. Default Jest configuration is unchanged. Later documentation-only evidence merges during the fb3add6 default-discovery run did not alter its test/runtime inputs; it is not a native source-freeze claim.",
   "runs": [
     {
       "commit": "043ac64",
@@ -54,6 +54,65 @@
       "outcome": {
         "programs": 4,
         "negativeControls": 32,
+        "hostFamilies": 20,
+        "exitCode": 0
+      }
+    },
+    {
+      "commit": "c925fa8",
+      "command": "npm test -- --workerIdleMemoryLimit=1MB",
+      "logBytes": 1781,
+      "logSha256": "67e2e2bb32347964f0d78b97ff29b59b075fe961e6f58c60b52beb13bceb273c",
+      "outcome": {
+        "suitesPassed": 223,
+        "suitesFailed": 1,
+        "testsPassed": 11186,
+        "testsFailed": 1,
+        "exitCode": 1,
+        "failure": "Stale retained POI literal caller expectation; explicit operational-poi-lane caller not yet in source assertion."
+      }
+    },
+    {
+      "commit": "fb3add6",
+      "command": "npm test -- --workerIdleMemoryLimit=1MB",
+      "logBytes": 222,
+      "logSha256": "8a5795b8c66d31871776870402fa0db2d1b704cd3e78876e2a3d5cce50446bd5",
+      "outcome": {
+        "suitesPassed": 225,
+        "testsPassed": 11197,
+        "exitCode": 0
+      }
+    },
+    {
+      "commit": "c925fa8",
+      "command": "NODE_OPTIONS=--experimental-vm-modules npm test -- --config tools/owner-test-staging/jest.host-credential.config.cjs",
+      "logBytes": 934,
+      "logSha256": "5fef5d59d2cb296e272fda2cb724309657444ccb758f024be2561635af1785e0",
+      "outcome": {
+        "suitesPassed": 2,
+        "testsPassed": 175,
+        "exitCode": 0
+      }
+    },
+    {
+      "commit": "fb3add6",
+      "command": "RAILGUN_HELD_HOST_ROOT=<exact-pinned-host> NODE_OPTIONS=--experimental-vm-modules npm test -- --config tools/owner-test-staging/jest.host-held.config.cjs",
+      "logBytes": 412,
+      "logSha256": "736c0a7e24d44136a5d97cb4705207a149445d66d93eef8cef7761faa54f75a4",
+      "outcome": {
+        "suitesPassed": 1,
+        "testsPassed": 3,
+        "exitCode": 0
+      }
+    },
+    {
+      "commit": "fb3add6",
+      "command": "cached TypeScript 5.9.3 owner-typecheck",
+      "logBytes": 141,
+      "logSha256": "9ce57d22b6f214c878bb8abaa34df754e31f531892de8cb08b558ab945df7d17",
+      "outcome": {
+        "programs": 4,
+        "negativeControls": 37,
         "hostFamilies": 20,
         "exitCode": 0
       }
