@@ -4,6 +4,7 @@ const fs = require("fs"),
   vm = require("vm"),
   { createHash } = require("crypto");
 const root = path.join(__dirname, "..");
+const facadeTransitions = require("../docs/owners/FACADE-TRANSITIONS.json");
 const policyTransitions = require("../docs/owners/POLICY-TRANSITIONS.json");
 const signerTransitions = require("../docs/owners/SIGNER-LIFETIME-TRANSITIONS.json");
 const callerTransitions = require("../docs/owners/CALLER-TRANSITIONS.json");
@@ -68,6 +69,14 @@ test("every translated algorithm reconstructs its exact immutable original bytes
     reused = 0;
   for (const row of translation.files) {
     let text = fs.readFileSync(sourceFile(row.destination), "utf8");
+    const facadeTransition = facadeTransitions.changes.find(
+      (change) => change.file === row.destination,
+    );
+    if (facadeTransition) {
+      expect(sha(text)).toBe(facadeTransition.afterSha256);
+      text = undo(text, facadeTransition.replacements);
+      expect(sha(text)).toBe(facadeTransition.beforeSha256);
+    }
     const policyTransition = policyTransitions.changes.find(
       (change) => change.file === row.destination,
     );
@@ -351,8 +360,17 @@ test("high-authority host family imports have an exact reviewed source allowlist
         .filter(([, row]) => row.hostFamilies.includes(family))
         .map(([file]) => file),
     ).toEqual(files);
-  for (const [file, digest] of Object.entries(audit.files))
-    expect(sha(fs.readFileSync(path.join(root, file)))).toBe(digest);
+  for (const [file, digest] of Object.entries(audit.files)) {
+    let text = fs.readFileSync(path.join(root, file), "utf8");
+    const transition = facadeTransitions.changes.find(
+      (row) => row.file === file,
+    );
+    if (transition) {
+      expect(sha(text)).toBe(transition.afterSha256);
+      text = undo(text, transition.replacements);
+    }
+    expect(sha(text)).toBe(digest);
+  }
 });
 
 test("controlled credential tests pin their immutable source and copied context issuer", () => {

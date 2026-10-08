@@ -235,3 +235,52 @@ test("late storage-root material after revocation is wiped and never opens a man
   expect(state.hostSettled).toBe(true);
   expect(() => state.guard.assert()).toThrow();
 });
+
+test("private closure observer retains the exact original loan barrier after revocation", async () => {
+  const owner = await open(),
+    hold = defer();
+  state.after = hold.promise;
+  const original = enrollment.observeRailgunEnrollmentClosure(owner);
+  expect(enrollment.observeRailgunEnrollmentClosure(owner)).toBe(original);
+  expect(() =>
+    enrollment.observeRailgunEnrollmentClosure({ ...owner }),
+  ).toThrow();
+  expect(owner).not.toHaveProperty("closed");
+  let settled = false;
+  original.then(
+    () => {
+      settled = true;
+    },
+    () => {
+      settled = true;
+    },
+  );
+  owner.close();
+  expect(enrollment.observeRailgunEnrollmentClosure(owner)).toBe(original);
+  await tick();
+  expect(settled).toBe(false);
+  hold.resolve();
+  await Promise.allSettled([original]);
+  expect(settled).toBe(true);
+});
+test("failed enrollment opening cannot settle before its original host callback", async () => {
+  const hold = defer();
+  state.after = hold.promise;
+  state.catalogFailure = new Error("catalog construction");
+  let settled = false;
+  const work = open();
+  work.then(
+    () => {
+      settled = true;
+    },
+    () => {
+      settled = true;
+    },
+  );
+  await tick();
+  expect(settled).toBe(false);
+  expect(state.callbackSettled).toBe(true);
+  hold.resolve();
+  await expect(work).rejects.toThrow();
+  expect(state.hostSettled).toBe(true);
+});
