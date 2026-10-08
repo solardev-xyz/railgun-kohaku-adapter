@@ -86,7 +86,7 @@ function fixture() {
         return {
           verifyRailgunEngineRuntime: (archive) => {
             checks.push(archive);
-            if (archive !== "/public-fixture.asar")
+            if (!["/public-fixture.asar", "/second-location/public-fixture.asar"].includes(archive))
               throw Error("Unverified archive");
           },
         };
@@ -218,6 +218,7 @@ test("historical qualification limit, domains, archive checks and TXID binding s
     expect(() => f.policy(name)[method]("/wrong.asar")).toThrow(
       "Unverified archive",
     );
+    expect(f.reads).toEqual([]);
     const text = fs.readFileSync(
       path.join(root, "src/owners", name + ".js"),
       "utf8",
@@ -317,5 +318,68 @@ test("source initialization refuses ancestor symlinks and escaping canonical pat
     );
     expect(() => f.capture()).toThrow();
     expect(() => f.source.readRailgunPolicySourceIdentity()).toThrow();
+  }
+});
+
+// Replaces the historical wrapper-by-wrapper rotation table: all explicitly
+// shipped sources now enter the single initialization snapshot. The list itself
+// has a separate exact-membership refusal control above, rather than rotation.
+test.each(files.filter((name) => name !== "src/owners/source-files.json"))(
+  "fresh owner wallet policy binds the actual shipped %s bytes",
+  (name) => {
+    const f = fixture();
+    f.capture();
+    const first = f
+      .policy("railgun-wallet-policy")
+      .getRailgunWalletPolicy("/public-fixture.asar");
+    const changed = Buffer.concat([
+      f.bytes.get(name),
+      Buffer.from("\nchanged source byte\n"),
+    ]);
+    f.bytes.set(name, changed);
+    expect(
+      f
+        .policy("railgun-wallet-policy")
+        .getRailgunWalletPolicy("/public-fixture.asar"),
+    ).toBe(first);
+    const next = fixture();
+    next.bytes.set(name, changed);
+    next.capture();
+    expect(
+      next
+        .policy("railgun-wallet-policy")
+        .getRailgunWalletPolicy("/public-fixture.asar"),
+    ).not.toBe(first);
+    expect(next.fakeFs.readdirSync).not.toHaveBeenCalled();
+  },
+);
+
+test("every fixed relative import in listed runtime source stays within the explicit source identity", () => {
+  // Literal relative require closure only. Dynamic archive imports are not
+  // claimed by this parser and remain authenticated by their fixed manifests.
+  const covered = new Set(files);
+  for (const name of files.filter((file) => /\.(?:js|cjs|mjs)$/.test(file))) {
+    const text = fs.readFileSync(path.join(root, name), "utf8");
+    for (const [, request] of text.matchAll(
+      /require\(['"](\.\.?\/[^'"]*)['"]\)/g,
+    )) {
+      const target = require.resolve(
+        path.resolve(root, path.dirname(name), request),
+      );
+      expect(target.startsWith(root + path.sep)).toBe(true);
+      expect(
+        covered.has(path.relative(root, target).split(path.sep).join("/")),
+      ).toBe(true);
+    }
+  }
+});
+
+
+test("authenticated archive location alone cannot change captured policy identity", () => {
+  const f = fixture();
+  f.capture();
+  for (const [name, method] of policies) {
+    const get = f.policy(name)[method];
+    expect(get("/second-location/public-fixture.asar")).toBe(get("/public-fixture.asar"));
   }
 });

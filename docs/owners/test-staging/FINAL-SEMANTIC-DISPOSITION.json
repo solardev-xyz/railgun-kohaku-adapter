@@ -1,0 +1,142 @@
+{
+  "schema": "railgun-owner-test-disposition-v1",
+  "basis": "bac009a8837c1d0dea672bb67d35a79d0b1125eb",
+  "counts": {
+    "defaultAdaptedOriginalSuites": 146,
+    "separateCredentialConformance": 2,
+    "semanticSuccessorSuites": 2,
+    "retainedHostAcceptanceRequired": 1,
+    "totalOriginalAdjacent": 151
+  },
+  "entries": [
+    {
+      "source": "src/main/wallet/railgun-identity.test.js",
+      "originalBytes": 49345,
+      "originalSha256": "bc93fd7e5bf03468c845f45f2ef69d6efaca0957a7fd55cc9e131f9ff5d39a63",
+      "originalRevision": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "status": "separate-host-conformance",
+      "activeSuccessors": [
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-identity.test.js"
+      ],
+      "reason": "Original assertions adapted to fixed credential ports; actual current reviewed host adapter, original virtual vault mocks. Explicit experimental-vm-modules invocation, not default."
+    },
+    {
+      "source": "src/main/wallet/railgun-account-enrollment.test.js",
+      "originalBytes": 69955,
+      "originalSha256": "d02058e0890847380041daec311f9d8cadf617d88a53a50971cf2c75374bfd98",
+      "originalRevision": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "status": "separate-host-conformance",
+      "activeSuccessors": [
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-account-enrollment.test.js"
+      ],
+      "reason": "Original enrollment cases and added root-loan completion/reopen control; fixed private helper calls, no raw-key public export. Actual current reviewed host adapter; original fence/profile/vault mocks."
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-plugin.test.js",
+      "originalBytes": 103249,
+      "originalSha256": "4aa95244ebdff7efb4dd09d2e586d335e13db60d0a10702894f9c253f237aaec",
+      "originalRevision": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "status": "default-active",
+      "activeSuccessors": [
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-kohaku-plugin.test.js",
+        "test/owner-operational-facade.test.js"
+      ],
+      "reason": "All217 original mixed-lane cases retained. Historical broadcaster is repository-only exact wrapper bound to actual owner, not a supported public API. Facade has separate active supported-contract tests."
+    },
+    {
+      "source": "src/main/wallet/railgun-process.test.js",
+      "originalBytes": 36057,
+      "originalSha256": "b5042fa99e4d5be20611000c28e0362c6918f6c363a450d7834f7e296a21e930",
+      "originalRevision": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "status": "semantically-replaced-default",
+      "activeSuccessors": [
+        "test/owner-process.test.js",
+        "test/owner-session-worker.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-session-worker.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-wallet-run.test.js",
+        "tools/owner-test-staging/tests/src/main/wallet/railgun-wallet-runner.test.js"
+      ],
+      "reason": "Historical generic filename and process-owned storage admission is now refused. Applicable lifecycle, protocol, one-key, capacity, shutdown, metrics and immutable job-domain assertions live in actual current fixed-enum supervisor tests. Actual Electron options/owned termination remain separate host platform acceptance; original source is archived, not rerun."
+    },
+    {
+      "source": "src/main/wallet/railgun-wallet-policy.test.js",
+      "originalBytes": 12273,
+      "originalSha256": "7aae1cefd929202e89ce8e53bd879ebce8358766329251fa1c9df558c4f5552d",
+      "originalRevision": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "status": "semantically-replaced-default",
+      "activeSuccessors": [
+        "test/owner-source-policy.test.js",
+        "test/owner-source-translation.test.js",
+        "test/execution-provenance.test.js",
+        "test/owner-host-bindings.test.js"
+      ],
+      "reason": "Old per-read rotation and duplicate Freedom/installed wrapper paths are obsolete. Fixed explicit shipped list, initialization snapshot, every listed byte fresh-generation sensitivity, host digest, schema/domain/archive checks and literal relative closure now tested. Historical translation/provenance stays independently active; no semantic full dynamic import coverage claimed."
+    },
+    {
+      "source": "src/main/wallet/railgun-private-submission-held.test.js",
+      "originalBytes": 18662,
+      "originalSha256": "cc367f427ebb893e07bbde5be3750d11ea139caa2c2bd1e5f08f3a20667ee613",
+      "originalRevision": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "status": "retained-host-acceptance-required",
+      "activeSuccessors": [],
+      "reason": "Three original real-vault cases require actual Freedom vault and public wallet-0 metadata: absent metadata refuses at history, matching metadata allows same hold, foreign-account metadata refuses at submitter. Exact originals retained; must remain in Freedom until installed-facade adaptation passes. No mock substitute or current installed acceptance claimed.",
+      "migrationGap": "Old private-owner imports will break after removal; fixed actual-host aliases and current private package test composition are specified but not yet implemented/executed in HELD-HISTORY-HOST-MIGRATION.md"
+    }
+  ],
+  "processOriginalLineMapping": [
+    [
+      "99-156",
+      "Removed process-owned worker construction; fixed current supervisor rejects storage/createProvider/storageWorker. Real worker readiness, failed-startup, original exit and directory hold remain in staged railgun-session-worker; parent runner owns its borrowed worker."
+    ],
+    [
+      "158-185",
+      "Enum-only startup and original channel in owner-process; actual filtered env/cwd/argv/heap in retained Freedom railgun-platform-host.test.js:178-199."
+    ],
+    [
+      "186-234",
+      "Actual memory readiness, missing metrics and synchronous arrival-order dispatch successors added."
+    ],
+    [
+      "235-302",
+      "Pre-spawn revocation, late reply suppression/wipe, malformed/duplicate/extra/oversize messages and startup/lifetime/RSS limits retained or added."
+    ],
+    [
+      "303-412",
+      "Global two/owner one limits, fork failure, child error, original exit, before-quit, invalid bounds, channel/parent messages, spawn timeout and guard attribution retained or added."
+    ],
+    [
+      "413-470",
+      "Borrowed broker never closed/revoked by utility; its late original work remains broker owner obligation. Genuine revoke/preabort and invalid broker/resource admission covered."
+    ],
+    [
+      "471-837",
+      "Every fixed job succeeds; every job crossed with each of six domain fields refuses. Binary eligibility, single reply, exact backing store and wipe controls. No old arbitrary filename route restored."
+    ],
+    [
+      "838-1019",
+      "Relay-purpose/domain and subject checks covered by full job matrix; keyless and own-property filename/binaryKey refusal retain intentional fixed-enum replacement. Old filesystem alias routes are unconditionally invalid, not resolved."
+    ]
+  ],
+  "policyMapping": [
+    [
+      "17 validator +31 adapter byte tables",
+      "Every current explicit shipped source except the self-list has an independent mutation control: same initialized owner unchanged, fresh owner policy changes. Self-list membership/hash drift refuses."
+    ],
+    [
+      "Unauthenticated archive",
+      "All three policies refuse unauthenticated archive before reading source identity; captured snapshot is initialized separately. Existing qualification bound/domain/binding preserved."
+    ],
+    [
+      "87-node local path traversal",
+      "Current fixed relative require closure must resolve within explicit source list. Literal-only coverage; dynamic archive loaders remain separately manifest authenticated."
+    ],
+    [
+      "40 duplicated Freedom/kernel source rows",
+      "Obsolete runtime duplicate coverage not retained as current architecture. Original source and reversible translation audit remain in owner/execution provenance tests. Current package snapshot covers all actual listed implementations and receives separate host digest."
+    ],
+    [
+      "Kernel bootstrap/job closure",
+      "All fixed literal relative imports across listed runtime files checked; existing bootstrap, enum and runtime manifest tests remain active."
+    ]
+  ]
+}
