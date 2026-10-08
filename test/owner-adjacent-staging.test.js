@@ -461,6 +461,8 @@ test('held real-vault conformance remains separate with two fixed actual-host al
   }
   const config = fs.readFileSync(path.join(root, 'tools/owner-test-staging/jest.host-held.config.cjs'), 'utf8');
   expect(config).toContain('railgun-private-submission-held.test.js');
-  expect(config).toContain('verifyHostInputs()');
+  expect(config).toContain('hostModuleAliases()');
+  expect(inputs.hostRoot).toBeUndefined();
+  expect(inputs.hostRootEnvironment).toBe('RAILGUN_HELD_HOST_ROOT');
   expect(require('../jest.config.js').testMatch.join(' ')).not.toContain('railgun-private-submission-held.test.js');
 });

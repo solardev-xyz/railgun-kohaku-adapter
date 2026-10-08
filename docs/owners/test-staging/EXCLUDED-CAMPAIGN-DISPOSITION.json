@@ -234,12 +234,22 @@
       "source": "scripts/fixtures/railgun-foreign-recipient-job.test.js",
       "bytes": 15941,
       "sha256": "8e3cf211f4760558be3b8c9b5a96988abfc04e1136d884ff05d7ac7373075b44",
-      "classification": "historical-host-campaign-not-executed-here",
+      "classification": "separate-real-engine-unit-successor-qualified",
       "relatedActiveCoverage": [
-        "test/owner-operational-facade.test.js"
+        "tools/qualification/scripts/fixtures/railgun-foreign-recipient-job.test.js"
       ],
       "equivalentCampaignSuccessorQualified": false,
-      "reason": "Related tests cover owner/data semantics only, not this campaign orchestration, runtime inventories, real crypto, native lifecycle or installed host acceptance. Preserve historical source/evidence and parent327-file archival; deletion is not justified by these package unit results."
+      "reason": "Exact four original tests/assertions retained by695f6cd6, separate real-engine crypto suite with full fixture preflight. Original archive-verifier mock remains. This qualifies original unit semantics, not ASAR admission, utility/original-child lifecycle, proof generation/verification or installed-host/native campaign equivalence.",
+      "originalUnitSuiteSuccessorQualified": true,
+      "qualification": {
+        "commit": "695f6cd6ef32bee22af316e19dff8107376416d4",
+        "checksPath": "tools/qualification/foreign-recipient/CHECKS.json",
+        "checksSha256": "f590037b3ceb3d424f11d0ad2bf23dc390fe00a4a4db1d18c3026c6d30a69a62",
+        "tests": 4,
+        "suites": 1,
+        "attribution": "Independent submission_review agent; source/evidence read here, not rerun here",
+        "originalTestSha256Matches": true
+      }
     },
     {
       "source": "scripts/fixtures/railgun-kohaku-second-handoff.test.js",

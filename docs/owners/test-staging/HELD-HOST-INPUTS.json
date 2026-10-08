@@ -1,6 +1,5 @@
 {
   "schema": "railgun-held-host-conformance-inputs-v1",
-  "hostRoot": "/private/tmp/freedom-owner-journal-consumers-oct8",
   "hostRevision": "8285fb804c82011abd4fcc38ccc00d66b27132e3",
   "files": {
     "src/main/identity/vault.js": {
@@ -603,5 +602,6 @@
       "inventorySha256": "5be3ccb549a2860be8d70fcd0a25eb689f7e740acd66f56d1ad9f6db692da841"
     }
   ],
-  "dependencyInventory": "Each tree inventory is lexically sorted [relativePath,bytes,sha256]; its SHA is JSON.stringify(entries). Full entries retained in qualification evidence, no target imports used for collection."
+  "dependencyInventory": "Each tree inventory is lexically sorted [relativePath,bytes,sha256]; its SHA is JSON.stringify(entries). Full entries retained in qualification evidence, no target imports used for collection.",
+  "hostRootEnvironment": "RAILGUN_HELD_HOST_ROOT"
 }
