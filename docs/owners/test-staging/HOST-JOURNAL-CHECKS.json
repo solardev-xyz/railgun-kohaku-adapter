@@ -1,0 +1,36 @@
+{
+  "baseRevision": "98da40c3625f22fba08bc2f5a0515676c97e5690",
+  "productionChanges": false,
+  "attempts": {
+    "a": {
+      "exitCode": 1,
+      "completion": "1d0b80",
+      "reason": "ESM import at journal setup"
+    },
+    "b": {
+      "exitCode": 130,
+      "completion": "08ea5c/fde09a",
+      "reason": "stale multiline mock path; interrupted failed run with pending barrier"
+    }
+  },
+  "targeted": {
+    "suites": 4,
+    "tests": 176,
+    "seconds": 4.596,
+    "exitCode": 0,
+    "originalSession": 19176,
+    "completion": "64364d"
+  },
+  "provenance": {
+    "tests": 9,
+    "exitCode": 0,
+    "completion": "ce675a"
+  },
+  "lint": {
+    "exitCode": 0,
+    "completion": "634719"
+  },
+  "qualifiedAdjacent": 142,
+  "remainingHost": 9,
+  "fullDefaultExecuted": false
+}

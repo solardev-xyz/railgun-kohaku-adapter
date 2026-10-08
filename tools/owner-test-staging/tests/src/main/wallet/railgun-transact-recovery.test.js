@@ -1,27 +1,30 @@
+// These explicit-key journal cases must not obtain mnemonic material.
+jest.mock('@scure/bip39', () => ({ mnemonicToSeedSync: () => { throw Error('Unexpected journal mnemonic derivation'); } }));
+require('../../../../context-host.cjs');
 const fs = require('fs'),
   os = require('os'),
   path = require('path');
 let mockSession, mockEndpoint, mockDirectory;
 const mockRequest = jest.fn(),
   mockJournals = new WeakMap();
-jest.mock('./privacy-session', () => ({ openPrivacySession: () => mockSession }));
-jest.mock('../settings-store', () => ({ isWalletTorExperimentAvailable: () => true }));
-jest.mock('../tor-manager', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));
-jest.mock('../networks/network-registry', () => ({
+jest.mock("../../../../fixtures/host/src/main/wallet/privacy-session.js", () => ({ openPrivacySession: () => mockSession }));
+jest.mock("../../../../fixtures/host/src/main/settings-store.js", () => ({ isWalletTorExperimentAvailable: () => true }));
+jest.mock("../../../../fixtures/host/src/main/tor-manager.js", () => ({ getWalletSocksEndpoint: () => mockEndpoint }));
+jest.mock("../../../../fixtures/host/src/main/networks/network-registry.js", () => ({
   getNetwork: () => ({}),
   getEndpoints: () => ['https://rpc.example'],
   getEndpointSources: () => [{ keyed: false, coverage: { 11155111: 'https://rpc.example' } }],
 }));
-jest.mock('../networks/wallet-tor-transport', () => ({
+jest.mock("../../../../fixtures/host/src/main/networks/wallet-tor-transport.js", () => ({
   createWalletTorTransport: () => ({ request: mockRequest }),
 }));
-jest.mock('./private-submission-journal', () => ({
+jest.mock("../../../../fixtures/host/src/main/wallet/private-submission-journal.js", () => ({
   getPrivateSubmissionJournal: (handle) => {
     if (!mockJournals.has(handle))
       mockJournals.set(
         handle,
         jest
-          .requireActual('./private-submission-journal')
+          .requireActual('../../../../fixtures/host/src/main/wallet/private-submission-journal.js')
           .createSubmissionJournal({ handle, directory: mockDirectory, key: Buffer.alloc(32, 3) })
       );
     return mockJournals.get(handle);
@@ -29,9 +32,9 @@ jest.mock('./private-submission-journal', () => ({
 }));
 const { Wallet, Interface, Transaction } = require('ethers');
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");
-const { createSubmissionJournal } = jest.requireActual('./private-submission-journal');
-const { transactionIntent } = require('./private-transaction-intent');
-const { openRailgunTransactRecovery } = require('./railgun-transact-recovery');
+const { createSubmissionJournal } = jest.requireActual("../../../../fixtures/host/src/main/wallet/private-submission-journal.js");
+const { transactionIntent } = require("../../../../fixtures/host/src/main/wallet/private-transaction-intent.js");
+const { openRailgunTransactRecovery } = require("../../../../../../src/owners/railgun-transact-recovery.js");
 const { PRIVATE_EVENTS } = require("../../../../../../src/owners/railgun-transact-receipt.js");
 const { TRANSACT_ABI } = require("../../../../../../src/data/railgun-private-policy.js");
 const pins = require("../../../../../../src/railgun-shield-pins.json");
@@ -268,7 +271,7 @@ test('an unjournaled hash and too-low confirmation policy never reach RPC', asyn
 
 test('a generic transaction context cannot resolve a transact or mint a journal resolution permit', async () => {
   const handle = mockSession.getContext(subject);
-  const client = require('./private-transaction-network').getPrivateTransactionNetwork(handle);
+  const client = require("../../../../fixtures/host/src/main/wallet/private-transaction-network.js").getPrivateTransactionNetwork(handle);
   const review = jest.fn(approve);
   await expect(
     client.resolveSubmission(hash, { minimumConfirmations: 3, review })
@@ -282,14 +285,14 @@ test('a generic transaction context cannot resolve a transact or mint a journal 
 });
 test('generic contexts cannot sign or broadcast a classified private transaction', async () => {
   const handle = mockSession.getContext(subject);
-  const network = require('./private-transaction-network').getPrivateTransactionNetwork(handle);
+  const network = require("../../../../fixtures/host/src/main/wallet/private-transaction-network.js").getPrivateTransactionNetwork(handle);
   const intent = transactionIntent('railgun-transact', Transaction.from(signedBytes));
   await expect(
     network.broadcastRawTransaction(11155111, signedBytes, { intent })
   ).rejects.toMatchObject({ code: 'RAILGUN_PRIVATE_SUBMISSION_REFUSED' });
   const signer = { getAddress: async () => owner, signTransaction: jest.fn() };
   await expect(
-    require('./transaction-service').signAndSendTransaction(
+    require("../../../../fixtures/host/src/main/wallet/transaction-service.js").signAndSendTransaction(
       {
         ...prepared,
         value: '0',
@@ -354,7 +357,7 @@ test('actual matched output facts survive encrypted archival and cold reopen', a
   }
   const archived = await journal.listArchive();
   expect(archived[0].railgun).toEqual(facts);
-  const { validArchive } = require('./privacy-journal-retention');
+  const { validArchive } = require("../../../../fixtures/host/src/main/wallet/privacy-journal-retention.js");
   expect(validArchive(archived, 'public')).toBe(true);
   const changed = structuredClone(archived);
   changed[0].railgun.transact.output.position = 65536;

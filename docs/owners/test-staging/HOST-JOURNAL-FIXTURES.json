@@ -1,0 +1,95 @@
+{
+  "files": [
+    {
+      "source": "src/main/wallet/private-transaction-network.js",
+      "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "destination": "tools/owner-test-staging/fixtures/host/src/main/wallet/private-transaction-network.js",
+      "bytes": 14134,
+      "sha256": "7b7763cd54c57a6e3c47af8834d9a0b9c76c451ba9c62d52ac35f07c230e7bcf"
+    },
+    {
+      "source": "src/main/wallet/private-submission-journal.js",
+      "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "destination": "tools/owner-test-staging/fixtures/host/src/main/wallet/private-submission-journal.js",
+      "bytes": 21897,
+      "sha256": "75df3bf4965841047478af9e42ffdb131cbd40ed825d7b57c719dc0f2dd2bf25"
+    },
+    {
+      "source": "src/main/wallet/private-submission-reconciler.js",
+      "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "destination": "tools/owner-test-staging/fixtures/host/src/main/wallet/private-submission-reconciler.js",
+      "bytes": 13106,
+      "sha256": "786ce5f69cdf9a491e08687fb95cc169d38c7939d5b9cd59706c9547cbc9f47b"
+    },
+    {
+      "source": "src/main/wallet/privacy-journal-archiver.js",
+      "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "destination": "tools/owner-test-staging/fixtures/host/src/main/wallet/privacy-journal-archiver.js",
+      "bytes": 6896,
+      "sha256": "e1bccb688c77364641e7bdefee1f3503ece7f0a572533ece98f6ee9d7295de7e"
+    },
+    {
+      "source": "src/main/wallet/transaction-submission-coordinator.js",
+      "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "destination": "tools/owner-test-staging/fixtures/host/src/main/wallet/transaction-submission-coordinator.js",
+      "bytes": 7803,
+      "sha256": "b16e324b5c4aa9a97549eabc1a294d9e2272ca1aca54389588f2d6e610f0f3b3"
+    },
+    {
+      "source": "src/main/wallet/transaction-service.js",
+      "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "destination": "tools/owner-test-staging/fixtures/host/src/main/wallet/transaction-service.js",
+      "bytes": 26271,
+      "sha256": "0ba460b353da3ded26227bee34ce6b72ba110c01112182ace25c5ea4934d1c13"
+    },
+    {
+      "source": "src/main/wallet/chains.js",
+      "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "destination": "tools/owner-test-staging/fixtures/host/src/main/wallet/chains.js",
+      "bytes": 3123,
+      "sha256": "34e48aa664e02b278d98a0b85172803bea272b5ecebf15c39e322ce8610f3c5d"
+    },
+    {
+      "source": "src/main/wallet/remote/errors.js",
+      "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "destination": "tools/owner-test-staging/fixtures/host/src/main/wallet/remote/errors.js",
+      "bytes": 3169,
+      "sha256": "4fd224ec9fecdb3794153d26b296a7a3e26b4929e362957d382575d283d624c3"
+    },
+    {
+      "source": "src/main/wallet/privacy-session.js",
+      "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "destination": "tools/owner-test-staging/fixtures/host/src/main/wallet/privacy-session.js",
+      "bytes": 1806,
+      "sha256": "ea3753aeea9e2ebfb0c497aac264c7e6f289c06cd7271dfb396c78b0d7e0f0c3"
+    }
+  ],
+  "fixedTestBindings": [
+    {
+      "file": "tools/owner-test-staging/fixtures/host/src/main/wallet/railgun-private-submission.js",
+      "bytes": 152,
+      "sha256": "9b047464c03c14db8a456a179569a0fe994d0a76fd5627d63ea0ab3bb4ef7c3f"
+    },
+    {
+      "file": "tools/owner-test-staging/fixtures/host/src/main/wallet/railgun-shield-operation.js",
+      "bytes": 150,
+      "sha256": "b24a11fb293f027cb70c7b648366968d4ff7d5e9bc27e1db2078f3f0317a8904"
+    },
+    {
+      "file": "tools/owner-test-staging/fixtures/host/src/main/wallet/railgun-transact-recovery.js",
+      "bytes": 151,
+      "sha256": "12a8d2823eabb257d386a8eba85e947fd0accce8e30a177b06547f2170f281ea"
+    },
+    {
+      "file": "tools/owner-test-staging/fixtures/host/src/main/wallet/railgun-shield-recovery.js",
+      "bytes": 149,
+      "sha256": "7ab1d022fe081baf219c71509dd46aa288a113d73a50a0787f41511a1bcdd31d"
+    },
+    {
+      "file": "tools/owner-test-staging/fixtures/host/src/main/networks/chain-data-router.js",
+      "bytes": 185,
+      "sha256": "93530aa231b0a17f20d920971632f972037734aef8195c70f7b78a7c1f6063f8"
+    }
+  ],
+  "liveTransport": false
+}

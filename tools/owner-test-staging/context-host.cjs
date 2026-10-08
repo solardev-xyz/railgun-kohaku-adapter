@@ -132,6 +132,17 @@ input.rpc = {
   getPrivateRpcDestinationDetails: (...args) => require('./fixtures/host/src/main/networks/private-rpc.js').getPrivateRpcDestinationDetails(...args),
   getPrivateRpcReadBudgetOutcome: (...args) => require('./fixtures/host/src/main/networks/private-rpc.js').getPrivateRpcReadBudgetOutcome(...args),
 };
+// Actual generic network and journal owners; original suites control lower ports.
+input.transactionNetwork = Object.fromEntries(schema.transactionNetwork.map(name => [name,
+  (...args) => require('./fixtures/host/src/main/wallet/private-transaction-network.js')[name](...args),
+]));
+input.submissionJournal = Object.fromEntries(schema.submissionJournal.map(name => [name,
+  (...args) => require('./fixtures/host/src/main/wallet/private-submission-journal.js')[name](...args),
+]));
+input.transactions = {
+  signAndSendTransaction: (...args) => require('./fixtures/host/src/main/wallet/transaction-service.js').signAndSendTransaction(...args),
+};
+input.sessions = { openPrivacySession: (...args) => require('./fixtures/host/src/main/wallet/privacy-session.js').openPrivacySession(...args) };
 let submitterHost;
 input.submitter = {
   readMetadata: (...args) => {

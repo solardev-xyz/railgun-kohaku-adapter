@@ -1,3 +1,6 @@
+// These explicit-key journal cases must not obtain mnemonic material.
+jest.mock('@scure/bip39', () => ({ mnemonicToSeedSync: () => { throw Error('Unexpected journal mnemonic derivation'); } }));
+require('../../../../context-host.cjs');
 let mockEnrollment, mockEndpoint, mockUrls, mockSources;
 const mockTransport = jest.fn(),
   mockTransportFactory = jest.fn(),
@@ -7,25 +10,25 @@ const mockTransport = jest.fn(),
 jest.mock("../../../../../../src/owners/railgun-account-enrollment.js", () => ({
   isRailgunAccountEnrollment: (value) => value === mockEnrollment,
 }));
-jest.mock('../settings-store', () => ({ isWalletTorExperimentAvailable: () => true }));
-jest.mock('../tor-manager', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));
-jest.mock('../networks/network-registry', () => ({
+jest.mock("../../../../fixtures/host/src/main/settings-store.js", () => ({ isWalletTorExperimentAvailable: () => true }));
+jest.mock("../../../../fixtures/host/src/main/tor-manager.js", () => ({ getWalletSocksEndpoint: () => mockEndpoint }));
+jest.mock("../../../../fixtures/host/src/main/networks/network-registry.js", () => ({
   getNetwork: () => ({}),
   getEndpoints: () => mockUrls,
   getEndpointSources: () => mockSources,
 }));
-jest.mock('../networks/wallet-tor-transport', () => ({
+jest.mock("../../../../fixtures/host/src/main/networks/wallet-tor-transport.js", () => ({
   createWalletTorTransport: (...args) => mockTransportFactory(...args),
 }));
-jest.mock('./private-submission-journal', () => ({
+jest.mock("../../../../fixtures/host/src/main/wallet/private-submission-journal.js", () => ({
   getPrivateSubmissionJournal: (...args) => mockJournalLookup(...args),
 }));
-jest.mock('./private-transaction-network', () => ({
-  ...jest.requireActual('./private-transaction-network'),
+jest.mock("../../../../fixtures/host/src/main/wallet/private-transaction-network.js", () => ({
+  ...jest.requireActual("../../../../fixtures/host/src/main/wallet/private-transaction-network.js"),
   getPrivateTransactionNetwork: (...args) => mockNetworkLookup(...args),
 }));
 const { createPrivacyScope, getPrivacyContext } = require("../../../../../../src/owners/context-bindings.js");
-const { getPrivateRpcDestinationDetails } = require('../networks/private-rpc');
+const { getPrivateRpcDestinationDetails } = require("../../../../fixtures/host/src/main/networks/private-rpc.js");
 const { sample } = require("../../../../fixtures/scripts/fixtures/railgun-own-txid-data.js");
 const { projectRailgunOwnRecord } = require("../../../../../../src/owners/railgun-own-txid.js");
 const {
@@ -105,7 +108,7 @@ beforeEach(() => {
   };
   setup();
   mockNetworkLookup.mockImplementation(
-    jest.requireActual('./private-transaction-network').getPrivateTransactionNetwork
+    jest.requireActual("../../../../fixtures/host/src/main/wallet/private-transaction-network.js").getPrivateTransactionNetwork
   );
   mockJournalLookup.mockImplementation((handle) => {
     const context = getPrivacyContext(handle);
