@@ -4,7 +4,10 @@ module.exports = {
   maxWorkers: 2,
   // Historical source snapshots are never executable modules or test discovery.
   modulePathIgnorePatterns: ['<rootDir>/tools/freedom-legacy-qualification/'],
-  workerIdleMemoryLimit: '256MB',
+  // Recycle between files: reused workers have had unexplained SIGSEGVs.
+  // This is an idle threshold, not a per-test memory cap or an assertion bypass.
+  // The same fresh-worker setting passed the expanded suite before adoption.
+  workerIdleMemoryLimit: '1MB',
   testMatch: [
     '<rootDir>/test/**/*.test.js',
     '<rootDir>/tools/qualification/scripts/fixtures/railgun-relay-wire/policy.test.js',
