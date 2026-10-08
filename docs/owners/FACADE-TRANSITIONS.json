@@ -1,0 +1,43 @@
+{
+  "baseRevision": "8e41803c7d1efa79c5249f77c36a989208877db9",
+  "label": "private original enrollment-closure observer and failed-open drainage; no public authority export",
+  "changes": [
+    {
+      "file": "src/owners/railgun-account-enrollment.js",
+      "beforeSha256": "79ff32c60048d7cde919635568c68144f5cabab64638ce08a2c7a956906a75b7",
+      "afterSha256": "66583723fc9e3de3d5c155bfe3134f329c513c55a803ad96fb5cadfbb798944c",
+      "replacements": [
+        {
+          "start": 30086,
+          "before": "",
+          "after": "\n  observeRailgunEnrollmentClosure,"
+        },
+        {
+          "start": 30068,
+          "before": "",
+          "after": "// Private lifecycle observer: remains valid after revocation, never returns a\n// key/store or authorizes any operation on the revoked enrollment.\nfunction observeRailgunEnrollmentClosure(enrollment) {\n  const original = closureOwners.get(enrollment);\n  check(original);\n  return original;\n}\n"
+        },
+        {
+          "start": 28326,
+          "before": "",
+          "after": "closureOwners.set(instance, rootLoan.closed);\n  "
+        },
+        {
+          "start": 10357,
+          "before": "",
+          "after": "; } catch (failure) { cleanupError = failure; }\n    // A failed opener publishes no instance for a facade to drain. Retain its\n    // original root loan here; cancellation is not callback settlement.\n    if (rootLoan) await Promise.allSettled([rootLoan.closed]);\n    if (cleanupError) throw cleanupError"
+        },
+        {
+          "start": 10350,
+          "before": "",
+          "after": "let cleanupError;\n    try { "
+        },
+        {
+          "start": 1449,
+          "before": "",
+          "after": "Owners = new WeakMap(),\n  closure"
+        }
+      ]
+    }
+  ]
+}

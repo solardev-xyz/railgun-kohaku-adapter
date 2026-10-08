@@ -76,6 +76,7 @@
   "src/owners/context-bindings.js",
   "src/owners/credential-loan.js",
   "src/owners/host-bindings.js",
+  "src/owners/operational-facade.js",
   "src/owners/process-jobs.js",
   "src/owners/railgun-account-enrollment.js",
   "src/owners/railgun-account-fence.js",
