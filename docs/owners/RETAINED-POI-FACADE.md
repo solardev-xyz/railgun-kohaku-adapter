@@ -127,3 +127,5 @@ fails the test instead of silently broadening it. Negative controls remove a
 required receipt, add legacy filename/binaryKey fields and mix the two output
 routes. This verifies argument-key compatibility; it does not claim execution of
 real crypto, private native owners or genuine encrypted storage in these mocks.
+
+For owned-note observation, the 45-second acquire argument bounds POI source acquisition. The unchanged membership verifier has its own default budget; the facade still applies one 180-second absolute lifetime across review, wallet restoration, acquisition, membership and cleanup. Cancellation begins wallet closure concurrently with the POI drain, and both original barriers must settle before publication. A never-settling review retains account exclusion until its original promise settles; cancellation is not evidence of settlement.
