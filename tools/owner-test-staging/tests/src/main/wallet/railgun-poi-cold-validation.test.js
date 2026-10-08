@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 // Authority boundaries are mocked; payload/capsule normalization, capture
 // comparison, privacy contexts and the directory-owned account phase are real.
 // These controller tests do not establish cryptographic proof validity.

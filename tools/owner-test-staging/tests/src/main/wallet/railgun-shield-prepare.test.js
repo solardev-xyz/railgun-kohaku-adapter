@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 let mockEnrollment, mockIdentity, mockMode, mockRelease, mockExit;
 const mockStart = jest.fn();
 jest.mock("../../../../../../src/owners/railgun-process.js", () => ({ startRailgunProcess: (...args) => mockStart(...args) }));

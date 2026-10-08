@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 let mockServices;
 jest.mock("../../../../../../src/owners/railgun-public-services.js", () => ({ createRailgunPublicServices: () => mockServices }));
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");

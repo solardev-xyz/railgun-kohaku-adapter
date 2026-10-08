@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 const mockQuarantine = jest.fn();
 const mockPoiCapture = jest.fn(),
   mockPoiCompletedCapture = jest.fn(),

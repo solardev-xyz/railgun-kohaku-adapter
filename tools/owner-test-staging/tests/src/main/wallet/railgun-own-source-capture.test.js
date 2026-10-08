@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 let mockEnrollment, mockCoordinator, mockGeneration;
 const mockCollect = jest.fn();
 jest.mock("../../../../../../src/owners/railgun-account-public.js", () => ({

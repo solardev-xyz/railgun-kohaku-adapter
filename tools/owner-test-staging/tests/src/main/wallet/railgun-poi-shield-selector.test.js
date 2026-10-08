@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 let mockMode, mockTask, mockExit, mockDeferExit;
 jest.mock("../../../../../../src/execution/railgun-engine-runtime.js", () => ({
   verifyRailgunEngineRuntime: jest.fn((v) => v),
@@ -173,7 +174,9 @@ test('returns immutable data only after exit and exposes only the result broker'
   const options = startRailgunProcess.mock.calls[0][0];
   for (const key of ['binaryKey', 'storage', 'createProvider', 'storageWorker'])
     expect(options[key]).toBeUndefined();
-  expect(options.filename).toBe(require.resolve("../../../../../../src/owners/railgun-poi-shield-selector-job.js"));
+  expect(options.executionJob).toBe('poi-shield-selector');
+  expect(options.filename).toBeUndefined();
+  expect(require('../../../../../../src/owners/process-jobs').getProcessJob(options.executionJob).key).toBe(false);
   expect(Object.keys(JSON.parse(options.input)).sort()).toEqual([
     'archive',
     'bindingDigest',

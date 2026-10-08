@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 let mockDescriptor,
   mockRefuse,
   mockCopy,
@@ -21,13 +22,13 @@ let mockDescriptor,
   mockQuarantine;
 jest.mock("../../../../../../src/execution/railgun-engine-runtime.js", () => ({ verifyRailgunEngineRuntime: (v) => v }));
 jest.mock("../../../../../../src/execution/railgun-prover-runtime.js", () => ({ verifyRailgunProverRuntime: (v) => v }));
-jest.mock("../../../../../../src/data/railgun-private-capsule.js", () => ({
+jest.mock("../../../../../../src/execution/railgun-private-capsule.js", () => ({
   normalizeRailgunPrivateCapsule: (value) =>
     jest.requireActual("../../../../../../src/data/railgun-private-capsule.js").normalizeRailgunPrivateCapsule(value),
   normalizeRailgunNewCapsule: (value, owned) => {
     if (mockActualCapsule)
       return jest
-        .requireActual('./railgun-private-capsule')
+        .requireActual('../../../../../../src/execution/railgun-private-capsule')
         .normalizeRailgunNewCapsule(value, owned);
     expect(value).toEqual({ recovery: true });
     expect(owned.walletId).toBe(mockDescriptor.walletId);
@@ -38,7 +39,7 @@ jest.mock("../../../../../../src/data/railgun-private-preparation.js", () => ({
   normalizeRailgunPrivateOffer: (value, selection) =>
     mockActualCapsule
       ? jest
-          .requireActual('./railgun-private-preparation')
+          .requireActual('../../../../../../src/data/railgun-private-preparation')
           .normalizeRailgunPrivateOffer(value, selection)
       : Object.freeze({ ...value }),
 }));

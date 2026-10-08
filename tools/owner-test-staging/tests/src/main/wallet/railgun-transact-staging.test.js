@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 let mockIdentity, mockEnrollment, mockCoordinator, mockOld, mockNew, mockOwned, mockFresh;
 let mockWalletPolicy, mockTxidPolicy, mockPublicPolicy, mockPublicIdentity, mockTxid, mockHandoff;
 const mockOpenWallet = jest.fn(),

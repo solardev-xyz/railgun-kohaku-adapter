@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 let mockEnrollment, mockCoordinator, mockGeneration, mockDestination, mockOutcomes;
 const mockCollect = jest.fn(),
   mockTransactCollect = jest.fn(),

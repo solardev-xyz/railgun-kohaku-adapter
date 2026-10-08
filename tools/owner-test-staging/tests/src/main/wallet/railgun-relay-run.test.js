@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 let mockEnrollment, mockFenceLive;
 jest.mock("../../../../../../src/owners/railgun-account-enrollment.js", () => ({
   assertRailgunFencedAccountEnrollment(value) {
@@ -159,10 +160,12 @@ test.each(['construct', 'reconstruct'])(
       args.relayDraftText = JSON.stringify(normalizeRailgunRelayDraftCapsule(data.draft).data);
     }
     const result = await run(args);
-    expect(mockOptions.binaryKey).toBe(true);
+    expect(mockOptions.binaryKey).toBeUndefined();
     expect(mockOptions.startupMs).toBe(30000);
     expect(mockOptions.lifetimeMs).toBe(30000);
-    expect(mockOptions.filename).toBe(require.resolve("../../../../../../src/owners/railgun-relay-wallet-job.js"));
+    expect(mockOptions.executionJob).toBe(mode === 'construct' ? 'relay-prepare' : 'relay-reconstruct');
+    expect(mockOptions.filename).toBeUndefined();
+  expect(require('../../../../../../src/owners/process-jobs').getProcessJob(mockOptions.executionJob).key).toBe(true);
     expect(mockCredential).toHaveBeenCalledTimes(1);
     expect([...mockLoan]).toEqual(Array(32).fill(0));
     expect(mockOptions.input).not.toContain('07'.repeat(32));
@@ -408,8 +411,10 @@ function proofSetup() {
 test('fixed producer shares key/storage/chunk sequence with exact 110s cap and observed close', async () => {
   const f = proofSetup(),
     result = await run(args);
-  expect(mockOptions.filename).toBe(require.resolve("../../../../../../src/owners/railgun-relay-prove-job.js"));
-  expect(mockOptions.binaryKey).toBe(true);
+  expect(mockOptions.executionJob).toBe('relay-prove-local');
+  expect(mockOptions.filename).toBeUndefined();
+  expect(require('../../../../../../src/owners/process-jobs').getProcessJob(mockOptions.executionJob).key).toBe(true);
+  expect(mockOptions.binaryKey).toBeUndefined();
   expect(mockOptions.startupMs).toBe(110000);
   expect(mockOptions.lifetimeMs).toBe(110000);
   expect(JSON.parse(mockOptions.input).recordText).toBeUndefined();
@@ -570,8 +575,10 @@ function prePoiSetup(change = () => {}) {
 test('fixed fresh binding restores once with canonical init, viewing key, 30s caps and original exit', async () => {
   const f = prePoiSetup();
   const result = await run(args);
-  expect(mockOptions.filename).toBe(require.resolve("../../../../../../src/owners/railgun-relay-pre-poi-job.js"));
-  expect(mockOptions.binaryKey).toBe(true);
+  expect(mockOptions.executionJob).toBe('relay-pre-poi');
+  expect(mockOptions.filename).toBeUndefined();
+  expect(require('../../../../../../src/owners/process-jobs').getProcessJob(mockOptions.executionJob).key).toBe(true);
+  expect(mockOptions.binaryKey).toBeUndefined();
   expect(mockOptions.startupMs).toBe(30000);
   expect(mockOptions.lifetimeMs).toBe(30000);
   const input = JSON.parse(mockOptions.input);

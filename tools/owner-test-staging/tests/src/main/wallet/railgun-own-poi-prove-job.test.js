@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 const { createHash } = require('crypto');
 let mockInput, mockExpected, mockPayload, mockArtifacts, mockScope, mockProve;
 jest.mock("../../../../../../src/execution/railgun-engine-runtime.js", () => ({ verifyRailgunEngineRuntime: jest.fn((v) => v) }));

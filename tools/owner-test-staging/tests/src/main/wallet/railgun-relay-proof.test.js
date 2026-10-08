@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 let mockVerification;
 jest.mock("../../../../../../src/owners/railgun-relay-proof-verifier.js", () => ({
   verifyRailgunRelayProofs: jest.fn(async () => JSON.parse(JSON.stringify(mockVerification))),
@@ -146,8 +147,10 @@ afterEach(() => {
 test('fixed keyless C issues only exact bound static evidence after observed original exit', async () => {
   const result = await verify(args);
   receiptOwners.push(result);
-  expect(mockOptions.filename).toBe(require.resolve("../../../../../../src/owners/railgun-relay-verify-job.js"));
-  expect(mockOptions.binaryKey).toBe(false);
+  expect(mockOptions.executionJob).toBe('relay-verify');
+  expect(mockOptions.filename).toBeUndefined();
+  expect(require('../../../../../../src/owners/process-jobs').getProcessJob(mockOptions.executionJob).key).toBe(false);
+  expect(mockOptions.binaryKey).toBeUndefined();
   expect(mockOptions.startupMs).toBe(60000);
   expect(mockOptions.lifetimeMs).toBe(60000);
   expect(getPrivacyContext(mockOptions.handle).subject.operation).toBe('relay-verify');

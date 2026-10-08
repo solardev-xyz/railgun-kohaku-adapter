@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 let mockMode, mockTask, mockExit, mockDeferExit, mockProtocol;
 jest.mock("../../../../../../src/execution/railgun-engine-runtime.js", () => ({ verifyRailgunEngineRuntime: (v) => v }));
 jest.mock("../../../../../../src/owners/railgun-process.js", () => ({

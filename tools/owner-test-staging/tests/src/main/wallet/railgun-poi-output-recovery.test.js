@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 jest.mock("../../../../../../src/data/railgun-poi-shield-selector-data.js", () => {
   const actual = jest.requireActual("../../../../../../src/data/railgun-poi-shield-selector-data.js");
   return {
@@ -562,9 +563,11 @@ test.each([false, true])(
         deployment: 'sepolia',
         chainId: 11155111,
       });
-      expect(job.filename).toBe(require.resolve("../../../../../../src/owners/railgun-poi-output-recover-job.js"));
+      expect(job.executionJob).toBe('poi-output-recover');
+      expect(job.filename).toBeUndefined();
+  expect(require('../../../../../../src/owners/process-jobs').getProcessJob(job.executionJob).key).toBe(true);
+      expect(job.binaryKey).toBeUndefined();
       expect(job).toMatchObject({
-        binaryKey: true,
         startupMs: 30000,
         lifetimeMs: 30000,
         heapMb: 256,

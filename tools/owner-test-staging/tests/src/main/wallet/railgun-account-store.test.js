@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 const mockEnrollments = new WeakSet();
 let mockStartWorker;
 jest.mock("../../../../../../src/owners/railgun-session-worker.js", () => ({
@@ -6,6 +7,24 @@ jest.mock("../../../../../../src/owners/railgun-session-worker.js", () => ({
 }));
 jest.mock("../../../../../../src/owners/railgun-account-enrollment.js", () => ({
   isRailgunAccountEnrollment: (v) => mockEnrollments.has(v),
+  // Original synthetic loan bodies stay below; only their package-private
+  // entrypoints moved off the public enrollment object during extraction.
+  withRailgunEnrollmentPublicKeys: (value, use) => {
+    expect(mockEnrollments.has(value)).toBe(true);
+    return value.withPublicKeys(use);
+  },
+  withRailgunEnrollmentPublicGenerationKeys: (value, ...args) => {
+    expect(mockEnrollments.has(value)).toBe(true);
+    return value.withPublicGenerationKeys(...args);
+  },
+  withRailgunEnrollmentGenerationKeys: (value, ...args) => {
+    expect(mockEnrollments.has(value)).toBe(true);
+    return value.withGenerationKeys(...args);
+  },
+  withRailgunEnrollmentTxidGenerationKeys: (value, ...args) => {
+    expect(mockEnrollments.has(value)).toBe(true);
+    return value.withTxidGenerationKeys(...args);
+  },
 }));
 const fs = require('fs'),
   os = require('os'),

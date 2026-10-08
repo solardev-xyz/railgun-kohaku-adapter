@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 let mockRun, mockOptions, mockTask;
 jest.mock("../../../../../../src/execution/railgun-engine-runtime.js", () => ({ verifyRailgunEngineRuntime: (v) => v }));
 jest.mock("../../../../../../src/owners/railgun-process.js", () => ({
@@ -109,7 +110,9 @@ test('projects bounded public batches with fixed governance ceiling and pinned a
     archive: '/engine.asar',
     qualifiedThrough: 11829346,
   });
-  expect(mockOptions.filename).toBe(require.resolve("../../../../../../src/owners/railgun-public-job.js"));
+  expect(mockOptions.executionJob).toBe('public-scan');
+  expect(mockOptions.filename).toBeUndefined();
+  expect(require('../../../../../../src/owners/process-jobs').getProcessJob(mockOptions.executionJob).key).toBe(false);
   expect(mockOptions.binaryKey).toBeUndefined();
   expect(mockTask.close).toHaveBeenCalled();
 });

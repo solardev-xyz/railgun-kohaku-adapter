@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 // Structural public fixtures and actual pure normalizers only. The selector
 // seam stops before utility launch; neither it nor this helper authenticates T.
 jest.mock("../../../../../../src/execution/railgun-engine-runtime.js", () => ({ verifyRailgunEngineRuntime: (v) => v }));

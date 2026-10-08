@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 let mockClosedFault,
   mockRejectExit,
   mockMode,

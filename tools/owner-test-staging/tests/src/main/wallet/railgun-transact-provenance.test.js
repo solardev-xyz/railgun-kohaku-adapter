@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 let mockStaged, mockWindow, mockCreator, mockClaim, mockRoots, mockVerified;
 const mockServices = jest.fn(),
   mockCapture = jest.fn(),

@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 let mockRun, mockTask, mockOptions, mockDeferExit;
 jest.mock("../../../../../../src/owners/railgun-session-worker.js", () => ({
   assertRailgunSessionWorker: (session, binding) => {

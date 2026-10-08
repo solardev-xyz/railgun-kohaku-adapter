@@ -1,0 +1,497 @@
+{
+  "baseRevision": "63be312906329d4469749c0b3cb7f9c72060fe85",
+  "productionTransforms": false,
+  "scope": "Fixed test-only genuine context composition; closed enum assertions; relocated complete capsule mock seam. Original assertions preserved by exact reversible deltas.",
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-account-poi.test.js",
+      "beforeSha256": "12559d22c685b5ad20162c746d2e25a7b2446af54516626ab62e4e18889bcb25",
+      "afterSha256": "7344feedfb1e840fb9fb08cc7e468ee007a20d66cac96091e8d96c19d30a9097",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-account-store.test.js",
+      "beforeSha256": "ae2fd73f1e3a2d96923a4090df35d81a18387aeee0e5bace88ef5fc9d1cb4a6b",
+      "afterSha256": "2c14ce8bf40284770aae60553b49f7569b8676a72f353a9086a3329feeeb7141",
+      "replacements": [
+        {
+          "start": 435,
+          "before": "",
+          "after": "  // Original synthetic loan bodies stay below; only their package-private\n  // entrypoints moved off the public enrollment object during extraction.\n  withRailgunEnrollmentPublicKeys: (value, use) => {\n    expect(mockEnrollments.has(value)).toBe(true);\n    return value.withPublicKeys(use);\n  },\n  withRailgunEnrollmentPublicGenerationKeys: (value, ...args) => {\n    expect(mockEnrollments.has(value)).toBe(true);\n    return value.withPublicGenerationKeys(...args);\n  },\n  withRailgunEnrollmentGenerationKeys: (value, ...args) => {\n    expect(mockEnrollments.has(value)).toBe(true);\n    return value.withGenerationKeys(...args);\n  },\n  withRailgunEnrollmentTxidGenerationKeys: (value, ...args) => {\n    expect(mockEnrollments.has(value)).toBe(true);\n    return value.withTxidGenerationKeys(...args);\n  },\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-note-provenance.test.js",
+      "beforeSha256": "ff5b5a30c879ff7a7c84d91113128ccab36047592fe1b51159e262d7b743d6e2",
+      "afterSha256": "af188e8683566752c590970dadf58331d5036aee0c7b8693aff7eb53777bfed9",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-poi-membership.test.js",
+      "beforeSha256": "30dfbf6c083c464a7534eb09a551117bbc913be61fb2698fa6de60524c7a1311",
+      "afterSha256": "9286102bd8e874a3696679132bb1532f6a90330aafd530012a8f2b04682b3979",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-poi-prove-job.test.js",
+      "beforeSha256": "2bae349b4ac5ff78bce5ac1032bf86a9b39bba44bab84d89a82fdd6f30c65aa3",
+      "afterSha256": "0e294a8b7346d3f7cb0a7d07fa991f1653a425a6e7fc7c2b672467c6f9c2a20b",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-poi-shape-data.test.js",
+      "beforeSha256": "60c10db535ff3d1d2e1aa17bff3cad227703984b4b4273164c0b113dbcf1b81e",
+      "afterSha256": "c464a61e94fd915382522a9e83703e096883d24fccabe42e0399a5788f1da61f",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-selector.test.js",
+      "beforeSha256": "3c17732b5c2508bd89b607bc3fe7e60cd06de30493538fece4ebca89f5d8a06c",
+      "afterSha256": "6e093905c41f03785654ebddf6256d0f115cd4e95f7834deb56084338f607937",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-source-capture.test.js",
+      "beforeSha256": "642e1aee76d5c76db042f47ce519710f445c488741313240bf8870cdcd88db36",
+      "afterSha256": "0b0cb1639a19464636f5df8e55d9174153d3cd69e92abd52d0ce7c4e7f923ea4",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-txid-verifier.test.js",
+      "beforeSha256": "e48583d461bdfde02830f4b0bb1ab383903c21da338d2269d632182c910ec879",
+      "afterSha256": "17dc632e10d8cee8c60904958c1ce0a3b3078412d869cd3a99addce3cecc7d4e",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-witness.test.js",
+      "beforeSha256": "fb619c25fbd068d20af8e0e85c8d09a07e9c8a3da19ea34510cd3cd6f6995858",
+      "afterSha256": "1b14c28437a746820d678d2a8fe3ff1119c464aa89304bd87e9e776ab4b3df5f",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-cold-validation.test.js",
+      "beforeSha256": "4305d15e02598d447e4a812c2d2e35bc2a88e38aab54eaf3f3dc41e673dd05b7",
+      "afterSha256": "e6f7e60e27c9bcd7c137ebf570a332d29a5b2f864ddbde788033c789a8a44a47",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-output-recovery.test.js",
+      "beforeSha256": "41362abde3ecbe2ed9037f7c9f015f09dca236bb38b23084666fb056d4d6cb31",
+      "afterSha256": "ec60e3a1967774ce90983704417015b40e94a6a7408ce9dc471af0e744395de4",
+      "replacements": [
+        {
+          "start": 19731,
+          "before": "        binaryKey: true,\n",
+          "after": ""
+        },
+        {
+          "start": 19581,
+          "before": "      expect(job.filename).toBe(require.resolve(\"../../../../../../src/owners/railgun-poi-output-recover-job.js\"));\n",
+          "after": "      expect(job.executionJob).toBe('poi-output-recover');\n      expect(job.filename).toBeUndefined();\n  expect(require('../../../../../../src/owners/process-jobs').getProcessJob(job.executionJob).key).toBe(true);\n      expect(job.binaryKey).toBeUndefined();\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-prover.test.js",
+      "beforeSha256": "c259dde9c327b3629be4d70dbc15e125c3d841b97ee4b78743443962e46ddedd",
+      "afterSha256": "59fb43be07ca5d7250950c80309481d34f1b0a217b41a7e4533779ee920ce111",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-shield-selector.test.js",
+      "beforeSha256": "edfd2e1b428167cc58f8c67f5adf2cb48c2f58028c90acc8f338f248aebc235b",
+      "afterSha256": "55cf0b4b43edf3b876b58d2d6e2a5865db80170fcbda1995dd4e508b871ef199",
+      "replacements": [
+        {
+          "start": 6963,
+          "before": "  expect(options.filename).toBe(require.resolve(\"../../../../../../src/owners/railgun-poi-shield-selector-job.js\"));\n",
+          "after": "  expect(options.executionJob).toBe('poi-shield-selector');\n  expect(options.filename).toBeUndefined();\n  expect(require('../../../../../../src/owners/process-jobs').getProcessJob(options.executionJob).key).toBe(false);\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-source-capture.test.js",
+      "beforeSha256": "2edcd63da3333c4f29cb2633b794e28989029a250453a6b333b85d4da616a80c",
+      "afterSha256": "bd1b350afe6cf514cad465d4695558479fb94824bbeed28615cb4893d45e6cb3",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-verifier.test.js",
+      "beforeSha256": "a19a02caea61132acb8a54b019b377bbd447670da0dc6c1b996748ede6d705bc",
+      "afterSha256": "1667adee99753f6a3eeffec14066e26f4a64fe58041bb0e36363c43f13d2d18d",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-proof.test.js",
+      "beforeSha256": "7adead5a19b524ce86ec36cae4d9f5dde2ec1cc689b1568fdbe7da1b7d2b5ccb",
+      "afterSha256": "f0869ea4c97501ed905dfbf1cee4a8fccc44258027a839457a739f6774c44ae3",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-public-run.test.js",
+      "beforeSha256": "4c4497d26a648f6d155b8090ace930bb2c4d25c4c9b37ab1c0d77544df8c5289",
+      "afterSha256": "9a97fe99466d05be0c854fe6f2d957523bed014d425bf6e64b43432aca68e879",
+      "replacements": [
+        {
+          "start": 3711,
+          "before": "  expect(mockOptions.filename).toBe(require.resolve(\"../../../../../../src/owners/railgun-public-job.js\"));\n",
+          "after": "  expect(mockOptions.executionJob).toBe('public-scan');\n  expect(mockOptions.filename).toBeUndefined();\n  expect(require('../../../../../../src/owners/process-jobs').getProcessJob(mockOptions.executionJob).key).toBe(false);\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-proof.test.js",
+      "beforeSha256": "36b592fcc67a27ee80e73951ff36e8dd4a8dcd487163e33d96de163d6ee7872f",
+      "afterSha256": "f4d70cfd3e6cbee66520e357941c9119ad6fa0b082bd20fe0c3b4dc90b61de07",
+      "replacements": [
+        {
+          "start": 4988,
+          "before": "  expect(mockOptions.filename).toBe(require.resolve(\"../../../../../../src/owners/railgun-relay-verify-job.js\"));\n  expect(mockOptions.binaryKey).toBe(false);\n",
+          "after": "  expect(mockOptions.executionJob).toBe('relay-verify');\n  expect(mockOptions.filename).toBeUndefined();\n  expect(require('../../../../../../src/owners/process-jobs').getProcessJob(mockOptions.executionJob).key).toBe(false);\n  expect(mockOptions.binaryKey).toBeUndefined();\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-run.test.js",
+      "beforeSha256": "4fa7541031f40e41588d48aa6bfdb1ddfae654b8890f8c08cd631d00d211c2a3",
+      "afterSha256": "7f6043680a45210a85a1546c3258bc02c440fff4a9860ef19ea3ab87042cdaaf",
+      "replacements": [
+        {
+          "start": 20087,
+          "before": "  expect(mockOptions.filename).toBe(require.resolve(\"../../../../../../src/owners/railgun-relay-pre-poi-job.js\"));\n  expect(mockOptions.binaryKey).toBe(true);\n",
+          "after": "  expect(mockOptions.executionJob).toBe('relay-pre-poi');\n  expect(mockOptions.filename).toBeUndefined();\n  expect(require('../../../../../../src/owners/process-jobs').getProcessJob(mockOptions.executionJob).key).toBe(true);\n  expect(mockOptions.binaryKey).toBeUndefined();\n"
+        },
+        {
+          "start": 14313,
+          "before": "  expect(mockOptions.filename).toBe(require.resolve(\"../../../../../../src/owners/railgun-relay-prove-job.js\"));\n  expect(mockOptions.binaryKey).toBe(true);\n",
+          "after": "  expect(mockOptions.executionJob).toBe('relay-prove-local');\n  expect(mockOptions.filename).toBeUndefined();\n  expect(require('../../../../../../src/owners/process-jobs').getProcessJob(mockOptions.executionJob).key).toBe(true);\n  expect(mockOptions.binaryKey).toBeUndefined();\n"
+        },
+        {
+          "start": 5572,
+          "before": "    expect(mockOptions.filename).toBe(require.resolve(\"../../../../../../src/owners/railgun-relay-wallet-job.js\"));\n",
+          "after": "    expect(mockOptions.executionJob).toBe(mode === 'construct' ? 'relay-prepare' : 'relay-reconstruct');\n    expect(mockOptions.filename).toBeUndefined();\n  expect(require('../../../../../../src/owners/process-jobs').getProcessJob(mockOptions.executionJob).key).toBe(true);\n"
+        },
+        {
+          "start": 5431,
+          "before": "    expect(mockOptions.binaryKey).toBe(true);\n",
+          "after": "    expect(mockOptions.binaryKey).toBeUndefined();\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-transact-provenance.test.js",
+      "beforeSha256": "a467a60a0aef040081f96e067629b6d8e9a45b260b70bb90b3c2e96a2dcc4310",
+      "afterSha256": "93d45ff9d52ca9683d6262cf9154a8af2a0cb9ee7e76136a811b9a42bf828ec8",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-transact-staging.test.js",
+      "beforeSha256": "ee0c70c9e3b5a3a352ae4b185c261cbe3f01079ddc9697dfc95fa3422d763bf6",
+      "afterSha256": "48c50c2237248463c215315a71675e3159a1c883ca40fc07a76b4ccb8b7060f2",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-session-worker.test.js",
+      "beforeSha256": "6797670bdbf634b51b2846f21c7c590398345d32407724253c723d7dd13f1384",
+      "afterSha256": "1acc156f0b5e0fd7219e5c877afceb96efaaf7a8bfda374b6a96ac377f48d812",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-session.test.js",
+      "beforeSha256": "4813722f5e38418e3c9521f72ea5ba2f01e538b6c1dae3f7af9ef4665bcefaab",
+      "afterSha256": "901a5465818ef1eaece540d1ce3e88689d3072c817cde0d651c0e029b5ef468b",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-shield-prepare.test.js",
+      "beforeSha256": "1369d4ce125fa2750d78a288577dade9e43f722654c77e1e6ba50a71c5ac8edd",
+      "afterSha256": "0b373954f20dc1178789ca487e8d7f2cac2c63e6d8b3d88965b31c563b0a9277",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-shield-receive.test.js",
+      "beforeSha256": "1ef74d2f6aae6a81c11476d01993784bb7d3fde45dcca7780fddba81dc48c445",
+      "afterSha256": "f324934bf1531811980bfeca711117215151f2a80526412208f44bec5c82ce42",
+      "replacements": [
+        {
+          "start": 3003,
+          "before": "  mockStart.mockImplementation(({ broker, binaryKey, filename }) => {\n    expect(binaryKey).toBe(true);\n    expect(filename).toBe(require.resolve(\"../../../../../../src/owners/railgun-shield-receive-job.js\"));\n",
+          "after": "  mockStart.mockImplementation(({ broker, binaryKey, filename, executionJob }) => {\n    expect(binaryKey).toBeUndefined();\n    expect(executionJob).toBe('shield-receive');\n    expect(require('../../../../../../src/owners/process-jobs').getProcessJob(executionJob).key).toBe(true);\n    expect(filename).toBeUndefined();\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-source-ledger-prefix.test.js",
+      "beforeSha256": "9193e73121c551ff2cab3be310daf6ca4cee9a370b7aedc947a4bc7191580639",
+      "afterSha256": "4357e73798186bfb4d806a52e3ec6b1e05eef483c26b0b6c9e1b23d974840c97",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-source-ledger.test.js",
+      "beforeSha256": "ddb87eaba144cf8ccde9fe0a7f8007a7a377ca2d1802759edc423c3bdf0797c1",
+      "afterSha256": "1011ff8dca96da04d13f007c38b1d882f3139bc30f41b9048273cf0dff8d1ad0",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-store.test.js",
+      "beforeSha256": "9e2d54c5e8d0b87d6f79ed82c5189362c6c4749d0aa145ea4a91195dccac63f3",
+      "afterSha256": "a4d451952b8d07105512a57bf8b3c8f0d751983d7c89b29df0b77011d6e4fb2d",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-transact-provenance.test.js",
+      "beforeSha256": "229f62efb5bedd061d3bf0b8a19a863d75f5e3b26967c64853657483c355b206",
+      "afterSha256": "c342407826d2ef17c585473b0f9fae94a9c3070fad60ec168018c5623e98b41f",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-transact-staging.test.js",
+      "beforeSha256": "f9090c24c208ab4c98e872a9a9f3c6c7e823335c5aee61727efc1033dc0edc70",
+      "afterSha256": "642f2e88101dc868e2ad5102464f8c4a5cfd726eb7413e2933cfb63d9daec8a6",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-txid-root.test.js",
+      "beforeSha256": "5cf9e3451edea81acbbb1bfc7e48e79c4c4191544bc7a4127b41e8f77bc7c4e9",
+      "afterSha256": "6f74afc01b9efa25434c8c47bcbf9b42e67480991a3a5d77a14f5f2250122467",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-txid-runner.test.js",
+      "beforeSha256": "f42e9f6012029502886be0e5d3b22e08bc0b83a6d84c7fd7e0e72402b645bc33",
+      "afterSha256": "82ec4832ce1763ebdc3b407a6c4a032a583f76a2983f5d6a4a752f0fb5796fc3",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-wallet-coverage-store.test.js",
+      "beforeSha256": "24b2c986618c949261adcb642e71706b3f901e9172d1fe5213156a39e7b58474",
+      "afterSha256": "06cfc90ad505e43c7fd0ea1983792dd047018c5ecbcdc595df78f387ffd65c49",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-wallet-run.test.js",
+      "beforeSha256": "37379a6bb5f2527d6bd12e074bea4808cb6b8d8def57bfa8d1b46e3f1009dbd3",
+      "afterSha256": "585c1eea9a642b7e5ec4c2c4f8c8393161471e93137937e02f8d8fa128345e30",
+      "replacements": [
+        {
+          "start": 1344,
+          "before": "          .requireActual('./railgun-private-preparation')\n",
+          "after": "          .requireActual('../../../../../../src/data/railgun-private-preparation')\n"
+        },
+        {
+          "start": 924,
+          "before": "        .requireActual('./railgun-private-capsule')\n",
+          "after": "        .requireActual('../../../../../../src/execution/railgun-private-capsule')\n"
+        },
+        {
+          "start": 589,
+          "before": "jest.mock(\"../../../../../../src/data/railgun-private-capsule.js\", () => ({\n",
+          "after": "jest.mock(\"../../../../../../src/execution/railgun-private-capsule.js\", () => ({\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    }
+  ]
+}

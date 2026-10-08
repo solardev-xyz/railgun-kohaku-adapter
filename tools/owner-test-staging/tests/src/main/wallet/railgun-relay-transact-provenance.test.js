@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 // Structural owner/permit seams; the real root source and its 60-second clock run.
 // No engine cryptography or public-service request is executed by these tests.
 let mockServices, mockClaim, mockData, mockOwners, mockAccount, mockWindow, mockReceipt;

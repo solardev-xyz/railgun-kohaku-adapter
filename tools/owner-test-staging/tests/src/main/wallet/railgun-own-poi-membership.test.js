@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 jest.mock("../../../../../../src/owners/railgun-identity.js", () => ({
   assertRailgunIdentity: () => {
     throw Error('Shield needs no identity credential');

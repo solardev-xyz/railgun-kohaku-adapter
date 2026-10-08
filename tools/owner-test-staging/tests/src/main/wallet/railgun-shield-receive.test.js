@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 let mockIdentity, mockEnrollment, mockPreparation, mockPrepared, mockMode, mockExit, mockRelease;
 const mockStart = jest.fn();
 const mockCredential = jest.fn();
@@ -74,9 +75,11 @@ beforeEach(() => {
     npk: 'fixture-npk',
     recipient: 'fixture-recipient',
   });
-  mockStart.mockImplementation(({ broker, binaryKey, filename }) => {
-    expect(binaryKey).toBe(true);
-    expect(filename).toBe(require.resolve("../../../../../../src/owners/railgun-shield-receive-job.js"));
+  mockStart.mockImplementation(({ broker, binaryKey, filename, executionJob }) => {
+    expect(binaryKey).toBeUndefined();
+    expect(executionJob).toBe('shield-receive');
+    expect(require('../../../../../../src/owners/process-jobs').getProcessJob(executionJob).key).toBe(true);
+    expect(filename).toBeUndefined();
     const closed = new Promise((resolve) => {
       mockExit = () => resolve({ code: 'RAILGUN_PROCESS_CLOSED' });
     });

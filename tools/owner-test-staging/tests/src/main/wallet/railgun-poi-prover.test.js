@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 let mockPrepared, mockArtifacts, mockSerial, mockProve, mockDebug, mockScope, mockController;
 jest.mock("../../../../../../src/owners/railgun-poi-witness.js", () => ({
   prepareRailgunPoiWitness: jest.fn(async () => mockPrepared),

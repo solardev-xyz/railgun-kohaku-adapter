@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 let mockWallet, mockIdentity, mockEnrollment, mockCoordinator, mockSnapshot, mockObservation;
 let mockSource, mockSourceArgs, mockStaleSource, mockStaleMembership;
 let mockWindow, mockWindowData, mockBusy, mockWindowController;

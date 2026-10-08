@@ -5,6 +5,7 @@ const { createHash } = require('crypto');
 const root = path.join(__dirname, '..');
 const manifest = require('../docs/owners/test-staging/MANIFEST.json');
 const adaptations = require('../docs/owners/test-staging/CLOSED-ADAPTATIONS.json');
+const contextAdaptations = require('../docs/owners/test-staging/CONTEXT-ADAPTATIONS.json');
 const retired = require('../docs/owners/RETIRED-RUNTIME.json');
 const sha = (value) => createHash('sha256').update(value).digest('hex');
 test('all staged tests and fixtures preserve exact c6 bytes through reversible import-only edits', () => {
@@ -17,6 +18,15 @@ test('all staged tests and fixtures preserve exact c6 bytes through reversible i
   expect(new Set(manifest.files.map((row) => row.destination)).size).toBe(168);
   for (const row of manifest.files) {
     let text = fs.readFileSync(path.join(root, row.destination), 'utf8');
+    const composed = contextAdaptations.changes.find((entry) => entry.file === row.destination);
+    if (composed) {
+      expect(sha(text)).toBe(composed.afterSha256);
+      for (const edit of [...composed.replacements].reverse()) {
+        expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(edit.after);
+        text = text.slice(0, edit.start) + edit.before + text.slice(edit.start + edit.after.length);
+      }
+      expect(sha(text)).toBe(composed.beforeSha256);
+    }
     const adapted = adaptations.changes.find((entry) => entry.file === row.destination);
     if (adapted) {
       expect(sha(text)).toBe(adapted.afterSha256);
@@ -72,4 +82,12 @@ test('public host retention fixtures are exact c6 bytes and fixed bindings never
     const binding = path.join(root, 'tools/owner-test-staging/fixtures/host', file);
     expect(require(binding)).toBe(require(path.join(root, target)));
   }
+});
+
+test('default CI discovery includes every qualified closed suite by exact filename only', () => {
+  const config = require('../jest.config.js');
+  const closed = require('../tools/owner-test-staging/jest.closed.config.cjs');
+  expect(closed.testMatch).toHaveLength(58);
+  expect(closed.testMatch.every((name) => !/[?*]/.test(name))).toBe(true);
+  expect(config.testMatch).toEqual(['<rootDir>/test/**/*.test.js', ...closed.testMatch]);
 });
