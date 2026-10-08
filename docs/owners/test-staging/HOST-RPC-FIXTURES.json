@@ -1,0 +1,38 @@
+{
+  "files": [
+    {
+      "source": "src/main/networks/private-rpc.js",
+      "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+      "destination": "tools/owner-test-staging/fixtures/host/src/main/networks/private-rpc.js",
+      "bytes": 26749,
+      "sha256": "5e36ee72f3d9ad78209c9f89c8e88d4cbf127e527d8956f77e0a2cdd4bf0a1a6"
+    }
+  ],
+  "fixedTestBindings": [
+    {
+      "file": "tools/owner-test-staging/fixtures/host/src/main/networks/network-registry.js",
+      "family": "registry",
+      "bytes": 148,
+      "sha256": "baa4bc3fe0d4b67c9189abf656f14f6f4fd8a195f97dca000b3642e440d0a7a0"
+    },
+    {
+      "file": "tools/owner-test-staging/fixtures/host/src/main/networks/wallet-tor-transport.js",
+      "family": "transport",
+      "bytes": 149,
+      "sha256": "dc2f14e0c06248205f1a292a6ed7b0c9da5dd45a6cd0ef4d53bf6ac9d0aaec40"
+    },
+    {
+      "file": "tools/owner-test-staging/fixtures/host/src/main/settings-store.js",
+      "family": "settings",
+      "bytes": 145,
+      "sha256": "4956a9828c605c0549fdbff9338a1fb8ce92f8758f008f36d26443195433835f"
+    },
+    {
+      "file": "tools/owner-test-staging/fixtures/host/src/main/tor-manager.js",
+      "family": "tor",
+      "bytes": 140,
+      "sha256": "68346d17e90c6ef5c39f13dedfb585c88843e2759779910e296eb7f5ad73cb87"
+    }
+  ],
+  "liveTransport": false
+}

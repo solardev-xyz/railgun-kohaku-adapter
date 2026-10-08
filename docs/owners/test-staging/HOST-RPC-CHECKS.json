@@ -1,0 +1,15 @@
+{
+  "baseRevision": "5a46cc881a0b0604a81e971f731ff808d26b283b",
+  "productionChanges": false,
+  "targeted": {
+    "suites": 4,
+    "tests": 105,
+    "seconds": 12.252,
+    "exitCode": 0,
+    "originalSession": 21730,
+    "completion": "45751b"
+  },
+  "qualifiedAdjacent": 133,
+  "remainingHost": 18,
+  "fullDefaultExecuted": false
+}

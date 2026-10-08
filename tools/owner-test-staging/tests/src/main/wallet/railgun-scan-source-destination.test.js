@@ -1,17 +1,18 @@
+require('../../../../context-host.cjs');
 // Standalone real source/private-RPC composition; storage ledger and transport
 // are explicit simulated boundaries. Does not qualify real node acceptance.
 let mockEndpoint, mockUrls, mockSources;
 const mockRequest = jest.fn(),
   mockRelease = jest.fn(),
   mockFactory = jest.fn();
-jest.mock('../settings-store', () => ({ isWalletTorExperimentAvailable: () => true }));
-jest.mock('../tor-manager', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));
-jest.mock('../networks/network-registry', () => ({
+jest.mock('../../../../fixtures/host/src/main/settings-store.js', () => ({ isWalletTorExperimentAvailable: () => true }));
+jest.mock('../../../../fixtures/host/src/main/tor-manager.js', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));
+jest.mock('../../../../fixtures/host/src/main/networks/network-registry.js', () => ({
   getNetwork: () => ({}),
   getEndpoints: () => mockUrls,
   getEndpointSources: () => mockSources,
 }));
-jest.mock('../networks/wallet-tor-transport', () => ({
+jest.mock('../../../../fixtures/host/src/main/networks/wallet-tor-transport.js', () => ({
   createWalletTorTransport: (...args) => mockFactory(...args),
 }));
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");
@@ -19,7 +20,7 @@ const {
   createPrivateRpc,
   getPrivateRpcDestination,
   getPrivateRpcDestinationDetails,
-} = require('../networks/private-rpc');
+} = require('../../../../fixtures/host/src/main/networks/private-rpc.js');
 const { emptyPublicState } = require("../../../../../../src/owners/railgun-public-records.js");
 const { createHash } = require('crypto');
 const {

@@ -14,6 +14,7 @@ const receiptAdaptations = require('../docs/owners/test-staging/HOST-RECEIPTS-AD
 const accountAdaptations = require('../docs/owners/test-staging/HOST-ACCOUNTS-ADAPTATIONS.json');
 const transportAdaptations = require('../docs/owners/test-staging/HOST-TRANSPORT-ADAPTATIONS.json');
 const walletAdaptations = require('../docs/owners/test-staging/HOST-WALLET-ADAPTATIONS.json');
+const rpcAdaptations = require('../docs/owners/test-staging/HOST-RPC-ADAPTATIONS.json');
 const retired = require('../docs/owners/RETIRED-RUNTIME.json');
 const sha = (value) => createHash('sha256').update(value).digest('hex');
 test('all staged tests and fixtures preserve exact c6 bytes through reversible import-only edits', () => {
@@ -26,6 +27,15 @@ test('all staged tests and fixtures preserve exact c6 bytes through reversible i
   expect(new Set(manifest.files.map((row) => row.destination)).size).toBe(168);
   for (const row of manifest.files) {
     let text = fs.readFileSync(path.join(root, row.destination), 'utf8');
+    const rpc = rpcAdaptations.changes.find((entry) => entry.file === row.destination);
+    if (rpc) {
+      expect(sha(text)).toBe(rpc.afterSha256);
+      for (const edit of [...rpc.replacements].reverse()) {
+        expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(edit.after);
+        text = text.slice(0, edit.start) + edit.before + text.slice(edit.start + edit.after.length);
+      }
+      expect(sha(text)).toBe(rpc.beforeSha256);
+    }
     const wallet = walletAdaptations.changes.find((entry) => entry.file === row.destination);
     if (wallet) {
       expect(sha(text)).toBe(wallet.afterSha256);
@@ -198,7 +208,10 @@ test('default CI discovery includes every qualified closed suite by exact filena
   const wallet = require('../tools/owner-test-staging/jest.host-wallet.config.cjs');
   expect(wallet.testMatch).toHaveLength(2);
   expect(wallet.testMatch.every((name) => !/[?*]/.test(name))).toBe(true);
-  expect(new Set([...closed.testMatch, ...context.testMatch, ...storage.testMatch, ...pure.testMatch, ...snapshot.testMatch, ...jobs.testMatch, ...receipts.testMatch, ...accounts.testMatch, ...transport.testMatch, ...wallet.testMatch]).size).toBe(129);
+  const rpc = require('../tools/owner-test-staging/jest.host-rpc.config.cjs');
+  expect(rpc.testMatch).toHaveLength(4);
+  expect(rpc.testMatch.every((name) => !/[?*]/.test(name))).toBe(true);
+  expect(new Set([...closed.testMatch, ...context.testMatch, ...storage.testMatch, ...pure.testMatch, ...snapshot.testMatch, ...jobs.testMatch, ...receipts.testMatch, ...accounts.testMatch, ...transport.testMatch, ...wallet.testMatch, ...rpc.testMatch]).size).toBe(133);
   expect(config.testMatch).toEqual([
     '<rootDir>/test/**/*.test.js',
     '<rootDir>/tools/qualification/scripts/fixtures/railgun-relay-wire/policy.test.js',
@@ -221,6 +234,7 @@ test('default CI discovery includes every qualified closed suite by exact filena
     ...accounts.testMatch,
     ...transport.testMatch,
     ...wallet.testMatch,
+    ...rpc.testMatch,
   ]);
 });
 
@@ -248,5 +262,22 @@ test('superseded host wrappers and mixed legacy harness remain exact non-runtime
     expect(row.archive.endsWith('.txt')).toBe(true);
     const bytes = fs.readFileSync(path.join(root, row.archive));
     expect({ bytes: bytes.length, sha256: sha(bytes) }).toEqual({ bytes: row.bytes, sha256: row.sha256 });
+  }
+});
+
+test('generic RPC fixture is exact c6 source and aliases bind only fixed test host families', () => {
+  const fixture = require('../docs/owners/test-staging/HOST-RPC-FIXTURES.json');
+  expect(fixture.liveTransport).toBe(false);
+  expect(fixture.files).toHaveLength(1);
+  expect(fixture.fixedTestBindings.map(row => row.family)).toEqual(['registry', 'transport', 'settings', 'tor']);
+  for (const row of fixture.files) {
+    expect(row.sourceCommit).toBe(manifest.sourceRevision);
+    const bytes = fs.readFileSync(path.join(root, row.destination));
+    expect({ bytes: bytes.length, sha256: sha(bytes) }).toEqual({ bytes: row.bytes, sha256: row.sha256 });
+  }
+  for (const row of fixture.fixedTestBindings) {
+    const bytes = fs.readFileSync(path.join(root, row.file));
+    expect({ bytes: bytes.length, sha256: sha(bytes) }).toEqual({ bytes: row.bytes, sha256: row.sha256 });
+    expect(row.file.startsWith('tools/owner-test-staging/fixtures/host/')).toBe(true);
   }
 });

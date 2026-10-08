@@ -1,15 +1,16 @@
+require('../../../../context-host.cjs');
 let mockEndpoint;
 const mockTransport = jest.fn();
-jest.mock('../settings-store', () => ({ isWalletTorExperimentAvailable: () => true }));
-jest.mock('../tor-manager', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));
-jest.mock('../networks/network-registry', () => ({
+jest.mock('../../../../fixtures/host/src/main/settings-store.js', () => ({ isWalletTorExperimentAvailable: () => true }));
+jest.mock('../../../../fixtures/host/src/main/tor-manager.js', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));
+jest.mock('../../../../fixtures/host/src/main/networks/network-registry.js', () => ({
   getNetwork: () => ({}),
   getEndpoints: () => ['https://rpc.example/completed-source'],
   getEndpointSources: () => [
     { keyed: false, coverage: { 11155111: 'https://rpc.example/completed-source' } },
   ],
 }));
-jest.mock('../networks/wallet-tor-transport', () => ({
+jest.mock('../../../../fixtures/host/src/main/networks/wallet-tor-transport.js', () => ({
   createWalletTorTransport: () => ({ request: (...args) => mockTransport(...args), release() {} }),
 }));
 const fs = require('fs'),

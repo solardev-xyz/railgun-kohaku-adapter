@@ -1,0 +1,119 @@
+{
+  "baseRevision": "5a46cc881a0b0604a81e971f731ff808d26b283b",
+  "productionTransforms": false,
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-account-public-destination.test.js",
+      "beforeSha256": "b3d45a3d48f7bb03eda8da7fbf9e194f1650a6b27cb2dab8740b8432105154f9",
+      "afterSha256": "710937768c342a9e2fac3c9e82258b384b82bf46e019d343efc669e55bbf3359",
+      "replacements": [
+        {
+          "start": 2638,
+          "before": "const { getPrivateRpcDestinationDetails } = require('../networks/private-rpc');\n",
+          "after": "const { getPrivateRpcDestinationDetails } = require('../../../../fixtures/host/src/main/networks/private-rpc.js');\n"
+        },
+        {
+          "start": 2326,
+          "before": "const { getPrivacyStoragePath } = require('./privacy-storage');\n",
+          "after": "const { getPrivacyStoragePath } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');\n"
+        },
+        {
+          "start": 1740,
+          "before": "jest.mock('../networks/wallet-tor-transport', () => ({\n",
+          "after": "jest.mock('../../../../fixtures/host/src/main/networks/wallet-tor-transport.js', () => ({\n"
+        },
+        {
+          "start": 1406,
+          "before": "jest.mock('../settings-store', () => ({ isWalletTorExperimentAvailable: () => true }));\njest.mock('../tor-manager', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));\njest.mock('../networks/network-registry', () => ({\n",
+          "after": "jest.mock('../../../../fixtures/host/src/main/settings-store.js', () => ({ isWalletTorExperimentAvailable: () => true }));\njest.mock('../../../../fixtures/host/src/main/tor-manager.js', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));\njest.mock('../../../../fixtures/host/src/main/networks/network-registry.js', () => ({\n"
+        },
+        {
+          "start": 586,
+          "before": "",
+          "after": "  withRailgunEnrollmentPublicKeys: (enrollment, ...args) => {\n    if (!mockEnrollments.has(enrollment)) throw Error('enrollment');\n    return enrollment.withPublicKeys(...args);\n  },\n  withRailgunEnrollmentPublicCatalogKey: (enrollment, ...args) => {\n    if (!mockEnrollments.has(enrollment)) throw Error('enrollment');\n    return enrollment.withPublicCatalogKey(...args);\n  },\n  withRailgunEnrollmentPublicGenerationKeys: (enrollment, ...args) => {\n    if (!mockEnrollments.has(enrollment)) throw Error('enrollment');\n    return enrollment.withPublicGenerationKeys(...args);\n  },\n  withRailgunEnrollmentTxidGenerationKeys: (enrollment, ...args) => {\n    if (!mockEnrollments.has(enrollment)) throw Error('enrollment');\n    return enrollment.withTxidGenerationKeys(...args);\n  },\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-scan-coordinator-completed.test.js",
+      "beforeSha256": "206963cd4b2f3e58c8d5806b465052e052a4d65a2cb69697759e4e36af4c35f5",
+      "afterSha256": "9e127c0abcd408a8cc29b24ebccb190a0fd1bce365d2c557b61473a25407fc04",
+      "replacements": [
+        {
+          "start": 20315,
+          "before": "  const { createPrivateRpc, getPrivateRpcDestination } = require('../networks/private-rpc');\n",
+          "after": "  const { createPrivateRpc, getPrivateRpcDestination } = require('../../../../fixtures/host/src/main/networks/private-rpc.js');\n"
+        },
+        {
+          "start": 443,
+          "before": "jest.mock('../networks/wallet-tor-transport', () => ({\n",
+          "after": "jest.mock('../../../../fixtures/host/src/main/networks/wallet-tor-transport.js', () => ({\n"
+        },
+        {
+          "start": 74,
+          "before": "jest.mock('../settings-store', () => ({ isWalletTorExperimentAvailable: () => true }));\njest.mock('../tor-manager', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));\njest.mock('../networks/network-registry', () => ({\n",
+          "after": "jest.mock('../../../../fixtures/host/src/main/settings-store.js', () => ({ isWalletTorExperimentAvailable: () => true }));\njest.mock('../../../../fixtures/host/src/main/tor-manager.js', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));\njest.mock('../../../../fixtures/host/src/main/networks/network-registry.js', () => ({\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-scan-source-completed.test.js",
+      "beforeSha256": "13e8f18897aa883788605070fe925d0bee0b0b7c7b7b851eba09305094dc1aae",
+      "afterSha256": "f316f702899a82b60f08ee19f4684c9fc886abbf214eacb928481e22ff270877",
+      "replacements": [
+        {
+          "start": 491,
+          "before": "jest.mock('../networks/wallet-tor-transport', () => ({\n",
+          "after": "jest.mock('../../../../fixtures/host/src/main/networks/wallet-tor-transport.js', () => ({\n"
+        },
+        {
+          "start": 51,
+          "before": "jest.mock('../settings-store', () => ({ isWalletTorExperimentAvailable: () => true }));\njest.mock('../tor-manager', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));\njest.mock('../networks/network-registry', () => ({\n",
+          "after": "jest.mock('../../../../fixtures/host/src/main/settings-store.js', () => ({ isWalletTorExperimentAvailable: () => true }));\njest.mock('../../../../fixtures/host/src/main/tor-manager.js', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));\njest.mock('../../../../fixtures/host/src/main/networks/network-registry.js', () => ({\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-scan-source-destination.test.js",
+      "beforeSha256": "17095c6b899ca56e28ae08370c76ebf2bd1b50fe78702dbebe41558783b662c5",
+      "afterSha256": "e3a1a88e04c32bf9d3ae3031c1a1a5554ff86a5ded0410ecc47a5b615b869085",
+      "replacements": [
+        {
+          "start": 917,
+          "before": "} = require('../networks/private-rpc');\n",
+          "after": "} = require('../../../../fixtures/host/src/main/networks/private-rpc.js');\n"
+        },
+        {
+          "start": 611,
+          "before": "jest.mock('../networks/wallet-tor-transport', () => ({\n",
+          "after": "jest.mock('../../../../fixtures/host/src/main/networks/wallet-tor-transport.js', () => ({\n"
+        },
+        {
+          "start": 283,
+          "before": "jest.mock('../settings-store', () => ({ isWalletTorExperimentAvailable: () => true }));\njest.mock('../tor-manager', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));\njest.mock('../networks/network-registry', () => ({\n",
+          "after": "jest.mock('../../../../fixtures/host/src/main/settings-store.js', () => ({ isWalletTorExperimentAvailable: () => true }));\njest.mock('../../../../fixtures/host/src/main/tor-manager.js', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));\njest.mock('../../../../fixtures/host/src/main/networks/network-registry.js', () => ({\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    }
+  ]
+}

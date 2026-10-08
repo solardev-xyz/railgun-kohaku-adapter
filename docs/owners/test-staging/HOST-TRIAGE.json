@@ -13,10 +13,10 @@
     "railgun-wallet-catalog.test.js",
     "railgun-wallet-journal.test.js"
   ],
-  "remainingCount": 22,
+  "remainingCount": 18,
   "groups": {
     "credential-and-enrollment-lifetime": 2,
-    "genuine-rpc-transport-and-destination": 5,
+    "genuine-rpc-transport-and-destination": 1,
     "account-storage-composition": 2,
     "adapter-wrapper-boundary": 1,
     "shared-eoa-journal-or-recovery": 11,
@@ -129,95 +129,6 @@
           "line": 916
         }
       ],
-      "executedInThisSuccessor": false
-    },
-    {
-      "source": "src/main/wallet/railgun-account-public-destination.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-account-public-destination.test.js",
-      "group": "genuine-rpc-transport-and-destination",
-      "requiredHostFamilies": [
-        "registry",
-        "rpc",
-        "settings",
-        "storage",
-        "tor",
-        "transport"
-      ],
-      "unresolved": [
-        {
-          "kind": "jest.mock",
-          "start": 1206,
-          "end": 1225,
-          "value": "../settings-store",
-          "line": 26,
-          "target": "src/main/settings-store.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "settings",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 1294,
-          "end": 1310,
-          "value": "../tor-manager",
-          "line": 27,
-          "target": "src/main/tor-manager.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "tor",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 1379,
-          "end": 1409,
-          "value": "../networks/network-registry",
-          "line": 28,
-          "target": "src/main/networks/network-registry.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "registry",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 1540,
-          "end": 1574,
-          "value": "../networks/wallet-tor-transport",
-          "line": 33,
-          "target": "src/main/networks/wallet-tor-transport.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "transport",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "require",
-          "start": 2107,
-          "end": 2126,
-          "value": "./privacy-storage",
-          "line": 46,
-          "target": "src/main/wallet/privacy-storage.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "storage",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "require",
-          "start": 2399,
-          "end": 2424,
-          "value": "../networks/private-rpc",
-          "line": 53,
-          "target": "src/main/networks/private-rpc.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "rpc",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        }
-      ],
-      "computedSites": [],
       "executedInThisSuccessor": false
     },
     {
@@ -1268,221 +1179,6 @@
       "executedInThisSuccessor": false
     },
     {
-      "source": "src/main/wallet/railgun-scan-coordinator-completed.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-scan-coordinator-completed.test.js",
-      "group": "genuine-rpc-transport-and-destination",
-      "requiredHostFamilies": [
-        "registry",
-        "rpc",
-        "settings",
-        "tor",
-        "transport"
-      ],
-      "unresolved": [
-        {
-          "kind": "jest.mock",
-          "start": 84,
-          "end": 103,
-          "value": "../settings-store",
-          "line": 3,
-          "target": "src/main/settings-store.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "settings",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 172,
-          "end": 188,
-          "value": "../tor-manager",
-          "line": 4,
-          "target": "src/main/tor-manager.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "tor",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 257,
-          "end": 287,
-          "value": "../networks/network-registry",
-          "line": 5,
-          "target": "src/main/networks/network-registry.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "registry",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 453,
-          "end": 487,
-          "value": "../networks/wallet-tor-transport",
-          "line": 10,
-          "target": "src/main/networks/wallet-tor-transport.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "transport",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "require",
-          "start": 20149,
-          "end": 20174,
-          "value": "../networks/private-rpc",
-          "line": 583,
-          "target": "src/main/networks/private-rpc.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "rpc",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        }
-      ],
-      "computedSites": [],
-      "executedInThisSuccessor": false
-    },
-    {
-      "source": "src/main/wallet/railgun-scan-source-completed.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-scan-source-completed.test.js",
-      "group": "genuine-rpc-transport-and-destination",
-      "requiredHostFamilies": [
-        "registry",
-        "settings",
-        "tor",
-        "transport"
-      ],
-      "unresolved": [
-        {
-          "kind": "jest.mock",
-          "start": 61,
-          "end": 80,
-          "value": "../settings-store",
-          "line": 3,
-          "target": "src/main/settings-store.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "settings",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 149,
-          "end": 165,
-          "value": "../tor-manager",
-          "line": 4,
-          "target": "src/main/tor-manager.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "tor",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 234,
-          "end": 264,
-          "value": "../networks/network-registry",
-          "line": 5,
-          "target": "src/main/networks/network-registry.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "registry",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 501,
-          "end": 535,
-          "value": "../networks/wallet-tor-transport",
-          "line": 12,
-          "target": "src/main/networks/wallet-tor-transport.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "transport",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        }
-      ],
-      "computedSites": [],
-      "executedInThisSuccessor": false
-    },
-    {
-      "source": "src/main/wallet/railgun-scan-source-destination.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-scan-source-destination.test.js",
-      "group": "genuine-rpc-transport-and-destination",
-      "requiredHostFamilies": [
-        "registry",
-        "rpc",
-        "settings",
-        "tor",
-        "transport"
-      ],
-      "unresolved": [
-        {
-          "kind": "jest.mock",
-          "start": 293,
-          "end": 312,
-          "value": "../settings-store",
-          "line": 7,
-          "target": "src/main/settings-store.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "settings",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 381,
-          "end": 397,
-          "value": "../tor-manager",
-          "line": 8,
-          "target": "src/main/tor-manager.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "tor",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 466,
-          "end": 496,
-          "value": "../networks/network-registry",
-          "line": 9,
-          "target": "src/main/networks/network-registry.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "registry",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 621,
-          "end": 655,
-          "value": "../networks/wallet-tor-transport",
-          "line": 14,
-          "target": "src/main/networks/wallet-tor-transport.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "transport",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "require",
-          "start": 908,
-          "end": 933,
-          "value": "../networks/private-rpc",
-          "line": 22,
-          "target": "src/main/networks/private-rpc.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "rpc",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        }
-      ],
-      "computedSites": [],
-      "executedInThisSuccessor": false
-    },
-    {
       "source": "src/main/wallet/railgun-shield-operation.test.js",
       "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-shield-operation.test.js",
       "group": "shared-eoa-journal-or-recovery",
@@ -2261,5 +1957,16 @@
       "railgun-shield-origin-data"
     ],
     "tests": 408
+  },
+  "qualifiedRpcGroup": {
+    "names": [
+      "railgun-account-public-destination",
+      "railgun-scan-coordinator-completed",
+      "railgun-scan-source-completed",
+      "railgun-scan-source-destination"
+    ],
+    "tests": 105,
+    "rpcBrands": "actual copied source",
+    "liveTransport": false
   }
 }
