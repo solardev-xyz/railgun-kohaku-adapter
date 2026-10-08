@@ -103,6 +103,7 @@ function createJourneyChain({
   // window's end after its logs were served fails, after the coordinator has
   // persisted its application (failRefreshTo). Each fires once per process.
   const scanFaults = { logsFired: false, refreshFired: false, servedTo: new Set() };
+  const servedLogs = [];
   const rpcError = () => Object.assign(Error('Synthetic scan fault'), { code: 'SYNTHETIC_RPC_ERROR', rpcError: { code: -32000, message: 'synthetic' } });
   assert.ok(worker && typeof worker.call === 'function');
   const fixture = publicFixture(sourceBytes);
@@ -550,6 +551,9 @@ function createJourneyChain({
         const from = Number(BigInt(filter.fromBlock)),
           to = Number(BigInt(filter.toBlock));
         assert.ok(from >= 0 && to >= from && to <= state.head && to - from < 100000);
+        // The windows actually served, for no-gap evidence (bounded).
+        servedLogs.push([from, to]);
+        if (servedLogs.length > 64) servedLogs.shift();
         return proxyLogs(from, to);
       }
       case 'eth_getCode': {
@@ -772,7 +776,7 @@ function createJourneyChain({
       txidRows: derived.rows.length,
       poiLeaves: derived.poiLeaves.length,
     }),
-    report: () => ({ counts: { ...counts }, refusals: copy(refusals), unknownSends, injectedFaults: injected }),
+    report: () => ({ counts: { ...counts }, refusals: copy(refusals), unknownSends, injectedFaults: injected, servedLogs: copy(servedLogs) }),
     assertClean() {
       assert.deepEqual(refusals, [], 'Synthetic chain observed refused requests');
     },

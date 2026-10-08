@@ -341,7 +341,7 @@ test("the fixed resume verifies its claim against the stopped continuation and c
     failedTarget: 299999,
     evidence: "3 reservations under the 100k plan",
   });
-  expect(good.ledgerHeader.caps.scanResumes).toBe(4);
+  expect(good.ledgerHeader.caps.scanResumes).toBe(5);
   expect(env.launcher.admit(good)).toBe(0);
   const budgets = env.launcher.validate(good).budgets;
   expect(budgets["scan-open:pending"]).toHaveLength(2);

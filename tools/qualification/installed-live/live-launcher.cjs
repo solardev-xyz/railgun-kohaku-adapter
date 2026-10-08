@@ -123,7 +123,7 @@ function headerFor(request, binding, syntheticCaps) {
     },
   };
 }
-const RESUME_SCAN_RESUMES = 4;
+const RESUME_SCAN_RESUMES = 5;
 // The continuation's plan under the pinned old runner (eeb7734a): 100000-block
 // windows from block 0, each reserved only after the previous one resolved.
 // Its k reservations therefore committed k-1 windows and failed the k-th.

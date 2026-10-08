@@ -177,18 +177,22 @@ function replay(records, header, carried = {}) {
       check(poi.pending && !poi.finished && poi.pending.handoffId === record.handoffId, 'poi-finished');
       poi.finished = record;
     } else if (record?.type === 'resume-attempt') {
-      // At most an A then a B attempt per candidate pair, with no checkpoint
-      // recorded between them: the two states a stopped window can leave.
-      check(['A', 'B'].includes(record.mode) && Number.isSafeInteger(record.lower) && Number.isSafeInteger(record.upper), 'resume-attempt');
-      check(record.lower < record.upper, 'resume-attempt');
+      // At most a first then a second attempt per candidate pair, with no
+      // checkpoint recorded between them. A failed attempt proves nothing
+      // about the checkpoint; the coordinator alone decides.
+      check(['first', 'second'].includes(record.mode) && Number.isSafeInteger(record.lower) && Number.isSafeInteger(record.upper), 'resume-attempt');
+      check(record.lower < record.upper && Number.isSafeInteger(record.target) && record.target >= record.upper, 'resume-attempt');
       const same = attempts.filter((row) => row.lower === record.lower && row.upper === record.upper);
-      check(same.length === (record.mode === 'A' ? 0 : 1), 'resume-attempt-order');
-      if (record.mode === 'B') check(same[0].mode === 'A' && same[0].progressAt === progress.length, 'resume-attempt-order');
+      check(same.length === (record.mode === 'first' ? 0 : 1), 'resume-attempt-order');
+      if (record.mode === 'second') check(same[0].progressAt === progress.length, 'resume-attempt-order');
       attempts.push({ ...record, progressAt: progress.length });
     } else if (record?.type === 'scan-progress') {
       // A durable public checkpoint the coordinator returned, strictly increasing.
       check(Number.isSafeInteger(record.to) && record.to >= 0 && /^0x[0-9a-f]{64}$/.test(record.hash), 'scan-progress');
       check(progress.length === 0 || record.to > progress.at(-1).to, 'scan-progress-order');
+      // Bound to the window reservation it answers: the latest, with this target.
+      const window = (budgets['scan-range'] ?? []).at(-1);
+      check(window && window.n === record.reservation && window.target === record.to, 'scan-progress-reservation');
       progress.push(record);
     } else if (record?.type === 'report') {
       check(typeof record.mode === 'string' && /^[0-9a-f]{64}$/.test(record.sha256), 'report');
@@ -269,12 +273,12 @@ function append(profile, header, record) {
 function predecessorBudgets(profile, header) {
   return CHAIN.indexOf(header.name) > 0 ? predecessor(path.dirname(ledgerFile(profile, header.name)), header) : {};
 }
-function resumeAttempt(profile, header, mode, lower, upper) {
-  return append(profile, header, { type: 'resume-attempt', mode, lower, upper, at: Date.now() }).attempts;
+function resumeAttempt(profile, header, mode, lower, upper, target) {
+  return append(profile, header, { type: 'resume-attempt', mode, lower, upper, target, at: Date.now() }).attempts;
 }
 // A durable public checkpoint after a successful advance.
-function progress(profile, header, to, hash) {
-  return append(profile, header, { type: 'scan-progress', to, hash, at: Date.now() }).progress;
+function progress(profile, header, to, hash, reservation) {
+  return append(profile, header, { type: 'scan-progress', to, hash, reservation, at: Date.now() }).progress;
 }
 function reserve(profile, header, kind, binding) {
   const attemptId = randomBytes(16).toString('hex');

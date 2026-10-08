@@ -452,16 +452,29 @@ test("the resume binds the continuation transitively and carries the whole chain
       9000,
     ),
   ).toBe(3);
-  // Durable progress is strictly increasing.
+  // Durable progress answers its window reservation and is strictly increasing.
+  const policy = ledger.policyFor(resume.caps, "scan-range");
+  const one = ledger.consume(p, resume, "scan-range", policy, 9001, {
+    target: 9019999,
+  });
+  expect(() =>
+    ledger.progress(p, resume, 9019999, "0x" + "a".repeat(64), one - 1),
+  ).toThrow();
+  expect(() =>
+    ledger.progress(p, resume, 9039999, "0x" + "a".repeat(64), one),
+  ).toThrow();
   expect(
-    ledger.progress(p, resume, 9019999, "0x" + "a".repeat(64)),
+    ledger.progress(p, resume, 9019999, "0x" + "a".repeat(64), one),
   ).toHaveLength(1);
   expect(() =>
-    ledger.progress(p, resume, 9019999, "0x" + "b".repeat(64)),
+    ledger.progress(p, resume, 9019999, "0x" + "b".repeat(64), one),
   ).toThrow();
-  expect(() => ledger.progress(p, resume, 9039999, "0xnot")).toThrow();
+  const two = ledger.consume(p, resume, "scan-range", policy, 9002, {
+    target: 9039999,
+  });
+  expect(() => ledger.progress(p, resume, 9039999, "0xnot", two)).toThrow();
   expect(
-    ledger.progress(p, resume, 9039999, "0x" + "c".repeat(64)),
+    ledger.progress(p, resume, 9039999, "0x" + "c".repeat(64), two),
   ).toHaveLength(2);
   expect(
     ledger.consume(
@@ -514,6 +527,14 @@ test("the resume refuses a changed endpoint, a skipped link or a continuation th
   ledger.reserve(s.p, s.continuation, "transfer", {});
   expect(() => ledger.inspect(s.p, resumeOf(s.p, s.continuation))).toThrow();
   const t = stoppedContinuation(1);
-  ledger.progress(t.p, t.continuation, 99999, "0x" + "d".repeat(64));
+  const n = ledger.consume(
+    t.p,
+    t.continuation,
+    "scan-range",
+    ledger.policyFor(CAPS, "scan-range"),
+    9500,
+    { target: 99999 },
+  );
+  ledger.progress(t.p, t.continuation, 99999, "0x" + "d".repeat(64), n);
   expect(() => ledger.inspect(t.p, resumeOf(t.p, t.continuation))).toThrow();
 });

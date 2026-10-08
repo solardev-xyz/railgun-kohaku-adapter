@@ -46,14 +46,17 @@ async function closeSession(session) {
 // aligned to their size from any cursor and capped at the anchor.
 const DENSE_FROM = 5700000,
   NARROW = 20000;
+// The schedule's window end for a window starting at `start`.
+function windowEnd(start) {
+  const size = start < DENSE_FROM ? RANGE : NARROW;
+  const to = start - (start % size) + size - 1;
+  return start < DENSE_FROM ? Math.min(to, DENSE_FROM - 1) : to;
+}
 function rangesTo(from, anchor) {
   assert.ok(Number.isSafeInteger(from) && from >= 0);
   const result = [];
   for (let start = from; start <= anchor.number; ) {
-    const size = start < DENSE_FROM ? RANGE : NARROW;
-    let to = start - (start % size) + size - 1;
-    if (start < DENSE_FROM) to = Math.min(to, DENSE_FROM - 1);
-    to = Math.min(to, anchor.number);
+    const to = Math.min(windowEnd(start), anchor.number);
     result.push(Object.freeze({ to, anchor: Object.freeze({ ...anchor }) }));
     start = to + 1;
   }
@@ -63,23 +66,32 @@ const RANGE_SPACING_MS = 1000;
 // Advances the public scan range by range from the coordinator's checkpoint.
 // Each window is budgeted before it is invoked; each returned checkpoint is
 // recorded durably, so a later resume starts from an exact lower bound.
-async function scanTo(context, session, from, anchor) {
+// Plans targets only: the coordinator recovers its own checkpoint and chooses
+// each window's start. A fixed first target, when given, precedes the schedule.
+async function scanTo(context, session, from, anchor, firstTarget = null) {
   // Synthetic only: the stopped continuation's runner (100000-block windows
   // from 0, no targets or checkpoints recorded), to reproduce its state.
   const legacy = context.params.legacyPlan === true;
   if (legacy) assert.equal(context.synthetic, true, 'The legacy plan is synthetic only');
-  const ranges = legacy ? legacyRangesTo(from, anchor) : rangesTo(from, anchor);
+  let ranges;
+  if (firstTarget !== null) {
+    assert.ok(!legacy && firstTarget <= anchor.number);
+    ranges = [Object.freeze({ to: firstTarget, anchor: Object.freeze({ ...anchor }) }), ...rangesTo(firstTarget + 1, anchor)];
+  } else ranges = legacy ? legacyRangesTo(from, anchor) : rangesTo(from, anchor);
   const statuses = {};
+  const returned = [];
   for (const [index, range] of ranges.entries()) {
     if (index > 0 && !context.synthetic) await sleep(RANGE_SPACING_MS, context.signal);
-    budget(context, 'scan-range', legacy ? undefined : { target: range.to });
+    const reservation = budget(context, 'scan-range', legacy ? undefined : { target: range.to });
     const result = await session.advancePublic(range);
     assert.equal(result.to?.number, range.to);
+    if (returned.length < 2) returned.push(result.to.number);
     fault(context, 'exit-after-advance', range.to);
-    if (!legacy) ledger.progress(context.profile, context.header, result.to.number, result.to.hash);
+    // A lower bound for a later resume, not a refreshed canonical checkpoint.
+    if (!legacy) ledger.progress(context.profile, context.header, result.to.number, result.to.hash, reservation);
     statuses[result.status] = (statuses[result.status] || 0) + 1;
   }
-  return { ranges: ranges.length, statuses };
+  return { ranges: ranges.length, statuses, firstReturned: returned };
 }
 function legacyRangesTo(from, anchor) {
   const result = [];
@@ -90,12 +102,14 @@ function legacyRangesTo(from, anchor) {
   }
   return result;
 }
-// The exact resume candidates. After the last recorded checkpoint L, the last
-// window attempted (target T) either committed nothing (A: continue from
-// L + 1) or was applied without a recorded checkpoint (B: continue from
-// T + 1). Before any checkpoint the launcher-verified claim supplies L and T.
-// A comes first; B only after a recorded A attempt made no progress. A
-// wrong guess is refused by the coordinator before any request or write.
+// The resume candidates. After the last recorded checkpoint L (a lower bound),
+// the last window attempted beyond it (target T) may or may not have been
+// applied; before any checkpoint, the launcher-verified claim supplies L and T.
+// The first attempt targets exactly T. If it fails the outcome is unknown, and
+// a second, separately budgeted attempt targets the fixed next boundary after
+// T. The coordinator recovers its own checkpoint and chooses each start, so
+// neither target can skip a block: one too far is refused at acquisition. If
+// both fail, the resume stops. Without a window beyond L the plan is exact.
 function resumePlan(context) {
   const state = ledger.inspect(context.profile, context.header);
   const last = state.progress.at(-1);
@@ -104,12 +118,13 @@ function resumePlan(context) {
   const windows = (state.budgets['scan-range'] ?? []).filter((row) => Number.isSafeInteger(row.target));
   const attempted = windows.at(-1);
   const upper = last ? (attempted && attempted.target > last.to ? attempted.target : null) : claim.failedTarget;
-  if (upper === null) return { mode: 'exact', from: lower + 1 };
+  if (upper === null) return { mode: 'exact', from: lower + 1, firstTarget: null };
   const tried = state.attempts.filter((row) => row.lower === lower && row.upper === upper);
-  assert.ok(tried.length < 2, 'Both resume candidates were tried');
-  const mode = tried.length === 0 ? 'A' : 'B';
-  ledger.resumeAttempt(context.profile, context.header, mode, lower, upper);
-  return { mode, from: mode === 'A' ? lower + 1 : upper + 1, lower, upper };
+  assert.ok(tried.length < 2, 'Both resume targets were tried');
+  const mode = tried.length === 0 ? 'first' : 'second';
+  const target = mode === 'first' ? upper : windowEnd(upper + 1);
+  ledger.resumeAttempt(context.profile, context.header, mode, lower, upper, target);
+  return { mode, lower, upper, from: null, firstTarget: target };
 }
 // The scan continues exactly where the last recorded checkpoint ended.
 function assertCheckpoint(context, number) {
@@ -319,7 +334,7 @@ async function rebuild(context) {
       resume = resumePlan(context);
       from = resume.from;
     }
-    const { ranges, statuses } = await scanTo(context, session, from, anchor);
+    const { ranges, statuses, firstReturned } = await scanTo(context, session, from, anchor, resume?.firstTarget ?? null);
     milestone('public-rebuilt:' + ranges);
     const facts = heldFacts(context.heldReport, owner);
     lane = await session.openRead({ wallet: 'new', signal });
@@ -367,8 +382,8 @@ async function rebuild(context) {
       schema: 'railgun-installed-live-rebuild-v1',
       publicCache,
       anchor,
-      resumedFrom: from,
       resume,
+      firstReturnedCheckpoints: firstReturned,
       ranges,
       advanceStatuses: statuses,
       notes: noteSummary(notes),
@@ -1009,4 +1024,4 @@ const MODES = Object.freeze({
   'live-unshield': unshield,
   'live-summary': summary,
 });
-module.exports = { MODES, rangesTo, resumePlan, sha };
+module.exports = { MODES, rangesTo, windowEnd, resumePlan, sha };

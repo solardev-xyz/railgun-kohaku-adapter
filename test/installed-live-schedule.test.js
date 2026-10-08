@@ -57,77 +57,79 @@ function resumeContext() {
   // A first ledger stands in for the resume ledger's records here.
   return { profile, header, params: {}, synthetic: true };
 }
-test("a resume tries the no-commit candidate first, then the applied candidate, never a third", () => {
+test("a resume targets exactly the failed window, then the fixed next boundary, never a third", () => {
   const context = resumeContext();
   expect(resumePlan(context)).toMatchObject({
-    mode: "A",
-    from: 9000000,
+    mode: "first",
+    firstTarget: 9099999,
     lower: 8999999,
     upper: 9099999,
   });
-  expect(resumePlan(context)).toMatchObject({ mode: "B", from: 9100000 });
+  expect(resumePlan(context)).toMatchObject({
+    mode: "second",
+    firstTarget: 9119999,
+  });
   expect(() => resumePlan(context)).toThrow();
 });
 test("a recorded checkpoint narrows the candidates to its last attempted window", () => {
   const context = resumeContext();
   const policy = ledger.policyFor(context.header.caps, "scan-range");
-  ledger.consume(
-    context.profile,
-    context.header,
-    "scan-range",
-    policy,
-    Date.now(),
-    { target: 9019999 },
-  );
+  const reserve = (target) =>
+    ledger.consume(
+      context.profile,
+      context.header,
+      "scan-range",
+      policy,
+      Date.now(),
+      { target },
+    );
+  let n = reserve(9019999);
   ledger.progress(
     context.profile,
     context.header,
     9019999,
     "0x" + "b".repeat(64),
+    n,
   );
   // No window attempted beyond the checkpoint: exact.
-  expect(resumePlan(context)).toEqual({ mode: "exact", from: 9020000 });
-  ledger.consume(
-    context.profile,
-    context.header,
-    "scan-range",
-    policy,
-    Date.now(),
-    { target: 9039999 },
-  );
-  expect(resumePlan(context)).toMatchObject({
-    mode: "A",
+  expect(resumePlan(context)).toEqual({
+    mode: "exact",
     from: 9020000,
+    firstTarget: null,
+  });
+  reserve(9039999);
+  expect(resumePlan(context)).toMatchObject({
+    mode: "first",
+    firstTarget: 9039999,
     lower: 9019999,
     upper: 9039999,
   });
-  expect(resumePlan(context)).toMatchObject({ mode: "B", from: 9040000 });
-  // Progress after B starts a fresh candidate pair.
-  ledger.consume(
-    context.profile,
-    context.header,
-    "scan-range",
-    policy,
-    Date.now(),
-    { target: 9059999 },
-  );
+  expect(resumePlan(context)).toMatchObject({
+    mode: "second",
+    firstTarget: 9059999,
+  });
+  // Progress after the second attempt starts a fresh candidate pair.
+  n = reserve(9059999);
   ledger.progress(
     context.profile,
     context.header,
     9059999,
     "0x" + "c".repeat(64),
+    n,
   );
-  ledger.consume(
-    context.profile,
-    context.header,
-    "scan-range",
-    policy,
-    Date.now(),
-    { target: 9079999 },
-  );
+  reserve(9079999);
   expect(resumePlan(context)).toMatchObject({
-    mode: "A",
+    mode: "first",
     lower: 9059999,
     upper: 9079999,
+    firstTarget: 9079999,
   });
+});
+test("below 5.7M the second target is the next 100000-block boundary", () => {
+  const {
+    windowEnd,
+  } = require("../tools/qualification/installed-live/live-scenario.cjs");
+  expect(windowEnd(3100000)).toBe(3199999);
+  expect(windowEnd(5650001)).toBe(5699999);
+  expect(windowEnd(9100000)).toBe(9119999);
 });

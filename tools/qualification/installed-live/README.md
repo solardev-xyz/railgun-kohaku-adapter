@@ -173,7 +173,8 @@ most 12 requests, and makes one confirming Tenderly window request.
 
 ## Scan schedule, checkpoints and the fixed resume
 
-Public scans use the fixed schedule the legacy live qualifier proved: windows
+Public scans use a conservative fixed operating schedule, the one the legacy
+live qualifier used (it is not a demonstrated fix for the stopped scan): windows
 of 100,000 blocks below block 5,700,000 and of 20,000 blocks from there. They
 are aligned to their size from any cursor and capped at the finalized anchor.
 Live runs pause one second between windows. Each window records its planned
@@ -191,18 +192,37 @@ binds the continuation, and transitively the first ledger, by bytes and header
 hash, with the same scope and endpoint. It carries the chain's budgets forward
 and closes both earlier ledgers. Its header carries:
 
-- the reviewed extension, four pending openers in total instead of two;
+- the reviewed extension: five pending openers in total instead of two, so
+  three for the resume;
 - the claim `resumeFrom {checkpoint, failedTarget}`, which the launcher
   verifies against the continuation's own reservations before any opener.
 
 The public API returns a checkpoint only from a successful advance. A resume
-therefore takes its candidates from the ledger: the last checkpoint L (or the
-claim's checkpoint) and the last attempted window T beyond it (or the claim's
-failed target). Window T either committed nothing (A: continue from L + 1) or
-was applied without a recorded checkpoint (B: continue from T + 1). A resume
-records an A attempt first and a B attempt only after A made no progress,
-never more. A wrong candidate is refused by the coordinator before any request
-or write.
+therefore takes its candidates from the ledger: the last recorded checkpoint L
+(a lower bound until production recovers it), or the claim's checkpoint, and
+the last attempted window T beyond it, or the claim's failed target. Then:
+
+1. The first attempt targets exactly T.
+2. If it fails, the outcome is unknown; a refusal is never read as a recovered
+   checkpoint. A second, separately budgeted attempt targets the fixed next
+   schedule boundary after T.
+3. If both fail, the resume stops. There is no third target for the pair.
+
+The coordinator recovers its own checkpoint and chooses each window's start;
+recovery may itself re-acquire, apply and write. A target beyond the
+production range cap from the true checkpoint is refused at acquisition,
+without any request for that window, so no block can be skipped. Only a
+successful production result establishes progress.
+
+**Opener allocation.** The resume has three openers:
+
+- the first and second targets for the stopped window;
+- one more, used only when a later window is left ambiguous, for example by a
+  crash between the coordinator's commit and the checkpoint record. That
+  window gets its first target only. If it fails, the resume stops for review.
+
+The 260-range cap counts window invocations only. Recovery re-acquisitions and
+RPC requests are not ranges.
 
 Live failure records include a sanitized transport trace: method, HTTP status,
 closed error code, elapsed time and size, never a URL, parameter or body.
