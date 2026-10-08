@@ -1,0 +1,13 @@
+{
+  "sourceRevision": "860c680f635fc5941b4b3bad8295bbad9315199f",
+  "source": "test-e2e/kohaku-runtime.spec.js",
+  "sourceBlob": "3181ff75dbc27a4e9015852b22ea71afcdec2fbf",
+  "sha256": "cc13f76cb9f319e2073942fa3cccdcc89405c3c18cc413841b3ef1f1513f7380",
+  "bytes": 803,
+  "destination": "tools/freedom-legacy-qualification/test-e2e/kohaku-runtime.spec.js",
+  "status": "Exact historical E2E source for the retired @kohaku-eth/railgun alpha.30 WASM spike. Not discovered or executed by this repository. Its local builder is preserved in HISTORICAL-KOHAKU-SPIKE-ADDENDUM.json. Current engine/prover native qualification is separate, not assertion-equivalent.",
+  "removedFreedomReferences": [
+    "playwright.config.js packaged testMatch kohaku-runtime alternative",
+    ".github/workflows/ci.yml e2e-not-in-ci declaration"
+  ]
+}
