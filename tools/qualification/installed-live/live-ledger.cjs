@@ -29,6 +29,20 @@ const check = (value, reason) => {
 };
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 const id = (value) => typeof value === 'string' && /^[0-9a-f]{32}$/.test(value);
+// The one mapping from a budget kind to its campaign cap.
+function policyFor(caps, kind) {
+  const policy =
+    kind.startsWith('observe:') ? caps.observePerSend
+    : kind === 'poi-status' ? caps.poiStatus
+    : kind.startsWith('readback:') ? caps.readbackPerSend
+    : kind === 'scan-open:new' ? { max: caps.rebuildNew }
+    : kind === 'scan-open:pending' ? { max: caps.scanResumes }
+    : kind === 'scan-range' ? { max: caps.scanRanges }
+    : kind === 'txid-page' ? { max: caps.txidPages }
+    : null;
+  check(policy && Number.isSafeInteger(policy.max) && policy.max > 0, 'budget-kind:' + kind);
+  return policy;
+}
 function ledgerFile(profile) {
   check(path.isAbsolute(profile) && fs.realpathSync(profile) === profile, 'profile');
   return path.join(profile + DIRECTORY_SUFFIX, NAME);
@@ -62,7 +76,17 @@ function replay(records, header) {
       last.finished = record;
     } else if (record?.type === 'budget') {
       check(typeof record.kind === 'string' && Number.isSafeInteger(record.at), 'budget');
-      (budgets[record.kind] ||= []).push(record);
+      const used = (budgets[record.kind] ||= []);
+      // Replay re-enforces the header's caps, not only the writer's checks.
+      if (header.caps?.observePerSend) {
+        const policy = policyFor(header.caps, record.kind);
+        check(used.length < policy.max && record.n === used.length + 1, 'budget-replay:' + record.kind);
+        if (used.length) {
+          check(record.at - used.at(-1).at >= (policy.minSpacingMs ?? 0), 'budget-replay:' + record.kind);
+          if (policy.windowMs != null) check(record.at - used[0].at <= policy.windowMs, 'budget-replay:' + record.kind);
+        }
+      }
+      used.push(record);
     } else if (record?.type === 'poi-pending') {
       check(!poi.pending && id(record.handoffId), 'poi-pending');
       check(sends[0]?.finished && CONTINUING.includes(sends[0].finished.outcome?.classification), 'poi-order');
@@ -178,6 +202,7 @@ function recordReport(profile, header, mode, sha256) {
   return append(profile, header, { type: 'report', mode, sha256, at: Date.now() }).reports;
 }
 module.exports = {
+  policyFor,
   recordReport,
   NAME,
   DIRECTORY_SUFFIX,

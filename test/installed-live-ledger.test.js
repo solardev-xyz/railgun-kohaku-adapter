@@ -108,3 +108,38 @@ test("report digests are recorded once", () => {
   expect(() => ledger.recordReport(p, header, "live-submit", "b".repeat(64))).toThrow(/duplicate/);
   expect(ledger.inspect(p, header).reports).toHaveLength(1);
 });
+test("replay re-enforces the header's caps on hand-written budget records", () => {
+  const p = profile();
+  const live = {
+    ...header,
+    caps: {
+      sends: 2,
+      observePerSend: { max: 2, minSpacingMs: 1000 },
+      readbackPerSend: { max: 1 },
+      poiStatus: { max: 2, minSpacingMs: 1000, windowMs: 5000 },
+      rebuildNew: 1,
+      scanResumes: 1,
+      scanRanges: 1,
+      txidPages: 1,
+    },
+  };
+  const policy = ledger.policyFor(live.caps, "observe:transfer");
+  ledger.consume(p, live, "observe:transfer", policy, 10000);
+  const file = ledger.ledgerFile(p);
+  const original = fs.readFileSync(file, "utf8");
+  const line = (value) => JSON.stringify(value) + "\n";
+  for (const record of [
+    { type: "budget", kind: "observe:transfer", n: 2, at: 10500 },
+    { type: "budget", kind: "observe:transfer", n: 3, at: 11000 },
+    { type: "budget", kind: "observe:transfer", n: 1, at: 12000 },
+    { type: "budget", kind: "unknown-kind", n: 1, at: 12000 },
+  ]) {
+    fs.writeFileSync(file, original + line(record));
+    expect(() => ledger.inspect(p, live)).toThrow();
+  }
+  fs.writeFileSync(
+    file,
+    original + line({ type: "budget", kind: "observe:transfer", n: 2, at: 11000 }),
+  );
+  expect(ledger.inspect(p, live).budgets["observe:transfer"]).toHaveLength(2);
+});

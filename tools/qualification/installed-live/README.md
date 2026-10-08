@@ -17,15 +17,25 @@ campaign ledger.
 | `live-poi-status` | 0 | One budgeted `observeOwnedPoi(output)` |
 | `live-unshield` | 1 (unshield) | Fresh `allValid` status; ledger reservation; `openPrivate().prepareUnshield(output → enrolled EOA)`; `broadcast`; new hold by set difference; G1 readback |
 | `live-summary` | 0 | Scan through the unshield; residual notes; public receipts of the two hashes; conservation checks |
+| `live-reconcile` | 0 | Finishes an unfinished send record from the journal: G1 `observe` of the bound hold only |
 
 Run `live-observe` after each send.
+
+A send whose broadcast returned a hash finishes its ledger record at once; the
+journal readback after it is best effort. If a process ends between the
+reservation and the finish, only `live-reconcile` may follow. A journaled
+attempt then finishes as `unknown` with its hash (observation only). Anything
+else finishes as `unjournaled-after-refusal` and stops the campaign. That label
+records no journaled attempt; it is not proof that nothing was sent.
 
 An uncertain send (`submissionStatus: 'unknown'`, or a refusal whose journal
 readback shows an attempt) permits only observation. The campaign continues
 only after G1 resolves that exact hold as `matched`, with 12 confirmations and
 finality. A revert, an anomaly or a consumed nonce stops the campaign. So does
-a known pre-send refusal of the transfer: the ledger then refuses both POI and
-the unshield.
+a refusal with no journaled attempt (`unjournaled-after-refusal`): the ledger
+then refuses both POI and the unshield. An earlier resolution counts only with
+`included`, `matched` and 12 confirmations. The unshield needs an owned POI
+status of at most six hours; the parameter can only tighten that.
 
 ## Campaign ledger
 
@@ -60,8 +70,11 @@ Records are fail-closed and append-only:
 - **Reports:** one `report` digest per mode. The launcher accepts a
   predecessor only if its digest is recorded here.
 
-A changed runner or binding refuses the whole ledger. A torn, extra or foreign
-record refuses. An exhausted budget stops the campaign; a new campaign
+The launcher derives the header from the request on every check; a spec cannot
+supply one. Live caps are fixed to the values above. A changed runner, binding,
+profile, transport or cap refuses the whole ledger. Replay re-enforces every
+budget record's maximum, spacing and window. A torn, extra or foreign record
+refuses, as does any other file in the ledger directory (including `.DS_Store`). An exhausted budget stops the campaign; a new campaign
 directory is not a way around it.
 
 ## Composition
@@ -82,8 +95,12 @@ These are qualification routing overrides, not ordinary production startup:
   ['direct']` (direct means no Freedom RPC proxy; requests still use the
   wallet Tor transport).
 
-There is no clearnet path and no fallback endpoint. Circuit isolation is not
-qualified. Each report records the Arti version, its hash and the RPC.
+There is no clearnet path and no fallback endpoint. The entry asserts that the
+transport's RPC is the request's frozen URL. Every reviewer asserts the
+disclosed destinations against it: the held-submission destination with the
+`tor-experimental` transport, and the retained source, protocol and transaction
+RPCs of each send summary. Circuit isolation is not qualified. Each report
+records the Arti version, its hash and the RPC.
 
 **Synthetic (`transport: 'synthetic'`)** runs the identical modes against the
 `../installed-journey` chain. That chain auto-mines pending sends, uses a
@@ -108,4 +125,5 @@ Before Electron starts, the launcher verifies:
 - send admission.
 
 It repeats the checks after exit and writes `RESULT.json`. Live failure
-records contain only codes and source frames.
+records contain only codes and source frames; synthetic ones also keep
+milestones.

@@ -83,26 +83,29 @@ function noteSummary(notes) {
     weth: notes.filter((note) => note.asset?.contract?.toLowerCase() === WETH).length,
   };
 }
-function budget(context, kind) {
-  const caps = context.header.caps;
-  const policy =
-    kind.startsWith('observe:') ? caps.observePerSend
-    : kind === 'poi-status' ? caps.poiStatus
-    : kind.startsWith('readback:') ? caps.readbackPerSend
-    : kind === 'scan-open:new' ? { max: caps.rebuildNew }
-    : kind === 'scan-open:pending' ? { max: caps.scanResumes }
-    : kind === 'scan-range' ? { max: caps.scanRanges }
-    : kind === 'txid-page' ? { max: caps.txidPages }
-    : null;
-  assert.ok(policy, 'Unbudgeted unit');
-  return ledger.consume(context.profile, context.header, kind, policy);
+// Synthetic-only crash points for the reconcile path; a live run refuses any.
+const FAULTS = Object.freeze(['exit-before-finish', 'exit-before-report']);
+function fault(context, point) {
+  const requested = context.params.fault ?? null;
+  if (requested === null) return;
+  assert.ok(FAULTS.includes(requested));
+  assert.equal(context.synthetic, true, 'Faults are synthetic only');
+  if (requested === point) context.crash();
 }
-function heldReviews(owner, milestone, seen) {
+function budget(context, kind) {
+  return ledger.consume(context.profile, context.header, kind, ledger.policyFor(context.header.caps, kind));
+}
+function heldReviews(owner, milestone, seen, expectedRpc) {
+  assert.equal(typeof expectedRpc, 'string');
   return {
     reviewDisclosures(summary, context) {
       assert.equal(context.signal.aborted, false);
       assert.equal(summary.chainId, CHAIN_ID);
       assert.equal(summary.retryEnabled, false);
+      // The one fixed campaign endpoint over the wallet Tor transport.
+      assert.deepEqual(Object.keys(summary.destination).sort(), ['transport', 'url']);
+      assert.equal(new URL(summary.destination.url).href, expectedRpc);
+      assert.equal(summary.destination.transport, 'tor-experimental');
       if (summary.purpose === 'railgun-held-submission-observation-v1') {
         assert.equal(summary.submitter, owner);
         assert.equal(summary.sendEnabled, false);
@@ -127,7 +130,13 @@ async function withHeld(session, signal, reviews, use) {
     await closeLane(lane);
   }
 }
-function recoveryOptions(owner, kind, milestone, seen, send) {
+function assertDestinations(destinations, expectedRpc) {
+  assert.ok(destinations && typeof destinations === 'object');
+  for (const key of ['retainedSource', 'protocolRpc', 'transactionRpc'])
+    if (Object.hasOwn(destinations, key)) assert.equal(new URL(destinations[key]).href, expectedRpc);
+  assert.ok(Object.hasOwn(destinations, 'transactionRpc'));
+}
+function recoveryOptions(owner, kind, milestone, seen, send, expectedRpc) {
   return {
     gasLimit: GAS_LIMIT,
     maxGasFee: MAX_GAS_FEE,
@@ -138,6 +147,7 @@ function recoveryOptions(owner, kind, milestone, seen, send) {
       if (!send) throw Error('No submission disclosure is authorized in this mode');
       assert.equal(summary.purpose, 'railgun-recovered-private-submission');
       assert.equal(summary.operation, kind);
+      assertDestinations(summary.destinations, expectedRpc);
       assert.equal(summary.automaticRetry, false);
       assert.equal(summary.newSpendingSignature, false);
       return true;
@@ -154,7 +164,7 @@ function recoveryOptions(owner, kind, milestone, seen, send) {
   };
 }
 async function holds(session, signal, owner, milestone) {
-  const lane = await session.openRecovery({ ...recoveryOptions(owner, null, milestone, [], false), signal });
+  const lane = await session.openRecovery({ ...recoveryOptions(owner, null, milestone, [], false, 'unused'), signal });
   try {
     const page = await lane.history();
     assert.equal(page.nextAfter, null);
@@ -198,7 +208,7 @@ async function rebuild(context) {
     const notes = await lane.notes(undefined, true);
     await closeLane(lane);
     lane = null;
-    lane = await session.openRecovery({ ...recoveryOptions(owner, 'railgun-private-transfer', milestone, seen, false), signal });
+    lane = await session.openRecovery({ ...recoveryOptions(owner, 'railgun-private-transfer', milestone, seen, false, context.expectedRpc), signal });
     const page = await lane.history();
     assert.equal(page.nextAfter, null);
     const hold = only(page.records, 'railgun-private-transfer');
@@ -209,7 +219,7 @@ async function rebuild(context) {
     lane = null;
     const held = [];
     budget(context, 'readback:transfer');
-    const observed = await withHeld(session, signal, heldReviews(owner, milestone, held), (l) => l.observe(hold.holdId));
+    const observed = await withHeld(session, signal, heldReviews(owner, milestone, held, context.expectedRpc), (l) => l.observe(hold.holdId));
     await closeSession(session);
     session = null;
     return finishReport(context, {
@@ -242,7 +252,8 @@ function classify(outcome) {
 function readback(result, after) {
   if (result.classification === 'not-acknowledged' && after?.status === 'journaled')
     return { classification: 'unknown', transactionHash: after.transactionHash, readback: 'journal' };
-  if (result.classification === 'not-acknowledged') return { ...result, classification: 'refused-before-send' };
+  // Not a proof that nothing was sent: only that no attempt is journaled.
+  if (result.classification === 'not-acknowledged') return { ...result, classification: 'unjournaled-after-refusal' };
   assert.equal(after?.transactionHash, result.transactionHash);
   return result;
 }
@@ -260,11 +271,11 @@ async function submit(context) {
     const hold = only(await holds(session, signal, owner, milestone), 'railgun-private-transfer');
     assert.equal(sha(hold.holdId), previous.holdIdSha256);
     budget(context, 'readback:transfer');
-    const before = await withHeld(session, signal, heldReviews(owner, milestone, held), (l) => l.observe(hold.holdId));
+    const before = await withHeld(session, signal, heldReviews(owner, milestone, held, context.expectedRpc), (l) => l.observe(hold.holdId));
     assert.equal(before.status, 'unjournaled', 'A journaled attempt exists: observation only');
     const attemptId = ledger.reserve(profile, header, 'transfer', { holdIdSha256: previous.holdIdSha256 });
     milestone('ledger-reserved:transfer');
-    lane = await session.openRecovery({ ...recoveryOptions(owner, 'railgun-private-transfer', milestone, seen, true), signal });
+    lane = await session.openRecovery({ ...recoveryOptions(owner, 'railgun-private-transfer', milestone, seen, true, context.expectedRpc), signal });
     let outcome,
       failure = null;
     try {
@@ -272,12 +283,26 @@ async function submit(context) {
     } catch (error) {
       failure = typeof error?.code === 'string' ? error.code : 'unknown-error';
     }
-    await closeLane(lane);
+    const immediate = failure ? { classification: 'not-acknowledged', error: failure } : classify(outcome);
+    fault(context, 'exit-before-finish');
+    // A known hash finishes the attempt at once; its readback is best effort.
+    if (immediate.transactionHash) ledger.finish(profile, header, attemptId, immediate);
+    fault(context, 'exit-before-report');
+    await closeLane(lane).catch(() => milestone('lane-close-uncertain'));
     lane = null;
-    budget(context, 'readback:transfer');
-    const after = await withHeld(session, signal, heldReviews(owner, milestone, held), (l) => l.observe(hold.holdId));
-    const result = readback(failure ? { classification: 'not-acknowledged', error: failure } : classify(outcome), after);
-    const sends = ledger.finish(profile, header, attemptId, result);
+    let after = null;
+    try {
+      budget(context, 'readback:transfer');
+      after = await withHeld(session, signal, heldReviews(owner, milestone, held, context.expectedRpc), (l) => l.observe(hold.holdId));
+    } catch (error) {
+      milestone('readback-unavailable:' + (error?.code ?? 'error'));
+      // Without a hash the journal must decide: leave the attempt pending.
+      if (!immediate.transactionHash) throw error;
+    }
+    const result = immediate.transactionHash ? immediate : readback(immediate, after);
+    if (after && immediate.transactionHash && after.status === 'journaled') assert.equal(after.transactionHash, immediate.transactionHash);
+    if (!immediate.transactionHash) ledger.finish(profile, header, attemptId, result);
+    const sends = ledger.inspect(profile, header).sends;
     milestone('ledger-finished:transfer:' + result.classification);
     await closeSession(session);
     session = null;
@@ -286,9 +311,9 @@ async function submit(context) {
       send: 'transfer',
       holdIdSha256: previous.holdIdSha256,
       outcome: result,
-      g1: { status: after.status, observation: after.observation ?? null, transact: after.transact ?? null },
+      g1: after ? { status: after.status, observation: after.observation ?? null, transact: after.transact ?? null } : null,
       ledgerSends: sends.length,
-      stop: result.classification === 'refused-before-send',
+      stop: result.classification === 'unjournaled-after-refusal',
       reviews: { recovery: seen, held },
     });
   } finally {
@@ -321,7 +346,7 @@ async function observe(context) {
     for (;;) {
       attempts++;
       budget(context, 'observe:' + send);
-      observation = await withHeld(session, signal, heldReviews(owner, milestone, held), (l) => l.observe(hold.holdId));
+      observation = await withHeld(session, signal, heldReviews(owner, milestone, held, context.expectedRpc), (l) => l.observe(hold.holdId));
       assert.equal(observation.transactionHash, previous.outcome.transactionHash);
       milestone('observed:' + JSON.stringify(observation.observation));
       const status = observation.observation?.status;
@@ -335,7 +360,7 @@ async function observe(context) {
       await sleep(spacing, signal);
       if (ready) {
         budget(context, 'observe:' + send);
-        const tried = await withHeld(session, signal, heldReviews(owner, milestone, held), (l) =>
+        const tried = await withHeld(session, signal, heldReviews(owner, milestone, held, context.expectedRpc), (l) =>
           l.resolve(hold.holdId, { minimumConfirmations: MIN_CONFIRMATIONS })
         ).then(
           (value) => ({ value }),
@@ -352,9 +377,13 @@ async function observe(context) {
     }
     await closeSession(session);
     session = null;
+    // An earlier resolution counts only with the same live evidence policy.
     const matched =
-      (resolution?.outcome === 'matched') ||
-      (observation.resolved === true && observation.transact?.status === 'matched');
+      resolution?.outcome === 'matched' ||
+      (observation.resolved === true &&
+        observation.observation?.status === 'included' &&
+        observation.transact?.status === 'matched' &&
+        observation.observation.confirmations >= MIN_CONFIRMATIONS);
     return finishReport(context, {
       schema: 'railgun-installed-live-observe-v1',
       send,
@@ -369,7 +398,12 @@ async function observe(context) {
       },
       resolution: publicResolution(resolution),
       continuable: matched,
-      stop: !matched && (observation.observation?.status === 'reverted' || observation.transact?.status === 'anomaly' || observation.observation?.status === 'nonce-consumed'),
+      stop:
+        !matched &&
+        (resolution?.outcome === 'reverted' ||
+          observation.observation?.status === 'reverted' ||
+          observation.transact?.status === 'anomaly' ||
+          observation.observation?.status === 'nonce-consumed'),
       unshield: send === 'unshield' ? previous.unshield ?? null : undefined,
       reviews: { held },
     });
@@ -547,7 +581,8 @@ async function unshield(context) {
   assert.equal(previous.schema, 'railgun-installed-live-poi-status-v1');
   assertChained(context, previous);
   assert.equal(previous.continuable, true);
-  const freshness = params.poiStatusMaxAgeMs ?? 6 * 3600 * 1000;
+  // Freshness may only tighten, never loosen beyond six hours.
+  const freshness = Math.min(params.poiStatusMaxAgeMs ?? 6 * 3600 * 1000, 6 * 3600 * 1000);
   assert.ok(Date.now() - previous.observedAt <= freshness, 'POI status is stale');
   const transactionHash = previous.transactionHash;
   const seen = [],
@@ -580,6 +615,7 @@ async function unshield(context) {
         assert.equal(summary.amount, String(output.amount));
         assert.deepEqual(summary.asset, { __type: 'erc20', contract: WETH });
         assert.equal(summary.automaticRetry, false);
+        assertDestinations(summary.destinations, context.expectedRpc);
         seen.push({ preparation: summary.operation, keys: keys(summary) });
         return true;
       },
@@ -600,18 +636,31 @@ async function unshield(context) {
     } catch (error) {
       failure = typeof error?.code === 'string' ? error.code : 'unknown-error';
     }
-    await closeLane(lane);
+    const immediate = failure ? { classification: 'not-acknowledged', error: failure } : classify(outcome);
+    fault(context, 'exit-before-finish');
+    // A known hash finishes the attempt at once; its readback is best effort.
+    if (immediate.transactionHash) ledger.finish(profile, header, attemptId, immediate);
+    fault(context, 'exit-before-report');
+    await closeLane(lane).catch(() => milestone('lane-close-uncertain'));
     lane = null;
-    const added = (await holds(session, signal, owner, milestone)).filter((record) => !beforeIds.has(record.holdId));
-    assert.ok(added.length <= 1, 'More than one new held operation');
-    let after = null;
-    if (added.length === 1) {
-      assert.equal(added[0].kind, 'railgun-token-unshield');
-      budget(context, 'readback:unshield');
-      after = await withHeld(session, signal, heldReviews(owner, milestone, held), (l) => l.observe(added[0].holdId));
+    let after = null,
+      added = [];
+    try {
+      added = (await holds(session, signal, owner, milestone)).filter((record) => !beforeIds.has(record.holdId));
+      assert.ok(added.length <= 1, 'More than one new held operation');
+      if (added.length === 1) {
+        assert.equal(added[0].kind, 'railgun-token-unshield');
+        budget(context, 'readback:unshield');
+        after = await withHeld(session, signal, heldReviews(owner, milestone, held, context.expectedRpc), (l) => l.observe(added[0].holdId));
+      }
+    } catch (error) {
+      milestone('readback-unavailable:' + (error?.code ?? 'error'));
+      if (!immediate.transactionHash) throw error;
     }
-    const result = readback(failure ? { classification: 'not-acknowledged', error: failure } : classify(outcome), after);
-    const sends = ledger.finish(profile, header, attemptId, result);
+    const result = immediate.transactionHash ? immediate : readback(immediate, after);
+    if (after && immediate.transactionHash && after.status === 'journaled') assert.equal(after.transactionHash, immediate.transactionHash);
+    if (!immediate.transactionHash) ledger.finish(profile, header, attemptId, result);
+    const sends = ledger.inspect(profile, header).sends;
     milestone('ledger-finished:unshield:' + result.classification);
     await closeSession(session);
     session = null;
@@ -625,7 +674,7 @@ async function unshield(context) {
       g1: after && { status: after.status, observation: after.observation ?? null },
       preparationReviews: preparations,
       ledgerSends: sends.length,
-      stop: result.classification === 'refused-before-send',
+      stop: result.classification === 'unjournaled-after-refusal',
       reviews: { lane: seen, held },
     });
   } finally {
@@ -687,7 +736,77 @@ async function summary(context) {
     await closeSession(session);
   }
 }
+const SEND_REPORT_MODES = Object.freeze(['live-submit', 'live-unshield', 'live-reconcile']);
+// Recovers a send without a recorded report: observation only, no signing or
+// sending. An unfinished record (a crash after the reservation) is finished
+// from the journal: the journal write precedes transport admission, so a
+// journaled attempt finishes as unknown with its hash and anything else as
+// unjournaled-after-refusal (a stop). A finished record whose report was lost
+// is reissued from the ledger alone, with no G1 read.
+async function reconcile(context) {
+  const { facade, signal, milestone, owner, profile, header } = context;
+  const state = ledger.inspect(profile, header);
+  const last = state.sends.at(-1);
+  assert.ok(last, 'No send to reconcile');
+  const reported = state.reports.filter((row) => SEND_REPORT_MODES.includes(row.mode)).length;
+  assert.ok(reported < state.sends.length, 'Every send is already reported');
+  const send = last.pending.send;
+  const kind = send === 'transfer' ? 'railgun-private-transfer' : 'railgun-token-unshield';
+  const held = [];
+  let session;
+  try {
+    session = await facade.openAccount({ accountIndex: 0, signal });
+    const records = await holds(session, signal, owner, milestone);
+    let holdId = null;
+    if (send === 'transfer') {
+      holdId = only(records, kind).holdId;
+      assert.equal(sha(holdId), last.pending.binding.holdIdSha256);
+    } else {
+      // The campaign admits one unshield attempt; at most one such hold exists.
+      const rows = records.filter((record) => record.kind === kind);
+      assert.ok(rows.length <= 1);
+      holdId = rows[0]?.holdId ?? null;
+    }
+    let after = null,
+      result,
+      sends;
+    if (last.finished) {
+      result = last.finished.outcome;
+      sends = state.sends;
+      if (result.transactionHash) assert.ok(holdId, 'A journaled send without its hold');
+      milestone('ledger-reissued:' + send + ':' + result.classification);
+    } else {
+      if (holdId) {
+        budget(context, 'readback:' + send);
+        after = await withHeld(session, signal, heldReviews(owner, milestone, held, context.expectedRpc), (l) => l.observe(holdId));
+      }
+      result =
+        after?.status === 'journaled'
+          ? { classification: 'unknown', transactionHash: after.transactionHash, readback: 'reconcile' }
+          : { classification: 'unjournaled-after-refusal', readback: 'reconcile' };
+      sends = ledger.finish(profile, header, last.pending.attemptId, result);
+      milestone('ledger-reconciled:' + send + ':' + result.classification);
+    }
+    await closeSession(session);
+    session = null;
+    return finishReport(context, {
+      schema: send === 'transfer' ? 'railgun-installed-live-submit-v1' : 'railgun-installed-live-unshield-v1',
+      send,
+      holdIdSha256: holdId ? sha(holdId) : null,
+      ...(send === 'unshield' ? { outputNoteIdSha256: last.pending.binding.outputNoteIdSha256, unshield: null } : {}),
+      outcome: result,
+      reconciled: last.finished ? 'reissued' : 'finished',
+      g1: after && { status: after.status, observation: after.observation ?? null },
+      ledgerSends: sends.length,
+      stop: !['acknowledged', 'unknown'].includes(result.classification),
+      reviews: { held },
+    });
+  } finally {
+    await closeSession(session);
+  }
+}
 const MODES = Object.freeze({
+  'live-reconcile': reconcile,
   'live-rebuild': rebuild,
   'live-submit': submit,
   'live-observe': observe,

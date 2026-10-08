@@ -70,8 +70,54 @@ function installed(request, scratch) {
   }
   return { members: Object.keys(packed).length, transformed: differing };
 }
+const FIXED_CAPS = Object.freeze({
+  sends: 2,
+  perSendMaxGasFeeWei: '2000000000000000',
+  totalMaxFeeWei: '4000000000000000',
+});
+const SYNTHETIC_CAP_KEYS = Object.keys(LIVE_CAPS).sort();
+// The ledger header is derived, never supplied: a changed runner, binding,
+// profile, transport or cap refuses the campaign's ledger.
+function headerFor(request, binding, syntheticCaps) {
+  assert.ok(binding && typeof binding === 'object' && !Array.isArray(binding));
+  if (request.transport === 'live') {
+    assert.equal(syntheticCaps, null);
+    for (const key of ['heldTransferReportSha256', 'previousLedgers', 'finalRecoveryOutcomeSha256', 'authorizationSha256', 'rpc'])
+      assert.ok(Object.hasOwn(binding, key), 'Live binding lacks ' + key);
+  } else {
+    assert.deepEqual(Object.keys(syntheticCaps).sort(), SYNTHETIC_CAP_KEYS);
+  }
+  return {
+    type: 'railgun-installed-journey-ledger',
+    version: 1,
+    name: 'installed-journey-1',
+    transport: request.transport,
+    profile: request.profileDirectory,
+    freedomCommit: request.hostCommit,
+    packageCommit: request.packageCommit,
+    packageTarSha256: request.packageTarPin.sha256,
+    runnerSha256: sha(Buffer.from(JSON.stringify(Object.fromEntries(RECIPE.map((name) => [name, file(name)]))))),
+    binding,
+    caps: { ...FIXED_CAPS, ...(request.transport === 'live' ? LIVE_CAPS : syntheticCaps) },
+  };
+}
 function check(request) {
   assert.equal(request.schema, 'railgun-installed-live-request-v1');
+  assert.deepEqual(
+    request.ledgerHeader,
+    headerFor(
+      request,
+      request.ledgerHeader?.binding,
+      request.transport === 'live' ? null : Object.fromEntries(SYNTHETIC_CAP_KEYS.map((key) => [key, request.ledgerHeader?.caps?.[key]]))
+    ),
+    'Ledger header is not derived from this request'
+  );
+  if (request.transport === 'live') {
+    assert.equal(request.ledgerHeader.binding.rpc.url, request.live.rpcUrl);
+    // Live parameters: no fault hook; publicCache only for the rebuild.
+    for (const key of Object.keys(request.params)) assert.ok(['publicCache', 'maxMs', 'poiStatusMaxAgeMs'].includes(key), 'Live parameter ' + key);
+    if (Object.hasOwn(request.params, 'publicCache')) assert.equal(request.mode, 'live-rebuild');
+  }
   assert.ok(Object.hasOwn(MODES, request.mode));
   assert.ok(['live', 'synthetic'].includes(request.transport));
   assert.deepEqual(Object.keys(request.recipeFiles).sort(), [...RECIPE].sort());
@@ -120,24 +166,13 @@ function makeRequest(spec) {
   const recipeFiles = Object.fromEntries(RECIPE.map((name) => [name, file(name)]));
   const reference = (report) => (report ? { report, reportSha256: sha(fs.readFileSync(report)) } : null);
   const packageTarPin = file(value.packageTar);
-  const header = {
-    type: 'railgun-installed-journey-ledger',
-    version: 1,
-    name: 'installed-journey-1',
-    transport: value.transport,
-    profile: value.profileDirectory,
-    freedomCommit: value.hostCommit,
-    packageCommit: value.packageCommit,
-    packageTarSha256: packageTarPin.sha256,
-    runnerSha256: sha(Buffer.from(JSON.stringify(recipeFiles))),
-    binding: value.binding,
-    caps: {
-      sends: 2,
-      perSendMaxGasFeeWei: '2000000000000000',
-      totalMaxFeeWei: '4000000000000000',
-      ...(value.transport === 'live' ? LIVE_CAPS : value.syntheticCaps),
-    },
-  };
+  assert.equal(Object.hasOwn(value, 'ledgerHeader'), false, 'The ledger header is derived, not supplied');
+  if (value.transport === 'live') assert.equal(Object.hasOwn(value, 'syntheticCaps'), false);
+  const header = headerFor(
+    { transport: value.transport, profileDirectory: value.profileDirectory, hostCommit: value.hostCommit, packageCommit: value.packageCommit, packageTarPin },
+    value.binding,
+    value.transport === 'live' ? null : value.syntheticCaps
+  );
   return {
     schema: 'railgun-installed-live-request-v1',
     mode: value.mode,
@@ -159,9 +194,17 @@ function makeRequest(spec) {
       ? Object.fromEntries(Object.entries(value.lineage).map(([name, report]) => [name, reference(report)]))
       : null,
     params: value.params ?? {},
-    ledgerHeader: value.ledgerHeader ?? header,
+    ledgerHeader: header,
     ...(value.transport === 'live'
-      ? { live: { rpcSource: value.live.rpcSource, enrolledOwner: value.live.enrolledOwner, arti: value.live.arti, artiPin: file(value.live.arti) } }
+      ? {
+          live: {
+            rpcSource: value.live.rpcSource,
+            rpcUrl: value.binding.rpc.url,
+            enrolledOwner: value.live.enrolledOwner,
+            arti: value.live.arti,
+            artiPin: file(value.live.arti),
+          },
+        }
       : {
           synthetic: {
             engineModules: value.synthetic.engineModules,
@@ -260,4 +303,4 @@ if (require.main === module)
     );
     process.exitCode = 1;
   });
-module.exports = { makeRequest, check, RECIPE };
+module.exports = { makeRequest, check, headerFor, RECIPE, LIVE_CAPS };

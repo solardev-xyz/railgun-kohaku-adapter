@@ -71,7 +71,7 @@ async function main() {
     await app.whenReady();
     const registry = fixed('networks/network-registry.js'),
       tor = fixed('tor-manager.js');
-    let readFinalized, readReceipt;
+    let readFinalized, readReceipt, expectedRpc;
     if (live) {
       assert.equal(app.isPackaged, false);
       assert.equal(process.env.FREEDOM_WALLET_TOR_EXPERIMENT, '1');
@@ -84,6 +84,9 @@ async function main() {
         request.live.rpcSource
       );
       replace(tor, 'getWalletSocksEndpoint', () => client.endpoint);
+      // The campaign's one frozen endpoint.
+      assert.equal(client.metadata.rpc, request.live.rpcUrl);
+      expectedRpc = new URL(client.metadata.rpc).href;
       assert.equal(
         registry.addCustomChain(
           {
@@ -128,6 +131,7 @@ async function main() {
         sendMode: request.synthetic.sendMode ?? 'acknowledge',
       });
       await chain.init();
+      expectedRpc = new URL(ENDPOINT).href;
       const { getPrivacyContext } = fixed('networks/privacy-context.js');
       const transport = fixed('networks/wallet-tor-transport.js'),
         settings = fixed('settings-store.js');
@@ -199,6 +203,15 @@ async function main() {
       rebuildReport: lineage.rebuild ?? null,
       readFinalized,
       readReceipt,
+      expectedRpc,
+      synthetic: !live,
+      // Synthetic crash: the network keeps what it received, the process ends.
+      crash: live
+        ? null
+        : () => {
+            write(path.join(request.outputDirectory, 'chain-state.json'), chain.state());
+            process.exit(7);
+          },
       params: request.params ?? {},
       profile: request.profileDirectory,
       header: request.ledgerHeader,
@@ -238,7 +251,7 @@ async function main() {
           .split('\n')
           .filter((line) => /^\s+at /.test(line))
           .slice(0, 14),
-        milestones: milestones.map((value) => value.slice(0, 200)),
+        ...(live ? {} : { milestones: milestones.map((value) => value.slice(0, 200)) }),
         syntheticChain: chain?.report() ?? null,
       });
     } catch {
