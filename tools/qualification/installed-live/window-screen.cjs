@@ -10,6 +10,9 @@
  *
  * Bounds: at most 200 explicit requests and 40 minutes after Tor is ready; no
  * retries. An unreadable window is reported as such, never given a count.
+ * This screens log count, JSON bytes and distinct-block cardinality at one
+ * snapshot; it does not prove a window acquirable (production also checks log
+ * shapes, order, hashes, headers, freshness and application).
  */
 'use strict';
 const fs = require('fs'),
@@ -40,7 +43,10 @@ async function main() {
     sourceSha256: createHash('sha256')
       .update(fs.readFileSync(path.join(root, 'scripts/qualify-ppv2-live.js')))
       .digest('hex'),
+    screenSha256: createHash('sha256').update(fs.readFileSync(__filename)).digest('hex'),
+    scheduleSourceSha256: createHash('sha256').update(fs.readFileSync(path.join(__dirname, 'live-scenario.cjs'))).digest('hex'),
     endpoint: SENTIO,
+    trace,
     bounds: { maxLogs: MAX_LOGS, maxLogJsonBytes: MAX_LOG_JSON, maxDistinctBlocks: MAX_BLOCKS },
     windows: [],
   };
@@ -48,7 +54,9 @@ async function main() {
   try {
     client = await live.openLiveTransport(path.join(output, 'transport'), () => {}, 'sentio');
     report.tor = client.metadata;
-    const ready = Date.now();
+    // One monotonic request window: each timeout is bounded by what remains,
+    // and no request is admitted once it is spent.
+    const ready = performance.now();
     const handle = client.scope.getContext({
       kind: 'service',
       principal: 'public-deployment-probe',
@@ -59,8 +67,9 @@ async function main() {
     });
     async function call(method, params) {
       assert.ok(trace.length < MAX_REQUESTS, 'Request bound reached');
-      assert.ok(Date.now() - ready < MAX_MS, 'Time bound reached');
-      const started = Date.now(),
+      const remaining = MAX_MS - (performance.now() - ready);
+      assert.ok(remaining > 1000, 'Time bound reached');
+      const started = performance.now(),
         id = randomUUID();
       const row = { method, ms: null, ok: false };
       trace.push(row);
@@ -69,12 +78,12 @@ async function main() {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({ jsonrpc: '2.0', id, method, params }),
-          timeoutMs: 45000,
+          timeoutMs: Math.min(45000, Math.floor(remaining)),
         });
         row.status = response.status;
         row.bytes = response.body.length;
         const value = JSON.parse(response.body.toString('utf8'));
-        row.ms = Date.now() - started;
+        row.ms = Math.round(performance.now() - started);
         if (response.status !== 200 || value.id !== id || Object.hasOwn(value, 'error') || !Object.hasOwn(value, 'result')) {
           row.code = Object.hasOwn(value ?? {}, 'error') ? 'RPC_ERROR' : 'INVALID_RESPONSE';
           if (Number.isSafeInteger(value?.error?.code)) row.rpcErrorCode = value.error.code;
@@ -83,14 +92,17 @@ async function main() {
         row.ok = true;
         return value.result;
       } catch (error) {
-        row.ms = Date.now() - started;
+        row.ms = Math.round(performance.now() - started);
         row.code = typeof error?.code === 'string' && /^[A-Z0-9_]{1,64}$/.test(error.code) ? error.code : 'REQUEST_FAILED';
         return undefined;
       }
     }
+    report.requestWindowMs = MAX_MS;
     const finalized = await call('eth_getBlockByNumber', ['finalized', false]);
     assert.ok(finalized, 'No finalized block');
     const head = Number(BigInt(finalized.number));
+    // An empty screen is never a pass.
+    assert.ok(Number.isSafeInteger(head) && head >= from, 'Finalized block below the screen start');
     report.finalized = { number: head, hash: finalized.hash };
     let start = from;
     for (const range of rangesTo(from, { number: head, hash: finalized.hash })) {
@@ -117,7 +129,9 @@ async function main() {
   } catch (error) {
     report.failure = { code: typeof error?.code === 'string' ? error.code : null, message: String(error?.message ?? '').slice(0, 120) };
   } finally {
+    const cleanup = performance.now();
     if (client) await client.close();
+    report.cleanupMs = Math.round(performance.now() - cleanup);
     report.requests = trace.length;
     report.finishedAt = new Date().toISOString();
     fs.writeFileSync(path.join(output, 'screen.json'), JSON.stringify(report, null, 2) + '\n', { flag: 'wx', mode: 0o600 });
