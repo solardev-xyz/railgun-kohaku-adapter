@@ -1,0 +1,15 @@
+{
+  "metadataValid": true,
+  "sourceFilesVerified": 777,
+  "sourceBasesVerified": 2,
+  "currentWorktreeSourcesVerified": 777,
+  "originalDestinationJoinsVerified": 799,
+  "resolvedDestinationJoinsVerified": 54,
+  "protectedFilesPresent": 24,
+  "additionalRetainedHostTestVerified": 1,
+  "formerPreservationGapsResolved": 34,
+  "unresolvedPreservationRows": 0,
+  "deletionPermitted": false,
+  "removalReady": false,
+  "scope": "Git objects and current source files only; external host coverage and post-cleanup acceptance remain conditional."
+}

@@ -1,0 +1,18 @@
+{
+  "controlsPassed": 11,
+  "controls": [
+    "deletion-flag",
+    "missing-e2e",
+    "old-join-drift",
+    "protected-membership-substitution",
+    "protected-removal-inclusion",
+    "new-join-traversal",
+    "new-join-content-drift",
+    "source-content-drift",
+    "wrong-original-package",
+    "source-symlink",
+    "missing-current-e2e"
+  ],
+  "deletionPermitted": false,
+  "scope": "Metadata/content mutations and explicit filesystem predicate doubles; no source writes or target runtime imports."
+}

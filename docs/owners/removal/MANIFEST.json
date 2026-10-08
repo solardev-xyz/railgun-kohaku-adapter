@@ -1,0 +1,30 @@
+{
+  "schema": "closed-removal-payload-v1",
+  "deletionEnabled": false,
+  "files": {
+    "PLAN.json": {
+      "bytes": 1379277,
+      "sha256": "43d28ab2be6f5b95fb4d861bbcbdc2b6e27ed66c1e94994d50b81d0f0f3ddecb"
+    },
+    "verify.py": {
+      "bytes": 9434,
+      "sha256": "615a3ce0f7d19cf77fab9feb6cce84e2ea9b79bde5302f0ab2f779ae6e86e84c"
+    },
+    "controls.py": {
+      "bytes": 3193,
+      "sha256": "08a156956b1a40c6065c6f712702e80a92a2d230f7c6e0c52df0af554896d10e"
+    },
+    "README.md": {
+      "bytes": 3700,
+      "sha256": "e672265011a2c3a451b774b28099c82095e74a6c6d94d0c9f747fb66055b6460"
+    },
+    "VERIFICATION.json": {
+      "bytes": 544,
+      "sha256": "792da31dac61d8d8d563f9555fc1795294ad5148c6b2d16ca2908bae551286c1"
+    },
+    "CONTROLS.json": {
+      "bytes": 506,
+      "sha256": "5a2a362c255a21cb1feb83ea28feb56a26bc6682b960ac1c04dc0d9f56976aa2"
+    }
+  }
+}
