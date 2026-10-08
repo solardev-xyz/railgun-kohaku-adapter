@@ -1,11 +1,17 @@
+require('../../../../context-host.cjs');
 let mockEndpoint;
 const mockRequest = jest.fn(),
   mockClose = jest.fn();
-jest.mock('../networks/wallet-tor-transport', () => ({
+jest.mock("../../../../../../src/owners/host-bindings.js", () => ({
+  ...jest.requireActual("../../../../../../src/owners/host-bindings.js"),
+  transport: {
   createWalletTorTransport: () => ({ request: mockRequest, close: mockClose }),
+},
+  tor: { getWalletSocksEndpoint: () => mockEndpoint },
+  settings: { isWalletTorExperimentAvailable: () => true },
 }));
-jest.mock('../tor-manager', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));
-jest.mock('../settings-store', () => ({ isWalletTorExperimentAvailable: () => true }));
+
+
 const { createPrivacyScope, getPrivacyContext } = require("../../../../../../src/owners/context-bindings.js");
 const {
   createRailgunPublicServices,

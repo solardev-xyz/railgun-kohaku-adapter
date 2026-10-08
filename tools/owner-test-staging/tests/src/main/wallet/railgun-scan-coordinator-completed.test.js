@@ -1,13 +1,14 @@
+require('../../../../context-host.cjs');
 let mockEndpoint, mockUrl, mockJournals;
 const mockTransport = jest.fn();
-jest.mock('../settings-store', () => ({ isWalletTorExperimentAvailable: () => true }));
-jest.mock('../tor-manager', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));
-jest.mock('../networks/network-registry', () => ({
+jest.mock('../../../../fixtures/host/src/main/settings-store.js', () => ({ isWalletTorExperimentAvailable: () => true }));
+jest.mock('../../../../fixtures/host/src/main/tor-manager.js', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));
+jest.mock('../../../../fixtures/host/src/main/networks/network-registry.js', () => ({
   getNetwork: () => ({}),
   getEndpoints: () => [mockUrl],
   getEndpointSources: () => [{ keyed: false, coverage: { 11155111: mockUrl } }],
 }));
-jest.mock('../networks/wallet-tor-transport', () => ({
+jest.mock('../../../../fixtures/host/src/main/networks/wallet-tor-transport.js', () => ({
   createWalletTorTransport: () => ({ request: (...args) => mockTransport(...args), release() {} }),
 }));
 jest.mock("../../../../../../src/owners/railgun-scan-journal.js", () => {
@@ -580,7 +581,7 @@ test('another genuine client at the same URL cannot substitute its destination o
   const entry = await open(true);
   await entry.coordinator.advance(next(10));
   resetCounters(entry);
-  const { createPrivateRpc, getPrivateRpcDestination } = require('../networks/private-rpc');
+  const { createPrivateRpc, getPrivateRpcDestination } = require('../../../../fixtures/host/src/main/networks/private-rpc.js');
   const other = createPrivateRpc(entry.rpcHandle, 'protocol-rpc');
   await expect(
     snapshot(entry, async () => {}, {

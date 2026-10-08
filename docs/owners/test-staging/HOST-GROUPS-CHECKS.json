@@ -1,0 +1,27 @@
+{
+  "testedRevision": "d46ef986736f1764605e5c6517daa77b77f09620",
+  "productionBasis": "197219144e806474af7eef1987f24a8db978b311",
+  "plainNpmTest": {
+    "suites": 196,
+    "tests": 8582,
+    "seconds": 298.863,
+    "exitCode": 0,
+    "originalSession": 18557,
+    "completion": "767b73",
+    "forceExit": false,
+    "maxWorkers": 2,
+    "workerIdleMemoryLimit": "256MB"
+  },
+  "log": {
+    "bytes": 192,
+    "sha256": "db885ea438fe480296922de5a65151e797bf42830886057c8cf875ec0dd65fa1"
+  },
+  "qualifiedAdjacent": 120,
+  "remainingHost": 31,
+  "limits": [
+    "Passing run is not a native GC root-cause fix. Prior local failures remain documented.",
+    "Parent reported separate043ac189-suite worker SIGSEGV66559; parent owns its crash evidence and subsequent runner control.",
+    "This branch does not qualify parent133e88 or newer type declarations.",
+    "No installed browser, engine/prover, live service or funded-profile acceptance is claimed."
+  ]
+}

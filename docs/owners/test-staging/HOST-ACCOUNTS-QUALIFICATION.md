@@ -1,0 +1,7 @@
+# Account public/TXID and cold relay composition
+
+Three original suites pass138 tests in17.324 seconds with natural exit0. They use actual package account-public/TXID and cold relay controller code. The cold suite retains real encrypted paired ledger/recovery/floor stores and original mutation capabilities. Context/storage imports bind to the same fixed repository composition and exact generic host storage fixtures already pinned by the storage group.
+
+The original account-public enrollment double provided key callbacks as methods; production extraction deliberately removed those methods. Its mock now implements the four fixed package-private enrollment helper functions, checking the exact existing test enrollment before delegating unchanged original callbacks, buffers, wiping and arguments. No real enrollment credential authority is claimed: the original mocks remain test doubles. No new production export or raw-owner getter was introduced. The first run (127passed/11failed) correctly exposed missing mock helpers; its log is retained. Every original assertion is preserved in the reversible provenance chain.
+
+Default CI includes120 qualified adjacent suites;31 host suites remain staged and excluded. This targeted result does not establish vault custody, genuine fence admission, native crypto, live services or installed-browser acceptance. Actual production basis remains1972191; newer parent types must be preserved at integration. No runtime/export/type/dependency changes.

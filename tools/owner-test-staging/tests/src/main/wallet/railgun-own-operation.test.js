@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 jest.mock("../../../../../../src/owners/railgun-transact-intent.js", () => {
   const actual = jest.requireActual("../../../../../../src/owners/railgun-transact-intent.js");
   return { ...actual, railgunTransactJournalIntent: jest.fn(actual.railgunTransactJournalIntent) };
@@ -10,11 +11,14 @@ let mockEnrollment, mockJournal, mockHandle;
 jest.mock("../../../../../../src/owners/railgun-account-enrollment.js", () => ({
   isRailgunAccountEnrollment: (value) => value === mockEnrollment,
 }));
-jest.mock('./private-submission-journal', () => ({
+jest.mock('../../../../../../src/owners/host-bindings.js', () => ({
+  ...jest.requireActual('../../../../../../src/owners/host-bindings.js'),
+  submissionJournal: {
   getPrivateSubmissionJournal: (handle) => {
     require("../../../../../../src/owners/context-bindings.js").getPrivacyContext(handle);
     mockHandle = handle;
     return mockJournal;
+  },
   },
 }));
 const { createPrivacyScope, getPrivacyContext } = require("../../../../../../src/owners/context-bindings.js");

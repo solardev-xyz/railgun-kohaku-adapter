@@ -1,0 +1,7 @@
+# Wallet-account and Shield-origin data boundaries
+
+Two original suites pass408 tests in14.621 seconds with natural exit0. All original assertions remain. The wallet-account suite uses its original controlled identity/enrollment/runner/permit seams and actual package account logic; its cold composition keeps actual encrypted ledger/recovery stores. The mock enrollment's unchanged generation-key callback is now called through the fixed private helper with an exact test-enrollment join. This is not qualification of genuine vault credential loans.
+
+Three existing `normalizeRailgunNewCapsule` spy/call references now target the actual execution wrapper, which retains that helper, instead of the canonical data-only module. The Shield-origin suite receives genuine fixed pure transaction-metadata functions through the initialized repository host binding; its original storage/context access-forbidden mocks and false-authority results remain. These supplied-data checks authenticate no chain or account.
+
+The initial run exposed both the missing pure metadata binding and the capsule-wrapper relocation (343pass/65fail). After the metadata binding,394passed/14failed; relocating the three capsule references passed408/2. All logs are retained. No original test expectation was relaxed, and no runtime/export/type/dependency changed. Default CI includes129 exact adjacent suites;22 host suites remain staged/excluded. No new complete205-suite run or installed-host acceptance is claimed; parent owns runner configuration controls.

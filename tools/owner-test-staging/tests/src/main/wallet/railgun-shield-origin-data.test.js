@@ -1,5 +1,6 @@
-jest.mock('./privacy-storage', () => ({
-  ...jest.requireActual('./privacy-storage'),
+require('../../../../context-host.cjs');
+jest.mock('../../../../fixtures/host/src/main/wallet/privacy-storage.js', () => ({
+  ...jest.requireActual('../../../../fixtures/host/src/main/wallet/privacy-storage.js'),
   createPrivacyStorage: jest.fn(() => {
     throw Error('storage construction forbidden');
   }),
@@ -19,8 +20,8 @@ jest.mock("../../../../../../src/owners/context-bindings.js", () => ({
 // Real calldata/receipt/intent/checkpoint validators, with explicitly supplied
 // synthetic journal and owned-note data. No genuine owner or chain is claimed.
 const { Interface, getAddress, toBeHex } = require('ethers');
-const { matchRailgunShieldOrigin } = require('./railgun-shield-origin-data');
-const { transactionIntent } = require('./private-transaction-intent');
+const { matchRailgunShieldOrigin } = require('../../../../../../src/owners/railgun-shield-origin-data.js');
+const { transactionIntent } = require('../../../../fixtures/host/src/main/wallet/private-transaction-intent.js');
 const { SHIELD_ABI } = require("../../../../../../src/owners/railgun-shield-policy.js");
 const { SHIELD_EVENT, inspectRailgunShieldReceipt } = require("../../../../../../src/owners/railgun-shield-receipt.js");
 const { checkpointHash } = require("../../../../../../src/owners/railgun-wallet-coverage.js");
@@ -492,7 +493,7 @@ test.each([
 });
 
 test('matching and refusal do not access context authority or construct storage', () => {
-  const storage = require('./privacy-storage');
+  const storage = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');
   const context = require("../../../../../../src/owners/context-bindings.js");
   expect(matchRailgunShieldOrigin(fixture())).toEqual(expected('matched'));
   expect(matchRailgunShieldOrigin(null)).toEqual(expected('refused'));

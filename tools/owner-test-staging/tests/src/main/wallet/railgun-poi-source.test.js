@@ -1,10 +1,16 @@
+require('../../../../context-host.cjs');
 let mockEndpoint;
 const mockScopes = [];
 const mockRequest = jest.fn(),
   mockClose = jest.fn(),
   mockFactory = jest.fn();
-jest.mock('../networks/wallet-tor-transport', () => ({
+jest.mock("../../../../../../src/owners/host-bindings.js", () => ({
+  ...jest.requireActual("../../../../../../src/owners/host-bindings.js"),
+  transport: {
   createWalletTorTransport: (...args) => mockFactory(...args),
+},
+  tor: { getWalletSocksEndpoint: () => mockEndpoint },
+  settings: { isWalletTorExperimentAvailable: () => true },
 }));
 jest.mock("../../../../../../src/owners/context-bindings.js", () => {
   const actual = jest.requireActual("../../../../../../src/owners/context-bindings.js");
@@ -17,8 +23,8 @@ jest.mock("../../../../../../src/owners/context-bindings.js", () => {
     },
   };
 });
-jest.mock('../tor-manager', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));
-jest.mock('../settings-store', () => ({ isWalletTorExperimentAvailable: () => true }));
+
+
 const { createPrivacyScope, getPrivacyContext } = require("../../../../../../src/owners/context-bindings.js");
 const { createRailgunPoiSource, MAX_AGE_MS } = require("../../../../../../src/owners/railgun-poi-source.js");
 const { REQUIRED_LIST } = require("../../../../../../src/data/railgun-poi-records.js");

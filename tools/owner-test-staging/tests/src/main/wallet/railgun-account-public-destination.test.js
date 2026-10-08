@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 // Real account registry/catalog, source and private RPC; store/coordinator
 // authority seams are explicit mocks, not native lifecycle qualification.
 let mockEnrollment, mockCreateCoordinator, mockSource, mockJobs;
@@ -9,6 +10,22 @@ const mockOpen = jest.fn(),
 let mockEndpoint, mockRpcUrls, mockRpcSources, mockCreatedSources;
 jest.mock("../../../../../../src/owners/railgun-account-enrollment.js", () => ({
   isRailgunAccountEnrollment: (v) => mockEnrollments.has(v),
+  withRailgunEnrollmentPublicKeys: (enrollment, ...args) => {
+    if (!mockEnrollments.has(enrollment)) throw Error('enrollment');
+    return enrollment.withPublicKeys(...args);
+  },
+  withRailgunEnrollmentPublicCatalogKey: (enrollment, ...args) => {
+    if (!mockEnrollments.has(enrollment)) throw Error('enrollment');
+    return enrollment.withPublicCatalogKey(...args);
+  },
+  withRailgunEnrollmentPublicGenerationKeys: (enrollment, ...args) => {
+    if (!mockEnrollments.has(enrollment)) throw Error('enrollment');
+    return enrollment.withPublicGenerationKeys(...args);
+  },
+  withRailgunEnrollmentTxidGenerationKeys: (enrollment, ...args) => {
+    if (!mockEnrollments.has(enrollment)) throw Error('enrollment');
+    return enrollment.withTxidGenerationKeys(...args);
+  },
 }));
 jest.mock("../../../../../../src/owners/railgun-account-store.js", () => ({
   openRailgunAccountStore: (...args) => mockOpen(...args),
@@ -23,14 +40,14 @@ jest.mock("../../../../../../src/owners/railgun-scan-source.js", () => ({
     return mockSource;
   },
 }));
-jest.mock('../settings-store', () => ({ isWalletTorExperimentAvailable: () => true }));
-jest.mock('../tor-manager', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));
-jest.mock('../networks/network-registry', () => ({
+jest.mock('../../../../fixtures/host/src/main/settings-store.js', () => ({ isWalletTorExperimentAvailable: () => true }));
+jest.mock('../../../../fixtures/host/src/main/tor-manager.js', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));
+jest.mock('../../../../fixtures/host/src/main/networks/network-registry.js', () => ({
   getNetwork: () => ({}),
   getEndpoints: () => mockRpcUrls,
   getEndpointSources: () => mockRpcSources,
 }));
-jest.mock('../networks/wallet-tor-transport', () => ({
+jest.mock('../../../../fixtures/host/src/main/networks/wallet-tor-transport.js', () => ({
   createWalletTorTransport: (...args) => mockTransportFactory(...args),
 }));
 jest.mock("../../../../../../src/owners/railgun-scan-coordinator.js", () => ({
@@ -43,14 +60,14 @@ const fs = require('fs'),
   os = require('os'),
   path = require('path');
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");
-const { getPrivacyStoragePath } = require('./privacy-storage');
+const { getPrivacyStoragePath } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');
 const {
   openRailgunAccountPublic,
   getRailgunAccountPublicDestination: destination,
   assertRailgunAccountPublicDestination: assertDestination,
   assertRailgunAccountPublic,
 } = require("../../../../../../src/owners/railgun-account-public.js");
-const { getPrivateRpcDestinationDetails } = require('../networks/private-rpc');
+const { getPrivateRpcDestinationDetails } = require('../../../../fixtures/host/src/main/networks/private-rpc.js');
 const { getRailgunScanSourceDestination } = require("../../../../../../src/owners/railgun-scan-source.js");
 let scope, stores, controllers, opened, metadata, publicRecords, journalPath;
 const originalUrl = 'https://account-source.example:8443/private-original-path';

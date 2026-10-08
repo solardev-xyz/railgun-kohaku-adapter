@@ -1,0 +1,62 @@
+{
+  "baseRevision": "1608ed5b5a2303f131292f27d948ba9c5a584025",
+  "productionTransforms": false,
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-account-public.test.js",
+      "beforeSha256": "3bd3ceb554a9cd5995a6c935fb1f2c9b683fcc6425c2baa487c2fdad43ebb36a",
+      "afterSha256": "bf540bc1f051238f593ec7f98bee07fb932aff085c6c6bc2c289b2637e7365ac",
+      "replacements": [
+        {
+          "start": 1397,
+          "before": "const { getPrivacyStoragePath } = require('./privacy-storage');\n",
+          "after": "const { getPrivacyStoragePath } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');\n"
+        },
+        {
+          "start": 268,
+          "before": "",
+          "after": "  withRailgunEnrollmentPublicKeys: (enrollment, ...args) => {\n    if (enrollment !== mockEnrollment) throw Error('enrollment');\n    return mockEnrollment.withPublicKeys(...args);\n  },\n  withRailgunEnrollmentPublicCatalogKey: (enrollment, ...args) => {\n    if (enrollment !== mockEnrollment) throw Error('enrollment');\n    return mockEnrollment.withPublicCatalogKey(...args);\n  },\n  withRailgunEnrollmentPublicGenerationKeys: (enrollment, ...args) => {\n    if (enrollment !== mockEnrollment) throw Error('enrollment');\n    return mockEnrollment.withPublicGenerationKeys(...args);\n  },\n  withRailgunEnrollmentTxidGenerationKeys: (enrollment, ...args) => {\n    if (enrollment !== mockEnrollment) throw Error('enrollment');\n    return mockEnrollment.withTxidGenerationKeys(...args);\n  },\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-account-txid.test.js",
+      "beforeSha256": "89210defa9a5ee86cd097e10f15cae057c93254d4b8e7b2f2aaf90e81197a84a",
+      "afterSha256": "58dd65ec352f433ecaf9f2cd0a58101b97cb1446d7d3baf382bdc55b09452174",
+      "replacements": [
+        {
+          "start": 1994,
+          "before": "const { getPrivacyStoragePath } = require('./privacy-storage');\n",
+          "after": "const { getPrivacyStoragePath } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-operation-cold.test.js",
+      "beforeSha256": "4a263c033c371e5e77ee7ded867fbc6d8f98d49a540aad642d89155aafaca57e",
+      "afterSha256": "553d2ba20b0a23979e7e0e35c8b209535bb3730e79bd91e69ff573dac1726b1a",
+      "replacements": [
+        {
+          "start": 1070,
+          "before": "const { createPrivacyStorage, getPrivacyStoragePath } = require('./privacy-storage');\nconst { createPrivacyProfileGuard } = require('./privacy-profile-guard');\n",
+          "after": "const { createPrivacyStorage, getPrivacyStoragePath } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');\nconst { createPrivacyProfileGuard } = require('../../../../fixtures/host/src/main/wallet/privacy-profile-guard.js');\n"
+        },
+        {
+          "start": 0,
+          "before": "",
+          "after": "require('../../../../context-host.cjs');\n"
+        }
+      ]
+    }
+  ]
+}

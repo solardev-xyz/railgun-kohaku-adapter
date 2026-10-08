@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 let mockEnrollment, mockMode, mockEndpoint;
 const mockRpcOptions = jest.fn(),
   mockRequest = jest.fn(),
@@ -15,7 +16,9 @@ jest.mock("../../../../../../src/railgun-shield-pins.json", () => {
     ),
   };
 });
-jest.mock('../networks/private-rpc', () => ({
+jest.mock('../../../../../../src/owners/host-bindings.js', () => ({
+  ...jest.requireActual('../../../../../../src/owners/host-bindings.js'),
+  rpc: {
   createPrivateRpc: (handle, role, options) => {
     mockRpcOptions(options);
     const { getPrivacyContext } = require("../../../../../../src/owners/context-bindings.js");
@@ -31,6 +34,7 @@ jest.mock('../networks/private-rpc', () => ({
         if (mockEndpoint.signal.aborted) throw Error('endpoint revoked');
       },
     };
+  },
   },
 }));
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");

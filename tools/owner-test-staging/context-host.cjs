@@ -122,6 +122,16 @@ input.transactionIntent = {
   transactionIntent: (...args) => require('./fixtures/host/src/main/wallet/private-transaction-intent.js').transactionIntent(...args),
   validIntent: (...args) => require('./fixtures/host/src/main/wallet/private-transaction-intent.js').validIntent(...args),
 };
+// Actual copied generic RPC owner; only fixed lower host ports are test-controlled.
+input.rpc = {
+  assertPrivateRpcDestination: (...args) => require('./fixtures/host/src/main/networks/private-rpc.js').assertPrivateRpcDestination(...args),
+  createPrivateRpc: (...args) => require('./fixtures/host/src/main/networks/private-rpc.js').createPrivateRpc(...args),
+  createPrivateRpcDestinationConstraint: (...args) => require('./fixtures/host/src/main/networks/private-rpc.js').createPrivateRpcDestinationConstraint(...args),
+  createPrivateRpcReadBudget: (...args) => require('./fixtures/host/src/main/networks/private-rpc.js').createPrivateRpcReadBudget(...args),
+  getPrivateRpcDestination: (...args) => require('./fixtures/host/src/main/networks/private-rpc.js').getPrivateRpcDestination(...args),
+  getPrivateRpcDestinationDetails: (...args) => require('./fixtures/host/src/main/networks/private-rpc.js').getPrivateRpcDestinationDetails(...args),
+  getPrivateRpcReadBudgetOutcome: (...args) => require('./fixtures/host/src/main/networks/private-rpc.js').getPrivateRpcReadBudgetOutcome(...args),
+};
 input.sourceIdentity = { readDigest: () => 'a'.repeat(64) };
 const owner = jest.requireActual('../../src/owners/host-bindings.js');
 owner.initializeRailgunOwnerHost(input);

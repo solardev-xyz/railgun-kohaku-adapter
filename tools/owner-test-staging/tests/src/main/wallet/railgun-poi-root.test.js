@@ -1,19 +1,25 @@
+require('../../../../context-host.cjs');
 let mockEndpoint, mockAvailable;
 const mockRequest = jest.fn(),
   mockClients = [];
-jest.mock('../networks/wallet-tor-transport', () => ({
+jest.mock("../../../../../../src/owners/host-bindings.js", () => ({
+  ...jest.requireActual("../../../../../../src/owners/host-bindings.js"),
+  transport: {
   createWalletTorTransport: jest.fn(() => {
     const client = { request: mockRequest, close: jest.fn() };
     mockClients.push(client);
     return client;
   }),
+},
+  tor: { getWalletSocksEndpoint: () => mockEndpoint },
+  settings: { isWalletTorExperimentAvailable: () => mockAvailable },
 }));
-jest.mock('../tor-manager', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));
-jest.mock('../settings-store', () => ({ isWalletTorExperimentAvailable: () => mockAvailable }));
+
+
 // Use genuine opaque context handles so owner cancellation and child isolation
 // exercise the real capability lifetime; only the Tor endpoint/I/O are mocked.
 const { createPrivacyScope, getPrivacyContext } = require("../../../../../../src/owners/context-bindings.js");
-const { createWalletTorTransport } = require('../networks/wallet-tor-transport');
+const { createWalletTorTransport } = require("../../../../../../src/owners/host-bindings.js").transport;
 const {
   createRailgunPoiRootSource: create,
   createRailgunPoiTxidRootSource: createTxid,

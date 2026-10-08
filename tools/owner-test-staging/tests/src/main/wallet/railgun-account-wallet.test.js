@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 const mockConsumeIssuance = jest.fn(),
   mockConsumeProof = jest.fn(),
   mockAssertIssuance = jest.fn();
@@ -41,6 +42,10 @@ jest.mock("../../../../../../src/owners/railgun-wallet-coverage.js", () => ({
 }));
 jest.mock("../../../../../../src/owners/railgun-account-enrollment.js", () => ({
   isRailgunAccountEnrollment: (v) => v === mockEnrollment,
+  withRailgunEnrollmentGenerationKeys: (enrollment, ...args) => {
+    if (enrollment !== mockEnrollment) throw Error('enrollment');
+    return mockEnrollment.withGenerationKeys(...args);
+  },
 }));
 jest.mock("../../../../../../src/owners/railgun-identity.js", () => ({
   assertRailgunRelayCredentialIssuance: (...args) => mockAssertIssuance(...args),
@@ -70,7 +75,7 @@ const fs = require('fs'),
   os = require('os'),
   path = require('path');
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");
-const { getPrivacyStoragePath } = require('./privacy-storage');
+const { getPrivacyStoragePath } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');
 const { claimRailgunAccountPhase } = require("../../../../../../src/owners/railgun-account-phase.js");
 const {
   openRailgunAccountWallet,
@@ -361,7 +366,7 @@ test('preparation re-attests, compares captured values and swaps to a diagnostic
 function operationFixture() {
   const value = preparationFixture();
   jest
-    .spyOn(require("../../../../../../src/data/railgun-private-capsule.js"), 'normalizeRailgunNewCapsule')
+    .spyOn(require("../../../../../../src/execution/railgun-private-capsule.js"), 'normalizeRailgunNewCapsule')
     .mockImplementation((_capsule, owned) => {
       expect(owned.noteHash).toBe(value.owned.ownedPoi[0].hash);
       return { capsule: true };
@@ -789,7 +794,7 @@ test('account capsule mismatch never reaches the authorizer and drains the opera
   const { request } = operationFixture(),
     opened = await openRailgunAccountWallet(options),
     onIntent = jest.fn();
-  require("../../../../../../src/data/railgun-private-capsule.js").normalizeRailgunNewCapsule.mockImplementationOnce(() => {
+  require("../../../../../../src/execution/railgun-private-capsule.js").normalizeRailgunNewCapsule.mockImplementationOnce(() => {
     throw Error('capsule mismatch');
   });
   await expect(
@@ -817,7 +822,7 @@ test('real account normalizers refuse a capsule with a different owned note hash
     capsule.selection
   );
   capsule.noteHash = '0x' + '0'.repeat(63) + '9';
-  const checked = require("../../../../../../src/data/railgun-private-capsule.js").normalizeRailgunNewCapsule(capsule, {
+  const checked = require("../../../../../../src/execution/railgun-private-capsule.js").normalizeRailgunNewCapsule(capsule, {
     walletId: mockEnrollment.descriptor.walletId,
     selection: capsule.selection,
     preparation: offer,
@@ -4609,7 +4614,7 @@ async function actualRelayComposition() {
   enrollmentApi.assertRailgunFencedAccountEnrollment = (value) => {
     if (value !== mockEnrollment || scope.signal.aborted) throw Error('fixture enrollment');
   };
-  const { createPrivacyStorage } = require('./privacy-storage');
+  const { createPrivacyStorage } = require('../../../../fixtures/host/src/main/wallet/privacy-storage.js');
   const { createRailgunPrivateReservations } = require("../../../../../../src/owners/railgun-private-reservations.js");
   const { createRailgunRelayRecoveryStore } = require("../../../../../../src/owners/railgun-relay-recovery-store.js");
   const walletId = mockIdentity.descriptor.walletId;
