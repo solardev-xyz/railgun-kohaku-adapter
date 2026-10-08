@@ -71,6 +71,9 @@ jest.mock("../src/owners/railgun-public-services.js", () => ({
   INDEXER_URL:
     "https://rail-squid.squids.live/squid-railgun-eth-sepolia-v2/graphql",
 }));
+jest.mock("../src/owners/operational-poi-lane.js", () => ({
+  createRailgunPoiLane: (input) => state.createPoi(input),
+}));
 const deferred = () => {
   let resolve, reject;
   const promise = new Promise((a, b) => {
@@ -217,6 +220,19 @@ function fixture() {
         submitStored: jest.fn(() => Promise.resolve({ status: "submitted" })),
       };
     }),
+    createPoi: jest.fn((input) => {
+      const value = plugin(input);
+      for (const name of [
+        "prepareShield",
+        "prepareTransact",
+        "submit",
+        "recoverOutput",
+      ])
+        value[name] = jest.fn(() =>
+          Promise.resolve({ status: "refused", stage: "controlled" }),
+        );
+      return value;
+    }),
     submit: jest.fn(() => Promise.resolve({ status: "submitted" })),
   };
   const initialize =
@@ -265,6 +281,7 @@ test("closed one-shot initializer and exact account options expose no owner auth
       "openPrivate",
       "synchronizeTxid",
       "openRecovery",
+      "openPoiRecovery",
       "openRelayLocal",
       "openRelayRecovery",
       "rebuildPublic",
@@ -1210,3 +1227,59 @@ test.each([false, true])(
     expect(() => f.api.openAccount(f.options)).toThrow();
   },
 );
+
+test("retained POI companion uses fixed owners and excludes simultaneous lanes", async () => {
+  const f = fixture(),
+    session = await f.api.openAccount(f.options);
+  const reviewDisclosures = jest.fn(() => true);
+  const lane = await session.openPoiRecovery({
+    signal: f.caller.signal,
+    reviewDisclosures,
+  });
+  expect(Object.keys(lane).sort()).toEqual(
+    [
+      "prepareShield",
+      "prepareTransact",
+      "submit",
+      "recoverOutput",
+      "signal",
+      "closed",
+      "close",
+    ].sort(),
+  );
+  const original = state.createPoi.mock.results[0].value;
+  expect(original.input.owners.enrollment).toBe(state.enrollments[0]);
+  expect(original.input.reviewDisclosures).toBe(reviewDisclosures);
+  expect(() => session.openRead(laneOptions(f.caller.signal))).toThrow();
+  expect(() =>
+    session.openPoiRecovery({
+      signal: f.caller.signal,
+      reviewDisclosures,
+      proof: {},
+    }),
+  ).toThrow();
+  await lane.prepareShield("a".repeat(64));
+  expect(original.prepareShield).toHaveBeenCalledWith("a".repeat(64));
+  const other = await f.api.openAccount({ ...f.options, accountIndex: 1 });
+  expect(state.createPoi).toHaveBeenCalledTimes(1);
+  lane.close();
+  await lane.closed;
+  await session.close();
+  await other.close();
+});
+test("retained POI unknown original drain preserves account exclusion", async () => {
+  const f = fixture(),
+    session = await f.api.openAccount(f.options);
+  const lane = await session.openPoiRecovery({
+    signal: f.caller.signal,
+    reviewDisclosures: () => true,
+  });
+  const original = state.createPoi.mock.results[0].value;
+  original.close.mockImplementation(() =>
+    original.drain.reject(Error("original unknown")),
+  );
+  lane.close();
+  await expect(lane.closed).rejects.toThrow("original unknown");
+  await expect(session.closed).rejects.toThrow("original unknown");
+  expect(() => f.api.openAccount(f.options)).toThrow();
+});

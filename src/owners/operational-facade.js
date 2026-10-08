@@ -125,6 +125,7 @@ function initializeRailgunMain(options) {
   const walletApi = require("./railgun-account-wallet.js");
   const pluginApi = require("./railgun-kohaku-plugin.js");
   const recoveryApi = require("./railgun-kohaku-recovery.js");
+  const poiApi = require("./operational-poi-lane.js");
   const txidApi = require("./railgun-account-txid.js");
   const publicServices = require("./railgun-public-services.js");
   const relayApi = require("./railgun-relay-operation.js");
@@ -519,31 +520,43 @@ function initializeRailgunMain(options) {
         }
       });
     }
-    function recovery(options) {
-      const data = record(options, [
-        "signal",
-        "reviewDisclosures",
-        "reviewTransaction",
-        "gasLimit",
-        "maxGasFee",
-      ]);
+    function recovery(options, poi = false) {
+      const data = record(
+        options,
+        poi
+          ? ["signal", "reviewDisclosures"]
+          : [
+              "signal",
+              "reviewDisclosures",
+              "reviewTransaction",
+              "gasLimit",
+              "maxGasFee",
+            ],
+      );
       signal(data.signal);
-      for (const callback of [data.reviewDisclosures, data.reviewTransaction])
+      for (const callback of poi
+        ? [data.reviewDisclosures]
+        : [data.reviewDisclosures, data.reviewTransaction])
         if (typeof callback !== "function" || types.isProxy(callback))
           throw fail();
       if (
-        typeof data.gasLimit !== "bigint" ||
-        data.gasLimit <= 0n ||
-        data.gasLimit > 3000000n ||
-        typeof data.maxGasFee !== "bigint" ||
-        data.maxGasFee <= 0n ||
-        data.maxGasFee > 2000000000000000n
+        !poi &&
+        (typeof data.gasLimit !== "bigint" ||
+          data.gasLimit <= 0n ||
+          data.gasLimit > 3000000n ||
+          typeof data.maxGasFee !== "bigint" ||
+          data.maxGasFee <= 0n ||
+          data.maxGasFee > 2000000000000000n)
       )
         throw fail();
       return run(async () => {
         let companion;
         try {
-          companion = recoveryApi.createRailgunKohakuRecovery({
+          companion = (
+            poi
+              ? poiApi.createRailgunPoiLane
+              : recoveryApi.createRailgunKohakuRecovery
+          )({
             owners: owners(),
             destination: publicApi.getRailgunAccountPublicDestination(
               state.public.coordinator,
@@ -575,18 +588,39 @@ function initializeRailgunMain(options) {
             if (state.lane === companion) state.lane = null;
           }).catch(() => {});
           return Object.freeze({
-            history(after = null) {
-              active();
-              return retain(companion.history(after));
-            },
-            resumeProof(holdId) {
-              active();
-              return retain(companion.resumeProof(holdId));
-            },
-            submitStored(holdId) {
-              active();
-              return retain(companion.submitStored(holdId));
-            },
+            ...(poi
+              ? {
+                  prepareShield(holdId) {
+                    active();
+                    return retain(companion.prepareShield(holdId));
+                  },
+                  prepareTransact(holdId) {
+                    active();
+                    return retain(companion.prepareTransact(holdId));
+                  },
+                  submit(capsuleDigest) {
+                    active();
+                    return retain(companion.submit(capsuleDigest));
+                  },
+                  recoverOutput(capsuleDigest) {
+                    active();
+                    return retain(companion.recoverOutput(capsuleDigest));
+                  },
+                }
+              : {
+                  history(after = null) {
+                    active();
+                    return retain(companion.history(after));
+                  },
+                  resumeProof(holdId) {
+                    active();
+                    return retain(companion.resumeProof(holdId));
+                  },
+                  submitStored(holdId) {
+                    active();
+                    return retain(companion.submitStored(holdId));
+                  },
+                }),
             signal: companion.signal,
             closed: companion.closed,
             close() {
@@ -1074,7 +1108,8 @@ function initializeRailgunMain(options) {
       rebuildPublic: (...extra) => replacePublic("new", extra),
       resumePublic: (...extra) => replacePublic("pending", extra),
       synchronizeTxid,
-      openRecovery: recovery,
+      openRecovery: (options) => recovery(options),
+      openPoiRecovery: (options) => recovery(options, true),
       openRelayLocal: (options) => relay(options, false),
       openRelayRecovery: (options) => relay(options, true),
       openRead: (options) => lane("read", options),

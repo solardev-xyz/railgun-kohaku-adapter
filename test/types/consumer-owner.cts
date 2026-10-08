@@ -118,3 +118,30 @@ const install: () => {
   initialize(options: { context: owner.OwnerContextHost }): void;
 } = worker.installRailgunStorageWorkerBootstrap;
 void install;
+
+async function poi(session: owner.AccountSession) {
+  const lane = await session.openPoiRecovery({
+    signal,
+    reviewDisclosures: (summary, context) => {
+      if (summary.purpose === "railgun-retained-poi-facade-disclosure-v1") {
+        const disabled: false = summary.poiSubmissionEnabled;
+        void disabled;
+      } else {
+        summary.requestInventory.map((value) => value.maxRequests);
+      }
+      return !context.signal.aborted;
+    },
+  });
+  const prepared = await lane.prepareShield("a".repeat(64));
+  if (prepared.status === "prepared") {
+    const outcome = await lane.recoverOutput(prepared.capsuleDigest);
+    if (outcome.status === "matched") {
+      const unavailable: false = outcome.membershipAuthenticated;
+      void unavailable;
+    }
+    await lane.submit(prepared.capsuleDigest);
+  }
+  lane.close();
+  await lane.closed;
+}
+void poi;

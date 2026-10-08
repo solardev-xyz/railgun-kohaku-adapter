@@ -85,3 +85,17 @@ if (proofOutcome.status === "proof-present") {
   const regenerated: "proof-stored" = proofOutcome.status;
   void regenerated;
 }
+
+declare const poi: owner.PoiRecoveryLane;
+// @ts-expect-error no raw membership receipt parameter
+poi.prepareShield("id", {});
+// @ts-expect-error no caller proof or plan accepted
+poi.submit({ proof: {}, plan: {} });
+// @ts-expect-error no generic type/policy selector
+poi.prepare("id", "Shield");
+// @ts-expect-error no retained store access
+poi.store;
+declare const output: Extract<owner.PoiOutputOutcome, { status: "matched" }>;
+// @ts-expect-error output matching cannot grant membership acceptance
+const acceptedMembership: true = output.membershipAuthenticated;
+void acceptedMembership;
