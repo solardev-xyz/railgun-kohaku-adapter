@@ -32,6 +32,8 @@ Reject foreign contexts, changed profiles/sessions, aborted signals, invalid ind
 
 The callback returns an original native promise resolving to `undefined`. Retain it through genuine settlement and wipe the borrowed bytes on abort and final settlement. Spending and root loans are retained through their original owner work; unknown signing-child exits keep the stable account excluded. Viewing consumers currently copy material to supervised utilities: that host loan ends after the copy, and an unknown viewing exit does not itself hold the signer latch. A detached copy does not extend vault access or authorize spending.
 
+Storage-root teardown is distinct from new credential admission. Once both the genuine context and the request signal are revoked, the root bytes must already be wiped. Continue awaiting the original callback, and accept its eventual `undefined` completion as a drain even if the vault or profile has changed. This grants no authority: the context is already revoked. Preserve original callback rejection, non-void-result refusal and unknown settlement. A request-only or context-only abort does not qualify, and this exception never applies to viewing or spending loans. Rechecking current vault/profile after this completed root drain would incorrectly quarantine normal account closure or vault locking.
+
 ## Public tests
 
 [`credential-vectors.json`](../../test/conformance/credential-vectors.json) contains only the well-known public test mnemonic, two fictitious profile identities and indices 0, 1 and 65535. The vectors were generated independently using Python's standard HMAC/PBKDF2 implementation, without importing the host helper. No real wallet, directory, network or profile is involved.

@@ -1,0 +1,91 @@
+{
+  "schema": "railgun-installed-owner-read-provenance-v1",
+  "packageCommit": "133e88cce2e1a37288e4f0bb61bb6d8c726ed6ef",
+  "hostCommit": "9947698957c4612f4af5a981465661601ab393be",
+  "tarball": {
+    "bytes": 534753,
+    "sha256": "c0217e23804e9ec3871977fc8a802be5e087565225aa493b217240ac8e9a467c",
+    "mode": 420
+  },
+  "launcherFreezeSha256": "6d2f5b7ac8b5b9fd8e9c8c8e661aa78caab86300b3b917f2e9755069e96a5385",
+  "requestSha256": "7664b74e03b7ced9f902a3685110ecb5f1725dbc4754942fd5954338b18a62d8",
+  "sourceFreezeSha256": "772de7c579e1134036d814e6b958e5c91a95e47f42079cb2240389e1b3539946",
+  "originalReportSha256": "29003370fa33e2d6ea38f101a2196045b27be01be3ef5e88916ff5956c13cd8e",
+  "reportDerivation": {
+    "onlyChangedField": "cacheAfter.native[0]",
+    "replacement": "<host>/node_modules/better-sqlite3/prebuilds/darwin-arm64.node"
+  },
+  "runtime": {
+    "railgun-engine.asar": {
+      "bytes": 81790332,
+      "sha256": "019f10880abf1c448aee02ec77c5c2d68c3561c7b4eef02095d66bb5fecd6a7a",
+      "mode": 420
+    },
+    "railgun-prover.asar": {
+      "bytes": 1613882,
+      "sha256": "dd50a29f297867b3bf91cb425066e1d257ea02230a94b02e4cf34c5c70a0c7ab",
+      "mode": 420
+    },
+    "Electron Framework": {
+      "bytes": 202648272,
+      "sha256": "69147ed2f3eb9c95f47c442ae864767fa5a9fc8a2a9700c5ecf86be28c099c7f",
+      "mode": 493
+    },
+    "Electron": {
+      "bytes": 33968,
+      "sha256": "c9da78c3c79b9e6d6714fbf2a1136c4eb4a93cc5edad0f8ccfb058d681325e7e",
+      "mode": 493
+    },
+    "default_app.asar": {
+      "bytes": 110862,
+      "sha256": "0eb2491b0a9ac94790389d39c09dd5005c6c1f0665842943829bbd0193f6cc4f",
+      "mode": 420
+    }
+  },
+  "sqliteAddon": {
+    "bytes": 1980736,
+    "sha256": "98e0e8acd01c632fe5615243e1296af0372826f8783b18fc31c506f73c47459c",
+    "mode": 420
+  },
+  "recipes": {
+    "freedom-read.cjs": {
+      "bytes": 7305,
+      "sha256": "ec47f3332e256d1c86e5968be7a331ccc7fe1c3929bac1cc3128edd38b7b232b",
+      "mode": 420
+    },
+    "read-scenario.cjs": {
+      "bytes": 6539,
+      "sha256": "6baeecc80a34c99c3b5c417ead4177720f861bc463e712a7009cb285c712a85c",
+      "mode": 420
+    }
+  },
+  "mainCacheRows": 530,
+  "prePostInventoryUnchanged": true,
+  "driverExitObserved": 0,
+  "failedAttempts": [
+    {
+      "case": "a",
+      "resultSha256": "972ddef01943f3e519486f76cbb7523adde104ee613dc19e6cb0a31578969b67",
+      "qualified": false,
+      "postUnchanged": true,
+      "exitCode": null,
+      "signal": "SIGABRT"
+    },
+    {
+      "case": "b",
+      "resultSha256": "8ae418eed72cd8457242375321fbe009b72803458177ac81274c785a80c2b4ad",
+      "qualified": false,
+      "postUnchanged": true,
+      "exitCode": 1,
+      "signal": null
+    },
+    {
+      "case": "c",
+      "resultSha256": "4e035d449bf1056144947c61a2f3c6b39a595a81e2ded00e3f8cacfbecaddf16",
+      "qualified": false,
+      "postUnchanged": true,
+      "exitCode": 1,
+      "signal": null
+    }
+  ]
+}

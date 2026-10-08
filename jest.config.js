@@ -2,6 +2,8 @@
 module.exports = {
   // Bound disposable worker/native-storage suite resources in local runs and CI.
   maxWorkers: 2,
+  // Historical source snapshots are never executable modules or test discovery.
+  modulePathIgnorePatterns: ['<rootDir>/tools/freedom-legacy-qualification/'],
   workerIdleMemoryLimit: '256MB',
   testMatch: [
     '<rootDir>/test/**/*.test.js',

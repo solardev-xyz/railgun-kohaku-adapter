@@ -1,0 +1,22 @@
+{
+  "INITIALIZED.json": {
+    "bytes": 14560,
+    "sha256": "675dfb0de2df1e81e7790eec75b4716ca2466188410e2e74cd6f54f58b134400"
+  },
+  "INVENTORY-FINAL.json": {
+    "bytes": 12320,
+    "sha256": "d9c29985c120dc9eb6fb4d0ce8747023cc657a686e663551b42a8ef4c7145824"
+  },
+  "PROCESS.json": {
+    "bytes": 166,
+    "sha256": "aa9ed84ce116b406cf7d6b4fc802af9f95c2dd2dd7a5514735355a5e7d55a2c2"
+  },
+  "PROVENANCE.json": {
+    "bytes": 2255,
+    "sha256": "847a882125d0afe7d7d8549bd6b625f30358e5fc832d3eb2f56693b4ba31064d"
+  },
+  "README.md": {
+    "bytes": 1921,
+    "sha256": "834e89fd9f050944cc8d57b0507ee3c7fe13e3105d35a5eb82d220dbf7f61274"
+  }
+}

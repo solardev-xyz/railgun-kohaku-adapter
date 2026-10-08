@@ -23,7 +23,9 @@ async function consume() {
     gasLimit: 100n,
     maxGasFee: 100n,
     reviewPreparation: async (summary, context) =>
-      summary.chainStateVerified === false && !context.signal.aborted,
+      summary.chainStateVerified === false &&
+      summary.submitter.startsWith("0x") &&
+      !context.signal.aborted,
     reviewTransaction: (summary, context) =>
       summary.maxGasFee <= 100n && !context.signal.aborted,
   });
@@ -57,11 +59,21 @@ async function consume() {
     gasLimit: 100n,
     maxGasFee: 100n,
     reviewDisclosures: (summary, originalSignal) =>
-      summary.originalSpendingSignatureReused && !originalSignal.aborted,
+      summary.originalSpendingSignatureReused &&
+      summary.submitter.startsWith("0x") &&
+      !originalSignal.aborted,
     reviewTransaction: (summary) => summary.maxGasFee === 100n,
   });
   const history = await recovery.history();
-  if (history.records[0]) await recovery.resumeProof(history.records[0].holdId);
+  if (history.records[0]) {
+    const proof = await recovery.resumeProof(history.records[0].holdId);
+    if (proof.status === "proof-present" || proof.status === "proof-stored") {
+      const checked: string = proof.transactionDigest;
+      const noSubmission: false = proof.submissionEnabled;
+      void checked;
+      void noSubmission;
+    }
+  }
   recovery.close();
   await recovery.closed;
   const local = await session.openRelayLocal({
@@ -89,8 +101,7 @@ async function consume() {
   await local.closed;
   const cold = await session.openRelayRecovery({ signal });
   const page = await cold.list();
-  if ("records" in page && page.records[0])
-    await cold.resume(page.records[0].operationId);
+  if (page.records[0]) await cold.resume(page.records[0].operationId);
   cold.close();
   await cold.closed;
   await session.synchronizeTxid({
@@ -99,6 +110,20 @@ async function consume() {
     reviewDisclosure: (summary, context) =>
       summary.maximumAdvancePages === 0 && !context.signal.aborted,
   });
+  const observed = await session.observeOwnedPoi({
+    noteId: "0:1",
+    signal,
+    reviewDisclosure: (summary, context) =>
+      summary.selectedTypeAndBlindAvailableBeforeOpen === false &&
+      summary.requiresCurrentUnspentOwnedNote &&
+      !context.signal.aborted,
+  });
+  const selectedCount: 1 = observed.selectedCount;
+  const notJoined: false = observed.transferJoinEstablished;
+  const notSpendable: false = observed.spendingEnabled;
+  void selectedCount;
+  void notJoined;
+  void notSpendable;
   await session.close();
 }
 void consume;
@@ -107,3 +132,37 @@ const install: () => {
   initialize(options: { context: owner.OwnerContextHost }): void;
 } = worker.installRailgunStorageWorkerBootstrap;
 void install;
+
+async function poi(session: owner.AccountSession) {
+  const lane = await session.openPoiRecovery({
+    signal,
+    reviewDisclosures: (summary, context) => {
+      if (summary.purpose === "railgun-retained-poi-facade-disclosure-v1") {
+        const disabled: false = summary.poiSubmissionEnabled;
+        void disabled;
+      } else {
+        summary.requestInventory.map((value) => value.maxRequests);
+      }
+      return !context.signal.aborted;
+    },
+  });
+  const prepared = await lane.prepareShield("a".repeat(64));
+  if (prepared.status === "prepared") {
+    const outcome = await lane.recoverOutput(prepared.capsuleDigest);
+    if (outcome.status === "matched") {
+      const unavailable: false = outcome.membershipAuthenticated;
+      void unavailable;
+    }
+    const attempted = await lane.recoverAttemptedOutput(prepared.capsuleDigest);
+    if (attempted.status === "matched") {
+      const retry: false = attempted.retryEnabled;
+      const uncertain: false = attempted.attemptOutcomeKnown;
+      void retry;
+      void uncertain;
+    }
+    await lane.submit(prepared.capsuleDigest);
+  }
+  lane.close();
+  await lane.closed;
+}
+void poi;

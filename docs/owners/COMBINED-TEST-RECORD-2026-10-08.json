@@ -1,0 +1,62 @@
+{
+  "scope": "Separate observed runs; passing controls do not relabel the default worker crash or establish its cause. Default Jest configuration is unchanged.",
+  "runs": [
+    {
+      "commit": "043ac64",
+      "command": "npm test",
+      "logBytes": 980,
+      "logSha256": "7ee270e3b9e95d69fdabffa92591d43450f7ab0938b7458354803ccda19ec28a",
+      "outcome": {
+        "suitesPassed": 188,
+        "suitesFailedToRun": 1,
+        "testsPassed": 8130,
+        "exitCode": 1,
+        "failure": "Node GC SIGSEGV in railgun-relay-run test worker; cause unestablished"
+      }
+    },
+    {
+      "commit": "043ac64",
+      "command": "isolated railgun-relay-run",
+      "logBytes": 348,
+      "logSha256": "a94cbb9314f58d281699711d38b1b12c74744c21369fff6df9766b9099e6fc95",
+      "outcome": {
+        "testsPassed": 62,
+        "exitCode": 0
+      }
+    },
+    {
+      "commit": "043ac64",
+      "command": "npm test -- --workerIdleMemoryLimit=1MB",
+      "logBytes": 219,
+      "logSha256": "7e96e7c04ac9188681ccb58507f4761d87baafb2c7dd63947c8e290790e67c5c",
+      "outcome": {
+        "suitesPassed": 189,
+        "testsPassed": 8192,
+        "exitCode": 0
+      }
+    },
+    {
+      "commit": "0a3d6c2",
+      "command": "npm test -- --workerIdleMemoryLimit=1MB",
+      "logBytes": 220,
+      "logSha256": "e1c18a5c20f97461c68558b315cc8c7152add8a526a42de004b4d023eadf50d8",
+      "outcome": {
+        "suitesPassed": 210,
+        "testsPassed": 9466,
+        "exitCode": 0
+      }
+    },
+    {
+      "commit": "0a3d6c2",
+      "command": "cached TypeScript 5.9.3 owner-typecheck",
+      "logBytes": 141,
+      "logSha256": "f48123eef37ee4006b3ccd83454b8d595d7edcdd8d84cc2566c24d7f784a8154",
+      "outcome": {
+        "programs": 4,
+        "negativeControls": 32,
+        "hostFamilies": 20,
+        "exitCode": 0
+      }
+    }
+  ]
+}

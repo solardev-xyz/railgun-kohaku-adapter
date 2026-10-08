@@ -71,3 +71,60 @@ const mutateReview: owner.Review<owner.RelayReview> = (summary) => {
   return false;
 };
 void mutateReview;
+
+declare const cold: owner.RelayRecoveryLane;
+async function onlyListData() {
+  const page = await cold.list();
+  // @ts-expect-error list rejects failures; it never returns a refusal status
+  page.status;
+}
+void onlyListData;
+declare const proofOutcome: owner.PrivateProofRecoveryOutcome;
+if (proofOutcome.status === "proof-present") {
+  // @ts-expect-error stored proof presence is not fresh proof regeneration
+  const regenerated: "proof-stored" = proofOutcome.status;
+  void regenerated;
+}
+
+declare const poi: owner.PoiRecoveryLane;
+// @ts-expect-error no raw membership receipt parameter
+poi.prepareShield("id", {});
+// @ts-expect-error no caller proof or plan accepted
+poi.submit({ proof: {}, plan: {} });
+// @ts-expect-error no generic type/policy selector
+poi.prepare("id", "Shield");
+// @ts-expect-error no retained store access
+poi.store;
+declare const output: Extract<owner.PoiOutputOutcome, { status: "matched" }>;
+// @ts-expect-error output matching cannot grant membership acceptance
+const acceptedMembership: true = output.membershipAuthenticated;
+void acceptedMembership;
+
+declare const attempted: Extract<
+  owner.PoiAttemptedOutputOutcome,
+  { status: "matched" }
+>;
+// @ts-expect-error attempted output matching cannot establish safe retry
+const retry: true = attempted.retryEnabled;
+void retry;
+// @ts-expect-error attempted state is selected by a fixed method, not options
+poi.recoverOutput("id", { attempted: true });
+
+// @ts-expect-error selection requires explicit review before any wallet opens
+session.observeOwnedPoi({ noteId: "0:1", signal });
+session.observeOwnedPoi({
+  noteId: "0:1",
+  signal,
+  reviewDisclosure: () => true,
+  // @ts-expect-error no receipt, policy, store or caller proof selection
+  receipt: {},
+});
+declare const observed: owner.OwnedPoiObservation;
+// @ts-expect-error observation is not a spending permission
+const spendable: true = observed.spendingEnabled;
+void spendable;
+// @ts-expect-error a selected owned note is not authenticated as a prior transfer output
+const transferJoined: true = observed.transferJoinEstablished;
+void transferJoined;
+// @ts-expect-error the private membership receipt never leaves the observer
+observed.receipt;

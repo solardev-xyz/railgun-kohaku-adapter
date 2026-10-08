@@ -8,7 +8,7 @@ const path = require('path');
 const { createHash } = require('crypto');
 const ROOT = path.resolve(__dirname, '../..');
 const LIST_FILE = 'src/owners/source-files.json';
-const LIST_SHA256 = '945cf9beac4a149b5c434d5a173135da524f6076a5c2b35a15e7e0fa9612464a';
+const LIST_SHA256 = '1a317302f524edaf52d1747fb25626b58d248ce474ad256caecfcabf05ed9e6d';
 const PACKAGE = '@freedom/railgun-kohaku-adapter';
 const sha = (value) => createHash('sha256').update(value).digest('hex');
 const fail = () => Object.assign(new Error('Railgun policy source unavailable'), {

@@ -1,4 +1,6 @@
-# Private owner source and credential transition — not activated
+# Historical checkpoint: private owner source and credential transition
+
+This document preserves the original source-staging checkpoint. Its activation blockers and test totals describe that checkpoint, not the current candidate. The current boundary is described in [INTEGRATION.md](INTEGRATION.md) and the package README; later installed-owner qualification records are under `docs/freedom-qualification/`. Do not treat the historical “no public facade” statement below as current.
 
 This package-only prerequisite starts at package commit
 `714401ae4a6f18275829e297ef5856d305a820ae` and reads every Freedom source from

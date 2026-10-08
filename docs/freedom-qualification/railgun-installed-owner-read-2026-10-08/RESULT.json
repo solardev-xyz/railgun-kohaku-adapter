@@ -1,0 +1,14 @@
+{
+  "schema": "railgun-installed-owner-read-result-v1",
+  "qualified": true,
+  "postUnchanged": true,
+  "requestSha256": "7664b74e03b7ced9f902a3685110ecb5f1725dbc4754942fd5954338b18a62d8",
+  "sourceFreezeSha256": "772de7c579e1134036d814e6b958e5c91a95e47f42079cb2240389e1b3539946",
+  "report": {
+    "bytes": 154079,
+    "sha256": "29003370fa33e2d6ea38f101a2196045b27be01be3ef5e88916ff5956c13cd8e",
+    "mode": 384
+  },
+  "nativeScope": "synthetic installed public-facade scan/read only",
+  "utilityModuleCacheObserved": false
+}

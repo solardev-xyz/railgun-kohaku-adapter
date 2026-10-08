@@ -2,6 +2,7 @@
 "use strict";
 const {
   checkCredentialRow,
+  checkStorageRootDrain,
   PURPOSES,
 } = require("../tools/conformance/credentials.cjs");
 const vectors = require("./conformance/credential-vectors.json");
@@ -20,6 +21,10 @@ function fixture(change = {}) {
       const bytes = new Uint8Array(32);
       bytes.set(Buffer.from(expected, "hex"));
       if (change.wrongBytes) bytes[0] ^= 1;
+      const wipe = () => {
+        if (!change.noAbortWipe) bytes.fill(0);
+      };
+      request.signal.addEventListener("abort", wipe, { once: true });
       try {
         const original = consume(
           Object.freeze(
@@ -32,25 +37,36 @@ function fixture(change = {}) {
           await new Promise((resolve, reject) =>
             Promise.prototype.then.call(original, resolve, reject),
           );
+        if (change.refuseDrain && request.signal.aborted)
+          throw Error("revoked drain");
       } finally {
+        request.signal.removeEventListener("abort", wipe);
         if (!change.noWipe) bytes.fill(0);
       }
     },
   };
   const guard = Object.freeze({});
-  const createContext = (row, purpose) => ({
-    request: {
-      handle: Object.freeze({}),
-      vaultSession: vault.signal,
-      accountIndex: row.accountIndex,
-      purpose,
-      signal: new AbortController().signal,
-    },
-    assertProfileGuard: (value) => {
-      if (value !== guard) throw Error("foreign guard");
-    },
-    close: () => closed.push(purpose),
-  });
+  const createContext = (row, purpose) => {
+    const operation = new AbortController();
+    let done = false;
+    return {
+      request: {
+        handle: Object.freeze({}),
+        vaultSession: vault.signal,
+        accountIndex: row.accountIndex,
+        purpose,
+        signal: operation.signal,
+      },
+      assertProfileGuard: (value) => {
+        if (value !== guard) throw Error("foreign guard");
+      },
+      close: () => {
+        operation.abort();
+        if (!done) closed.push(purpose);
+        done = true;
+      },
+    };
+  };
   return { host, createContext, closed, row: vectors.rows[0] };
 }
 test("normative public fixture pin and account/profile domain coverage", () => {
@@ -88,5 +104,19 @@ test.each(["wrongBytes", "noWipe", "early"])(
     const f = fixture({ [kind]: true });
     await expect(checkCredentialRow(f)).rejects.toThrow();
     expect(f.closed).toEqual(["spending-public"]);
+  },
+);
+
+test("storage-root revocation wipes immediately and permits only original void drain", async () => {
+  const f = fixture();
+  await expect(checkStorageRootDrain(f)).resolves.toHaveLength(1);
+  expect(f.closed).toEqual(["storage-root"]);
+});
+test.each(["noAbortWipe", "refuseDrain", "early"])(
+  "root-drain checker rejects %s",
+  async (kind) => {
+    await expect(
+      checkStorageRootDrain(fixture({ [kind]: true })),
+    ).rejects.toThrow();
   },
 );

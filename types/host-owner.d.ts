@@ -214,8 +214,8 @@ export type ReviewData =
   | readonly ReviewData[]
   | { readonly [key: string]: ReviewData };
 export interface PublicSubmitter {
-  readonly index: number;
-  readonly type: string;
+  readonly index: 0;
+  readonly type: "mnemonic";
   readonly address: string;
 }
 export type PrivateKind =
@@ -229,7 +229,7 @@ export interface PrivatePreparationReview {
   readonly asset: { readonly __type: "erc20"; readonly contract: string };
   readonly amount: string;
   readonly recipient: string;
-  readonly submitter: PublicSubmitter;
+  readonly submitter: string;
   readonly inputType: "Shield" | "Transact";
   readonly selection: {
     readonly noteId: string;
@@ -366,7 +366,7 @@ export interface RecoveryDisclosureReview {
   readonly purpose: "railgun-recovered-private-submission";
   readonly chainId: 11155111;
   readonly operation: PrivateKind;
-  readonly submitter: PublicSubmitter;
+  readonly submitter: string;
   readonly recipient: string;
   readonly recipientRelationship?: "foreign";
   readonly foreignOutputPoiDisclosure?: string;
@@ -417,7 +417,9 @@ export interface RecoveryHistory {
 }
 export type PrivateProofRecoveryOutcome =
   | {
-      readonly status: "proof-stored";
+      /** proof-present checks an existing saved slot; it does not reprove,
+       * freshly verify, or grant submission authority. */
+      readonly status: "proof-stored" | "proof-present";
       readonly holdId: string;
       readonly transactionDigest: string;
       readonly submissionEnabled: false;
@@ -432,6 +434,124 @@ export interface RecoveryLane extends LaneLifetime {
   history(after?: string | null): Promise<RecoveryHistory>;
   resumeProof(holdId: string): Promise<PrivateProofRecoveryOutcome>;
   submitStored(holdId: string): Promise<RecoverySubmissionOutcome>;
+}
+/** Read-only disclosure inventories. Neither summary is an authorization receipt. */
+export interface PoiPreparationDisclosure {
+  readonly purpose: "railgun-retained-poi-facade-disclosure-v1";
+  readonly operation:
+    | "prepare-shield"
+    | "prepare-transact"
+    | "recover-output"
+    | "recover-attempted-output";
+  readonly chainId: 11155111;
+  readonly selection: string;
+  readonly destinationSource: "authenticated-account-public-destination";
+  readonly endpoints: {
+    readonly poi: "https://ppoi.fdi.network";
+    readonly indexer: string;
+  };
+  readonly exposures: readonly string[];
+  readonly exactServiceValuesAvailableBeforeAuthenticatedOpen: false;
+  readonly mayDiscloseBeforeCreatorTypeMismatchEstablished: true;
+  readonly spendingSigningEnabled: false;
+  readonly transactionBroadcastEnabled: false;
+  readonly poiSubmissionEnabled: false;
+}
+export interface PoiSubmissionDisclosure {
+  readonly version: 1;
+  readonly purpose: "validate-retained-poi" | "submit-retained-poi";
+  readonly protocol: "railgun";
+  readonly deployment: "sepolia";
+  readonly chainId: 11155111;
+  readonly accountIndex: number;
+  readonly listKey: string;
+  readonly txidVersion: "V2_PoseidonMerkle";
+  readonly operation: "transfer" | "unshield" | "partial-unshield";
+  readonly outputCount: number;
+  readonly unshieldIdCategory: "railgun-txid" | "absent";
+  readonly disclosureExplanation?: string;
+  readonly destinations: readonly {
+    readonly role: "poi-service" | "source-rpc" | "receipt-rpc";
+    readonly origin: string;
+  }[];
+  readonly requestInventory: readonly {
+    readonly method: string;
+    readonly maxRequests: number;
+  }[];
+  readonly disclosureCategories: readonly string[];
+  readonly uncertaintyCategories: readonly string[];
+  readonly requestIdAllocation: "local-time-once-at-durable-attempt";
+  readonly consentGranted: false;
+  readonly transportAuthorized: false;
+  readonly requestLimitsEnforced: false;
+}
+export type PoiRefusal = Readonly<{ status: "refused"; stage: string }>;
+export type PoiPreparationOutcome =
+  | PoiRefusal
+  | Readonly<{
+      status: "prepared";
+      capsuleDigest: string;
+      payloadSha256: string;
+      revision: number;
+      proofAuthenticated: false;
+      disclosureEnabled: false;
+      spendingEnabled: false;
+    }>;
+export type PoiSubmissionOutcome = Readonly<{
+  status: "refused" | "recovery-required";
+  stage: string;
+  sourceOutcome?: Readonly<Record<string, ReviewData>>;
+  response?: Readonly<{
+    classification: string;
+    httpStatus: number | null;
+    responseBytes: number;
+    matchingEnvelope: boolean;
+    transportAuthenticated: false;
+    acceptanceVerified: false;
+    disclosureEnabled: false;
+    spendingEnabled: false;
+  }>;
+}>;
+export type PoiOutputOutcome =
+  | PoiRefusal
+  | Readonly<{
+      status: "matched";
+      capsuleDigest: string;
+      revision: number;
+      payloadSha256: string;
+      outputMatched: true;
+      proofVerified: false;
+      originalInputReconstructed: false;
+      originalRootsAccepted: false;
+      membershipAuthenticated: false;
+      sourceAuthenticated: false;
+      disclosureEnabled: false;
+      spendingEnabled: false;
+    }>;
+export type PoiAttemptedOutputOutcome =
+  | PoiRefusal
+  | (Extract<PoiOutputOutcome, { status: "matched" }> &
+      Readonly<{
+        recordState: "attempted";
+        attemptBodySha256: string;
+        eligibilityEstablished: false;
+        attemptOutcomeKnown: false;
+        submissionAccepted: false;
+        retryEnabled: false;
+      }>);
+/** Exclusive companion. Type-specific routes reauthenticate actual creators;
+ * a mismatched route can disclose before source classification refuses it.
+ * submit is terminal for this lane, including refusal/uncertain delivery. */
+export interface PoiRecoveryLane extends LaneLifetime {
+  prepareShield(holdId: string): Promise<PoiPreparationOutcome>;
+  prepareTransact(holdId: string): Promise<PoiPreparationOutcome>;
+  submit(capsuleDigest: string): Promise<PoiSubmissionOutcome>;
+  /** Existing output matching only, never list acceptance or spend eligibility. */
+  recoverOutput(capsuleDigest: string): Promise<PoiOutputOutcome>;
+  /** Attempted-state diagnostic only; never delivery acceptance or retry permission. */
+  recoverAttemptedOutput(
+    capsuleDigest: string,
+  ): Promise<PoiAttemptedOutputOutcome>;
 }
 export interface RelayQuote {
   data: string;
@@ -628,11 +748,10 @@ export interface RelayHistory {
   readonly nextAfter: string | null;
 }
 export interface RelayRecoveryLane extends LaneLifetime {
-  list(after?: string | null): Promise<RelayHistory | RelayRefusal>;
+  /** Ordinary and unknown failures reject; list has no refusal-value arm. */
+  list(after?: string | null): Promise<RelayHistory>;
   resume(operationId: string): Promise<RelayReady | RelayRefusal>;
-  discard(
-    operationId: string,
-  ): Promise<
+  discard(operationId: string): Promise<
     | {
         readonly status: "cancelled-unsigned" | "discarded-signed";
         readonly operationId: string;
@@ -687,6 +806,54 @@ export interface TxidDiagnostic {
   readonly unverified: true;
   readonly spendingEnabled: false;
 }
+/** Reviewed before a completed wallet opens; exact selected type/blind are not
+ * available yet. This consent does not authorize nullifier or transport requests. */
+export interface OwnedPoiDisclosureReview {
+  readonly purpose: "railgun-owned-note-poi-disclosure-v1";
+  readonly noteId: string;
+  readonly chainId: 11155111;
+  readonly txidVersion: "V2_PoseidonMerkle";
+  readonly listKey: string;
+  readonly endpoint: string;
+  readonly sourceDestination: "authenticated-account-public-destination";
+  readonly selectedTypeAndBlindAvailableBeforeOpen: false;
+  readonly requiresCurrentUnspentOwnedNote: true;
+  readonly disclosures: readonly [
+    "completed-wallet-canonical-source-and-timing",
+    "selected-blinded-commitment",
+    "commitment-type",
+    "list",
+    "membership-proof-and-event",
+    "membership-root",
+  ];
+  readonly requests: readonly [
+    "ppoi_pois_per_list",
+    "ppoi_merkle_proofs",
+    "ppoi_poi_events",
+    "ppoi_validate_poi_merkleroots",
+  ];
+  readonly transferJoinEstablished: false;
+  readonly txidProvenanceVerified: false;
+  readonly reservationsChecked: false;
+  readonly spendingEnabled: false;
+}
+/** Snapshot-owned note/list diagnostic only. No prior-transfer join or spending
+ * eligibility follows even when allValid is true. All original work has drained. */
+export interface OwnedPoiObservation {
+  readonly noteId: string;
+  readonly inputType: "Shield" | "Transact";
+  readonly selectedCount: 1;
+  readonly listKey: string;
+  readonly statuses: readonly [string];
+  readonly rootsAccepted: boolean;
+  readonly membershipVerified: boolean;
+  readonly allValid: boolean;
+  readonly ownershipAtSnapshot: true;
+  readonly transferJoinEstablished: false;
+  readonly txidProvenanceVerified: false;
+  readonly reservationsChecked: false;
+  readonly spendingEnabled: false;
+}
 export interface AccountSession {
   describe(): Readonly<{
     accountIndex: number;
@@ -714,10 +881,27 @@ export interface AccountSession {
     signal: AbortSignal;
     reviewDisclosure: Review<TxidDisclosureReview>;
   }): Promise<TxidDiagnostic>;
+  /** Exclusive one-shot diagnostic; its original 180s budget includes review.
+   * Exact true within 30s is required before opening a wallet or contacting POI.
+   * Native callback promises must settle on cancellation; nonnative thenables
+   * are not assimilated and conservatively quarantine this account. */
+  observeOwnedPoi(options: {
+    noteId: string;
+    signal: AbortSignal;
+    reviewDisclosure: Review<OwnedPoiDisclosureReview>;
+  }): Promise<OwnedPoiObservation>;
   openRead(options: ReadLaneOptions): Promise<ReadLane>;
   openPrivate(options: PrivateLaneOptions): Promise<PrivateLane>;
   openPublic(options: PublicLaneOptions): Promise<PublicLane>;
   openRecovery(options: RecoveryOptions): Promise<RecoveryLane>;
+  openPoiRecovery(options: {
+    signal: AbortSignal;
+    /** Exact true required within 30s; native promises must settle on cancellation.
+     * Thenables/unknown original settlement quarantine the session. */
+    reviewDisclosures: Review<
+      PoiPreparationDisclosure | PoiSubmissionDisclosure
+    >;
+  }): Promise<PoiRecoveryLane>;
   openRelayLocal(options: RelayLocalOptions): Promise<RelayLocalLane>;
   openRelayRecovery(options: {
     signal: AbortSignal;
