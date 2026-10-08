@@ -641,6 +641,35 @@ const recoveryOptions = (signal) => ({
   gasLimit: 1500000n,
   maxGasFee: 1n,
 });
+test.each([
+  { gasLimit: 0n },
+  { gasLimit: 3000001n },
+  { gasLimit: 1 },
+  { maxGasFee: 0n },
+  { maxGasFee: 2000000000000001n },
+  { maxGasFee: "1" },
+])(
+  "invalid recovery gas refuses before lane admission: %p",
+  async (invalid) => {
+    const f = fixture();
+    const account = await f.api.openAccount(f.options);
+    expect(() =>
+      account.openRecovery({
+        ...recoveryOptions(f.options.signal),
+        ...invalid,
+      }),
+    ).toThrow();
+    expect(state.createRecovery).not.toHaveBeenCalled();
+    expect(account.signal.aborted).toBe(false);
+    expect(state.enrollments[0].close).not.toHaveBeenCalled();
+    const lane = await account.openRead({
+      wallet: "active",
+      signal: f.options.signal,
+    });
+    expect(await lane.instanceId()).toBe("id");
+    await account.close();
+  },
+);
 test("recovery history opens without any wallet and uses only genuine internal destination/owners", async () => {
   const f = fixture(),
     account = await f.api.openAccount(f.options);
@@ -1134,5 +1163,50 @@ test.each(["identity", "enrollment", "public"])(
     expect(account.signal.aborted).toBe(true);
     expect(() => account.describe()).toThrow();
     await account.closed;
+  },
+);
+
+test.each([false, true])(
+  "TXID original drain failure overrides operation outcome (operation fails: %s)",
+  async (operationFails) => {
+    const f = fixture();
+    const account = await f.api.openAccount(f.options);
+    const drain = deferred();
+    const operationError = Error("operation failed");
+    const cleanupError = Error("original cleanup failed");
+    const txid = {
+      advance: jest.fn(() =>
+        operationFails
+          ? Promise.reject(operationError)
+          : Promise.resolve({
+              checkpoint: { state: { count: 1, root: "a".repeat(64) } },
+              pending: null,
+              serviceLatestIndex: 0,
+            }),
+      ),
+      close: jest.fn(() => drain.promise),
+    };
+    state.openTxid.mockResolvedValue(txid);
+    const original = account.synchronizeTxid({
+      mode: "advance",
+      signal: f.options.signal,
+      reviewDisclosure: () => true,
+    });
+    let settled = false;
+    original.then(
+      () => {
+        settled = true;
+      },
+      () => {
+        settled = true;
+      },
+    );
+    await tick();
+    expect(txid.close).toHaveBeenCalledTimes(1);
+    expect(settled).toBe(false);
+    drain.reject(cleanupError);
+    await expect(original).rejects.toBe(cleanupError);
+    await expect(account.closed).rejects.toBe(cleanupError);
+    expect(() => f.api.openAccount(f.options)).toThrow();
   },
 );

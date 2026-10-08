@@ -531,6 +531,15 @@ function initializeRailgunMain(options) {
       for (const callback of [data.reviewDisclosures, data.reviewTransaction])
         if (typeof callback !== "function" || types.isProxy(callback))
           throw fail();
+      if (
+        typeof data.gasLimit !== "bigint" ||
+        data.gasLimit <= 0n ||
+        data.gasLimit > 3000000n ||
+        typeof data.maxGasFee !== "bigint" ||
+        data.maxGasFee <= 0n ||
+        data.maxGasFee > 2000000000000000n
+      )
+        throw fail();
       return run(async () => {
         let companion;
         try {
@@ -935,7 +944,10 @@ function initializeRailgunMain(options) {
           deadline = started + 30000;
         const timer = setTimeout(() => controller.abort(), 30000);
         timer.unref?.();
-        let txid;
+        let txid,
+          outcome,
+          operationError,
+          operationFailed = false;
         const unknownReview = () => {
           const error = Object.assign(fail(), {
             code: "RAILGUN_WALLET_EXIT_UNOBSERVED",
@@ -1008,7 +1020,7 @@ function initializeRailgunMain(options) {
             (latest !== null && (!Number.isSafeInteger(latest) || latest < 0))
           )
             throw fail();
-          return Object.freeze({
+          outcome = Object.freeze({
             count,
             root,
             checkpointAvailable: !!result.checkpoint,
@@ -1018,25 +1030,31 @@ function initializeRailgunMain(options) {
             unverified: true,
             spendingEnabled: false,
           });
-        } finally {
-          clearTimeout(timer);
-          controller.abort();
-          // acquire() retains a late owner even when cancellation rejects before
-          // assignment to txid; the session owns that exact original as well.
-          const owned = txid || state.txid;
-          if (owned) {
-            stop(owned, "txid");
-            const cleanup = state.cleanup.get(owned);
-            try {
-              if (cleanup?.work) await cleanup.work;
-              if (state.failure) throw state.failure;
-              if (state.txid === owned) state.txid = null;
-            } catch (error) {
-              close();
-              throw error;
-            }
+        } catch (error) {
+          operationFailed = true;
+          operationError = error;
+        }
+        clearTimeout(timer);
+        controller.abort();
+        // acquire() retains a late owner even when cancellation rejects before
+        // assignment to txid; the session owns that exact original as well.
+        // Original cleanup settles before publication. As before, a failed drain
+        // overrides either an operation result or an earlier operation failure.
+        const owned = txid || state.txid;
+        if (owned) {
+          stop(owned, "txid");
+          const cleanup = state.cleanup.get(owned);
+          try {
+            if (cleanup?.work) await cleanup.work;
+            if (state.failure) throw state.failure;
+            if (state.txid === owned) state.txid = null;
+          } catch (error) {
+            close();
+            throw error;
           }
         }
+        if (operationFailed) throw operationError;
+        return outcome;
       });
     }
     const session = Object.freeze({
