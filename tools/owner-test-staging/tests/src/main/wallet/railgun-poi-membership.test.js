@@ -1,8 +1,11 @@
+require('../../../../context-host.cjs');
 let mockEndpoint, mockJobMode, mockExit, mockReleaseJob, mockTransportExit, mockHoldTransport;
 const mockRequest = jest.fn(),
   mockTransportClose = jest.fn(),
   mockStart = jest.fn();
-jest.mock('../networks/wallet-tor-transport', () => ({
+jest.mock("../../../../../../src/owners/host-bindings.js", () => ({
+  ...jest.requireActual("../../../../../../src/owners/host-bindings.js"),
+  transport: {
   createWalletTorTransport: () => {
     const closed = new Promise((resolve) => {
       mockTransportExit = resolve;
@@ -16,9 +19,12 @@ jest.mock('../networks/wallet-tor-transport', () => ({
       },
     };
   },
+},
+  tor: { getWalletSocksEndpoint: () => mockEndpoint },
+  settings: { isWalletTorExperimentAvailable: () => true },
 }));
-jest.mock('../tor-manager', () => ({ getWalletSocksEndpoint: () => mockEndpoint }));
-jest.mock('../settings-store', () => ({ isWalletTorExperimentAvailable: () => true }));
+
+
 jest.mock("../../../../../../src/owners/railgun-process.js", () => ({ startRailgunProcess: (...args) => mockStart(...args) }));
 jest.mock("../../../../../../src/execution/railgun-engine-runtime.js", () => ({ verifyRailgunEngineRuntime: (v) => v }));
 const { createPrivacyScope } = require("../../../../../../src/owners/context-bindings.js");

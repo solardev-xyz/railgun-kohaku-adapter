@@ -1,0 +1,7 @@
+# Fixed transport and service test boundaries
+
+Seven original suites pass335 tests in6.224 seconds with natural exit0. They execute actual package POI membership/root/source, public services, own-Transact admission, scan source and scan coordinator logic. The genuine copied context issuer is shared with the actual initialized private bindings. Original request/cancellation/drain and malformed-response assertions are unchanged.
+
+Original Tor/settings/transport/RPC mocks are grouped under the same fixed host families; direct test references read those same objects. Their method bodies and simulated replies are unchanged. All other families retain genuine initialized binding functions. No network request or actual Tor service is admitted. The own-Transact admission suite already substituted a generated test Ed25519 key for the production list anchor: that original controlled trust-domain seam remains, and is not authentic production-list qualification. Engine/task issuer mocks remain explicit.
+
+An AST-only repository relocation tool changed fixed known mock/import sites; its initial zero-argument-call parser mistake stopped before edits, then was corrected. No production source or dependency changed. The reversible provenance chain reconstructs every original test assertion. Default CI now includes127 exact adjacent suite filenames;24 host suites remain staged and excluded. Parent owns runner configuration experiments; this successor retains its prior configuration and makes no new full203-suite claim.

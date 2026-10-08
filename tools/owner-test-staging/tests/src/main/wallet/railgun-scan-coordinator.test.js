@@ -1,8 +1,12 @@
-jest.mock('../networks/private-rpc', () => ({ createPrivateRpc: jest.fn() }));
+require('../../../../context-host.cjs');
+jest.mock("../../../../../../src/owners/host-bindings.js", () => ({
+  ...jest.requireActual("../../../../../../src/owners/host-bindings.js"),
+  rpc: { createPrivateRpc: jest.fn() },
+}));
 const fs = require('fs'),
   os = require('os'),
   path = require('path');
-const { createPrivateRpc } = require('../networks/private-rpc');
+const { createPrivateRpc } = require("../../../../../../src/owners/host-bindings.js").rpc;
 const { createPrivacyScope, getPrivacyContext } = require("../../../../../../src/owners/context-bindings.js");
 const { startRailgunSessionWorker } = require("../../../../../../src/owners/railgun-session-worker.js");
 const { createRailgunSourceLedger } = require("../../../../../../src/owners/railgun-source-ledger.js");

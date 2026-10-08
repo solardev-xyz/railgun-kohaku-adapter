@@ -1,3 +1,4 @@
+require('../../../../context-host.cjs');
 let mockSigningKey;
 jest.mock('crypto', () => {
   const actual = jest.requireActual('crypto');
@@ -145,9 +146,11 @@ jest.mock("../../../../../../src/owners/railgun-poi-source.js", () => {
     },
   };
 });
-jest.mock('../settings-store', () => ({ isWalletTorExperimentAvailable: () => true }));
-jest.mock('../tor-manager', () => ({ getWalletSocksEndpoint: () => mock.endpoint }));
-jest.mock('../networks/wallet-tor-transport', () => ({
+jest.mock("../../../../../../src/owners/host-bindings.js", () => ({
+  ...jest.requireActual("../../../../../../src/owners/host-bindings.js"),
+  settings: { isWalletTorExperimentAvailable: () => true },
+  tor: { getWalletSocksEndpoint: () => mock.endpoint },
+  transport: {
   createWalletTorTransport: () => {
     let resolve;
     const closed = new Promise((done) => {
@@ -165,7 +168,10 @@ jest.mock('../networks/wallet-tor-transport', () => ({
     mock.transports.push(transport);
     return transport;
   },
+},
 }));
+
+
 jest.mock("../../../../../../src/owners/railgun-poi-membership.js", () => ({
   verifyRailgunPoiMembership: jest.fn((options) => mock.verify(options)),
   assertRailgunPoiMembership: jest.fn((receipt, handle, margin = 0) => {
