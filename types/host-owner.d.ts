@@ -417,7 +417,9 @@ export interface RecoveryHistory {
 }
 export type PrivateProofRecoveryOutcome =
   | {
-      readonly status: "proof-stored";
+      /** proof-present checks an existing saved slot; it does not reprove,
+       * freshly verify, or grant submission authority. */
+      readonly status: "proof-stored" | "proof-present";
       readonly holdId: string;
       readonly transactionDigest: string;
       readonly submissionEnabled: false;
@@ -630,9 +632,7 @@ export interface RelayHistory {
 export interface RelayRecoveryLane extends LaneLifetime {
   list(after?: string | null): Promise<RelayHistory | RelayRefusal>;
   resume(operationId: string): Promise<RelayReady | RelayRefusal>;
-  discard(
-    operationId: string,
-  ): Promise<
+  discard(operationId: string): Promise<
     | {
         readonly status: "cancelled-unsigned" | "discarded-signed";
         readonly operationId: string;

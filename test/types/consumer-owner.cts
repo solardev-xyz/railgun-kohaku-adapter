@@ -61,7 +61,15 @@ async function consume() {
     reviewTransaction: (summary) => summary.maxGasFee === 100n,
   });
   const history = await recovery.history();
-  if (history.records[0]) await recovery.resumeProof(history.records[0].holdId);
+  if (history.records[0]) {
+    const proof = await recovery.resumeProof(history.records[0].holdId);
+    if (proof.status === "proof-present" || proof.status === "proof-stored") {
+      const checked: string = proof.transactionDigest;
+      const noSubmission: false = proof.submissionEnabled;
+      void checked;
+      void noSubmission;
+    }
+  }
   recovery.close();
   await recovery.closed;
   const local = await session.openRelayLocal({
