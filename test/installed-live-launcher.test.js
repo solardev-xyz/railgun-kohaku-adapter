@@ -451,3 +451,26 @@ test("the second resume link carries the same claim, checked against the first r
     ),
   ).toThrow();
 });
+test("live polling stays within the vault lifetime and the lifetime override is pinned", () => {
+  const env = liveEnvironment();
+  expect(() =>
+    env.launcher.validate(
+      env.launcher.makeRequest(
+        env.spec({ mode: "live-observe", params: { maxMs: 11 * 60 * 1000 } }),
+      ),
+    ),
+  ).toThrow();
+  expect(() =>
+    env.launcher.validate(
+      env.launcher.makeRequest(
+        env.spec({ mode: "live-observe", params: { unlockMs: 60000 } }),
+      ),
+    ),
+  ).toThrow();
+  const request = env.launcher.makeRequest(
+    env.spec({ mode: "live-observe", params: { maxMs: 10 * 60 * 1000 } }),
+  );
+  expect(Object.keys(request.recipeFiles)).toContain(
+    env.path.join(env.tools, "installed-live/vault-lifetime.cjs"),
+  );
+});

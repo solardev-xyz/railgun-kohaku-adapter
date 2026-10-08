@@ -27,7 +27,23 @@ const RESUME = 'installed-journey-sentio-resume-1';
 // earlier 100000-block window, which can exceed the scan source's per-window
 // bounds; its successor changes only the target rule.
 const RESUME2 = 'installed-journey-sentio-resume-2';
-const CHAIN = Object.freeze([FIRST, CONTINUATION, RESUME, RESUME2]);
+// The one reviewed third link: transient failures ended sessions that were
+// progressing. Its openers are admitted by progress, not by a flat count.
+const RESUME3 = 'installed-journey-sentio-resume-3';
+const CHAIN = Object.freeze([FIRST, CONTINUATION, RESUME, RESUME2, RESUME3]);
+const NO_PROGRESS_SESSIONS = 2;
+// The third link admits openers within one fixed window from its first opener.
+const RESUME3_WINDOW_MS = 4 * 3600 * 1000;
+// Resume sessions of one ledger with no returned checkpoint at its end: the
+// trailing openers not followed by any scan-progress record.
+function trailingNoProgress(records) {
+  let count = 0;
+  for (const record of records) {
+    if (record?.type === 'budget' && record.kind === 'scan-open:pending') count++;
+    else if (record?.type === 'scan-progress') count = 0;
+  }
+  return count;
+}
 const SENTIO = 'https://sepolia.rpc.sentio.xyz';
 const PREDECESSOR_KINDS = Object.freeze(['scan-open:new', 'scan-open:pending', 'scan-range']);
 const sha256 = (value) => createHash('sha256').update(value).digest('hex');
@@ -107,7 +123,7 @@ function predecessor(directory, header) {
   for (const key of ['type', 'version', 'transport', 'profile', 'freedomCommit', 'packageTarSha256'])
     check(same(previous[key], header[key]), 'predecessor-scope:' + key);
   check(previous.binding?.heldTransferReportSha256 === header.binding.heldTransferReportSha256, 'predecessor-held');
-  if ([RESUME, RESUME2].includes(header.name)) check(same(previous.binding?.rpc?.url, header.binding?.rpc?.url), 'predecessor-endpoint');
+  if ([RESUME, RESUME2, RESUME3].includes(header.name)) check(same(previous.binding?.rpc?.url, header.binding?.rpc?.url), 'predecessor-endpoint');
   // Scan budgets, and a resume's attempt records; never a checkpoint, send,
   // POI handoff or report.
   check(
@@ -116,7 +132,8 @@ function predecessor(directory, header) {
       .every(
         (record) =>
           (record?.type === 'budget' && PREDECESSOR_KINDS.includes(record.kind)) ||
-          (record?.type === 'resume-attempt' && previous.name === RESUME)
+          (record?.type === 'resume-attempt' && [RESUME, RESUME2].includes(previous.name)) ||
+          (record?.type === 'scan-progress' && previous.name === RESUME2)
       ),
     'predecessor-events'
   );
@@ -126,6 +143,17 @@ function predecessor(directory, header) {
   // The second link binds the first resume exactly: one opener, one attempt
   // (first, at the claimed pair and the claimed failed target, the earlier
   // rule) and its windows, all at that target; no checkpoint.
+  // The third link's claim is read from the second's own records: its last
+  // returned checkpoint and the window it attempted beyond it.
+  if (header.name === RESUME3) {
+    const claim = header.binding.resumeFrom;
+    const own = records.slice(1);
+    const progress = own.filter((record) => record.type === 'scan-progress');
+    const windows = own.filter((record) => record.kind === 'scan-range' && Number.isSafeInteger(record.target));
+    check(progress.length > 0 && windows.length > 0, 'predecessor-progress');
+    check(claim.checkpoint === progress.at(-1).to && claim.checkpointHash === progress.at(-1).hash, 'predecessor-claim');
+    check(windows.at(-1).target > claim.checkpoint && claim.failedTarget === windows.at(-1).target, 'predecessor-claim');
+  }
   if (header.name === RESUME2) {
     const claim = header.binding.resumeFrom;
     check(same(previous.binding?.resumeFrom, claim), 'predecessor-claim');
@@ -190,6 +218,7 @@ function replay(records, header, carried = {}) {
     progress = [],
     attempts = [],
     poi = { pending: null, finished: null };
+  const ownSoFar = [];
   for (const record of records.slice(1)) {
     if (record?.type === 'send-pending') {
       check(sends.every((send) => send.finished), 'pending-attempt');
@@ -204,6 +233,13 @@ function replay(records, header, carried = {}) {
       last.finished = record;
     } else if (record?.type === 'budget') {
       check(typeof record.kind === 'string' && Number.isSafeInteger(record.at), 'budget');
+      // A third-link opener needs progress since the previous one, allowing
+      // at most two consecutive sessions without a returned checkpoint.
+      if (header.name === RESUME3 && record.kind === 'scan-open:pending') {
+        check(trailingNoProgress(ownSoFar) < NO_PROGRESS_SESSIONS, 'resume-no-progress');
+        const first = ownSoFar.find((row) => row.type === 'budget' && row.kind === 'scan-open:pending');
+        if (first) check(record.at - first.at <= RESUME3_WINDOW_MS, 'resume-window');
+      }
       // A scan window may name its planned target; nothing else carries extras.
       if (Object.hasOwn(record, 'target'))
         check(record.kind === 'scan-range' && Number.isSafeInteger(record.target) && record.target >= 0, 'budget-target');
@@ -248,6 +284,7 @@ function replay(records, header, carried = {}) {
       check(!reports.some((row) => row.sha256 === record.sha256), 'report-duplicate');
       reports.push(record);
     } else throw fail('record');
+    ownSoFar.push(record);
   }
   return { sends, budgets, poi, reports, progress, attempts };
 }
@@ -371,7 +408,25 @@ function poiFinish(profile, header, handoffId, outcome) {
 function recordReport(profile, header, mode, sha256) {
   return append(profile, header, { type: 'report', mode, sha256, at: Date.now() }).reports;
 }
+// The third link's fixed admission deadline, from its first opener; null
+// before one is reserved.
+function resumeDeadline(profile, header) {
+  if (header.name !== RESUME3) return null;
+  const file = ledgerFile(profile, header.name);
+  if (!fs.existsSync(file)) return null;
+  const first = fs
+    .readFileSync(file, 'utf8')
+    .trim()
+    .split('\n')
+    .slice(1)
+    .map((line) => JSON.parse(line))
+    .find((row) => row.type === 'budget' && row.kind === 'scan-open:pending');
+  return first ? first.at + RESUME3_WINDOW_MS : null;
+}
 module.exports = {
+  RESUME3,
+  resumeDeadline,
+  trailingNoProgress,
   FIRST,
   CONTINUATION,
   RESUME,

@@ -30,6 +30,7 @@ const RECIPE = [
   path.join(HERE, 'live-entry.cjs'),
   path.join(HERE, 'live-scenario.cjs'),
   path.join(HERE, 'live-ledger.cjs'),
+  path.join(HERE, 'vault-lifetime.cjs'),
   path.join(FAMILY, 'inventory.cjs'),
   path.join(FAMILY, 'journey-chain.cjs'),
   path.join(FAMILY, 'journey-crypto.cjs'),
@@ -86,8 +87,8 @@ const SYNTHETIC_CAP_KEYS = Object.keys(LIVE_CAPS).sort();
 function headerFor(request, binding, syntheticCaps) {
   assert.ok(binding && typeof binding === 'object' && !Array.isArray(binding));
   const name = request.ledger ?? ledger.FIRST;
-  assert.ok([ledger.FIRST, ledger.CONTINUATION, ledger.RESUME, ledger.RESUME2].includes(name));
-  const resuming = [ledger.RESUME, ledger.RESUME2].includes(name);
+  assert.ok([ledger.FIRST, ledger.CONTINUATION, ledger.RESUME, ledger.RESUME2, ledger.RESUME3].includes(name));
+  const resuming = [ledger.RESUME, ledger.RESUME2, ledger.RESUME3].includes(name);
   // Each later ledger of the fixed chain binds its stopped predecessor.
   assert.equal(Object.hasOwn(binding, 'predecessor'), name !== ledger.FIRST);
   if (request.transport === 'live' && name !== ledger.FIRST) assert.equal(binding.rpc?.url, ledger.SENTIO);
@@ -97,6 +98,9 @@ function headerFor(request, binding, syntheticCaps) {
     const { checkpoint, failedTarget, evidence } = binding.resumeFrom;
     assert.ok(Number.isSafeInteger(checkpoint) && Number.isSafeInteger(failedTarget) && failedTarget > checkpoint);
     assert.ok(typeof evidence === 'string' && evidence.length > 0);
+    // The third link's claim names its predecessor's returned checkpoint hash.
+    assert.equal(Object.hasOwn(binding.resumeFrom, 'checkpointHash'), name === ledger.RESUME3);
+    if (name === ledger.RESUME3) assert.match(binding.resumeFrom.checkpointHash, /^0x[0-9a-f]{64}$/);
   }
   if (request.transport === 'live') {
     assert.equal(syntheticCaps, null);
@@ -120,11 +124,16 @@ function headerFor(request, binding, syntheticCaps) {
       ...FIXED_CAPS,
       ...(request.transport === 'live' ? LIVE_CAPS : syntheticCaps),
       // The reviewed resume extension: five pending openers in aggregate, nothing else.
-      ...(resuming ? { scanResumes: RESUME_SCAN_RESUMES } : {}),
+      ...(resuming ? { scanResumes: name === ledger.RESUME3 ? RESUME3_SCAN_RESUMES : RESUME_SCAN_RESUMES } : {}),
     },
   };
 }
 const RESUME_SCAN_RESUMES = 5;
+// The reviewed third-link backstop: twelve more openers, 17 in aggregate;
+// progress admits each (see the ledger).
+const RESUME3_SCAN_RESUMES = 17;
+// The vault auto-locks 15 minutes after unlock; live polling stays inside it.
+const LIVE_MAX_MS = 10 * 60 * 1000;
 // The continuation's plan under the pinned old runner (eeb7734a): 100000-block
 // windows from block 0, each reserved only after the previous one resolved.
 // Its k reservations therefore committed k-1 windows and failed the k-th.
@@ -162,6 +171,7 @@ function validate(request) {
     // Live parameters: no fault hook; publicCache only for the rebuild.
     for (const key of Object.keys(request.params)) assert.ok(['publicCache', 'maxMs', 'poiStatusMaxAgeMs'].includes(key), 'Live parameter ' + key);
     if (Object.hasOwn(request.params, 'publicCache')) assert.equal(request.mode, 'live-rebuild');
+    if (Object.hasOwn(request.params, 'maxMs')) assert.ok(request.params.maxMs <= LIVE_MAX_MS, 'Live maxMs within the vault lifetime');
   }
   // Later ledgers resume the existing generation; they never begin one.
   if (request.ledgerHeader.name !== ledger.FIRST) assert.notEqual(request.params.publicCache, 'new');
@@ -191,12 +201,16 @@ function validate(request) {
     assert.equal(file(request.synthetic.publicSource).sha256, request.synthetic.publicSourceSha256);
     assert.ok(['primary', 'limited'].includes(request.synthetic.endpoint));
     for (const [key, value] of Object.entries(request.synthetic.faults))
-      assert.ok(['failLogsFrom', 'failApplyRefreshTo', 'denseFrom', 'denseTo'].includes(key) && Number.isSafeInteger(value), 'Synthetic fault ' + key);
+      assert.ok(
+        ['failLogsFrom', 'failApplyRefreshTo', 'denseFrom', 'denseTo', 'latencyMs'].includes(key) && Number.isSafeInteger(value),
+        'Synthetic fault ' + key
+      );
   }
   assert.equal(fs.realpathSync(request.profileDirectory), request.profileDirectory);
   assert.equal(file(request.heldReport.file).sha256, request.heldReport.sha256);
   assert.equal(request.heldReport.sha256, request.ledgerHeader.binding.heldTransferReportSha256);
   const state = ledger.inspect(request.profileDirectory, request.ledgerHeader);
+  // The third link's claim is derived from its predecessor's records by the ledger.
   if ([ledger.RESUME, ledger.RESUME2].includes(request.ledgerHeader.name)) assertResumeClaim(request);
   return state;
 }

@@ -51,12 +51,23 @@ async function main() {
   const transportTrace = { requests: 0, failures: 0, byOutcome: {}, recent: [] };
   const traceRequest = (entry) => {
     transportTrace.requests++;
-    if (entry.code || entry.status !== 200) transportTrace.failures++;
-    const key = entry.method + ':' + (entry.code ?? entry.status);
+    if (entry.code || entry.status !== 200 || entry.rpcError || entry.shapeInvalid) transportTrace.failures++;
+    const key =
+      entry.method +
+      ':' +
+      (entry.code ?? entry.status) +
+      (entry.rpcError ? ':rpc-error' + (entry.rpcErrorCode ?? '') : '') +
+      (entry.resultNull ? ':null' : '') +
+      (entry.shapeInvalid ? ':shape' : '');
     transportTrace.byOutcome[key] = (transportTrace.byOutcome[key] || 0) + 1;
     transportTrace.recent.push(entry);
     if (transportTrace.recent.length > 64) transportTrace.recent.shift();
   };
+  // Vault lifecycle evidence: lifetime, whether overridden, and when the
+  // session aborted relative to unlock. No key or account data.
+  const lifecycle = { lifetimeMs: null, overridden: null, sessionAbortedAfterMs: null };
+  let vaultLifetime = null,
+    sessionUnlockedAt = null;
   let report = null,
     client = null,
     chain = null,
@@ -121,7 +132,21 @@ async function main() {
             const started = Date.now();
             try {
               const response = await value.request(handle, url, options);
-              traceRequest({ method, status: response?.status ?? null, ms: Date.now() - started, bytes: response?.body?.length ?? null });
+              // Bounded outcome classification of an answer: never its payload.
+              const outcome = {};
+              if (method !== 'other' && Buffer.isBuffer(response?.body)) {
+                try {
+                  const body = JSON.parse(response.body.toString('utf8'));
+                  if (body && Object.hasOwn(body, 'error')) {
+                    outcome.rpcError = true;
+                    if (Number.isSafeInteger(body.error?.code)) outcome.rpcErrorCode = body.error.code;
+                  } else if (!body || !Object.hasOwn(body, 'result')) outcome.shapeInvalid = true;
+                  else if (body.result === null) outcome.resultNull = true;
+                } catch {
+                  outcome.shapeInvalid = true;
+                }
+              }
+              traceRequest({ method, status: response?.status ?? null, ...outcome, ms: Date.now() - started, bytes: response?.body?.length ?? null });
               return response;
             } catch (error) {
               const code = typeof error?.code === 'string' && /^[A-Z0-9_]{1,64}$/.test(error.code) ? error.code : 'REQUEST_FAILED';
@@ -249,6 +274,24 @@ async function main() {
       await manager.unlockVault(password);
       password = undefined;
     } else await manager.unlockVault(FIXTURE_PASSWORD);
+    // The one bounded lifetime override (live rebuild only; see vault-lifetime.cjs).
+    const identity = fixed('identity/vault.js');
+    const unlockedAt = performance.now();
+    vaultLifetime = require('./vault-lifetime.cjs').applyRebuildUnlock(identity, {
+      mode: request.mode,
+      synthetic: !live,
+      params: request.params,
+    });
+    lifecycle.lifetimeMs = vaultLifetime.lifetimeMs;
+    lifecycle.overridden = vaultLifetime.overridden;
+    identity.getSessionSignal().addEventListener(
+      'abort',
+      () => {
+        lifecycle.sessionAbortedAfterMs = Math.round(performance.now() - unlockedAt);
+      },
+      { once: true }
+    );
+    sessionUnlockedAt = unlockedAt;
     const owner = (await fixed('wallet/signers.js').getSigner(0).getAddress()).toLowerCase();
     if (live) assert.equal(owner, request.live.enrolledOwner);
     const facade = fixed('wallet/railgun-owner-host.js').initializeRailgunOwner(request.runtime);
@@ -266,6 +309,8 @@ async function main() {
       heldReport: JSON.parse(heldBytes),
       heldReportSha256: sha(heldBytes),
       synthetic: !live,
+      mode: request.mode,
+      vault: { unlockedAt: sessionUnlockedAt, lifetimeMs: vaultLifetime.lifetimeMs },
       // Synthetic crash: the network keeps what it received, then the process
       // dies at once. Electron's process.exit would let JavaScript run on.
       crash: live
@@ -311,6 +356,7 @@ async function main() {
         ...(live ? {} : { milestones: milestones.map((value) => value.slice(0, 200)) }),
         syntheticChain: chain?.report() ?? null,
         transportTrace: live ? transportTrace : null,
+        lifecycle,
       });
     } catch {
       /* Diagnostics cannot replace the original failure. */

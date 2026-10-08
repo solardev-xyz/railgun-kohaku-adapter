@@ -9,6 +9,7 @@
 const assert = require('assert/strict');
 const { createHash } = require('crypto');
 const ledger = require('./live-ledger.cjs');
+const { pauseMargin } = require('./vault-lifetime.cjs');
 const CHAIN_ID = 11155111;
 const WETH = '0xfff9976782d46cc05630d1f6ebab18b2324d6b14';
 const GAS_LIMIT = 1500000n;
@@ -68,6 +69,19 @@ const RANGE_SPACING_MS = 1000;
 // recorded durably, so a later resume starts from an exact lower bound.
 // Plans targets only: the coordinator recovers its own checkpoint and chooses
 // each window's start. A fixed first target, when given, precedes the schedule.
+// A rebuild stops starting windows before its vault lifetime ends (and, on the
+// third resume link, at its fixed admission deadline): a clean pause leaves
+// exact progress and no window in flight. Synthetic runs may disable it to
+// exercise a real vault expiry mid-scan.
+function pauseDue(context) {
+  if (context.mode !== 'live-rebuild') return false;
+  if (!(context.synthetic && context.params.noScanPause === true)) {
+    const { unlockedAt, lifetimeMs } = context.vault;
+    if (performance.now() - unlockedAt >= lifetimeMs - pauseMargin(lifetimeMs)) return true;
+  }
+  const deadline = ledger.resumeDeadline(context.profile, context.header);
+  return deadline !== null && Date.now() >= deadline;
+}
 async function scanTo(context, session, from, anchor, firstTarget = null) {
   // Synthetic only: the stopped continuation's runner (100000-block windows
   // from 0, no targets or checkpoints recorded), to reproduce its state.
@@ -82,6 +96,8 @@ async function scanTo(context, session, from, anchor, firstTarget = null) {
   const returned = [];
   for (const [index, range] of ranges.entries()) {
     if (index > 0 && !context.synthetic) await sleep(RANGE_SPACING_MS, context.signal);
+    if (pauseDue(context))
+      throw Object.assign(new Error('Scan paused before the vault lifetime or resume deadline'), { code: 'LIVE_SCAN_PAUSED' });
     const reservation = budget(context, 'scan-range', legacy ? undefined : { target: range.to });
     const result = await session.advancePublic(range);
     assert.equal(result.to?.number, range.to);
@@ -326,7 +342,7 @@ async function rebuild(context) {
   // attempt only once the opener is reserved (see resumePlan).
   let from = 0,
     resume = null;
-  if ([ledger.RESUME, ledger.RESUME2].includes(context.header.name)) {
+  if ([ledger.RESUME, ledger.RESUME2, ledger.RESUME3].includes(context.header.name)) {
     assert.equal(publicCache, 'pending');
     resume = resumePlan(context);
     from = resume.from;

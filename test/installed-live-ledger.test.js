@@ -707,3 +707,115 @@ test("the second link refuses any first resume that differs from the bound singl
     }),
   ).toThrow();
 });
+
+function stoppedResume2() {
+  const s = stoppedResume();
+  const next = resume2Of(s.p, s.resume);
+  const policy = ledger.policyFor(next.caps, "scan-range");
+  ledger.consume(
+    s.p,
+    next,
+    "scan-open:pending",
+    ledger.policyFor(next.caps, "scan-open:pending"),
+    9100,
+  );
+  ledger.resumeAttempt(s.p, next, "first", 199999, 299999, 219999);
+  let n = ledger.consume(s.p, next, "scan-range", policy, 9101, {
+    target: 219999,
+  });
+  ledger.progress(s.p, next, 219999, "0x" + "1".repeat(64), n);
+  n = ledger.consume(s.p, next, "scan-range", policy, 9102, { target: 239999 });
+  ledger.progress(s.p, next, 239999, "0x" + "2".repeat(64), n);
+  ledger.consume(s.p, next, "scan-range", policy, 9103, { target: 259999 });
+  return { ...s, resume2: next };
+}
+function resume3Of(p, resume2, overrides = {}) {
+  const crypto = require("crypto");
+  const hash = (v) => crypto.createHash("sha256").update(v).digest("hex");
+  return {
+    ...resume2,
+    name: ledger.RESUME3,
+    runnerSha256: "5".repeat(64),
+    caps: { ...resume2.caps, scanResumes: 17 },
+    binding: {
+      ...resume2.binding,
+      resumeFrom: {
+        checkpoint: 239999,
+        checkpointHash: "0x" + "2".repeat(64),
+        failedTarget: 259999,
+        evidence: "x",
+      },
+      predecessor: {
+        name: ledger.RESUME2,
+        ledgerSha256: hash(
+          fs.readFileSync(ledger.ledgerFile(p, ledger.RESUME2)),
+        ),
+        headerSha256: hash(JSON.stringify(resume2)),
+        reason: "vault lifetime ended the session",
+      },
+    },
+    ...overrides,
+  };
+}
+test("the third link derives its claim, hash included, from the second link's own records", () => {
+  const { p, resume2 } = stoppedResume2();
+  const next = resume3Of(p, resume2);
+  expect(ledger.inspect(p, next).budgets["scan-open:pending"]).toHaveLength(4);
+  for (const resumeFrom of [
+    {
+      checkpoint: 219999,
+      checkpointHash: "0x" + "1".repeat(64),
+      failedTarget: 259999,
+      evidence: "x",
+    },
+    {
+      checkpoint: 239999,
+      checkpointHash: "0x" + "9".repeat(64),
+      failedTarget: 259999,
+      evidence: "x",
+    },
+    {
+      checkpoint: 239999,
+      checkpointHash: "0x" + "2".repeat(64),
+      failedTarget: 279999,
+      evidence: "x",
+    },
+  ])
+    expect(() =>
+      ledger.inspect(p, { ...next, binding: { ...next.binding, resumeFrom } }),
+    ).toThrow();
+  // A second link holding a send never continues.
+  const t = stoppedResume2();
+  ledger.reserve(t.p, t.resume2, "transfer", {});
+  expect(() => ledger.inspect(t.p, resume3Of(t.p, t.resume2))).toThrow();
+});
+test("third-link openers are admitted by progress: two sessions without a checkpoint stop, any checkpoint resets", () => {
+  const { p, resume2 } = stoppedResume2();
+  const next = resume3Of(p, resume2);
+  const opener = (at) =>
+    ledger.consume(
+      p,
+      next,
+      "scan-open:pending",
+      ledger.policyFor(next.caps, "scan-open:pending"),
+      at,
+    );
+  const window = (at, target) =>
+    ledger.consume(
+      p,
+      next,
+      "scan-range",
+      ledger.policyFor(next.caps, "scan-range"),
+      at,
+      { target },
+    );
+  opener(20000);
+  opener(20001);
+  expect(() => opener(20002)).toThrow();
+  const n = window(20003, 259999);
+  ledger.progress(p, next, 259999, "0x" + "3".repeat(64), n);
+  expect(opener(20004)).toBe(7);
+  // The admission window is fixed from the first third-link opener.
+  expect(() => opener(20000 + 4 * 3600 * 1000 + 1)).toThrow();
+  expect(ledger.resumeDeadline(p, next)).toBe(20000 + 4 * 3600 * 1000);
+});

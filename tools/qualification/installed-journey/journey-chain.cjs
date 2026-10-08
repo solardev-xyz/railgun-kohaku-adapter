@@ -96,7 +96,7 @@ function createJourneyChain({
   assert.ok(['acknowledge', 'unknown-after-delivery'].includes(sendMode));
   assert.deepEqual(
     Object.keys(faults).filter(
-      (key) => !['preflightAnchorAfterEstimate', 'failLogsFrom', 'failApplyRefreshTo', 'denseFrom', 'denseTo'].includes(key)
+      (key) => !['preflightAnchorAfterEstimate', 'failLogsFrom', 'failApplyRefreshTo', 'denseFrom', 'denseTo', 'latencyMs'].includes(key)
     ),
     []
   );
@@ -781,7 +781,11 @@ function createJourneyChain({
         method = wire.method;
         assert.equal(typeof method, 'string');
         if (lane === 'transaction-rpc') result = transactionRpc(method, wire.params);
-        else if (lane === 'protocol-rpc') result = protocolRpc(method, wire.params, url);
+        else if (lane === 'protocol-rpc') {
+          // Synthetic latency, to stretch a rescan past a short vault lifetime.
+          if (Number.isSafeInteger(faults.latencyMs)) await new Promise((resolve) => setTimeout(resolve, faults.latencyMs));
+          result = protocolRpc(method, wire.params, url);
+        }
         else result = await poi(method, wire.params);
       }
       const role = subject.role === lane ? '' : '(' + subject.role + ')';
