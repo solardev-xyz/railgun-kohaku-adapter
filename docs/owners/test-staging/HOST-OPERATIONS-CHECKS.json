@@ -1,0 +1,27 @@
+{
+  "baseRevision": "9c5c8db62fc9de66e8269694870d211210fc49e3",
+  "productionChanges": false,
+  "firstAttempt": {
+    "passed": 151,
+    "failed": 116,
+    "exitCode": 1,
+    "completion": "49ac7f"
+  },
+  "secondAttempt": {
+    "passed": 264,
+    "failed": 3,
+    "exitCode": 1,
+    "completion": "ca42cb"
+  },
+  "targeted": {
+    "suites": 3,
+    "tests": 267,
+    "seconds": 19.376,
+    "exitCode": 0,
+    "originalSession": 15762,
+    "completion": "7e840a"
+  },
+  "qualifiedAdjacent": 138,
+  "remainingHost": 13,
+  "fullDefaultExecuted": false
+}

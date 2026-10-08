@@ -13,13 +13,13 @@
     "railgun-wallet-catalog.test.js",
     "railgun-wallet-journal.test.js"
   ],
-  "remainingCount": 16,
+  "remainingCount": 13,
   "groups": {
     "credential-and-enrollment-lifetime": 2,
     "genuine-rpc-transport-and-destination": 0,
     "account-storage-composition": 1,
     "adapter-wrapper-boundary": 1,
-    "shared-eoa-journal-or-recovery": 11,
+    "shared-eoa-journal-or-recovery": 8,
     "fixed-utility-or-worker-job": 1
   },
   "remaining": [
@@ -395,147 +395,6 @@
           "end": 3685,
           "value": "./private-transaction-network",
           "line": 108,
-          "target": "src/main/wallet/private-transaction-network.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "transactionNetwork",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        }
-      ],
-      "computedSites": [],
-      "executedInThisSuccessor": false
-    },
-    {
-      "source": "src/main/wallet/railgun-poi-submission.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-submission.test.js",
-      "group": "shared-eoa-journal-or-recovery",
-      "requiredHostFamilies": [
-        "rpc",
-        "transactionNetwork",
-        "transport"
-      ],
-      "unresolved": [
-        {
-          "kind": "jest.mock",
-          "start": 3673,
-          "end": 3698,
-          "value": "../networks/private-rpc",
-          "line": 103,
-          "target": "src/main/networks/private-rpc.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "rpc",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 6007,
-          "end": 6038,
-          "value": "./private-transaction-network",
-          "line": 171,
-          "target": "src/main/wallet/private-transaction-network.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "transactionNetwork",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 6720,
-          "end": 6754,
-          "value": "../networks/wallet-tor-transport",
-          "line": 190,
-          "target": "src/main/networks/wallet-tor-transport.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "transport",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "require",
-          "start": 25089,
-          "end": 25120,
-          "value": "./private-transaction-network",
-          "line": 711,
-          "target": "src/main/wallet/private-transaction-network.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "transactionNetwork",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "require",
-          "start": 30839,
-          "end": 30864,
-          "value": "../networks/private-rpc",
-          "line": 851,
-          "target": "src/main/networks/private-rpc.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "rpc",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "require",
-          "start": 32011,
-          "end": 32042,
-          "value": "./private-transaction-network",
-          "line": 880,
-          "target": "src/main/wallet/private-transaction-network.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "transactionNetwork",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        }
-      ],
-      "computedSites": [
-        {
-          "kind": "require",
-          "line": 418
-        }
-      ],
-      "executedInThisSuccessor": false
-    },
-    {
-      "source": "src/main/wallet/railgun-private-operation.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-operation.test.js",
-      "group": "shared-eoa-journal-or-recovery",
-      "requiredHostFamilies": [
-        "rpc",
-        "signers",
-        "transactionNetwork"
-      ],
-      "unresolved": [
-        {
-          "kind": "jest.mock",
-          "start": 40,
-          "end": 65,
-          "value": "../networks/private-rpc",
-          "line": 2,
-          "target": "src/main/networks/private-rpc.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "rpc",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 4963,
-          "end": 4974,
-          "value": "./signers",
-          "line": 146,
-          "target": "src/main/wallet/signers.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "signers",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 5209,
-          "end": 5240,
-          "value": "./private-transaction-network",
-          "line": 157,
           "target": "src/main/wallet/private-transaction-network.js",
           "currentPackageTarget": null,
           "currentTargetExists": false,
@@ -1034,56 +893,6 @@
           "currentPackageTarget": null,
           "currentTargetExists": false,
           "fixedHostFamily": "submissionJournal",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        }
-      ],
-      "computedSites": [],
-      "executedInThisSuccessor": false
-    },
-    {
-      "source": "src/main/wallet/railgun-private-submission.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-submission.test.js",
-      "group": "shared-eoa-journal-or-recovery",
-      "requiredHostFamilies": [
-        "signers",
-        "transactionNetwork",
-        "transactions"
-      ],
-      "unresolved": [
-        {
-          "kind": "jest.mock",
-          "start": 1334,
-          "end": 1345,
-          "value": "./signers",
-          "line": 42,
-          "target": "src/main/wallet/signers.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "signers",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 1400,
-          "end": 1431,
-          "value": "./private-transaction-network",
-          "line": 43,
-          "target": "src/main/wallet/private-transaction-network.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "transactionNetwork",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 1607,
-          "end": 1630,
-          "value": "./transaction-service",
-          "line": 49,
-          "target": "src/main/wallet/transaction-service.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "transactions",
           "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
         }
       ],
@@ -1798,5 +1607,15 @@
     "tests": 66,
     "metadataValidation": "actual reviewed fixed host adapter",
     "walletRecord": "original explicit virtual mock"
+  },
+  "qualifiedOperationGroup": {
+    "names": [
+      "railgun-private-operation",
+      "railgun-private-submission",
+      "railgun-poi-submission"
+    ],
+    "tests": 267,
+    "originalNoPostAssertionsRetained": true,
+    "negativeVectorsDetachedAndAssertChanged": true
   }
 }
