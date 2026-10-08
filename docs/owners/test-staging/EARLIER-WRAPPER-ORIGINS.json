@@ -1,0 +1,33 @@
+{
+  "sourceRevision": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+  "changes": [
+    {
+      "source": "src/main/wallet/railgun-kohaku-broadcaster.test.js",
+      "destination": "docs/owners/historical-tests/railgun-kohaku-broadcaster.test.source.txt",
+      "bytes": 1651,
+      "sha256": "e340df43fc1a4bd1d8886baa68d1f21f2153696bc90277f6ed8091360ba33fa2",
+      "disposition": "Removed wrapper constructor/layout preserved historically; active lifetime/authority/delegation semantics map to current owning facade and private plugin, see EARLIER-WRAPPER-SEMANTICS.md."
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-private-host.test.js",
+      "destination": "docs/owners/historical-tests/railgun-kohaku-private-host.test.source.txt",
+      "bytes": 6765,
+      "sha256": "b1429169a4cdad8a0c332a85262fe8a0ef5e466aaca5e3d87c91d96e2df5b6cc",
+      "disposition": "Removed wrapper constructor/layout preserved historically; active lifetime/authority/delegation semantics map to current owning facade and private plugin, see EARLIER-WRAPPER-SEMANTICS.md."
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-public-host.test.js",
+      "destination": "docs/owners/historical-tests/railgun-kohaku-public-host.test.source.txt",
+      "bytes": 15123,
+      "sha256": "5977cf638b083ceb749f346f66f6dc1c37592937aa124aeb8293c81e1f93fd33",
+      "disposition": "Removed wrapper constructor/layout preserved historically; active lifetime/authority/delegation semantics map to current owning facade and private plugin, see EARLIER-WRAPPER-SEMANTICS.md."
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-public-submitter.test.js",
+      "destination": "docs/owners/historical-tests/railgun-kohaku-public-submitter.test.source.txt",
+      "bytes": 6157,
+      "sha256": "6c601ed9f1156e4e10a46ae9c6b8f87775a392c1ab81dbcd5c277ea383e424c6",
+      "disposition": "Removed wrapper constructor/layout preserved historically; active lifetime/authority/delegation semantics map to current owning facade and private plugin, see EARLIER-WRAPPER-SEMANTICS.md."
+    }
+  ]
+}

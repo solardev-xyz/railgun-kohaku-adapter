@@ -1,0 +1,34 @@
+[
+  {
+    "source": "src/main/wallet/railgun-kohaku-private-adapter.test.js",
+    "destination": "test/railgun-kohaku-private-adapter.test.js",
+    "sourceSha256": "b8ee978ab88b839df9b91368565877737b9a0b5efc9a413db11b5115a08146f2",
+    "destinationSha256": "73f66a6fb37c032e1fad754c3ae6fb04c7dcddb11597c9022affba6da1e5afc6",
+    "astEqualExceptImportArguments": true,
+    "scope": "AST assertion/body parity excluding require and jest loader first arguments, comments and formatting; not runtime execution"
+  },
+  {
+    "source": "src/main/wallet/railgun-kohaku-public-adapter.test.js",
+    "destination": "test/railgun-kohaku-public-adapter.test.js",
+    "sourceSha256": "c47486ba00771c52ab24e605b5562aedd26deb54c9e7eda7b8a5d5e710345852",
+    "destinationSha256": "60a1f8881f57788321f1b77b5039a4c0bf6aae1363a7286fb720ea8e19194195",
+    "astEqualExceptImportArguments": true,
+    "scope": "AST assertion/body parity excluding require and jest loader first arguments, comments and formatting; not runtime execution"
+  },
+  {
+    "source": "src/main/wallet/railgun-kohaku-read-data.test.js",
+    "destination": "test/railgun-kohaku-read-data.test.js",
+    "sourceSha256": "66b780ca2c7c58a80eb704993fe58e615722bc340b1e683c603a6ca8676fe325",
+    "destinationSha256": "4c6dcc7739c5a3b60daa4b51d740ab1e942a3621cd5415b3709ccb550dedd68d",
+    "astEqualExceptImportArguments": true,
+    "scope": "AST assertion/body parity excluding require and jest loader first arguments, comments and formatting; not runtime execution"
+  },
+  {
+    "source": "src/main/wallet/railgun-kohaku-read-dispatch.test.js",
+    "destination": "test/railgun-kohaku-read-dispatch.test.js",
+    "sourceSha256": "19b225200fbc745998130927dab1ce0812f11434bbaf4554d2fcd6d17c9829e7",
+    "destinationSha256": "79f6314580ccb9fd2f16c6d8d367ea828518b9d884d94b4a173059380fb62695",
+    "astEqualExceptImportArguments": true,
+    "scope": "AST assertion/body parity excluding require and jest loader first arguments, comments and formatting; not runtime execution"
+  }
+]

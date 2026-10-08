@@ -1591,3 +1591,146 @@ test("owned POI direct thenable is not assimilated and conservatively retains ex
   await expect(session.closed).rejects.toThrow();
   expect(() => f.api.openAccount(f.options)).toThrow();
 });
+
+// Semantic successors of removed host wrappers: actual closed facade, original
+// controlled owner promises. No borrowed-owner or raw-plugin public constructor.
+async function wrapperSuccessor(mode) {
+  const f = fixture(), account = await f.api.openAccount(f.options);
+  const lane = await account[mode === "private" ? "openPrivate" : "openPublic"](
+    laneOptions(f.options.signal, mode));
+  return { ...f, account, lane, actual: state.plugins[0],
+    prepare: mode === "private" ? "prepareTransfer" : "prepareShield",
+    consume: mode === "private" ? "broadcast" : "submit" };
+}
+test.each(["private", "public"])("wrapper successor %s exact frozen shape and live receiver delegation", async (mode) => {
+  const f = await wrapperSuccessor(mode);
+  expect(Object.isFrozen(f.lane)).toBe(true);
+  expect(Object.keys(f.lane).sort()).toEqual([
+    "balance", "close", "closed", "instanceId", "notes", "signal",
+    ...(mode === "private" ? ["prepareTransfer", "prepareUnshield", "broadcast"] : ["prepareShield", "submit"]),
+  ].sort());
+  expect(f.lane.signal).toBe(f.actual.signal);
+  expect(f.lane.closed).toBe(f.actual.closed);
+  for (const [method, args] of [["instanceId", []], ["balance", [[{}]]], ["notes", [[{}], true]]]) {
+    const result = [], original = Promise.resolve(result);
+    f.actual[method].mockImplementation(function (...values) {
+      expect(this).toBe(f.actual); expect(values).toEqual(args); return original;
+    });
+    expect(f.lane[method](...args)).toBe(original);
+    expect(await original).toBe(result);
+  }
+  const replacement = [];
+  f.actual.notes.mockResolvedValue(replacement);
+  expect(await f.lane.notes()).toBe(replacement);
+  await f.account.close();
+});
+test.each(["transfer", "full", "partial", "public-default", "public-recipient"])("wrapper successor %s request and hidden original operation", async (kind) => {
+  const mode = kind.startsWith("public") ? "public" : "private", f = await wrapperSuccessor(mode);
+  const method = mode === "public" ? "prepareShield" : kind === "transfer" ? "prepareTransfer" : "prepareUnshield";
+  const input = { amount: kind === "partial" ? 500n : 2000n }, recipient = kind === "public-default" ? undefined : "recipient";
+  const options = kind === "partial" ? { amount: 500n } : undefined;
+  const operation = Object.freeze({ original: true });
+  f.actual[method].mockResolvedValue(operation);
+  const args = method === "prepareUnshield" ? [input, recipient, options] : [input, recipient];
+  const result = await f.lane[method](...args);
+  expect(f.actual[method]).toHaveBeenCalledWith(...args);
+  expect(Object.isFrozen(result)).toBe(true); expect(Object.isFrozen(result.handle)).toBe(true);
+  expect(Object.keys(result)).toEqual(["handle"]); expect(Object.keys(result.handle)).toEqual([]);
+  expect(result.handle).not.toBe(operation);
+  const transport = jest.fn(), extra = Object.defineProperty({}, "transport", { get: transport });
+  const acknowledged = Object.freeze({ status: "recovery-required" }), original = Promise.resolve(acknowledged);
+  state.submit.mockReturnValue(original);
+  expect(f.lane[f.consume].call({}, result.handle, extra)).toBe(original);
+  expect(await original).toBe(acknowledged);
+  expect(state.submit.mock.calls).toEqual([[f.actual, operation, mode]]);
+  expect(transport).not.toHaveBeenCalled();
+  await f.account.close();
+});
+test.each(["PRIVATE_BROADCAST_UNCERTAIN", "PRIVATE_SUBMISSION_UNRESOLVED", "OTHER"])("wrapper successor preserves original rejection %s and burns handle", async (code) => {
+  const f = await wrapperSuccessor("public"), prepared = await f.lane.prepareShield(1n);
+  const error = Object.assign(Error("bounded refusal"), { code }), original = Promise.reject(error);
+  original.catch(() => {}); state.submit.mockReturnValue(original);
+  expect(f.lane.submit(prepared.handle)).toBe(original);
+  await expect(original).rejects.toBe(error);
+  expect(() => f.lane.submit(prepared.handle)).toThrow();
+  expect(state.submit).toHaveBeenCalledTimes(1);
+  await f.account.close();
+});
+test.each(["private", "public"])("wrapper successor %s reserves consumption before synchronous throw and replay", async (mode) => {
+  const f = await wrapperSuccessor(mode), prepared = await f.lane[f.prepare](1n), error = Error("refused");
+  state.submit.mockImplementation(() => {
+    expect(() => f.lane[f.consume](prepared.handle)).toThrow();
+    throw error;
+  });
+  expect(() => f.lane[f.consume](prepared.handle)).toThrow(error);
+  expect(() => f.lane[f.consume](prepared.handle)).toThrow();
+  expect(state.submit).toHaveBeenCalledTimes(1);
+  await f.account.close();
+});
+test("wrapper successor foreign account, copied and raw tokens do not consume own handle", async () => {
+  const f = await wrapperSuccessor("public"), account2 = await f.api.openAccount({ ...f.options, accountIndex: 1 });
+  const other = await account2.openPrivate(laneOptions(f.options.signal, "private"));
+  const raw = Object.freeze({ raw: true }); f.actual.prepareShield.mockResolvedValue(raw);
+  const own = await f.lane.prepareShield(1n), foreign = await other.prepareTransfer(1n);
+  for (const value of [null, undefined, {}, raw, { ...own.handle }, Object.create(own.handle), foreign.handle])
+    expect(() => f.lane.submit(value)).toThrow();
+  expect(state.submit).not.toHaveBeenCalled();
+  await f.lane.submit(own.handle); await other.broadcast(foreign.handle);
+  expect(state.submit).toHaveBeenCalledTimes(2);
+  await f.account.close(); await account2.close();
+});
+test.each(["private", "public"])("wrapper successor %s reentrant close revokes handle and late preparation", async (mode) => {
+  const f = await wrapperSuccessor(mode), own = await f.lane[f.prepare](1n), held = deferred();
+  f.actual[f.prepare].mockReturnValue(held.promise);
+  const pending = f.lane[f.prepare](2n); pending.catch(() => {});
+  f.actual.close.mockImplementation(() => { f.lane.close(); f.actual.drain.resolve(); });
+  f.lane.close(); f.lane.close();
+  expect(f.actual.close).toHaveBeenCalledTimes(1);
+  expect(() => f.lane[f.consume](own.handle)).toThrow();
+  held.resolve(Object.freeze({ late: true }));
+  await expect(pending).rejects.toBeDefined();
+  expect(state.submit).not.toHaveBeenCalled();
+  await f.account.close();
+});
+test("wrapper successor original preparation rejection is unchanged", async () => {
+  const f = await wrapperSuccessor("public"), error = Error("original preparation");
+  f.actual.prepareShield.mockRejectedValue(error);
+  await expect(f.lane.prepareShield(1n)).rejects.toBe(error);
+  await f.account.close();
+});
+test("wrapper successor outward rejection and acknowledged result remain separate from original drain", async () => {
+  const f = await wrapperSuccessor("public"), own = await f.lane.prepareShield(1n), error = Error("original refusal");
+  const submitted = deferred(); state.submit.mockReturnValue(submitted.promise);
+  expect(f.lane.submit(own.handle)).toBe(submitted.promise);
+  f.actual.close.mockImplementation(() => {});
+  const closed = f.account.close(), observed = jest.fn(); closed.then(observed, observed);
+  submitted.reject(error); await expect(submitted.promise).rejects.toBe(error); await tick();
+  expect(observed).not.toHaveBeenCalled();
+  f.actual.drain.resolve(); await closed;
+});
+test("wrapper successor cleanup rejection cannot replace an acknowledged submission", async () => {
+  const f = await wrapperSuccessor("public"), own = await f.lane.prepareShield(1n);
+  const result = Object.freeze({ status: "submitted" }), original = Promise.resolve(result);
+  state.submit.mockReturnValue(original); expect(f.lane.submit(own.handle)).toBe(original);
+  const error = Error("original cleanup");
+  f.actual.close.mockImplementation(() => { f.actual.drain.reject(error); throw error; });
+  const closed = f.account.close();
+  expect(await original).toBe(result); await expect(closed).rejects.toBe(error);
+});
+test.each(["mode", "host", "ports", "proverArchive", "artifactDirectory", "signer", "controller"])("wrapper successor caller %s refuses before plugin adoption", async (key) => {
+  const f = fixture(), account = await f.api.openAccount(f.options);
+  expect(() => account.openPublic({ ...laneOptions(f.options.signal, "public"), [key]: {} })).toThrow();
+  expect(state.createPlugin).not.toHaveBeenCalled(); expect(state.openWallet).not.toHaveBeenCalled();
+  await account.close();
+});
+test("wrapper successor external plugin abort refuses unused handle and late preparation", async () => {
+  const f = fixture(), controller = new AbortController();
+  state.createPlugin.mockImplementation((input) => { const value = plugin(input); value.signal = controller.signal; return value; });
+  const account = await f.api.openAccount(f.options), lane = await account.openPublic(laneOptions(f.options.signal, "public"));
+  const actual = state.plugins[0], own = await lane.prepareShield(1n), held = deferred();
+  actual.prepareShield.mockReturnValue(held.promise); const pending = lane.prepareShield(2n); pending.catch(() => {});
+  controller.abort(); expect(() => lane.submit(own.handle)).toThrow();
+  held.resolve({}); await expect(pending).rejects.toBeDefined();
+  expect(actual.close).not.toHaveBeenCalled(); expect(state.submit).not.toHaveBeenCalled();
+  await account.close();
+});

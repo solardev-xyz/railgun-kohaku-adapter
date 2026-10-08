@@ -1,0 +1,110 @@
+{
+  "sourceRevision": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+  "changes": [
+    {
+      "source": "src/main/wallet/railgun-kohaku-private-adapter.test.js",
+      "destination": "test/railgun-kohaku-private-adapter.test.js",
+      "beforeSha256": "b8ee978ab88b839df9b91368565877737b9a0b5efc9a413db11b5115a08146f2",
+      "afterSha256": "73f66a6fb37c032e1fad754c3ae6fb04c7dcddb11597c9022affba6da1e5afc6",
+      "replacements": [
+        {
+          "start": 267,
+          "before": "} = require('../../../scripts/fixtures/railgun-kohaku-private-conformance');\nconst pins = require('./railgun-shield-pins.json');\n",
+          "after": "} = require('./fixtures/railgun-kohaku-private-conformance');\nconst pins = require('../src/railgun-shield-pins.json');\n"
+        },
+        {
+          "start": 114,
+          "before": "} = require('./railgun-kohaku-private-adapter');\n",
+          "after": "} = require('../src/railgun-kohaku-private-adapter');\n"
+        }
+      ],
+      "scope": "AST body/assertion equality excluding literal loader arguments/comments/formatting"
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-public-adapter.test.js",
+      "destination": "test/railgun-kohaku-public-adapter.test.js",
+      "beforeSha256": "c47486ba00771c52ab24e605b5562aedd26deb54c9e7eda7b8a5d5e710345852",
+      "afterSha256": "60a1f8881f57788321f1b77b5039a4c0bf6aae1363a7286fb720ea8e19194195",
+      "replacements": [
+        {
+          "start": 14031,
+          "before": "  const privateApi = require('./railgun-kohaku-private-adapter');\n  const {\n    independentPrivateHost,\n  } = require('../../../scripts/fixtures/railgun-kohaku-private-conformance');\n",
+          "after": "  const privateApi = require('../src/railgun-kohaku-private-adapter');\n  const { independentPrivateHost } = require('./fixtures/railgun-kohaku-private-conformance');\n"
+        },
+        {
+          "start": 247,
+          "before": "} = require('../../../scripts/fixtures/railgun-kohaku-public-conformance');\n",
+          "after": "} = require('./fixtures/railgun-kohaku-public-conformance');\n"
+        },
+        {
+          "start": 108,
+          "before": "} = require('./railgun-kohaku-public-adapter');\n",
+          "after": "} = require('../src/railgun-kohaku-public-adapter');\n"
+        }
+      ],
+      "scope": "AST body/assertion equality excluding literal loader arguments/comments/formatting"
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-read-data.test.js",
+      "destination": "test/railgun-kohaku-read-data.test.js",
+      "beforeSha256": "66b780ca2c7c58a80eb704993fe58e615722bc340b1e683c603a6ca8676fe325",
+      "afterSha256": "4c6dcc7739c5a3b60daa4b51d740ab1e942a3621cd5415b3709ccb550dedd68d",
+      "replacements": [
+        {
+          "start": 131,
+          "before": "} = require('./railgun-kohaku-read-data');\n",
+          "after": "} = require('../src/railgun-kohaku-read-data');\n"
+        }
+      ],
+      "scope": "AST body/assertion equality excluding literal loader arguments/comments/formatting"
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-read-dispatch.test.js",
+      "destination": "test/railgun-kohaku-read-dispatch.test.js",
+      "beforeSha256": "19b225200fbc745998130927dab1ce0812f11434bbaf4554d2fcd6d17c9829e7",
+      "afterSha256": "79f6314580ccb9fd2f16c6d8d367ea828518b9d884d94b4a173059380fb62695",
+      "replacements": [
+        {
+          "start": 80,
+          "before": "const { dispatchRailgunKohakuRead: dispatch } = require('./railgun-kohaku-read-dispatch');\n",
+          "after": "const { dispatchRailgunKohakuRead: dispatch } = require('../src/railgun-kohaku-read-dispatch');\n"
+        }
+      ],
+      "scope": "AST body/assertion equality excluding literal loader arguments/comments/formatting"
+    },
+    {
+      "source": "src/main/wallet/railgun-kohaku-snapshot-plugin.test.js",
+      "destination": "test/railgun-kohaku-snapshot-plugin.test.js",
+      "beforeSha256": "230397d28859a4cd96117db402b158b38d275f624e48b913d6430db9c6b26904",
+      "afterSha256": "f7ea962ad2ecaa701efc6c860d284ae4e0f0c7568ac08834b1ff0a7273651716",
+      "replacements": [
+        {
+          "start": 12334,
+          "before": "  vm.runInNewContext(fs.readFileSync(require.resolve('./railgun-kohaku-plugin'), 'utf8'), sandbox);\n",
+          "after": "  vm.runInNewContext(\n    fs.readFileSync(require.resolve('../src/owners/railgun-kohaku-plugin.js'), 'utf8'),\n    sandbox\n  );\n"
+        },
+        {
+          "start": 12233,
+          "before": "    require: (name) => (['assert/strict', 'path', 'util'].includes(name) ? require(name) : {}),\n",
+          "after": "    require: (name) => {\n      if (['assert/strict', 'path', 'util'].includes(name)) return require(name);\n      if (name === './host-bindings') return { rpc: {} };\n      return {};\n    },\n"
+        },
+        {
+          "start": 12058,
+          "before": "  // Actual unchanged registry checks with inert imports: registry isolation,\n  // not genuine owner or native qualification.\n",
+          "after": "  // Actual package-private registry, with inert imports only: this checks brand\n  // isolation, not initialized owner construction or native qualification.\n"
+        },
+        {
+          "start": 234,
+          "before": "} = require('../../../scripts/fixtures/railgun-kohaku-snapshot-conformance');\n",
+          "after": "} = require('./fixtures/railgun-kohaku-snapshot-conformance');\n"
+        },
+        {
+          "start": 52,
+          "before": "const { createRailgunKohakuSnapshotPlugin: create } = require('./railgun-kohaku-snapshot-plugin');\n",
+          "after": "const {\n  createRailgunKohakuSnapshotPlugin: create,\n} = require('../src/railgun-kohaku-snapshot-plugin');\n"
+        }
+      ],
+      "scope": "Original registry refusal restored against current actual private owner in a VM with inert imports; existing package additional snapshot bounds remain active."
+    }
+  ]
+}
