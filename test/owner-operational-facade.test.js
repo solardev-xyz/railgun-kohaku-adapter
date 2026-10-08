@@ -659,6 +659,109 @@ test.each([
     await account.close();
   },
 );
+test.each(["new", "pending"])(
+  "openAccount publicCache %s opens the public cache like its replacement",
+  async (mode) => {
+    const f = fixture();
+    const account = await f.api.openAccount({ ...f.options, publicCache: mode });
+    expect(state.openEnrollment.mock.calls[0][0]).toEqual({
+      identity: await state.openIdentity.mock.results[0].value,
+      create: false,
+    });
+    expect(state.openPublic.mock.calls[0][0]).toEqual({
+      enrollment: state.enrollments[0],
+      archive: runtime.archive,
+      create: false,
+      mode,
+    });
+    await account.close();
+  },
+);
+test.each(["new", "pending"])(
+  "close during a publicCache %s opening retains and closes the late public owner",
+  async (publicCache) => {
+    const f = fixture(),
+      held = deferred();
+    state.openPublic.mockImplementation(() => held.promise);
+    const work = f.api.openAccount({ ...f.options, publicCache });
+    work.catch(() => {});
+    await tick();
+    expect(state.openPublic.mock.calls[0][0].mode).toBe(publicCache);
+    f.caller.abort();
+    await tick();
+    const nextSignal = new AbortController().signal;
+    expect(() =>
+      f.api.openAccount({ accountIndex: 0, signal: nextSignal, publicCache }),
+    ).toThrow();
+    const value = publicOwner();
+    held.resolve(value);
+    await expect(work).rejects.toThrow();
+    await tick();
+    expect(value.close).toHaveBeenCalledTimes(1);
+  },
+);
+test.each(["new", "pending"])(
+  "a refused publicCache %s opening keeps exclusion until acquired owners drain",
+  async (publicCache) => {
+    const f = fixture(),
+      failure = Error("no current-policy candidate");
+    state.openPublic.mockRejectedValue(failure);
+    state.openEnrollment.mockImplementation(async () => {
+      const value = enrollment();
+      // The original enrollment closes only when its own drain settles.
+      value.close.mockImplementation(() => value.controller.abort());
+      return value;
+    });
+    const work = f.api.openAccount({ ...f.options, publicCache });
+    work.catch(() => {});
+    await tick();
+    expect(state.enrollments[0].close).toHaveBeenCalledTimes(1);
+    const nextSignal = new AbortController().signal;
+    expect(() =>
+      f.api.openAccount({ accountIndex: 0, signal: nextSignal, publicCache }),
+    ).toThrow();
+    state.enrollments[0].drain.resolve();
+    await expect(work).rejects.toBe(failure);
+    await tick();
+    state.openPublic.mockImplementation(async () => publicOwner());
+    state.openEnrollment.mockImplementation(async () => enrollment());
+    const reopened = await f.api.openAccount({
+      accountIndex: 0,
+      signal: nextSignal,
+      publicCache,
+    });
+    await reopened.close();
+  },
+);
+test("openAccount without publicCache keeps the active-only opening", async () => {
+  const f = fixture();
+  const account = await f.api.openAccount(f.options);
+  expect(state.openPublic.mock.calls[0][0]).toEqual({
+    enrollment: state.enrollments[0],
+    archive: runtime.archive,
+    create: false,
+  });
+  await account.close();
+});
+test.each([
+  ["active", false],
+  ["rebuild", false],
+  [undefined, false],
+  ["new", true],
+])(
+  "public-cache opening %s (create %s) refuses before any owner opens",
+  (publicCache, create) => {
+    const f = fixture();
+    expect(() =>
+      (create ? f.api.createAccount : f.api.openAccount)({
+        ...f.options,
+        publicCache,
+      }),
+    ).toThrow();
+    expect(state.openIdentity).not.toHaveBeenCalled();
+    expect(state.openPublic).not.toHaveBeenCalled();
+  },
+);
 test("public replacement original close failure is not converted to a fresh generation", async () => {
   const f = fixture(),
     account = await f.api.openAccount(f.options);

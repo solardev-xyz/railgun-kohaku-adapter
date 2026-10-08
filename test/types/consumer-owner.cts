@@ -202,3 +202,23 @@ async function held(session: owner.AccountSession) {
   await lane.closed;
 }
 void held;
+
+async function rebuildOpen(
+  api: ReturnType<typeof owner.initializeRailgunMain>,
+) {
+  const rebuilt = await api.openAccount({
+    accountIndex: 0,
+    signal,
+    publicCache: "new",
+  });
+  rebuilt.close();
+  await rebuilt.closed;
+  const resumed = await api.openAccount({
+    accountIndex: 0,
+    signal,
+    publicCache: "pending",
+  });
+  resumed.close();
+  await resumed.closed;
+}
+void rebuildOpen;

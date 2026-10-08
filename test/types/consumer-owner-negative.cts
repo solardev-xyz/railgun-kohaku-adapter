@@ -137,6 +137,11 @@ session.openSubmissionRecovery({
   // @ts-expect-error no caller-selected submitter address or journal row
   submitter: "0x",
 });
+declare const facade: ReturnType<typeof owner.initializeRailgunMain>;
+// @ts-expect-error account creation never takes an existing-cache opening mode
+facade.createAccount({ accountIndex: 0, signal, publicCache: "new" });
+// @ts-expect-error only explicit "new" or "pending" public-cache openings exist
+facade.openAccount({ accountIndex: 0, signal, publicCache: "active" });
 declare const heldLane: owner.SubmissionRecoveryLane;
 // @ts-expect-error resolution requires an explicit confirmation policy
 heldLane.resolve("id");

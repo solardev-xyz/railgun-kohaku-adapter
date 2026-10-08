@@ -3,7 +3,11 @@
  */
 const { createPrivacyScope, getPrivacyContext } = require('./context-bindings');
 const { openPrivacySession } = require('./host-bindings').sessions;
-const { getPrivateTransactionNetwork } = require('./host-bindings').transactionNetwork;
+const {
+  getPrivateTransactionNetwork,
+  getPrivateTransactionNetworkDestination,
+  assertPrivateTransactionNetworkDestination,
+} = require('./host-bindings').transactionNetwork;
 const { inspectRailgunTransactReceipt } = require("./railgun-transact-receipt.js");
 const { readRailgunRecoveryFinality } = require("./railgun-recovery-finality.js");
 const {
@@ -42,9 +46,12 @@ function openRailgunTransactRecovery(owner) {
     },
   });
   const handle = scope.getContext(subject);
-  let network;
+  let network, destination;
   try {
     network = getPrivateTransactionNetwork(handle);
+    // This exact client's genuine endpoint observation, captured locally
+    // before any request; every later request reasserts the same destination.
+    destination = getPrivateTransactionNetworkDestination(network, handle);
   } catch (error) {
     scope.close();
     throw error;
@@ -57,7 +64,10 @@ function openRailgunTransactRecovery(owner) {
     hash: () => currentHash,
     permit: () => currentPermit,
   });
-  const active = () => network.assertActive();
+  const active = () => {
+    network.assertActive();
+    assertPrivateTransactionNetworkDestination(network, handle, destination);
+  };
   async function list() {
     active();
     const records = await network.listSubmissions();
@@ -182,6 +192,9 @@ function openRailgunTransactRecovery(owner) {
     list,
     observe,
     resolve,
+    destination,
+    assertDestination: () =>
+      assertPrivateTransactionNetworkDestination(network, handle, destination),
     close: () => scope.close(),
     signal: scope.signal,
   });

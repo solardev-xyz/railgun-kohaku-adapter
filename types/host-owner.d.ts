@@ -188,6 +188,14 @@ export interface AccountOptions {
   accountIndex: number;
   signal: AbortSignal;
 }
+/** Opening an existing account. Without publicCache only an active public
+ * generation of the current source policy opens. After a package source change
+ * none exists: "new" begins a fresh generation exactly as rebuildPublic and
+ * "pending" resumes an interrupted one as resumePublic. Reads, lanes and
+ * recovery keep their completed-public requirements; advance ranges first. */
+export interface OpenAccountOptions extends AccountOptions {
+  publicCache?: "new" | "pending";
+}
 export type WalletMode = "active" | "advance" | "new" | "pending";
 export interface ReadLaneOptions {
   wallet: WalletMode;
@@ -562,6 +570,9 @@ export interface HeldSubmissionDisclosure {
   readonly operation: PrivateKind;
   readonly submitter: string;
   readonly destinationRole: "transaction-rpc";
+  /** The actual transaction-RPC endpoint observed locally before consent;
+   * reasserted before every request. */
+  readonly destination: HeldSubmissionDestination;
   readonly requests: readonly [
     "eth_blockNumber",
     "eth_getBlockByNumber",
@@ -578,6 +589,10 @@ export interface HeldSubmissionDisclosure {
   readonly sendEnabled: false;
   readonly retryEnabled: false;
   readonly holdReleaseEnabled: false;
+}
+export interface HeldSubmissionDestination {
+  readonly url: string;
+  readonly transport: string;
 }
 export interface HeldSubmissionObservationFields {
   readonly status: string;
@@ -622,6 +637,7 @@ export interface HeldSubmissionResolutionReview {
   readonly holdId: string;
   readonly operation: PrivateKind;
   readonly transactionHash: string;
+  readonly destination: HeldSubmissionDestination;
   readonly observation: HeldSubmissionObservationFields | null;
   readonly transact: HeldSubmissionTransact;
   readonly output: HeldSubmissionOutput;
@@ -1042,7 +1058,7 @@ export interface AccountSession {
 }
 export interface RailgunMain {
   createAccount(options: AccountOptions): Promise<AccountSession>;
-  openAccount(options: AccountOptions): Promise<AccountSession>;
+  openAccount(options: OpenAccountOptions): Promise<AccountSession>;
 }
 /** Once per realm; exact data properties only. Invalid options may throw before
  * returning a promise. No key, raw store, receipt, module getter or policy override.

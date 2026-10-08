@@ -16,12 +16,29 @@ const {
   openRailgunTransactRecovery,
 } = require("./railgun-transact-recovery.js");
 const { getPrivacyContext } = require("./context-bindings.js");
+const { getPrivateRpcDestinationDetails } = require("./host-bindings.js").rpc;
 const fail = () =>
   Object.assign(new Error("Railgun held submission unavailable"), {
     code: "RAILGUN_SUBMISSION_FACADE_REFUSED",
   });
 const unknown = () =>
   Object.assign(fail(), { code: "RAILGUN_SUBMISSION_FACADE_DRAIN_UNOBSERVED" });
+// The only codes a caller may observe; each leaves as a fresh fixed-message
+// error. No original message, cause or field crosses the lane boundary.
+const CODES = new Set([
+  "RAILGUN_SUBMISSION_FACADE_REFUSED",
+  "RAILGUN_SUBMISSION_FACADE_DRAIN_UNOBSERVED",
+  "RAILGUN_TRANSACT_RECOVERY_REFUSED",
+  "PRIVATE_SUBMISSION_UNRESOLVED",
+  "PRIVATE_TRANSACTION_REQUEST_REFUSED",
+  "PRIVATE_TRANSACTION_DESTINATION_REFUSED",
+  "PRIVATE_REVIEW_REJECTED",
+  "PRIVATE_REVIEW_STALE",
+  "PRIVATE_RECONCILIATION_STALE",
+  "PRIVACY_REQUEST_ABORTED",
+  "PRIVACY_CONTEXT_REVOKED",
+]);
+const refusal = (code) => Object.assign(fail(), { code });
 const aborted = Object.getOwnPropertyDescriptor(
   AbortSignal.prototype,
   "aborted",
@@ -103,6 +120,16 @@ function assertJournalScope(handle, submitter) {
   assert.equal(journal.profileId, engine.profileId);
   assert.equal(journal.subject.principal, submitter);
   assert.equal(journal.subject.chainId, 11155111);
+}
+// Safe projection of the genuine transaction-RPC destination observation:
+// public endpoint and transport only, never a context or transport authority.
+function destinationProjection(observation) {
+  const details = getPrivateRpcDestinationDetails(observation);
+  assert.equal(details.role, "transaction-rpc");
+  assert.equal(details.chainId, 11155111);
+  assert.equal(typeof details.url, "string");
+  assert.equal(typeof details.transport, "string");
+  return Object.freeze({ url: details.url, transport: details.transport });
 }
 function noteId(output) {
   assert.ok(
@@ -309,16 +336,15 @@ function createRailgunSubmissionLane(options) {
           typeof code === "string" &&
           (code.endsWith("_EXIT_UNOBSERVED") ||
             code.endsWith("_DRAIN_UNOBSERVED"))
-        )
-          failed ||= error;
-        // Coded owner/host refusals keep their generic messages; anything else,
-        // notably assertion values over custody facts, never leaves the lane.
-        if (
-          typeof code === "string" &&
-          /^(?:RAILGUN|PRIVATE|PRIVACY)_[A-Z0-9_]{1,80}$/.test(code)
-        )
-          throw error;
-        throw fail();
+        ) {
+          failed ||= unknown();
+          throw unknown();
+        }
+        throw refusal(
+          typeof code === "string" && CODES.has(code)
+            ? code
+            : "RAILGUN_SUBMISSION_FACADE_REFUSED",
+        );
       } finally {
         busy = false;
         if (failed) close();
@@ -378,7 +404,7 @@ function createRailgunSubmissionLane(options) {
     assert.ok(matches.length <= 1);
     return matches[0] ?? null;
   }
-  function disclosure(holdId, hold) {
+  function disclosure(holdId, hold, destination) {
     return {
       purpose: "railgun-held-submission-observation-v1",
       chainId: 11155111,
@@ -386,6 +412,7 @@ function createRailgunSubmissionLane(options) {
       operation: hold.kind,
       submitter: hold.submitter,
       destinationRole: "transaction-rpc",
+      destination,
       requests: [...REQUESTS],
       disclosures: [
         "public-submitter",
@@ -399,21 +426,29 @@ function createRailgunSubmissionLane(options) {
       holdReleaseEnabled: false,
     };
   }
-  // Custody, submitter and profile checks are local; consent precedes the
-  // journal scope, and only a complete journal read may report no match.
+  // Custody, submitter, profile and destination are established locally; the
+  // recovery scope opens without any request so consent can name its actual
+  // endpoint. Only a complete journal read may report no match.
   async function open(holdId) {
     id(holdId);
     const hold = await held(holdId);
     assert.equal(hold.submitter, submitterAddress());
     assertJournalScope(handle, hold.submitter);
-    await review(disclosure(holdId, hold));
     current();
     assert.equal(recovery, null);
     recovery = openRailgunTransactRecovery(hold.submitter);
     const opened = recovery;
+    const destination = destinationProjection(opened.destination);
+    await review(disclosure(holdId, hold, destination));
+    current();
+    const confirm = () => {
+      opened.assertDestination();
+      assert.deepEqual(destinationProjection(opened.destination), destination);
+    };
+    confirm();
     const record = bind(await opened.list(), hold);
     current();
-    return { hold, opened, record };
+    return { hold, opened, record, destination, confirm };
   }
   function observe(holdId) {
     return invoke(async () => {
@@ -460,7 +495,8 @@ function createRailgunSubmissionLane(options) {
           minimumConfirmations <= 64,
       );
       try {
-        const { hold, opened, record } = await open(holdId);
+        const { hold, opened, record, destination, confirm } =
+          await open(holdId);
         assert.ok(record && !record.resolution);
         let reviewed;
         const resolved = await opened.resolve(record.hash, {
@@ -476,6 +512,7 @@ function createRailgunSubmissionLane(options) {
               holdId,
               operation: hold.kind,
               transactionHash: record.hash,
+              destination,
               observation: observationProjection(request.observation),
               transact: transactProjection(request.transact),
               output: outputProjection(request.transact),
@@ -487,6 +524,7 @@ function createRailgunSubmissionLane(options) {
               trust: "unverified-rpc",
             };
             await review(summary);
+            confirm();
             reviewed = freeze(summary);
             return Object.freeze({
               allowNextTransaction: true,

@@ -28,7 +28,7 @@
       "status": "active-semantic-successor-with-historical-wrapper-api",
       "archive": "docs/owners/historical-tests/railgun-kohaku-broadcaster.test.source.txt",
       "destination": "test/owner-operational-facade.test.js",
-      "destinationSha256": "4f550f3ee1a3b6f80ff5bbd7ef2be64c6ee09b3c455ac8fbcf121dcfc9ecc912",
+      "destinationSha256": "b0ff090599fadca94d8ad3b4500df3fe251a1dcfd7ed9e56d0f950f492d9fc7a",
       "additionalActiveTest": "tools/owner-test-staging/tests/src/main/wallet/railgun-kohaku-plugin.test.js",
       "provenance": "docs/owners/test-staging/EARLIER-WRAPPER-ORIGINS.json",
       "scope": "docs/owners/test-staging/EARLIER-WRAPPER-SEMANTICS.md; constructor/borrowed-owner API is obsolete, lifetime/authority/delegation mapped to current owning facade; not byte parity."
@@ -57,7 +57,7 @@
       "status": "active-semantic-successor-with-historical-wrapper-api",
       "archive": "docs/owners/historical-tests/railgun-kohaku-private-host.test.source.txt",
       "destination": "test/owner-operational-facade.test.js",
-      "destinationSha256": "4f550f3ee1a3b6f80ff5bbd7ef2be64c6ee09b3c455ac8fbcf121dcfc9ecc912",
+      "destinationSha256": "b0ff090599fadca94d8ad3b4500df3fe251a1dcfd7ed9e56d0f950f492d9fc7a",
       "additionalActiveTest": "tools/owner-test-staging/tests/src/main/wallet/railgun-kohaku-plugin.test.js",
       "provenance": "docs/owners/test-staging/EARLIER-WRAPPER-ORIGINS.json",
       "scope": "docs/owners/test-staging/EARLIER-WRAPPER-SEMANTICS.md; constructor/borrowed-owner API is obsolete, lifetime/authority/delegation mapped to current owning facade; not byte parity."
@@ -77,7 +77,7 @@
       "status": "active-semantic-successor-with-historical-wrapper-api",
       "archive": "docs/owners/historical-tests/railgun-kohaku-public-host.test.source.txt",
       "destination": "test/owner-operational-facade.test.js",
-      "destinationSha256": "4f550f3ee1a3b6f80ff5bbd7ef2be64c6ee09b3c455ac8fbcf121dcfc9ecc912",
+      "destinationSha256": "b0ff090599fadca94d8ad3b4500df3fe251a1dcfd7ed9e56d0f950f492d9fc7a",
       "additionalActiveTest": "tools/owner-test-staging/tests/src/main/wallet/railgun-kohaku-plugin.test.js",
       "provenance": "docs/owners/test-staging/EARLIER-WRAPPER-ORIGINS.json",
       "scope": "docs/owners/test-staging/EARLIER-WRAPPER-SEMANTICS.md; constructor/borrowed-owner API is obsolete, lifetime/authority/delegation mapped to current owning facade; not byte parity."
@@ -88,7 +88,7 @@
       "status": "active-semantic-successor-with-historical-wrapper-api",
       "archive": "docs/owners/historical-tests/railgun-kohaku-public-submitter.test.source.txt",
       "destination": "test/owner-operational-facade.test.js",
-      "destinationSha256": "4f550f3ee1a3b6f80ff5bbd7ef2be64c6ee09b3c455ac8fbcf121dcfc9ecc912",
+      "destinationSha256": "b0ff090599fadca94d8ad3b4500df3fe251a1dcfd7ed9e56d0f950f492d9fc7a",
       "additionalActiveTest": "tools/owner-test-staging/tests/src/main/wallet/railgun-kohaku-plugin.test.js",
       "provenance": "docs/owners/test-staging/EARLIER-WRAPPER-ORIGINS.json",
       "scope": "docs/owners/test-staging/EARLIER-WRAPPER-SEMANTICS.md; constructor/borrowed-owner API is obsolete, lifetime/authority/delegation mapped to current owning facade; not byte parity."

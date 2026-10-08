@@ -143,14 +143,23 @@ function initializeRailgunMain(options) {
   const sessions = new WeakMap();
   function open(options, create) {
     host.assertRailgunOwnerHost();
-    const { accountIndex, signal: caller } = record(options, [
-      "accountIndex",
-      "signal",
-    ]);
+    // An explicit public-cache opening for an existing account whose active
+    // public generation belongs to another source policy: "new" begins a fresh
+    // generation exactly as rebuildPublic, "pending" resumes it exactly as
+    // resumePublic. Absent keeps the active-only opening; never implicit.
+    let data;
+    try {
+      data = record(options, ["accountIndex", "signal", "publicCache"]);
+    } catch {
+      data = record(options, ["accountIndex", "signal"]);
+    }
+    const { accountIndex, signal: caller, publicCache } = data;
     if (
       !Number.isInteger(accountIndex) ||
       accountIndex < 0 ||
-      accountIndex > 65535
+      accountIndex > 65535 ||
+      (Object.hasOwn(data, "publicCache") &&
+        (create || !["new", "pending"].includes(publicCache)))
     )
       throw fail();
     signal(caller);
@@ -1464,6 +1473,7 @@ function initializeRailgunMain(options) {
             enrollment: state.enrollment,
             archive: runtime.archive,
             create,
+            ...(publicCache === undefined ? {} : { mode: publicCache }),
           }),
         );
         current();

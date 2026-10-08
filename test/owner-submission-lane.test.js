@@ -30,6 +30,10 @@ jest.mock("../src/owners/railgun-transact-recovery.js", () => ({
 }));
 jest.mock("../src/owners/host-bindings.js", () => ({
   submitter: { readMetadata: () => state.metadata },
+  rpc: {
+    getPrivateRpcDestinationDetails: (observation) =>
+      state.destinationDetails(observation),
+  },
   sessions: {
     openPrivacySession: () => ({
       getContext: (subject) => {
@@ -158,6 +162,8 @@ function fixture() {
     }),
     close: jest.fn(() => recoveryController.abort()),
     signal: recoveryController.signal,
+    destination: Object.freeze({}),
+    assertDestination: jest.fn(),
   };
   state = {
     descriptor,
@@ -186,6 +192,17 @@ function fixture() {
       profileId: "profile-a",
       subject: { ...subject },
     })),
+    destinationDetails: jest.fn((observation) => {
+      if (observation !== recovery.destination)
+        throw Error("foreign observation");
+      return {
+        version: 1,
+        url: "https://rpc.example/",
+        chainId: 11155111,
+        role: "transaction-rpc",
+        transport: "tor-experimental",
+      };
+    }),
   };
   const input = {
     owners: { identity, enrollment, coordinator },
@@ -251,6 +268,7 @@ test("observe binds only the exact held intent and projects public outcome field
     operation: "railgun-private-transfer",
     submitter: SUBMITTER,
     destinationRole: "transaction-rpc",
+    destination: { url: "https://rpc.example/", transport: "tor-experimental" },
     requests: [
       "eth_blockNumber",
       "eth_chainId",
@@ -346,13 +364,17 @@ test.each([
   expect(state.openRecovery).not.toHaveBeenCalled();
 });
 
-test("refused or nonboolean consent opens no recovery", async () => {
+test("refused or nonboolean consent sends no recovery request", async () => {
   for (const answer of [false, "true", 1, undefined]) {
     const f = fixture();
     f.input.reviewDisclosures.mockImplementation(() => answer);
     const lane = f.createRailgunSubmissionLane(f.input);
     await expect(lane.observe(HOLD)).rejects.toThrow();
-    expect(state.openRecovery).not.toHaveBeenCalled();
+    // The recovery scope opens locally before consent to name its endpoint;
+    // refused consent sends no request and closes that scope.
+    expect(f.recovery.list).not.toHaveBeenCalled();
+    expect(f.recovery.observe).not.toHaveBeenCalled();
+    expect(f.recovery.close).toHaveBeenCalled();
   }
 });
 
@@ -368,7 +390,11 @@ test("a direct thenable consent is not assimilated and fails the lane closed", a
   await expect(lane.closed).rejects.toMatchObject({
     code: "RAILGUN_SUBMISSION_FACADE_DRAIN_UNOBSERVED",
   });
-  expect(state.openRecovery).not.toHaveBeenCalled();
+  // The recovery scope opens locally before consent to name its endpoint;
+  // refused consent sends no request and closes that scope.
+  expect(f.recovery.list).not.toHaveBeenCalled();
+  expect(f.recovery.observe).not.toHaveBeenCalled();
+  expect(f.recovery.close).toHaveBeenCalled();
 });
 
 test("the lane is exclusive while one observation is pending", async () => {
@@ -736,7 +762,7 @@ test("closing during the resolution review never returns the decision", async ()
   expect(state.decision).toBeUndefined();
 });
 
-test("closing during the opening consent opens no journal scope", async () => {
+test("closing during the opening consent sends no journal request", async () => {
   const f = fixture();
   let answer;
   f.input.reviewDisclosures.mockImplementation(
@@ -749,7 +775,11 @@ test("closing during the opening consent opens no journal scope", async () => {
   answer(true);
   await expect(pending).rejects.toThrow();
   await lane.closed;
-  expect(state.openRecovery).not.toHaveBeenCalled();
+  // The recovery scope opens locally before consent to name its endpoint;
+  // refused consent sends no request and closes that scope.
+  expect(f.recovery.list).not.toHaveBeenCalled();
+  expect(f.recovery.observe).not.toHaveBeenCalled();
+  expect(f.recovery.close).toHaveBeenCalled();
 });
 
 test("assertion failures over custody facts leave only the generic refusal", async () => {
@@ -778,16 +808,114 @@ test("assertion failures over custody facts leave only the generic refusal", asy
   );
 });
 
-test("coded owner and host refusals keep their original code", async () => {
+test("supported owner codes leave only as fresh fixed-message errors", async () => {
   const f = fixture();
-  const refused = Object.assign(
-    Error("Transaction request is outside this context"),
-    {
-      code: "PRIVATE_TRANSACTION_REQUEST_REFUSED",
-    },
-  );
+  const secret = "/Users/someone/profile/" + f.sent.intent.nullifier;
+  const refused = Object.assign(Error("leaked " + secret), {
+    code: "PRIVATE_TRANSACTION_REQUEST_REFUSED",
+    cause: Error(secret),
+    record: { nullifier: f.sent.intent.nullifier },
+  });
   f.recovery.observe.mockRejectedValue(refused);
   const lane = f.createRailgunSubmissionLane(f.input);
-  await expect(lane.observe(HOLD)).rejects.toBe(refused);
+  const error = await lane.observe(HOLD).catch((value) => value);
+  expect(error).not.toBe(refused);
+  expect(error.code).toBe("PRIVATE_TRANSACTION_REQUEST_REFUSED");
+  expect(error.message).toBe("Railgun held submission unavailable");
+  expect(Object.keys(error)).toEqual(["code"]);
+  expect(error.cause).toBeUndefined();
+  expect(String(error.stack)).not.toContain(secret);
   expect(f.recovery.close).toHaveBeenCalledTimes(1);
+});
+
+test.each([
+  ["an unsupported prefixed code", "PRIVATE_SOMETHING_NEW"],
+  ["no code", undefined],
+])("%s becomes the generic refusal", async (_name, code) => {
+  const f = fixture();
+  f.recovery.list.mockRejectedValue(
+    Object.assign(
+      Error("private " + f.sent.intent.nullifier),
+      code ? { code } : {},
+    ),
+  );
+  const lane = f.createRailgunSubmissionLane(f.input);
+  const error = await lane.observe(HOLD).catch((value) => value);
+  expect(error.code).toBe("RAILGUN_SUBMISSION_FACADE_REFUSED");
+  expect(Object.keys(error)).toEqual(["code"]);
+});
+
+test("an unobserved owner drain quarantines with a fresh lane error and closed rejection", async () => {
+  const f = fixture();
+  const original = Object.assign(Error("private " + f.sent.intent.nullifier), {
+    code: "RAILGUN_TRANSACT_RECOVERY_DRAIN_UNOBSERVED",
+    detail: f.sent.intent.nullifier,
+  });
+  f.recovery.observe.mockRejectedValue(original);
+  const lane = f.createRailgunSubmissionLane(f.input);
+  const error = await lane.observe(HOLD).catch((value) => value);
+  expect(error).not.toBe(original);
+  expect(error.code).toBe("RAILGUN_SUBMISSION_FACADE_DRAIN_UNOBSERVED");
+  const closed = await lane.closed.catch((value) => value);
+  expect(closed).not.toBe(original);
+  expect(closed.code).toBe("RAILGUN_SUBMISSION_FACADE_DRAIN_UNOBSERVED");
+  expect(Object.keys(closed)).toEqual(["code"]);
+});
+
+test("the reviewed destination must remain the recovery's exact observation", async () => {
+  const f = fixture();
+  f.input.reviewDisclosures.mockImplementation(() => {
+    f.recovery.assertDestination.mockImplementation(() => {
+      throw Object.assign(Error("changed"), {
+        code: "PRIVATE_TRANSACTION_DESTINATION_REFUSED",
+      });
+    });
+    return true;
+  });
+  const lane = f.createRailgunSubmissionLane(f.input);
+  await expect(lane.observe(HOLD)).rejects.toMatchObject({
+    code: "PRIVATE_TRANSACTION_DESTINATION_REFUSED",
+  });
+  expect(f.recovery.list).not.toHaveBeenCalled();
+  expect(f.recovery.observe).not.toHaveBeenCalled();
+});
+
+test("a destination whose details change during review refuses before any request", async () => {
+  const f = fixture();
+  f.input.reviewDisclosures.mockImplementation(() => {
+    state.destinationDetails.mockImplementation(() => ({
+      version: 1,
+      url: "https://other.example/",
+      chainId: 11155111,
+      role: "transaction-rpc",
+      transport: "tor-experimental",
+    }));
+    return true;
+  });
+  const lane = f.createRailgunSubmissionLane(f.input);
+  await expect(lane.observe(HOLD)).rejects.toMatchObject({
+    code: "RAILGUN_SUBMISSION_FACADE_REFUSED",
+  });
+  expect(f.recovery.list).not.toHaveBeenCalled();
+});
+
+test("a destination change during the resolution review never returns the decision", async () => {
+  const f = fixture();
+  f.input.reviewDisclosures.mockImplementation((summary) => {
+    if (summary.purpose === "railgun-held-submission-resolution-v1") {
+      expect(summary.destination).toEqual({
+        url: "https://rpc.example/",
+        transport: "tor-experimental",
+      });
+      f.recovery.assertDestination.mockImplementation(() => {
+        throw Error("changed");
+      });
+    }
+    return true;
+  });
+  const lane = f.createRailgunSubmissionLane(f.input);
+  await expect(
+    lane.resolve(HOLD, { minimumConfirmations: 12 }),
+  ).rejects.toThrow();
+  expect(state.decision).toBeUndefined();
 });

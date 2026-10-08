@@ -23,8 +23,11 @@ Before any review, the lane requires:
 
 The Freedom journal is itself keyed by profile, chain and submitter.
 
-After exact-true review, the lane opens `openRailgunTransactRecovery(submitter)`
-and reads the complete journal. The only accepted join is a `railgun-transact`
+The lane then opens `openRailgunTransactRecovery(submitter)` locally. Opening
+creates the transaction client and captures that client's genuine destination
+observation without any request. After exact-true review naming that
+destination, the lane reasserts the identical observation and reads the complete
+journal; the recovery owner reasserts it again before every later request. The only accepted join is a `railgun-transact`
 journal intent whose `intentDigest`, `nullifier`, `tree` and `operation` equal
 the hold's. `intentDigest` is the zero-proof signing digest bound into both the
 reservation and the journal; it is distinct from the journal's outer `digest`
@@ -42,7 +45,8 @@ returned `recovery-required` without a hash: only the hold id is needed.
 ## Disclosure
 
 The single observation review names the hold, operation, public submitter, the
-transaction-RPC destination role and the exact request inventory the original
+transaction-RPC destination role and actual endpoint (`url`, `transport` from
+the genuine destination details), and the exact request inventory the original
 endpoint readiness check, nonce reconciliation, receipt match and finality checks
 may issue: `eth_blockNumber`, `eth_chainId`, `eth_getBlockByNumber`,
 `eth_getTransactionByHash`, `eth_getTransactionCount`, `eth_getTransactionReceipt`.
@@ -84,6 +88,19 @@ Pending, anomaly, nonce-consumed or mismatched observations cannot resolve as
 success: the original recovery refuses them. A reverted resolution unblocks the
 journal but carries no output and ends that journey. Resolution never releases
 the private hold or permits replay.
+
+## Errors
+
+A caller observes only fresh errors with the fixed message "Railgun held
+submission unavailable" and one closed code: the lane's own refusal or
+unobserved-drain codes, or `RAILGUN_TRANSACT_RECOVERY_REFUSED`,
+`PRIVATE_SUBMISSION_UNRESOLVED`, `PRIVATE_TRANSACTION_REQUEST_REFUSED`,
+`PRIVATE_TRANSACTION_DESTINATION_REFUSED`, `PRIVATE_REVIEW_REJECTED`,
+`PRIVATE_REVIEW_STALE`, `PRIVATE_RECONCILIATION_STALE`,
+`PRIVACY_REQUEST_ABORTED` or `PRIVACY_CONTEXT_REVOKED`. No original message,
+cause or field crosses the boundary; any other failure is the generic refusal.
+An unobserved original drain quarantines the lane with a fresh unobserved-drain
+error, which is also the `closed` rejection.
 
 ## Lifetime
 

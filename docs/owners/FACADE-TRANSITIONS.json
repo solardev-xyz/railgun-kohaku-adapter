@@ -38,6 +38,53 @@
           "after": "Owners = new WeakMap(),\n  closure"
         }
       ]
+    },
+    {
+      "file": "src/owners/railgun-transact-recovery.js",
+      "beforeSha256": "897a0b5886b3fa3775122112f56c82c263a88f13f3a67b7de44540be474a6e3f",
+      "afterSha256": "edfbb0d4d608def44c481f2b11d2ffd355ba55c78f0bd84c3ded06490716d054",
+      "replacements": [
+        {
+          "start": 310,
+          "before": "",
+          "after": "\n "
+        },
+        {
+          "start": 341,
+          "before": "",
+          "after": ",\n"
+        },
+        {
+          "start": 344,
+          "before": "",
+          "after": " getPrivateTransactionNetworkDestination,\n  assertPrivateTransactionNetworkDestination,\n"
+        },
+        {
+          "start": 1723,
+          "before": "",
+          "after": ", destination"
+        },
+        {
+          "start": 1789,
+          "before": "",
+          "after": "handle);\n    // This exact client's genuine endpoint observation, captured locally\n    // before any request; every later request reasserts the same destination.\n    destination = getPrivateTransactionNetworkDestination(network, "
+        },
+        {
+          "start": 2320,
+          "before": "",
+          "after": "{\n    "
+        },
+        {
+          "start": 2348,
+          "before": "",
+          "after": ";\n    assertPrivateTransactionNetworkDestination(network, handle, destination);\n  }"
+        },
+        {
+          "start": 7150,
+          "before": "",
+          "after": "destination,\n    assertDestination: () =>\n      assertPrivateTransactionNetworkDestination(network, handle, destination),\n    "
+        }
+      ]
     }
   ]
 }
