@@ -1,0 +1,53 @@
+{
+  "schema": "railgun-installed-owner-packaged-v1",
+  "hostCommit": "9947698957c4612f4af5a981465661601ab393be",
+  "packageCommit": "133e88cce2e1a37288e4f0bb61bb6d8c726ed6ef",
+  "tarballSha256": "c0217e23804e9ec3871977fc8a802be5e087565225aa493b217240ac8e9a467c",
+  "tools": [
+    {
+      "file": "check-inventory.cjs",
+      "bytes": 3225,
+      "sha256": "fc3e06d70547c469fb59e10fe485ebf13dcb0df65a4cddda828c2ad55474bfbf",
+      "published": false,
+      "reason": "Local fixed-input paths; hashes identify the exact check sources."
+    },
+    {
+      "file": "initialize.cjs",
+      "bytes": 3946,
+      "sha256": "dcccc81f6c4b438f081cb7f61139e83f8b9d18460252bc4ca40f63afdb2f7be8",
+      "published": false,
+      "reason": "Local fixed-input paths; hashes identify the exact check sources."
+    }
+  ],
+  "builderVersion": "26.15.3",
+  "electronVersion": "44.6.0",
+  "builderArguments": [
+    "--mac",
+    "--arm64",
+    "--dir",
+    "--config.mac.identity=null",
+    "--config.mac.notarize=false",
+    "--config.npmRebuild=false",
+    "--config.electronDist=node_modules/electron/dist",
+    "--config.directories.output=<fresh-output>"
+  ],
+  "environment": {
+    "CSC_IDENTITY_AUTO_DISCOVERY": "false"
+  },
+  "install": "npm ci --ignore-scripts --no-audit --no-fund; existing lockfile unchanged",
+  "knownLimits": [
+    "No account, credential, worker, proof or network behavior exercised.",
+    "Node network entrypoints explicitly refuse; this is not OS network confinement.",
+    "Unsigned app.asar loaded in the pinned source Electron, not launched as the distributed application.",
+    "Known platform-negation packaging overinclusion remains; clean tracked input and explicit profile/vault filename check only, not a general secrets classifier."
+  ],
+  "priorCheckerRefusals": [
+    "Stricter inventory initially treated eight directory entries as files.",
+    "Next invocation passed absolute list paths to the relative statFile API.",
+    "Final invocation corrected both and completed."
+  ],
+  "priorInstallNonstarts": [
+    "npm ci invoked one directory too high refused with EUSAGE before install.",
+    "Restricted-network clean install hit ENOTFOUND; owned install stopped, then exact locked install completed with network access."
+  ]
+}
