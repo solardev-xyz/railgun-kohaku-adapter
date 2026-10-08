@@ -94,3 +94,17 @@ transfer. A caller transaction hash, retained output digest or `allValid` flag
 cannot replace that join. No new semantic acceptance truth is invented by this
 candidate. Likewise signed-unfinished original-signature proof regeneration still
 requires its separate native qualification; this lane does not close that gap.
+
+## Executable source admission checks
+
+The focused owner-seam tests parse the actual original owner function bodies and
+extract their exact option-key admission expressions. The real facade calls are
+checked against those expressions before the mocked work runs: both membership
+routes, proof creation, plan creation/revalidation/submission, prepared/attempted
+output recovery and retained-store preparation. Conditional identity and
+sourceDestination membership comes from those original expressions, not another
+handwritten caller schema. Unknown expression syntax or multiple matching gates
+fails the test instead of silently broadening it. Negative controls remove a
+required receipt, add legacy filename/binaryKey fields and mix the two output
+routes. This verifies argument-key compatibility; it does not claim execution of
+real crypto, private native owners or genuine encrypted storage in these mocks.

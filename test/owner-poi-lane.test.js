@@ -1,5 +1,8 @@
 /** Fixed owner seams: no native, service, crypto or profile reads. */
 "use strict";
+const admission = require("./owner-poi-admission.cjs").createAdmission(
+  require("path").join(__dirname, "../src/owners"),
+);
 let state;
 jest.mock("../src/owners/railgun-account-enrollment.js", () => ({
   isRailgunAccountEnrollment: (value) => state.enrollments.has(value),
@@ -26,22 +29,44 @@ jest.mock("../src/owners/railgun-account-public.js", () => ({
   },
 }));
 jest.mock("../src/owners/railgun-own-poi-membership.js", () => ({
-  openRailgunOwnPoiMembership: (input) => state.membership(input, "Shield"),
-  openRailgunOwnTransactPoiMembership: (input) =>
-    state.membership(input, "Transact"),
+  openRailgunOwnPoiMembership: (input) => {
+    admission("shield", input);
+    return state.membership(input, "Shield");
+  },
+  openRailgunOwnTransactPoiMembership: (input) => {
+    admission("transact", input);
+    return state.membership(input, "Transact");
+  },
 }));
 jest.mock("../src/owners/railgun-own-poi-proof.js", () => ({
-  proveRailgunOwnPoi: (input) => state.prove(input),
+  proveRailgunOwnPoi: (input) => {
+    admission("proof", input);
+    return state.prove(input);
+  },
 }));
 jest.mock("../src/owners/railgun-poi-disclosure-plan.js", () => ({
-  prepareRailgunPoiDisclosurePlan: (input) => state.plan(input),
-  revalidateRailgunPoiDisclosurePlan: (input) => state.revalidate(input),
-  submitRailgunRetainedPoi: (input) => state.submit(input),
+  prepareRailgunPoiDisclosurePlan: (input) => {
+    admission("plan", input);
+    return state.plan(input);
+  },
+  revalidateRailgunPoiDisclosurePlan: (input) => {
+    admission("revalidate", input);
+    return state.revalidate(input);
+  },
+  submitRailgunRetainedPoi: (input) => {
+    admission("submit", input);
+    return state.submit(input);
+  },
 }));
 jest.mock("../src/owners/railgun-poi-output-recovery.js", () => ({
-  recoverRailgunPoiOutputCompleted: (input) => state.recover(input, "prepared"),
-  recoverRailgunAttemptedPoiOutput: (input) =>
-    state.recover(input, "attempted"),
+  recoverRailgunPoiOutputCompleted: (input) => {
+    admission("preparedOutput", input);
+    return state.recover(input, "prepared");
+  },
+  recoverRailgunAttemptedPoiOutput: (input) => {
+    admission("attemptedOutput", input);
+    return state.recover(input, "attempted");
+  },
 }));
 const hex = (character) => character.repeat(64);
 const deferred = () => {
@@ -99,7 +124,10 @@ function fixture() {
     revision: 1,
   };
   const store = {
-    prepare: jest.fn(async () => ({ status: "prepared", ...saved })),
+    prepare: jest.fn(async (input) => {
+      admission("storePrepare", input);
+      return { status: "prepared", ...saved };
+    }),
     get: jest.fn(async () => saved),
   };
   const enrollment = {
@@ -595,6 +623,43 @@ test.each([
     [key]: true,
   });
   await expect(lane.recoverAttemptedOutput(hex("4"))).rejects.toThrow();
+  lane.close();
+  await lane.closed;
+});
+
+test("source-derived admission rejects missing, foreign-route and legacy selector properties", async () => {
+  const f = fixture(),
+    lane = f.createRailgunPoiLane(f.input);
+  await lane.prepareShield(hex("1"));
+  const shield = state.membership.mock.calls[0][0],
+    proof = state.prove.mock.calls[0][0];
+  expect(() =>
+    admission("shield", { ...shield, identity: state.identity }),
+  ).toThrow();
+  expect(() => admission("transact", shield)).toThrow();
+  const { membershipReceipt, ...withoutReceipt } = proof;
+  void membershipReceipt;
+  expect(() => admission("proof", withoutReceipt)).toThrow();
+  expect(() =>
+    admission("proof", { ...proof, filename: "/unselected/job.js" }),
+  ).toThrow();
+  expect(() => admission("proof", { ...proof, binaryKey: true })).toThrow();
+  const base = {
+    identity: state.identity,
+    enrollment: state.enrollment,
+    coordinator: state.coordinator,
+    archive: f.input.archive,
+    capsuleDigest: hex("4"),
+    signal: f.input.signal,
+  };
+  expect(admission("attemptedOutput", base)).toBe(true);
+  expect(() => admission("preparedOutput", base)).toThrow();
+  expect(() =>
+    admission("attemptedOutput", {
+      ...base,
+      sourceDestination: f.input.destination,
+    }),
+  ).toThrow();
   lane.close();
   await lane.closed;
 });
