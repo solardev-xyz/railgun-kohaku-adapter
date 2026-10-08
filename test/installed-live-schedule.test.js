@@ -4,7 +4,7 @@ const os = require("os");
 const path = require("path");
 const {
   rangesTo,
-  resumePlan,
+  resumePlan: plan,
 } = require("../tools/qualification/installed-live/live-scenario.cjs");
 const ledger = require("../tools/qualification/installed-live/live-ledger.cjs");
 // As the rebuild does: plan, then record the attempt with its opener.
