@@ -259,13 +259,17 @@ Synthetic-only scaffolding reproduces the stopped states:
 - chain faults `failLogsFrom` and `failApplyRefreshTo` model a failure before
   acquisition completes, and one after the coordinator prepared and applied a
   window, leaving a pending application for recovery;
-- `denseFrom`/`denseTo` mark an interval where a request wider than 20,000
-  blocks answers with 600 well-formed `Nullified` logs in 600 distinct blocks.
-  The real `normalizeLogs` refuses it at the 512-block bound before any further
-  processing, as live Sepolia does around 9.0M. 20,000-block requests answer
-  with the chain's true logs. Synthetic events that also pass projection would
-  need consistent TXID and tree records, so the split windows' union identity
-  is shown on public Sepolia data instead;
+- `denseFrom`/`denseTo` mark an interval where the synthetic provider is
+  intentionally width-dependent and inconsistent. A request wider than 20,000
+  blocks answers with 600 well-formed `Nullified` logs in 600 distinct blocks,
+  which the real `normalizeLogs` refuses at the 512-block bound (counts and bytes
+  far below theirs) before any further processing, as live Sepolia does around
+  9.0M. 20,000-block requests answer with the chain's true logs. This qualifies
+  recovery from that admission refusal and the smaller-window control flow. It
+  cannot show that the wide and split answers carry the same events, and the
+  synthetic model authenticates none of the 600. Split-window equivalence is
+  shown separately on public Sepolia data and in a direct normalizer test (512
+  blocks pass, 513 refuse);
 - `legacyResumeRule` reproduces the first link's whole-window first target;
 - `exit-after-advance` models a crash before the checkpoint is recorded.
 
