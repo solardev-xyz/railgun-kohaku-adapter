@@ -74,6 +74,9 @@ jest.mock("../src/owners/railgun-public-services.js", () => ({
 jest.mock("../src/owners/operational-poi-lane.js", () => ({
   createRailgunPoiLane: (input) => state.createPoi(input),
 }));
+jest.mock("../src/owners/operational-submission-lane.js", () => ({
+  createRailgunSubmissionLane: (input) => state.createSubmission(input),
+}));
 jest.mock("../src/owners/railgun-account-poi.js", () => ({
   openRailgunAccountPoi: (input) => state.openOwnedPoi(input),
   assertRailgunAccountPoi: (operation, receipt, wallet, owners) =>
@@ -239,6 +242,14 @@ function fixture() {
         );
       return value;
     }),
+    createSubmission: jest.fn((input) => {
+      const value = plugin(input);
+      value.observe = jest.fn(() =>
+        Promise.resolve({ status: "unjournaled", holdId: "a".repeat(64) }),
+      );
+      value.resolve = jest.fn(() => Promise.resolve({ status: "resolved" }));
+      return value;
+    }),
     submit: jest.fn(() => Promise.resolve({ status: "submitted" })),
   };
   const initialize =
@@ -289,6 +300,7 @@ test("closed one-shot initializer and exact account options expose no owner auth
       "observeOwnedPoi",
       "openRecovery",
       "openPoiRecovery",
+      "openSubmissionRecovery",
       "openRelayLocal",
       "openRelayRecovery",
       "rebuildPublic",
@@ -1274,6 +1286,46 @@ test("retained POI companion uses fixed owners and excludes simultaneous lanes",
   await lane.closed;
   await session.close();
   await other.close();
+});
+test("held-submission companion uses fixed owners, no runtime and excludes simultaneous lanes", async () => {
+  const f = fixture(),
+    session = await f.api.openAccount(f.options);
+  const reviewDisclosures = jest.fn(() => true);
+  const lane = await session.openSubmissionRecovery({
+    signal: f.caller.signal,
+    reviewDisclosures,
+  });
+  expect(Object.keys(lane).sort()).toEqual(
+    ["observe", "resolve", "signal", "closed", "close"].sort(),
+  );
+  const original = state.createSubmission.mock.results[0].value;
+  expect(Object.keys(original.input).sort()).toEqual(
+    ["owners", "destination", "signal", "reviewDisclosures"].sort(),
+  );
+  expect(original.input.owners.enrollment).toBe(state.enrollments[0]);
+  expect(original.input.reviewDisclosures).toBe(reviewDisclosures);
+  expect(() => session.openRead(laneOptions(f.caller.signal))).toThrow();
+  for (const extra of [
+    { gasLimit: 1n },
+    { reviewTransaction: () => true },
+    { holdId: "a".repeat(64) },
+  ])
+    expect(() =>
+      session.openSubmissionRecovery({
+        signal: f.caller.signal,
+        reviewDisclosures,
+        ...extra,
+      }),
+    ).toThrow();
+  await lane.observe("a".repeat(64));
+  expect(original.observe).toHaveBeenCalledWith("a".repeat(64));
+  await lane.resolve("a".repeat(64), { minimumConfirmations: 3 });
+  expect(original.resolve).toHaveBeenCalledWith("a".repeat(64), {
+    minimumConfirmations: 3,
+  });
+  lane.close();
+  await lane.closed;
+  await session.close();
 });
 test("retained POI unknown original drain preserves account exclusion", async () => {
   const f = fixture(),

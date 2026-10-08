@@ -166,3 +166,39 @@ async function poi(session: owner.AccountSession) {
   await lane.closed;
 }
 void poi;
+
+async function held(session: owner.AccountSession) {
+  const lane = await session.openSubmissionRecovery({
+    signal,
+    reviewDisclosures: (summary, context) => {
+      if (summary.purpose === "railgun-held-submission-observation-v1") {
+        const noSend: false = summary.sendEnabled;
+        void noSend;
+      } else {
+        const keepsHold: false = summary.releasesHold;
+        void keepsHold;
+      }
+      return !context.signal.aborted;
+    },
+  });
+  const observed = await lane.observe("a".repeat(64));
+  if (observed.status === "journaled") {
+    const hash: string = observed.transactionHash;
+    void hash;
+    if (observed.output?.kind === "shielded") {
+      const noteId: string = observed.output.noteId;
+      void noteId;
+    }
+    const resolved = await lane.resolve(observed.holdId, {
+      minimumConfirmations: 3,
+    });
+    const retry: false = resolved.retryEnabled;
+    void retry;
+  } else {
+    const absent: null = observed.transactionHash;
+    void absent;
+  }
+  lane.close();
+  await lane.closed;
+}
+void held;

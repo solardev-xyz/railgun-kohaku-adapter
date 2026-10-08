@@ -553,6 +553,129 @@ export interface PoiRecoveryLane extends LaneLifetime {
     capsuleDigest: string,
   ): Promise<PoiAttemptedOutputOutcome>;
 }
+/** Reviewed before any transaction-RPC read for one held operation. The fixed
+ * wallet-0 submitter is never caller-selected; no signing, send, retry or hold release. */
+export interface HeldSubmissionDisclosure {
+  readonly purpose: "railgun-held-submission-observation-v1";
+  readonly chainId: 11155111;
+  readonly holdId: string;
+  readonly operation: PrivateKind;
+  readonly submitter: string;
+  readonly destinationRole: "transaction-rpc";
+  readonly requests: readonly [
+    "eth_blockNumber",
+    "eth_getBlockByNumber",
+    "eth_getTransactionByHash",
+    "eth_getTransactionCount",
+    "eth_getTransactionReceipt",
+  ];
+  readonly disclosures: readonly [
+    "public-submitter",
+    "journaled-transaction-hash",
+    "observation-timing",
+  ];
+  readonly signingEnabled: false;
+  readonly sendEnabled: false;
+  readonly retryEnabled: false;
+  readonly holdReleaseEnabled: false;
+}
+export interface HeldSubmissionObservationFields {
+  readonly status: string;
+  readonly blockNumber: number | null;
+  readonly blockHash: string | null;
+  readonly confirmations: number | null;
+}
+export type HeldSubmissionTransact =
+  | null
+  | Readonly<{
+      status: "matched";
+      operation: PrivateKind;
+      blockNumber: number;
+      blockHash: string;
+    }>
+  | Readonly<{ status: "anomaly" }>;
+export type HeldSubmissionOutput =
+  | null
+  | Readonly<{ kind: "shielded"; noteId: string }>
+  | Readonly<{
+      kind: "unshield";
+      recipient: string;
+      amount: string;
+      received: string;
+      fee: string;
+      feeDeviation: boolean;
+    }>
+  | Readonly<{
+      kind: "partial-unshield";
+      changeNoteId: string;
+      recipient: string;
+      unshieldAmount: string;
+      received: string;
+      fee: string;
+      feeDeviation: boolean;
+    }>;
+/** Resolution review: exact true lets the original reconciler resolve this one
+ * journaled submission. It never releases the hold or permits replay. */
+export interface HeldSubmissionResolutionReview {
+  readonly purpose: "railgun-held-submission-resolution-v1";
+  readonly chainId: 11155111;
+  readonly holdId: string;
+  readonly operation: PrivateKind;
+  readonly transactionHash: string;
+  readonly observation: HeldSubmissionObservationFields | null;
+  readonly transact: HeldSubmissionTransact;
+  readonly output: HeldSubmissionOutput;
+  readonly finalizedBlockNumber: number | null;
+  readonly minimumConfirmations: number;
+  readonly allowsNextTransaction: true;
+  readonly releasesHold: false;
+  readonly retryEnabled: false;
+  readonly trust: "unverified-rpc";
+}
+/** Absent journal binding is not evidence that nothing was submitted. */
+export type HeldSubmissionObservation =
+  | Readonly<{
+      status: "unjournaled";
+      holdId: string;
+      kind: PrivateKind;
+      transactionHash: null;
+      submissionEnabled: false;
+      retryEnabled: false;
+    }>
+  | Readonly<{
+      status: "journaled";
+      holdId: string;
+      kind: PrivateKind;
+      transactionHash: string;
+      observation: HeldSubmissionObservationFields | null;
+      transact: HeldSubmissionTransact;
+      output: HeldSubmissionOutput;
+      resolved: boolean;
+      trust: "unverified-rpc";
+      submissionEnabled: false;
+      retryEnabled: false;
+    }>;
+export interface HeldSubmissionResolution {
+  readonly status: "resolved";
+  readonly holdId: string;
+  readonly kind: PrivateKind;
+  readonly transactionHash: string;
+  readonly outcome: "matched" | "reverted";
+  readonly finalizedBlockNumber: number | null;
+  readonly output: HeldSubmissionOutput;
+  readonly releasesHold: false;
+  readonly retryEnabled: false;
+  readonly trust: "unverified-rpc";
+}
+/** Exclusive companion. Binds a held operation to its exact journaled own-EOA
+ * submission by signing digest/nullifier/tree/operation; never the last row. */
+export interface SubmissionRecoveryLane extends LaneLifetime {
+  observe(holdId: string): Promise<HeldSubmissionObservation>;
+  resolve(
+    holdId: string,
+    options: { minimumConfirmations: number },
+  ): Promise<HeldSubmissionResolution>;
+}
 export interface RelayQuote {
   data: string;
   signature: string;
@@ -902,6 +1025,13 @@ export interface AccountSession {
       PoiPreparationDisclosure | PoiSubmissionDisclosure
     >;
   }): Promise<PoiRecoveryLane>;
+  openSubmissionRecovery(options: {
+    signal: AbortSignal;
+    /** Exact true required within 30s for each disclosure and resolution review. */
+    reviewDisclosures: Review<
+      HeldSubmissionDisclosure | HeldSubmissionResolutionReview
+    >;
+  }): Promise<SubmissionRecoveryLane>;
   openRelayLocal(options: RelayLocalOptions): Promise<RelayLocalLane>;
   openRelayRecovery(options: {
     signal: AbortSignal;

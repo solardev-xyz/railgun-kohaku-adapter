@@ -126,6 +126,7 @@ function initializeRailgunMain(options) {
   const pluginApi = require("./railgun-kohaku-plugin.js");
   const recoveryApi = require("./railgun-kohaku-recovery.js");
   const poiApi = require("./operational-poi-lane.js");
+  const submissionApi = require("./operational-submission-lane.js");
   const ownedPoiApi = require("./railgun-account-poi.js");
   const {
     REQUIRED_LIST: requiredPoiList,
@@ -524,10 +525,12 @@ function initializeRailgunMain(options) {
         }
       });
     }
-    function recovery(options, poi = false) {
+    function recovery(options, kind = "private") {
+      const poi = kind === "poi",
+        submission = kind === "submission";
       const data = record(
         options,
-        poi
+        poi || submission
           ? ["signal", "reviewDisclosures"]
           : [
               "signal",
@@ -538,13 +541,14 @@ function initializeRailgunMain(options) {
             ],
       );
       signal(data.signal);
-      for (const callback of poi
+      for (const callback of poi || submission
         ? [data.reviewDisclosures]
         : [data.reviewDisclosures, data.reviewTransaction])
         if (typeof callback !== "function" || types.isProxy(callback))
           throw fail();
       if (
         !poi &&
+        !submission &&
         (typeof data.gasLimit !== "bigint" ||
           data.gasLimit <= 0n ||
           data.gasLimit > 3000000n ||
@@ -556,20 +560,28 @@ function initializeRailgunMain(options) {
       return run(async () => {
         let companion;
         try {
-          companion = (
-            poi
-              ? poiApi.createRailgunPoiLane
-              : recoveryApi.createRailgunKohakuRecovery
-          )({
-            owners: owners(),
-            destination: publicApi.getRailgunAccountPublicDestination(
-              state.public.coordinator,
-              state.enrollment,
-            ),
-            ...runtime,
-            ...data,
-            signal: AbortSignal.any([lifetime, data.signal]),
-          });
+          const destination = publicApi.getRailgunAccountPublicDestination(
+            state.public.coordinator,
+            state.enrollment,
+          );
+          // The held-submission companion needs no engine/prover runtime: it
+          // reads local custody and the EOA journal, and never proves or signs.
+          companion = submission
+            ? submissionApi.createRailgunSubmissionLane({
+                owners: owners(),
+                destination,
+                signal: AbortSignal.any([lifetime, data.signal]),
+                reviewDisclosures: data.reviewDisclosures,
+              })
+            : (poi
+                ? poiApi.createRailgunPoiLane
+                : recoveryApi.createRailgunKohakuRecovery)({
+                owners: owners(),
+                destination,
+                ...runtime,
+                ...data,
+                signal: AbortSignal.any([lifetime, data.signal]),
+              });
           state.lane = companion;
           if (state.closing) stop(companion, "lane");
           current();
@@ -591,6 +603,23 @@ function initializeRailgunMain(options) {
             closing = true;
             if (state.lane === companion) state.lane = null;
           }).catch(() => {});
+          if (submission)
+            return Object.freeze({
+              observe(holdId) {
+                active();
+                return retain(companion.observe(holdId));
+              },
+              resolve(holdId, options) {
+                active();
+                return retain(companion.resolve(holdId, options));
+              },
+              signal: companion.signal,
+              closed: companion.closed,
+              close() {
+                closing = true;
+                stop(companion, "lane");
+              },
+            });
           return Object.freeze({
             ...(poi
               ? {
@@ -1399,7 +1428,8 @@ function initializeRailgunMain(options) {
       synchronizeTxid,
       observeOwnedPoi,
       openRecovery: (options) => recovery(options),
-      openPoiRecovery: (options) => recovery(options, true),
+      openPoiRecovery: (options) => recovery(options, "poi"),
+      openSubmissionRecovery: (options) => recovery(options, "submission"),
       openRelayLocal: (options) => relay(options, false),
       openRelayRecovery: (options) => relay(options, true),
       openRead: (options) => lane("read", options),

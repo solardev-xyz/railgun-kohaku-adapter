@@ -128,3 +128,25 @@ const transferJoined: true = observed.transferJoinEstablished;
 void transferJoined;
 // @ts-expect-error the private membership receipt never leaves the observer
 observed.receipt;
+
+// @ts-expect-error held-submission recovery requires explicit disclosure review
+session.openSubmissionRecovery({ signal });
+session.openSubmissionRecovery({
+  signal,
+  reviewDisclosures: () => true,
+  // @ts-expect-error no caller-selected submitter address or journal row
+  submitter: "0x",
+});
+declare const heldLane: owner.SubmissionRecoveryLane;
+// @ts-expect-error resolution requires an explicit confirmation policy
+heldLane.resolve("id");
+// @ts-expect-error no resend, retry or broadcast method on the observation lane
+heldLane.submit("id");
+declare const heldObservation: owner.HeldSubmissionObservation;
+// @ts-expect-error observation never enables a new submission
+const resend: true = heldObservation.submissionEnabled;
+void resend;
+declare const heldResolution: owner.HeldSubmissionResolution;
+// @ts-expect-error resolution never releases the private signing hold
+const released: true = heldResolution.releasesHold;
+void released;
