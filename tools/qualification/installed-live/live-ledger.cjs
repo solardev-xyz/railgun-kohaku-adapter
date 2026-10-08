@@ -13,8 +13,16 @@
 'use strict';
 const fs = require('fs'),
   path = require('path'),
-  { randomBytes } = require('crypto');
+  { randomBytes, createHash } = require('crypto');
 const NAME = 'installed-journey-1.jsonl';
+// The one reviewed continuation: the stopped first ledger's endpoint could not
+// serve the scan windows. It binds that ledger's exact bytes and header, carries
+// its consumed budgets forward and never allows a further continuation.
+const FIRST = 'installed-journey-1';
+const CONTINUATION = 'installed-journey-sentio-1';
+const SENTIO = 'https://sepolia.rpc.sentio.xyz';
+const PREDECESSOR_KINDS = Object.freeze(['scan-open:new', 'scan-open:pending', 'scan-range']);
+const sha256 = (value) => createHash('sha256').update(value).digest('hex');
 const DIRECTORY_SUFFIX = '.installed-journey-ledger';
 const MAX_BYTES = 1024 * 1024;
 const SENDS = Object.freeze(['transfer', 'unshield']);
@@ -43,9 +51,55 @@ function policyFor(caps, kind) {
   check(policy && Number.isSafeInteger(policy.max) && policy.max > 0, 'budget-kind:' + kind);
   return policy;
 }
-function ledgerFile(profile) {
+function ledgerFile(profile, name = FIRST) {
   check(path.isAbsolute(profile) && fs.realpathSync(profile) === profile, 'profile');
-  return path.join(profile + DIRECTORY_SUFFIX, NAME);
+  check([FIRST, CONTINUATION].includes(name), 'name');
+  return path.join(profile + DIRECTORY_SUFFIX, name + '.jsonl');
+}
+// Read-only: the continuation's predecessor must be exactly the bound, stopped
+// first ledger of the same scope with budget records only. Returns its budgets.
+function predecessor(directory, header) {
+  const bound = header.binding?.predecessor;
+  check(
+    bound &&
+      bound.name === FIRST &&
+      /^[0-9a-f]{64}$/.test(bound.ledgerSha256) &&
+      /^[0-9a-f]{64}$/.test(bound.headerSha256) &&
+      typeof bound.reason === 'string' &&
+      bound.reason.length > 0,
+    'predecessor-binding'
+  );
+  let bytes;
+  try {
+    const file = path.join(directory, FIRST + '.jsonl');
+    const stat = fs.lstatSync(file);
+    check(stat.isFile() && stat.size <= MAX_BYTES, 'predecessor');
+    bytes = fs.readFileSync(file);
+  } catch (error) {
+    if (error?.code === 'INSTALLED_JOURNEY_LEDGER_REFUSED') throw error;
+    throw fail('predecessor');
+  }
+  check(sha256(bytes) === bound.ledgerSha256, 'predecessor-sha256');
+  let records;
+  try {
+    const lines = bytes.toString('utf8').split('\n');
+    check(lines.pop() === '', 'predecessor-torn');
+    records = lines.map((line) => JSON.parse(line));
+  } catch (error) {
+    if (error?.code === 'INSTALLED_JOURNEY_LEDGER_REFUSED') throw error;
+    throw fail('predecessor');
+  }
+  const first = records[0];
+  check(sha256(JSON.stringify(first)) === bound.headerSha256 && first.name === FIRST, 'predecessor-header');
+  // Same profile, artifact, host, transport and held operation; only the
+  // endpoint (and the runner that names it) changes.
+  for (const key of ['type', 'version', 'transport', 'profile', 'freedomCommit', 'packageTarSha256'])
+    check(same(first[key], header[key]), 'predecessor-scope:' + key);
+  check(first.binding?.heldTransferReportSha256 === header.binding.heldTransferReportSha256, 'predecessor-held');
+  check(records.slice(1).every((record) => record?.type === 'budget' && PREDECESSOR_KINDS.includes(record.kind)), 'predecessor-events');
+  const state = replay(records, first);
+  check(state.sends.length === 0 && state.poi.pending === null && state.reports.length === 0, 'predecessor-not-empty');
+  return state.budgets;
 }
 function syncDirectory(directory) {
   const fd = fs.openSync(directory, 'r');
@@ -55,11 +109,11 @@ function syncDirectory(directory) {
     fs.closeSync(fd);
   }
 }
-// Replays and validates the whole ledger.
-function replay(records, header) {
+// Replays and validates the whole ledger, from carried-forward budgets.
+function replay(records, header, carried = {}) {
   check(same(records[0], header), 'header');
   const sends = [],
-    budgets = {},
+    budgets = Object.fromEntries(Object.entries(carried).map(([kind, rows]) => [kind, [...rows]])),
     reports = [],
     poi = { pending: null, finished: null };
   for (const record of records.slice(1)) {
@@ -102,7 +156,7 @@ function replay(records, header) {
   }
   return { sends, budgets, poi, reports };
 }
-function read(file, header) {
+function read(file, header, carried) {
   let records;
   try {
     const stat = fs.lstatSync(file);
@@ -114,25 +168,37 @@ function read(file, header) {
     if (error?.code === 'INSTALLED_JOURNEY_LEDGER_REFUSED') throw error;
     throw fail('ledger');
   }
-  return replay(records, header);
+  return replay(records, header, carried);
 }
 // Read-only admission: the campaign is absent, or exactly this ledger.
 function inspect(profile, header) {
-  const file = ledgerFile(profile),
+  const continuation = header.name === CONTINUATION;
+  check(continuation || (header.name === FIRST && !Object.hasOwn(header.binding ?? {}, 'predecessor')), 'name');
+  if (continuation) check(header.transport === 'synthetic' || header.binding?.rpc?.url === SENTIO, 'continuation-endpoint');
+  const file = ledgerFile(profile, header.name),
     directory = path.dirname(file);
   let names;
   try {
     const stat = fs.lstatSync(directory);
     check(stat.isDirectory(), 'directory');
-    names = fs.readdirSync(directory);
+    names = fs.readdirSync(directory).sort();
   } catch (error) {
-    if (error?.code === 'ENOENT') return { file, sends: [], budgets: {}, reports: [], poi: { pending: null, finished: null } };
+    if (error?.code === 'ENOENT' && !continuation)
+      return { file, sends: [], budgets: {}, reports: [], poi: { pending: null, finished: null } };
     if (error?.code === 'INSTALLED_JOURNEY_LEDGER_REFUSED') throw error;
     throw fail('directory');
   }
-  if (names.length === 0) return { file, sends: [], budgets: {}, reports: [], poi: { pending: null, finished: null } };
-  check(names.length === 1 && names[0] === NAME, 'directory');
-  return { file, ...read(file, header) };
+  if (!continuation) {
+    // Once a continuation exists the first ledger is closed.
+    if (names.length === 0) return { file, sends: [], budgets: {}, reports: [], poi: { pending: null, finished: null } };
+    check(names.length === 1 && names[0] === NAME, 'directory');
+    return { file, ...read(file, header) };
+  }
+  const carried = predecessor(directory, header);
+  const empty = { file, sends: [], budgets: carried, reports: [], poi: { pending: null, finished: null } };
+  if (names.length === 1 && names[0] === NAME) return empty;
+  check(names.length === 2 && names[0] === NAME && names[1] === CONTINUATION + '.jsonl', 'directory');
+  return { file, ...read(file, header, carried) };
 }
 // Appends one record durably, then re-validates the whole ledger.
 function append(profile, header, record) {
@@ -146,7 +212,7 @@ function append(profile, header, record) {
   check(fs.lstatSync(directory).isDirectory(), 'directory');
   // Validate the would-be ledger before writing anything.
   const existing = fresh ? [header] : fs.readFileSync(state.file, 'utf8').split('\n').slice(0, -1).map((line) => JSON.parse(line));
-  replay([...existing, record], header);
+  replay([...existing, record], header, predecessorBudgets(profile, header));
   const lines = (fresh ? [JSON.stringify(header)] : []).concat(JSON.stringify(record));
   const fd = fs.openSync(state.file, fresh ? 'wx' : 'a', 0o600);
   try {
@@ -158,6 +224,9 @@ function append(profile, header, record) {
   }
   syncDirectory(directory);
   return inspect(profile, header);
+}
+function predecessorBudgets(profile, header) {
+  return header.name === CONTINUATION ? predecessor(path.dirname(ledgerFile(profile, CONTINUATION)), header) : {};
 }
 function reserve(profile, header, kind, binding) {
   const attemptId = randomBytes(16).toString('hex');
@@ -202,6 +271,9 @@ function recordReport(profile, header, mode, sha256) {
   return append(profile, header, { type: 'report', mode, sha256, at: Date.now() }).reports;
 }
 module.exports = {
+  FIRST,
+  CONTINUATION,
+  SENTIO,
   policyFor,
   recordReport,
   NAME,

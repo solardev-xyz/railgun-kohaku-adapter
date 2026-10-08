@@ -124,6 +124,47 @@ budget record's maximum, spacing and window. A torn, extra or foreign record
 refuses, as does any other file in the ledger directory (including `.DS_Store`). An exhausted budget stops the campaign; a new campaign
 directory is not a way around it.
 
+## The fixed Sentio continuation
+
+The first live ledger froze `https://gateway.tenderly.co/public/sepolia`.
+Tenderly's public gateway rejects `eth_getLogs` spans above 1,000 blocks, but
+the scan source reads windows of up to 100,000 blocks. The first ledger stopped
+with zero sends, no POI and no report, after consuming one new rebuild, one
+pending resume and one scan range.
+
+Exactly one continuation exists, `installed-journey-sentio-1`. It freezes
+`https://sepolia.rpc.sentio.xyz`, the endpoint the earlier L-A live scans used.
+Its header binds:
+
+- the stopped ledger's exact bytes and header hashes;
+- the reason for the endpoint change.
+
+Admission, rechecked on every read and write, requires:
+
+- **same scope as the first ledger:** profile, transport, Freedom commit,
+  package tar and held report;
+- **stopped first ledger:** budget records only, of the three scan kinds; no
+  send, POI or report.
+
+Consumed budgets carry forward. There is no new rebuild (`publicCache:'new'`
+refuses), one pending resume and 259 ranges remain, and send, POI and other
+read budgets are untouched. Once the continuation writes, the first ledger is
+closed. No other continuation name is accepted.
+
+The continuation resumes the existing empty pending generation. A public
+generation binds only the package policy, and a scan source is rebuilt per
+process from the current endpoint. Only staged ranges record the provider set
+(`providersSha256`), and the first ledger staged none. This is a reviewed
+endpoint change, never a runtime fallback.
+
+Synthetic runs model the failure with `synthetic.endpoint: 'limited'`, a
+second endpoint that answers spans above 1,000 blocks with JSON-RPC -32602.
+
+`scan-window-probe.cjs` is the bounded public screen for the continuation's
+endpoint, run before any funded continuation. It checks the runner's aligned
+100,000-block windows on the proxy address and the known public event, with at
+most 12 requests, and makes one confirming Tenderly window request.
+
 ## Composition
 
 **Live (`transport: 'live'`)** uses:

@@ -120,7 +120,8 @@ async function main() {
       };
     } else {
       const family = path.join(__dirname, '../installed-journey');
-      const { createJourneyChain, ENDPOINT } = require(path.join(family, 'journey-chain.cjs'));
+      const { createJourneyChain, ENDPOINT: PRIMARY, LIMITED_ENDPOINT } = require(path.join(family, 'journey-chain.cjs'));
+      const ENDPOINT = request.synthetic.endpoint === 'limited' ? LIMITED_ENDPOINT : PRIMARY;
       const { createJourneyCrypto } = require(path.join(family, 'journey-crypto.cjs'));
       const stateBytes = request.synthetic.chainState ? fs.readFileSync(request.synthetic.chainState.file) : null;
       if (stateBytes) assert.equal(sha(stateBytes), request.synthetic.chainState.sha256);
@@ -164,7 +165,17 @@ async function main() {
             assert.equal(closed, false);
             const { subject } = getPrivacyContext(handle);
             const wire = JSON.parse(options.body);
-            const result = await chain.request(subject, url, wire);
+            let result;
+            try {
+              result = await chain.request(subject, url, wire);
+            } catch (error) {
+              // A modeled provider error answers as JSON-RPC, as a gateway would.
+              if (error?.code !== 'SYNTHETIC_RPC_ERROR') throw error;
+              return {
+                status: 200,
+                body: Buffer.from(JSON.stringify({ jsonrpc: '2.0', id: wire.id, error: error.rpcError })),
+              };
+            }
             return {
               status: 200,
               body: Buffer.from(

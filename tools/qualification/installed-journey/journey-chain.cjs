@@ -21,6 +21,10 @@ const SUBMITTER = '0x9858effd232b4033e47d90003d41ec34ecaeda94';
 const PROXY = '0xecfcf3b4ec647c4ca6d49108b311b7a7c9543fea';
 const TOKEN = '0xfff9976782d46cc05630d1f6ebab18b2324d6b14';
 const ENDPOINT = 'https://synthetic.invalid/installed-owner-private';
+// A second endpoint with a public gateway's eth_getLogs span limit: spans above
+// 1000 blocks get JSON-RPC error -32602 in an HTTP 200 response.
+const LIMITED_ENDPOINT = 'https://synthetic.invalid/installed-owner-private-limited';
+const LIMITED_SPAN = 1000;
 const POI_URL = 'https://ppoi.fdi.network';
 const INDEXER_URL = 'https://rail-squid.squids.live/squid-railgun-eth-sepolia-v2/graphql';
 const TEST_LIST = '43a72e714401762df66b68c26dfbdf2682aaec9f2474eca4613e424a0fbafd3c';
@@ -492,7 +496,12 @@ function createJourneyChain({
         throw Error('Undeclared transaction-rpc method');
     }
   }
-  function protocolRpc(method, params) {
+  function protocolRpc(method, params, url) {
+    if (url === LIMITED_ENDPOINT && method === 'eth_getLogs') {
+      const span = Number(BigInt(params[0].toBlock)) - Number(BigInt(params[0].fromBlock)) + 1;
+      if (span > LIMITED_SPAN)
+        throw Object.assign(Error('Synthetic span limit'), { code: 'SYNTHETIC_RPC_ERROR', rpcError: { code: -32602, message: 'invalid params' } });
+    }
     switch (method) {
       case 'eth_chainId':
         assert.deepEqual(params, []);
@@ -675,7 +684,7 @@ function createJourneyChain({
       assert.ok(['service', 'private-account'].includes(subject.kind));
       return 'poi';
     }
-    assert.equal(url, ENDPOINT);
+    assert.ok([ENDPOINT, LIMITED_ENDPOINT].includes(url));
     if (subject.role === 'transaction-rpc') {
       assert.equal(subject.kind, 'public-address');
       assert.equal(subject.principal, SUBMITTER);
@@ -708,7 +717,7 @@ function createJourneyChain({
         method = wire.method;
         assert.equal(typeof method, 'string');
         if (lane === 'transaction-rpc') result = transactionRpc(method, wire.params);
-        else if (lane === 'protocol-rpc') result = protocolRpc(method, wire.params);
+        else if (lane === 'protocol-rpc') result = protocolRpc(method, wire.params, url);
         else result = await poi(method, wire.params);
       }
       const role = subject.role === lane ? '' : '(' + subject.role + ')';
@@ -716,7 +725,7 @@ function createJourneyChain({
       counts[key] = (counts[key] || 0) + 1;
       return copy(result);
     } catch (error) {
-      if (!['SYNTHETIC_DELIVERY_UNOBSERVED', 'SYNTHETIC_INJECTED_FAULT'].includes(error?.code))
+      if (!['SYNTHETIC_DELIVERY_UNOBSERVED', 'SYNTHETIC_INJECTED_FAULT', 'SYNTHETIC_RPC_ERROR'].includes(error?.code))
         refusals.push({
           lane,
           subjectKind: typeof subject?.kind === 'string' ? subject.kind : null,
@@ -745,6 +754,7 @@ function createJourneyChain({
   });
 }
 module.exports = Object.freeze({
+  LIMITED_ENDPOINT,
   SUBMITTER,
   PROXY,
   TOKEN,

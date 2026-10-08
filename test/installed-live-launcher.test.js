@@ -203,3 +203,63 @@ test("changing any executed launcher, process-owner or copy-contract byte invali
     env.launcher.validate(request);
   }
 });
+test("the fixed Sentio continuation resumes from a stopped first ledger and never begins a generation", () => {
+  const env = liveEnvironment();
+  const crypto = require("crypto");
+  const hash = (v) => crypto.createHash("sha256").update(v).digest("hex");
+  const ledger = require(
+    env.path.join(env.tools, "installed-live/live-ledger.cjs"),
+  );
+  const first = env.launcher.makeRequest(env.spec());
+  for (const kind of ["scan-open:new", "scan-open:pending", "scan-range"])
+    ledger.consume(
+      first.profileDirectory,
+      first.ledgerHeader,
+      kind,
+      ledger.policyFor(first.ledgerHeader.caps, kind),
+    );
+  const predecessor = {
+    name: ledger.FIRST,
+    ledgerSha256: hash(
+      env.fs.readFileSync(ledger.ledgerFile(first.profileDirectory)),
+    ),
+    headerSha256: hash(JSON.stringify(first.ledgerHeader)),
+    reason: "frozen endpoint rejects scan windows",
+  };
+  const continuation = (
+    params,
+    rpc = { source: "sentio", url: ledger.SENTIO },
+  ) => {
+    const spec = JSON.parse(env.fs.readFileSync(env.spec(), "utf8"));
+    const name = env.spec({
+      ledger: ledger.CONTINUATION,
+      params,
+      binding: { ...spec.binding, rpc, predecessor },
+      live: { ...spec.live, rpcSource: rpc.source },
+    });
+    return env.launcher.makeRequest(name);
+  };
+  const resumed = continuation({ publicCache: "pending" });
+  expect(resumed.ledgerHeader.name).toBe(ledger.CONTINUATION);
+  expect(env.launcher.admit(resumed)).toBe(0);
+  expect(env.launcher.validate(resumed).budgets["scan-open:new"]).toHaveLength(
+    1,
+  );
+  expect(() =>
+    env.launcher.validate(continuation({ publicCache: "new" })),
+  ).toThrow();
+  expect(() =>
+    continuation(
+      { publicCache: "pending" },
+      { source: "tenderly", url: "https://gateway.tenderly.co/public/sepolia" },
+    ),
+  ).toThrow();
+  // The first ledger cannot bind a predecessor, and stays readable until the continuation writes.
+  const spec = JSON.parse(env.fs.readFileSync(env.spec(), "utf8"));
+  expect(() =>
+    env.launcher.makeRequest(
+      env.spec({ binding: { ...spec.binding, predecessor } }),
+    ),
+  ).toThrow();
+  expect(env.launcher.validate(first).budgets["scan-range"]).toHaveLength(1);
+});

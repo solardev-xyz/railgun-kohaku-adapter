@@ -76,12 +76,18 @@ test("budgets enforce maximum, spacing and window durably", () => {
   const p = profile();
   const policy = { max: 2, minSpacingMs: 1000, windowMs: 5000 };
   expect(ledger.consume(p, header, "observe:transfer", policy, 10000)).toBe(1);
-  expect(() => ledger.consume(p, header, "observe:transfer", policy, 10500)).toThrow(/spacing/);
+  expect(() =>
+    ledger.consume(p, header, "observe:transfer", policy, 10500),
+  ).toThrow(/spacing/);
   expect(ledger.consume(p, header, "observe:transfer", policy, 11000)).toBe(2);
-  expect(() => ledger.consume(p, header, "observe:transfer", policy, 13000)).toThrow(/exhausted/);
+  expect(() =>
+    ledger.consume(p, header, "observe:transfer", policy, 13000),
+  ).toThrow(/exhausted/);
   const window = { max: 5, minSpacingMs: 0, windowMs: 5000 };
   ledger.consume(p, header, "poi-status", window, 1000);
-  expect(() => ledger.consume(p, header, "poi-status", window, 7001)).toThrow(/window/);
+  expect(() => ledger.consume(p, header, "poi-status", window, 7001)).toThrow(
+    /window/,
+  );
   expect(ledger.inspect(p, header).budgets["observe:transfer"]).toHaveLength(2);
 });
 test("one POI handoff only after a continuing transfer", () => {
@@ -90,22 +96,30 @@ test("one POI handoff only after a continuing transfer", () => {
   const attempt = ledger.reserve(p, header, "transfer", {});
   expect(() => ledger.poiReserve(p, header, {})).toThrow(/poi-order/);
   ledger.finish(p, header, attempt, { classification: "unknown" });
-  const handoff = ledger.poiReserve(p, header, { payloadSha256: "a".repeat(64) });
+  const handoff = ledger.poiReserve(p, header, {
+    payloadSha256: "a".repeat(64),
+  });
   expect(() => ledger.poiReserve(p, header, {})).toThrow(/poi-pending/);
   ledger.poiFinish(p, header, handoff, { status: "recovery-required" });
-  expect(() => ledger.poiFinish(p, header, handoff, {})).toThrow(/poi-finished/);
+  expect(() => ledger.poiFinish(p, header, handoff, {})).toThrow(
+    /poi-finished/,
+  );
 });
 test("a refused transfer stops the campaign: no unshield or POI", () => {
   const p = profile();
   const attempt = ledger.reserve(p, header, "transfer", {});
   ledger.finish(p, header, attempt, { classification: "refused-before-send" });
-  expect(() => ledger.reserve(p, header, "unshield", {})).toThrow(/transfer-not-continuable/);
+  expect(() => ledger.reserve(p, header, "unshield", {})).toThrow(
+    /transfer-not-continuable/,
+  );
   expect(() => ledger.poiReserve(p, header, {})).toThrow(/poi-order/);
 });
 test("report digests are recorded once", () => {
   const p = profile();
   ledger.recordReport(p, header, "live-rebuild", "b".repeat(64));
-  expect(() => ledger.recordReport(p, header, "live-submit", "b".repeat(64))).toThrow(/duplicate/);
+  expect(() =>
+    ledger.recordReport(p, header, "live-submit", "b".repeat(64)),
+  ).toThrow(/duplicate/);
   expect(ledger.inspect(p, header).reports).toHaveLength(1);
 });
 test("replay re-enforces the header's caps on hand-written budget records", () => {
@@ -139,7 +153,224 @@ test("replay re-enforces the header's caps on hand-written budget records", () =
   }
   fs.writeFileSync(
     file,
-    original + line({ type: "budget", kind: "observe:transfer", n: 2, at: 11000 }),
+    original +
+      line({ type: "budget", kind: "observe:transfer", n: 2, at: 11000 }),
   );
   expect(ledger.inspect(p, live).budgets["observe:transfer"]).toHaveLength(2);
+});
+
+const CAPS = {
+  sends: 2,
+  observePerSend: { max: 40, minSpacingMs: 0 },
+  readbackPerSend: { max: 6 },
+  poiStatus: { max: 8, minSpacingMs: 0, windowMs: 1e9 },
+  rebuildNew: 1,
+  scanResumes: 2,
+  scanRanges: 260,
+  txidPages: 90,
+};
+function stoppedFirst() {
+  const p = profile();
+  const first = {
+    type: "railgun-installed-journey-ledger",
+    version: 1,
+    name: ledger.FIRST,
+    transport: "live",
+    profile: p,
+    freedomCommit: "f".repeat(40),
+    packageTarSha256: "a".repeat(64),
+    runnerSha256: "1".repeat(64),
+    binding: {
+      heldTransferReportSha256: "d".repeat(64),
+      rpc: { url: "https://tenderly.example" },
+    },
+    caps: CAPS,
+  };
+  ledger.consume(
+    p,
+    first,
+    "scan-open:new",
+    ledger.policyFor(CAPS, "scan-open:new"),
+    1000,
+  );
+  ledger.consume(
+    p,
+    first,
+    "scan-open:pending",
+    ledger.policyFor(CAPS, "scan-open:pending"),
+    2000,
+  );
+  ledger.consume(
+    p,
+    first,
+    "scan-range",
+    ledger.policyFor(CAPS, "scan-range"),
+    3000,
+  );
+  return { p, first };
+}
+function continuationOf(p, first, overrides = {}) {
+  const crypto = require("crypto");
+  const hash = (v) => crypto.createHash("sha256").update(v).digest("hex");
+  return {
+    ...first,
+    name: ledger.CONTINUATION,
+    runnerSha256: "2".repeat(64),
+    binding: {
+      ...first.binding,
+      rpc: { url: ledger.SENTIO },
+      predecessor: {
+        name: ledger.FIRST,
+        ledgerSha256: hash(fs.readFileSync(ledger.ledgerFile(p))),
+        headerSha256: hash(JSON.stringify(first)),
+        reason: "frozen endpoint rejects scan windows",
+      },
+    },
+    ...overrides,
+  };
+}
+test("the continuation carries the stopped ledger's consumed budgets forward", () => {
+  const { p, first } = stoppedFirst();
+  const next = continuationOf(p, first);
+  const state = ledger.inspect(p, next);
+  expect(
+    Object.fromEntries(
+      Object.entries(state.budgets).map(([k, v]) => [k, v.length]),
+    ),
+  ).toEqual({
+    "scan-open:new": 1,
+    "scan-open:pending": 1,
+    "scan-range": 1,
+  });
+  // No new generation: the one new rebuild is already consumed.
+  expect(() =>
+    ledger.consume(
+      p,
+      next,
+      "scan-open:new",
+      ledger.policyFor(CAPS, "scan-open:new"),
+      4000,
+    ),
+  ).toThrow();
+  expect(
+    ledger.consume(
+      p,
+      next,
+      "scan-open:pending",
+      ledger.policyFor(CAPS, "scan-open:pending"),
+      4000,
+    ),
+  ).toBe(2);
+  expect(() =>
+    ledger.consume(
+      p,
+      next,
+      "scan-open:pending",
+      ledger.policyFor(CAPS, "scan-open:pending"),
+      5000,
+    ),
+  ).toThrow();
+  expect(
+    ledger.consume(
+      p,
+      next,
+      "scan-range",
+      ledger.policyFor(CAPS, "scan-range"),
+      5000,
+    ),
+  ).toBe(2);
+  // The aggregate survives replay; sends start fresh at zero.
+  expect(ledger.inspect(p, next).budgets["scan-range"]).toHaveLength(2);
+  expect(ledger.inspect(p, next).sends).toEqual([]);
+  // Once the continuation exists the first ledger is closed.
+  expect(() => ledger.inspect(p, first)).toThrow();
+  // A changed predecessor byte refuses the continuation.
+  const file = ledger.ledgerFile(p);
+  const original = fs.readFileSync(file);
+  fs.writeFileSync(file, Buffer.concat([original, Buffer.from(" ")]));
+  expect(() => ledger.inspect(p, next)).toThrow();
+  fs.writeFileSync(file, original);
+  expect(ledger.inspect(p, next).budgets["scan-open:pending"]).toHaveLength(2);
+});
+test("the continuation refuses a missing, re-scoped or non-empty predecessor and any second continuation", () => {
+  const empty = profile();
+  const base = stoppedFirst();
+  expect(() =>
+    ledger.inspect(
+      empty,
+      continuationOf(base.p, base.first, { profile: empty }),
+    ),
+  ).toThrow();
+  const { p, first } = stoppedFirst();
+  const good = continuationOf(p, first);
+  for (const bad of [
+    { ...good, freedomCommit: "e".repeat(40) },
+    { ...good, packageTarSha256: "b".repeat(64) },
+    {
+      ...good,
+      binding: { ...good.binding, heldTransferReportSha256: "c".repeat(64) },
+    },
+    {
+      ...good,
+      binding: { ...good.binding, rpc: { url: "https://other.example" } },
+    },
+    {
+      ...good,
+      binding: {
+        ...good.binding,
+        predecessor: { ...good.binding.predecessor, reason: "" },
+      },
+    },
+    {
+      ...good,
+      binding: {
+        ...good.binding,
+        predecessor: {
+          ...good.binding.predecessor,
+          headerSha256: "0".repeat(64),
+        },
+      },
+    },
+    { ...good, name: "installed-journey-sentio-2" },
+  ])
+    expect(() => ledger.inspect(p, bad)).toThrow();
+  expect(ledger.inspect(p, good).sends).toEqual([]);
+  expect(() => ledger.ledgerFile(p, "installed-journey-sentio-2")).toThrow();
+  ledger.consume(
+    p,
+    good,
+    "scan-range",
+    ledger.policyFor(CAPS, "scan-range"),
+    9000,
+  );
+  fs.writeFileSync(
+    require("path").join(
+      require("path").dirname(ledger.ledgerFile(p)),
+      "installed-journey-sentio-2.jsonl",
+    ),
+    "",
+  );
+  expect(() => ledger.inspect(p, good)).toThrow();
+  // A predecessor holding a send, a POI handoff, a report or any other event never continues.
+  for (const use of [
+    (q, h) => ledger.reserve(q, h, "transfer", {}),
+    (q, h) => ledger.recordReport(q, h, "live-rebuild", "a".repeat(64)),
+    (q, h) =>
+      ledger.consume(
+        q,
+        h,
+        "readback:transfer",
+        ledger.policyFor(CAPS, "readback:transfer"),
+        9000,
+      ),
+  ]) {
+    const s = stoppedFirst();
+    use(s.p, s.first);
+    expect(() => ledger.inspect(s.p, continuationOf(s.p, s.first))).toThrow();
+  }
+  const s = stoppedFirst();
+  const attempt = ledger.reserve(s.p, s.first, "transfer", {});
+  ledger.finish(s.p, s.first, attempt, { classification: "acknowledged" });
+  ledger.poiReserve(s.p, s.first, {});
+  expect(() => ledger.inspect(s.p, continuationOf(s.p, s.first))).toThrow();
 });

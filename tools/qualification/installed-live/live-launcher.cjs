@@ -85,6 +85,11 @@ const SYNTHETIC_CAP_KEYS = Object.keys(LIVE_CAPS).sort();
 // profile, transport or cap refuses the campaign's ledger.
 function headerFor(request, binding, syntheticCaps) {
   assert.ok(binding && typeof binding === 'object' && !Array.isArray(binding));
+  const name = request.ledger ?? ledger.FIRST;
+  assert.ok([ledger.FIRST, ledger.CONTINUATION].includes(name));
+  // The one reviewed continuation binds its stopped predecessor; nothing else does.
+  assert.equal(Object.hasOwn(binding, 'predecessor'), name === ledger.CONTINUATION);
+  if (request.transport === 'live' && name === ledger.CONTINUATION) assert.equal(binding.rpc?.url, ledger.SENTIO);
   if (request.transport === 'live') {
     assert.equal(syntheticCaps, null);
     for (const key of ['heldTransferReportSha256', 'previousLedgers', 'finalRecoveryOutcomeSha256', 'authorizationSha256', 'rpc'])
@@ -95,7 +100,7 @@ function headerFor(request, binding, syntheticCaps) {
   return {
     type: 'railgun-installed-journey-ledger',
     version: 1,
-    name: 'installed-journey-1',
+    name,
     transport: request.transport,
     profile: request.profileDirectory,
     freedomCommit: request.hostCommit,
@@ -124,6 +129,8 @@ function validate(request) {
     for (const key of Object.keys(request.params)) assert.ok(['publicCache', 'maxMs', 'poiStatusMaxAgeMs'].includes(key), 'Live parameter ' + key);
     if (Object.hasOwn(request.params, 'publicCache')) assert.equal(request.mode, 'live-rebuild');
   }
+  // The continuation resumes the existing generation; it never begins one.
+  if (request.ledgerHeader.name === ledger.CONTINUATION) assert.notEqual(request.params.publicCache, 'new');
   assert.ok(Object.hasOwn(MODES, request.mode));
   assert.ok(['live', 'synthetic'].includes(request.transport));
   assert.deepEqual(Object.keys(request.recipeFiles).sort(), [...RECIPE].sort());
@@ -148,6 +155,7 @@ function validate(request) {
     for (const [name, pin] of Object.entries(request.synthetic.enginePins))
       assert.deepEqual(file(path.join(request.synthetic.engineModules, name)), pin);
     assert.equal(file(request.synthetic.publicSource).sha256, request.synthetic.publicSourceSha256);
+    assert.ok(['primary', 'limited'].includes(request.synthetic.endpoint));
   }
   assert.equal(fs.realpathSync(request.profileDirectory), request.profileDirectory);
   assert.equal(file(request.heldReport.file).sha256, request.heldReport.sha256);
@@ -181,13 +189,21 @@ function makeRequest(spec) {
   assert.equal(Object.hasOwn(value, 'ledgerHeader'), false, 'The ledger header is derived, not supplied');
   if (value.transport === 'live') assert.equal(Object.hasOwn(value, 'syntheticCaps'), false);
   const header = headerFor(
-    { transport: value.transport, profileDirectory: value.profileDirectory, hostCommit: value.hostCommit, packageCommit: value.packageCommit, packageTarPin },
+    {
+      transport: value.transport,
+      ledger: value.ledger ?? ledger.FIRST,
+      profileDirectory: value.profileDirectory,
+      hostCommit: value.hostCommit,
+      packageCommit: value.packageCommit,
+      packageTarPin,
+    },
     value.binding,
     value.transport === 'live' ? null : value.syntheticCaps
   );
   return {
     schema: 'railgun-installed-live-request-v1',
     mode: value.mode,
+    ledger: value.ledger ?? ledger.FIRST,
     transport: value.transport,
     hostRoot: value.hostRoot,
     hostCommit: value.hostCommit,
@@ -227,6 +243,7 @@ function makeRequest(spec) {
             publicSource: value.synthetic.publicSource,
             publicSourceSha256: file(value.synthetic.publicSource).sha256,
             sendMode: value.synthetic.sendMode ?? 'acknowledge',
+            endpoint: value.synthetic.endpoint ?? 'primary',
             chainState: value.synthetic.chainState
               ? { file: value.synthetic.chainState, sha256: sha(fs.readFileSync(value.synthetic.chainState)) }
               : null,
