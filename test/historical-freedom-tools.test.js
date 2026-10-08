@@ -29,7 +29,9 @@ test("historical commands cannot enter the shipped or default executable surface
   expect(pkg.files.every((entry) => !entry.startsWith("tools") && entry !== "*" && entry !== "**/*"))
     .toBe(true);
   expect(JSON.stringify(pkg.exports)).not.toContain("tools/");
-  const discovery = require("../jest.config.js").testMatch;
+  const config = require("../jest.config.js");
+  expect(config.modulePathIgnorePatterns).toContain("<rootDir>/tools/freedom-legacy-qualification/");
+  const discovery = config.testMatch;
   expect(discovery.every((entry) => !entry.includes("freedom-legacy-qualification"))).toBe(true);
   expect(manifest.files.filter((row) => row.destination.startsWith("tools/freedom-legacy-qualification/")))
     .toHaveLength(327);
