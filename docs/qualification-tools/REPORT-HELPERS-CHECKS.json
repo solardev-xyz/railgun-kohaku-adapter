@@ -1,0 +1,56 @@
+{
+  "schema": "railgun-private-report-helper-checks-v1",
+  "sourceCommit": "c6afd0432918d1258c1aafe11117f133cdd21ef4",
+  "originalSourceFiles": 15,
+  "originalSourceLines": 2620,
+  "literalPinImportEdits": 3,
+  "literalModuleLoadSites": 54,
+  "computedModuleLoadSites": 0,
+  "prior21FileSliceAndMetadataUnchanged": true,
+  "originalSuites": {
+    "suites": 7,
+    "testsPassed": 174,
+    "exitCode": 0
+  },
+  "parityAndImportClosure": {
+    "suites": 1,
+    "testsPassed": 2,
+    "exitCode": 0
+  },
+  "lint": {
+    "warnings": 0,
+    "exitCode": 0
+  },
+  "logs": {
+    "originalSuites": {
+      "bytes": 689,
+      "sha256": "21678fec2c7356fa73ddd311e86f121723dc51145428cec8c0015084b69236b1"
+    },
+    "parityAndImportClosure": {
+      "bytes": 284,
+      "sha256": "a0cebc6424676364c0276d9c2ebfe45518244de45751b6a39b02881aee85bf54"
+    },
+    "lint": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "defaultJestDiscovery": {
+      "bytes": 363,
+      "sha256": "3136690ff028c09e7e20883a0e3f2f6adfc712a0623a4fee9de442c7762d8f49"
+    },
+    "finalLint": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "nativeOrUpstreamCryptoExecuted": false,
+  "existingProfilesRead": false,
+  "dependenciesInstalled": false,
+  "defaultJestDiscovery": {
+    "explicitQualifiedToolSuites": 7,
+    "broadToolsGlob": false,
+    "suites": 8,
+    "testsPassed": 176,
+    "exitCode": 0
+  }
+}
