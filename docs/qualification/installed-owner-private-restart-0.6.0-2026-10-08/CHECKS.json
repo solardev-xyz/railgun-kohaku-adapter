@@ -1,0 +1,36 @@
+{
+  "schema": "railgun-native-restart-publication-checks-v1",
+  "exporterSha256": "44f81c865b8b388364ea65e32572bb4ecc060fb623919e5a230fb9bddfc4e4d3",
+  "publicInputsOnly": true,
+  "profilePayloadRead": false,
+  "runtimeExecutedByExporter": false,
+  "checks": [
+    {
+      "name": "export original metadata and first-run joins",
+      "exitCode": 0
+    },
+    {
+      "name": "original two-case verifier",
+      "exitCode": 0
+    },
+    {
+      "name": "three additional case verifier",
+      "exitCode": 0
+    },
+    {
+      "name": "strict verifier ESLint via stdin",
+      "exitCode": 0
+    },
+    {
+      "name": "rehash wrong driver request then verify",
+      "exitCode": 1,
+      "expectedRefusal": true
+    },
+    {
+      "name": "rehash changed original signature then verify",
+      "exitCode": 1,
+      "expectedRefusal": true
+    }
+  ],
+  "originalArchiveManifestSha256": "fa5e930f3d45421f1c33baa304c572924ce2d875a06797bae859588742d9d440"
+}
