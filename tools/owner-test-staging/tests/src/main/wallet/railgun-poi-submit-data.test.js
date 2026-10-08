@@ -684,12 +684,12 @@ describe('bounded redacted POI response inspection', () => {
 
 test('cold response inspection loads no network, store, identity or utility boundary', () => {
   const forbidden = [
-    '../networks/private-rpc',
-    './privacy-storage',
-    './railgun-poi-intent-store',
-    './railgun-identity',
-    './railgun-process',
-    './railgun-poi-root',
+    '../../../../../../src/owners/host-bindings.js',
+    '../../../../../../src/owners/context-bindings.js',
+    '../../../../../../src/owners/railgun-poi-intent-store.js',
+    '../../../../../../src/owners/railgun-identity.js',
+    '../../../../../../src/owners/railgun-process.js',
+    '../../../../../../src/owners/railgun-poi-root.js',
   ];
   const touched = [];
   for (const name of forbidden)

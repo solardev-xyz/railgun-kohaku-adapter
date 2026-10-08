@@ -478,13 +478,16 @@ test.each([false, true])(
     ]);
     const job = startRailgunProcess.mock.calls[0][0];
     expect(job).toMatchObject({
-      binaryKey: true,
+      executionJob: 'poi-prove',
       startupMs: 110000,
       lifetimeMs: 110000,
       heapMb: 256,
       rssMb: 768,
-      filename: require.resolve("../../../../../../src/owners/railgun-own-poi-prove-job.js"),
+
     });
+    expect(job.filename).toBeUndefined();
+    expect(job.binaryKey).toBeUndefined();
+    expect(require('../../../../../../src/owners/process-jobs.js').getProcessJob(job.executionJob).key).toBe(true);
     expect(job.handle).toEqual({ role: 'engine', operation: 'poi-prove' });
     expect(withRailgunOwnOperationRecovery.mock.calls[0][0].timeoutMs).toBe(120000);
     expect(mockWindow.reattest).toHaveBeenCalledTimes(2);

@@ -1,80 +1,58 @@
-jest.mock("../../../../../../src/execution/railgun-engine-runtime.js", () => ({ verifyRailgunEngineRuntime: jest.fn((p) => p) }));
+// Source-only policy composition: actual reader/policy bytes in a fresh VM,
+// fixed mocked archive verifier and context assertion; no native/host authority.
+const { fixture, files, root } = require("../../../../policy-fixture.cjs");
 const fs = require('fs');
 const path = require('path');
-const { getRailgunPublicPolicy } = require("../../../../../../src/owners/railgun-public-policy.js");
-const { verifyRailgunEngineRuntime } = require("../../../../../../src/execution/railgun-engine-runtime.js");
 const engine = require("../../../../../../src/execution/railgun-engine-manifest.json");
-afterEach(() => {
-  jest.restoreAllMocks();
-  jest.clearAllMocks();
-});
-test('policy is location-independent but changes when the pinned engine or a public validator changes', () => {
-  const first = getRailgunPublicPolicy('/first/engine.asar');
-  expect(first).toMatch(/^[0-9a-f]{64}$/);
-  expect(getRailgunPublicPolicy('/other/engine.asar')).toBe(first);
-  const original = fs.readFileSync;
-  const read = jest
-    .spyOn(fs, 'readFileSync')
-    .mockImplementation((name, ...args) =>
-      String(name).endsWith('/railgun-public-records.js')
-        ? Buffer.from('changed validation')
-        : original(name, ...args)
-    );
-  expect(getRailgunPublicPolicy('/first/engine.asar')).not.toBe(first);
-  read.mockRestore();
-  const saved = engine.sha256;
-  try {
-    engine.sha256 = 'f'.repeat(64);
-    expect(getRailgunPublicPolicy('/first/engine.asar')).not.toBe(first);
-  } finally {
-    engine.sha256 = saved;
-  }
-  expect(getRailgunPublicPolicy('/first/engine.asar')).toBe(first);
-});
-test('an unauthenticated archive cannot obtain a public policy', () => {
-  verifyRailgunEngineRuntime.mockImplementationOnce(() => {
-    throw Error('archive');
-  });
-  const read = jest.spyOn(fs, 'readFileSync');
-  expect(() => getRailgunPublicPolicy('/bad/engine.asar')).toThrow('archive');
-  expect(read.mock.calls.filter(([name]) => String(name).includes('/src/main/wallet/'))).toEqual(
-    []
-  );
-});
-test('public job and host transport dependency closure is pinned with explicit infrastructure terminals', () => {
-  const { SOURCES } = require("../../../../../../src/owners/railgun-public-policy.js");
-  const included = new Set(SOURCES.map((name) => require.resolve('./' + name)));
-  const terminals = new Set(
-    [
-      'railgun-engine-runtime',
-      'railgun-engine-manifest.json',
-      'railgun-process',
-      'privacy-storage',
-      'railgun-session-worker',
-      'railgun-account-store',
-      'railgun-account-enrollment',
-      'railgun-store-owners',
-      'railgun-account-public',
-      'railgun-public-catalog',
-    ].map((name) => require.resolve('./' + name))
-  );
-  const visited = new Set();
+function fresh(change, host) {
+  const verify = jest.fn((value) => value), f = fixture(verify);
+  if (change) f.bytes.set(change, Buffer.from('changed validator source'));
+  if (host) f.setHost(host);
+  f.capture();
+  return { f, verify };
+}
+function closedSources(seeds) {
+  const included = new Set(files.map((name) => path.join(root, name))), visited = new Set();
   function walk(filename) {
-    if (visited.has(filename) || terminals.has(filename)) return;
-    visited.add(filename);
-    expect(included.has(filename)).toBe(true);
-    for (const [, name] of fs
-      .readFileSync(filename, 'utf8')
-      .matchAll(/require\(['"](\.\/[^'"]+)['"]\)/g)) {
+    if (visited.has(filename)) return;
+    visited.add(filename); expect(included.has(filename)).toBe(true);
+    for (const [, name] of fs.readFileSync(filename, 'utf8').matchAll(/require\(['"](\.\.?\/[^'"]+)['"]\)/g)) {
       const dependency = require.resolve(path.resolve(path.dirname(filename), name));
-      if (path.dirname(dependency) === __dirname) walk(dependency);
+      expect(dependency.startsWith(root + path.sep)).toBe(true);
+      if (dependency.endsWith('.json')) expect(included.has(dependency)).toBe(true);
+      else walk(dependency);
     }
   }
-  walk(require.resolve("../../../../../../src/owners/railgun-public-run.js"));
-  walk(require.resolve("../../../../../../src/owners/railgun-public-job.js"));
-  walk(require.resolve("../../../../../../src/owners/railgun-scan-coordinator.js"));
-  walk(require.resolve("../../../../../../src/owners/railgun-scan-source.js"));
-  walk(require.resolve("../../../../../../src/owners/railgun-source-ledger.js"));
-  walk(require.resolve("../../../../../../src/owners/railgun-account-public.js"));
-  expect(visited.size).toBe(13);
+  for (const name of seeds) walk(path.join(root, 'src/owners', name + '.js'));
+  expect(visited.size).toBeGreaterThan(seeds.length);
+  return included;
+}
+
+test('policy is location-independent and fresh initialization binds pinned engine and public validator', () => {
+  const { f } = fresh(), read = (archive) => f.policy('railgun-public-policy').getRailgunPublicPolicy(archive);
+  const first = read('/first/engine.asar');
+  expect(first).toMatch(/^[0-9a-f]{64}$/);
+  expect(read('/other/engine.asar')).toBe(first);
+  const changed = fresh('src/owners/railgun-public-records.js').f;
+  expect(changed.policy('railgun-public-policy').getRailgunPublicPolicy('/first/engine.asar')).not.toBe(first);
+  f.bytes.set('src/owners/railgun-public-records.js', Buffer.from('changed validation'));
+  f.setHost('b'.repeat(64));
+  expect(read('/first/engine.asar')).toBe(first);
+  expect(f.hostRead).toHaveBeenCalledTimes(1);
+  expect(fresh(null, 'b'.repeat(64)).f.policy('railgun-public-policy').getRailgunPublicPolicy('/first/engine.asar')).not.toBe(first);
+  const saved = engine.sha256;
+  try { engine.sha256 = 'f'.repeat(64); expect(read('/first/engine.asar')).not.toBe(first); }
+  finally { engine.sha256 = saved; }
+  expect(read('/first/engine.asar')).toBe(first);
+});
+test('an unauthenticated archive cannot obtain a public policy or read additional sources', () => {
+  const { f, verify } = fresh(), count = f.reads.length;
+  verify.mockImplementationOnce(() => { throw Error('archive'); });
+  expect(() => f.policy('railgun-public-policy').getRailgunPublicPolicy('/bad/engine.asar')).toThrow('archive');
+  expect(f.reads).toHaveLength(count);
+});
+test('fixed public source closure is contained in the explicit package snapshot', () => {
+  const included = closedSources(['railgun-public-run', 'railgun-public-job', 'railgun-scan-coordinator', 'railgun-scan-source', 'railgun-source-ledger', 'railgun-account-public']);
+  expect(included.has(path.join(root, 'package.json'))).toBe(true);
+  expect(fresh().f.policy('railgun-public-policy').QUALIFIED_THROUGH).toBe(11829346);
 });

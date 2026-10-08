@@ -145,7 +145,7 @@ test('unsupported capsule version refuses before runtime and any owned viewing-k
     createRailgunPartialCapsuleData,
   } = require("../../../../fixtures/scripts/fixtures/railgun-partial-capsule-data.js");
   const capsule = jest
-    .requireActual('./railgun-private-capsule')
+    .requireActual("../../../../../../src/execution/railgun-private-capsule.js")
     .normalizeRailgunPrivateCapsule(createRailgunPartialCapsuleData().capsule);
   const input = { ...args(), capsule: { ...capsule, version: 3 } };
   mockResolvePoseidon();

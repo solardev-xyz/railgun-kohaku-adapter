@@ -1,3 +1,7 @@
+// Test-only same copied context issuer previously supplied by the browser host.
+jest.mock("../../../../../../src/owners/context-bindings.js", () =>
+  jest.requireActual("../../../../../../test/fixtures/owner-privacy-context.js")
+);
 // Real canonical records/ABI; cryptographic execution and owned-core output are
 // explicit structural test seams. No runtime archive, prover or key is loaded.
 const {
@@ -650,7 +654,7 @@ test('C holds its original verify across abort and never returns a receipt', asy
 test('keyless C source has no private helper import; init limits remain unchanged in baseline', () => {
   const fs = require('fs'),
     path = require('path');
-  const source = fs.readFileSync(path.join(__dirname, 'railgun-relay-proof-verifier.js'), 'utf8');
+  const source = fs.readFileSync(require.resolve("../../../../../../src/owners/railgun-relay-proof-verifier.js"), 'utf8');
   for (const name of [
     'railgun-relay-prover',
     'railgun-relay-reconstruct',
@@ -658,8 +662,8 @@ test('keyless C source has no private helper import; init limits remain unchange
     'railgun-wallet-job',
   ])
     expect(source).not.toContain("require('./" + name + "')");
-  for (const name of ['railgun-process.js', 'railgun-process-entry.js'])
-    expect(fs.readFileSync(path.join(__dirname, name), 'utf8')).toContain('> 65536');
+  for (const name of ['src/owners/railgun-process.js', 'host-bootstrap.cjs'])
+    expect(fs.readFileSync(path.resolve(__dirname, '../../../../../..', name), 'utf8')).toContain('> 65536');
 });
 test.each(['selector', 'prover', 'verify', 'witness', 'hashPair', 'trustRoot'])(
   'helpers refuse caller-supplied %s without executing work',

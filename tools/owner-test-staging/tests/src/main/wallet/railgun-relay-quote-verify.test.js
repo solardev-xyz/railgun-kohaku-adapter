@@ -89,7 +89,10 @@ function setup() {
 test('genuine owner config is keyless, bounded and result-only; original exit precedes result', async () => {
   const f = setup(),
     pending = verifyRailgunRelayQuote(f.options);
-  expect(mock.options).toMatchObject({ binaryKey: false, startupMs: 15000, lifetimeMs: 15000 });
+  expect(mock.options.filename).toBeUndefined();
+  expect(mock.options.binaryKey).toBeUndefined();
+  expect(require('../../../../../../src/owners/process-jobs.js').getProcessJob(mock.options.executionJob).key).toBe(false);
+  expect(mock.options).toMatchObject({ executionJob: 'relay-quote-review', startupMs: 15000, lifetimeMs: 15000 });
   expect(Object.keys(JSON.parse(mock.options.input)).sort()).toEqual(['archive', 'gas', 'quote']);
   expect(mock.options).not.toHaveProperty('storage');
   expect(mock.options).not.toHaveProperty('createProvider');

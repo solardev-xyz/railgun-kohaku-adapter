@@ -1,3 +1,7 @@
+// Test-only same copied context issuer previously supplied by the browser host.
+jest.mock("../../../../../../src/owners/context-bindings.js", () =>
+  jest.requireActual("../../../../../../test/fixtures/owner-privacy-context.js")
+);
 let mockSerial, mockArtifacts;
 jest.mock("../../../../../../src/execution/railgun-prover-runtime.js", () => ({ loadRailgunProverRuntime: () => mockSerial }));
 jest.mock("../../../../../../src/execution/railgun-artifacts.js", () => ({

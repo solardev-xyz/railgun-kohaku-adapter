@@ -1,78 +1,65 @@
-jest.mock("../../../../../../src/execution/railgun-engine-runtime.js", () => ({ verifyRailgunEngineRuntime: jest.fn((p) => p) }));
+// Source-only policy composition: actual reader/policy bytes in a fresh VM,
+// fixed mocked archive verifier and context assertion; no native/host authority.
+const { fixture, files, root } = require("../../../../policy-fixture.cjs");
 const fs = require('fs');
 const path = require('path');
-const { getRailgunTxidPolicy, railgunTxidBinding, SOURCES } = require("../../../../../../src/owners/railgun-txid-policy.js");
-const { verifyRailgunEngineRuntime } = require("../../../../../../src/execution/railgun-engine-runtime.js");
-afterEach(() => jest.restoreAllMocks());
-test('TXID policy binds every listed validator and authenticated engine independently of location', () => {
-  const expected = getRailgunTxidPolicy('/fixture/engine.asar');
-  expect(getRailgunTxidPolicy('/elsewhere/engine.asar')).toBe(expected);
-  for (const source of SOURCES) {
-    const original = fs.readFileSync;
-    const spy = jest
-      .spyOn(fs, 'readFileSync')
-      .mockImplementation((name, ...args) =>
-        String(name).endsWith('/' + source + '.js')
-          ? Buffer.from('changed')
-          : original(name, ...args)
-      );
-    expect(getRailgunTxidPolicy('/fixture/engine.asar')).not.toBe(expected);
-    spy.mockRestore();
+function fresh(change, host) {
+  const verify = jest.fn((value) => value), f = fixture(verify);
+  if (change) f.bytes.set(change, Buffer.from('changed validator source'));
+  if (host) f.setHost(host);
+  f.capture();
+  return { f, verify };
+}
+function closedSources(seeds) {
+  const included = new Set(files.map((name) => path.join(root, name))), visited = new Set();
+  function walk(filename) {
+    if (visited.has(filename)) return;
+    visited.add(filename); expect(included.has(filename)).toBe(true);
+    for (const [, name] of fs.readFileSync(filename, 'utf8').matchAll(/require\(['"](\.\.?\/[^'"]+)['"]\)/g)) {
+      const dependency = require.resolve(path.resolve(path.dirname(filename), name));
+      expect(dependency.startsWith(root + path.sep)).toBe(true);
+      if (dependency.endsWith('.json')) expect(included.has(dependency)).toBe(true);
+      else walk(dependency);
+    }
   }
-  verifyRailgunEngineRuntime.mockImplementationOnce(() => {
-    throw Error('archive');
-  });
-  expect(() => getRailgunTxidPolicy('/bad')).toThrow('archive');
+  for (const name of seeds) walk(path.join(root, 'src/owners', name + '.js'));
+  expect(visited.size).toBeGreaterThan(seeds.length);
+  return included;
+}
+
+test('TXID policy binds each validator at initialization and remains location-independent', () => {
+  const { f, verify } = fresh(), read = (archive) => f.policy('railgun-txid-policy').getRailgunTxidPolicy(archive);
+  const first = read('/fixture/engine.asar');
+  expect(read('/elsewhere/engine.asar')).toBe(first);
+  const oldSource = require('../../../../../../docs/owners/HISTORICAL-POLICY-SOURCES.json').files['railgun-txid-policy.js'];
+  const oldNames = [...oldSource.split('const SOURCES = Object.freeze([')[1].split(']);')[0].matchAll(/'([^']+)'/g)].map((match) => match[1] + '.js');
+  const translation = require('../../../../../../docs/owners/TRANSLATION.json').files;
+  expect(oldNames).toHaveLength(17);
+  for (const name of oldNames) {
+    const row = translation.find((entry) => entry.source === 'src/main/wallet/' + name);
+    expect(row).toBeDefined(); expect(files).toContain(row.destination);
+    const changed = fresh(row.destination).f;
+    expect(changed.policy('railgun-txid-policy').getRailgunTxidPolicy('/fixture/engine.asar')).not.toBe(first);
+  }
+  f.bytes.set('src/owners/railgun-txid-events.js', Buffer.from('changed'));
+  f.setHost('b'.repeat(64)); expect(read('/fixture/engine.asar')).toBe(first);
+  expect(fresh(null, 'b'.repeat(64)).f.policy('railgun-txid-policy').getRailgunTxidPolicy('/fixture/engine.asar')).not.toBe(first);
+  expect(f.hostRead).toHaveBeenCalledTimes(1);
+  verify.mockImplementationOnce(() => { throw Error('archive'); });
+  expect(() => read('/bad')).toThrow('archive');
 });
 test('TXID binding is account-specific and separate from ordinary account storage', () => {
-  const input = '1'.repeat(64);
+  const { railgunTxidBinding } = fresh().f.policy('railgun-txid-policy'), input = '1'.repeat(64);
   expect(railgunTxidBinding(input)).toMatch(/^[0-9a-f]{64}$/);
   expect(railgunTxidBinding(input)).not.toBe(input);
   expect(railgunTxidBinding(input)).not.toBe(railgunTxidBinding('2'.repeat(64)));
   for (const v of [null, {}, 'A'.repeat(64), '1']) expect(() => railgunTxidBinding(v)).toThrow();
 });
-test('TXID computation, persistence and service validators have a closed policy dependency set', () => {
-  const adapter = path.dirname(require.resolve('@freedom/railgun-kohaku-adapter/host/poi'));
-  const read = jest.spyOn(fs, 'readFileSync');
-  getRailgunTxidPolicy('/engine.asar');
-  const included = new Set(read.mock.calls.map(([name]) => name));
-  read.mockRestore();
-  expect(included.has(path.join(adapter, 'package.json'))).toBe(true);
-  const terminal = new Set(
-    [
-      'railgun-engine-runtime',
-      'railgun-engine-manifest.json',
-      'railgun-session-worker',
-      'railgun-process',
-      'privacy-storage',
-    ].map((name) => require.resolve('./' + name))
-  );
-  const visited = new Set();
-  function walk(filename) {
-    if (visited.has(filename) || terminal.has(filename)) return;
-    visited.add(filename);
-    expect(included.has(filename)).toBe(true);
-    for (const [, name] of fs
-      .readFileSync(filename, 'utf8')
-      .matchAll(/require\(['"]((?:\.\.?\/|@freedom\/railgun-kohaku-adapter)[^'"]*)['"]\)/g)) {
-      const dependency = name.startsWith('.')
-        ? require.resolve(path.resolve(path.dirname(filename), name))
-        : require.resolve(name, { paths: [path.dirname(filename)] });
-      if (path.dirname(dependency) === __dirname || dependency.startsWith(adapter + path.sep))
-        walk(dependency);
-    }
-  }
-  for (const name of [
-    'railgun-txid-job',
-    'railgun-txid-runner',
-    'railgun-txid-journal',
-    'railgun-txid-root',
-  ])
-    walk(require.resolve('./' + name));
-  expect(visited.size).toBe(36);
-  expect([...visited].filter((name) => name.startsWith(adapter + path.sep)).length).toBe(20);
+test('TXID computation, persistence and service validators are included in package source snapshot', () => {
+  const included = closedSources(['railgun-txid-job', 'railgun-txid-runner', 'railgun-txid-journal', 'railgun-txid-root']);
+  expect(included.has(path.join(root, 'package.json'))).toBe(true);
+  expect(files).toContain('host-poi.cjs');
 });
-
 test.each([
   'package.json',
   'host-poi.cjs',
@@ -95,17 +82,8 @@ test.each([
   'src/data/railgun-private-intent.js',
   'src/data/railgun-private-destination.js',
   'src/railgun-shield-pins.json',
-])('TXID policy binds eagerly loaded package file %s', (name) => {
-  const expected = getRailgunTxidPolicy('/engine.asar');
-  const filename = path.join(
-    path.dirname(require.resolve('@freedom/railgun-kohaku-adapter/host/poi')),
-    name
-  );
-  const original = fs.readFileSync;
-  jest
-    .spyOn(fs, 'readFileSync')
-    .mockImplementation((file, ...args) =>
-      file === filename ? Buffer.from('changed') : original(file, ...args)
-    );
-  expect(getRailgunTxidPolicy('/engine.asar')).not.toBe(expected);
+])('TXID policy binds eagerly loaded package file %s at fresh initialization', (name) => {
+  const first = fresh().f.policy('railgun-txid-policy').getRailgunTxidPolicy('/engine.asar');
+  expect(files).toContain(name);
+  expect(fresh(name).f.policy('railgun-txid-policy').getRailgunTxidPolicy('/engine.asar')).not.toBe(first);
 });

@@ -1,3 +1,5 @@
+> Historical staging checkpoint. Current combined-package qualification is in [CLOSED-QUALIFICATION.md](CLOSED-QUALIFICATION.md); original staging counts below are preserved.
+
 # Adjacent owner tests: destination-only staging
 
 Basis: Freedom `c6afd0432918d1258c1aafe11117f133cdd21ef4`, package owner candidate `f7da14e8d864a416444380cc99f2fa6c85102ff9`. No Freedom original has been removed or changed. No package export, runtime source, dependency, installed artifact or authority mock was added.

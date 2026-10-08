@@ -67,7 +67,8 @@ jest.mock('better-sqlite3', () =>
     };
     mockConnections.push(db);
     return db;
-  })
+  }),
+  { virtual: true }
 );
 const { openRailgunAccountFence } = require("../../../../../../src/owners/railgun-account-fence.js");
 const Database = require('better-sqlite3');

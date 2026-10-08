@@ -1,3 +1,7 @@
+// Exact original public host validator; no authority or production shim.
+jest.mock("../../../../../../src/owners/host-bindings.js", () => ({
+  journalRetention: jest.requireActual("../../../../fixtures/host/src/main/wallet/privacy-journal-retention.js"),
+}));
 const {
   matchRailgunOwnTxid: match,
   projectRailgunOwnRecord: project,

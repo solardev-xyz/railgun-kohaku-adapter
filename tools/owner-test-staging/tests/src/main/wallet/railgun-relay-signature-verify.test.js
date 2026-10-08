@@ -162,8 +162,10 @@ test('fixed keyless job receives only genuine public key and immutable original 
     value = await finish(original);
   expect(Object.isFrozen(value)).toBe(true);
   expect(value).toEqual(f.expected);
-  expect(mock.options.filename).toBe(require.resolve("../../../../../../src/owners/railgun-relay-signature-verify-job.js"));
-  expect(mock.options.binaryKey).toBe(false);
+  expect(mock.options.executionJob).toBe('relay-signature-verify');
+  expect(mock.options.filename).toBeUndefined();
+  expect(mock.options.binaryKey).toBeUndefined();
+  expect(require('../../../../../../src/owners/process-jobs.js').getProcessJob(mock.options.executionJob).key).toBe(false);
   expect(mock.options.startupMs).toBeGreaterThan(0);
   expect(mock.options.startupMs).toBeLessThanOrEqual(30000);
   expect(mock.options.lifetimeMs).toBe(mock.options.startupMs);
