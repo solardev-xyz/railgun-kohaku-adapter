@@ -1,3 +1,7 @@
+# Completed successor status
+
+The concrete repository-only host-conformance successor below is now implemented and passes all three original cases. See `HOST-HELD-QUALIFICATION.md` for exact invocation, reviewed8285 host pins and limits. The remaining text preserves the gap and chosen migration rationale at26deb565; references to outstanding wiring describe that prior checkpoint, not the current status. No installed public-lane/native equivalence is inferred.
+
 # Remaining real-vault acceptance gap
 
 `railgun-private-submission-held.test.js` is not runnable after the original Freedom owner modules are removed. Its staged source still requires the old vault relative path and its original fixtures assume local private owner imports. Merely retaining this file is not active coverage. Removal must wait for the following successor or an equivalent installed-lane acceptance. No claim of completed extraction testing is made here.

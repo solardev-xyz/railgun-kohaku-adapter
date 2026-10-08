@@ -13,101 +13,9 @@
     "railgun-wallet-catalog.test.js",
     "railgun-wallet-journal.test.js"
   ],
-  "remainingCount": 1,
-  "groups": {
-    "retained-real-vault-host-acceptance": 1
-  },
-  "remaining": [
-    {
-      "source": "src/main/wallet/railgun-private-submission-held.test.js",
-      "destination": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-submission-held.test.js",
-      "group": "shared-eoa-journal-or-recovery",
-      "requiredHostFamilies": [
-        "credentials",
-        "rpc",
-        "signers",
-        "submissionJournal",
-        "transactionNetwork",
-        "transactions"
-      ],
-      "unresolved": [
-        {
-          "kind": "jest.mock",
-          "start": 4831,
-          "end": 4842,
-          "value": "./signers",
-          "line": 135,
-          "target": "src/main/wallet/signers.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "signers",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 5102,
-          "end": 5133,
-          "value": "./private-transaction-network",
-          "line": 146,
-          "target": "src/main/wallet/private-transaction-network.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "transactionNetwork",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 5403,
-          "end": 5426,
-          "value": "./transaction-service",
-          "line": 155,
-          "target": "src/main/wallet/transaction-service.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "transactions",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 5893,
-          "end": 5918,
-          "value": "../networks/private-rpc",
-          "line": 166,
-          "target": "src/main/networks/private-rpc.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "rpc",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "jest.mock",
-          "start": 6545,
-          "end": 6575,
-          "value": "./private-submission-journal",
-          "line": 184,
-          "target": "src/main/wallet/private-submission-journal.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "submissionJournal",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        },
-        {
-          "kind": "require",
-          "start": 8405,
-          "end": 8424,
-          "value": "../identity/vault",
-          "line": 228,
-          "target": "src/main/identity/vault.js",
-          "currentPackageTarget": null,
-          "currentTargetExists": false,
-          "fixedHostFamily": "credentials",
-          "requirement": "Compose genuine fixed host binding or faithful explicit test port; original host/private imports cannot become package API"
-        }
-      ],
-      "computedSites": [],
-      "executedInThisSuccessor": false
-    }
-  ],
+  "remainingCount": 0,
+  "groups": {},
+  "remaining": [],
   "qualifiedFixedImportGroup": [
     "src/main/wallet/railgun-own-poi-checks.test.js",
     "src/main/wallet/railgun-own-transact-poi-membership.test.js",
@@ -242,5 +150,12 @@
     "policy": "test/owner-source-policy.test.js",
     "originalsExecuted": false,
     "mapping": "FINAL-SEMANTIC-DISPOSITION.json"
+  },
+  "heldHistoryQualification": {
+    "tests": 3,
+    "defaultDiscovery": false,
+    "hostRevision": "8285fb804c82011abd4fcc38ccc00d66b27132e3",
+    "invocation": "NODE_OPTIONS=--experimental-vm-modules npm test -- --config tools/owner-test-staging/jest.host-held.config.cjs",
+    "installedPublicLaneClaimed": false
   }
 }

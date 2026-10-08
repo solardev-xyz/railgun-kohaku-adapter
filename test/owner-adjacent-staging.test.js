@@ -22,6 +22,7 @@ const journalAdaptations = require('../docs/owners/test-staging/HOST-JOURNAL-ADA
 const submissionAdaptations = require('../docs/owners/test-staging/HOST-SUBMISSION-ADAPTATIONS.json');
 const credentialAdaptations = require('../docs/owners/test-staging/HOST-CREDENTIAL-ADAPTATIONS.json');
 const pluginAdaptations = require('../docs/owners/test-staging/HOST-PLUGIN-ADAPTATIONS.json');
+const heldAdaptations = require('../docs/owners/test-staging/HOST-HELD-ADAPTATIONS.json');
 const retired = require('../docs/owners/RETIRED-RUNTIME.json');
 const sha = (value) => createHash('sha256').update(value).digest('hex');
 test('all staged tests and fixtures preserve exact c6 bytes through reversible import-only edits', () => {
@@ -34,6 +35,15 @@ test('all staged tests and fixtures preserve exact c6 bytes through reversible i
   expect(new Set(manifest.files.map((row) => row.destination)).size).toBe(168);
   for (const row of manifest.files) {
     let text = fs.readFileSync(path.join(root, row.destination), 'utf8');
+    const held = heldAdaptations.changes.find((entry) => entry.file === row.destination);
+    if (held) {
+      expect(sha(text)).toBe(held.afterSha256);
+      for (const edit of [...held.replacements].reverse()) {
+        expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(edit.after);
+        text = text.slice(0, edit.start) + edit.before + text.slice(edit.start + edit.after.length);
+      }
+      expect(sha(text)).toBe(held.beforeSha256);
+    }
     const plugin = pluginAdaptations.changes.find((entry) => entry.file === row.destination);
     if (plugin) {
       expect(sha(text)).toBe(plugin.afterSha256);
@@ -433,4 +443,24 @@ test('historical broadcaster harness binds actual private owners without publish
   expect({ bytes: bytes.length, sha256: sha(bytes) }).toEqual({ bytes: fixture.bytes, sha256: fixture.sha256 });
   const binding = fs.readFileSync(path.join(root, fixture.binding.file));
   expect({ bytes: binding.length, sha256: sha(binding) }).toEqual({ bytes: fixture.binding.bytes, sha256: fixture.binding.sha256 });
+});
+
+test('held real-vault conformance remains separate with two fixed actual-host aliases', () => {
+  const inputs = require('../docs/owners/test-staging/HELD-HOST-INPUTS.json');
+  expect(inputs.hostRevision).toBe('8285fb804c82011abd4fcc38ccc00d66b27132e3');
+  expect(inputs.aliases).toEqual({
+    'railgun-held-real-vault': 'src/main/identity/vault.js',
+    'railgun-held-real-submitter': 'src/main/identity/railgun-submitter-host.js',
+  });
+  expect(Object.keys(inputs.files)).toHaveLength(14);
+  expect(inputs.dependencies).toHaveLength(67);
+  for (const pin of inputs.dependencies) {
+    expect(['host', 'package']).toContain(pin.root);
+    expect(pin.path.startsWith('node_modules/')).toBe(true);
+    expect(pin.inventorySha256).toMatch(/^[0-9a-f]{64}$/);
+  }
+  const config = fs.readFileSync(path.join(root, 'tools/owner-test-staging/jest.host-held.config.cjs'), 'utf8');
+  expect(config).toContain('railgun-private-submission-held.test.js');
+  expect(config).toContain('verifyHostInputs()');
+  expect(require('../jest.config.js').testMatch.join(' ')).not.toContain('railgun-private-submission-held.test.js');
 });
