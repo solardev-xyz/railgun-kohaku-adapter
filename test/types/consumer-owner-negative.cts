@@ -71,3 +71,17 @@ const mutateReview: owner.Review<owner.RelayReview> = (summary) => {
   return false;
 };
 void mutateReview;
+
+declare const cold: owner.RelayRecoveryLane;
+async function onlyListData() {
+  const page = await cold.list();
+  // @ts-expect-error list rejects failures; it never returns a refusal status
+  page.status;
+}
+void onlyListData;
+declare const proofOutcome: owner.PrivateProofRecoveryOutcome;
+if (proofOutcome.status === "proof-present") {
+  // @ts-expect-error stored proof presence is not fresh proof regeneration
+  const regenerated: "proof-stored" = proofOutcome.status;
+  void regenerated;
+}

@@ -214,8 +214,8 @@ export type ReviewData =
   | readonly ReviewData[]
   | { readonly [key: string]: ReviewData };
 export interface PublicSubmitter {
-  readonly index: number;
-  readonly type: string;
+  readonly index: 0;
+  readonly type: "mnemonic";
   readonly address: string;
 }
 export type PrivateKind =
@@ -630,7 +630,8 @@ export interface RelayHistory {
   readonly nextAfter: string | null;
 }
 export interface RelayRecoveryLane extends LaneLifetime {
-  list(after?: string | null): Promise<RelayHistory | RelayRefusal>;
+  /** Ordinary and unknown failures reject; list has no refusal-value arm. */
+  list(after?: string | null): Promise<RelayHistory>;
   resume(operationId: string): Promise<RelayReady | RelayRefusal>;
   discard(operationId: string): Promise<
     | {

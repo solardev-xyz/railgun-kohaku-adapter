@@ -101,8 +101,7 @@ async function consume() {
   await local.closed;
   const cold = await session.openRelayRecovery({ signal });
   const page = await cold.list();
-  if ("records" in page && page.records[0])
-    await cold.resume(page.records[0].operationId);
+  if (page.records[0]) await cold.resume(page.records[0].operationId);
   cold.close();
   await cold.closed;
   await session.synchronizeTxid({
