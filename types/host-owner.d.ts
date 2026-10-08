@@ -229,7 +229,7 @@ export interface PrivatePreparationReview {
   readonly asset: { readonly __type: "erc20"; readonly contract: string };
   readonly amount: string;
   readonly recipient: string;
-  readonly submitter: PublicSubmitter;
+  readonly submitter: string;
   readonly inputType: "Shield" | "Transact";
   readonly selection: {
     readonly noteId: string;
@@ -366,7 +366,7 @@ export interface RecoveryDisclosureReview {
   readonly purpose: "railgun-recovered-private-submission";
   readonly chainId: 11155111;
   readonly operation: PrivateKind;
-  readonly submitter: PublicSubmitter;
+  readonly submitter: string;
   readonly recipient: string;
   readonly recipientRelationship?: "foreign";
   readonly foreignOutputPoiDisclosure?: string;

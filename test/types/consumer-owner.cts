@@ -23,7 +23,9 @@ async function consume() {
     gasLimit: 100n,
     maxGasFee: 100n,
     reviewPreparation: async (summary, context) =>
-      summary.chainStateVerified === false && !context.signal.aborted,
+      summary.chainStateVerified === false &&
+      summary.submitter.startsWith("0x") &&
+      !context.signal.aborted,
     reviewTransaction: (summary, context) =>
       summary.maxGasFee <= 100n && !context.signal.aborted,
   });
@@ -57,7 +59,9 @@ async function consume() {
     gasLimit: 100n,
     maxGasFee: 100n,
     reviewDisclosures: (summary, originalSignal) =>
-      summary.originalSpendingSignatureReused && !originalSignal.aborted,
+      summary.originalSpendingSignatureReused &&
+      summary.submitter.startsWith("0x") &&
+      !originalSignal.aborted,
     reviewTransaction: (summary) => summary.maxGasFee === 100n,
   });
   const history = await recovery.history();
