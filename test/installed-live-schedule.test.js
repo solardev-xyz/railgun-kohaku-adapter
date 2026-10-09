@@ -184,3 +184,63 @@ test("after a failed smaller first window the second target still derives from t
   });
   expect(() => resumePlan(context)).toThrow();
 });
+test("the upgrade plan scopes progress and resume targets to its own phase", () => {
+  const fs = require("fs"),
+    os = require("os"),
+    path = require("path");
+  const ledger = require("../tools/qualification/installed-live/live-ledger.cjs");
+  const scenario = require("../tools/qualification/installed-live/live-scenario.cjs");
+  // Pure: the plan only reads the ledger through the context's profile and header.
+  const inspect = jest.spyOn(ledger, "inspect");
+  const phaseState = (progress, windows, attempts = []) => ({
+    progress: [{ to: 259999, hash: "0x" + "1".repeat(64) }, ...progress],
+    budgets: { "scan-range": [{ n: 1, target: 259999 }, ...windows] },
+    attempts,
+    phase: { progressFrom: 1, rangesFrom: 1, at: 1 },
+  });
+  const context = { profile: "/p", header: { name: ledger.JOURNEY3 } };
+  inspect.mockReturnValue(phaseState([], []));
+  expect(scenario.upgradePlan(context)).toEqual({
+    mode: "exact",
+    lower: -1,
+    upper: null,
+    from: 0,
+    firstTarget: null,
+  });
+  inspect.mockReturnValue(phaseState([], [{ n: 2, target: 99999 }]));
+  expect(scenario.upgradePlan(context)).toMatchObject({
+    mode: "first",
+    lower: -1,
+    upper: 99999,
+    firstTarget: 99999,
+  });
+  inspect.mockReturnValue(
+    phaseState([], [{ n: 2, target: 99999 }], [{ lower: -1, upper: 99999 }]),
+  );
+  expect(scenario.upgradePlan(context)).toMatchObject({
+    mode: "second",
+    firstTarget: 199999,
+  });
+  inspect.mockReturnValue(
+    phaseState(
+      [{ to: 99999, hash: "0x" + "2".repeat(64) }],
+      [{ n: 2, target: 99999 }],
+    ),
+  );
+  expect(scenario.upgradePlan(context)).toEqual({
+    mode: "exact",
+    lower: 99999,
+    upper: null,
+    from: 100000,
+    firstTarget: null,
+  });
+  // The carried old head never becomes the new generation's start.
+  inspect.mockReturnValue(
+    phaseState([{ to: 99999, hash: "0x" + "2".repeat(64) }], []),
+  );
+  expect(scenario.scanStart(context, 0, { number: 120000 })).toBe(100000);
+  inspect.mockRestore();
+  void fs;
+  void os;
+  void path;
+});

@@ -97,7 +97,16 @@ function createJourneyChain({
   assert.deepEqual(
     Object.keys(faults).filter(
       (key) =>
-        !['preflightAnchorAfterEstimate', 'failLogsFrom', 'failApplyRefreshTo', 'denseFrom', 'denseTo', 'latencyMs', 'failValidatedTxid'].includes(key)
+        ![
+          'preflightAnchorAfterEstimate',
+          'failLogsFrom',
+          'failApplyRefreshTo',
+          'denseFrom',
+          'denseTo',
+          'latencyMs',
+          'failValidatedTxid',
+          'rejectPoiSubmits',
+        ].includes(key)
     ),
     []
   );
@@ -107,7 +116,7 @@ function createJourneyChain({
   //   its end header once more; the next read is the coordinator's refresh
   //   inside apply, after its journal entry is prepared and the window applied.
   //   That read fails, leaving a pending application for recovery.
-  const scanFaults = { logsFired: false, refreshFired: false, servedTo: new Set(), endReads: 0, txidReads: 0 };
+  const scanFaults = { logsFired: false, refreshFired: false, servedTo: new Set(), endReads: 0, txidReads: 0, poiRejected: 0 };
   const servedLogs = [];
   // A dense interval [denseFrom, denseTo], as Sepolia around 9.0M: a request
   // wider than 20000 blocks covering it answers with 600 well-formed Railgun
@@ -678,6 +687,17 @@ function createJourneyChain({
         return derived.txidRoots[params.index] === bare(params.merkleroot);
       case 'ppoi_submit_transact_proof': {
         assert.equal(params.listKey, TEST_LIST);
+        // The first N submissions are refused as the deployed service answered
+        // live (HTTP 400, -32602 Invalid proof), and nothing is accepted.
+        if (Number.isSafeInteger(faults.rejectPoiSubmits) && scanFaults.poiRejected < faults.rejectPoiSubmits) {
+          scanFaults.poiRejected++;
+          injected++;
+          throw Object.assign(Error('Synthetic POI rejection'), {
+            code: 'SYNTHETIC_RPC_ERROR',
+            httpStatus: 400,
+            rpcError: { code: -32602, message: 'Invalid proof' },
+          });
+        }
         const data = params.transactProofData;
         assert.deepEqual(Object.keys(data).sort(), [
           'blindedCommitmentsOut',

@@ -506,3 +506,83 @@ test("the post-send header keeps the third link's caps and carries no resume cla
     ),
   ).toThrow();
 });
+test("the upgrade header names this exact identity and derives its phase caps from the bound boundary", () => {
+  const ledger = require("../tools/qualification/installed-live/live-ledger.cjs");
+  const sentio = {
+    ...binding,
+    rpc: { url: ledger.SENTIO },
+    predecessor: { name: ledger.JOURNEY2 },
+  };
+  const base = headerFor({ ...request, ledger: ledger.JOURNEY2 }, sentio, null);
+  const boundary = {
+    scanRanges: 245,
+    txidPages: 52,
+    scanOpenNew: 1,
+    scanOpenPending: 16,
+    poiStatus: 1,
+  };
+  const to = {
+    freedomCommit: request.hostCommit,
+    packageCommit: request.packageCommit,
+    packageTarSha256: request.packageTarPin.sha256,
+    runnerSha256: base.runnerSha256,
+  };
+  const upgrade = {
+    from: { ...to, freedomCommit: "9".repeat(40) },
+    to,
+    reason: "x",
+  };
+  const phase = { boundary, additions: { ...ledger.UPGRADE_ADDITIONS } };
+  const header = headerFor(
+    { ...request, ledger: ledger.JOURNEY3 },
+    { ...sentio, upgrade, phase },
+    null,
+  );
+  expect(header.caps).toMatchObject({
+    scanRanges: 645,
+    txidPages: 112,
+    rebuildNew: 2,
+    scanResumes: 27,
+    poiStatus: {
+      max: 5,
+      minSpacingMs: 600000,
+      windowMs: 86400000,
+      phaseFrom: 1,
+    },
+    poiRetries: 1,
+    perSendMaxGasFeeWei: "2000000000000000",
+    totalMaxFeeWei: "4000000000000000",
+  });
+  for (const changed of [
+    { ...upgrade, to: { ...to, runnerSha256: "0".repeat(64) } },
+    { ...upgrade, to: { ...to, packageTarSha256: "0".repeat(64) } },
+  ])
+    expect(() =>
+      headerFor(
+        { ...request, ledger: ledger.JOURNEY3 },
+        { ...sentio, upgrade: changed, phase },
+        null,
+      ),
+    ).toThrow();
+  expect(() =>
+    headerFor(
+      { ...request, ledger: ledger.JOURNEY3 },
+      {
+        ...sentio,
+        upgrade,
+        phase: { ...phase, additions: { ...phase.additions, scanRanges: 401 } },
+      },
+      null,
+    ),
+  ).toThrow();
+  expect(() =>
+    headerFor({ ...request, ledger: ledger.JOURNEY3 }, sentio, null),
+  ).toThrow();
+  expect(() =>
+    headerFor(
+      { ...request, ledger: ledger.JOURNEY2 },
+      { ...sentio, upgrade, phase },
+      null,
+    ),
+  ).toThrow();
+});

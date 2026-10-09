@@ -87,7 +87,9 @@ const SYNTHETIC_CAP_KEYS = Object.keys(LIVE_CAPS).sort();
 function headerFor(request, binding, syntheticCaps) {
   assert.ok(binding && typeof binding === 'object' && !Array.isArray(binding));
   const name = request.ledger ?? ledger.FIRST;
-  assert.ok([ledger.FIRST, ledger.CONTINUATION, ledger.RESUME, ledger.RESUME2, ledger.RESUME3, ledger.JOURNEY2].includes(name));
+  assert.ok(
+    [ledger.FIRST, ledger.CONTINUATION, ledger.RESUME, ledger.RESUME2, ledger.RESUME3, ledger.JOURNEY2, ledger.JOURNEY3].includes(name)
+  );
   const resuming = [ledger.RESUME, ledger.RESUME2, ledger.RESUME3].includes(name);
   // Each later ledger of the fixed chain binds its stopped predecessor.
   assert.equal(Object.hasOwn(binding, 'predecessor'), name !== ledger.FIRST);
@@ -109,6 +111,32 @@ function headerFor(request, binding, syntheticCaps) {
   } else {
     assert.deepEqual(Object.keys(syntheticCaps).sort(), SYNTHETIC_CAP_KEYS);
   }
+  const runnerSha256 = sha(Buffer.from(JSON.stringify(Object.fromEntries(RECIPE.map((name) => [name, file(name)])))));
+  // The upgrade link names this exact host, package, artifact and runner, and
+  // its phase allowances are derived from its bound boundary counts.
+  const upgrading = name === ledger.JOURNEY3;
+  assert.equal(Object.hasOwn(binding, 'upgrade'), upgrading);
+  assert.equal(Object.hasOwn(binding, 'phase'), upgrading);
+  let phaseCaps = {};
+  if (upgrading) {
+    assert.deepEqual(binding.upgrade.to, {
+      freedomCommit: request.hostCommit,
+      packageCommit: request.packageCommit,
+      packageTarSha256: request.packageTarPin.sha256,
+      runnerSha256,
+    });
+    const { boundary, additions } = binding.phase;
+    assert.deepEqual(additions, { ...ledger.UPGRADE_ADDITIONS });
+    for (const value of Object.values(boundary)) assert.ok(Number.isSafeInteger(value) && value >= 0);
+    phaseCaps = {
+      scanRanges: boundary.scanRanges + additions.scanRanges,
+      txidPages: boundary.txidPages + additions.txidPages,
+      rebuildNew: boundary.scanOpenNew + additions.scanOpenNew,
+      scanResumes: boundary.scanOpenPending + additions.scanOpenPending,
+      poiStatus: { max: boundary.poiStatus + additions.poiStatus, ...ledger.UPGRADE_STATUS, phaseFrom: boundary.poiStatus },
+      poiRetries: 1,
+    };
+  }
   return {
     type: 'railgun-installed-journey-ledger',
     version: 1,
@@ -118,7 +146,7 @@ function headerFor(request, binding, syntheticCaps) {
     freedomCommit: request.hostCommit,
     packageCommit: request.packageCommit,
     packageTarSha256: request.packageTarPin.sha256,
-    runnerSha256: sha(Buffer.from(JSON.stringify(Object.fromEntries(RECIPE.map((name) => [name, file(name)]))))),
+    runnerSha256,
     binding,
     caps: {
       ...FIXED_CAPS,
@@ -126,7 +154,8 @@ function headerFor(request, binding, syntheticCaps) {
       // The reviewed resume extension: five pending openers in aggregate, nothing else.
       ...(resuming ? { scanResumes: name === ledger.RESUME3 ? RESUME3_SCAN_RESUMES : RESUME_SCAN_RESUMES } : {}),
       // The post-send link keeps its predecessor's caps exactly.
-      ...(name === ledger.JOURNEY2 ? { scanResumes: RESUME3_SCAN_RESUMES } : {}),
+      ...(name === ledger.JOURNEY2 || upgrading ? { scanResumes: RESUME3_SCAN_RESUMES } : {}),
+      ...phaseCaps,
     },
   };
 }
@@ -178,6 +207,15 @@ function validate(request) {
   // Later ledgers resume the existing generation; they never begin one.
   if (request.ledgerHeader.name !== ledger.FIRST) assert.notEqual(request.params.publicCache, 'new');
   assert.ok(Object.hasOwn(MODES, request.mode));
+  // The upgrade link runs only its continuation stages; the two new modes run
+  // nowhere else. No rebuild of the old kind, no transfer, no first handoff.
+  const upgradeOnly = ['live-upgrade-rebuild', 'live-poi-retry'];
+  if (request.ledgerHeader.name === ledger.JOURNEY3)
+    assert.ok(
+      [...upgradeOnly, 'live-poi-status', 'live-unshield', 'live-observe', 'live-summary', 'live-reconcile'].includes(request.mode),
+      'Mode not admitted on the upgrade link'
+    );
+  else assert.ok(!upgradeOnly.includes(request.mode), 'Mode admitted on the upgrade link only');
   assert.ok(['live', 'synthetic'].includes(request.transport));
   assert.deepEqual(Object.keys(request.recipeFiles).sort(), [...RECIPE].sort());
   for (const name of RECIPE) assert.deepEqual(file(name), request.recipeFiles[name]);
@@ -204,7 +242,7 @@ function validate(request) {
     assert.ok(['primary', 'limited'].includes(request.synthetic.endpoint));
     for (const [key, value] of Object.entries(request.synthetic.faults))
       assert.ok(
-        ['failLogsFrom', 'failApplyRefreshTo', 'denseFrom', 'denseTo', 'latencyMs', 'failValidatedTxid'].includes(key) &&
+        ['failLogsFrom', 'failApplyRefreshTo', 'denseFrom', 'denseTo', 'latencyMs', 'failValidatedTxid', 'rejectPoiSubmits'].includes(key) &&
           Number.isSafeInteger(value),
         'Synthetic fault ' + key
       );

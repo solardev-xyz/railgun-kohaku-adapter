@@ -248,7 +248,8 @@ async function main() {
               // A modeled provider error answers as JSON-RPC, as a gateway would.
               if (error?.code !== 'SYNTHETIC_RPC_ERROR') throw error;
               return {
-                status: 200,
+                // A modeled service may answer its error with a non-200 status.
+                status: Number.isSafeInteger(error.httpStatus) ? error.httpStatus : 200,
                 body: Buffer.from(JSON.stringify({ jsonrpc: '2.0', id: wire.id, error: error.rpcError })),
               };
             }

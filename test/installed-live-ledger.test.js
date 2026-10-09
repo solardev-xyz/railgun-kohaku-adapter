@@ -977,3 +977,320 @@ test("old-header reports are admitted only as the bound predecessor's exact reco
   expect(() => scanStart(context, 279999, { number: 300000 })).toThrow();
   expect(() => scanStart(context, 239999, { number: 250000 })).toThrow();
 });
+
+// --- The upgrade link (journey-3) -------------------------------------------
+function attemptedJourney2() {
+  const s = resolvedResume3();
+  const j2 = journey2Of(s.p, s.r3);
+  const handoff = ledger.poiReserve(s.p, j2, {
+    capsuleDigestSha256: "c".repeat(64),
+  });
+  ledger.poiFinish(s.p, j2, handoff, {
+    status: "recovery-required",
+    classification: "http-failure",
+  });
+  ledger.recordReport(s.p, j2, "live-poi", "d".repeat(64));
+  ledger.consume(
+    s.p,
+    j2,
+    "poi-status",
+    ledger.policyFor(j2.caps, "poi-status"),
+    40000,
+  );
+  ledger.recordReport(s.p, j2, "live-poi-status", "e".repeat(64));
+  return { ...s, j2 };
+}
+function journey3Of(p, j2, overrides = {}) {
+  const crypto = require("crypto");
+  const hash = (v) => crypto.createHash("sha256").update(v).digest("hex");
+  const state = ledger.inspect(p, j2);
+  const count = (kind) => (state.budgets[kind] ?? []).length;
+  const boundary = {
+    scanRanges: count("scan-range"),
+    txidPages: count("txid-page"),
+    scanOpenNew: count("scan-open:new"),
+    scanOpenPending: count("scan-open:pending"),
+    poiStatus: count("poi-status"),
+  };
+  const add = ledger.UPGRADE_ADDITIONS;
+  const next = {
+    ...j2,
+    name: ledger.JOURNEY3,
+    freedomCommit: "f".repeat(40),
+    packageCommit: "e".repeat(40),
+    packageTarSha256: "8".repeat(64),
+    runnerSha256: "7".repeat(64),
+    caps: {
+      ...j2.caps,
+      scanRanges: boundary.scanRanges + add.scanRanges,
+      txidPages: boundary.txidPages + add.txidPages,
+      rebuildNew: boundary.scanOpenNew + add.scanOpenNew,
+      scanResumes: boundary.scanOpenPending + add.scanOpenPending,
+      poiStatus: {
+        max: boundary.poiStatus + add.poiStatus,
+        ...ledger.UPGRADE_STATUS,
+        phaseFrom: boundary.poiStatus,
+      },
+      poiRetries: 1,
+    },
+  };
+  const identity = (v) => ({
+    freedomCommit: v.freedomCommit,
+    packageCommit: v.packageCommit,
+    packageTarSha256: v.packageTarSha256,
+    runnerSha256: v.runnerSha256,
+  });
+  next.binding = {
+    ...j2.binding,
+    predecessor: {
+      name: ledger.JOURNEY2,
+      ledgerSha256: hash(
+        fs.readFileSync(ledger.ledgerFile(p, ledger.JOURNEY2)),
+      ),
+      headerSha256: hash(JSON.stringify(j2)),
+      reason: "package upgrade for one explicit POI retry",
+    },
+    upgrade: {
+      from: identity(j2),
+      to: identity(next),
+      reason: "one explicit POI retry",
+    },
+    phase: { boundary, additions: { ...add } },
+  };
+  return { ...next, ...overrides };
+}
+test("the upgrade link carries the complete state and adds exactly the phase allowances", () => {
+  const { p, j2 } = attemptedJourney2();
+  const j3 = journey3Of(p, j2);
+  const state = ledger.inspect(p, j3);
+  expect(state.sends).toHaveLength(1);
+  expect(state.poi.pending).not.toBeNull();
+  expect(state.poi.finished).not.toBeNull();
+  expect(state.reports.map((row) => row.mode)).toEqual([
+    "live-rebuild",
+    "live-submit",
+    "live-observe",
+    "live-poi",
+    "live-poi-status",
+  ]);
+  expect(state.phase).toBeNull();
+  expect(j3.caps.scanRanges).toBe(j3.binding.phase.boundary.scanRanges + 400);
+  expect(j3.caps.txidPages).toBe(j3.binding.phase.boundary.txidPages + 60);
+  expect(j3.caps.poiStatus.max).toBe(j3.binding.phase.boundary.poiStatus + 4);
+  // The transfer and the first handoff stay consumed.
+  expect(() => ledger.reserve(p, j3, "transfer", {})).toThrow();
+  expect(() => ledger.poiReserve(p, j3, {})).toThrow();
+  // Old reports are admitted only with their own producer header.
+  const rows = ledger.predecessorReports(p, j3);
+  const crypto = require("crypto");
+  const j2Header = crypto
+    .createHash("sha256")
+    .update(JSON.stringify(j2))
+    .digest("hex");
+  expect(rows.find((row) => row.mode === "live-poi").headerSha256).toBe(
+    j2Header,
+  );
+  expect(rows.find((row) => row.mode === "live-rebuild").headerSha256).not.toBe(
+    j2Header,
+  );
+});
+test.each([
+  [
+    "a boundary that omits a used range",
+    (j3) => ({
+      binding: {
+        ...j3.binding,
+        phase: {
+          ...j3.binding.phase,
+          boundary: {
+            ...j3.binding.phase.boundary,
+            scanRanges: j3.binding.phase.boundary.scanRanges - 1,
+          },
+        },
+      },
+    }),
+  ],
+  [
+    "one more range than the phase allows",
+    (j3) => ({ caps: { ...j3.caps, scanRanges: j3.caps.scanRanges + 1 } }),
+  ],
+  [
+    "old unused capacity added again",
+    (j3) => ({ caps: { ...j3.caps, txidPages: j3.caps.txidPages + 38 } }),
+  ],
+  [
+    "twelve pending openers",
+    (j3) => ({ caps: { ...j3.caps, scanResumes: j3.caps.scanResumes + 1 } }),
+  ],
+  [
+    "a status window from the chain origin",
+    (j3) => ({
+      caps: { ...j3.caps, poiStatus: { ...j3.caps.poiStatus, phaseFrom: 0 } },
+    }),
+  ],
+  ["two retries", (j3) => ({ caps: { ...j3.caps, poiRetries: 2 } })],
+  [
+    "a changed fee cap",
+    (j3) => ({ caps: { ...j3.caps, perSendMaxGasFeeWei: "3000000000000000" } }),
+  ],
+  [
+    "an upgrade from another identity",
+    (j3) => ({
+      binding: {
+        ...j3.binding,
+        upgrade: {
+          ...j3.binding.upgrade,
+          from: { ...j3.binding.upgrade.from, runnerSha256: "0".repeat(64) },
+        },
+      },
+    }),
+  ],
+  [
+    "an upgrade to another identity",
+    (j3) => ({
+      binding: {
+        ...j3.binding,
+        upgrade: {
+          ...j3.binding.upgrade,
+          to: { ...j3.binding.upgrade.to, packageTarSha256: "0".repeat(64) },
+        },
+      },
+    }),
+  ],
+  ["a changed profile", () => ({ profile: "/elsewhere" })],
+])("the upgrade link refuses %s", (_name, change) => {
+  const { p, j2 } = attemptedJourney2();
+  const j3 = journey3Of(p, j2);
+  expect(() => ledger.inspect(p, { ...j3, ...change(j3) })).toThrow();
+});
+test("the upgrade link refuses a predecessor without the consumed first handoff or with an unshield", () => {
+  const s = resolvedResume3();
+  const j2 = journey2Of(s.p, s.r3);
+  expect(() => ledger.inspect(s.p, journey3Of(s.p, j2))).toThrow();
+  const t = attemptedJourney2();
+  ledger.reserve(t.p, t.j2, "unshield", {});
+  expect(() => ledger.inspect(t.p, journey3Of(t.p, t.j2))).toThrow();
+});
+test("the new generation starts once and orders its own progress below the carried head", () => {
+  const { p, j2 } = attemptedJourney2();
+  const j3 = journey3Of(p, j2);
+  const range = ledger.policyFor(j3.caps, "scan-range");
+  expect(() =>
+    ledger.consume(p, j3, "scan-range", range, 50000, { target: 99999 }),
+  ).toThrow();
+  expect(() =>
+    ledger.consume(
+      p,
+      j3,
+      "scan-open:new",
+      ledger.policyFor(j3.caps, "scan-open:new"),
+      50000,
+    ),
+  ).toThrow();
+  const carried = ledger.inspect(p, j3).progress.length;
+  const phase = ledger.startPhase(p, j3);
+  expect(phase.progressFrom).toBe(carried);
+  expect(() => ledger.startPhase(p, j3)).toThrow();
+  ledger.consume(
+    p,
+    j3,
+    "scan-open:new",
+    ledger.policyFor(j3.caps, "scan-open:new"),
+    50001,
+  );
+  let n = ledger.consume(p, j3, "scan-range", range, 50002, { target: 99999 });
+  // Below journey-2's carried head (259999): the new generation's own first checkpoint.
+  ledger.progress(p, j3, 99999, "0x" + "6".repeat(64), n);
+  n = ledger.consume(p, j3, "scan-range", range, 50003, { target: 99999 });
+  expect(() =>
+    ledger.progress(p, j3, 99999, "0x" + "6".repeat(64), n),
+  ).toThrow();
+  const state = ledger.inspect(p, j3);
+  expect(state.progress.at(-1).to).toBe(99999);
+  expect(state.progress.slice(0, state.phase.progressFrom).at(-1).to).toBe(
+    259999,
+  );
+  expect(() =>
+    ledger.consume(
+      p,
+      j3,
+      "scan-open:new",
+      ledger.policyFor(j3.caps, "scan-open:new"),
+      50004,
+    ),
+  ).toThrow();
+});
+test("upgrade openers need progress and stay inside eight hours from the first", () => {
+  const { p, j2 } = attemptedJourney2();
+  const j3 = journey3Of(p, j2);
+  ledger.startPhase(p, j3);
+  const pending = ledger.policyFor(j3.caps, "scan-open:pending");
+  ledger.consume(
+    p,
+    j3,
+    "scan-open:new",
+    ledger.policyFor(j3.caps, "scan-open:new"),
+    60000,
+  );
+  ledger.consume(p, j3, "scan-open:pending", pending, 60001);
+  expect(() =>
+    ledger.consume(p, j3, "scan-open:pending", pending, 60002),
+  ).toThrow();
+  const n = ledger.consume(
+    p,
+    j3,
+    "scan-range",
+    ledger.policyFor(j3.caps, "scan-range"),
+    60003,
+    { target: 99999 },
+  );
+  ledger.progress(p, j3, 99999, "0x" + "6".repeat(64), n);
+  expect(() =>
+    ledger.consume(
+      p,
+      j3,
+      "scan-open:pending",
+      pending,
+      60000 + 8 * 3600 * 1000 + 1,
+    ),
+  ).toThrow();
+  ledger.consume(p, j3, "scan-open:pending", pending, 60004);
+  expect(ledger.upgradeDeadline(p, j3)).toBe(60000 + 8 * 3600 * 1000);
+});
+test("phase status reads: four more, ten minutes apart, inside 24 hours from the first phase read", () => {
+  const { p, j2 } = attemptedJourney2();
+  const j3 = journey3Of(p, j2);
+  const status = ledger.policyFor(j3.caps, "poi-status");
+  const t0 = 2 * 24 * 3600 * 1000;
+  // Long after the chain's own 24-hour window: the phase window starts here.
+  ledger.consume(p, j3, "poi-status", status, t0);
+  expect(() =>
+    ledger.consume(p, j3, "poi-status", status, t0 + 599999),
+  ).toThrow();
+  ledger.consume(p, j3, "poi-status", status, t0 + 600000);
+  expect(() =>
+    ledger.consume(p, j3, "poi-status", status, t0 + 24 * 3600 * 1000 + 1),
+  ).toThrow();
+  ledger.consume(p, j3, "poi-status", status, t0 + 1200000);
+  ledger.consume(p, j3, "poi-status", status, t0 + 1800000);
+  expect(() =>
+    ledger.consume(p, j3, "poi-status", status, t0 + 2400000),
+  ).toThrow();
+});
+test("the explicit retry is reserved once, after the consumed first handoff", () => {
+  const { p, j2 } = attemptedJourney2();
+  const j3 = journey3Of(p, j2);
+  const retryId = ledger.poiRetryReserve(p, j3, {
+    holdIdSha256: "a".repeat(64),
+  });
+  expect(() => ledger.poiRetryReserve(p, j3, {})).toThrow();
+  expect(() => ledger.poiRetryFinish(p, j3, "0".repeat(32), {})).toThrow();
+  const retry = ledger.poiRetryFinish(p, j3, retryId, {
+    status: "recovery-required",
+  });
+  expect(retry.finished.retryId).toBe(retryId);
+  expect(() => ledger.poiRetryReserve(p, j3, {})).toThrow();
+  // Not on the post-send link.
+  const other = attemptedJourney2();
+  expect(() => ledger.poiRetryReserve(other.p, other.j2, {})).toThrow();
+});
