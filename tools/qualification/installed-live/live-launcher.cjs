@@ -100,6 +100,7 @@ function headerFor(request, binding, syntheticCaps) {
       ledger.JOURNEY3,
       ledger.JOURNEY4,
       ledger.JOURNEY5,
+      ledger.JOURNEY6,
     ].includes(name)
   );
   const resuming = [ledger.RESUME, ledger.RESUME2, ledger.RESUME3].includes(name);
@@ -129,6 +130,7 @@ function headerFor(request, binding, syntheticCaps) {
   const upgrading = ledger.UPGRADES.includes(name);
   const circuit = name === ledger.JOURNEY4;
   const amending = name === ledger.JOURNEY5;
+  const attempting = name === ledger.JOURNEY6;
   assert.equal(Object.hasOwn(binding, 'upgrade'), upgrading);
   assert.equal(Object.hasOwn(binding, 'phase'), upgrading);
   // The send amendment names this exact host, package and runner, the same
@@ -147,6 +149,23 @@ function headerFor(request, binding, syntheticCaps) {
     // Two chain transactions and the fee caps stay exactly as they were.
     for (const [key, value] of Object.entries(FIXED_CAPS)) assert.equal(amendment.caps?.[key], value);
     assert.equal(Object.hasOwn(amendment.caps, 'sendReservations'), false);
+  }
+  // The bounded-attempts link: the same host and package as journey-5, this
+  // exact runner, and journey-5's caps carried with its three reservations.
+  assert.equal(Object.hasOwn(binding, 'attempts'), attempting);
+  if (attempting) {
+    const { attempts } = binding;
+    assert.deepEqual(attempts.to, {
+      freedomCommit: request.hostCommit,
+      packageCommit: request.packageCommit,
+      packageTarSha256: request.packageTarPin.sha256,
+      runnerSha256,
+    });
+    assert.equal(attempts.from.freedomCommit, request.hostCommit);
+    assert.equal(attempts.from.packageTarSha256, request.packageTarPin.sha256);
+    for (const [key, value] of Object.entries(FIXED_CAPS)) assert.equal(attempts.caps?.[key], value);
+    assert.equal(attempts.caps.sendReservations, ledger.AMENDMENT_RESERVATIONS);
+    assert.equal(Object.hasOwn(attempts.caps, 'custodyVerify'), false);
   }
   let phaseCaps = {};
   if (upgrading) {
@@ -198,6 +217,12 @@ function headerFor(request, binding, syntheticCaps) {
     binding,
     caps: amending
       ? { ...binding.amendment.caps, sendReservations: ledger.AMENDMENT_RESERVATIONS }
+      : attempting
+      ? {
+          ...binding.attempts.caps,
+          sendReservations: ledger.ATTEMPT_RESERVATIONS,
+          custodyVerify: { max: ledger.CUSTODY_VERIFICATIONS },
+        }
       : {
           ...FIXED_CAPS,
           ...(request.transport === 'live' ? LIVE_CAPS : syntheticCaps),
@@ -231,6 +256,26 @@ function assertUnsentEvidence(request) {
   assert.deepEqual(value.unshield, unsent.unshield);
   assert.equal(value.ledgerHeaderSha256, reconcile.headerSha256);
 }
+// Journey-6's bound refused attempt, read from its own recorded report: that
+// exact reservation refused with no hash, no hold and no G1 read.
+function assertAttemptEvidence(request) {
+  const { previous } = request.ledgerHeader.binding.attempts;
+  const report = read(previous.report.report, previous.report.reportSha256);
+  assert.equal(report.mode, 'live-unshield');
+  assert.equal(report.transport, request.transport);
+  const value = report.scenario;
+  assert.equal(value.schema, 'railgun-installed-live-unshield-v1');
+  assert.equal(value.send, 'unshield');
+  assert.deepEqual(value.outcome, previous.outcome);
+  assert.equal(value.outcome.classification, ledger.REFUSED);
+  assert.equal(Object.hasOwn(value.outcome, 'transactionHash'), false);
+  assert.equal(value.holdIdSha256, null);
+  assert.equal(value.g1, null);
+  assert.equal(value.stop, true);
+  assert.equal(value.outputNoteIdSha256, previous.unsent.outputNoteIdSha256);
+  assert.deepEqual(value.unshield, previous.unsent.unshield);
+  assert.equal(value.ledgerHeaderSha256, previous.report.headerSha256);
+}
 const RESUME_SCAN_RESUMES = 5;
 // Each upgrade link runs only its own modes and the continuation stages; its
 // own modes run nowhere else. No rebuild of the old kind, no transfer, no first
@@ -240,6 +285,8 @@ const UPGRADE_MODES = Object.freeze({
   [ledger.JOURNEY4]: Object.freeze(['live-reproof-rebuild', 'live-poi-reproof']),
   // The send amendment has no modes of its own: continuation stages only.
   [ledger.JOURNEY5]: Object.freeze([]),
+  // The bounded-attempts link's own custody verification, plus continuation.
+  [ledger.JOURNEY6]: Object.freeze(['live-custody-verify']),
 });
 const CONTINUATION_MODES = Object.freeze(['live-poi-status', 'live-unshield', 'live-observe', 'live-summary', 'live-reconcile']);
 function assertModeAdmitted(name, mode) {
@@ -332,6 +379,7 @@ function validate(request) {
           'rejectPoiSubmits',
           'failPoisPerList',
           'failRootHistoryRead',
+          'rejectRootHistoryRead',
         ].includes(key) &&
           Number.isSafeInteger(value),
         'Synthetic fault ' + key
@@ -342,6 +390,7 @@ function validate(request) {
   assert.equal(request.heldReport.sha256, request.ledgerHeader.binding.heldTransferReportSha256);
   const state = ledger.inspect(request.profileDirectory, request.ledgerHeader);
   if (request.ledgerHeader.name === ledger.JOURNEY5) assertUnsentEvidence(request);
+  if (request.ledgerHeader.name === ledger.JOURNEY6) assertAttemptEvidence(request);
   // The third link's claim is derived from its predecessor's records by the ledger.
   if ([ledger.RESUME, ledger.RESUME2].includes(request.ledgerHeader.name)) assertResumeClaim(request);
   return state;
@@ -359,8 +408,21 @@ function admit(request) {
   if (kind) {
     assert.ok(sends.every((send) => send.finished), 'Unfinished send: observation only');
     // The amendment's one further unshield (the ledger binds its predecessor).
-    const next = request.ledgerHeader.name === ledger.JOURNEY5 && sends.length === 2 ? 'unshield' : ledger.SENDS[sends.length];
+    const further =
+      (request.ledgerHeader.name === ledger.JOURNEY5 && sends.length === 2) ||
+      (request.ledgerHeader.name === ledger.JOURNEY6 && sends.length >= 3 && sends.length < ledger.ATTEMPT_RESERVATIONS);
+    const next = further ? 'unshield' : ledger.SENDS[sends.length];
     assert.equal(next, kind, 'Send order or allowance exhausted');
+    // Journey-6: a further attempt follows only its custody verification of the
+    // previous refused attempt, read from that verification's own report.
+    if (request.ledgerHeader.name === ledger.JOURNEY6) {
+      const custody = read(request.previous.report, request.previous.reportSha256);
+      assert.equal(custody.mode, 'live-custody-verify');
+      assert.equal(custody.scenario.schema, 'railgun-installed-live-custody-v1');
+      assert.equal(custody.scenario.verdict, 'no-hold', 'Custody not established');
+      assert.ok(['first-instrumented', 'transport-qualified'].includes(custody.scenario.eligibility), 'No eligibility');
+      assert.equal(custody.scenario.attemptId, sends.at(-1).pending.attemptId);
+    }
   }
   return sends.length;
 }
@@ -529,4 +591,14 @@ if (require.main === module)
     );
     process.exitCode = 1;
   });
-module.exports = { makeRequest, validate, admit, headerFor, assertModeAdmitted, assertUnsentEvidence, RECIPE, LIVE_CAPS };
+module.exports = {
+  makeRequest,
+  validate,
+  admit,
+  headerFor,
+  assertModeAdmitted,
+  assertUnsentEvidence,
+  assertAttemptEvidence,
+  RECIPE,
+  LIVE_CAPS,
+};

@@ -224,6 +224,7 @@ const FAULTS = Object.freeze([
   'exit-after-advance',
   'exit-after-poi-retry-reserve',
   'exit-after-poi-reproof-reserve',
+  'exit-after-prepare',
 ]);
 function fault(context, point, target) {
   const requested = context.params.fault ?? null;
@@ -371,7 +372,7 @@ function finishReport(context, value) {
 // digest and mode as a report row of that predecessor. Nothing is relabelled.
 function assertChained(context, previous) {
   if (previous.ledgerHeaderSha256 === sha(JSON.stringify(context.header))) return;
-  assert.ok([ledger.JOURNEY2, ...ledger.UPGRADES, ledger.JOURNEY5].includes(context.header.name), 'Report from another campaign');
+  assert.ok([ledger.JOURNEY2, ...ledger.UPGRADES, ledger.JOURNEY5, ledger.JOURNEY6].includes(context.header.name), 'Report from another campaign');
   if (context.header.name === ledger.JOURNEY2)
     assert.equal(previous.ledgerHeaderSha256, context.header.binding.predecessor.headerSha256, 'Report from another campaign');
   // Exact producer header, digest and mode as one ancestor recorded them.
@@ -827,7 +828,19 @@ async function poiStatus(context) {
 // hold is identified by set difference over authenticated history, never by
 // position, and its G1 outcome must name the approved recipient and amount.
 async function unshield(context) {
-  const { facade, signal, milestone, owner, previous, profile, header, params } = context;
+  const { facade, signal, milestone, owner, profile, header, params } = context;
+  const mark = context.mark ?? (() => {});
+  // Journey-6: each further attempt follows a completed custody verification
+  // of the previous refused attempt (the previous report); the allValid status
+  // read is a lineage report instead.
+  const attempting = header.name === ledger.JOURNEY6;
+  let custody = null;
+  if (attempting) {
+    custody = context.previous;
+    assertCustodyAdmits(context, custody);
+  }
+  const previous = attempting ? context.lineage.poi : context.previous;
+  assert.ok(previous, 'The allValid status read');
   // A genuine allValid status read: a status report, or a retry or
   // replacement report whose own fresh read was already allValid and
   // therefore skipped the handoff.
@@ -842,6 +855,7 @@ async function unshield(context) {
   // Freshness may only tighten, never loosen beyond six hours.
   const freshness = Math.min(params.poiStatusMaxAgeMs ?? 6 * 3600 * 1000, 6 * 3600 * 1000);
   assert.ok(Date.now() - previous.observedAt <= freshness, 'POI status is stale');
+  if (custody) assert.equal(custody.outputNoteIdSha256, previous.outputNoteIdSha256);
   const transactionHash = previous.transactionHash;
   const seen = [],
     held = [];
@@ -873,6 +887,21 @@ async function unshield(context) {
         'A held operation appeared after the refused reservation'
       );
     }
+    // Journey-6: the same output, recipient, amount and asset as the bound
+    // refused attempt, and the original before-set: no held operation since.
+    if (attempting) {
+      const { attempts } = header.binding;
+      const sends = ledger.inspect(profile, header).sends;
+      assert.ok(sends.length >= 3 && sends.length < ledger.ATTEMPT_RESERVATIONS, 'Further reservations exhausted');
+      assert.equal(sends.at(-1).pending.attemptId, custody.attemptId);
+      assert.equal(previous.outputNoteIdSha256, attempts.previous.unsent.outputNoteIdSha256);
+      assert.deepEqual({ amount: String(output.amount), recipient: owner, asset: WETH }, attempts.previous.unsent.unshield);
+      assert.deepEqual(
+        [...beforeIds].map(sha).sort(),
+        attempts.previous.holdIdsBeforeSha256,
+        'A held operation appeared after the refused reservation'
+      );
+    }
     // The pre-existing holds, hashed, let a later reconcile find the new one.
     const attemptId = ledger.reserve(profile, header, 'unshield', {
       outputNoteIdSha256: previous.outputNoteIdSha256,
@@ -880,6 +909,7 @@ async function unshield(context) {
       unshield: { amount: String(output.amount), recipient: owner, asset: WETH },
     });
     milestone('ledger-reserved:unshield');
+    mark('open-private:start');
     lane = await session.openPrivate({
       wallet: 'advance',
       signal,
@@ -907,12 +937,22 @@ async function unshield(context) {
         return true;
       },
     });
+    mark('open-private:end');
     let outcome,
-      failure = null;
+      failure = null,
+      stage = 'prepare';
     try {
+      mark('prepare:start');
       const prepared = await lane.prepareUnshield({ asset: { __type: 'erc20', contract: WETH }, amount: output.amount, noteId: output.id }, owner);
+      mark('prepare:end');
+      // Synthetic: a durable hold exists and nothing was broadcast.
+      fault(context, 'exit-after-prepare');
+      stage = 'broadcast';
+      mark('broadcast:start');
       outcome = await lane.broadcast(prepared.handle);
+      mark('broadcast:end');
     } catch (error) {
+      mark(stage + ':refused');
       failure = typeof error?.code === 'string' ? error.code : 'unknown-error';
     }
     const immediate = failure ? { classification: 'not-acknowledged', error: failure } : classify(outcome);
@@ -929,9 +969,12 @@ async function unshield(context) {
     // deferred to live-reconcile, which finds the hold by set difference. A
     // failure here keeps the attempt's own outcome as its primary refusal.
     try {
+      mark('history:start');
       fault(context, 'history-unavailable-after-send');
       added = (await holds(session, signal, owner, milestone)).filter((record) => !beforeIds.has(record.holdId));
+      mark('history:end');
     } catch (error) {
+      mark('history:failed');
       try {
         Object.defineProperty(error, 'primaryRefusal', { value: failure ?? 'returned' });
       } catch {
@@ -976,6 +1019,26 @@ async function unshield(context) {
     await closeSession(session);
   }
 }
+// The report row each send's finish was immediately followed by, across the
+// fixed chain and this ledger, keyed by attempt id. Read-only.
+function sendReports(context) {
+  const fs = require('fs');
+  const chain = ledger.chainRecords(context.profile, context.header);
+  const own = fs
+    .readFileSync(ledger.ledgerFile(context.profile, context.header.name), 'utf8')
+    .trim()
+    .split('\n')
+    .slice(1)
+    .map((line) => JSON.parse(line));
+  const result = {};
+  for (const records of [...Object.values(chain), own])
+    records.forEach((record, index) => {
+      if (record.type !== 'send-finished') return;
+      const next = records[index + 1];
+      if (next?.type === 'report') result[record.attemptId] = { mode: next.mode, sha256: next.sha256 };
+    });
+  return result;
+}
 // Read-only conservation account of the completed journey.
 async function summary(context) {
   const { facade, signal, previous, lineage, readReceipt, readFinalized, milestone, owner } = context;
@@ -999,16 +1062,26 @@ async function summary(context) {
     reproof = null,
     unsent = null,
   } = lineage;
-  // The send amendment continues the circuit link's generation and lineage.
-  const amended = context.header.name === ledger.JOURNEY5;
+  // The send amendment and the bounded-attempts link continue the circuit
+  // link's generation and lineage.
+  const attemptsLink = context.header.name === ledger.JOURNEY6;
+  const amended = context.header.name === ledger.JOURNEY5 || attemptsLink;
   const upgraded = ledger.UPGRADES.includes(context.header.name) || amended;
   const circuit = context.header.name === ledger.JOURNEY4 || amended;
   assert.equal(upgrade !== null, upgraded);
   // The amendment's refused reservation stays in the lineage, unsent: its own
   // reconcile report, exactly as the ledger and launcher bound it.
   assert.equal(unsent !== null, amended);
+  // Every unshield reservation's own report row, as its ledger recorded it.
+  const rows = attemptsLink ? sendReports(context) : null;
+  const sendsNow = attemptsLink ? ledger.inspect(context.profile, context.header).sends : null;
   if (amended) {
-    const { reconcile, unsent: bound } = context.header.binding.amendment;
+    const { reconcile, unsent: bound } = attemptsLink
+      ? {
+          reconcile: { reportSha256: rows[sendsNow[1].pending.attemptId]?.sha256 },
+          unsent: context.header.binding.attempts.previous.unsent,
+        }
+      : context.header.binding.amendment;
     assertChained(context, unsent);
     assert.equal(unsent.reportSha256, reconcile.reportSha256);
     assert.equal(unsent.reportMode, 'live-reconcile');
@@ -1021,6 +1094,28 @@ async function summary(context) {
     // The actual unshield is a different, journaled operation with its own hash.
     assert.notEqual(previous.holdIdSha256, null);
     assert.ok(previous.transactionHash);
+  }
+  // Journey-6: every further refused attempt, journey-5's bound one first,
+  // stays unsent with its own report; the last reservation is the actual one.
+  const refusedAttempts = [];
+  if (attemptsLink) {
+    assert.ok(sendsNow.length >= 4 && sendsNow.length <= ledger.ATTEMPT_RESERVATIONS);
+    const actual = sendsNow.at(-1);
+    assert.equal(actual.finished?.outcome?.transactionHash, previous.transactionHash, 'The actual unshield');
+    sendsNow.slice(2, -1).forEach((send, index) => {
+      const report = lineage['refused' + (index + 1)];
+      assert.ok(report, 'Refused attempt report');
+      assertChained(context, report);
+      const row = rows[send.pending.attemptId];
+      assert.ok(row && row.mode === 'live-unshield' && row.sha256 === report.reportSha256, 'Refused attempt report row');
+      assert.equal(report.schema, 'railgun-installed-live-unshield-v1');
+      assert.deepEqual(report.outcome, send.finished.outcome);
+      assert.equal(report.outcome.classification, ledger.REFUSED);
+      assert.equal(report.holdIdSha256, null);
+      assert.equal(report.g1, null);
+      refusedAttempts.push({ attemptId: send.pending.attemptId, outcome: report.outcome, reportSha256: report.reportSha256 });
+    });
+    assert.equal(lineage['refused' + (sendsNow.length - 2)], undefined);
   }
   // The circuit link's lineage: the consumed retry, its own rebuild and its
   // own replacement report.
@@ -1134,9 +1229,22 @@ async function summary(context) {
       ...(circuit
         ? { circuit: { anchor: reproofRebuild.anchor, ranges: reproofRebuild.ranges, identity: reproofRebuild.upgrade } }
         : {}),
-      // Three operator reservations, two chain transactions: the refused one
+      // Every operator reservation, two chain transactions: each refused one
       // stays recorded as unsent and has no receipt or fee.
-      ...(amended
+      ...(attemptsLink
+        ? {
+            reservations: {
+              operator: sendsNow.length,
+              unshieldReservations: sendsNow.length - 1,
+              chainTransactions: 2,
+              unsent: [
+                { attemptId: sendsNow[1].pending.attemptId, outcome: unsent.outcome, reportSha256: unsent.reportSha256 },
+                ...refusedAttempts,
+              ],
+              unshield: { holdIdSha256: previous.holdIdSha256, transactionHash: previous.transactionHash },
+            },
+          }
+        : amended
         ? {
             reservations: {
               operator: ledger.AMENDMENT_RESERVATIONS,
@@ -1610,6 +1718,163 @@ async function reconcile(context) {
     await closeSession(session);
   }
 }
+// Journey-6 transport evidence, read from an attempt's own frozen telemetry.
+// Qualifies only a refusal of prepareUnshield itself (no broadcast began) with
+// at least one primary transport failure inside that preparation interval and
+// before its refusal; aborts only as fallout after such a failure; no provider
+// error, malformed answer, non-200 status or unclassified failure anywhere; a
+// complete trace and an unexpired vault. Anything else stops: a transport
+// failure outside the interval, abort-only, mixed or truncated evidence. A
+// qualifying trace is eligibility evidence, not proof of no local defect.
+const PRIMARY_TRANSPORT = Object.freeze({
+  live: Object.freeze(['TOR_REQUEST_FAILED', 'TOR_REQUEST_TIMEOUT']),
+  synthetic: Object.freeze(['SYNTHETIC_INJECTED_FAULT']),
+});
+function transportQualified(telemetry, transport) {
+  const refuse = (reason) => Object.freeze({ qualified: false, reason });
+  if (!telemetry || telemetry.version !== 1) return refuse('no-telemetry');
+  if (telemetry.transport !== transport || !Object.hasOwn(PRIMARY_TRANSPORT, transport)) return refuse('transport');
+  if (telemetry.complete !== true || telemetry.inflight !== 0) return refuse('incomplete');
+  if (telemetry.lifecycle?.sessionAbortedAfterMs != null) return refuse('lifetime');
+  const marks = telemetry.marks ?? [];
+  const labels = marks.map((row) => row.label);
+  const start = marks.find((row) => row.label === 'prepare:start');
+  const refused = marks.find((row) => row.label === 'prepare:refused');
+  if (!start || !refused || labels.filter((label) => label === 'prepare:start').length !== 1) return refuse('interval');
+  if (labels.includes('prepare:end') || labels.includes('broadcast:start')) return refuse('not-a-preparation-refusal');
+  if (!(start.seq <= refused.seq && start.at <= refused.at)) return refuse('ordering');
+  const primary = PRIMARY_TRANSPORT[transport];
+  const entries = telemetry.entries ?? [];
+  const failed = (row) => row.code !== null || row.status !== 200 || row.rpcError !== null || row.shapeInvalid === true;
+  // Integrity-class evidence anywhere: a provider error, malformed answer,
+  // non-200 status or an unclassified error never qualifies a repetition.
+  if (
+    entries.some(
+      (row) =>
+        failed(row) &&
+        !primary.includes(row.code) &&
+        row.code !== 'PRIVACY_REQUEST_ABORTED'
+    )
+  )
+    return refuse('non-transport-failure');
+  // The interval: requests begun after the start mark and before the refusal,
+  // and completed by it.
+  const inside = (row) => row.seq > start.seq && row.seq <= refused.seq && row.startAt + row.ms <= refused.at;
+  const transportFailures = entries.filter((row) => primary.includes(row.code));
+  const primaryInside = transportFailures.filter(inside);
+  if (primaryInside.length === 0)
+    return refuse(transportFailures.length ? 'transport-outside-interval' : entries.some(failed) ? 'abort-only' : 'no-failure');
+  const first = Math.min(...primaryInside.map((row) => row.startAt + row.ms));
+  // Aborts: only after a primary transport failure, attributed to one.
+  for (const row of entries.filter((value) => value.code === 'PRIVACY_REQUEST_ABORTED')) {
+    if (!inside(row)) return refuse('abort-outside-interval');
+    const after = entries.find((value) => value.seq === row.afterFailureSeq);
+    if (!after || !primary.includes(after.code) || row.startAt + row.ms < first) return refuse('abort-provenance');
+  }
+  return Object.freeze({
+    qualified: true,
+    reason: 'transport-in-preparation',
+    primaryFailures: primaryInside.length,
+    aborts: entries.filter((value) => value.code === 'PRIVACY_REQUEST_ABORTED').length,
+  });
+}
+// Journey-6: the custody report a further unshield follows, as it stands.
+function assertCustodyAdmits(context, custody) {
+  assert.ok(custody, 'No custody verification');
+  assert.equal(custody.schema, 'railgun-installed-live-custody-v1');
+  assertChained(context, custody);
+  assert.equal(custody.verdict, 'no-hold', 'Custody not established');
+  assert.ok(['first-instrumented', 'transport-qualified'].includes(custody.eligibility), 'No eligibility');
+  assert.equal(custody.stop, false);
+  const sends = ledger.inspect(context.profile, context.header).sends;
+  const last = sends.at(-1);
+  assert.ok(last?.finished, 'A pending reservation: observation only');
+  assert.equal(last.pending.attemptId, custody.attemptId);
+  assert.equal(last.finished.outcome.classification, ledger.REFUSED);
+  assert.equal(Object.hasOwn(last.finished.outcome, 'transactionHash'), false);
+}
+// Journey-6's observation-only custody verification of the previous refused
+// attempt: its own report as it stands, its eligibility (the bound journey-5
+// attempt is an instrumented first attempt; a later one needs qualifying
+// transport evidence in its own telemetry), then one bounded read of the
+// exact output and the complete authenticated hold inventory against the
+// original before-set. It never finishes, changes or re-reports a reservation.
+async function custodyVerify(context) {
+  const { facade, signal, milestone, owner, previous, profile, header } = context;
+  const mark = context.mark ?? (() => {});
+  assert.equal(header.name, ledger.JOURNEY6, 'Custody verification runs on the bounded-attempts link only');
+  const { attempts } = header.binding;
+  const state = ledger.inspect(profile, header);
+  const last = state.sends.at(-1);
+  assert.ok(last?.finished, 'A pending reservation: observation only');
+  assert.equal(last.pending.send, 'unshield');
+  assert.equal(last.finished.outcome.classification, ledger.REFUSED);
+  assert.equal(Object.hasOwn(last.finished.outcome, 'transactionHash'), false);
+  // The attempt's own recorded report, exactly: never a reconcile report.
+  assert.equal(previous.schema, 'railgun-installed-live-unshield-v1');
+  assert.equal(previous.reportMode, 'live-unshield');
+  assertChained(context, previous);
+  assert.deepEqual(previous.outcome, last.finished.outcome);
+  assert.equal(previous.holdIdSha256, null);
+  assert.equal(previous.g1, null);
+  assert.equal(previous.stop, true);
+  assert.equal(previous.outputNoteIdSha256, attempts.previous.unsent.outputNoteIdSha256);
+  assert.deepEqual(previous.unshield, attempts.previous.unsent.unshield);
+  let eligibility = null,
+    evidence;
+  if (state.sends.length === 3) {
+    assert.equal(last.pending.attemptId, attempts.previous.attemptId);
+    assert.equal(previous.reportSha256, attempts.previous.report.reportSha256);
+    // L60 recorded no telemetry: an explicitly instrumented, bounded attempt,
+    // not a proven transport retry.
+    eligibility = 'first-instrumented';
+    evidence = { reason: 'bound-refusal-without-telemetry' };
+  } else {
+    evidence = transportQualified(previous.telemetry, context.synthetic ? 'synthetic' : 'live');
+    if (evidence.qualified) eligibility = 'transport-qualified';
+  }
+  const base = {
+    schema: 'railgun-installed-live-custody-v1',
+    attemptId: last.pending.attemptId,
+    attemptReportSha256: previous.reportSha256,
+    eligibility,
+    evidence,
+    outputNoteIdSha256: attempts.previous.unsent.outputNoteIdSha256,
+    unshield: attempts.previous.unsent.unshield,
+  };
+  // Not eligible: no read, no budget; the batch stops here.
+  if (!eligibility) return finishReport(context, { ...base, verdict: 'not-eligible', unit: null, stop: true });
+  const unit = budget(context, 'custody-verify', { attemptId: last.pending.attemptId });
+  let session;
+  try {
+    session = await facade.openAccount({ accountIndex: 0, signal });
+    const notes = await readNotes(session, signal, 'advance');
+    const outputs = notes.filter((note) => sha(note.id) === attempts.previous.unsent.outputNoteIdSha256);
+    assert.equal(outputs.length, 1, 'The exact output');
+    assert.equal(String(outputs[0].amount), attempts.previous.unsent.unshield.amount);
+    assert.equal(outputs[0].spentTxid, false, 'The output is unspent');
+    assert.equal(outputs[0].asset?.contract?.toLowerCase(), attempts.previous.unsent.unshield.asset);
+    // A failed or incomplete history read throws: it never means no hold.
+    mark('custody-history:start');
+    const records = await holds(session, signal, owner, milestone);
+    mark('custody-history:end');
+    const current = records.map((record) => sha(record.holdId)).sort();
+    const matched = JSON.stringify(current) === JSON.stringify(attempts.previous.holdIdsBeforeSha256);
+    await closeSession(session);
+    session = null;
+    return finishReport(context, {
+      ...base,
+      verdict: matched ? 'no-hold' : 'hold-present',
+      holdCount: current.length,
+      beforeSetMatched: matched,
+      unit,
+      observedAt: Date.now(),
+      stop: !matched,
+    });
+  } finally {
+    await closeSession(session);
+  }
+}
 const MODES = Object.freeze({
   'live-reconcile': reconcile,
   'live-rebuild': rebuild,
@@ -1623,5 +1888,17 @@ const MODES = Object.freeze({
   'live-poi-retry': poiRetry,
   'live-reproof-rebuild': reproofRebuild,
   'live-poi-reproof': poiReproof,
+  'live-custody-verify': custodyVerify,
 });
-module.exports = { MODES, rangesTo, windowEnd, resumePlan, upgradePlan, assertChained, scanStart, sha };
+module.exports = {
+  MODES,
+  rangesTo,
+  windowEnd,
+  resumePlan,
+  upgradePlan,
+  assertChained,
+  scanStart,
+  sha,
+  transportQualified,
+  assertCustodyAdmits,
+};

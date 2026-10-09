@@ -28,6 +28,8 @@ function pinned(reference) {
   return Object.defineProperties(outer.scenario, {
     reportSha256: { value: reference.reportSha256 },
     reportMode: { value: outer.mode },
+    // The producing run's own frozen request telemetry, when it recorded one.
+    telemetry: { value: outer.telemetry ?? null },
   });
 }
 async function main() {
@@ -73,6 +75,82 @@ async function main() {
   // Vault lifecycle evidence: lifetime, whether overridden, and when the
   // session aborted relative to unlock. No key or account data.
   const lifecycle = { lifetimeMs: null, overridden: null, sessionAbortedAfterMs: null };
+  // Sanitized request telemetry on every outcome, in the report and in a
+  // failure record alike: an allowlisted method, closed status/error/result
+  // categories, the request's start sequence, timing, size, cancellation
+  // provenance and the scenario's interval marks. Never a URL, parameter,
+  // body, identifier or raw error. A request trace cannot expose a local
+  // assertion; it only orders the service requests around one.
+  const TELEMETRY_METHODS = new Set([
+    'eth_chainId', 'eth_blockNumber', 'eth_getBlockByNumber', 'eth_getBlockByHash', 'eth_getLogs', 'eth_call',
+    'eth_estimateGas', 'eth_getTransactionCount', 'eth_getBalance', 'eth_getCode', 'eth_gasPrice',
+    'eth_maxPriorityFeePerGas', 'eth_feeHistory', 'eth_sendRawTransaction', 'eth_getTransactionByHash',
+    'eth_getTransactionReceipt', 'ppoi_validated_txid', 'ppoi_validate_txid_merkleroot',
+    'ppoi_validate_poi_merkleroots', 'ppoi_merkle_proofs', 'ppoi_pois_per_list', 'ppoi_submit_transact_proof',
+    'ppoi_poi_events', 'ppoi_node_status',
+  ]);
+  const TELEMETRY_CODES = new Set([
+    'TOR_REQUEST_FAILED', 'TOR_REQUEST_TIMEOUT', 'PRIVACY_REQUEST_ABORTED', 'SYNTHETIC_INJECTED_FAULT',
+    'SYNTHETIC_DELIVERY_UNOBSERVED',
+  ]);
+  const TELEMETRY_RPC = { [-32602]: 'invalid-params', [-32603]: 'internal', [-32000]: 'server', [-32601]: 'method' };
+  const TELEMETRY_MARKS = new Set([
+    'open-private:start', 'open-private:end', 'prepare:start', 'prepare:end', 'prepare:refused',
+    'broadcast:start', 'broadcast:end', 'broadcast:refused', 'history:start', 'history:end', 'history:failed',
+    'custody-history:start', 'custody-history:end',
+  ]);
+  const TELEMETRY_MAX = 2048;
+  const origin = Date.now();
+  const telemetry = { started: 0, completed: 0, inflight: 0, truncated: false, entries: [], marks: [] };
+  const failureLike = (entry) => entry.code !== null || entry.status !== 200 || entry.rpcError !== null || entry.shapeInvalid;
+  const beginRequest = (method) => {
+    telemetry.started++;
+    telemetry.inflight++;
+    return { seq: telemetry.started, method: TELEMETRY_METHODS.has(method) ? method : 'other', startAt: Date.now() - origin };
+  };
+  const endRequest = (begun, outcome) => {
+    telemetry.inflight--;
+    telemetry.completed++;
+    const code = outcome.code == null ? null : TELEMETRY_CODES.has(outcome.code) ? outcome.code : 'OTHER_ERROR';
+    const entry = {
+      seq: begun.seq,
+      method: begun.method,
+      startAt: begun.startAt,
+      ms: Date.now() - origin - begun.startAt,
+      status: Number.isSafeInteger(outcome.status) ? outcome.status : null,
+      code,
+      rpcError: outcome.rpcError ? TELEMETRY_RPC[outcome.rpcErrorCode] ?? 'other' : null,
+      resultNull: outcome.resultNull === true,
+      shapeInvalid: outcome.shapeInvalid === true,
+      bytes: Number.isSafeInteger(outcome.bytes) ? outcome.bytes : null,
+    };
+    // Abort provenance: the latest other failure completed before this one.
+    if (code === 'PRIVACY_REQUEST_ABORTED') {
+      const prior = [...telemetry.entries].reverse().find((row) => failureLike(row) && row.code !== 'PRIVACY_REQUEST_ABORTED');
+      entry.afterFailureSeq = prior ? prior.seq : null;
+    }
+    if (telemetry.entries.length < TELEMETRY_MAX) telemetry.entries.push(entry);
+    else telemetry.truncated = true;
+  };
+  const mark = (label) => {
+    assert.ok(TELEMETRY_MARKS.has(label), 'Telemetry mark');
+    if (telemetry.marks.length < 256) telemetry.marks.push({ label, seq: telemetry.started, at: Date.now() - origin });
+    else telemetry.truncated = true;
+  };
+  const telemetrySnapshot = (transport) =>
+    JSON.parse(
+      JSON.stringify({
+        version: 1,
+        transport,
+        complete: !telemetry.truncated && telemetry.inflight === 0,
+        inflight: telemetry.inflight,
+        started: telemetry.started,
+        completed: telemetry.completed,
+        entries: telemetry.entries,
+        marks: telemetry.marks,
+        lifecycle,
+      })
+    );
   let vaultLifetime = null,
     sessionUnlockedAt = null;
   let report = null,
@@ -137,6 +215,7 @@ async function main() {
               /* Not JSON-RPC: counted as other. */
             }
             const started = Date.now();
+            const begun = beginRequest(method);
             try {
               const response = await value.request(handle, url, options);
               // Bounded outcome classification of an answer: never its payload.
@@ -154,10 +233,12 @@ async function main() {
                 }
               }
               traceRequest({ method, status: response?.status ?? null, ...outcome, ms: Date.now() - started, bytes: response?.body?.length ?? null });
+              endRequest(begun, { status: response?.status ?? null, ...outcome, bytes: response?.body?.length ?? null });
               return response;
             } catch (error) {
               const code = typeof error?.code === 'string' && /^[A-Z0-9_]{1,64}$/.test(error.code) ? error.code : 'REQUEST_FAILED';
               traceRequest({ method, status: null, code, ms: Date.now() - started });
+              endRequest(begun, { status: null, code });
               throw error;
             }
           },
@@ -246,24 +327,30 @@ async function main() {
             assert.equal(closed, false);
             const { subject } = getPrivacyContext(handle);
             const wire = JSON.parse(options.body);
+            const begun = beginRequest(typeof wire?.method === 'string' ? wire.method : 'other');
             let result;
             try {
               result = await chain.request(subject, url, wire);
             } catch (error) {
               // A modeled provider error answers as JSON-RPC, as a gateway would.
-              if (error?.code !== 'SYNTHETIC_RPC_ERROR') throw error;
+              if (error?.code !== 'SYNTHETIC_RPC_ERROR') {
+                endRequest(begun, { status: null, code: typeof error?.code === 'string' ? error.code : 'REQUEST_FAILED' });
+                throw error;
+              }
+              const body = Buffer.from(JSON.stringify({ jsonrpc: '2.0', id: wire.id, error: error.rpcError }));
+              const status = Number.isSafeInteger(error.httpStatus) ? error.httpStatus : 200;
+              endRequest(begun, { status, rpcError: true, rpcErrorCode: error.rpcError?.code, bytes: body.length });
               return {
                 // A modeled service may answer its error with a non-200 status.
-                status: Number.isSafeInteger(error.httpStatus) ? error.httpStatus : 200,
-                body: Buffer.from(JSON.stringify({ jsonrpc: '2.0', id: wire.id, error: error.rpcError })),
+                status,
+                body,
               };
             }
-            return {
-              status: 200,
-              body: Buffer.from(
-                JSON.stringify(Object.hasOwn(wire, 'jsonrpc') ? { jsonrpc: '2.0', id: wire.id, result } : result)
-              ),
-            };
+            const body = Buffer.from(
+              JSON.stringify(Object.hasOwn(wire, 'jsonrpc') ? { jsonrpc: '2.0', id: wire.id, result } : result)
+            );
+            endRequest(begun, { status: 200, resultNull: result === null, bytes: body.length });
+            return { status: 200, body };
           },
         });
         clients.add(value);
@@ -314,6 +401,7 @@ async function main() {
       facade,
       signal: application.signal,
       milestone,
+      mark,
       owner,
       previous,
       lineage,
@@ -353,6 +441,8 @@ async function main() {
           }
         : null,
       milestones: live ? null : milestones,
+      // Frozen once the scenario returned, after its lanes and sessions drained.
+      telemetry: telemetrySnapshot(request.transport),
     };
     write(path.join(request.outputDirectory, 'report.json'), report);
     if (chain) write(path.join(request.outputDirectory, 'chain-state.json'), chain.state());
@@ -376,6 +466,7 @@ async function main() {
         ...(live ? {} : { milestones: milestones.map((value) => value.slice(0, 200)) }),
         syntheticChain: chain?.report() ?? null,
         transportTrace: live ? transportTrace : null,
+        telemetry: telemetrySnapshot(request.transport),
         lifecycle,
       });
     } catch {

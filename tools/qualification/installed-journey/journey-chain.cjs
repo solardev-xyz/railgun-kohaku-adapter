@@ -111,6 +111,7 @@ function createJourneyChain({
           'rejectPoiSubmits',
           'failPoisPerList',
           'failRootHistoryRead',
+          'rejectRootHistoryRead',
         ].includes(key)
     ),
     []
@@ -516,6 +517,15 @@ function createJourneyChain({
       if (Number.isSafeInteger(faults.failRootHistoryRead) && scanFaults.rootHistoryReads === faults.failRootHistoryRead) {
         injected++;
         throw Object.assign(Error('Synthetic Tor request failure'), { code: 'SYNTHETIC_INJECTED_FAULT' });
+      }
+      // The n-th merkle-root read answers a provider error instead: a refusal
+      // with no transport failure, which never qualifies a further attempt.
+      if (Number.isSafeInteger(faults.rejectRootHistoryRead) && scanFaults.rootHistoryReads === faults.rejectRootHistoryRead) {
+        injected++;
+        throw Object.assign(Error('Synthetic provider error'), {
+          code: 'SYNTHETIC_RPC_ERROR',
+          rpcError: { code: -32000, message: 'synthetic' },
+        });
       }
       const [tree, root] = coder.decode(['uint256', 'bytes32'], '0x' + data.slice(10));
       assert.equal(tree, 0n);
