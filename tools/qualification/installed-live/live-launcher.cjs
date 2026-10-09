@@ -242,7 +242,9 @@ function validate(request) {
     assert.ok(['primary', 'limited'].includes(request.synthetic.endpoint));
     for (const [key, value] of Object.entries(request.synthetic.faults))
       assert.ok(
-        ['failLogsFrom', 'failApplyRefreshTo', 'denseFrom', 'denseTo', 'latencyMs', 'failValidatedTxid', 'rejectPoiSubmits'].includes(key) &&
+        ['failLogsFrom', 'failApplyRefreshTo', 'denseFrom', 'denseTo', 'latencyMs', 'failValidatedTxid', 'rejectPoiSubmits', 'failPoisPerList'].includes(
+          key
+        ) &&
           Number.isSafeInteger(value),
         'Synthetic fault ' + key
       );

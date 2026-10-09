@@ -217,7 +217,7 @@ function noteSummary(notes) {
   };
 }
 // Synthetic-only crash points for the reconcile path; a live run refuses any.
-const FAULTS = Object.freeze(['exit-before-finish', 'exit-before-report', 'history-unavailable-after-send', 'exit-after-advance']);
+const FAULTS = Object.freeze(['exit-before-finish', 'exit-before-report', 'history-unavailable-after-send', 'exit-after-advance', 'exit-after-poi-retry-reserve']);
 function fault(context, point, target) {
   const requested = context.params.fault ?? null;
   if (requested === null) return;
@@ -1206,6 +1206,7 @@ async function poiRetry(context) {
       originalPayloadSha256: state0.poi.pending.binding.payloadSha256,
     });
     milestone('ledger-reserved:poi-retry');
+    fault(context, 'exit-after-poi-retry-reserve');
     lane = await session.openPoiRecovery({ signal, reviewDisclosures: accept('poi-retry') });
     const outcome = await lane.retryAttempted(hold.holdId).then(
       (value) => value,
