@@ -1569,6 +1569,84 @@ test("a completed owned POI read leaves session-private retry evidence for the P
   await lane.closed;
   await session.close();
 });
+const missingStatus = (f) => {
+  f.value.statuses = [{ blindedCommitment: "0x" + "5".repeat(64), type: "Transact", status: "Missing" }];
+};
+const laneEvidence = async (f, session) => {
+  const lane = await session.openPoiRecovery({
+    signal: f.caller.signal,
+    reviewDisclosures: jest.fn(() => true),
+  });
+  const value = state.createPoi.mock.results.at(-1).value.input.ownedPoiEvidence();
+  lane.close();
+  await lane.closed;
+  return value;
+};
+test("evidence age counts from before the status acquisition", async () => {
+  const f = observerFixture(),
+    session = await f.api.openAccount(f.options);
+  missingStatus(f);
+  let acquireStarted;
+  f.operation.acquire = jest.fn(async () => {
+    acquireStarted = performance.now();
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    return { receipt: f.receipt, observation: f.value };
+  });
+  await session.observeOwnedPoi(f.input);
+  const evidence = await laneEvidence(f, session);
+  expect(evidence.at).toBeLessThanOrEqual(acquireStarted);
+  await session.close();
+});
+test("a cancellation after acquisition, during cleanup, leaves no evidence", async () => {
+  const f = observerFixture(),
+    session = await f.api.openAccount(f.options);
+  missingStatus(f);
+  const call = new AbortController();
+  f.operation.close = jest.fn(() => {
+    // Cancel while the original drain is still pending, then let it settle.
+    call.abort();
+    setTimeout(() => f.drain.resolve(), 0);
+  });
+  await expect(session.observeOwnedPoi({ ...f.input, signal: call.signal })).rejects.toThrow();
+  expect(state.assertOwnedPoi).toHaveBeenCalledTimes(1);
+  expect(await laneEvidence(f, session)).toBeNull();
+  await session.close();
+});
+test("a deadline crossed during cleanup leaves no evidence", async () => {
+  const f = observerFixture(),
+    session = await f.api.openAccount(f.options);
+  missingStatus(f);
+  const now = performance.now.bind(performance);
+  let offset = 0;
+  const clock = jest.spyOn(performance, "now").mockImplementation(() => now() + offset);
+  f.operation.close = jest.fn(() => {
+    offset = 181000;
+    f.drain.resolve();
+  });
+  try {
+    await expect(session.observeOwnedPoi(f.input)).rejects.toThrow();
+  } finally {
+    clock.mockRestore();
+  }
+  expect(state.assertOwnedPoi).toHaveBeenCalledTimes(1);
+  expect(await laneEvidence(f, session)).toBeNull();
+  await session.close();
+});
+test("a rejected cleanup after acquisition leaves no usable evidence", async () => {
+  const f = observerFixture(),
+    session = await f.api.openAccount(f.options);
+  missingStatus(f);
+  await session.observeOwnedPoi(f.input);
+  expect((await laneEvidence(f, session)).status).toBe("Missing");
+  const drained = deferred();
+  f.operation.closed = drained.promise;
+  f.operation.close = jest.fn(() => drained.reject(Error("drain failed")));
+  await expect(session.observeOwnedPoi(f.input)).rejects.toThrow();
+  // The failed original closure quarantines the session: no lane can read evidence.
+  expect(() =>
+    session.openPoiRecovery({ signal: f.caller.signal, reviewDisclosures: jest.fn(() => true) }),
+  ).toThrow();
+});
 test("a later failed owned POI read clears earlier retry evidence", async () => {
   const f = observerFixture(),
     session = await f.api.openAccount(f.options);

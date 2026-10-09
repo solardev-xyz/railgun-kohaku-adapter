@@ -1004,6 +1004,8 @@ function initializeRailgunMain(options) {
           poiDrain,
           cleanupFailure,
           result,
+          evidence = null,
+          acquireStartedAt,
           operationError,
           operationFailed = false;
         const lost = () => {
@@ -1169,6 +1171,9 @@ function initializeRailgunMain(options) {
             noteIds: [data.noteId],
           });
           remaining(45000);
+          // The evidence age counts from before the status acquisition, so
+          // acquisition and cleanup time can never extend its freshness.
+          acquireStartedAt = performance.now();
           const acquired = await operation.acquire({
             timeoutMs: remaining(45000),
           });
@@ -1203,12 +1208,12 @@ function initializeRailgunMain(options) {
           // Session-private evidence for the POI lane's explicit retry only:
           // the owned output's commitment, type, list and status, and when.
           const observedStatus = value.statuses[0];
-          const evidence = Object.freeze({
+          evidence = Object.freeze({
             blindedCommitment: observedStatus.blindedCommitment,
             type: observedStatus.type,
             status: observedStatus.status,
             listKey: value.listKey,
-            at: performance.now(),
+            at: acquireStartedAt,
           });
           result = Object.freeze({
             noteId: data.noteId,
@@ -1228,7 +1233,6 @@ function initializeRailgunMain(options) {
             reservationsChecked: false,
             spendingEnabled: false,
           });
-          state.ownedPoiEvidence = evidence;
         } catch (error) {
           operationFailed = true;
           operationError = error;
@@ -1263,6 +1267,9 @@ function initializeRailgunMain(options) {
         current();
         signal(data.signal);
         if (performance.now() >= deadline) throw fail();
+        // Published only after cleanup and every final check: a rejected read
+        // always leaves none.
+        state.ownedPoiEvidence = evidence;
         return result;
       });
     }

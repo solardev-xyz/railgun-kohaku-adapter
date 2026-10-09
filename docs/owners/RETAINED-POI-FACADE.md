@@ -88,13 +88,20 @@ the second handoff of the same proof to the same service.
 
 **Status evidence.** The retry needs status evidence from this session's own
 `observeOwnedPoi` read: the output's blinded commitment, a `Transact` type, the
-required list and `Missing`. The facade records it privately after a completed
-single-note read. A failed or later read replaces or clears it, and no caller
-value is accepted. The sender binds the evidence to the payload's output
-commitment. It requires the evidence to be under five minutes old both at the
-durable reservation and again at send admission, before any transport exists.
-`Missing` is a prerequisite only. It does not establish that the first request
-was never processed.
+required list and `Missing`. The facade keeps a candidate locally and publishes
+it only after the read's cleanup and every final check succeed, immediately
+before returning. Any rejected read, including a late cancellation, a deadline
+crossed during cleanup or a failed drain, leaves none. Its time is taken just
+before the status acquisition, so acquisition and cleanup count toward its age.
+Each read clears the previous evidence first, and no caller value is accepted.
+
+The sender binds the evidence to the payload's output commitment. It requires
+the evidence to be under five minutes old both at the durable reservation and
+again at send admission, which is checked before any transport exists. That is
+an admission bound, not a guarantee about when bytes leave a newly established
+Tor connection. A stale status never triggers another status query inside the
+sender; it refuses. `Missing` is a prerequisite only. It does not establish
+that the first request was never processed.
 
 **Reservation.** Before any send, the intent store records
 `retry: {reservedAt, bodySha256}` on the entry, writing a V4 document. The
