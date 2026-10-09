@@ -310,12 +310,14 @@ test('exposes only bounded persistence methods without sender or recovered proof
   const store = await open();
   expect(Object.keys(store).sort()).toEqual([
     'beginAttempt',
+    'beginReproofAttempt',
     'close',
     'closed',
     'get',
     'inspect',
     'list',
     'prepare',
+    'prepareReproof',
     'reserveRetry',
     'signal',
   ]);
@@ -650,7 +652,7 @@ const corruptions = [
   [
     'version',
     (v) => {
-      v.version = 5;
+      v.version = 6;
     },
   ],
   [

@@ -1,6 +1,8 @@
 /** Fresh keyless POI verification with the same pinned cryptographic runtime.
  * A diagnostic only: checkpoint index/list metadata are hash-bound, not SNARK
  * signals. No ownership, current membership, root or disclosure authority.
+ * The circuit transition check is a separate receipt: the retired key accepts
+ * and the current key rejects the exact payload. It never confers validity.
  */
 const assert = require('assert/strict');
 const { createHash } = require('crypto');
@@ -13,18 +15,16 @@ const fail = () =>
   Object.assign(new Error('Railgun POI verification unavailable'), {
     code: 'RAILGUN_POI_VERIFICATION_REFUSED',
   });
+const RETIRED = new WeakSet();
+const RETIRED_VKEY_SHA256 = '2f4dcbf58d383204e09240863a6f6eff249071849e5161801ebfe83691037b23';
 const shape = (value, keys) => {
   assert.ok(value && typeof value === 'object' && !Array.isArray(value));
   assert.deepEqual(Object.keys(value).sort(), [...keys].sort());
 };
-async function verify({
-  handle,
-  proverArchive,
-  artifactDirectory,
-  payload,
-  signal,
-  timeoutMs = 30000,
-}) {
+async function verify(
+  { handle, proverArchive, artifactDirectory, payload, signal, timeoutMs = 30000 },
+  transition = false
+) {
   const parent = getPrivacyContext(handle);
   assert.ok(signal instanceof AbortSignal && !signal.aborted);
   assert.ok(Number.isSafeInteger(timeoutMs) && timeoutMs >= 1 && timeoutMs <= 60000);
@@ -42,6 +42,7 @@ async function verify({
     proverArchive: verifyRailgunProverRuntime(proverArchive),
     artifactDirectory,
     payload: normalized,
+    ...(transition ? { transition: true } : {}),
   });
   assert.ok(Buffer.byteLength(input) <= 32768);
   const digest = createHash('sha256').update(input).digest('hex');
@@ -108,10 +109,25 @@ async function verify({
               'spendingEnabled',
               'guards',
               'proverSha256',
+              ...(transition
+                ? ['retiredVerified', 'currentRejected', 'retiredVkeySha256', 'currentVkeySha256']
+                : []),
             ]);
             assert.equal(value.inputSha256, digest);
             assert.equal(value.payloadSha256, payloadSha256);
-            assert.equal(value.proofVerified, true);
+            assert.equal(value.proofVerified, !transition);
+            if (transition) {
+              assert.equal(value.retiredVerified, true);
+              assert.equal(value.currentRejected, true);
+              assert.equal(value.retiredVkeySha256, RETIRED_VKEY_SHA256);
+              assert.equal(
+                value.currentVkeySha256,
+                require("../execution/railgun-artifacts.js").manifest.POI_3x3.find(
+                  (entry) => entry.kind === 'vkey'
+                ).sha256
+              );
+              assert.notEqual(value.currentVkeySha256, RETIRED_VKEY_SHA256);
+            }
             for (const key of [
               'sourceAuthenticated',
               'membershipAuthenticated',
@@ -133,8 +149,18 @@ async function verify({
             result = Object.freeze({
               inputSha256: digest,
               payloadSha256,
-              proofVerified: true,
-              independentlyVerified: true,
+              ...(transition
+                ? {
+                    circuit: Object.freeze({
+                      from: value.retiredVkeySha256,
+                      to: value.currentVkeySha256,
+                    }),
+                    retiredVerified: true,
+                    currentRejected: true,
+                  }
+                : {}),
+              proofVerified: !transition,
+              independentlyVerified: !transition,
               sourceAuthenticated: false,
               membershipAuthenticated: false,
               rootAccepted: false,
@@ -159,7 +185,9 @@ async function verify({
     const exited = await task.closed;
     assert.equal(exited.code, 'RAILGUN_PROCESS_CLOSED');
     active();
-    return Object.freeze({ ...result, utilityExitObserved: true });
+    const completed = Object.freeze({ ...result, utilityExitObserved: true });
+    if (transition) RETIRED.add(completed);
+    return completed;
   } finally {
     clearTimeout(timer);
     close();
@@ -169,6 +197,26 @@ async function verify({
 exports.verifyRailgunPoiPayload = async (options) => {
   try {
     return await verify(options);
+  } catch {
+    throw fail();
+  }
+};
+// Completed only when the retired key verified and the current key rejected.
+exports.checkRailgunRetiredPoiCircuit = async (options) => {
+  try {
+    return await verify(options, true);
+  } catch {
+    throw fail();
+  }
+};
+exports.assertRailgunRetiredPoiCircuit = (receipt, payloadSha256) => {
+  try {
+    assert.ok(RETIRED.has(receipt));
+    assert.equal(receipt.payloadSha256, payloadSha256);
+    assert.equal(receipt.retiredVerified, true);
+    assert.equal(receipt.currentRejected, true);
+    assert.equal(receipt.utilityExitObserved, true);
+    return receipt.circuit;
   } catch {
     throw fail();
   }

@@ -664,6 +664,14 @@ function initializeRailgunMain(options) {
                     active();
                     return retain(companion.retryAttempted(holdId));
                   },
+                  reproveRetired(holdId) {
+                    active();
+                    return retain(companion.reproveRetired(holdId));
+                  },
+                  submitReproof(holdId) {
+                    active();
+                    return retain(companion.submitReproof(holdId));
+                  },
                 }
               : {
                   history(after = null) {

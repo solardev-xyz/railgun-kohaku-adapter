@@ -1,13 +1,18 @@
 /** Keyless, offline POI verification. No engine, account, store or key import.
  * List/checkpoint metadata are bound in the payload digest, not authenticated
  * by the circuit. All authority must be established by a later controller.
+ * The transition check instead requires a proof that the pinned retired POI
+ * circuit key accepts and the current key rejects; that confers no validity.
  */
 const assert = require('assert/strict');
+const fs = require('fs');
 const path = require('path');
 const { createHash } = require('crypto');
 const { createPrivacyScope } = require('./context-bindings');
 const { normalizeRailgunPoiPayload } = require("../data/railgun-poi-payload.js");
 const FIELD = 21888242871839275222246405745257275088548364400416034343698204186575808495617n;
+// The POI_3x3 key that wallet 11.2.0's circuit rotation retired.
+const RETIRED_VKEY_SHA256 = '2f4dcbf58d383204e09240863a6f6eff249071849e5161801ebfe83691037b23';
 exports.run = async function run(text, { request, signal, guardReport }) {
   let artifacts, scope;
   try {
@@ -15,7 +20,14 @@ exports.run = async function run(text, { request, signal, guardReport }) {
     const active = () => assert.ok(signal instanceof AbortSignal && !signal.aborted);
     active();
     const input = JSON.parse(text);
-    assert.deepEqual(Object.keys(input).sort(), ['artifactDirectory', 'payload', 'proverArchive']);
+    const transition = Object.hasOwn(input, 'transition');
+    assert.deepEqual(Object.keys(input).sort(), [
+      'artifactDirectory',
+      'payload',
+      'proverArchive',
+      ...(transition ? ['transition'] : []),
+    ]);
+    assert.ok(!transition || input.transition === true);
     assert.ok(
       typeof input.artifactDirectory === 'string' && path.isAbsolute(input.artifactDirectory)
     );
@@ -53,12 +65,29 @@ exports.run = async function run(text, { request, signal, guardReport }) {
       zero,
       zero,
     ];
-    assert.equal(await serial.verify(artifacts.vkey, signals, payload.proof), true);
-    active();
     const changed = [...signals];
     changed[3] = (changed[3] + 1n) % FIELD;
-    assert.equal(await serial.verify(artifacts.vkey, changed, payload.proof), false);
-    active();
+    let retiredVkeySha256;
+    if (transition) {
+      const bytes = fs.readFileSync(require.resolve('../execution/railgun-poi-retired-vkey.json'));
+      retiredVkeySha256 = createHash('sha256').update(bytes).digest('hex');
+      assert.equal(retiredVkeySha256, RETIRED_VKEY_SHA256);
+      const retired = JSON.parse(bytes.toString());
+      assert.ok(retired.protocol === 'groth16' && retired.curve === 'bn128');
+      assert.ok(retired.nPublic === 8 && retired.IC.length === 9);
+      // Each verdict is a completed verification; a thrown verifier refuses.
+      assert.equal(await serial.verify(retired, signals, payload.proof), true);
+      active();
+      assert.equal(await serial.verify(retired, changed, payload.proof), false);
+      active();
+      assert.equal(await serial.verify(artifacts.vkey, signals, payload.proof), false);
+      active();
+    } else {
+      assert.equal(await serial.verify(artifacts.vkey, signals, payload.proof), true);
+      active();
+      assert.equal(await serial.verify(artifacts.vkey, changed, payload.proof), false);
+      active();
+    }
     assert.equal(globalThis.curve_bn128, null);
     const guards = guardReport();
     assert.equal(guards.attempts, 0);
@@ -71,7 +100,17 @@ exports.run = async function run(text, { request, signal, guardReport }) {
             value: {
               inputSha256: createHash('sha256').update(text).digest('hex'),
               payloadSha256: createHash('sha256').update(JSON.stringify(payload)).digest('hex'),
-              proofVerified: true,
+              ...(transition
+                ? {
+                    retiredVerified: true,
+                    currentRejected: true,
+                    retiredVkeySha256,
+                    currentVkeySha256: require("../execution/railgun-artifacts.js").manifest.POI_3x3.find(
+                      (entry) => entry.kind === 'vkey'
+                    ).sha256,
+                  }
+                : {}),
+              proofVerified: !transition,
               sourceAuthenticated: false,
               membershipAuthenticated: false,
               rootAccepted: false,

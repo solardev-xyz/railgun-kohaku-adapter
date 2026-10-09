@@ -130,23 +130,29 @@ async function validate(options, history, submission) {
         : getRailgunAccountPublicDestination(coordinator, enrollment, policy)
       : undefined;
     let submitted,
-      retryHandoff = false;
+      retryHandoff = false,
+      reproofHandoff = false;
     if (submission) {
       assert.deepEqual(Object.keys(submission).sort(), [
         'capture',
         'destination',
         'entry',
         'reader',
+        ...(Object.hasOwn(submission, 'reproof') ? ['reproof'] : []),
         ...(Object.hasOwn(submission, 'retry') ? ['retry'] : []),
         'sourceDestination',
       ]);
       // An explicit marker, never inferred from the entry's own state.
       assert.ok(!Object.hasOwn(submission, 'retry') || submission.retry === true);
+      assert.ok(!Object.hasOwn(submission, 'reproof') || submission.reproof === true);
       retryHandoff = submission.retry === true;
+      reproofHandoff = submission.reproof === true;
+      assert.ok(!(retryHandoff && reproofHandoff));
       submitted = snapshot({
         entry: submission.entry,
         capture: submission.capture,
         ...(retryHandoff ? { retry: true } : {}),
+        ...(reproofHandoff ? { reproof: true } : {}),
       });
       submission = Object.freeze({
         reader: submission.reader,
@@ -214,16 +220,24 @@ async function validate(options, history, submission) {
     const entry = history ? snapshot(loaded) : loaded;
     if (submission) assert.deepEqual(entry, submitted.entry);
     // Only the sender's explicitly marked retry hands off an attempted entry,
-    // and only before its single retry is reserved; it requires one.
+    // and only before its single retry is reserved; it requires one. Its marked
+    // replacement hands off only an unsent replacement after a spent retry.
     assert.ok(
       entry &&
         (retryHandoff
           ? entry.state === 'attempted' && !entry.retry
-          : entry.state === 'prepared')
+          : reproofHandoff
+            ? entry.state === 'attempted' &&
+              entry.retry &&
+              entry.reproof &&
+              !entry.reproof.attempt
+            : entry.state === 'prepared')
     );
     assert.equal(entry.capsuleDigest, capsuleDigest);
-    const payload = normalizeRailgunPoiPayload(entry.payload);
-    assert.equal(sha(JSON.stringify(payload)), entry.payloadSha256);
+    // The validated payload: the replacement's own, never the original's.
+    const handed = reproofHandoff ? entry.reproof : entry;
+    const payload = normalizeRailgunPoiPayload(handed.payload);
+    assert.equal(sha(JSON.stringify(payload)), handed.payloadSha256);
     const stored = JSON.stringify(entry);
     const readCurrent = async () => {
       current();
@@ -295,7 +309,7 @@ async function validate(options, history, submission) {
     }
     assert.equal(output.capsuleDigest, capsuleDigest);
     assert.equal(output.revision, entry.revision);
-    assert.equal(output.payloadSha256, entry.payloadSha256);
+    assert.equal(output.payloadSha256, handed.payloadSha256);
     assert.equal(output.outputMatched, true);
     for (const name of [
       'proofVerified',
@@ -321,7 +335,7 @@ async function validate(options, history, submission) {
       });
       current();
       phase.assertCurrent();
-      assert.equal(verified.payloadSha256, entry.payloadSha256);
+      assert.equal(verified.payloadSha256, handed.payloadSha256);
       assert.equal(verified.proofVerified, true);
       assert.equal(verified.independentlyVerified, true);
       assert.equal(verified.utilityExitObserved, true);
@@ -556,7 +570,7 @@ async function validate(options, history, submission) {
       status: 'validated',
       capsuleDigest,
       revision: entry.revision,
-      payloadSha256: entry.payloadSha256,
+      payloadSha256: handed.payloadSha256,
       outputMatched: true,
       proofVerified: true,
       independentlyVerified: true,

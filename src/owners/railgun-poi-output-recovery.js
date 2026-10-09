@@ -76,7 +76,8 @@ async function recover(options = {}, completed = false, submission, attempted = 
     sourceOutcome,
     sharedClaim,
     store,
-    retryMarked = false;
+    retryMarked = false,
+    reproofMarked = false;
   const owner = {},
     controller = new AbortController();
   const stop = () => controller.abort();
@@ -106,14 +107,19 @@ async function recover(options = {}, completed = false, submission, attempted = 
         'capture',
         'observation',
         ...(Object.hasOwn(submission, 'retry') ? ['retry'] : []),
+        ...(Object.hasOwn(submission, 'reproof') ? ['reproof'] : []),
       ]);
       assert.ok(!Object.hasOwn(submission, 'retry') || submission.retry === true);
+      assert.ok(!Object.hasOwn(submission, 'reproof') || submission.reproof === true);
       const text = JSON.stringify(submission);
       assert.ok(Buffer.byteLength(text) <= 384 * 1024);
       submission = JSON.parse(text);
-      // The retry marker is consumed here; downstream owners keep their exact input.
+      // Markers are consumed here; downstream owners keep their exact input.
       retryMarked = submission.retry === true;
+      reproofMarked = submission.reproof === true;
+      assert.ok(!(retryMarked && reproofMarked));
       delete submission.retry;
+      delete submission.reproof;
     }
     assert.ok(isRailgunAccountEnrollment(enrollment));
     assert.ok(signal instanceof AbortSignal && !signal.aborted);
@@ -197,11 +203,19 @@ async function recover(options = {}, completed = false, submission, attempted = 
     // The sender's one explicit, marked retry hands off its own snapshot of an
     // attempted entry that has not reserved its retry; every other caller is unchanged.
     const retryHandoff = retryMarked && !attempted;
-    assert.ok(entry && entry.state === (attempted || retryHandoff ? 'attempted' : 'prepared'));
+    // Its marked replacement hands off only an unsent replacement after a spent retry.
+    const reproofHandoff = reproofMarked && !attempted;
+    assert.ok(
+      entry &&
+        entry.state === (attempted || retryHandoff || reproofHandoff ? 'attempted' : 'prepared')
+    );
     if (retryHandoff) assert.ok(!entry.retry);
+    if (reproofHandoff) assert.ok(entry.retry && entry.reproof && !entry.reproof.attempt);
     assert.equal(entry.capsuleDigest, capsuleDigest);
-    const payload = normalizeRailgunPoiPayload(entry.payload);
-    assert.equal(sha(JSON.stringify(payload)), entry.payloadSha256);
+    // The bound payload: the replacement's own, never the original's.
+    const handed = reproofHandoff ? entry.reproof : entry;
+    const payload = normalizeRailgunPoiPayload(handed.payload);
+    assert.equal(sha(JSON.stringify(payload)), handed.payloadSha256);
     let attemptBodySha256;
     if (attempted || retryHandoff) {
       shape(entry.attempt, ['attemptedAt', 'submission']);
@@ -313,7 +327,7 @@ async function recover(options = {}, completed = false, submission, attempted = 
           binding: {
             capsuleDigest,
             bindingDigest: entry.bindingDigest,
-            payloadSha256: entry.payloadSha256,
+            payloadSha256: handed.payloadSha256,
             revision: entry.revision,
           },
           preparation: fresh.poiPreparation,
@@ -425,7 +439,7 @@ async function recover(options = {}, completed = false, submission, attempted = 
                 'guards',
               ]);
               assert.equal(value.recoveryInputSha256, recoveryInputSha256);
-              assert.equal(value.payloadSha256, entry.payloadSha256);
+              assert.equal(value.payloadSha256, handed.payloadSha256);
               assert.equal(value.engineSha256, require("../execution/railgun-engine-manifest.json").sha256);
               for (const key of [
                 'sourceAuthenticated',
@@ -530,7 +544,7 @@ async function recover(options = {}, completed = false, submission, attempted = 
         : {}),
       capsuleDigest,
       revision: entry.revision,
-      payloadSha256: entry.payloadSha256,
+      payloadSha256: handed.payloadSha256,
       recoveryInputSha256,
       preflightDurationMs,
       viewingKeyReleases: recovered.value.viewingKeyReleases,

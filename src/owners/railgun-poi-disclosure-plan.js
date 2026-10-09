@@ -32,9 +32,11 @@ const plans = new WeakMap(),
   operations = new Map();
 const TTL_MS = 120000;
 const POI_URL = 'https://ppoi.fdi.network';
-// The explicit retry's owned status evidence must be younger than this at its
-// durable reservation and again at send admission.
+// The explicit retry's or replacement's owned status evidence must be younger
+// than this at its durable reservation and again at send admission.
 const RETRY_EVIDENCE_MS = 300000;
+// The payload a plan hands off: a replacement plan's own, never the original's.
+const handed = (state) => (state.reproof ? state.entry.reproof : state.entry);
 const freeze = (value) => {
   if (value && typeof value === 'object') {
     Object.values(value).forEach(freeze);
@@ -221,7 +223,7 @@ function operationKind(capture, payload) {
   return kind === 'railgun-partial-unshield' ? 'partial-unshield' : 'unshield';
 }
 function summaryFor(state) {
-  const payload = state.entry.payload;
+  const payload = handed(state).payload;
   const operation = operationKind(state.capture, payload);
   const shape = getRailgunOwnPoiShape(state.capture.capsule);
   const summary = freeze({
@@ -275,12 +277,21 @@ function summaryFor(state) {
     ],
     requestIdAllocation: state.retry
       ? 'original-attempt-request-reused'
-      : 'local-time-once-at-durable-attempt',
+      : state.reproof
+        ? 'local-time-once-at-durable-replacement-attempt'
+        : 'local-time-once-at-durable-attempt',
     ...(state.retry
       ? {
           handoff: 'second-identical',
           retryExplanation:
             'This sends the identical stored proof request a second time to the same POI service. The first attempt has no accepted status. The same proof and commitments are disclosed again, and the two submissions are linkable by timing. No further handoff is possible afterwards.',
+        }
+      : {}),
+    ...(state.reproof
+      ? {
+          handoff: 'replacement-proof',
+          reproofExplanation:
+            "This sends a new proof for the same transaction output, made with Railgun's current POI circuit because the earlier proof used a retired one. It is a new request and a further disclosure to the same POI service: the same output commitment and transaction are disclosed again, with new roots, and are linkable by timing to the earlier submissions. No further handoff is possible afterwards.",
         }
       : {}),
     displayFreshnessMs: TTL_MS,
@@ -330,20 +341,31 @@ async function inspect(state, deadline, progress) {
         !loaded.retry &&
         loaded.payload.blindedCommitmentsOut.length === 1
     );
+  // A replacement plan admits only an unsent replacement after the spent retry.
+  else if (state.reproof)
+    assert.ok(
+      loaded &&
+        loaded.state === 'attempted' &&
+        loaded.retry &&
+        loaded.reproof &&
+        !loaded.reproof.attempt &&
+        loaded.payload.blindedCommitmentsOut.length === 1
+    );
   else assert.ok(loaded && loaded.state === 'prepared');
   assert.equal(loaded.capsuleDigest, state.capsuleDigest);
   const entry = snapshot(loaded);
-  const payload = normalizeRailgunPoiPayload(entry.payload);
-  assert.deepEqual(payload, entry.payload);
-  if (state.retry) {
+  const source = state.reproof ? entry.reproof : entry;
+  const payload = normalizeRailgunPoiPayload(source.payload);
+  assert.deepEqual(payload, source.payload);
+  if (state.retry || state.reproof) {
     const { normalizeRailgunPoiSubmission } = require("../data/railgun-poi-submit-data.js");
     const original = normalizeRailgunPoiSubmission(entry.attempt.submission);
     assert.equal(original.requestId, entry.attempt.attemptedAt);
-    assert.deepEqual(original.payload, payload);
+    assert.deepEqual(original.payload, normalizeRailgunPoiPayload(entry.payload));
   }
   assert.equal(
     createHash('sha256').update(JSON.stringify(payload)).digest('hex'),
-    entry.payloadSha256
+    source.payloadSha256
   );
   if (state.entry) assert.deepEqual(entry, state.entry);
   else state.entry = entry;
@@ -417,9 +439,12 @@ async function prepareRailgunPoiDisclosurePlan(input) {
       'signal',
       ...(Object.hasOwn(input, 'timeoutMs') ? ['timeoutMs'] : []),
       ...(Object.hasOwn(input, 'retry') ? ['retry'] : []),
+      ...(Object.hasOwn(input, 'reproof') ? ['reproof'] : []),
     ]);
     const { identity, enrollment, coordinator, capsuleDigest, signal, timeoutMs = 15000 } = args;
     assert.ok(!Object.hasOwn(args, 'retry') || args.retry === true);
+    assert.ok(!Object.hasOwn(args, 'reproof') || args.reproof === true);
+    assert.ok(!(args.retry && args.reproof));
     assert.ok(signal instanceof AbortSignal && !signal.aborted);
     assert.ok(Number.isSafeInteger(timeoutMs) && timeoutMs > 0 && timeoutMs <= 45000);
     assert.equal(typeof capsuleDigest, 'string');
@@ -441,6 +466,7 @@ async function prepareRailgunPoiDisclosurePlan(input) {
       bindings,
       capsuleDigest,
       retry: args.retry === true,
+      reproof: args.reproof === true,
       controller: new AbortController(),
       listeners: new Map(),
       pending: 1,
@@ -597,9 +623,10 @@ async function submitRailgunRetainedPoi(input) {
       ...(Object.hasOwn(input, 'retryEvidence') ? ['retryEvidence'] : []),
     ]);
     const { identity, enrollment, coordinator, signal, review, timeoutMs = 840000 } = args;
-    // Evidence is admitted exactly for a retry plan, and required there.
-    assert.equal(Object.hasOwn(args, 'retryEvidence'), state.retry);
-    assert.ok(!state.retry || typeof args.retryEvidence === 'function');
+    // Evidence is admitted exactly for a retry or replacement plan, and required there.
+    const gated = state.retry || state.reproof;
+    assert.equal(Object.hasOwn(args, 'retryEvidence'), gated);
+    assert.ok(!gated || typeof args.retryEvidence === 'function');
     assert.ok(Number.isSafeInteger(timeoutMs) && timeoutMs >= 790000 && timeoutMs <= 840000);
     assert.ok(signal instanceof AbortSignal && !signal.aborted && typeof review === 'function');
     assert.equal(identity, state.bindings.identity);
@@ -693,7 +720,11 @@ async function submitRailgunRetainedPoi(input) {
     });
     senderCurrent();
     const requestFor = (purpose) => {
-      const submitting = purpose === 'submit-retained-poi' || purpose === 'retry-retained-poi';
+      const submitting = [
+        'submit-retained-poi',
+        'retry-retained-poi',
+        'reproof-retained-poi',
+      ].includes(purpose);
       const base = state.summary;
       const request = freeze({
         version: 1,
@@ -747,8 +778,11 @@ async function submitRailgunRetainedPoi(input) {
             ],
         uncertaintyCategories: base.uncertaintyCategories,
         requestIdAllocation: base.requestIdAllocation,
-        ...(base.handoff
+        ...(base.retryExplanation
           ? { handoff: base.handoff, retryExplanation: base.retryExplanation }
+          : {}),
+        ...(base.reproofExplanation
+          ? { handoff: base.handoff, reproofExplanation: base.reproofExplanation }
           : {}),
         consentGranted: false,
         transportAuthorized: false,
@@ -802,8 +836,9 @@ async function submitRailgunRetainedPoi(input) {
           sourceDestination,
           reader: prepared.reader,
           destination: prepared.destination,
-          // Only the explicit retry marks its attempted-entry handoff.
+          // Only the explicit retry or replacement marks its attempted-entry handoff.
           ...(state.retry ? { retry: true } : {}),
+          ...(state.reproof ? { reproof: true } : {}),
         })
       );
       if (validated.status !== 'validated') {
@@ -814,7 +849,7 @@ async function submitRailgunRetainedPoi(input) {
       senderCurrent();
       assert.equal(validated.capsuleDigest, state.capsuleDigest);
       assert.equal(validated.revision, state.entry.revision);
-      assert.equal(validated.payloadSha256, state.entry.payloadSha256);
+      assert.equal(validated.payloadSha256, handed(state).payloadSha256);
       for (const key of [
         'outputMatched',
         'proofVerified',
@@ -837,7 +872,13 @@ async function submitRailgunRetainedPoi(input) {
     await stageRun('review-submit', 60000, 70000, async () => {
       assert.equal(
         await review(
-          requestFor(state.retry ? 'retry-retained-poi' : 'submit-retained-poi'),
+          requestFor(
+            state.retry
+              ? 'retry-retained-poi'
+              : state.reproof
+                ? 'reproof-retained-poi'
+                : 'submit-retained-poi'
+          ),
           { signal: state.controller.signal }
         ),
         true
@@ -855,7 +896,7 @@ async function submitRailgunRetainedPoi(input) {
           JSON.stringify([
             'freedom:railgun:retained-poi-submit-v1',
             randomUUID(),
-            state.entry.payloadSha256,
+            handed(state).payloadSha256,
           ])
         )
         .digest('hex');
@@ -876,7 +917,7 @@ async function submitRailgunRetainedPoi(input) {
       createRailgunPoiRootSource,
       createRailgunPoiTxidRootSource,
     } = require("./railgun-poi-root.js");
-    const payload = state.entry.payload;
+    const payload = handed(state).payload;
     list = createRailgunPoiRootSource({ handle: postHandle, root: payload.poiMerkleroots[0] });
     txid = createRailgunPoiTxidRootSource({
       handle: postHandle,
@@ -931,7 +972,21 @@ async function submitRailgunRetainedPoi(input) {
     let begun;
     await stageRun('attempt', 15000, 25000, async () => {
       assertRoots(40000);
-      if (state.retry) {
+      if (state.reproof) {
+        assertRetryEvidence();
+        // The replacement's single attempt is consumed once written, sent or not.
+        possiblyCommitted = true;
+        begun = await state.store.beginReproofAttempt({
+          capsuleDigest: state.capsuleDigest,
+          expectedRevision: state.entry.revision,
+          expectedPayloadSha256: state.entry.payloadSha256,
+          expectedReproofRevision: state.entry.reproof.revision,
+          expectedReproofPayloadSha256: state.entry.reproof.payloadSha256,
+          signal: state.controller.signal,
+        });
+        if (begun.status === 'refused') possiblyCommitted = false;
+        assert.equal(begun.status, 'attempted');
+      } else if (state.retry) {
         assertRetryEvidence();
         // The reservation is consumed once written, sent or not.
         possiblyCommitted = true;
@@ -987,8 +1042,37 @@ async function submitRailgunRetainedPoi(input) {
       else durable = snapshot(value);
       return submission;
     };
+    // The replacement's own new request: its own body and local-time ID.
+    const readReproof = async () => {
+      senderCurrent();
+      const value = await state.store.get(state.capsuleDigest);
+      senderCurrent();
+      const submission = prepareRailgunPoiSubmission({ payload, requestId: begun.attemptedAt });
+      assert.deepEqual(value, {
+        ...state.entry,
+        reproof: {
+          ...state.entry.reproof,
+          attempt: { attemptedAt: begun.attemptedAt, submission },
+        },
+      });
+      assert.deepEqual(normalizeRailgunPoiSubmission(value.reproof.attempt.submission), submission);
+      assert.equal(begun.capsuleDigest, state.capsuleDigest);
+      assert.equal(begun.revision, state.entry.revision);
+      assert.equal(begun.payloadSha256, state.entry.payloadSha256);
+      assert.equal(begun.reproofRevision, state.entry.reproof.revision);
+      assert.equal(begun.reproofPayloadSha256, state.entry.reproof.payloadSha256);
+      assert.equal(begun.bodySha256, submission.bodySha256);
+      assert.notEqual(submission.bodySha256, state.entry.attempt.submission.bodySha256);
+      assert.ok(begun.attemptedAt > state.entry.retry.reservedAt);
+      assert.equal(begun.disclosureEnabled, false);
+      assert.equal(begun.spendingEnabled, false);
+      if (durable) assert.deepEqual(value, durable);
+      else durable = snapshot(value);
+      return submission;
+    };
     const readAttempt = async () => {
       if (state.retry) return readRetry();
+      if (state.reproof) return readReproof();
       senderCurrent();
       const value = await state.store.get(state.capsuleDigest);
       senderCurrent();
@@ -1034,8 +1118,8 @@ async function submitRailgunRetainedPoi(input) {
           const submission = await readAttempt();
           currentWindow(12000);
           assert.equal(new URL(submission.endpoint).origin, new URL(POI_URL).origin);
-          // Send admission: the retry's evidence is rechecked before any transport.
-          if (state.retry) assertRetryEvidence();
+          // Send admission: the evidence is rechecked before any transport.
+          if (gated) assertRetryEvidence();
           const { createWalletTorTransport } = require('./host-bindings').transport;
           transport = createWalletTorTransport();
           currentWindow(12000);

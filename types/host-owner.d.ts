@@ -505,6 +505,19 @@ export type PoiPreparationOutcome =
       disclosureEnabled: false;
       spendingEnabled: false;
     }>;
+export type PoiReproofOutcome =
+  | PoiRefusal
+  | Readonly<{
+      status: "reproof-prepared";
+      capsuleDigest: string;
+      payloadSha256: string;
+      reproofRevision: number;
+      /** The fixed retired-to-current POI_3x3 verification key digests. */
+      circuit: Readonly<{ from: string; to: string }>;
+      proofAuthenticated: false;
+      disclosureEnabled: false;
+      spendingEnabled: false;
+    }>;
 export type PoiSubmissionOutcome = Readonly<{
   status: "refused" | "recovery-required";
   stage: string;
@@ -590,6 +603,15 @@ export interface PoiRecoveryLane extends LaneLifetime {
    * read showing the output Missing, reserves the single retry durably before
    * sending, and is terminal for this lane. No automatic retry; never acceptance. */
   retryAttempted(holdId: string): Promise<PoiSubmissionOutcome>;
+  /** After the spent retry, one local replacement proof for the same output,
+   * only when the pinned retired POI circuit key verifies the exact stored
+   * original proof and the current key rejects it. Fresh membership roots; no
+   * handoff, status or disclosure authority. Revisable until it is attempted. */
+  reproveRetired(holdId: string): Promise<PoiReproofOutcome>;
+  /** The replacement's single explicit handoff: a new request with its own
+   * local-time ID, gated like the retry by this session's fresh owned Missing
+   * status, reserved durably before sending, terminal for this lane. */
+  submitReproof(holdId: string): Promise<PoiSubmissionOutcome>;
 }
 /** Reviewed before any transaction-RPC read for one held operation. The fixed
  * wallet-0 submitter is never caller-selected; no signing, send, retry or hold release. */

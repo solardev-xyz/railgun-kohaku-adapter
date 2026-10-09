@@ -68,6 +68,9 @@ jest.mock("../src/owners/railgun-poi-output-recovery.js", () => ({
     return state.recover(input, "attempted");
   },
 }));
+jest.mock("../src/owners/railgun-poi-verifier.js", () => ({
+  checkRailgunRetiredPoiCircuit: (input) => state.check(input),
+}));
 const hex = (character) => character.repeat(64);
 const deferred = () => {
   let resolve, reject;
@@ -730,5 +733,171 @@ test("source-derived admission rejects missing, foreign-route and legacy selecto
     }),
   ).toThrow();
   lane.close();
+  await lane.closed;
+});
+
+// --- Replacement proof after a POI circuit rotation ---------------------------
+const CIRCUIT = Object.freeze({ from: hex("c"), to: hex("d") });
+const spentEntry = (f, extra = {}) => ({
+  ...attemptedEntry(f, hex("4")),
+  payload: { blindedCommitmentsOut: ["0x" + hex("b")], original: true },
+  payloadSha256: hex("5"),
+  revision: 1,
+  attempt: { attemptedAt: 1000, submission: { bodySha256: hex("6") } },
+  retry: { reservedAt: 2000, bodySha256: hex("6") },
+  ...extra,
+});
+function reproofFixture(entry) {
+  const f = fixture(),
+    lane = f.createRailgunPoiLane(f.input);
+  const stored = entry(f);
+  attemptedStore(f, [stored]);
+  const receipt = Object.freeze({ payloadSha256: stored.payloadSha256 });
+  state.check = jest.fn(async () => receipt);
+  f.store.prepareReproof = jest.fn(async (input) => {
+    admission("storePrepareReproof", input);
+    const reproof = { payloadSha256: hex("e"), revision: 1 };
+    attemptedStore(f, [{ ...stored, reproof }]);
+    return {
+      status: "reproof-prepared",
+      capsuleDigest: stored.capsuleDigest,
+      payloadSha256: reproof.payloadSha256,
+      reproofRevision: 1,
+      circuit: CIRCUIT,
+      proofAuthenticated: false,
+      disclosureEnabled: false,
+      spendingEnabled: false,
+    };
+  });
+  return { f, lane, stored, receipt };
+}
+test("reproveRetired checks the exact original, reviews, proves afresh and records the replacement", async () => {
+  const { f, lane, stored, receipt } = reproofFixture((f) => spentEntry(f));
+  const result = await lane.reproveRetired(f.row.entry.id);
+  expect(result).toEqual({
+    status: "reproof-prepared",
+    capsuleDigest: hex("4"),
+    payloadSha256: hex("e"),
+    reproofRevision: 1,
+    circuit: CIRCUIT,
+    proofAuthenticated: false,
+    disclosureEnabled: false,
+    spendingEnabled: false,
+  });
+  // The completed transition check covers the exact stored original payload.
+  expect(state.check).toHaveBeenCalledTimes(1);
+  const checked = state.check.mock.calls[0][0];
+  expect(Object.keys(checked).sort()).toEqual([
+    "artifactDirectory",
+    "handle",
+    "payload",
+    "proverArchive",
+    "signal",
+    "timeoutMs",
+  ]);
+  expect(checked.payload).toBe(stored.payload);
+  expect(checked.artifactDirectory).toBe(f.input.artifactDirectory);
+  // One read review before any membership opening, then the Transact route only.
+  expect(f.input.reviewDisclosures).toHaveBeenCalledTimes(1);
+  expect(f.input.reviewDisclosures.mock.calls[0][0]).toMatchObject({
+    operation: "reprove-retired",
+    poiSubmissionEnabled: false,
+  });
+  expect(state.membership).toHaveBeenCalledTimes(1);
+  expect(state.membership.mock.calls[0][1]).toBe("Transact");
+  expect(state.prove.mock.calls[0][0].membershipReceipt).toBe(f.membership.receipt);
+  const prepared = f.store.prepareReproof.mock.calls[0][0];
+  expect(prepared.proof).toBe(f.proof);
+  expect(prepared.transition).toBe(receipt);
+  expect(prepared.expected).toEqual({
+    capsuleDigest: hex("4"),
+    revision: 1,
+    payloadSha256: hex("5"),
+    bodySha256: hex("6"),
+    attemptedAt: 1000,
+    reservedAt: 2000,
+  });
+  expect(f.membership.close).toHaveBeenCalledTimes(1);
+  // Preparation is no handoff: no plan, no submission.
+  expect(state.plan).not.toHaveBeenCalled();
+  expect(state.submit).not.toHaveBeenCalled();
+  lane.close();
+  await lane.closed;
+});
+test.each([
+  ["an unspent retry", (f) => spentEntry(f, { retry: undefined })],
+  ["an attempted replacement", (f) => spentEntry(f, { reproof: { attempt: {} } })],
+  ["no output commitment", (f) => spentEntry(f, { payload: { blindedCommitmentsOut: [] } })],
+])("reproveRetired refuses an entry with %s before any check, review or membership", async (_name, entry) => {
+  const { f, lane } = reproofFixture(entry);
+  expect(await lane.reproveRetired(f.row.entry.id)).toEqual({ status: "refused", stage: "entry" });
+  expect(state.check).not.toHaveBeenCalled();
+  expect(f.input.reviewDisclosures).not.toHaveBeenCalled();
+  expect(state.membership).not.toHaveBeenCalled();
+  lane.close();
+  await lane.closed;
+});
+test("a verifier failure is a refusal, never an eligible rejection", async () => {
+  const { f, lane } = reproofFixture((f) => spentEntry(f));
+  state.check = jest.fn(async () => {
+    throw Error("verifier timeout");
+  });
+  expect(await lane.reproveRetired(f.row.entry.id)).toEqual({ status: "refused", stage: "circuit" });
+  expect(f.input.reviewDisclosures).not.toHaveBeenCalled();
+  expect(state.membership).not.toHaveBeenCalled();
+  expect(f.store.prepareReproof).not.toHaveBeenCalled();
+  lane.close();
+  await lane.closed;
+});
+test("a receipt for another payload never reaches review", async () => {
+  const { f, lane } = reproofFixture((f) => spentEntry(f));
+  state.check = jest.fn(async () => Object.freeze({ payloadSha256: hex("9") }));
+  await expect(lane.reproveRetired(f.row.entry.id)).rejects.toThrow();
+  expect(f.input.reviewDisclosures).not.toHaveBeenCalled();
+  expect(state.membership).not.toHaveBeenCalled();
+});
+test("a refused store preparation is reported and the membership drains", async () => {
+  const { f, lane } = reproofFixture((f) => spentEntry(f));
+  f.store.prepareReproof = jest.fn(async () => ({ status: "refused", stage: "persist" }));
+  expect(await lane.reproveRetired(f.row.entry.id)).toEqual({
+    status: "refused",
+    stage: "store:persist",
+  });
+  expect(f.membership.close).toHaveBeenCalledTimes(1);
+  lane.close();
+  await lane.closed;
+});
+test("reproveRetired refuses without the hold's single attempted intent", async () => {
+  const f = fixture(),
+    lane = f.createRailgunPoiLane(f.input);
+  attemptedStore(f, [{ capsuleDigest: hex("4"), state: "prepared" }]);
+  state.check = jest.fn();
+  await expect(lane.reproveRetired(f.row.entry.id)).rejects.toThrow();
+  expect(state.check).not.toHaveBeenCalled();
+});
+test("submitReproof is one explicit replacement plan carrying only the session evidence accessor", async () => {
+  const f = fixture(),
+    lane = f.createRailgunPoiLane(f.input);
+  attemptedStore(f, [
+    attemptedEntry(f, hex("8"), { ...f.row.entry.facts, nullifier: "0x" + hex("9") }),
+    attemptedEntry(f, hex("4")),
+  ]);
+  const result = await lane.submitReproof(f.row.entry.id);
+  expect(state.plan).toHaveBeenCalledTimes(1);
+  expect(state.plan.mock.calls[0][0].reproof).toBe(true);
+  expect(state.plan.mock.calls[0][0]).not.toHaveProperty("retry");
+  expect(state.plan.mock.calls[0][0].capsuleDigest).toBe(hex("4"));
+  expect(state.submit.mock.calls[0][0].retryEvidence).toBe(f.input.ownedPoiEvidence);
+  expect(result).toEqual({ status: "recovery-required", stage: "post" });
+  await lane.closed;
+  await expect(lane.submitReproof(f.row.entry.id)).rejects.toThrow();
+  expect(state.submit).toHaveBeenCalledTimes(1);
+});
+test("the retry plan never carries the replacement marker", async () => {
+  const f = fixture(),
+    lane = f.createRailgunPoiLane(f.input);
+  attemptedStore(f, [attemptedEntry(f, hex("4"))]);
+  await lane.retryAttempted(f.row.entry.id);
+  expect(state.plan.mock.calls[0][0]).not.toHaveProperty("reproof");
   await lane.closed;
 });

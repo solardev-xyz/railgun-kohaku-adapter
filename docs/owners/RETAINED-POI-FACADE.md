@@ -123,6 +123,38 @@ these changes as the newest reviewed phase
 `docs/owners/test-staging/POI-RETRY-ADAPTATIONS.json`), so the original bytes
 still reconstruct.
 
+## Replacement proof after a POI circuit rotation
+
+Railgun's wallet 11.2.0 rotated the POI_3x3 circuit (bundle
+`QmZ2MyM6TKxffkv6stuo2hFwmUfs3q4xgMYN164Sje8new`). Proofs from the retired
+circuit fail verification at a POI service that uses the current key, however
+correct their inputs. The package pins the current artifacts and keeps the
+retired verification key (`src/execution/railgun-poi-retired-vkey.json`) for one
+purpose only: deciding whether a stored attempted proof was made with it.
+
+`reproveRetired(holdId)` finds the hold's attempted entry exactly as
+`retryAttempted` does. It admits only an entry with a spent retry, one output
+commitment and no replacement attempt. Eligibility is two completed
+verifications of the exact stored original payload with node-compatible public
+inputs: the retired key accepts it and the current key rejects it. A verifier
+error or timeout refuses; it is never read as a rejection. The retired key
+confers no validity, sends nothing and is no verifier fallback. After the read
+review, it opens fresh membership, proves with the current circuit and records
+the replacement on the same entry (`reproof`, a V5 document). Only the proof,
+the POI and TXID roots and the checkpoint index may differ: the list, output
+commitment and unshield marker must equal the original's. The original attempt
+and retry bytes stay unchanged. Preparation may be revised, within the record's
+revision bound, until the replacement is attempted.
+
+`submitReproof(holdId)` hands the replacement off once. It is a new proof and a
+further disclosure, not a resend: a new request with its own local-time ID and
+body. It runs the same plan, review (`reproof-retained-poi`), cold validation of
+the replacement payload, roots and final-account stages as a first submission,
+and requires the same fresh owned `Missing` evidence as the retry, at the
+durable attempt and at send admission. The attempt is written before transport
+and is consumed once written, including on refusal, crash or a missing
+response. A V5 document refuses to open in the V4 reader.
+
 ## One-shot owned-note observation
 
 The existing Freedom live qualifier's `status` phase is the source model:

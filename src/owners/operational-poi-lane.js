@@ -14,6 +14,8 @@ const {
   openRailgunOwnTransactPoiMembership,
 } = require("./railgun-own-poi-membership.js");
 const { proveRailgunOwnPoi } = require("./railgun-own-poi-proof.js");
+const { checkRailgunRetiredPoiCircuit } = require("./railgun-poi-verifier.js");
+const { claimRailgunAccountPhase } = require("./railgun-account-phase.js");
 const {
   prepareRailgunPoiDisclosurePlan,
   revalidateRailgunPoiDisclosurePlan,
@@ -448,6 +450,147 @@ function createRailgunPoiLane(options) {
     assert.equal(matches.length, 1);
     return matches[0];
   }
+  // One replacement proof for a hold's attempted output whose identical retry
+  // is spent, only when the pinned retired POI circuit key verifies the exact
+  // stored original proof and the current key rejects it. Local preparation
+  // with fresh membership roots; no handoff, status or disclosure authority.
+  function reproveRetired(holdId) {
+    try {
+      id(holdId);
+    } catch {
+      return Promise.reject(fail());
+    }
+    return invoke(async () => {
+      const capsuleDigest = await attemptedCapsule(holdId);
+      const selector = await selection(holdId);
+      current();
+      const store = await enrollment.openPoiIntents({ existingOnly: true });
+      current();
+      const entry = await store.get(capsuleDigest);
+      current();
+      assert.equal(entry.capsuleDigest, capsuleDigest);
+      if (
+        entry.state !== "attempted" ||
+        !entry.retry ||
+        entry.reproof?.attempt ||
+        entry.payload.blindedCommitmentsOut.length !== 1
+      )
+        return Object.freeze({ status: "refused", stage: "entry" });
+      // A verifier error or timeout is a refusal, never "fails the current key".
+      let transition;
+      const phase = claimRailgunAccountPhase(enrollment, "recovery");
+      try {
+        transition = await checkRailgunRetiredPoiCircuit({
+          handle: enrollment.getContext("prover", "poi-verify"),
+          proverArchive,
+          artifactDirectory,
+          payload: entry.payload,
+          signal: lifetime,
+          timeoutMs: 60000,
+        });
+      } catch {
+        return Object.freeze({ status: "refused", stage: "circuit" });
+      } finally {
+        phase.release();
+      }
+      current();
+      assert.equal(transition.payloadSha256, entry.payloadSha256);
+      await review(disclosure("reprove-retired", holdId));
+      current();
+      let membership,
+        outcome,
+        operationError,
+        operationFailed = false;
+      try {
+        membership = await openRailgunOwnTransactPoiMembership({
+          identity,
+          enrollment,
+          coordinator,
+          archive,
+          selector,
+          signal: lifetime,
+        });
+        current();
+        if (membership.status !== "verified")
+          outcome = Object.freeze({
+            status: "refused",
+            stage: "membership:" + membership.stage,
+          });
+        else {
+          const proof = await proveRailgunOwnPoi({
+            ...common,
+            membershipReceipt: membership.receipt,
+          });
+          current();
+          if (proof.status !== "proved")
+            outcome = Object.freeze({
+              status: "refused",
+              stage: "proof:" + proof.stage,
+            });
+          else {
+            const prepared = await store.prepareReproof({
+              proof,
+              coordinator,
+              transition,
+              expected: {
+                capsuleDigest,
+                revision: entry.revision,
+                payloadSha256: entry.payloadSha256,
+                bodySha256: entry.attempt.submission.bodySha256,
+                attemptedAt: entry.attempt.attemptedAt,
+                reservedAt: entry.retry.reservedAt,
+              },
+              signal: lifetime,
+            });
+            current();
+            if (prepared.status !== "reproof-prepared")
+              outcome = Object.freeze({
+                status: "refused",
+                stage: "store:" + prepared.stage,
+              });
+            else {
+              const saved = await store.get(capsuleDigest);
+              current();
+              assert.equal(saved.reproof.payloadSha256, prepared.payloadSha256);
+              assert.equal(saved.reproof.revision, prepared.reproofRevision);
+              assert.equal(saved.reproof.attempt, undefined);
+              outcome = Object.freeze({
+                status: "reproof-prepared",
+                capsuleDigest,
+                payloadSha256: prepared.payloadSha256,
+                reproofRevision: prepared.reproofRevision,
+                circuit: Object.freeze({
+                  from: prepared.circuit.from,
+                  to: prepared.circuit.to,
+                }),
+                proofAuthenticated: false,
+                disclosureEnabled: false,
+                spendingEnabled: false,
+              });
+            }
+          }
+        }
+      } catch (error) {
+        operationFailed = true;
+        operationError = error;
+      }
+      if (membership?.status === "verified") await drain(membership);
+      if (operationFailed) throw operationError;
+      current();
+      return outcome;
+    });
+  }
+  function reproofHold(holdId) {
+    try {
+      id(holdId);
+    } catch {
+      return Promise.reject(fail());
+    }
+    return invoke(
+      async () => submitCore(await attemptedCapsule(holdId), "reproof"),
+      true,
+    );
+  }
   function retryHold(holdId) {
     try {
       id(holdId);
@@ -455,7 +598,7 @@ function createRailgunPoiLane(options) {
       return Promise.reject(fail());
     }
     return invoke(
-      async () => submitCore(await attemptedCapsule(holdId), true),
+      async () => submitCore(await attemptedCapsule(holdId), "retry"),
       true,
     );
   }
@@ -465,9 +608,10 @@ function createRailgunPoiLane(options) {
     } catch {
       return Promise.reject(fail());
     }
-    return invoke(() => submitCore(capsuleDigest, false), true);
+    return invoke(() => submitCore(capsuleDigest, null), true);
   }
-  async function submitCore(capsuleDigest, retry) {
+  async function submitCore(capsuleDigest, mode) {
+    const gated = mode === "retry" || mode === "reproof";
     {
       let prepared,
         outcome,
@@ -480,7 +624,8 @@ function createRailgunPoiLane(options) {
           coordinator,
           capsuleDigest,
           signal: lifetime,
-          ...(retry ? { retry: true } : {}),
+          ...(mode === "retry" ? { retry: true } : {}),
+          ...(mode === "reproof" ? { reproof: true } : {}),
         });
         current();
         if (prepared.status !== "prepared")
@@ -507,9 +652,9 @@ function createRailgunPoiLane(options) {
               ...common,
               plan: prepared.plan,
               review,
-              // The explicit retry reads only the session's own last owned
-              // POI observation; it never accepts caller-supplied status.
-              ...(retry ? { retryEvidence: ownedPoiEvidence } : {}),
+              // The explicit retry or replacement reads only the session's own
+              // last owned POI observation; it never accepts caller-supplied status.
+              ...(gated ? { retryEvidence: ownedPoiEvidence } : {}),
             });
         }
       } catch (error) {
@@ -606,6 +751,11 @@ function createRailgunPoiLane(options) {
     // One explicit second handoff of a hold's attempted entry's identical
     // request, gated by fresh owned Missing status. Never automatic.
     retryAttempted: (holdId) => retryHold(holdId),
+    // After the spent retry, one replacement proof under the current POI
+    // circuit for a retired-circuit original, then its single explicit handoff,
+    // gated by fresh owned Missing status. Never automatic.
+    reproveRetired: (holdId) => reproveRetired(holdId),
+    submitReproof: (holdId) => reproofHold(holdId),
     close,
     closed,
     signal: lifetime,

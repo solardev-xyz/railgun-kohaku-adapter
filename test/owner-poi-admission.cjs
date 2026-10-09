@@ -30,6 +30,7 @@ const routes = Object.freeze({
     { completed: true, attempted: true },
   ],
   storePrepare: ["railgun-poi-intent-store.js", "prepare", {}],
+  storePrepareReproof: ["railgun-poi-intent-store.js", "prepareReproof", {}],
 });
 function walk(node, visit) {
   if (!node || typeof node !== "object") return;

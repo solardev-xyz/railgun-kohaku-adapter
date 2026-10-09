@@ -1,6 +1,8 @@
-/** Pinned public Railgun artifacts. WASM/zkey hashes match upstream wallet
- * 5c9d04c8; vkeys are independently derived from those zkeys before pinning.
- * Local loading never downloads. Verifier equality does not establish chain trust.
+/** Pinned public Railgun artifacts. Transaction WASM/zkey hashes match upstream
+ * wallet 5c9d04c8; POI_3x3 matches wallet 11.2.0's rotated bundle
+ * QmZ2MyM6TKxffkv6stuo2hFwmUfs3q4xgMYN164Sje8new. vkeys are independently derived
+ * from those zkeys before pinning. Local loading never downloads. Verifier
+ * equality does not establish chain trust.
  */
 const { Interface } = require('ethers');
 const { createHash } = require('crypto');
@@ -71,20 +73,20 @@ const manifest = {
     {
       kind: 'wasm',
       name: 'POI_3x3.wasm',
-      size: 4520908,
-      sha256: '831aad53c05d19f9854ed27429610da724fbdf9e1e7023aa7a90666f50b0da78',
+      size: 4588991,
+      sha256: 'b82a6d545d94cb774592b652b3d6b3d73f032eac946119b5de631d0609da7cbe',
     },
     {
       kind: 'zkey',
       name: 'POI_3x3.zkey',
-      size: 13605800,
-      sha256: '667984c51df2122956107c11c3c606e4e4688f70fb25515b9388cbd5140e48b3',
+      size: 14192542,
+      sha256: 'a128e273f8a7b9fa9e04e17da079b89a57e416db845864d0d5c88570564a2066',
     },
     {
       kind: 'vkey',
       name: 'POI_3x3.vkey',
-      size: 4207,
-      sha256: '2f4dcbf58d383204e09240863a6f6eff249071849e5161801ebfe83691037b23',
+      size: 4206,
+      sha256: 'b7ca7ba048666fb0e17efd0af1e407a8dcb0906bfaf2f20e362ed40cbec6f4d8',
     },
   ],
   '01x03': [

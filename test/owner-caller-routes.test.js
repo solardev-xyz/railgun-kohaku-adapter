@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const { createHash } = require("crypto");
 const transitions = require("../docs/owners/CALLER-TRANSITIONS.json");
+const poiReproof = require("../docs/owners/POI-REPROOF-TRANSITIONS.json");
 const poiRetry = require("../docs/owners/POI-RETRY-TRANSITIONS.json");
 const {
   getProcessJob,
@@ -46,7 +47,17 @@ test("all caller transitions reconstruct exact base bytes without changing any o
   );
   for (const row of transitions.changes) {
     let text = fs.readFileSync(path.join(root, row.file), "utf8");
-    // A later reviewed phase (the explicit POI retry) is undone first.
+    // Later reviewed phases (the replacement proof, then the explicit POI
+    // retry) are undone first, newest first.
+    const newest = poiReproof.changes.find((change) => change.file === row.file);
+    if (newest) {
+      expect(sha(text)).toBe(newest.afterSha256);
+      for (const edit of [...newest.replacements].reverse()) {
+        expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(edit.after);
+        text = text.slice(0, edit.start) + edit.before + text.slice(edit.start + edit.after.length);
+      }
+      expect(sha(text)).toBe(newest.beforeSha256);
+    }
     const later = poiRetry.changes.find((change) => change.file === row.file);
     if (later) {
       expect(sha(text)).toBe(later.afterSha256);

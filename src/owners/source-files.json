@@ -49,6 +49,7 @@
   "src/execution/railgun-engine-manifest.json",
   "src/execution/railgun-engine-runtime.js",
   "src/execution/railgun-identity-job.js",
+  "src/execution/railgun-poi-retired-vkey.json",
   "src/execution/railgun-private-capsule.js",
   "src/execution/railgun-private-operate-job.js",
   "src/execution/railgun-private-prepare-job.js",

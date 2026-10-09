@@ -4,6 +4,7 @@ const fs = require("fs"),
   vm = require("vm"),
   { createHash } = require("crypto");
 const root = path.join(__dirname, "..");
+const poiReproofTransitions = require("../docs/owners/POI-REPROOF-TRANSITIONS.json");
 const poiRetryTransitions = require("../docs/owners/POI-RETRY-TRANSITIONS.json");
 const facadeTransitions = require("../docs/owners/FACADE-TRANSITIONS.json");
 const policyTransitions = require("../docs/owners/POLICY-TRANSITIONS.json");
@@ -70,7 +71,16 @@ test("every translated algorithm reconstructs its exact immutable original bytes
     reused = 0;
   for (const row of translation.files) {
     let text = fs.readFileSync(sourceFile(row.destination), "utf8");
-    // Newest phase first: the explicit POI retry.
+    // Newest phase first: the replacement proof after the POI circuit rotation.
+    const poiReproofTransition = poiReproofTransitions.changes.find(
+      (change) => change.file === row.destination,
+    );
+    if (poiReproofTransition) {
+      expect(sha(text)).toBe(poiReproofTransition.afterSha256);
+      text = undo(text, poiReproofTransition.replacements);
+      expect(sha(text)).toBe(poiReproofTransition.beforeSha256);
+    }
+    // Then the explicit POI retry.
     const poiRetryTransition = poiRetryTransitions.changes.find(
       (change) => change.file === row.destination,
     );
@@ -327,6 +337,13 @@ test("all reused static named export surfaces were checked, including the full c
     expect(found.sourceSha256).toBe(row.sourceSha256);
     // The audited bytes are the pre-retry basis; the retry phase is undone.
     let text = fs.readFileSync(path.join(root, row.destination), "utf8");
+    const poiReproof = poiReproofTransitions.changes.find(
+      (change) => change.file === row.destination,
+    );
+    if (poiReproof) {
+      expect(sha(text)).toBe(poiReproof.afterSha256);
+      text = undo(text, poiReproof.replacements);
+    }
     const poiRetry = poiRetryTransitions.changes.find(
       (change) => change.file === row.destination,
     );

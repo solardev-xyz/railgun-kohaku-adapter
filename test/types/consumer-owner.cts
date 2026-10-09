@@ -165,6 +165,17 @@ async function poi(session: owner.AccountSession) {
       await lane.retryAttempted(prepared.capsuleDigest)
     ).status;
     void retried;
+    const replacement = await lane.reproveRetired(prepared.capsuleDigest);
+    if (replacement.status === "reproof-prepared") {
+      const from: string = replacement.circuit.from;
+      const sends: false = replacement.disclosureEnabled;
+      void from;
+      void sends;
+    }
+    const replaced: "refused" | "recovery-required" = (
+      await lane.submitReproof(prepared.capsuleDigest)
+    ).status;
+    void replaced;
   }
   lane.close();
   await lane.closed;
