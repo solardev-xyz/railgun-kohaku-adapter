@@ -198,6 +198,7 @@ async function main() {
       const { createJourneyChain, ENDPOINT: PRIMARY, LIMITED_ENDPOINT } = require(path.join(family, 'journey-chain.cjs'));
       const ENDPOINT = request.synthetic.endpoint === 'limited' ? LIMITED_ENDPOINT : PRIMARY;
       const { createJourneyCrypto } = require(path.join(family, 'journey-crypto.cjs'));
+      const { createJourneyPoiVerifier } = require(path.join(family, 'journey-poi-verifier.cjs'));
       const stateBytes = request.synthetic.chainState ? fs.readFileSync(request.synthetic.chainState.file) : null;
       if (stateBytes) assert.equal(sha(stateBytes), request.synthetic.chainState.sha256);
       worker = createJourneyCrypto({ engineModules: request.synthetic.engineModules });
@@ -210,6 +211,10 @@ async function main() {
         autoMine: { afterMs: 0 },
         sendMode: request.synthetic.sendMode ?? 'acknowledge',
         faults: request.synthetic.faults ?? {},
+        poiVerifier: createJourneyPoiVerifier({
+          engineModules: request.synthetic.engineModules,
+          serialProver: path.join(request.runtime.proverArchive, 'serial-prover.cjs'),
+        }),
       });
       await chain.init();
       expectedRpc = new URL(ENDPOINT).href;

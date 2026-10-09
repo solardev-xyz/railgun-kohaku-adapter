@@ -35,6 +35,8 @@ const RECIPE = [
   path.join(FAMILY, 'journey-chain.cjs'),
   path.join(FAMILY, 'journey-crypto.cjs'),
   path.join(FAMILY, 'journey-crypto-worker.cjs'),
+  path.join(FAMILY, 'journey-poi-verifier.cjs'),
+  path.join(FAMILY, 'POI_3x3-current.vkey.json'),
   path.join(FAMILY, 'read-scenario.cjs'),
   path.join(FAMILY, 'WIRE-MAP.json'),
   path.join(FAMILY, 'VECTOR.json'),

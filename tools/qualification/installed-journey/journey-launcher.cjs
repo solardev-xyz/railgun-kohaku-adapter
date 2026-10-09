@@ -20,6 +20,8 @@ const RECIPE = [
   'journey-scenario.cjs',
   'journey-crypto.cjs',
   'journey-crypto-worker.cjs',
+  'journey-poi-verifier.cjs',
+  'POI_3x3-current.vkey.json',
   'profile-inventory.cjs',
   'read-scenario.cjs',
   'synthetic-copy-contract.cjs',

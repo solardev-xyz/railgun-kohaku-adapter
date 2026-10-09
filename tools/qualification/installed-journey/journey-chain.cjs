@@ -4,7 +4,9 @@
  * (with inclusion), and accepted POI outputs. Every derived value (UTXO
  * leaves/roots, spent set, TXID rows/roots, POI list tree and signed events)
  * is recomputed with the PINNED engine source tree in a harness worker,
- * independently of the installed package's own projection code.
+ * independently of the installed package's own projection code. A POI
+ * transact proof is SNARK-verified against the pinned current POI_3x3 key
+ * (journey-poi-verifier.cjs) before it can be accepted.
  *
  * Anything undeclared is a sticky refusal; only role/method/kind are recorded.
  */
@@ -90,6 +92,7 @@ function createJourneyChain({
   crypto: worker,
   faults = {},
   autoMine = null,
+  poiVerifier = null,
 }) {
   // Dry runs of polling callers: pending sends are mined once they are this old.
   assert.ok(autoMine === null || (Number.isSafeInteger(autoMine.afterMs) && autoMine.afterMs >= 0));
@@ -150,6 +153,8 @@ function createJourneyChain({
   };
   const rpcError = () => Object.assign(Error('Synthetic scan fault'), { code: 'SYNTHETIC_RPC_ERROR', rpcError: { code: -32000, message: 'synthetic' } });
   assert.ok(worker && typeof worker.call === 'function');
+  // Without a verifier no POI submission can be accepted (fail closed).
+  assert.ok(poiVerifier === null || typeof poiVerifier.verify === 'function');
   const fixture = publicFixture(sourceBytes);
   assert.ok(fixture.logs.every((log) => log.address.toLowerCase() === PROXY));
   state = primary(state);
@@ -171,6 +176,8 @@ function createJourneyChain({
   }
   const vectorEvent = mapping.entries.find((row) => row.method === 'ppoi_poi_events').result[0];
   let unknownSends = 0,
+    poiInvalid = 0,
+    poiVerifierFailed = 0,
     derived = null,
     estimated = false,
     injected = 0;
@@ -714,11 +721,37 @@ function createJourneyChain({
           'txidMerkleroot',
           'txidMerklerootIndex',
         ]);
+        // As the deployed node, the SNARK is verified before the roots: the
+        // parsed request's own fields give the public inputs, checked against
+        // the pinned CURRENT POI_3x3 key (journey-poi-verifier.cjs). A false
+        // verdict answers as the node did live (HTTP 400, -32602 Invalid
+        // proof); a failed verifier answers 500 and is a recorded refusal.
+        // Still synthetic: the POI list and TXID roots, the list signatures and
+        // finality are this harness's own; only the 3x3 circuit is pinned.
+        let valid;
+        try {
+          assert.ok(poiVerifier, 'No POI verifier');
+          valid = await poiVerifier.verify(data);
+        } catch (error) {
+          poiVerifierFailed++;
+          throw Object.assign(Error('Synthetic POI verifier failure'), {
+            code: 'SYNTHETIC_RPC_ERROR',
+            harnessFailure: String(error?.message ?? error).slice(0, 80),
+            httpStatus: 500,
+            rpcError: { code: -32603, message: 'Internal error' },
+          });
+        }
+        assert.equal(typeof valid, 'boolean');
+        if (!valid) {
+          poiInvalid++;
+          throw Object.assign(Error('Synthetic POI rejection'), {
+            code: 'SYNTHETIC_RPC_ERROR',
+            httpStatus: 400,
+            rpcError: { code: -32602, message: 'Invalid proof' },
+          });
+        }
         assert.ok(data.poiMerkleroots.every((root) => derived.poiRoots.includes(bare(root))), 'Unknown POI root');
         assert.equal(derived.txidRoots[data.txidMerklerootIndex], bare(data.txidMerkleroot), 'Unknown TXID root');
-        // Structural acceptance only: this synthetic node does not verify the
-        // POI snark. The reported scope records that limitation.
-        assert.ok(data.snarkProof && data.snarkProof.pi_a && data.snarkProof.pi_b && data.snarkProof.pi_c);
         for (const blindedCommitment of data.blindedCommitmentsOut) {
           const value = blindedCommitment.toLowerCase();
           if (BigInt(value) === 0n || derived.poiLeaves.includes(value)) continue;
@@ -826,13 +859,16 @@ function createJourneyChain({
       counts[key] = (counts[key] || 0) + 1;
       return copy(result);
     } catch (error) {
-      if (!['SYNTHETIC_DELIVERY_UNOBSERVED', 'SYNTHETIC_INJECTED_FAULT', 'SYNTHETIC_RPC_ERROR'].includes(error?.code))
+      if (
+        error?.harnessFailure ||
+        !['SYNTHETIC_DELIVERY_UNOBSERVED', 'SYNTHETIC_INJECTED_FAULT', 'SYNTHETIC_RPC_ERROR'].includes(error?.code)
+      )
         refusals.push({
           lane,
           subjectKind: typeof subject?.kind === 'string' ? subject.kind : null,
           subjectRole: typeof subject?.role === 'string' ? subject.role : null,
           method: typeof method === 'string' ? method : typeof wire?.method === 'string' ? wire.method : null,
-          reason: String(error?.message ?? '').slice(0, 80),
+          reason: String(error?.harnessFailure ?? error?.message ?? '').slice(0, 80),
         });
       throw error;
     }
@@ -848,7 +884,18 @@ function createJourneyChain({
       txidRows: derived.rows.length,
       poiLeaves: derived.poiLeaves.length,
     }),
-    report: () => ({ counts: { ...counts }, refusals: copy(refusals), unknownSends, injectedFaults: injected, servedLogs: copy(servedLogs) }),
+    report: () => ({
+      counts: { ...counts },
+      refusals: copy(refusals),
+      unknownSends,
+      injectedFaults: injected,
+      servedLogs: copy(servedLogs),
+      poiVerification: {
+        ...(poiVerifier?.report?.() ?? { key: null, circuits: [] }),
+        invalidProofs: poiInvalid,
+        verifierFailures: poiVerifierFailed,
+      },
+    }),
     assertClean() {
       assert.deepEqual(refusals, [], 'Synthetic chain observed refused requests');
     },

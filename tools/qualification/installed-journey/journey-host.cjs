@@ -12,6 +12,7 @@ const { createRequire } = require('module');
 const { publicFixture } = require('./read-scenario.cjs');
 const { createJourneyChain, ENDPOINT } = require('./journey-chain.cjs');
 const { createJourneyCrypto } = require('./journey-crypto.cjs');
+const { createJourneyPoiVerifier } = require('./journey-poi-verifier.cjs');
 const scenarios = require('./journey-scenario.cjs');
 const MODES = Object.freeze({
   prepare: { cold: false, sendMode: 'acknowledge' },
@@ -64,6 +65,10 @@ async function executeInner(
     state: chainState,
     sendMode,
     crypto: worker,
+    poiVerifier: createJourneyPoiVerifier({
+      engineModules,
+      serialProver: path.join(runtime.proverArchive, 'serial-prover.cjs'),
+    }),
   });
   const clients = new Set(),
     endpointLife = new AbortController(),
