@@ -1,6 +1,6 @@
 /** The qualification host's one bounded vault-lifetime override, authorized by
- * the user for the live public rescan only: a `live-rebuild` or the upgrade
- * link's `live-upgrade-rebuild` process sets the
+ * the user for the live public rescan only: a `live-rebuild` or an upgrade
+ * link's `live-upgrade-rebuild`/`live-reproof-rebuild` process sets the
  * unlocked vault's auto-lock to 60 minutes, once, right after its explicit
  * unlock. Every other mode keeps the host default (15 minutes). Nothing is
  * persisted; there is no periodic renewal or synthetic activity; the process
@@ -17,7 +17,7 @@ function applyRebuildUnlock(identity, { mode, synthetic, params }) {
   // Synthetic only: a short lifetime, to exercise expiry and the clean pause.
   const syntheticMs = synthetic && Number.isSafeInteger(params?.unlockMs) ? params.unlockMs : null;
   if (!synthetic) assert.equal(Object.hasOwn(params ?? {}, 'unlockMs'), false);
-  if (!['live-rebuild', 'live-upgrade-rebuild'].includes(mode)) return Object.freeze({ lifetimeMs: DEFAULT_MS, overridden: false });
+  if (!['live-rebuild', 'live-upgrade-rebuild', 'live-reproof-rebuild'].includes(mode)) return Object.freeze({ lifetimeMs: DEFAULT_MS, overridden: false });
   const lifetimeMs = syntheticMs ?? REBUILD_MS;
   assert.ok(lifetimeMs > 0 && lifetimeMs <= REBUILD_MS);
   identity.resetAutoLockTimer(lifetimeMs);

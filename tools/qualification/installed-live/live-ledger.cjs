@@ -38,7 +38,15 @@ const JOURNEY2 = 'installed-journey-sentio-journey-2';
 // host after the transfer and its first POI handoff. It carries the complete
 // state and adds only these bounded phase allowances to the boundary counts.
 const JOURNEY3 = 'installed-journey-sentio-journey-3';
-const CHAIN = Object.freeze([FIRST, CONTINUATION, RESUME, RESUME2, RESUME3, JOURNEY2, JOURNEY3]);
+// The one reviewed circuit link: Railgun rotated its POI circuits, so every
+// proof from the retired POI_3x3 key is refused. A new package and host prove
+// one replacement for the same output. It carries the complete state (the
+// consumed first handoff and retry included) and adds the same bounded phase
+// allowances to its own boundary counts, plus one replacement handoff.
+const JOURNEY4 = 'installed-journey-sentio-journey-4';
+const CHAIN = Object.freeze([FIRST, CONTINUATION, RESUME, RESUME2, RESUME3, JOURNEY2, JOURNEY3, JOURNEY4]);
+// The links that start a new generation under a phase of their own.
+const UPGRADES = Object.freeze([JOURNEY3, JOURNEY4]);
 const UPGRADE_ADDITIONS = Object.freeze({
   scanRanges: 400,
   txidPages: 60,
@@ -49,6 +57,21 @@ const UPGRADE_ADDITIONS = Object.freeze({
 const UPGRADE_STATUS = Object.freeze({ minSpacingMs: 10 * 60 * 1000, windowMs: 24 * 3600 * 1000 });
 // The upgrade phase admits openers within one fixed window from its first.
 const UPGRADE_WINDOW_MS = 8 * 3600 * 1000;
+// The circuit link's additions: the upgrade phase's, exactly.
+const REPROOF_ADDITIONS = UPGRADE_ADDITIONS;
+// The POI_3x3 artifact identities the circuit link moves between: the retired
+// wallet 5c9d04c bundle and the bundle wallet 11.2.0 selects (QmZ2MyM6...).
+const pin = (bytes, sha256) => Object.freeze({ bytes, sha256 });
+const RETIRED_POI_3X3 = Object.freeze({
+  wasm: pin(4520908, '831aad53c05d19f9854ed27429610da724fbdf9e1e7023aa7a90666f50b0da78'),
+  zkey: pin(13605800, '667984c51df2122956107c11c3c606e4e4688f70fb25515b9388cbd5140e48b3'),
+  vkey: pin(4207, '2f4dcbf58d383204e09240863a6f6eff249071849e5161801ebfe83691037b23'),
+});
+const CURRENT_POI_3X3 = Object.freeze({
+  wasm: pin(4588991, 'b82a6d545d94cb774592b652b3d6b3d73f032eac946119b5de631d0609da7cbe'),
+  zkey: pin(14192542, 'a128e273f8a7b9fa9e04e17da079b89a57e416db845864d0d5c88570564a2066'),
+  vkey: pin(4206, 'b7ca7ba048666fb0e17efd0af1e407a8dcb0906bfaf2f20e362ed40cbec6f4d8'),
+});
 const NO_PROGRESS_SESSIONS = 2;
 // The third link admits openers within one fixed window from its first opener.
 const RESUME3_WINDOW_MS = 4 * 3600 * 1000;
@@ -78,6 +101,11 @@ const check = (value, reason) => {
   if (!value) throw fail(reason);
 };
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+// Key order is not identity: a spec may list an object's fields in any order.
+const canonical = (value) =>
+  value && typeof value === 'object' && !Array.isArray(value)
+    ? Object.fromEntries(Object.keys(value).sort().map((key) => [key, canonical(value[key])]))
+    : value;
 const id = (value) => typeof value === 'string' && /^[0-9a-f]{32}$/.test(value);
 // The one mapping from a budget kind to its campaign cap.
 function policyFor(caps, kind) {
@@ -138,15 +166,85 @@ function predecessor(directory, header) {
   check(sha256(JSON.stringify(previous)) === bound.headerSha256 && previous.name === bound.name, 'predecessor-header');
   // Same profile, artifact, host, transport and held operation. Only the
   // first continuation changes the endpoint; the resume keeps it.
-  // Only the upgrade link changes the host and artifact, under its binding.
+  // Only the upgrade links change the host and artifact, under their binding.
   for (const key of ['type', 'version', 'transport', 'profile', 'freedomCommit', 'packageTarSha256'])
-    if (header.name !== JOURNEY3 || !['freedomCommit', 'packageTarSha256'].includes(key))
+    if (!UPGRADES.includes(header.name) || !['freedomCommit', 'packageTarSha256'].includes(key))
       check(same(previous[key], header[key]), 'predecessor-scope:' + key);
   check(previous.binding?.heldTransferReportSha256 === header.binding.heldTransferReportSha256, 'predecessor-held');
-  if ([RESUME, RESUME2, RESUME3, JOURNEY2, JOURNEY3].includes(header.name))
+  if ([RESUME, RESUME2, RESUME3, JOURNEY2, JOURNEY3, JOURNEY4].includes(header.name))
     check(same(previous.binding?.rpc?.url, header.binding?.rpc?.url), 'predecessor-endpoint');
   const carried = index - 1 > 0 ? predecessor(directory, previous) : {};
   const state = replay(records, previous, carried);
+  if (header.name === JOURNEY4) {
+    check(previous.name === JOURNEY3, 'predecessor-circuit');
+    const identity = (value) => ({
+      freedomCommit: value.freedomCommit,
+      packageCommit: value.packageCommit,
+      packageTarSha256: value.packageTarSha256,
+      runnerSha256: value.runnerSha256,
+    });
+    const upgrade = header.binding?.upgrade;
+    // Old and new host, package and runner identities, and the POI artifact
+    // move from the retired circuit to the current one, exactly.
+    check(
+      upgrade &&
+        same(Object.keys(upgrade).sort(), ['artifacts', 'from', 'reason', 'to']) &&
+        same(upgrade.from, identity(previous)) &&
+        same(upgrade.to, identity(header)) &&
+        same(canonical(upgrade.artifacts), canonical({ from: { POI_3x3: RETIRED_POI_3X3 }, to: { POI_3x3: CURRENT_POI_3X3 } })) &&
+        typeof upgrade.reason === 'string' &&
+        upgrade.reason.length > 0,
+      'predecessor-circuit'
+    );
+    // Exactly the resolved transfer, the consumed first handoff and the
+    // consumed, finished retry; nothing after them.
+    check(
+      state.sends.length === 1 &&
+        state.sends[0].pending.send === 'transfer' &&
+        CONTINUING.includes(state.sends[0].finished?.outcome?.classification),
+      'predecessor-circuit-send'
+    );
+    check(state.poi.pending && state.poi.finished, 'predecessor-circuit-poi');
+    check(state.retry.pending && state.retry.finished, 'predecessor-circuit-retry');
+    check(state.reproof.pending === null, 'predecessor-circuit-reproof');
+    const count = (kind) => (state.budgets[kind] ?? []).length;
+    const boundary = {
+      scanRanges: count('scan-range'),
+      txidPages: count('txid-page'),
+      scanOpenNew: count('scan-open:new'),
+      scanOpenPending: count('scan-open:pending'),
+      poiStatus: count('poi-status'),
+    };
+    const phase = header.binding?.phase;
+    check(
+      phase && same(phase.boundary, boundary) && same(phase.additions, REPROOF_ADDITIONS),
+      'predecessor-boundary'
+    );
+    const caps = header.caps;
+    check(
+      caps.scanRanges === boundary.scanRanges + REPROOF_ADDITIONS.scanRanges &&
+        caps.txidPages === boundary.txidPages + REPROOF_ADDITIONS.txidPages &&
+        caps.rebuildNew === boundary.scanOpenNew + REPROOF_ADDITIONS.scanOpenNew &&
+        caps.scanResumes === boundary.scanOpenPending + REPROOF_ADDITIONS.scanOpenPending &&
+        caps.poiReproofs === 1 &&
+        same(caps.poiStatus, {
+          max: boundary.poiStatus + REPROOF_ADDITIONS.poiStatus,
+          ...UPGRADE_STATUS,
+          phaseFrom: boundary.poiStatus,
+        }),
+      'predecessor-circuit-caps'
+    );
+    // Every other cap is the predecessor's, exactly: the consumed retry
+    // allowance stays one, never replenished or repurposed.
+    const rest = (value) =>
+      Object.fromEntries(
+        Object.entries(value).filter(
+          ([key]) => !['scanRanges', 'txidPages', 'rebuildNew', 'scanResumes', 'poiStatus', 'poiReproofs'].includes(key)
+        )
+      );
+    check(same(rest(caps), rest(previous.caps)) && caps.poiRetries === 1, 'predecessor-circuit-caps');
+    return state;
+  }
   if (header.name === JOURNEY3) {
     check(previous.name === JOURNEY2, 'predecessor-upgrade');
     const identity = (value) => ({
@@ -277,7 +375,7 @@ function predecessor(directory, header) {
 // link admits its bound predecessor's rows; the upgrade link admits the rows of
 // every verified ancestor, each only with its own producer header.
 function predecessorReports(profile, header) {
-  if (![JOURNEY2, JOURNEY3].includes(header.name)) return [];
+  if (![JOURNEY2, ...UPGRADES].includes(header.name)) return [];
   const directory = path.dirname(ledgerFile(profile, header.name));
   const rows = [];
   let current = header;
@@ -339,7 +437,9 @@ function replay(records, header, carried = {}) {
     progress = copy(carried.progress ?? []),
     attempts = [],
     poi = copy(carried.poi ?? { pending: null, finished: null }),
-    retry = { pending: null, finished: null };
+    // Carried consumed handoffs stay consumed on every later link.
+    retry = copy(carried.retry ?? { pending: null, finished: null }),
+    reproof = copy(carried.reproof ?? { pending: null, finished: null });
   // The upgrade generation's scope: progress and openers after its one start.
   let phase = null;
   const ownSoFar = [];
@@ -364,11 +464,11 @@ function replay(records, header, carried = {}) {
         const first = ownSoFar.find((row) => row.type === 'budget' && row.kind === 'scan-open:pending');
         if (first) check(record.at - first.at <= RESUME3_WINDOW_MS, 'resume-window');
       }
-      // The upgrade link scans and syncs only within its started generation.
-      if (header.name === JOURNEY3 && ['scan-range', 'txid-page'].includes(record.kind)) check(phase, 'upgrade-phase');
+      // An upgrade link scans and syncs only within its started generation.
+      if (UPGRADES.includes(header.name) && ['scan-range', 'txid-page'].includes(record.kind)) check(phase, 'upgrade-phase');
       // Upgrade openers: only inside the started phase, admitted by progress
       // within one fixed window from the phase's first opener.
-      if (header.name === JOURNEY3 && record.kind.startsWith('scan-open:')) {
+      if (UPGRADES.includes(header.name) && record.kind.startsWith('scan-open:')) {
         check(phase, 'upgrade-phase');
         const openers = ownSoFar.filter((row) => row.type === 'budget' && row.kind.startsWith('scan-open:'));
         let since = 0;
@@ -396,8 +496,8 @@ function replay(records, header, carried = {}) {
       }
       used.push(record);
     } else if (record?.type === 'phase-start') {
-      // Once, on the upgrade link, before any of its own openers or progress.
-      check(header.name === JOURNEY3 && !phase && record.phase === 'upgrade' && Number.isSafeInteger(record.at), 'phase-start');
+      // Once, on an upgrade link, before any of its own openers or progress.
+      check(UPGRADES.includes(header.name) && !phase && record.phase === 'upgrade' && Number.isSafeInteger(record.at), 'phase-start');
       check(!ownSoFar.some((row) => row.type === 'scan-progress' || (row.type === 'budget' && row.kind.startsWith('scan-open:'))), 'phase-start');
       phase = { progressFrom: progress.length, rangesFrom: (budgets['scan-range'] ?? []).length, at: record.at };
     } else if (record?.type === 'poi-retry-pending') {
@@ -409,6 +509,15 @@ function replay(records, header, carried = {}) {
     } else if (record?.type === 'poi-retry-finished') {
       check(retry.pending && !retry.finished && retry.pending.retryId === record.retryId, 'poi-retry-finished');
       retry.finished = record;
+    } else if (record?.type === 'poi-reproof-pending') {
+      // The one replacement-proof handoff, on the circuit link only, after the
+      // consumed first handoff and the consumed retry; never a second.
+      check(header.name === JOURNEY4 && header.caps?.poiReproofs === 1, 'poi-reproof');
+      check(poi.finished && retry.pending && !reproof.pending && id(record.reproofId), 'poi-reproof-pending');
+      reproof.pending = record;
+    } else if (record?.type === 'poi-reproof-finished') {
+      check(reproof.pending && !reproof.finished && reproof.pending.reproofId === record.reproofId, 'poi-reproof-finished');
+      reproof.finished = record;
     } else if (record?.type === 'poi-pending') {
       check(!poi.pending && id(record.handoffId), 'poi-pending');
       check(sends[0]?.finished && CONTINUING.includes(sends[0].finished.outcome?.classification), 'poi-order');
@@ -432,7 +541,7 @@ function replay(records, header, carried = {}) {
       // Within the upgrade phase, order restarts with the new generation.
       const from = phase ? phase.progressFrom : 0;
       check(progress.length === from || record.to > progress.at(-1).to, 'scan-progress-order');
-      if (header.name === JOURNEY3) check(phase, 'upgrade-phase');
+      if (UPGRADES.includes(header.name)) check(phase, 'upgrade-phase');
       // Bound to the window reservation it answers: the latest, with this target.
       const window = (budgets['scan-range'] ?? []).at(-1);
       check(window && window.n === record.reservation && window.target === record.to, 'scan-progress-reservation');
@@ -444,7 +553,7 @@ function replay(records, header, carried = {}) {
     } else throw fail('record');
     ownSoFar.push(record);
   }
-  return { sends, budgets, poi, reports, progress, attempts, phase, retry };
+  return { sends, budgets, poi, reports, progress, attempts, phase, retry, reproof };
 }
 function read(file, header, carried) {
   let records;
@@ -477,7 +586,8 @@ function inspect(profile, header) {
     attempts: [],
     poi: carried.poi ?? { pending: null, finished: null },
     phase: null,
-    retry: { pending: null, finished: null },
+    retry: carried.retry ?? { pending: null, finished: null },
+    reproof: carried.reproof ?? { pending: null, finished: null },
   });
   let names;
   try {
@@ -578,10 +688,25 @@ function poiRetryFinish(profile, header, retryId, outcome) {
   return append(profile, header, { type: 'poi-retry-finished', retryId, finishedAt: new Date().toISOString(), outcome })
     .retry;
 }
+// The circuit link's one replacement handoff: consumed once written, whether
+// or not anything leaves afterwards.
+function poiReproofReserve(profile, header, binding) {
+  const reproofId = randomBytes(16).toString('hex');
+  append(profile, header, { type: 'poi-reproof-pending', reproofId, reservedAt: new Date().toISOString(), binding });
+  return reproofId;
+}
+function poiReproofFinish(profile, header, reproofId, outcome) {
+  return append(profile, header, {
+    type: 'poi-reproof-finished',
+    reproofId,
+    finishedAt: new Date().toISOString(),
+    outcome,
+  }).reproof;
+}
 // The upgrade phase's fixed admission deadline from its first opener; null
 // before one is reserved.
 function upgradeDeadline(profile, header) {
-  if (header.name !== JOURNEY3) return null;
+  if (!UPGRADES.includes(header.name)) return null;
   const file = ledgerFile(profile, header.name);
   if (!fs.existsSync(file)) return null;
   const first = fs
@@ -621,6 +746,13 @@ function resumeDeadline(profile, header) {
   return first ? first.at + RESUME3_WINDOW_MS : null;
 }
 module.exports = {
+  JOURNEY4,
+  UPGRADES,
+  REPROOF_ADDITIONS,
+  RETIRED_POI_3X3,
+  CURRENT_POI_3X3,
+  poiReproofReserve,
+  poiReproofFinish,
   JOURNEY3,
   UPGRADE_ADDITIONS,
   UPGRADE_STATUS,

@@ -90,7 +90,16 @@ function headerFor(request, binding, syntheticCaps) {
   assert.ok(binding && typeof binding === 'object' && !Array.isArray(binding));
   const name = request.ledger ?? ledger.FIRST;
   assert.ok(
-    [ledger.FIRST, ledger.CONTINUATION, ledger.RESUME, ledger.RESUME2, ledger.RESUME3, ledger.JOURNEY2, ledger.JOURNEY3].includes(name)
+    [
+      ledger.FIRST,
+      ledger.CONTINUATION,
+      ledger.RESUME,
+      ledger.RESUME2,
+      ledger.RESUME3,
+      ledger.JOURNEY2,
+      ledger.JOURNEY3,
+      ledger.JOURNEY4,
+    ].includes(name)
   );
   const resuming = [ledger.RESUME, ledger.RESUME2, ledger.RESUME3].includes(name);
   // Each later ledger of the fixed chain binds its stopped predecessor.
@@ -114,9 +123,10 @@ function headerFor(request, binding, syntheticCaps) {
     assert.deepEqual(Object.keys(syntheticCaps).sort(), SYNTHETIC_CAP_KEYS);
   }
   const runnerSha256 = sha(Buffer.from(JSON.stringify(Object.fromEntries(RECIPE.map((name) => [name, file(name)])))));
-  // The upgrade link names this exact host, package, artifact and runner, and
+  // An upgrade link names this exact host, package, artifact and runner, and
   // its phase allowances are derived from its bound boundary counts.
-  const upgrading = name === ledger.JOURNEY3;
+  const upgrading = ledger.UPGRADES.includes(name);
+  const circuit = name === ledger.JOURNEY4;
   assert.equal(Object.hasOwn(binding, 'upgrade'), upgrading);
   assert.equal(Object.hasOwn(binding, 'phase'), upgrading);
   let phaseCaps = {};
@@ -127,8 +137,23 @@ function headerFor(request, binding, syntheticCaps) {
       packageTarSha256: request.packageTarPin.sha256,
       runnerSha256,
     });
+    // The circuit link moves from the retired POI_3x3 artifacts to exactly the
+    // files this run's runtime directory holds (re-read before and after it).
+    assert.equal(Object.hasOwn(binding.upgrade, 'artifacts'), circuit);
+    if (circuit) {
+      const pins = Object.fromEntries(
+        ['wasm', 'zkey', 'vkey'].map((kind) => {
+          const { bytes, sha256 } = file(path.join(request.runtime.artifactDirectory, 'POI_3x3.' + kind));
+          return [kind, { bytes, sha256 }];
+        })
+      );
+      assert.deepEqual(binding.upgrade.artifacts, {
+        from: { POI_3x3: { ...ledger.RETIRED_POI_3X3 } },
+        to: { POI_3x3: pins },
+      });
+    }
     const { boundary, additions } = binding.phase;
-    assert.deepEqual(additions, { ...ledger.UPGRADE_ADDITIONS });
+    assert.deepEqual(additions, { ...(circuit ? ledger.REPROOF_ADDITIONS : ledger.UPGRADE_ADDITIONS) });
     for (const value of Object.values(boundary)) assert.ok(Number.isSafeInteger(value) && value >= 0);
     phaseCaps = {
       scanRanges: boundary.scanRanges + additions.scanRanges,
@@ -136,7 +161,9 @@ function headerFor(request, binding, syntheticCaps) {
       rebuildNew: boundary.scanOpenNew + additions.scanOpenNew,
       scanResumes: boundary.scanOpenPending + additions.scanOpenPending,
       poiStatus: { max: boundary.poiStatus + additions.poiStatus, ...ledger.UPGRADE_STATUS, phaseFrom: boundary.poiStatus },
+      // The retry stays one (consumed on the circuit link); the replacement is separate.
       poiRetries: 1,
+      ...(circuit ? { poiReproofs: 1 } : {}),
     };
   }
   return {
@@ -162,6 +189,20 @@ function headerFor(request, binding, syntheticCaps) {
   };
 }
 const RESUME_SCAN_RESUMES = 5;
+// Each upgrade link runs only its own modes and the continuation stages; its
+// own modes run nowhere else. No rebuild of the old kind, no transfer, no first
+// handoff, and the retry never on the circuit link.
+const UPGRADE_MODES = Object.freeze({
+  [ledger.JOURNEY3]: Object.freeze(['live-upgrade-rebuild', 'live-poi-retry']),
+  [ledger.JOURNEY4]: Object.freeze(['live-reproof-rebuild', 'live-poi-reproof']),
+});
+const CONTINUATION_MODES = Object.freeze(['live-poi-status', 'live-unshield', 'live-observe', 'live-summary', 'live-reconcile']);
+function assertModeAdmitted(name, mode) {
+  const own = UPGRADE_MODES[name] ?? null;
+  if (own) assert.ok([...own, ...CONTINUATION_MODES].includes(mode), 'Mode not admitted on the upgrade link');
+  for (const [link, modes] of Object.entries(UPGRADE_MODES))
+    if (link !== name) assert.ok(!modes.includes(mode), 'Mode admitted on its own upgrade link only');
+}
 // The reviewed third-link backstop: twelve more openers, 17 in aggregate;
 // progress admits each (see the ledger).
 const RESUME3_SCAN_RESUMES = 17;
@@ -209,15 +250,7 @@ function validate(request) {
   // Later ledgers resume the existing generation; they never begin one.
   if (request.ledgerHeader.name !== ledger.FIRST) assert.notEqual(request.params.publicCache, 'new');
   assert.ok(Object.hasOwn(MODES, request.mode));
-  // The upgrade link runs only its continuation stages; the two new modes run
-  // nowhere else. No rebuild of the old kind, no transfer, no first handoff.
-  const upgradeOnly = ['live-upgrade-rebuild', 'live-poi-retry'];
-  if (request.ledgerHeader.name === ledger.JOURNEY3)
-    assert.ok(
-      [...upgradeOnly, 'live-poi-status', 'live-unshield', 'live-observe', 'live-summary', 'live-reconcile'].includes(request.mode),
-      'Mode not admitted on the upgrade link'
-    );
-  else assert.ok(!upgradeOnly.includes(request.mode), 'Mode admitted on the upgrade link only');
+  assertModeAdmitted(request.ledgerHeader.name, request.mode);
   assert.ok(['live', 'synthetic'].includes(request.transport));
   assert.deepEqual(Object.keys(request.recipeFiles).sort(), [...RECIPE].sort());
   for (const name of RECIPE) assert.deepEqual(file(name), request.recipeFiles[name]);
@@ -293,6 +326,7 @@ function makeRequest(spec) {
       hostCommit: value.hostCommit,
       packageCommit: value.packageCommit,
       packageTarPin,
+      runtime: value.runtime,
     },
     value.binding,
     value.transport === 'live' ? null : value.syntheticCaps
@@ -439,4 +473,4 @@ if (require.main === module)
     );
     process.exitCode = 1;
   });
-module.exports = { makeRequest, validate, admit, headerFor, RECIPE, LIVE_CAPS };
+module.exports = { makeRequest, validate, admit, headerFor, assertModeAdmitted, RECIPE, LIVE_CAPS };

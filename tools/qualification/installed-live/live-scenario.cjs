@@ -74,7 +74,7 @@ const RANGE_SPACING_MS = 1000;
 // exact progress and no window in flight. Synthetic runs may disable it to
 // exercise a real vault expiry mid-scan.
 function pauseDue(context) {
-  if (!['live-rebuild', 'live-upgrade-rebuild'].includes(context.mode)) return false;
+  if (!['live-rebuild', 'live-upgrade-rebuild', 'live-reproof-rebuild'].includes(context.mode)) return false;
   if (!(context.synthetic && context.params.noScanPause === true)) {
     const { unlockedAt, lifetimeMs } = context.vault;
     if (performance.now() - unlockedAt >= lifetimeMs - pauseMargin(lifetimeMs)) return true;
@@ -150,11 +150,11 @@ function resumePlan(context) {
 // A later stage's scan continues from the last recorded checkpoint, which may
 // already lie beyond its lineage anchor after an interrupted attempt of the
 // same stage, but never behind it. The coordinator still chooses each start.
-// The active generation's progress: on the upgrade link, only what its own
+// The active generation's progress: on an upgrade link, only what its own
 // started phase recorded; every earlier checkpoint is historical.
 function activeProgress(context) {
   const state = ledger.inspect(context.profile, context.header);
-  if (context.header.name !== ledger.JOURNEY3) return { state, progress: state.progress };
+  if (!ledger.UPGRADES.includes(context.header.name)) return { state, progress: state.progress };
   assert.ok(state.phase, 'The upgrade generation has not started');
   return { state, progress: state.progress.slice(state.phase.progressFrom) };
 }
@@ -217,7 +217,14 @@ function noteSummary(notes) {
   };
 }
 // Synthetic-only crash points for the reconcile path; a live run refuses any.
-const FAULTS = Object.freeze(['exit-before-finish', 'exit-before-report', 'history-unavailable-after-send', 'exit-after-advance', 'exit-after-poi-retry-reserve']);
+const FAULTS = Object.freeze([
+  'exit-before-finish',
+  'exit-before-report',
+  'history-unavailable-after-send',
+  'exit-after-advance',
+  'exit-after-poi-retry-reserve',
+  'exit-after-poi-reproof-reserve',
+]);
 function fault(context, point, target) {
   const requested = context.params.fault ?? null;
   if (requested === null) return;
@@ -364,7 +371,7 @@ function finishReport(context, value) {
 // digest and mode as a report row of that predecessor. Nothing is relabelled.
 function assertChained(context, previous) {
   if (previous.ledgerHeaderSha256 === sha(JSON.stringify(context.header))) return;
-  assert.ok([ledger.JOURNEY2, ledger.JOURNEY3].includes(context.header.name), 'Report from another campaign');
+  assert.ok([ledger.JOURNEY2, ...ledger.UPGRADES].includes(context.header.name), 'Report from another campaign');
   if (context.header.name === ledger.JOURNEY2)
     assert.equal(previous.ledgerHeaderSha256, context.header.binding.predecessor.headerSha256, 'Report from another campaign');
   // Exact producer header, digest and mode as one ancestor recorded them.
@@ -768,9 +775,12 @@ async function poi(context) {
 async function poiStatus(context) {
   const { facade, signal, milestone, previous } = context;
   assert.ok(
-    ['railgun-installed-live-poi-v1', 'railgun-installed-live-poi-status-v1', 'railgun-installed-live-poi-retry-v1'].includes(
-      previous.schema
-    )
+    [
+      'railgun-installed-live-poi-v1',
+      'railgun-installed-live-poi-status-v1',
+      'railgun-installed-live-poi-retry-v1',
+      'railgun-installed-live-poi-reproof-v1',
+    ].includes(previous.schema)
   );
   assertChained(context, previous);
   const consents = [];
@@ -818,11 +828,13 @@ async function poiStatus(context) {
 // position, and its G1 outcome must name the approved recipient and amount.
 async function unshield(context) {
   const { facade, signal, milestone, owner, previous, profile, header, params } = context;
-  // A genuine allValid status read: a status report, or a retry report whose
-  // own fresh read was already allValid and therefore skipped the handoff.
+  // A genuine allValid status read: a status report, or a retry or
+  // replacement report whose own fresh read was already allValid and
+  // therefore skipped the handoff.
   assert.ok(
     previous.schema === 'railgun-installed-live-poi-status-v1' ||
-      (previous.schema === 'railgun-installed-live-poi-retry-v1' && previous.skipped === true)
+      (['railgun-installed-live-poi-retry-v1', 'railgun-installed-live-poi-reproof-v1'].includes(previous.schema) &&
+        previous.skipped === true)
   );
   assertChained(context, previous);
   assert.equal(previous.continuable, true);
@@ -949,17 +961,34 @@ async function summary(context) {
   assert.equal(previous.final.observation?.status, 'included');
   assert.ok(Number.isSafeInteger(previous.final.observation.blockNumber));
   if (previous.resolution) assert.equal(previous.resolution.outcome, 'matched');
-  const { transfer, poi: poiReport, scan, rebuild: rebuildReport, upgrade = null, retry = null } = lineage;
-  const upgraded = context.header.name === ledger.JOURNEY3;
+  const {
+    transfer,
+    poi: poiReport,
+    scan,
+    rebuild: rebuildReport,
+    upgrade = null,
+    retry = null,
+    reproofRebuild = null,
+    reproof = null,
+  } = lineage;
+  const upgraded = ledger.UPGRADES.includes(context.header.name);
+  const circuit = context.header.name === ledger.JOURNEY4;
   assert.equal(upgrade !== null, upgraded);
-  for (const report of [transfer, poiReport, scan, rebuildReport, upgrade, retry].filter(Boolean)) assertChained(context, report);
+  // The circuit link's lineage: the consumed retry, its own rebuild and its
+  // own replacement report.
+  assert.equal(reproofRebuild !== null, circuit);
+  assert.equal(reproof !== null, circuit);
+  if (circuit) assert.notEqual(retry, null);
+  for (const report of [transfer, poiReport, scan, rebuildReport, upgrade, retry, reproofRebuild, reproof].filter(Boolean))
+    assertChained(context, report);
   assert.equal(rebuildReport.schema, 'railgun-installed-live-rebuild-v1');
   assert.equal(transfer.schema, 'railgun-installed-live-submit-v1');
   assert.ok(['acknowledged', 'unknown'].includes(transfer.outcome.classification));
   assert.equal(scan.schema, 'railgun-installed-live-poi-v1');
   assert.ok(
     poiReport.schema === 'railgun-installed-live-poi-status-v1' ||
-      (poiReport.schema === 'railgun-installed-live-poi-retry-v1' && poiReport.skipped === true)
+      (['railgun-installed-live-poi-retry-v1', 'railgun-installed-live-poi-reproof-v1'].includes(poiReport.schema) &&
+        poiReport.skipped === true)
   );
   assert.equal(poiReport.continuable, true);
   if (upgraded) {
@@ -967,6 +996,13 @@ async function summary(context) {
     assert.equal(upgrade.outputNoteIdSha256, scan.outputNoteIdSha256);
     if (retry) assert.equal(retry.schema, 'railgun-installed-live-poi-retry-v1');
   } else assert.equal(retry, null);
+  if (circuit) {
+    assert.equal(retry.skipped, false);
+    assert.equal(reproofRebuild.schema, 'railgun-installed-live-reproof-rebuild-v1');
+    assert.equal(reproofRebuild.outputNoteIdSha256, scan.outputNoteIdSha256);
+    assert.equal(reproof.schema, 'railgun-installed-live-poi-reproof-v1');
+    assert.equal(reproof.outputNoteIdSha256, scan.outputNoteIdSha256);
+  }
   assert.equal(transfer.holdIdSha256, rebuildReport.holdIdSha256);
   // Exact value lineage: full input to the transfer output to the unshield.
   assert.equal(poiReport.inputAmount, rebuildReport.heldBinding.amount);
@@ -983,7 +1019,12 @@ async function summary(context) {
     // Advance through the unshield so residual notes reflect its spend.
     const anchor = await readFinalized();
     assert.ok(previous.final.observation.blockNumber <= anchor.number, 'The unshield is finalized');
-    const { ranges } = await scanTo(context, session, scanStart(context, (upgraded ? upgrade : scan).anchor.number, anchor), anchor);
+    const { ranges } = await scanTo(
+      context,
+      session,
+      scanStart(context, (circuit ? reproofRebuild : upgraded ? upgrade : scan).anchor.number, anchor),
+      anchor
+    );
     milestone('public-advanced:' + ranges);
     const notes = await readNotes(session, signal, 'advance');
     const spentOutput = notes.filter((note) => note.spentTxid !== false && bare(note.spentTxid) === bare(previous.transactionHash));
@@ -1032,9 +1073,19 @@ async function summary(context) {
         first: scan.poi?.submitted?.response ?? null,
         second: retry && !retry.skipped ? retry.retry?.response ?? null : null,
         secondSkipped: retry ? retry.skipped === true : null,
+        // The circuit link's replacement proof: a new proof, never the same bytes.
+        ...(circuit
+          ? {
+              replacement: reproof.skipped ? null : reproof.reproof?.submitted?.response ?? null,
+              replacementSkipped: reproof.skipped === true,
+            }
+          : {}),
         finalStatus: poiReport.owned,
       },
       ...(upgraded ? { upgrade: { anchor: upgrade.anchor, ranges: upgrade.ranges, identity: upgrade.upgrade } } : {}),
+      ...(circuit
+        ? { circuit: { anchor: reproofRebuild.anchor, ranges: reproofRebuild.ranges, identity: reproofRebuild.upgrade } }
+        : {}),
     });
   } finally {
     await closeSession(session);
@@ -1047,7 +1098,7 @@ async function summary(context) {
 // prepares or releases anything. A separate checkpoint, not a conservation
 // baseline: the original pre-transfer rebuild report remains that.
 async function upgradeRebuild(context) {
-  const { facade, signal, milestone, owner, readFinalized, previous, lineage, profile, header } = context;
+  const { previous, lineage, header } = context;
   assert.equal(header.name, ledger.JOURNEY3, 'The upgrade rebuild runs on the upgrade link only');
   assert.equal(previous.schema, 'railgun-installed-live-observe-v1');
   assertChained(context, previous);
@@ -1061,6 +1112,49 @@ async function upgradeRebuild(context) {
   assert.equal(previous.transactionHash, transfer.outcome.transactionHash);
   const output0 = previous.resolution?.output ?? previous.final.output;
   assert.equal(output0.kind, 'shielded');
+  return rebuildGeneration(context, {
+    rebuildReport,
+    transfer,
+    outputNoteIdSha256: output0.noteIdSha256,
+    schema: 'railgun-installed-live-upgrade-rebuild-v1',
+    label: 'upgrade-public-rebuilt:',
+  });
+}
+// The circuit link's rebuild, after the consumed retry: the same fresh public
+// and wallet generations for the new package policy, binding the same input,
+// output and matched journal. Before the replacement handoff only.
+async function reproofRebuild(context) {
+  const { previous, lineage, header, profile } = context;
+  assert.equal(header.name, ledger.JOURNEY4, 'The circuit rebuild runs on the circuit link only');
+  // The consumed retry's own report: its handoff left, and no status since
+  // decided anything.
+  assert.equal(previous.schema, 'railgun-installed-live-poi-retry-v1');
+  assertChained(context, previous);
+  assert.equal(previous.skipped, false);
+  const state = ledger.inspect(profile, header);
+  assert.ok(state.retry.pending && state.retry.finished, 'The retry is not consumed');
+  assert.equal(state.reproof.pending, null, 'The replacement precedes no rebuild');
+  const { rebuild: rebuildReport, transfer, upgrade } = lineage;
+  for (const report of [rebuildReport, transfer, upgrade]) assertChained(context, report);
+  assert.equal(rebuildReport.schema, 'railgun-installed-live-rebuild-v1');
+  assert.equal(transfer.schema, 'railgun-installed-live-submit-v1');
+  assert.equal(upgrade.schema, 'railgun-installed-live-upgrade-rebuild-v1');
+  assert.equal(transfer.holdIdSha256, rebuildReport.holdIdSha256);
+  assert.equal(previous.holdIdSha256, rebuildReport.holdIdSha256);
+  assert.equal(previous.transactionHash, transfer.outcome.transactionHash);
+  assert.equal(upgrade.transactionHash, transfer.outcome.transactionHash);
+  assert.equal(previous.outputNoteIdSha256, upgrade.outputNoteIdSha256);
+  return rebuildGeneration(context, {
+    rebuildReport,
+    transfer,
+    outputNoteIdSha256: previous.outputNoteIdSha256,
+    schema: 'railgun-installed-live-reproof-rebuild-v1',
+    label: 'reproof-public-rebuilt:',
+  });
+}
+// One upgrade link's generation rebuild over its own phase.
+async function rebuildGeneration(context, { rebuildReport, transfer, outputNoteIdSha256, schema, label }) {
+  const { facade, signal, milestone, owner, readFinalized, profile, header } = context;
   // One durable start; later sessions resume the same generation.
   let state = ledger.inspect(profile, header);
   const started = state.phase !== null;
@@ -1078,7 +1172,7 @@ async function upgradeRebuild(context) {
     session = await facade.openAccount({ accountIndex: 0, signal, publicCache });
     const anchor = await readFinalized();
     const { ranges, statuses, firstReturned } = await scanTo(context, session, plan.from ?? 0, anchor, plan.firstTarget);
-    milestone('upgrade-public-rebuilt:' + ranges);
+    milestone(label + ranges);
     const facts = heldFacts(context.heldReport, owner);
     lane = await session.openRead({ wallet: 'new', signal });
     const notes = await lane.notes(undefined, true);
@@ -1094,7 +1188,7 @@ async function upgradeRebuild(context) {
     const created = notes.filter((note) => note.txid !== undefined && bare(note.txid) === bare(transfer.outcome.transactionHash));
     assert.equal(created.length, 1, 'The transfer created exactly one owned output');
     const output = created[0];
-    assert.equal(sha(output.id), output0.noteIdSha256);
+    assert.equal(sha(output.id), outputNoteIdSha256);
     assert.equal(output.spentTxid, false);
     assert.equal(output.asset?.contract?.toLowerCase(), WETH);
     assert.equal(String(output.amount), rebuildReport.heldBinding.amount);
@@ -1114,7 +1208,7 @@ async function upgradeRebuild(context) {
     await closeSession(session);
     session = null;
     return finishReport(context, {
-      schema: 'railgun-installed-live-upgrade-rebuild-v1',
+      schema,
       upgrade: header.binding.upgrade,
       publicCache,
       plan,
@@ -1238,6 +1332,146 @@ async function poiRetry(context) {
     await closeSession(session);
   }
 }
+// The circuit link's one replacement-proof handoff. Local preparation comes
+// first: the lane proves a replacement for the same output with the current
+// circuit (eligibility, fresh roots, proof; never a send), so a refused
+// preparation spends no status read or handoff. One owned status read in the
+// same session then gates the handoff and is its fresh evidence: Valid skips
+// it, Missing admits it, anything else stops. The durable reservation precedes
+// the handoff's lane; any failure after it is final.
+async function poiReproof(context) {
+  const { facade, signal, milestone, owner, readFinalized, previous, profile, header } = context;
+  assert.equal(header.name, ledger.JOURNEY4, 'The replacement runs on the circuit link only');
+  assert.equal(previous.schema, 'railgun-installed-live-reproof-rebuild-v1');
+  assertChained(context, previous);
+  const state0 = ledger.inspect(profile, header);
+  assert.ok(state0.poi.pending && state0.poi.finished, 'No first handoff');
+  assert.ok(state0.retry.pending && state0.retry.finished, 'The retry is not consumed');
+  assert.equal(state0.reproof.pending, null, 'The replacement is consumed: status only');
+  const consents = [];
+  const accept = (label) => (summary, review) => {
+    assert.equal((review?.signal ?? review)?.aborted, false);
+    consents.push({ label, purpose: summary?.purpose ?? null });
+    return true;
+  };
+  let session, lane;
+  try {
+    session = await facade.openAccount({ accountIndex: 0, signal });
+    const anchor = await readFinalized();
+    const { ranges } = await scanTo(context, session, scanStart(context, previous.anchor.number, anchor), anchor);
+    milestone('public-advanced:' + ranges);
+    const txid = await syncTxid(context, session, accept);
+    milestone('txid:' + JSON.stringify(txid.at(-1)));
+    const notes = await readNotes(session, signal, 'advance');
+    const created = notes.filter((note) => note.txid !== undefined && bare(note.txid) === bare(previous.transactionHash));
+    assert.equal(created.length, 1);
+    const output = created[0];
+    assert.equal(sha(output.id), previous.outputNoteIdSha256);
+    assert.equal(String(output.amount), previous.outputAmount);
+    assert.equal(output.spentTxid, false);
+    const hold = bound(await holds(session, signal, owner, milestone), 'railgun-private-transfer', previous.holdIdSha256);
+    lane = await session.openPoiRecovery({ signal, reviewDisclosures: accept('poi-reproof-prepare') });
+    const prepared = await lane.reproveRetired(hold.holdId).then(
+      (value) => value,
+      (error) => ({ status: 'error', code: error?.code ?? 'unknown-error' })
+    );
+    milestone('poi-reproof-prepared:' + JSON.stringify({ status: prepared.status, stage: prepared.stage ?? null }));
+    await closeLane(lane);
+    lane = null;
+    const preparation =
+      prepared.status === 'reproof-prepared'
+        ? {
+            status: prepared.status,
+            capsuleDigestSha256: sha(prepared.capsuleDigest),
+            payloadSha256: prepared.payloadSha256,
+            reproofRevision: prepared.reproofRevision,
+            circuit: prepared.circuit,
+          }
+        : { status: prepared.status, stage: prepared.stage ?? null, code: prepared.code ?? null };
+    const base = {
+      schema: 'railgun-installed-live-poi-reproof-v1',
+      holdIdSha256: previous.holdIdSha256,
+      transactionHash: previous.transactionHash,
+      outputNoteIdSha256: previous.outputNoteIdSha256,
+      outputAmount: previous.outputAmount,
+      inputAmount: previous.inputAmount,
+      anchor,
+      ranges,
+      txid,
+      prepared: preparation,
+      original: state0.poi.finished.outcome,
+      retry: state0.retry.finished.outcome,
+    };
+    if (prepared.status !== 'reproof-prepared') {
+      // Nothing reserved or read: a later run may prepare again.
+      await closeSession(session);
+      session = null;
+      return finishReport(context, { ...base, unit: null, observedAt: null, owned: null, skipped: false, reproof: null, continuable: false, stop: true, consents });
+    }
+    const unit = budget(context, 'poi-status');
+    const owned = await session
+      .observeOwnedPoi({ noteId: output.id, signal, reviewDisclosure: accept('owned-poi') })
+      .then((value) => value, (error) => ({ code: error?.code ?? 'unknown-error' }));
+    milestone('owned-poi:' + JSON.stringify(owned.statuses ?? owned.code));
+    const observed = {
+      unit,
+      observedAt: Date.now(),
+      owned: { statuses: owned.statuses ?? null, allValid: owned.allValid ?? false, inputType: owned.inputType ?? null, code: owned.code ?? null },
+    };
+    const valid = owned.allValid === true && owned.inputType === 'Transact';
+    const missing = !owned.code && owned.inputType === 'Transact' && JSON.stringify(owned.statuses) === JSON.stringify(['Missing']);
+    if (!missing) {
+      // Valid already: the prepared replacement stays local. Anything else: a stop.
+      await closeSession(session);
+      session = null;
+      return finishReport(context, { ...base, ...observed, skipped: true, reproof: null, continuable: valid, stop: !valid, consents });
+    }
+    const reproofId = ledger.poiReproofReserve(profile, header, {
+      holdIdSha256: previous.holdIdSha256,
+      originalHandoffId: state0.poi.pending.handoffId,
+      originalCapsuleDigestSha256: state0.poi.pending.binding.capsuleDigestSha256,
+      originalPayloadSha256: state0.poi.pending.binding.payloadSha256,
+      retryId: state0.retry.pending.retryId,
+      replacementPayloadSha256: prepared.payloadSha256,
+      circuit: prepared.circuit,
+    });
+    milestone('ledger-reserved:poi-reproof');
+    fault(context, 'exit-after-poi-reproof-reserve');
+    lane = await session.openPoiRecovery({ signal, reviewDisclosures: accept('poi-reproof') });
+    const outcome = await lane.submitReproof(hold.holdId).then(
+      (value) => value,
+      (error) => ({ status: 'error', code: error?.code ?? 'unknown-error' })
+    );
+    ledger.poiReproofFinish(profile, header, reproofId, {
+      status: outcome.status,
+      stage: outcome.stage ?? null,
+      classification: outcome.response?.classification ?? null,
+      diagnostic: outcome.response?.diagnostic ?? null,
+      code: outcome.code ?? null,
+    });
+    milestone('poi-reproof-submitted:' + JSON.stringify({ status: outcome.status, classification: outcome.response?.classification ?? null }));
+    await closeLane(lane);
+    lane = null;
+    await closeSession(session);
+    session = null;
+    return finishReport(context, {
+      ...base,
+      ...observed,
+      skipped: false,
+      reproof: {
+        prepared: preparation,
+        submitted: { status: outcome.status, stage: outcome.stage ?? null, response: outcome.response ?? null, code: outcome.code ?? null },
+      },
+      // A response is never acceptance: a later status read decides.
+      continuable: false,
+      stop: false,
+      consents,
+    });
+  } finally {
+    await closeLane(lane);
+    await closeSession(session);
+  }
+}
 const SEND_REPORT_MODES = Object.freeze(['live-submit', 'live-unshield', 'live-reconcile']);
 // Recovers a send without a recorded report: observation only, no signing or
 // sending. An unfinished record (a crash after the reservation) is finished
@@ -1321,5 +1555,7 @@ const MODES = Object.freeze({
   'live-summary': summary,
   'live-upgrade-rebuild': upgradeRebuild,
   'live-poi-retry': poiRetry,
+  'live-reproof-rebuild': reproofRebuild,
+  'live-poi-reproof': poiReproof,
 });
 module.exports = { MODES, rangesTo, windowEnd, resumePlan, upgradePlan, assertChained, scanStart, sha };

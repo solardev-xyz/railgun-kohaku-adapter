@@ -94,3 +94,29 @@ test("the upgrade link's rebuild gets the same single 60-minute unlock; its retr
   });
   expect(other.resetAutoLockTimer).not.toHaveBeenCalled();
 });
+test("the circuit link's rebuild gets the same single 60-minute unlock; its replacement does not", () => {
+  const vault = identity();
+  expect(
+    applyRebuildUnlock(vault, {
+      mode: "live-reproof-rebuild",
+      synthetic: false,
+      params: {},
+    }),
+  ).toEqual({
+    lifetimeMs: REBUILD_MS,
+    overridden: true,
+  });
+  expect(vault.resetAutoLockTimer).toHaveBeenCalledTimes(1);
+  const other = identity();
+  expect(
+    applyRebuildUnlock(other, {
+      mode: "live-poi-reproof",
+      synthetic: false,
+      params: {},
+    }),
+  ).toEqual({
+    lifetimeMs: DEFAULT_MS,
+    overridden: false,
+  });
+  expect(other.resetAutoLockTimer).not.toHaveBeenCalled();
+});

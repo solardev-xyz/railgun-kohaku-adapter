@@ -1294,3 +1294,740 @@ test("the explicit retry is reserved once, after the consumed first handoff", ()
   const other = attemptedJourney2();
   expect(() => ledger.poiRetryReserve(other.p, other.j2, {})).toThrow();
 });
+
+// --- The circuit link (journey-4) -------------------------------------------
+// A journey-3 that rebuilt, read one status and spent its retry.
+function retriedJourney3({ finishRetry = true } = {}) {
+  const s = attemptedJourney2();
+  const j3 = journey3Of(s.p, s.j2);
+  ledger.startPhase(s.p, j3);
+  ledger.consume(
+    s.p,
+    j3,
+    "scan-open:new",
+    ledger.policyFor(j3.caps, "scan-open:new"),
+    50001,
+  );
+  const n = ledger.consume(
+    s.p,
+    j3,
+    "scan-range",
+    ledger.policyFor(j3.caps, "scan-range"),
+    50002,
+    { target: 99999 },
+  );
+  ledger.progress(s.p, j3, 99999, "0x" + "6".repeat(64), n);
+  ledger.consume(
+    s.p,
+    j3,
+    "txid-page",
+    ledger.policyFor(j3.caps, "txid-page"),
+    50003,
+  );
+  ledger.recordReport(s.p, j3, "live-upgrade-rebuild", "9".repeat(64));
+  ledger.consume(
+    s.p,
+    j3,
+    "poi-status",
+    ledger.policyFor(j3.caps, "poi-status"),
+    2 * 24 * 3600 * 1000,
+  );
+  const retryId = ledger.poiRetryReserve(s.p, j3, {
+    holdIdSha256: "a".repeat(64),
+  });
+  if (finishRetry) {
+    ledger.poiRetryFinish(s.p, j3, retryId, {
+      status: "recovery-required",
+      classification: "http-failure",
+    });
+    ledger.recordReport(s.p, j3, "live-poi-retry", "8".repeat(64));
+  }
+  return { ...s, j3 };
+}
+function journey4Of(p, j3, overrides = {}) {
+  const crypto = require("crypto");
+  const hash = (v) => crypto.createHash("sha256").update(v).digest("hex");
+  const state = ledger.inspect(p, j3);
+  const count = (kind) => (state.budgets[kind] ?? []).length;
+  const boundary = {
+    scanRanges: count("scan-range"),
+    txidPages: count("txid-page"),
+    scanOpenNew: count("scan-open:new"),
+    scanOpenPending: count("scan-open:pending"),
+    poiStatus: count("poi-status"),
+  };
+  const add = ledger.REPROOF_ADDITIONS;
+  const next = {
+    ...j3,
+    name: ledger.JOURNEY4,
+    freedomCommit: "4".repeat(40),
+    packageCommit: "3".repeat(40),
+    packageTarSha256: "2".repeat(64),
+    runnerSha256: "1".repeat(64),
+    caps: {
+      ...j3.caps,
+      scanRanges: boundary.scanRanges + add.scanRanges,
+      txidPages: boundary.txidPages + add.txidPages,
+      rebuildNew: boundary.scanOpenNew + add.scanOpenNew,
+      scanResumes: boundary.scanOpenPending + add.scanOpenPending,
+      poiStatus: {
+        max: boundary.poiStatus + add.poiStatus,
+        ...ledger.UPGRADE_STATUS,
+        phaseFrom: boundary.poiStatus,
+      },
+      poiRetries: 1,
+      poiReproofs: 1,
+    },
+  };
+  const identity = (v) => ({
+    freedomCommit: v.freedomCommit,
+    packageCommit: v.packageCommit,
+    packageTarSha256: v.packageTarSha256,
+    runnerSha256: v.runnerSha256,
+  });
+  next.binding = {
+    ...j3.binding,
+    predecessor: {
+      name: ledger.JOURNEY3,
+      ledgerSha256: hash(
+        fs.readFileSync(ledger.ledgerFile(p, ledger.JOURNEY3)),
+      ),
+      headerSha256: hash(JSON.stringify(j3)),
+      reason: "POI circuit rotation: one replacement proof",
+    },
+    upgrade: {
+      from: identity(j3),
+      to: identity(next),
+      reason: "POI circuit rotation",
+      artifacts: {
+        from: { POI_3x3: { ...ledger.RETIRED_POI_3X3 } },
+        to: { POI_3x3: { ...ledger.CURRENT_POI_3X3 } },
+      },
+    },
+    phase: { boundary, additions: { ...add } },
+  };
+  return { ...next, ...overrides };
+}
+test("the circuit link carries the complete state, the consumed retry included, and adds exactly its phase allowances", () => {
+  const { p, j3 } = retriedJourney3();
+  const j4 = journey4Of(p, j3);
+  const state = ledger.inspect(p, j4);
+  expect(state.sends).toHaveLength(1);
+  expect(state.poi.pending).not.toBeNull();
+  expect(state.poi.finished).not.toBeNull();
+  expect(state.retry.pending).not.toBeNull();
+  expect(state.retry.finished).not.toBeNull();
+  expect(state.reproof).toEqual({ pending: null, finished: null });
+  expect(state.phase).toBeNull();
+  expect(state.reports.map((row) => row.mode)).toEqual([
+    "live-rebuild",
+    "live-submit",
+    "live-observe",
+    "live-poi",
+    "live-poi-status",
+    "live-upgrade-rebuild",
+    "live-poi-retry",
+  ]);
+  const { boundary } = j4.binding.phase;
+  expect(boundary).toEqual({
+    scanRanges: ledger.inspect(p, j3).budgets["scan-range"].length,
+    txidPages: ledger.inspect(p, j3).budgets["txid-page"].length,
+    scanOpenNew: 2,
+    scanOpenPending: ledger.inspect(p, j3).budgets["scan-open:pending"]
+      .length,
+    poiStatus: 2,
+  });
+  expect(j4.caps.scanRanges).toBe(boundary.scanRanges + 400);
+  expect(j4.caps.txidPages).toBe(boundary.txidPages + 60);
+  expect(j4.caps.rebuildNew).toBe(3);
+  expect(j4.caps.scanResumes).toBe(boundary.scanOpenPending + 11);
+  expect(j4.caps.poiStatus).toEqual({
+    max: 6,
+    minSpacingMs: 600000,
+    windowMs: 86400000,
+    phaseFrom: 2,
+  });
+  // Everything consumed stays consumed: the transfer, the first handoff, the retry.
+  expect(() => ledger.reserve(p, j4, "transfer", {})).toThrow();
+  expect(() => ledger.poiReserve(p, j4, {})).toThrow();
+  expect(() => ledger.poiRetryReserve(p, j4, {})).toThrow();
+  // Old reports are admitted only with their own producer header.
+  const crypto = require("crypto");
+  const digest = (v) =>
+    crypto.createHash("sha256").update(JSON.stringify(v)).digest("hex");
+  const rows = ledger.predecessorReports(p, j4);
+  expect(rows.find((row) => row.mode === "live-poi-retry").headerSha256).toBe(
+    digest(j3),
+  );
+  expect(rows.find((row) => row.mode === "live-poi").headerSha256).not.toBe(
+    digest(j3),
+  );
+  expect(rows.map((row) => row.mode)).toContain("live-rebuild");
+});
+test.each([
+  [
+    "a boundary that omits a used range",
+    (j4) => ({
+      binding: {
+        ...j4.binding,
+        phase: {
+          ...j4.binding.phase,
+          boundary: {
+            ...j4.binding.phase.boundary,
+            scanRanges: j4.binding.phase.boundary.scanRanges - 1,
+          },
+        },
+      },
+    }),
+  ],
+  [
+    "one more range than the phase allows",
+    (j4) => ({ caps: { ...j4.caps, scanRanges: j4.caps.scanRanges + 1 } }),
+  ],
+  [
+    "a status read more than the phase allows",
+    (j4) => ({
+      caps: {
+        ...j4.caps,
+        poiStatus: { ...j4.caps.poiStatus, max: j4.caps.poiStatus.max + 1 },
+      },
+    }),
+  ],
+  [
+    "a status window from the journey-3 phase",
+    (j4) => ({
+      caps: { ...j4.caps, poiStatus: { ...j4.caps.poiStatus, phaseFrom: 1 } },
+    }),
+  ],
+  ["a replenished retry", (j4) => ({ caps: { ...j4.caps, poiRetries: 2 } })],
+  [
+    "a dropped retry cap",
+    (j4) => {
+      const { poiRetries, ...caps } = j4.caps;
+      void poiRetries;
+      return { caps };
+    },
+  ],
+  ["two replacements", (j4) => ({ caps: { ...j4.caps, poiReproofs: 2 } })],
+  [
+    "no replacement allowance",
+    (j4) => {
+      const { poiReproofs, ...caps } = j4.caps;
+      void poiReproofs;
+      return { caps };
+    },
+  ],
+  [
+    "a changed fee cap",
+    (j4) => ({ caps: { ...j4.caps, totalMaxFeeWei: "5000000000000000" } }),
+  ],
+  [
+    "a third send",
+    (j4) => ({ caps: { ...j4.caps, sends: 3 } }),
+  ],
+  [
+    "an upgrade from another identity",
+    (j4) => ({
+      binding: {
+        ...j4.binding,
+        upgrade: {
+          ...j4.binding.upgrade,
+          from: { ...j4.binding.upgrade.from, packageCommit: "0".repeat(40) },
+        },
+      },
+    }),
+  ],
+  [
+    "an upgrade to another identity",
+    (j4) => ({
+      binding: {
+        ...j4.binding,
+        upgrade: {
+          ...j4.binding.upgrade,
+          to: { ...j4.binding.upgrade.to, runnerSha256: "0".repeat(64) },
+        },
+      },
+    }),
+  ],
+  [
+    "no artifact move",
+    (j4) => {
+      const { artifacts, ...upgrade } = j4.binding.upgrade;
+      void artifacts;
+      return { binding: { ...j4.binding, upgrade } };
+    },
+  ],
+  [
+    "a move to the retired circuit",
+    (j4) => ({
+      binding: {
+        ...j4.binding,
+        upgrade: {
+          ...j4.binding.upgrade,
+          artifacts: {
+            from: { POI_3x3: { ...ledger.RETIRED_POI_3X3 } },
+            to: { POI_3x3: { ...ledger.RETIRED_POI_3X3 } },
+          },
+        },
+      },
+    }),
+  ],
+  [
+    "another current key",
+    (j4) => ({
+      binding: {
+        ...j4.binding,
+        upgrade: {
+          ...j4.binding.upgrade,
+          artifacts: {
+            ...j4.binding.upgrade.artifacts,
+            to: {
+              POI_3x3: {
+                ...ledger.CURRENT_POI_3X3,
+                vkey: { bytes: 4206, sha256: "0".repeat(64) },
+              },
+            },
+          },
+        },
+      },
+    }),
+  ],
+  ["a changed profile", () => ({ profile: "/elsewhere" })],
+])("the circuit link refuses %s", (_name, change) => {
+  const { p, j3 } = retriedJourney3();
+  const j4 = journey4Of(p, j3);
+  expect(() => ledger.inspect(p, { ...j4, ...change(j4) })).toThrow();
+});
+test("the circuit link admits artifact identities in any key order", () => {
+  const { p, j3 } = retriedJourney3();
+  const j4 = journey4Of(p, j3);
+  const reorder = (pins) =>
+    Object.fromEntries(
+      ["vkey", "wasm", "zkey"].map((kind) => [
+        kind,
+        { sha256: pins[kind].sha256, bytes: pins[kind].bytes },
+      ]),
+    );
+  const changed = {
+    ...j4,
+    binding: {
+      ...j4.binding,
+      upgrade: {
+        ...j4.binding.upgrade,
+        artifacts: {
+          to: { POI_3x3: reorder(ledger.CURRENT_POI_3X3) },
+          from: { POI_3x3: reorder(ledger.RETIRED_POI_3X3) },
+        },
+      },
+    },
+  };
+  expect(ledger.inspect(p, changed).retry.finished).not.toBeNull();
+});
+test("the circuit link refuses a journey-3 without a consumed and finished retry, or with an unshield", () => {
+  const plain = attemptedJourney2();
+  const j3 = journey3Of(plain.p, plain.j2);
+  ledger.startPhase(plain.p, j3);
+  expect(() => ledger.inspect(plain.p, journey4Of(plain.p, j3))).toThrow();
+  const open = retriedJourney3({ finishRetry: false });
+  expect(() => ledger.inspect(open.p, journey4Of(open.p, open.j3))).toThrow();
+  const sent = retriedJourney3();
+  ledger.reserve(sent.p, sent.j3, "unshield", {});
+  expect(() => ledger.inspect(sent.p, journey4Of(sent.p, sent.j3))).toThrow();
+  // Exactly the bound journey-3 bytes: a later journey-3 record refuses.
+  const later = retriedJourney3();
+  const bound = journey4Of(later.p, later.j3);
+  ledger.inspect(later.p, bound);
+  ledger.recordReport(later.p, later.j3, "live-poi-status", "7".repeat(64));
+  expect(() => ledger.inspect(later.p, bound)).toThrow();
+  // Only journey-3 can precede it.
+  const skipped = retriedJourney3();
+  const j4 = journey4Of(skipped.p, skipped.j3);
+  expect(() =>
+    ledger.inspect(skipped.p, {
+      ...j4,
+      binding: {
+        ...j4.binding,
+        predecessor: { ...j4.binding.predecessor, name: ledger.JOURNEY2 },
+      },
+    }),
+  ).toThrow();
+});
+test("the circuit generation starts once, below the carried heads, with its own openers and window", () => {
+  const { p, j3 } = retriedJourney3();
+  const j4 = journey4Of(p, j3);
+  const range = ledger.policyFor(j4.caps, "scan-range");
+  const opener = ledger.policyFor(j4.caps, "scan-open:new");
+  const pending = ledger.policyFor(j4.caps, "scan-open:pending");
+  expect(() =>
+    ledger.consume(p, j4, "scan-range", range, 70000, { target: 99999 }),
+  ).toThrow();
+  expect(() => ledger.consume(p, j4, "scan-open:new", opener, 70000)).toThrow();
+  expect(() =>
+    ledger.consume(
+      p,
+      j4,
+      "txid-page",
+      ledger.policyFor(j4.caps, "txid-page"),
+      70000,
+    ),
+  ).toThrow();
+  const carried = ledger.inspect(p, j4).progress.length;
+  expect(ledger.startPhase(p, j4).progressFrom).toBe(carried);
+  expect(() => ledger.startPhase(p, j4)).toThrow();
+  ledger.consume(p, j4, "scan-open:new", opener, 70001);
+  // Journey-3's own generation's head was 99999: the new one restarts below it.
+  const n = ledger.consume(p, j4, "scan-range", range, 70002, {
+    target: 49999,
+  });
+  ledger.progress(p, j4, 49999, "0x" + "7".repeat(64), n);
+  // Two sessions without a checkpoint, then a stop.
+  ledger.consume(p, j4, "scan-open:pending", pending, 70003);
+  ledger.consume(p, j4, "scan-open:pending", pending, 70004);
+  expect(() =>
+    ledger.consume(p, j4, "scan-open:pending", pending, 70005),
+  ).toThrow();
+  // The chain's fourth new opener: none is left.
+  expect(() => ledger.consume(p, j4, "scan-open:new", opener, 70005)).toThrow();
+  const m = ledger.consume(p, j4, "scan-range", range, 70006, {
+    target: 99999,
+  });
+  ledger.progress(p, j4, 99999, "0x" + "8".repeat(64), m);
+  expect(() =>
+    ledger.consume(
+      p,
+      j4,
+      "scan-open:pending",
+      pending,
+      70001 + 8 * 3600 * 1000 + 1,
+    ),
+  ).toThrow();
+  ledger.consume(p, j4, "scan-open:pending", pending, 70007);
+  expect(ledger.upgradeDeadline(p, j4)).toBe(70001 + 8 * 3600 * 1000);
+  const state = ledger.inspect(p, j4);
+  expect(state.progress.slice(state.phase.progressFrom).map((r) => r.to)).toEqual(
+    [49999, 99999],
+  );
+});
+test("circuit status reads: four more, ten minutes apart, inside 24 hours from the circuit phase's first read", () => {
+  const { p, j3 } = retriedJourney3();
+  const j4 = journey4Of(p, j3);
+  const status = ledger.policyFor(j4.caps, "poi-status");
+  // Long after journey-3's own phase window: this phase's window starts here.
+  const t0 = 5 * 24 * 3600 * 1000;
+  ledger.consume(p, j4, "poi-status", status, t0);
+  expect(() =>
+    ledger.consume(p, j4, "poi-status", status, t0 + 599999),
+  ).toThrow();
+  ledger.consume(p, j4, "poi-status", status, t0 + 600000);
+  expect(() =>
+    ledger.consume(p, j4, "poi-status", status, t0 + 24 * 3600 * 1000 + 1),
+  ).toThrow();
+  ledger.consume(p, j4, "poi-status", status, t0 + 1200000);
+  ledger.consume(p, j4, "poi-status", status, t0 + 1800000);
+  expect(() =>
+    ledger.consume(p, j4, "poi-status", status, t0 + 2400000),
+  ).toThrow();
+});
+test("the replacement handoff is reserved once on the circuit link, consumed even without a finish", () => {
+  const { p, j3 } = retriedJourney3();
+  const j4 = journey4Of(p, j3);
+  const reproofId = ledger.poiReproofReserve(p, j4, {
+    holdIdSha256: "a".repeat(64),
+  });
+  // A crash here leaves it consumed: no second reservation.
+  expect(ledger.inspect(p, j4).reproof.pending.reproofId).toBe(reproofId);
+  expect(() => ledger.poiReproofReserve(p, j4, {})).toThrow();
+  expect(() => ledger.poiReproofFinish(p, j4, "0".repeat(32), {})).toThrow();
+  const reproof = ledger.poiReproofFinish(p, j4, reproofId, {
+    status: "recovery-required",
+  });
+  expect(reproof.finished.reproofId).toBe(reproofId);
+  expect(() => ledger.poiReproofFinish(p, j4, reproofId, {})).toThrow();
+  expect(() => ledger.poiReproofReserve(p, j4, {})).toThrow();
+  expect(() => ledger.poiRetryReserve(p, j4, {})).toThrow();
+  // Never on the upgrade link.
+  const other = retriedJourney3();
+  expect(() => ledger.poiReproofReserve(other.p, other.j3, {})).toThrow();
+});
+test("hand-written replacement records refuse on replay", () => {
+  const { p, j3 } = retriedJourney3();
+  const j4 = journey4Of(p, j3);
+  ledger.poiReproofReserve(p, j4, {});
+  const file = ledger.ledgerFile(p, ledger.JOURNEY4);
+  const bytes = fs.readFileSync(file);
+  fs.appendFileSync(
+    file,
+    JSON.stringify({
+      type: "poi-reproof-pending",
+      reproofId: "b".repeat(32),
+      reservedAt: "x",
+      binding: {},
+    }) + "\n",
+  );
+  expect(() => ledger.inspect(p, j4)).toThrow();
+  fs.writeFileSync(file, bytes);
+  fs.appendFileSync(
+    file,
+    JSON.stringify({
+      type: "poi-retry-pending",
+      retryId: "c".repeat(32),
+      reservedAt: "x",
+      binding: {},
+    }) + "\n",
+  );
+  expect(() => ledger.inspect(p, j4)).toThrow();
+  fs.writeFileSync(file, bytes);
+  expect(ledger.inspect(p, j4).reproof.pending).not.toBeNull();
+});
+
+// --- The replacement mode over a mocked facade -------------------------------
+function circuitContext(outcomes = {}) {
+  const crypto = require("crypto");
+  const sha = (v) => crypto.createHash("sha256").update(String(v)).digest("hex");
+  const { p, j3 } = retriedJourney3();
+  const j4 = journey4Of(p, j3);
+  ledger.startPhase(p, j4);
+  ledger.consume(
+    p,
+    j4,
+    "scan-open:new",
+    ledger.policyFor(j4.caps, "scan-open:new"),
+    Date.now(),
+  );
+  const n = ledger.consume(
+    p,
+    j4,
+    "scan-range",
+    ledger.policyFor(j4.caps, "scan-range"),
+    Date.now(),
+    { target: 99999 },
+  );
+  ledger.progress(p, j4, 99999, "0x" + "6".repeat(64), n);
+  const holdId = "hold-1";
+  const noteId = "0:7";
+  const calls = [];
+  let open = 0;
+  const closable = (value) => {
+    open++;
+    let closed;
+    return {
+      ...value,
+      close: () => {
+        if (!closed) open--;
+        closed = true;
+      },
+      closed: Promise.resolve(),
+    };
+  };
+  const session = closable({
+    advancePublic: async (range) => ({
+      to: { number: range.to, hash: "0x" + "5".repeat(64) },
+      status: "applied",
+    }),
+    synchronizeTxid: async () => ({
+      count: 10,
+      serviceLatestIndex: 9,
+      capacityReached: false,
+    }),
+    openRead: async () =>
+      closable({
+        notes: async () => [
+          {
+            id: noteId,
+            txid: "0x" + "a".repeat(64),
+            spentTxid: false,
+            amount: 997500000000000n,
+          },
+        ],
+      }),
+    openRecovery: async () =>
+      closable({
+        history: async () => ({
+          records: [{ holdId, kind: "railgun-private-transfer" }],
+          nextAfter: null,
+        }),
+      }),
+    openPoiRecovery: async () =>
+      closable({
+        reproveRetired: async (id) => {
+          calls.push(["reprove", id, open]);
+          return (
+            outcomes.prepared ?? {
+              status: "reproof-prepared",
+              capsuleDigest: "c".repeat(64),
+              payloadSha256: "d".repeat(64),
+              reproofRevision: 1,
+              circuit: { from: "2f4dcbf5", to: "b7ca7ba0" },
+            }
+          );
+        },
+        submitReproof: async (id) => {
+          calls.push(["submit", id, open]);
+          return (
+            outcomes.submitted ?? {
+              status: "recovery-required",
+              stage: "response",
+              response: { classification: "accepted", diagnostic: null },
+            }
+          );
+        },
+      }),
+    observeOwnedPoi: async ({ noteId: id }) => {
+      // An owned read admits no open lane.
+      calls.push(["status", id, open]);
+      if (outcomes.status instanceof Error) throw outcomes.status;
+      return (
+        outcomes.status ?? {
+          statuses: ["Missing"],
+          allValid: false,
+          inputType: "Transact",
+        }
+      );
+    },
+  });
+  const context = {
+    facade: { openAccount: async () => session },
+    signal: new AbortController().signal,
+    milestone: (value) => calls.push(["milestone", value]),
+    owner: "0x" + "1".repeat(40),
+    readFinalized: async () => ({ number: 99999, hash: "0x" + "4".repeat(64) }),
+    previous: {
+      schema: "railgun-installed-live-reproof-rebuild-v1",
+      ledgerHeaderSha256: sha(JSON.stringify(j4)),
+      holdIdSha256: sha(holdId),
+      transactionHash: "0x" + "a".repeat(64),
+      outputNoteIdSha256: sha(noteId),
+      outputAmount: "997500000000000",
+      inputAmount: "997500000000000",
+      anchor: { number: 99999 },
+    },
+    params: outcomes.params ?? {},
+    synthetic: true,
+    mode: "live-poi-reproof",
+    vault: { unlockedAt: performance.now(), lifetimeMs: 15 * 60 * 1000 },
+    crash: () => {
+      throw Object.assign(Error("crashed"), { code: "TEST_CRASH" });
+    },
+    profile: p,
+    header: j4,
+  };
+  return { context, calls, p, j4, j3 };
+}
+const reproofMode = () =>
+  require("../tools/qualification/installed-live/live-scenario.cjs").MODES[
+    "live-poi-reproof"
+  ];
+test("the replacement mode prepares first, then one fresh Missing read with no lane open, then reserves and hands off once", async () => {
+  const { context, calls, p, j4 } = circuitContext();
+  const statusBefore = ledger.inspect(p, j4).budgets["poi-status"].length;
+  const report = await reproofMode()(context);
+  const order = calls.filter(([kind]) => kind !== "milestone");
+  expect(order.map(([kind]) => kind)).toEqual(["reprove", "status", "submit"]);
+  expect(order[1][2]).toBe(1); // only the session is open during the read
+  const milestones = calls
+    .filter(([kind]) => kind === "milestone")
+    .map(([, value]) => value.split(":")[0]);
+  expect(milestones.indexOf("ledger-reserved")).toBeLessThan(
+    milestones.indexOf("poi-reproof-submitted"),
+  );
+  const state = ledger.inspect(p, j4);
+  expect(state.budgets["poi-status"]).toHaveLength(statusBefore + 1);
+  expect(state.reproof.pending.binding).toMatchObject({
+    replacementPayloadSha256: "d".repeat(64),
+    retryId: state.retry.pending.retryId,
+  });
+  expect(state.reproof.finished.outcome).toEqual({
+    status: "recovery-required",
+    stage: "response",
+    classification: "accepted",
+    diagnostic: null,
+    code: null,
+  });
+  expect(report).toMatchObject({
+    schema: "railgun-installed-live-poi-reproof-v1",
+    skipped: false,
+    continuable: false,
+    stop: false,
+    prepared: { status: "reproof-prepared", reproofRevision: 1 },
+  });
+  expect(JSON.stringify(report)).not.toContain("c".repeat(64));
+  // Consumed: a second run refuses before opening anything.
+  const again = circuitContext();
+  again.context.profile = p;
+  again.context.header = j4;
+  again.context.previous = context.previous;
+  await expect(reproofMode()(again.context)).rejects.toThrow(
+    /replacement is consumed/,
+  );
+  expect(again.calls).toEqual([]);
+});
+test("a refused preparation spends no status read and no handoff", async () => {
+  const { context, calls, p, j4 } = circuitContext({
+    prepared: { status: "refused", stage: "eligibility" },
+  });
+  const statusBefore = ledger.inspect(p, j4).budgets["poi-status"].length;
+  const report = await reproofMode()(context);
+  expect(calls.filter(([k]) => k !== "milestone").map(([k]) => k)).toEqual([
+    "reprove",
+  ]);
+  const state = ledger.inspect(p, j4);
+  expect(state.budgets["poi-status"]).toHaveLength(statusBefore);
+  expect(state.reproof).toEqual({ pending: null, finished: null });
+  expect(report).toMatchObject({
+    prepared: { status: "refused", stage: "eligibility" },
+    reproof: null,
+    continuable: false,
+    stop: true,
+  });
+});
+test.each([
+  [
+    "an already valid output",
+    { statuses: ["Valid"], allValid: true, inputType: "Transact" },
+    { skipped: true, continuable: true, stop: false },
+  ],
+  [
+    "a failed read",
+    Object.assign(Error("x"), { code: "RAILGUN_POI_FACADE_REFUSED" }),
+    { skipped: true, continuable: false, stop: true },
+  ],
+  [
+    "a shield-typed status",
+    { statuses: ["Missing"], allValid: false, inputType: "Shield" },
+    { skipped: true, continuable: false, stop: true },
+  ],
+])("%s skips the handoff with nothing reserved", async (_name, status, expected) => {
+  const { context, calls, p, j4 } = circuitContext({ status });
+  const report = await reproofMode()(context);
+  expect(calls.some(([k]) => k === "submit")).toBe(false);
+  expect(ledger.inspect(p, j4).reproof.pending).toBeNull();
+  expect(report).toMatchObject({ ...expected, reproof: null });
+});
+test("a crash right after the reservation leaves the replacement consumed", async () => {
+  const { context, calls, p, j4 } = circuitContext({
+    params: { fault: "exit-after-poi-reproof-reserve" },
+  });
+  await expect(reproofMode()(context)).rejects.toThrow("crashed");
+  expect(calls.some(([k]) => k === "submit")).toBe(false);
+  const state = ledger.inspect(p, j4);
+  expect(state.reproof.pending).not.toBeNull();
+  expect(state.reproof.finished).toBeNull();
+  expect(() => ledger.poiReproofReserve(p, j4, {})).toThrow();
+});
+test("the replacement and circuit rebuild modes run on the circuit link only", async () => {
+  const { MODES } = require("../tools/qualification/installed-live/live-scenario.cjs");
+  const { context, j3 } = circuitContext();
+  await expect(
+    MODES["live-poi-reproof"]({ ...context, header: j3 }),
+  ).rejects.toThrow(/circuit link only/);
+  await expect(
+    MODES["live-reproof-rebuild"]({ ...context, header: j3 }),
+  ).rejects.toThrow(/circuit link only/);
+  // The circuit rebuild follows the consumed retry's own report only.
+  await expect(
+    MODES["live-reproof-rebuild"]({
+      ...context,
+      previous: { ...context.previous, schema: "railgun-installed-live-observe-v1" },
+    }),
+  ).rejects.toThrow();
+});

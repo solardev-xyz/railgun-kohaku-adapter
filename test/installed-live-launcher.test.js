@@ -586,3 +586,143 @@ test("the upgrade header names this exact identity and derives its phase caps fr
     ),
   ).toThrow();
 });
+test("the circuit header names this identity and the runtime's own POI artifacts, and derives its phase caps", () => {
+  const fs = require("fs"),
+    os = require("os"),
+    path = require("path");
+  const ledger = require("../tools/qualification/installed-live/live-ledger.cjs");
+  const directory = fs.realpathSync(
+    fs.mkdtempSync(path.join(os.tmpdir(), "installed-live-circuit-")),
+  );
+  for (const kind of ["wasm", "zkey", "vkey"])
+    fs.writeFileSync(path.join(directory, "POI_3x3." + kind), "poi " + kind);
+  const crypto = require("crypto");
+  const pins = Object.fromEntries(
+    ["wasm", "zkey", "vkey"].map((kind) => {
+      const bytes = fs.readFileSync(path.join(directory, "POI_3x3." + kind));
+      return [
+        kind,
+        {
+          bytes: bytes.length,
+          sha256: crypto.createHash("sha256").update(bytes).digest("hex"),
+        },
+      ];
+    }),
+  );
+  const runtime = { artifactDirectory: directory };
+  const sentio = {
+    ...binding,
+    rpc: { url: ledger.SENTIO },
+    predecessor: { name: ledger.JOURNEY3 },
+  };
+  const base = headerFor({ ...request, ledger: ledger.JOURNEY2 }, sentio, null);
+  const boundary = {
+    scanRanges: 622,
+    txidPages: 109,
+    scanOpenNew: 2,
+    scanOpenPending: 11,
+    poiStatus: 2,
+  };
+  const to = {
+    freedomCommit: request.hostCommit,
+    packageCommit: request.packageCommit,
+    packageTarSha256: request.packageTarPin.sha256,
+    runnerSha256: base.runnerSha256,
+  };
+  const artifacts = {
+    from: { POI_3x3: { ...ledger.RETIRED_POI_3X3 } },
+    to: { POI_3x3: pins },
+  };
+  const upgrade = {
+    from: { ...to, freedomCommit: "9".repeat(40) },
+    to,
+    reason: "x",
+    artifacts,
+  };
+  const phase = { boundary, additions: { ...ledger.REPROOF_ADDITIONS } };
+  const circuit = { ...request, ledger: ledger.JOURNEY4, runtime };
+  const header = headerFor(circuit, { ...sentio, upgrade, phase }, null);
+  expect(header.caps).toEqual({
+    sends: 2,
+    perSendMaxGasFeeWei: "2000000000000000",
+    totalMaxFeeWei: "4000000000000000",
+    ...LIVE_CAPS,
+    scanRanges: 1022,
+    txidPages: 169,
+    rebuildNew: 3,
+    scanResumes: 22,
+    poiStatus: {
+      max: 6,
+      minSpacingMs: 600000,
+      windowMs: 86400000,
+      phaseFrom: 2,
+    },
+    poiRetries: 1,
+    poiReproofs: 1,
+  });
+  for (const changed of [
+    { ...upgrade, to: { ...to, runnerSha256: "0".repeat(64) } },
+    { ...upgrade, artifacts: { ...artifacts, to: { POI_3x3: { ...pins, vkey: { ...pins.vkey, bytes: 1 } } } } },
+    { ...upgrade, artifacts: { ...artifacts, from: { POI_3x3: pins } } },
+    (({ artifacts: _a, ...rest }) => rest)(upgrade),
+  ])
+    expect(() =>
+      headerFor(circuit, { ...sentio, upgrade: changed, phase }, null),
+    ).toThrow();
+  // Re-read on every derivation: a changed runtime file refuses.
+  fs.writeFileSync(path.join(directory, "POI_3x3.zkey"), "other zkey");
+  expect(() =>
+    headerFor(circuit, { ...sentio, upgrade, phase }, null),
+  ).toThrow();
+  fs.writeFileSync(path.join(directory, "POI_3x3.zkey"), "poi zkey");
+  expect(headerFor(circuit, { ...sentio, upgrade, phase }, null)).toEqual(
+    header,
+  );
+  // The upgrade link never carries an artifact move.
+  expect(() =>
+    headerFor(
+      { ...request, ledger: ledger.JOURNEY3, runtime },
+      {
+        ...sentio,
+        predecessor: { name: ledger.JOURNEY2 },
+        upgrade,
+        phase: { boundary, additions: { ...ledger.UPGRADE_ADDITIONS } },
+      },
+      null,
+    ),
+  ).toThrow();
+});
+test("each upgrade link admits only its own modes and the continuation stages", () => {
+  const { assertModeAdmitted } = require("../tools/qualification/installed-live/live-launcher.cjs");
+  const ledger = require("../tools/qualification/installed-live/live-ledger.cjs");
+  const continuing = [
+    "live-poi-status",
+    "live-unshield",
+    "live-observe",
+    "live-summary",
+    "live-reconcile",
+  ];
+  for (const mode of ["live-reproof-rebuild", "live-poi-reproof", ...continuing])
+    expect(() => assertModeAdmitted(ledger.JOURNEY4, mode)).not.toThrow();
+  for (const mode of [
+    "live-upgrade-rebuild",
+    "live-poi-retry",
+    "live-rebuild",
+    "live-submit",
+    "live-poi",
+  ])
+    expect(() => assertModeAdmitted(ledger.JOURNEY4, mode)).toThrow();
+  for (const mode of ["live-upgrade-rebuild", "live-poi-retry", ...continuing])
+    expect(() => assertModeAdmitted(ledger.JOURNEY3, mode)).not.toThrow();
+  for (const mode of ["live-reproof-rebuild", "live-poi-reproof", "live-poi"])
+    expect(() => assertModeAdmitted(ledger.JOURNEY3, mode)).toThrow();
+  for (const name of [ledger.JOURNEY2, ledger.RESUME3, ledger.FIRST])
+    for (const mode of [
+      "live-upgrade-rebuild",
+      "live-poi-retry",
+      "live-reproof-rebuild",
+      "live-poi-reproof",
+    ])
+      expect(() => assertModeAdmitted(name, mode)).toThrow();
+  expect(() => assertModeAdmitted(ledger.JOURNEY2, "live-poi")).not.toThrow();
+});
