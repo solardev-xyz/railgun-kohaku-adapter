@@ -454,7 +454,9 @@ function createRailgunPoiLane(options) {
   // is spent, only when the pinned retired POI circuit key verifies the exact
   // stored original proof and the current key rejects it. Local preparation
   // with fresh membership roots; no handoff, status or disclosure authority.
-  function reproveRetired(holdId) {
+  // As prepare, the fixed route names the input's creator type and the genuine
+  // membership owner reauthenticates it; a mismatched route refuses there.
+  function reproveRetired(holdId, type) {
     try {
       id(holdId);
     } catch {
@@ -495,15 +497,26 @@ function createRailgunPoiLane(options) {
       }
       current();
       assert.equal(transition.payloadSha256, entry.payloadSha256);
-      await review(disclosure("reprove-retired", holdId));
+      await review(
+        disclosure(
+          type === "Shield"
+            ? "reprove-retired-shield"
+            : "reprove-retired-transact",
+          holdId,
+        ),
+      );
       current();
       let membership,
         outcome,
         operationError,
         operationFailed = false;
       try {
-        membership = await openRailgunOwnTransactPoiMembership({
-          identity,
+        membership = await (
+          type === "Shield"
+            ? openRailgunOwnPoiMembership
+            : openRailgunOwnTransactPoiMembership
+        )({
+          ...(type === "Transact" ? { identity } : {}),
           enrollment,
           coordinator,
           archive,
@@ -754,7 +767,8 @@ function createRailgunPoiLane(options) {
     // After the spent retry, one replacement proof under the current POI
     // circuit for a retired-circuit original, then its single explicit handoff,
     // gated by fresh owned Missing status. Never automatic.
-    reproveRetired: (holdId) => reproveRetired(holdId),
+    reproveRetiredShield: (holdId) => reproveRetired(holdId, "Shield"),
+    reproveRetiredTransact: (holdId) => reproveRetired(holdId, "Transact"),
     submitReproof: (holdId) => reproofHold(holdId),
     close,
     closed,

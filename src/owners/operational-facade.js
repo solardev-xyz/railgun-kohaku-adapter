@@ -664,9 +664,13 @@ function initializeRailgunMain(options) {
                     active();
                     return retain(companion.retryAttempted(holdId));
                   },
-                  reproveRetired(holdId) {
+                  reproveRetiredShield(holdId) {
                     active();
-                    return retain(companion.reproveRetired(holdId));
+                    return retain(companion.reproveRetiredShield(holdId));
+                  },
+                  reproveRetiredTransact(holdId) {
+                    active();
+                    return retain(companion.reproveRetiredTransact(holdId));
                   },
                   submitReproof(holdId) {
                     active();

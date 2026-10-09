@@ -606,8 +606,11 @@ export interface PoiRecoveryLane extends LaneLifetime {
   /** After the spent retry, one local replacement proof for the same output,
    * only when the pinned retired POI circuit key verifies the exact stored
    * original proof and the current key rejects it. Fresh membership roots; no
-   * handoff, status or disclosure authority. Revisable until it is attempted. */
-  reproveRetired(holdId: string): Promise<PoiReproofOutcome>;
+   * handoff, status or disclosure authority. Revisable until it is attempted.
+   * The route names the input's creator type, as prepareShield/prepareTransact;
+   * a mismatched route can disclose before source classification refuses it. */
+  reproveRetiredShield(holdId: string): Promise<PoiReproofOutcome>;
+  reproveRetiredTransact(holdId: string): Promise<PoiReproofOutcome>;
   /** The replacement's single explicit handoff: a new request with its own
    * local-time ID, gated like the retry by this session's fresh owned Missing
    * status, reserved durably before sending, terminal for this lane. */

@@ -771,9 +771,12 @@ function reproofFixture(entry) {
   });
   return { f, lane, stored, receipt };
 }
-test("reproveRetired checks the exact original, reviews, proves afresh and records the replacement", async () => {
+test.each([
+  ["Shield", "reproveRetiredShield", "reprove-retired-shield"],
+  ["Transact", "reproveRetiredTransact", "reprove-retired-transact"],
+])("the %s route checks the exact original, reviews, proves afresh and records the replacement", async (type, method, operation) => {
   const { f, lane, stored, receipt } = reproofFixture((f) => spentEntry(f));
-  const result = await lane.reproveRetired(f.row.entry.id);
+  const result = await lane[method](f.row.entry.id);
   expect(result).toEqual({
     status: "reproof-prepared",
     capsuleDigest: hex("4"),
@@ -797,14 +800,14 @@ test("reproveRetired checks the exact original, reviews, proves afresh and recor
   ]);
   expect(checked.payload).toBe(stored.payload);
   expect(checked.artifactDirectory).toBe(f.input.artifactDirectory);
-  // One read review before any membership opening, then the Transact route only.
+  // One read review before any membership opening, then the named route only.
   expect(f.input.reviewDisclosures).toHaveBeenCalledTimes(1);
   expect(f.input.reviewDisclosures.mock.calls[0][0]).toMatchObject({
-    operation: "reprove-retired",
+    operation,
     poiSubmissionEnabled: false,
   });
   expect(state.membership).toHaveBeenCalledTimes(1);
-  expect(state.membership.mock.calls[0][1]).toBe("Transact");
+  expect(state.membership.mock.calls[0][1]).toBe(type);
   expect(state.prove.mock.calls[0][0].membershipReceipt).toBe(f.membership.receipt);
   const prepared = f.store.prepareReproof.mock.calls[0][0];
   expect(prepared.proof).toBe(f.proof);
@@ -828,9 +831,9 @@ test.each([
   ["an unspent retry", (f) => spentEntry(f, { retry: undefined })],
   ["an attempted replacement", (f) => spentEntry(f, { reproof: { attempt: {} } })],
   ["no output commitment", (f) => spentEntry(f, { payload: { blindedCommitmentsOut: [] } })],
-])("reproveRetired refuses an entry with %s before any check, review or membership", async (_name, entry) => {
+])("a replacement refuses an entry with %s before any check, review or membership", async (_name, entry) => {
   const { f, lane } = reproofFixture(entry);
-  expect(await lane.reproveRetired(f.row.entry.id)).toEqual({ status: "refused", stage: "entry" });
+  expect(await lane.reproveRetiredShield(f.row.entry.id)).toEqual({ status: "refused", stage: "entry" });
   expect(state.check).not.toHaveBeenCalled();
   expect(f.input.reviewDisclosures).not.toHaveBeenCalled();
   expect(state.membership).not.toHaveBeenCalled();
@@ -842,7 +845,7 @@ test("a verifier failure is a refusal, never an eligible rejection", async () =>
   state.check = jest.fn(async () => {
     throw Error("verifier timeout");
   });
-  expect(await lane.reproveRetired(f.row.entry.id)).toEqual({ status: "refused", stage: "circuit" });
+  expect(await lane.reproveRetiredShield(f.row.entry.id)).toEqual({ status: "refused", stage: "circuit" });
   expect(f.input.reviewDisclosures).not.toHaveBeenCalled();
   expect(state.membership).not.toHaveBeenCalled();
   expect(f.store.prepareReproof).not.toHaveBeenCalled();
@@ -852,14 +855,14 @@ test("a verifier failure is a refusal, never an eligible rejection", async () =>
 test("a receipt for another payload never reaches review", async () => {
   const { f, lane } = reproofFixture((f) => spentEntry(f));
   state.check = jest.fn(async () => Object.freeze({ payloadSha256: hex("9") }));
-  await expect(lane.reproveRetired(f.row.entry.id)).rejects.toThrow();
+  await expect(lane.reproveRetiredShield(f.row.entry.id)).rejects.toThrow();
   expect(f.input.reviewDisclosures).not.toHaveBeenCalled();
   expect(state.membership).not.toHaveBeenCalled();
 });
 test("a refused store preparation is reported and the membership drains", async () => {
   const { f, lane } = reproofFixture((f) => spentEntry(f));
   f.store.prepareReproof = jest.fn(async () => ({ status: "refused", stage: "persist" }));
-  expect(await lane.reproveRetired(f.row.entry.id)).toEqual({
+  expect(await lane.reproveRetiredShield(f.row.entry.id)).toEqual({
     status: "refused",
     stage: "store:persist",
   });
@@ -867,12 +870,12 @@ test("a refused store preparation is reported and the membership drains", async 
   lane.close();
   await lane.closed;
 });
-test("reproveRetired refuses without the hold's single attempted intent", async () => {
+test("reproveRetiredShield refuses without the hold's single attempted intent", async () => {
   const f = fixture(),
     lane = f.createRailgunPoiLane(f.input);
   attemptedStore(f, [{ capsuleDigest: hex("4"), state: "prepared" }]);
   state.check = jest.fn();
-  await expect(lane.reproveRetired(f.row.entry.id)).rejects.toThrow();
+  await expect(lane.reproveRetiredShield(f.row.entry.id)).rejects.toThrow();
   expect(state.check).not.toHaveBeenCalled();
 });
 test("submitReproof is one explicit replacement plan carrying only the session evidence accessor", async () => {

@@ -1849,7 +1849,7 @@ function circuitContext(outcomes = {}) {
       }),
     openPoiRecovery: async () =>
       closable({
-        reproveRetired: async (id) => {
+        reproveRetiredShield: async (id) => {
           calls.push(["reprove", id, open]);
           return (
             outcomes.prepared ?? {

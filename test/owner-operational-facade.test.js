@@ -237,7 +237,8 @@ function fixture() {
         "recoverOutput",
         "recoverAttemptedOutput",
         "retryAttempted",
-        "reproveRetired",
+        "reproveRetiredShield",
+        "reproveRetiredTransact",
         "submitReproof",
       ])
         value[name] = jest.fn(() =>
@@ -1370,7 +1371,8 @@ test("retained POI companion uses fixed owners and excludes simultaneous lanes",
       "recoverOutput",
       "recoverAttemptedOutput",
       "retryAttempted",
-      "reproveRetired",
+      "reproveRetiredShield",
+      "reproveRetiredTransact",
       "submitReproof",
       "signal",
       "closed",
@@ -1570,9 +1572,12 @@ test("a completed owned POI read leaves session-private retry evidence for the P
   expect(original.retryAttempted).toHaveBeenCalledWith("a".repeat(64));
   expect(original.retryAttempted.mock.calls[0]).toHaveLength(1);
   // The replacement actions forward exactly the hold ID, nothing else.
-  await lane.reproveRetired("b".repeat(64));
-  expect(original.reproveRetired).toHaveBeenCalledWith("b".repeat(64));
-  expect(original.reproveRetired.mock.calls[0]).toHaveLength(1);
+  await lane.reproveRetiredShield("b".repeat(64));
+  expect(original.reproveRetiredShield).toHaveBeenCalledWith("b".repeat(64));
+  expect(original.reproveRetiredShield.mock.calls[0]).toHaveLength(1);
+  await lane.reproveRetiredTransact("d".repeat(64));
+  expect(original.reproveRetiredTransact).toHaveBeenCalledWith("d".repeat(64));
+  expect(original.reproveRetiredTransact.mock.calls[0]).toHaveLength(1);
   await lane.submitReproof("c".repeat(64));
   expect(original.submitReproof).toHaveBeenCalledWith("c".repeat(64));
   expect(original.submitReproof.mock.calls[0]).toHaveLength(1);

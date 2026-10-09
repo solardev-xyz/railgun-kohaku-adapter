@@ -1371,7 +1371,9 @@ async function poiReproof(context) {
     assert.equal(output.spentTxid, false);
     const hold = bound(await holds(session, signal, owner, milestone), 'railgun-private-transfer', previous.holdIdSha256);
     lane = await session.openPoiRecovery({ signal, reviewDisclosures: accept('poi-reproof-prepare') });
-    const prepared = await lane.reproveRetired(hold.holdId).then(
+    // The original handoff prepared through the Shield route (live-poi), so the
+    // replacement uses the same route; a mismatch refuses in the membership owner.
+    const prepared = await lane.reproveRetiredShield(hold.holdId).then(
       (value) => value,
       (error) => ({ status: 'error', code: error?.code ?? 'unknown-error' })
     );

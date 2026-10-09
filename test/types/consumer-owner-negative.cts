@@ -100,7 +100,9 @@ poi.retryAttempted("id", { status: "Missing" });
 // @ts-expect-error submit takes no retry flag
 poi.submit("id", true);
 // @ts-expect-error a replacement accepts no caller proof, payload or circuit
-poi.reproveRetired("id", { proof: {} });
+poi.reproveRetiredShield("id", { proof: {} });
+// @ts-expect-error no generic replacement route or type selector
+poi.reproveRetired("id");
 // @ts-expect-error a replacement handoff accepts no caller status or evidence
 poi.submitReproof("id", { status: "Missing" });
 declare const output: Extract<owner.PoiOutputOutcome, { status: "matched" }>;

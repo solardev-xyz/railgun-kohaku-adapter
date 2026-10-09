@@ -132,8 +132,12 @@ correct their inputs. The package pins the current artifacts and keeps the
 retired verification key (`src/execution/railgun-poi-retired-vkey.json`) for one
 purpose only: deciding whether a stored attempted proof was made with it.
 
-`reproveRetired(holdId)` finds the hold's attempted entry exactly as
-`retryAttempted` does. It admits only an entry with a spent retry, one output
+`reproveRetiredShield(holdId)` and `reproveRetiredTransact(holdId)` find the
+hold's attempted entry exactly as `retryAttempted` does. Like `prepareShield`
+and `prepareTransact`, the route names the input note's creator type, and the
+genuine membership owner reauthenticates it; a mismatched route can disclose
+before source classification refuses it. Use the route the original
+preparation used. It admits only an entry with a spent retry, one output
 commitment and no replacement attempt. Eligibility is two completed
 verifications of the exact stored original payload with node-compatible public
 inputs: the retired key accepts it and the current key rejects it. A verifier

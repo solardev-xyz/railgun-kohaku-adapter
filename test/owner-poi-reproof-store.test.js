@@ -262,6 +262,18 @@ test('a replacement appends to the spent-retry entry, migrates to V5 and keeps t
   reopened.close();
 });
 
+test('a Shield-created input prepares on the same terms as a Transact-created one', async () => {
+  seed(4, [entry()]);
+  state.history = history(undefined, { preparation: { creator: { type: 'Shield' } } });
+  const store = await open();
+  expect(await store.prepareReproof(prepareOptions())).toMatchObject({
+    status: 'reproof-prepared',
+    reproofRevision: 1,
+  });
+  expect(stored().version).toBe(5);
+  store.close();
+});
+
 test('preparation revises only an unsent replacement, is idempotent and is bounded', async () => {
   const { store } = await prepared();
   const writes = state.writes;
@@ -314,8 +326,8 @@ test.each([
     return {};
   }],
   ['an unregistered proof', () => ({ proof: Object.freeze({}) })],
-  ['a shield proof', () => {
-    state.history = history(undefined, { preparation: { creator: { type: 'Shield' } } });
+  ['an unsupported creator type', () => {
+    state.history = history(undefined, { preparation: { creator: { type: 'Legacy' } } });
     return {};
   }],
   ['another capsule', () => {

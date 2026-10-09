@@ -918,7 +918,8 @@ async function createRailgunPoiIntentStore({
       const circuit = assertRailgunRetiredPoiCircuit(transition, expected.payloadSha256);
       assert.deepEqual({ ...circuit }, { ...CIRCUIT });
       const history = assertRailgunOwnPoiProof(proof, enrollment, coordinator);
-      assert.equal(history.preparation.creator.type, 'Transact');
+      // The genuine proof history supplies the input's creator type, as prepare.
+      assert.ok(['Shield', 'Transact'].includes(history.preparation.creator.type));
       const payload = bindRailgunOwnPoiPayload(history.payload, history.expected);
       assertRailgunOwnPoiPayloadShape(payload, history.capture.capsule);
       assert.equal(hash(JSON.stringify(payload)), history.payloadSha256);
