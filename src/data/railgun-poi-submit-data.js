@@ -159,7 +159,7 @@ const responseShape = (value, keys) => {
   assert.ok(value && typeof value === 'object' && !Array.isArray(value));
   assert.deepEqual(Reflect.ownKeys(value).sort(), [...keys].sort());
 };
-const responseDiagnostic = (classification, httpStatus, responseBytes) =>
+const responseDiagnostic = (classification, httpStatus, responseBytes, diagnostic = null) =>
   Object.freeze({
     classification,
     httpStatus,
@@ -169,7 +169,68 @@ const responseDiagnostic = (classification, httpStatus, responseBytes) =>
     acceptanceVerified: false,
     disclosureEnabled: false,
     spendingEnabled: false,
+    diagnostic,
   });
+// Closed public JSON-RPC error categories. Neither the provider's message,
+// its data nor any other body content is retained: unknown values are 'other'.
+const RPC_CODES = new Map([
+  [-32700, 'parse-error'],
+  [-32600, 'invalid-request'],
+  [-32601, 'method-not-found'],
+  [-32602, 'invalid-params'],
+  [-32603, 'internal-error'],
+]);
+const MESSAGES = new Map([
+  ['Invalid params', 'invalid-params'],
+  ['Invalid proof', 'invalid-proof'],
+  ['Validation error: Invalid txid merkleroot.', 'invalid-txid-merkleroot'],
+  ['Validation error: POI merkleroots must all exist.', 'poi-merkleroots-missing'],
+  ['Error occurred while executing the JSON-RPC method', 'execution-error-hidden'],
+  ['Internal server error', 'internal-server-error'],
+  ['Method not found', 'method-not-found'],
+  ['Invalid listKey', 'invalid-list-key'],
+]);
+/** A redacted error category for an error envelope (HTTP failure or 200 error).
+ * Diagnostic only: it never establishes delivery, rejection, acceptance or
+ * that a retry is safe, and it changes no classification above. */
+function errorDiagnostic(body, submission) {
+  try {
+    assert.ok(!(body[0] === 0xef && body[1] === 0xbb && body[2] === 0xbf));
+    const text = new TextDecoder('utf-8', { fatal: true }).decode(body);
+    const value = JSON.parse(text);
+    const { idToken, codeToken } = scanResponse(text);
+    assert.ok(value && typeof value === 'object' && !Array.isArray(value));
+    responseShape(value, ['jsonrpc', 'id', 'error']);
+    assert.equal(value.jsonrpc, '2.0');
+    const error = value.error;
+    assert.ok(error && typeof error === 'object' && !Array.isArray(error));
+    const hasData = Object.hasOwn(error, 'data');
+    responseShape(error, hasData ? ['code', 'message', 'data'] : ['code', 'message']);
+    assert.ok(/^(?:0|-?[1-9][0-9]*)$/.test(codeToken) && Number.isSafeInteger(error.code));
+    assert.equal(typeof error.message, 'string');
+    const code = error.code;
+    return Object.freeze({
+      envelope: idToken === String(submission.requestId) ? 'matched-id' : 'other-id',
+      rpcCode:
+        RPC_CODES.get(code) ?? (code <= -32000 && code >= -32099 ? 'server-error' : 'other'),
+      messageCategory: MESSAGES.get(error.message) ?? 'other',
+      dataCategory: !hasData
+        ? 'none'
+        : error.data === 'Invalid listKey'
+          ? 'invalid-list-key'
+          : Array.isArray(error.data)
+            ? 'schema-errors'
+            : 'other',
+    });
+  } catch {
+    return Object.freeze({
+      envelope: 'invalid',
+      rpcCode: null,
+      messageCategory: null,
+      dataCategory: null,
+    });
+  }
+}
 
 /** Classifies caller-supplied evidence only; actual service response shape remains
  * unqualified. No classification establishes not-submitted, non-delivery,
@@ -215,7 +276,13 @@ function inspectRailgunPoiResponse(input) {
   } catch {
     throw fail();
   }
-  if (httpStatus !== 200) return responseDiagnostic('http-failure', httpStatus, body.length);
+  if (httpStatus !== 200)
+    return responseDiagnostic(
+      'http-failure',
+      httpStatus,
+      body.length,
+      errorDiagnostic(body, submission)
+    );
   let classification;
   try {
     // TextDecoder normally strips a BOM: refuse its bytes explicitly instead.
@@ -245,7 +312,14 @@ function inspectRailgunPoiResponse(input) {
   } catch {
     classification = 'malformed';
   }
-  return responseDiagnostic(classification, httpStatus, body.length);
+  return responseDiagnostic(
+    classification,
+    httpStatus,
+    body.length,
+    ['rpc-error', 'unmatched', 'malformed'].includes(classification)
+      ? errorDiagnostic(body, submission)
+      : null
+  );
 }
 
 module.exports = {

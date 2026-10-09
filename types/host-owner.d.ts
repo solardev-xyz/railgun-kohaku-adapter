@@ -518,6 +518,31 @@ export type PoiSubmissionOutcome = Readonly<{
     acceptanceVerified: false;
     disclosureEnabled: false;
     spendingEnabled: false;
+    /** Redacted closed error category; diagnostic only, never acceptance or retry authority. */
+    diagnostic: Readonly<{
+      envelope: 'matched-id' | 'other-id' | 'invalid';
+      rpcCode:
+        | 'parse-error'
+        | 'invalid-request'
+        | 'method-not-found'
+        | 'invalid-params'
+        | 'internal-error'
+        | 'server-error'
+        | 'other'
+        | null;
+      messageCategory:
+        | 'invalid-params'
+        | 'invalid-proof'
+        | 'invalid-txid-merkleroot'
+        | 'poi-merkleroots-missing'
+        | 'execution-error-hidden'
+        | 'internal-server-error'
+        | 'method-not-found'
+        | 'invalid-list-key'
+        | 'other'
+        | null;
+      dataCategory: 'none' | 'invalid-list-key' | 'schema-errors' | 'other' | null;
+    }> | null;
   }>;
 }>;
 export type PoiOutputOutcome =
