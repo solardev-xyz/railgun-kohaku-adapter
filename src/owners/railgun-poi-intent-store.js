@@ -940,7 +940,10 @@ async function createRailgunPoiIntentStore({
         entry.attempt.submission.bodySha256 === expected.bodySha256 &&
         entry.retry.reservedAt === expected.reservedAt &&
         entry.bindingDigest === history.capture.bindingDigest &&
-        JSON.stringify(entry.selector) === JSON.stringify(history.capture.selector);
+        // Field by field: the capture's own key order is not the record's.
+        ['tree', 'position', 'nullifier', 'noteHash'].every(
+          (key) => entry.selector[key] === history.capture.selector[key]
+        );
       stage = 'recovery';
       const result = await withRailgunOwnOperationRecovery(
         {

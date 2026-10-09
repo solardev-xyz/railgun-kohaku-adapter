@@ -262,6 +262,32 @@ test('a replacement appends to the spent-retry entry, migrates to V5 and keeps t
   reopened.close();
 });
 
+test('a genuine capture lists its selector fields in its own order', async () => {
+  seed(4, [entry()]);
+  const { tree, position, nullifier, noteHash } = selector;
+  state.capture = { ...state.capture, selector: { noteHash, nullifier, position, tree } };
+  state.history = history();
+  const store = await open();
+  expect(await store.prepareReproof(prepareOptions())).toMatchObject({
+    status: 'reproof-prepared',
+    reproofRevision: 1,
+  });
+  // The record keeps its own canonical selector.
+  expect(Object.keys(stored().entries[0].selector)).toEqual(['tree', 'position', 'nullifier', 'noteHash']);
+  store.close();
+});
+
+test('a capture of another selector refuses', async () => {
+  seed(4, [entry()]);
+  state.capture = { ...state.capture, selector: { ...selector, position: 8 } };
+  state.history = history();
+  const store = await open();
+  const writes = state.writes;
+  expect((await store.prepareReproof(prepareOptions())).status).toBe('refused');
+  expect(state.writes).toBe(writes);
+  store.close();
+});
+
 test('a Shield-created input prepares on the same terms as a Transact-created one', async () => {
   seed(4, [entry()]);
   state.history = history(undefined, { preparation: { creator: { type: 'Shield' } } });

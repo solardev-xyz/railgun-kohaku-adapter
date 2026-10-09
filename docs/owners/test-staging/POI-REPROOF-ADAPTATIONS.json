@@ -4,7 +4,7 @@
   "reason": "The replacement proof deliberately changes one public contract: the intent store gains exactly prepareReproof and beginReproofAttempt and a V5 document. The store method list stays exact with the two added names; the unsupported-version case moves from 5 (now valid) to 6. No assertion is skipped or widened.",
   "reviewedSource": {
     "path": "src/owners/railgun-poi-intent-store.js",
-    "sha256": "e46afd8031e03190ba4367fe483fe5e11014ad90799e69c0890a0f01d56f3128"
+    "sha256": "0c89b8aa530e61578872065a153606b8dad14b4d8c2830bfbd7e8658ba0b19ef"
   },
   "changes": [
     {
