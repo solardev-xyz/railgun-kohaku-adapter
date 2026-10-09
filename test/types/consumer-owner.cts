@@ -161,6 +161,10 @@ async function poi(session: owner.AccountSession) {
       void uncertain;
     }
     await lane.submit(prepared.capsuleDigest);
+    const retried: "refused" | "recovery-required" = (
+      await lane.retryAttempted(prepared.capsuleDigest)
+    ).status;
+    void retried;
   }
   lane.close();
   await lane.closed;

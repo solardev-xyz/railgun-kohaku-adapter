@@ -1,8 +1,5 @@
 /** Encrypted account-owned POI history. V1 is prepared-only; V2 records
- * conservative attempts; V3 also admits combined output/unshield payloads; V4
- * also records at most one durable retry reservation per attempted entry. The
- * original attempt bytes stay unchanged, and V4 is written only by that
- * reservation, so older readers refuse a document that has spent its retry.
+ * conservative attempts; V3 also admits combined output/unshield payloads.
  * No document version grants sender or restored disclosure authority.
  * Data rename and manifest-floor advancement are separate writes: if the latter
  * fails, ordinary reopen preserves the attempt and repairs the floor, but an old
@@ -13,24 +10,23 @@ const assert = require('assert/strict');
 const fs = require('fs');
 const path = require('path');
 const { randomBytes, createHash } = require('crypto');
-const { createPrivacyScope, getPrivacyContext } = require('./context-bindings');
-const { createPrivacyStorage, getPrivacyStoragePath } = require('./host-bindings').storage;
-const { normalizeRailgunPoiPayload } = require("../data/railgun-poi-payload.js");
-const { assertRailgunOwnPoiPayloadShape } = require("../data/railgun-own-poi-shape-data.js");
+const { createPrivacyScope, getPrivacyContext } = require('../../src/owners/context-bindings');
+const { createPrivacyStorage, getPrivacyStoragePath } = require('../../src/owners/host-bindings').storage;
+const { normalizeRailgunPoiPayload } = require("../../src/data/railgun-poi-payload.js");
+const { assertRailgunOwnPoiPayloadShape } = require("../../src/data/railgun-own-poi-shape-data.js");
 const {
   prepareRailgunPoiSubmission,
   normalizeRailgunPoiSubmission,
-} = require("../data/railgun-poi-submit-data.js");
+} = require("../../src/data/railgun-poi-submit-data.js");
 const RECORD = 'railgun-poi-intents-v1';
 const MAX_RECORDS = 32,
   MAX_SEQUENCE = 128,
   MAX_REVISIONS = 4,
   FUTURE_TRANSITIONS = 3;
 const owners = new Set();
-// One transition for the attempt and one for its single retry reservation.
-const transitions = (entry) => Number(entry.state === 'attempted') + Number(Boolean(entry.retry));
+const attemptTransitions = (entry) => Number(entry.state === 'attempted');
 const reserved = (entries) =>
-  entries.reduce((total, entry) => total + FUTURE_TRANSITIONS - transitions(entry), 0);
+  entries.reduce((total, entry) => total + FUTURE_TRANSITIONS - attemptTransitions(entry), 0);
 const hash = (text) => createHash('sha256').update(text).digest('hex');
 const digest = (v) => typeof v === 'string' && /^[0-9a-f]{64}$/.test(v);
 const integer = (v) => Number.isSafeInteger(v) && v >= 0 && v <= MAX_SEQUENCE;
@@ -61,7 +57,7 @@ async function createRailgunPoiIntentStore({
 }) {
   // Enrollment imports this store. Proof/recovery modules import enrollment;
   // keep those imports out of initialization to preserve the module boundary.
-  const { isRailgunAccountEnrollment } = require("./railgun-account-enrollment.js");
+  const { isRailgunAccountEnrollment } = require("../../src/owners/railgun-account-enrollment.js");
   const context = getPrivacyContext(handle),
     subject = context.subject;
   assert.ok(isRailgunAccountEnrollment(enrollment) && !enrollment.signal.aborted);
@@ -114,11 +110,9 @@ async function createRailgunPoiIntentStore({
     enrollment.getContext('storage');
   };
   function record(value, version) {
-    assert.ok([1, 2, 3, 4].includes(version));
+    assert.ok([1, 2, 3].includes(version));
     const attempted = value?.state === 'attempted';
-    assert.ok(value?.state === 'prepared' || ([2, 3, 4].includes(version) && attempted));
-    const retried = attempted && Object.hasOwn(value, 'retry');
-    assert.ok(!retried || version === 4);
+    assert.ok(value?.state === 'prepared' || ([2, 3].includes(version) && attempted));
     shape(value, [
       'capsuleDigest',
       'bindingDigest',
@@ -129,7 +123,6 @@ async function createRailgunPoiIntentStore({
       'revision',
       'state',
       ...(attempted ? ['attempt'] : []),
-      ...(retried ? ['retry'] : []),
     ]);
     assert.ok(
       digest(value.capsuleDigest) && digest(value.bindingDigest) && digest(value.inputSha256)
@@ -152,7 +145,7 @@ async function createRailgunPoiIntentStore({
     const payload = normalizeRailgunPoiPayload(value.payload);
     // V3 is the whole-document older-reader refusal boundary. Payload shape
     // is structural data only; genuine proof/recovery bindings remain required.
-    if (version < 3)
+    if (version !== 3)
       assert.equal(
         BigInt(payload.railgunTxidIfHasUnshield) === 0n,
         payload.blindedCommitmentsOut.length === 1
@@ -169,15 +162,6 @@ async function createRailgunPoiIntentStore({
       assert.deepEqual(submission.payload, payload);
       attempt = Object.freeze({ attemptedAt, submission });
     }
-    let retry;
-    if (retried) {
-      shape(value.retry, ['reservedAt', 'bodySha256']);
-      const { reservedAt, bodySha256 } = value.retry;
-      assert.ok(Number.isSafeInteger(reservedAt) && reservedAt > attempt.attemptedAt);
-      // The retry is the identical original request: one body, one digest.
-      assert.equal(bodySha256, attempt.submission.bodySha256);
-      retry = Object.freeze({ reservedAt, bodySha256 });
-    }
     const result = freeze({
       capsuleDigest: value.capsuleDigest,
       bindingDigest: value.bindingDigest,
@@ -193,7 +177,6 @@ async function createRailgunPoiIntentStore({
       revision: value.revision,
       state: value.state,
       ...(attempted ? { attempt } : {}),
-      ...(retried ? { retry } : {}),
     });
     // Reserve the entire future canonical envelope now, including its duplicated
     // payload. A further 8 KiB/entry is reserved for two bounded observations.
@@ -205,7 +188,6 @@ async function createRailgunPoiIntentStore({
             ...result,
             state: 'attempted',
             attempt: { attemptedAt: Number.MAX_SAFE_INTEGER, submission: envelope },
-            retry: { reservedAt: Number.MAX_SAFE_INTEGER, bodySha256: envelope.bodySha256 },
           };
     assert.ok(Buffer.byteLength(JSON.stringify(maximum)) <= 16 * 1024);
     return result;
@@ -214,7 +196,7 @@ async function createRailgunPoiIntentStore({
     assert.ok(typeof text === 'string' && Buffer.byteLength(text) <= 800 * 1024);
     const value = JSON.parse(text);
     shape(value, ['version', 'binding', 'walletId', 'lease', 'sequence', 'entries']);
-    assert.ok([1, 2, 3, 4].includes(value.version));
+    assert.ok([1, 2, 3].includes(value.version));
     assert.equal(value.binding, binding);
     assert.equal(value.walletId, walletId);
     assert.ok(digest(value.lease) && integer(value.sequence));
@@ -224,7 +206,7 @@ async function createRailgunPoiIntentStore({
     assert.equal(new Set(entries.map((v) => v.selector.nullifier)).size, entries.length);
     assert.equal(
       value.sequence,
-      entries.reduce((n, v) => n + v.revision + transitions(v), 0)
+      entries.reduce((n, v) => n + v.revision + attemptTransitions(v), 0)
     );
     assert.ok(value.sequence + reserved(entries) <= MAX_SEQUENCE);
     return {
@@ -368,8 +350,7 @@ async function createRailgunPoiIntentStore({
       const combined =
         input.payload.blindedCommitmentsOut.length === 1 &&
         BigInt(input.payload.railgunTxidIfHasUnshield) !== 0n;
-      // Never lower a document version: V4 already admits combined payloads.
-      const version = combined ? Math.max(3, current.version) : current.version;
+      const version = combined ? 3 : current.version;
       const entry = record({ ...input, revision: (old?.revision || 0) + 1 }, version);
       const next = {
         ...current,
@@ -393,10 +374,10 @@ async function createRailgunPoiIntentStore({
       shape(options, ['proof', 'coordinator', 'signal']);
       const { proof, coordinator, signal } = options;
       assert.ok(signal instanceof AbortSignal && !signal.aborted);
-      const { assertRailgunOwnPoiProof } = require("./railgun-own-poi-proof.js");
-      const { bindRailgunOwnPoiPayload } = require("./railgun-own-poi-proof-data.js");
-      const { withRailgunOwnOperationRecovery } = require("./railgun-own-operation.js");
-      const { assertRailgunOwnPoiCapture } = require("../data/railgun-own-poi-binding.js");
+      const { assertRailgunOwnPoiProof } = require("../../src/owners/railgun-own-poi-proof.js");
+      const { bindRailgunOwnPoiPayload } = require("../../src/owners/railgun-own-poi-proof-data.js");
+      const { withRailgunOwnOperationRecovery } = require("../../src/owners/railgun-own-operation.js");
+      const { assertRailgunOwnPoiCapture } = require("../../src/data/railgun-own-poi-binding.js");
       const lifetime = AbortSignal.any([signal, scope.signal]);
       const history = assertRailgunOwnPoiProof(proof, enrollment, coordinator);
       // The genuine proof history supplies the supported input type. Retained
@@ -513,11 +494,11 @@ async function createRailgunPoiIntentStore({
         return record(entry, current.version);
       });
       currentAttempt();
-      const { withRailgunOwnOperationRecovery } = require("./railgun-own-operation.js");
+      const { withRailgunOwnOperationRecovery } = require("../../src/owners/railgun-own-operation.js");
       const {
         assertRailgunOwnPoiCapture,
         assertRailgunOwnPoiStableCapture,
-      } = require("../data/railgun-own-poi-binding.js");
+      } = require("../../src/data/railgun-own-poi-binding.js");
       const bind = (capture) => {
         assert.equal(capture.capsuleDigest, baseline.capsuleDigest);
         assert.equal(capture.bindingDigest, baseline.bindingDigest);
@@ -619,173 +600,9 @@ async function createRailgunPoiIntentStore({
       drain();
     }
   }
-  // One durable reservation for re-sending an attempted entry's identical
-  // original request. It is consumed once written, whether or not a send
-  // follows, and a reserved entry can never be reserved again. Writing it is
-  // the only V4 migration. It grants no send, status or disclosure authority.
-  async function reserveRetry(options) {
-    if (mutating) return Object.freeze({ status: 'refused', stage: 'busy' });
-    mutating = true;
-    pending++;
-    let stage = 'context',
-      possiblyCommitted = false;
-    const refused = () =>
-      Object.freeze({
-        status: possiblyCommitted ? 'recovery-required' : 'refused',
-        stage,
-      });
-    try {
-      active();
-      shape(options, [
-        'capsuleDigest',
-        'expectedRevision',
-        'expectedPayloadSha256',
-        'expectedBodySha256',
-        'expectedAttemptedAt',
-        'signal',
-      ]);
-      const {
-        capsuleDigest,
-        expectedRevision,
-        expectedPayloadSha256,
-        expectedBodySha256,
-        expectedAttemptedAt,
-        signal,
-      } = options;
-      assert.ok(
-        digest(capsuleDigest) && digest(expectedPayloadSha256) && digest(expectedBodySha256)
-      );
-      assert.ok(
-        Number.isSafeInteger(expectedRevision) &&
-          expectedRevision >= 1 &&
-          expectedRevision <= MAX_REVISIONS
-      );
-      assert.ok(Number.isSafeInteger(expectedAttemptedAt) && expectedAttemptedAt > 0);
-      assert.ok(signal instanceof AbortSignal && !signal.aborted);
-      const lifetime = AbortSignal.any([signal, scope.signal]);
-      const currentRetry = () => {
-        active();
-        if (lifetime.aborted) throw fail('RAILGUN_POI_INTENT_STORE_STALE');
-      };
-      const eligible = (entry) =>
-        entry &&
-        entry.state === 'attempted' &&
-        !entry.retry &&
-        entry.revision === expectedRevision &&
-        entry.payloadSha256 === expectedPayloadSha256 &&
-        entry.attempt.attemptedAt === expectedAttemptedAt &&
-        entry.attempt.submission.bodySha256 === expectedBodySha256;
-      stage = 'stored';
-      const baseline = await exclusive(() => {
-        currentRetry();
-        const entry = current.entries.find((v) => v.capsuleDigest === capsuleDigest);
-        if (!eligible(entry)) throw fail('RAILGUN_POI_INTENT_STORE_CONFLICT');
-        return record(entry, current.version);
-      });
-      currentRetry();
-      const { withRailgunOwnOperationRecovery } = require("./railgun-own-operation.js");
-      const {
-        assertRailgunOwnPoiCapture,
-        assertRailgunOwnPoiStableCapture,
-      } = require("../data/railgun-own-poi-binding.js");
-      const bind = (capture) => {
-        assert.equal(capture.capsuleDigest, baseline.capsuleDigest);
-        assert.equal(capture.bindingDigest, baseline.bindingDigest);
-        assert.deepEqual(capture.selector, baseline.selector);
-      };
-      let reservedEntry;
-      stage = 'recovery';
-      const result = await withRailgunOwnOperationRecovery(
-        { enrollment, selector: baseline.selector, signal: lifetime, timeoutMs: 15000 },
-        async (window) => {
-          const check = () => {
-            try {
-              currentRetry();
-              window.assertCurrent();
-            } catch {
-              throw fail('RAILGUN_POI_INTENT_STORE_STALE');
-            }
-          };
-          check();
-          bind(window.capture);
-          const capture = await window.reattest();
-          check();
-          bind(capture);
-          assertRailgunOwnPoiCapture(capture, window.capture);
-          stage = 'persist';
-          reservedEntry = await exclusive(async () => {
-            check();
-            const old = current.entries.find((v) => v.capsuleDigest === capsuleDigest);
-            // The whole detached attempted baseline, not only caller fields, is fixed.
-            if (!eligible(old)) throw fail('RAILGUN_POI_INTENT_STORE_CONFLICT');
-            assert.deepEqual(old, baseline);
-            const reservedAt = Date.now();
-            if (!Number.isSafeInteger(reservedAt) || reservedAt <= old.attempt.attemptedAt)
-              throw fail('RAILGUN_POI_INTENT_STORE_STALE');
-            const entry = record(
-              {
-                ...baseline,
-                retry: { reservedAt, bodySha256: baseline.attempt.submission.bodySha256 },
-              },
-              4
-            );
-            // Everything but the appended reservation is the original attempt.
-            const { retry: _retry, ...unchanged } = entry;
-            assert.deepEqual(unchanged, baseline);
-            const next = {
-              ...current,
-              version: 4,
-              sequence: current.sequence + 1,
-              entries: current.entries.map((v) => (v === old ? entry : v)),
-            };
-            await commit(next, check, () => {
-              possiblyCommitted = true;
-            });
-            return entry;
-          });
-          stage = 'reattest';
-          const fresh = await window.reattest();
-          check();
-          bind(fresh);
-          assertRailgunOwnPoiStableCapture(fresh, window.capture);
-          return { checked: true };
-        }
-      );
-      currentRetry();
-      if (result.status !== 'used') return refused();
-      assert.deepEqual(result.value, { checked: true });
-      assert.ok(reservedEntry);
-      await exclusive(() => {
-        currentRetry();
-        assert.deepEqual(
-          current.entries.find((v) => v.capsuleDigest === capsuleDigest),
-          reservedEntry
-        );
-      });
-      currentRetry();
-      return Object.freeze({
-        status: 'reserved',
-        capsuleDigest,
-        revision: reservedEntry.revision,
-        payloadSha256: reservedEntry.payloadSha256,
-        bodySha256: reservedEntry.retry.bodySha256,
-        attemptedAt: reservedEntry.attempt.attemptedAt,
-        reservedAt: reservedEntry.retry.reservedAt,
-        disclosureEnabled: false,
-        spendingEnabled: false,
-      });
-    } catch {
-      return refused();
-    } finally {
-      mutating = false;
-      pending--;
-      drain();
-    }
-  }
   return Object.freeze({
     prepare,
     beginAttempt,
-    reserveRetry,
     get: (capsuleDigest) =>
       exclusive(async () => {
         assert.ok(digest(capsuleDigest));

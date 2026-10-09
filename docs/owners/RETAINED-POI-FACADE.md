@@ -40,7 +40,8 @@ controller's bounded `refused` or `recovery-required` outcome is preserved. A
 matching RPC result remains a delivery diagnostic; it does not establish POI
 acceptance. The genuine plan is never returned or reusable, and its original
 closure is awaited. No automatic resend, rollback or compensation exists. A
-new lane also remains subject to the existing durable attempted-store state.
+new lane also remains subject to the existing durable attempted-store state;
+only the explicit `retryAttempted` below can hand off the same request once more.
 
 `recoverOutput(capsuleDigest)` invokes the existing completed output recovery
 owner with the captured public destination after explicit read-disclosure review.
@@ -67,6 +68,53 @@ independent. Closing revokes immediately and waits for original work, including
 held native reviews and membership/plan drains. A failed/unknown original closure
 rejects the session closure and retains same-account exclusion. Rejected work does
 not free an uncertain process or turn a report boolean into authority.
+
+## Explicit retry of an attempted submission
+
+`retryAttempted(holdId)` is the only way to send an attempted entry's request
+again. It is a separate, explicit lane action, never automatic. Its whole
+allowance is one more handoff per attempted entry. The lane finds that entry from
+local custody only: the hold's genuine selector, then exactly one attempted
+intent with that selector. No capsule digest is supplied by the caller.
+
+**Request.** It sends the identical stored request: the same body bytes, payload,
+proof, JSON-RPC id and fixed destination. Nothing is re-proved, re-prepared or
+re-serialized, and no replacement capsule can evade the limit.
+
+**Preconditions.** The plan admits only an `attempted` entry that has exactly one
+output commitment and no reserved retry. Validation runs through the same
+attempted-entry handoff as a first submission. The review states that this is
+the second handoff of the same proof to the same service.
+
+**Status evidence.** The retry needs status evidence from this session's own
+`observeOwnedPoi` read: the output's blinded commitment, a `Transact` type, the
+required list and `Missing`. The facade records it privately after a completed
+single-note read. A failed or later read replaces or clears it, and no caller
+value is accepted. The sender binds the evidence to the payload's output
+commitment. It requires the evidence to be under five minutes old both at the
+durable reservation and again at send admission, before any transport exists.
+`Missing` is a prerequisite only. It does not establish that the first request
+was never processed.
+
+**Reservation.** Before any send, the intent store records
+`retry: {reservedAt, bodySha256}` on the entry, writing a V4 document. The
+reservation is consumed once written, including on refusal, crash, cancellation
+or a missing response. A third handoff is refused across reopen and concurrency.
+Ordinary reads of V2/V3 documents never migrate them. A V4 document refuses to
+open in the pre-retry reader, so a downgrade cannot send again. Restoring a
+pre-retry document behind the advanced floor refuses as before.
+
+**Response diagnostics.** A non-200 or error response keeps its classification,
+and now also carries a redacted category: envelope match, a JSON-RPC code class,
+a message category from a fixed allowlist and a data category. These are
+recorded within the existing 2 KiB cap. No raw message, data or body is kept.
+The category grants no acceptance, retry or disclosure authority.
+
+**Provenance.** The translated sources and the affected staged tests record
+these changes as the newest reviewed phase
+(`docs/owners/POI-RETRY-TRANSITIONS.json` and
+`docs/owners/test-staging/POI-RETRY-ADAPTATIONS.json`), so the original bytes
+still reconstruct.
 
 ## One-shot owned-note observation
 

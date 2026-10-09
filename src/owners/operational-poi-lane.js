@@ -77,6 +77,7 @@ function createRailgunPoiLane(options) {
     "destination",
     "signal",
     "reviewDisclosures",
+    "ownedPoiEvidence",
   ]);
   const {
     owners,
@@ -86,7 +87,11 @@ function createRailgunPoiLane(options) {
     destination,
     signal,
     reviewDisclosures,
+    ownedPoiEvidence,
   } = options;
+  assert.ok(
+    typeof ownedPoiEvidence === "function" && !types.isProxy(ownedPoiEvidence),
+  );
   exact(owners, ["identity", "enrollment", "coordinator"]);
   const { identity, enrollment, coordinator } = owners;
   assert.ok(isRailgunAccountEnrollment(enrollment));
@@ -414,13 +419,56 @@ function createRailgunPoiLane(options) {
       return outcome;
     });
   }
+  // The single attempted intent for a hold, found from local custody only: the
+  // hold's genuine selector, then exactly one attempted entry with that selector.
+  async function attemptedCapsule(holdId) {
+    const selected = await selection(holdId);
+    current();
+    const store = await enrollment.openPoiIntents({ existingOnly: true });
+    current();
+    const rows = await store.list();
+    current();
+    const matches = [];
+    for (const row of rows) {
+      if (row.state !== "attempted") continue;
+      const entry = await store.get(row.capsuleDigest);
+      current();
+      assert.equal(entry.capsuleDigest, row.capsuleDigest);
+      if (
+        entry.state === "attempted" &&
+        JSON.stringify(
+          ["noteHash", "nullifier", "position", "tree"].map((k) => entry.selector[k]),
+        ) ===
+          JSON.stringify(
+            ["noteHash", "nullifier", "position", "tree"].map((k) => selected[k]),
+          )
+      )
+        matches.push(entry.capsuleDigest);
+    }
+    assert.equal(matches.length, 1);
+    return matches[0];
+  }
+  function retryHold(holdId) {
+    try {
+      id(holdId);
+    } catch {
+      return Promise.reject(fail());
+    }
+    return invoke(
+      async () => submitCore(await attemptedCapsule(holdId), true),
+      true,
+    );
+  }
   function submit(capsuleDigest) {
     try {
       id(capsuleDigest);
     } catch {
       return Promise.reject(fail());
     }
-    return invoke(async () => {
+    return invoke(() => submitCore(capsuleDigest, false), true);
+  }
+  async function submitCore(capsuleDigest, retry) {
+    {
       let prepared,
         outcome,
         operationError,
@@ -432,6 +480,7 @@ function createRailgunPoiLane(options) {
           coordinator,
           capsuleDigest,
           signal: lifetime,
+          ...(retry ? { retry: true } : {}),
         });
         current();
         if (prepared.status !== "prepared")
@@ -458,6 +507,9 @@ function createRailgunPoiLane(options) {
               ...common,
               plan: prepared.plan,
               review,
+              // The explicit retry reads only the session's own last owned
+              // POI observation; it never accepts caller-supplied status.
+              ...(retry ? { retryEvidence: ownedPoiEvidence } : {}),
             });
         }
       } catch (error) {
@@ -469,7 +521,7 @@ function createRailgunPoiLane(options) {
       current();
       assert.ok(["refused", "recovery-required"].includes(outcome.status));
       return outcome;
-    }, true);
+    }
   }
   function recoverOutput(capsuleDigest, attempted) {
     try {
@@ -547,10 +599,13 @@ function createRailgunPoiLane(options) {
   return Object.freeze({
     prepareShield: (holdId) => prepare(holdId, "Shield"),
     prepareTransact: (holdId) => prepare(holdId, "Transact"),
-    submit,
+    submit: (capsuleDigest) => submit(capsuleDigest),
     recoverOutput: (capsuleDigest) => recoverOutput(capsuleDigest, false),
     recoverAttemptedOutput: (capsuleDigest) =>
       recoverOutput(capsuleDigest, true),
+    // One explicit second handoff of a hold's attempted entry's identical
+    // request, gated by fresh owned Missing status. Never automatic.
+    retryAttempted: (holdId) => retryHold(holdId),
     close,
     closed,
     signal: lifetime,

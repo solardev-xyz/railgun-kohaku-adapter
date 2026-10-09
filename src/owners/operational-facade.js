@@ -180,6 +180,7 @@ function initializeRailgunMain(options) {
       txid: null,
       account: null,
       lane: null,
+      ownedPoiEvidence: null,
       closing: false,
       busy: false,
       failure: null,
@@ -589,6 +590,7 @@ function initializeRailgunMain(options) {
                 destination,
                 ...runtime,
                 ...data,
+                ...(poi ? { ownedPoiEvidence: () => state.ownedPoiEvidence ?? null } : {}),
                 signal: AbortSignal.any([lifetime, data.signal]),
               });
           state.lane = companion;
@@ -657,6 +659,10 @@ function initializeRailgunMain(options) {
                     return retain(
                       companion.recoverAttemptedOutput(capsuleDigest),
                     );
+                  },
+                  retryAttempted(holdId) {
+                    active();
+                    return retain(companion.retryAttempted(holdId));
                   },
                 }
               : {
@@ -980,6 +986,8 @@ function initializeRailgunMain(options) {
       )
         throw fail();
       return run(async () => {
+        // Each read replaces the retry evidence; a failed read leaves none.
+        state.ownedPoiEvidence = null;
         const started = performance.now(),
           deadline = started + 180000;
         const controller = new AbortController();
@@ -1192,6 +1200,16 @@ function initializeRailgunMain(options) {
           )
             throw fail();
           const statuses = Object.freeze([value.statuses[0].status]);
+          // Session-private evidence for the POI lane's explicit retry only:
+          // the owned output's commitment, type, list and status, and when.
+          const observedStatus = value.statuses[0];
+          const evidence = Object.freeze({
+            blindedCommitment: observedStatus.blindedCommitment,
+            type: observedStatus.type,
+            status: observedStatus.status,
+            listKey: value.listKey,
+            at: performance.now(),
+          });
           result = Object.freeze({
             noteId: data.noteId,
             inputType: records[0].type,
@@ -1210,6 +1228,7 @@ function initializeRailgunMain(options) {
             reservationsChecked: false,
             spendingEnabled: false,
           });
+          state.ownedPoiEvidence = evidence;
         } catch (error) {
           operationFailed = true;
           operationError = error;

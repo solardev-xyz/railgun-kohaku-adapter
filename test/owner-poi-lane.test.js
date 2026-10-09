@@ -185,6 +185,7 @@ function fixture() {
     destination: state.destination,
     signal: controller.signal,
     reviewDisclosures: jest.fn(() => true),
+    ownedPoiEvidence: jest.fn(() => null),
   };
   const {
     createRailgunPoiLane,
@@ -432,6 +433,74 @@ test("submit keeps the one genuine plan, original review and exact uncertain out
   await expect(lane.submit(hex("4"))).rejects.toThrow();
   expect(state.submit).toHaveBeenCalledTimes(1);
   expect(f.plan.close).toHaveBeenCalledTimes(1);
+});
+test("submit never admits retry or owned status evidence", async () => {
+  const f = fixture(),
+    lane = f.createRailgunPoiLane(f.input);
+  await lane.submit(hex("4"), true);
+  expect(state.plan.mock.calls[0][0]).not.toHaveProperty("retry");
+  expect(state.submit.mock.calls[0][0]).not.toHaveProperty("retryEvidence");
+  expect(f.input.ownedPoiEvidence).not.toHaveBeenCalled();
+  await lane.closed;
+});
+const attemptedStore = (f, entries) => {
+  f.store.list = jest.fn(async () =>
+    entries.map((entry) => ({ capsuleDigest: entry.capsuleDigest, state: entry.state })),
+  );
+  f.store.get = jest.fn(async (digest) => entries.find((entry) => entry.capsuleDigest === digest));
+};
+const attemptedEntry = (f, digest, selector = f.row.entry.facts) => ({
+  capsuleDigest: digest,
+  state: "attempted",
+  selector: {
+    tree: selector.tree,
+    position: selector.position,
+    nullifier: selector.nullifier,
+    noteHash: selector.noteHash,
+  },
+});
+test("retryAttempted is one explicit retry plan carrying only the session evidence accessor", async () => {
+  const f = fixture(),
+    lane = f.createRailgunPoiLane(f.input);
+  attemptedStore(f, [
+    { capsuleDigest: hex("7"), state: "prepared" },
+    attemptedEntry(f, hex("8"), { ...f.row.entry.facts, nullifier: "0x" + hex("9") }),
+    attemptedEntry(f, hex("4")),
+  ]);
+  const result = await lane.retryAttempted(f.row.entry.id);
+  expect(f.reservations.withSigningRecovery).toHaveBeenCalledTimes(1);
+  expect(state.plan).toHaveBeenCalledTimes(1);
+  expect(state.plan.mock.calls[0][0].retry).toBe(true);
+  // The hold's own attempted intent, found by its genuine selector.
+  expect(state.plan.mock.calls[0][0].capsuleDigest).toBe(hex("4"));
+  expect(state.revalidate.mock.calls[0][0].plan).toBe(f.plan.plan);
+  expect(state.submit.mock.calls[0][0].plan).toBe(f.plan.plan);
+  // The exact owner-provided accessor, never a caller value or its result.
+  expect(state.submit.mock.calls[0][0].retryEvidence).toBe(f.input.ownedPoiEvidence);
+  expect(result).toEqual({ status: "recovery-required", stage: "post" });
+  await lane.closed;
+  await expect(lane.retryAttempted(f.row.entry.id)).rejects.toThrow();
+  expect(state.submit).toHaveBeenCalledTimes(1);
+});
+test.each([
+  ["no attempted intent", (f) => [{ capsuleDigest: hex("4"), state: "prepared" }]],
+  ["two attempted intents for the hold", (f) => [attemptedEntry(f, hex("4")), attemptedEntry(f, hex("6"))]],
+  ["only another hold's attempted intent", (f) => [attemptedEntry(f, hex("4"), { ...f.row.entry.facts, position: 9 })]],
+])("retryAttempted refuses with %s before any plan", async (_name, entries) => {
+  const f = fixture(),
+    lane = f.createRailgunPoiLane(f.input);
+  attemptedStore(f, entries(f));
+  await expect(lane.retryAttempted(f.row.entry.id)).rejects.toThrow();
+  expect(state.plan).not.toHaveBeenCalled();
+  expect(state.submit).not.toHaveBeenCalled();
+  await lane.closed;
+});
+test("the lane requires a genuine owned evidence accessor", () => {
+  const f = fixture();
+  for (const ownedPoiEvidence of [undefined, null, {}, new Proxy(() => null, {})])
+    expect(() => f.createRailgunPoiLane({ ...f.input, ownedPoiEvidence })).toThrow();
+  const { ownedPoiEvidence: _omitted, ...missing } = f.input;
+  expect(() => f.createRailgunPoiLane(missing)).toThrow();
 });
 test("revoked plan never reaches submit and is drained", async () => {
   const f = fixture();

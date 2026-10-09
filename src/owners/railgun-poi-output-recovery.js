@@ -75,7 +75,8 @@ async function recover(options = {}, completed = false, submission, attempted = 
     directory,
     sourceOutcome,
     sharedClaim,
-    store;
+    store,
+    retryMarked = false;
   const owner = {},
     controller = new AbortController();
   const stop = () => controller.abort();
@@ -100,10 +101,19 @@ async function recover(options = {}, completed = false, submission, attempted = 
       timeoutMs = TOTAL_MS,
     } = options;
     if (submission) {
-      shape(submission, ['entry', 'capture', 'observation']);
+      shape(submission, [
+        'entry',
+        'capture',
+        'observation',
+        ...(Object.hasOwn(submission, 'retry') ? ['retry'] : []),
+      ]);
+      assert.ok(!Object.hasOwn(submission, 'retry') || submission.retry === true);
       const text = JSON.stringify(submission);
       assert.ok(Buffer.byteLength(text) <= 384 * 1024);
       submission = JSON.parse(text);
+      // The retry marker is consumed here; downstream owners keep their exact input.
+      retryMarked = submission.retry === true;
+      delete submission.retry;
     }
     assert.ok(isRailgunAccountEnrollment(enrollment));
     assert.ok(signal instanceof AbortSignal && !signal.aborted);
@@ -184,12 +194,16 @@ async function recover(options = {}, completed = false, submission, attempted = 
     // remains mandatory even if this same request was previously transmitted.
     const entry = attempted ? freeze(JSON.parse(JSON.stringify(loaded))) : loaded;
     if (submission) assert.deepEqual(entry, submission.entry);
-    assert.ok(entry && entry.state === (attempted ? 'attempted' : 'prepared'));
+    // The sender's one explicit, marked retry hands off its own snapshot of an
+    // attempted entry that has not reserved its retry; every other caller is unchanged.
+    const retryHandoff = retryMarked && !attempted;
+    assert.ok(entry && entry.state === (attempted || retryHandoff ? 'attempted' : 'prepared'));
+    if (retryHandoff) assert.ok(!entry.retry);
     assert.equal(entry.capsuleDigest, capsuleDigest);
     const payload = normalizeRailgunPoiPayload(entry.payload);
     assert.equal(sha(JSON.stringify(payload)), entry.payloadSha256);
     let attemptBodySha256;
-    if (attempted) {
+    if (attempted || retryHandoff) {
       shape(entry.attempt, ['attemptedAt', 'submission']);
       const attempt = normalizeRailgunPoiSubmission(entry.attempt.submission);
       assert.equal(attempt.requestId, entry.attempt.attemptedAt);

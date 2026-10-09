@@ -129,16 +129,25 @@ async function validate(options, history, submission) {
         ? submission.sourceDestination
         : getRailgunAccountPublicDestination(coordinator, enrollment, policy)
       : undefined;
-    let submitted;
+    let submitted,
+      retryHandoff = false;
     if (submission) {
       assert.deepEqual(Object.keys(submission).sort(), [
         'capture',
         'destination',
         'entry',
         'reader',
+        ...(Object.hasOwn(submission, 'retry') ? ['retry'] : []),
         'sourceDestination',
       ]);
-      submitted = snapshot({ entry: submission.entry, capture: submission.capture });
+      // An explicit marker, never inferred from the entry's own state.
+      assert.ok(!Object.hasOwn(submission, 'retry') || submission.retry === true);
+      retryHandoff = submission.retry === true;
+      submitted = snapshot({
+        entry: submission.entry,
+        capture: submission.capture,
+        ...(retryHandoff ? { retry: true } : {}),
+      });
       submission = Object.freeze({
         reader: submission.reader,
         destination: submission.destination,
@@ -204,7 +213,14 @@ async function validate(options, history, submission) {
     current();
     const entry = history ? snapshot(loaded) : loaded;
     if (submission) assert.deepEqual(entry, submitted.entry);
-    assert.ok(entry && entry.state === 'prepared');
+    // Only the sender's explicitly marked retry hands off an attempted entry,
+    // and only before its single retry is reserved; it requires one.
+    assert.ok(
+      entry &&
+        (retryHandoff
+          ? entry.state === 'attempted' && !entry.retry
+          : entry.state === 'prepared')
+    );
     assert.equal(entry.capsuleDigest, capsuleDigest);
     const payload = normalizeRailgunPoiPayload(entry.payload);
     assert.equal(sha(JSON.stringify(payload)), entry.payloadSha256);

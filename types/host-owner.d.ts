@@ -585,6 +585,11 @@ export interface PoiRecoveryLane extends LaneLifetime {
   recoverAttemptedOutput(
     capsuleDigest: string,
   ): Promise<PoiAttemptedOutputOutcome>;
+  /** One explicit second handoff of a hold's attempted POI request, the
+   * identical stored request. It requires this session's own fresh owned status
+   * read showing the output Missing, reserves the single retry durably before
+   * sending, and is terminal for this lane. No automatic retry; never acceptance. */
+  retryAttempted(holdId: string): Promise<PoiSubmissionOutcome>;
 }
 /** Reviewed before any transaction-RPC read for one held operation. The fixed
  * wallet-0 submitter is never caller-selected; no signing, send, retry or hold release. */

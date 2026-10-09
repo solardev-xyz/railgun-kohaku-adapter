@@ -1,0 +1,298 @@
+{
+  "baseRevision": "5b8379e480e4436a789c8a0cd778c99e709905f0",
+  "label": "one explicit POI retry: V4 single retry reservation, retry-mode sender and explicitly marked attempted-entry handoff, redacted response category; the pinned inspection test copy accepts the new field",
+  "changes": [
+    {
+      "file": "src/data/railgun-poi-submit-data.js",
+      "beforeSha256": "dc4a0f82586e6245752634bfba70cc0af3d3b21a3b60cb9b99f384a69d818a5f",
+      "afterSha256": "73734d745a2c7cbe9244395ea5cc73717b43be0a526476a6441a19aefc3f236d",
+      "replacements": [
+        {
+          "start": 5691,
+          "before": "const responseDiagnostic = (classification, httpStatus, responseBytes) =>\n",
+          "after": "const responseDiagnostic = (classification, httpStatus, responseBytes, diagnostic = null) =>\n"
+        },
+        {
+          "start": 6070,
+          "before": "",
+          "after": "    diagnostic,\n"
+        },
+        {
+          "start": 6092,
+          "before": "",
+          "after": "// Closed public JSON-RPC error categories. Neither the provider's message,\n// its data nor any other body content is retained: unknown values are 'other'.\nconst RPC_CODES = new Map([\n  [-32700, 'parse-error'],\n  [-32600, 'invalid-request'],\n  [-32601, 'method-not-found'],\n  [-32602, 'invalid-params'],\n  [-32603, 'internal-error'],\n]);\nconst MESSAGES = new Map([\n  ['Invalid params', 'invalid-params'],\n  ['Invalid proof', 'invalid-proof'],\n  ['Validation error: Invalid txid merkleroot.', 'invalid-txid-merkleroot'],\n  ['Validation error: POI merkleroots must all exist.', 'poi-merkleroots-missing'],\n  ['Error occurred while executing the JSON-RPC method', 'execution-error-hidden'],\n  ['Internal server error', 'internal-server-error'],\n  ['Method not found', 'method-not-found'],\n  ['Invalid listKey', 'invalid-list-key'],\n]);\n/** A redacted error category for an error envelope (HTTP failure or 200 error).\n * Diagnostic only: it never establishes delivery, rejection, acceptance or\n * that a retry is safe, and it changes no classification above. */\nfunction errorDiagnostic(body, submission) {\n  try {\n    assert.ok(!(body[0] === 0xef && body[1] === 0xbb && body[2] === 0xbf));\n    const text = new TextDecoder('utf-8', { fatal: true }).decode(body);\n    const value = JSON.parse(text);\n    const { idToken, codeToken } = scanResponse(text);\n    assert.ok(value && typeof value === 'object' && !Array.isArray(value));\n    responseShape(value, ['jsonrpc', 'id', 'error']);\n    assert.equal(value.jsonrpc, '2.0');\n    const error = value.error;\n    assert.ok(error && typeof error === 'object' && !Array.isArray(error));\n    const hasData = Object.hasOwn(error, 'data');\n    responseShape(error, hasData ? ['code', 'message', 'data'] : ['code', 'message']);\n    assert.ok(/^(?:0|-?[1-9][0-9]*)$/.test(codeToken) && Number.isSafeInteger(error.code));\n    assert.equal(typeof error.message, 'string');\n    const code = error.code;\n    return Object.freeze({\n      envelope: idToken === String(submission.requestId) ? 'matched-id' : 'other-id',\n      rpcCode:\n        RPC_CODES.get(code) ?? (code <= -32000 && code >= -32099 ? 'server-error' : 'other'),\n      messageCategory: MESSAGES.get(error.message) ?? 'other',\n      dataCategory: !hasData\n        ? 'none'\n        : error.data === 'Invalid listKey'\n          ? 'invalid-list-key'\n          : Array.isArray(error.data)\n            ? 'schema-errors'\n            : 'other',\n    });\n  } catch {\n    return Object.freeze({\n      envelope: 'invalid',\n      rpcCode: null,\n      messageCategory: null,\n      dataCategory: null,\n    });\n  }\n}\n"
+        },
+        {
+          "start": 10586,
+          "before": "  if (httpStatus !== 200) return responseDiagnostic('http-failure', httpStatus, body.length);\n",
+          "after": "  if (httpStatus !== 200)\n    return responseDiagnostic(\n      'http-failure',\n      httpStatus,\n      body.length,\n      errorDiagnostic(body, submission)\n    );\n"
+        },
+        {
+          "start": 12052,
+          "before": "  return responseDiagnostic(classification, httpStatus, body.length);\n",
+          "after": "  return responseDiagnostic(\n    classification,\n    httpStatus,\n    body.length,\n    ['rpc-error', 'unmatched', 'malformed'].includes(classification)\n      ? errorDiagnostic(body, submission)\n      : null\n  );\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-poi-intent-store.js",
+      "beforeSha256": "6d49d0b20b7b3149782ee3a692cdd2b371131eb0cd68c2df2526a10cd28df964",
+      "afterSha256": "e421031f58f2c174b62896654cb4bcb745b2c06c15c19e189953d0a7c1777ec3",
+      "replacements": [
+        {
+          "start": 73,
+          "before": " * conservative attempts; V3 also admits combined output/unshield payloads.\n",
+          "after": " * conservative attempts; V3 also admits combined output/unshield payloads; V4\n * also records at most one durable retry reservation per attempted entry. The\n * original attempt bytes stay unchanged, and V4 is written only by that\n * reservation, so older readers refuse a document that has spent its retry.\n"
+        },
+        {
+          "start": 1558,
+          "before": "const attemptTransitions = (entry) => Number(entry.state === 'attempted');\n",
+          "after": "// One transition for the attempt and one for its single retry reservation.\nconst transitions = (entry) => Number(entry.state === 'attempted') + Number(Boolean(entry.retry));\n"
+        },
+        {
+          "start": 1763,
+          "before": "  entries.reduce((total, entry) => total + FUTURE_TRANSITIONS - attemptTransitions(entry), 0);\n",
+          "after": "  entries.reduce((total, entry) => total + FUTURE_TRANSITIONS - transitions(entry), 0);\n"
+        },
+        {
+          "start": 4779,
+          "before": "    assert.ok([1, 2, 3].includes(version));\n",
+          "after": "    assert.ok([1, 2, 3, 4].includes(version));\n"
+        },
+        {
+          "start": 4878,
+          "before": "    assert.ok(value?.state === 'prepared' || ([2, 3].includes(version) && attempted));\n",
+          "after": "    assert.ok(value?.state === 'prepared' || ([2, 3, 4].includes(version) && attempted));\n    const retried = attempted && Object.hasOwn(value, 'retry');\n    assert.ok(!retried || version === 4);\n"
+        },
+        {
+          "start": 5292,
+          "before": "",
+          "after": "      ...(retried ? ['retry'] : []),\n"
+        },
+        {
+          "start": 6322,
+          "before": "    if (version !== 3)\n",
+          "after": "    if (version < 3)\n"
+        },
+        {
+          "start": 7086,
+          "before": "",
+          "after": "    let retry;\n    if (retried) {\n      shape(value.retry, ['reservedAt', 'bodySha256']);\n      const { reservedAt, bodySha256 } = value.retry;\n      assert.ok(Number.isSafeInteger(reservedAt) && reservedAt > attempt.attemptedAt);\n      // The retry is the identical original request: one body, one digest.\n      assert.equal(bodySha256, attempt.submission.bodySha256);\n      retry = Object.freeze({ reservedAt, bodySha256 });\n    }\n"
+        },
+        {
+          "start": 8018,
+          "before": "",
+          "after": "      ...(retried ? { retry } : {}),\n"
+        },
+        {
+          "start": 8550,
+          "before": "",
+          "after": "            retry: { reservedAt: Number.MAX_SAFE_INTEGER, bodySha256: envelope.bodySha256 },\n"
+        },
+        {
+          "start": 8981,
+          "before": "    assert.ok([1, 2, 3].includes(value.version));\n",
+          "after": "    assert.ok([1, 2, 3, 4].includes(value.version));\n"
+        },
+        {
+          "start": 9562,
+          "before": "      entries.reduce((n, v) => n + v.revision + attemptTransitions(v), 0)\n",
+          "after": "      entries.reduce((n, v) => n + v.revision + transitions(v), 0)\n"
+        },
+        {
+          "start": 14054,
+          "before": "      const version = combined ? 3 : current.version;\n",
+          "after": "      // Never lower a document version: V4 already admits combined payloads.\n      const version = combined ? Math.max(3, current.version) : current.version;\n"
+        },
+        {
+          "start": 23768,
+          "before": "",
+          "after": "  // One durable reservation for re-sending an attempted entry's identical\n  // original request. It is consumed once written, whether or not a send\n  // follows, and a reserved entry can never be reserved again. Writing it is\n  // the only V4 migration. It grants no send, status or disclosure authority.\n  async function reserveRetry(options) {\n    if (mutating) return Object.freeze({ status: 'refused', stage: 'busy' });\n    mutating = true;\n    pending++;\n    let stage = 'context',\n      possiblyCommitted = false;\n    const refused = () =>\n      Object.freeze({\n        status: possiblyCommitted ? 'recovery-required' : 'refused',\n        stage,\n      });\n    try {\n      active();\n      shape(options, [\n        'capsuleDigest',\n        'expectedRevision',\n        'expectedPayloadSha256',\n        'expectedBodySha256',\n        'expectedAttemptedAt',\n        'signal',\n      ]);\n      const {\n        capsuleDigest,\n        expectedRevision,\n        expectedPayloadSha256,\n        expectedBodySha256,\n        expectedAttemptedAt,\n        signal,\n      } = options;\n      assert.ok(\n        digest(capsuleDigest) && digest(expectedPayloadSha256) && digest(expectedBodySha256)\n      );\n      assert.ok(\n        Number.isSafeInteger(expectedRevision) &&\n          expectedRevision >= 1 &&\n          expectedRevision <= MAX_REVISIONS\n      );\n      assert.ok(Number.isSafeInteger(expectedAttemptedAt) && expectedAttemptedAt > 0);\n      assert.ok(signal instanceof AbortSignal && !signal.aborted);\n      const lifetime = AbortSignal.any([signal, scope.signal]);\n      const currentRetry = () => {\n        active();\n        if (lifetime.aborted) throw fail('RAILGUN_POI_INTENT_STORE_STALE');\n      };\n      const eligible = (entry) =>\n        entry &&\n        entry.state === 'attempted' &&\n        !entry.retry &&\n        entry.revision === expectedRevision &&\n        entry.payloadSha256 === expectedPayloadSha256 &&\n        entry.attempt.attemptedAt === expectedAttemptedAt &&\n        entry.attempt.submission.bodySha256 === expectedBodySha256;\n      stage = 'stored';\n      const baseline = await exclusive(() => {\n        currentRetry();\n        const entry = current.entries.find((v) => v.capsuleDigest === capsuleDigest);\n        if (!eligible(entry)) throw fail('RAILGUN_POI_INTENT_STORE_CONFLICT');\n        return record(entry, current.version);\n      });\n      currentRetry();\n      const { withRailgunOwnOperationRecovery } = require(\"./railgun-own-operation.js\");\n      const {\n        assertRailgunOwnPoiCapture,\n        assertRailgunOwnPoiStableCapture,\n      } = require(\"../data/railgun-own-poi-binding.js\");\n      const bind = (capture) => {\n        assert.equal(capture.capsuleDigest, baseline.capsuleDigest);\n        assert.equal(capture.bindingDigest, baseline.bindingDigest);\n        assert.deepEqual(capture.selector, baseline.selector);\n      };\n      let reservedEntry;\n      stage = 'recovery';\n      const result = await withRailgunOwnOperationRecovery(\n        { enrollment, selector: baseline.selector, signal: lifetime, timeoutMs: 15000 },\n        async (window) => {\n          const check = () => {\n            try {\n              currentRetry();\n              window.assertCurrent();\n            } catch {\n              throw fail('RAILGUN_POI_INTENT_STORE_STALE');\n            }\n          };\n          check();\n          bind(window.capture);\n          const capture = await window.reattest();\n          check();\n          bind(capture);\n          assertRailgunOwnPoiCapture(capture, window.capture);\n          stage = 'persist';\n          reservedEntry = await exclusive(async () => {\n            check();\n            const old = current.entries.find((v) => v.capsuleDigest === capsuleDigest);\n            // The whole detached attempted baseline, not only caller fields, is fixed.\n            if (!eligible(old)) throw fail('RAILGUN_POI_INTENT_STORE_CONFLICT');\n            assert.deepEqual(old, baseline);\n            const reservedAt = Date.now();\n            if (!Number.isSafeInteger(reservedAt) || reservedAt <= old.attempt.attemptedAt)\n              throw fail('RAILGUN_POI_INTENT_STORE_STALE');\n            const entry = record(\n              {\n                ...baseline,\n                retry: { reservedAt, bodySha256: baseline.attempt.submission.bodySha256 },\n              },\n              4\n            );\n            // Everything but the appended reservation is the original attempt.\n            const { retry: _retry, ...unchanged } = entry;\n            assert.deepEqual(unchanged, baseline);\n            const next = {\n              ...current,\n              version: 4,\n              sequence: current.sequence + 1,\n              entries: current.entries.map((v) => (v === old ? entry : v)),\n            };\n            await commit(next, check, () => {\n              possiblyCommitted = true;\n            });\n            return entry;\n          });\n          stage = 'reattest';\n          const fresh = await window.reattest();\n          check();\n          bind(fresh);\n          assertRailgunOwnPoiStableCapture(fresh, window.capture);\n          return { checked: true };\n        }\n      );\n      currentRetry();\n      if (result.status !== 'used') return refused();\n      assert.deepEqual(result.value, { checked: true });\n      assert.ok(reservedEntry);\n      await exclusive(() => {\n        currentRetry();\n        assert.deepEqual(\n          current.entries.find((v) => v.capsuleDigest === capsuleDigest),\n          reservedEntry\n        );\n      });\n      currentRetry();\n      return Object.freeze({\n        status: 'reserved',\n        capsuleDigest,\n        revision: reservedEntry.revision,\n        payloadSha256: reservedEntry.payloadSha256,\n        bodySha256: reservedEntry.retry.bodySha256,\n        attemptedAt: reservedEntry.attempt.attemptedAt,\n        reservedAt: reservedEntry.retry.reservedAt,\n        disclosureEnabled: false,\n        spendingEnabled: false,\n      });\n    } catch {\n      return refused();\n    } finally {\n      mutating = false;\n      pending--;\n      drain();\n    }\n  }\n"
+        },
+        {
+          "start": 29887,
+          "before": "",
+          "after": "    reserveRetry,\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-poi-disclosure-plan.js",
+      "beforeSha256": "b66ee916af6ec5d3babbb83c2b9efb159db3618b868d1592425ff3ea6a175ae2",
+      "afterSha256": "13695fe9c1af822afccbc027a348dc612e5bcc3ac588e4474c49aa9af68b72d4",
+      "replacements": [
+        {
+          "start": 1634,
+          "before": "",
+          "after": "// The explicit retry's owned status evidence must be younger than this at its\n// durable reservation and again at send admission.\nconst RETRY_EVIDENCE_MS = 300000;\n"
+        },
+        {
+          "start": 11201,
+          "before": "    requestIdAllocation: 'local-time-once-at-durable-attempt',\n",
+          "after": "    requestIdAllocation: state.retry\n      ? 'original-attempt-request-reused'\n      : 'local-time-once-at-durable-attempt',\n    ...(state.retry\n      ? {\n          handoff: 'second-identical',\n          retryExplanation:\n            'This sends the identical stored proof request a second time to the same POI service. The first attempt has no accepted status. The same proof and commitments are disclosed again, and the two submissions are linkable by timing. No further handoff is possible afterwards.',\n        }\n      : {}),\n"
+        },
+        {
+          "start": 12911,
+          "before": "  assert.ok(loaded && loaded.state === 'prepared');\n",
+          "after": "  // A retry plan admits only an attempted entry whose single retry is unspent,\n  // with exactly one output commitment whose owned status gates the retry.\n  if (state.retry)\n    assert.ok(\n      loaded &&\n        loaded.state === 'attempted' &&\n        !loaded.retry &&\n        loaded.payload.blindedCommitmentsOut.length === 1\n    );\n  else assert.ok(loaded && loaded.state === 'prepared');\n"
+        },
+        {
+          "start": 13502,
+          "before": "",
+          "after": "  if (state.retry) {\n    const { normalizeRailgunPoiSubmission } = require(\"../data/railgun-poi-submit-data.js\");\n    const original = normalizeRailgunPoiSubmission(entry.attempt.submission);\n    assert.equal(original.requestId, entry.attempt.attemptedAt);\n    assert.deepEqual(original.payload, payload);\n  }\n"
+        },
+        {
+          "start": 16021,
+          "before": "",
+          "after": "      ...(Object.hasOwn(input, 'retry') ? ['retry'] : []),\n"
+        },
+        {
+          "start": 16186,
+          "before": "",
+          "after": "    assert.ok(!Object.hasOwn(args, 'retry') || args.retry === true);\n"
+        },
+        {
+          "start": 17084,
+          "before": "",
+          "after": "      retry: args.retry === true,\n"
+        },
+        {
+          "start": 22175,
+          "before": "",
+          "after": "      ...(Object.hasOwn(input, 'retryEvidence') ? ['retryEvidence'] : []),\n"
+        },
+        {
+          "start": 22350,
+          "before": "",
+          "after": "    // Evidence is admitted exactly for a retry plan, and required there.\n    assert.equal(Object.hasOwn(args, 'retryEvidence'), state.retry);\n    assert.ok(!state.retry || typeof args.retryEvidence === 'function');\n"
+        },
+        {
+          "start": 26440,
+          "before": "      const submitting = purpose === 'submit-retained-poi';\n",
+          "after": "      const submitting = purpose === 'submit-retained-poi' || purpose === 'retry-retained-poi';\n"
+        },
+        {
+          "start": 28924,
+          "before": "",
+          "after": "        ...(base.handoff\n          ? { handoff: base.handoff, retryExplanation: base.retryExplanation }\n          : {}),\n"
+        },
+        {
+          "start": 31234,
+          "before": "",
+          "after": "          // Only the explicit retry marks its attempted-entry handoff.\n          ...(state.retry ? { retry: true } : {}),\n"
+        },
+        {
+          "start": 32467,
+          "before": "        await review(requestFor('submit-retained-poi'), { signal: state.controller.signal }),\n",
+          "after": "        await review(\n          requestFor(state.retry ? 'retry-retained-poi' : 'submit-retained-poi'),\n          { signal: state.controller.signal }\n        ),\n"
+        },
+        {
+          "start": 34857,
+          "before": "",
+          "after": "    // The owned status evidence comes from the account's own completed POI\n    // read; it must name this payload's output on the required list as a\n    // Missing transact output, and be fresh. It authorizes nothing by itself.\n    const assertRetryEvidence = () => {\n      const evidence = args.retryEvidence();\n      assert.ok(evidence && typeof evidence === 'object' && Object.isFrozen(evidence));\n      assert.deepEqual(Object.keys(evidence).sort(), [\n        'at',\n        'blindedCommitment',\n        'listKey',\n        'status',\n        'type',\n      ]);\n      assert.equal(evidence.listKey, REQUIRED_LIST);\n      assert.equal(evidence.type, 'Transact');\n      assert.equal(evidence.status, 'Missing');\n      assert.match(evidence.blindedCommitment, /^0x[0-9a-f]{64}$/);\n      assert.equal(evidence.blindedCommitment, payload.blindedCommitmentsOut[0]);\n      const age = performance.now() - evidence.at;\n      assert.ok(Number.isFinite(age) && age >= 0 && age < RETRY_EVIDENCE_MS);\n    };\n"
+        },
+        {
+          "start": 35953,
+          "before": "      // Until a genuine precommit refusal returns, a thrown/lost result may\n      // follow persistence. No transport slot exists on that uncertain path.\n      possiblyCommitted = true;\n      begun = await state.store.beginAttempt({\n        capsuleDigest: state.capsuleDigest,\n        expectedRevision: state.entry.revision,\n        expectedPayloadSha256: state.entry.payloadSha256,\n        signal: state.controller.signal,\n      });\n      if (begun.status === 'refused') possiblyCommitted = false;\n      assert.equal(begun.status, 'attempted');\n",
+          "after": "      if (state.retry) {\n        assertRetryEvidence();\n        // The reservation is consumed once written, sent or not.\n        possiblyCommitted = true;\n        begun = await state.store.reserveRetry({\n          capsuleDigest: state.capsuleDigest,\n          expectedRevision: state.entry.revision,\n          expectedPayloadSha256: state.entry.payloadSha256,\n          expectedBodySha256: state.entry.attempt.submission.bodySha256,\n          expectedAttemptedAt: state.entry.attempt.attemptedAt,\n          signal: state.controller.signal,\n        });\n        if (begun.status === 'refused') possiblyCommitted = false;\n        assert.equal(begun.status, 'reserved');\n      } else {\n        // Until a genuine precommit refusal returns, a thrown/lost result may\n        // follow persistence. No transport slot exists on that uncertain path.\n        possiblyCommitted = true;\n        begun = await state.store.beginAttempt({\n          capsuleDigest: state.capsuleDigest,\n          expectedRevision: state.entry.revision,\n          expectedPayloadSha256: state.entry.payloadSha256,\n          signal: state.controller.signal,\n        });\n        if (begun.status === 'refused') possiblyCommitted = false;\n        assert.equal(begun.status, 'attempted');\n      }\n"
+        },
+        {
+          "start": 37436,
+          "before": "",
+          "after": "    const readRetry = async () => {\n      senderCurrent();\n      const value = await state.store.get(state.capsuleDigest);\n      senderCurrent();\n      // The identical original request: same body, ID and destination.\n      const submission = normalizeRailgunPoiSubmission(state.entry.attempt.submission);\n      assert.deepEqual(value, {\n        ...state.entry,\n        retry: { reservedAt: begun.reservedAt, bodySha256: submission.bodySha256 },\n      });\n      assert.equal(begun.capsuleDigest, state.capsuleDigest);\n      assert.equal(begun.revision, state.entry.revision);\n      assert.equal(begun.payloadSha256, state.entry.payloadSha256);\n      assert.equal(begun.bodySha256, submission.bodySha256);\n      assert.equal(begun.attemptedAt, state.entry.attempt.attemptedAt);\n      assert.equal(begun.disclosureEnabled, false);\n      assert.equal(begun.spendingEnabled, false);\n      if (durable) assert.deepEqual(value, durable);\n      else durable = snapshot(value);\n      return submission;\n    };\n"
+        },
+        {
+          "start": 38476,
+          "before": "",
+          "after": "      if (state.retry) return readRetry();\n"
+        },
+        {
+          "start": 40482,
+          "before": "",
+          "after": "          // Send admission: the retry's evidence is rechecked before any transport.\n          if (state.retry) assertRetryEvidence();\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-poi-cold-validation.js",
+      "beforeSha256": "0b16d2df3cf60c035de20b7481dd33d65feb6bd5762242ef5bb45b9288dace4a",
+      "afterSha256": "6dc43817456a5de0f4d990211bf01317234aeefe34701ffd73c8c116e680156c",
+      "replacements": [
+        {
+          "start": 4928,
+          "before": "    let submitted;\n",
+          "after": "    let submitted,\n      retryHandoff = false;\n"
+        },
+        {
+          "start": 5131,
+          "before": "",
+          "after": "        ...(Object.hasOwn(submission, 'retry') ? ['retry'] : []),\n"
+        },
+        {
+          "start": 5236,
+          "before": "      submitted = snapshot({ entry: submission.entry, capture: submission.capture });\n",
+          "after": "      // An explicit marker, never inferred from the entry's own state.\n      assert.ok(!Object.hasOwn(submission, 'retry') || submission.retry === true);\n      retryHandoff = submission.retry === true;\n      submitted = snapshot({\n        entry: submission.entry,\n        capture: submission.capture,\n        ...(retryHandoff ? { retry: true } : {}),\n      });\n"
+        },
+        {
+          "start": 8360,
+          "before": "    assert.ok(entry && entry.state === 'prepared');\n",
+          "after": "    // Only the sender's explicitly marked retry hands off an attempted entry,\n    // and only before its single retry is reserved; it requires one.\n    assert.ok(\n      entry &&\n        (retryHandoff\n          ? entry.state === 'attempted' && !entry.retry\n          : entry.state === 'prepared')\n    );\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-poi-output-recovery.js",
+      "beforeSha256": "ec24460b34ad131bfa22305f74a20af1fbbdb88ecc0a039385e5aa4d3329072e",
+      "afterSha256": "1e44d34df61211223258aed966514616457687cc19c19d8a7c69937e23227437",
+      "replacements": [
+        {
+          "start": 3515,
+          "before": "    store;\n",
+          "after": "    store,\n    retryMarked = false;\n"
+        },
+        {
+          "start": 4151,
+          "before": "      shape(submission, ['entry', 'capture', 'observation']);\n",
+          "after": "      shape(submission, [\n        'entry',\n        'capture',\n        'observation',\n        ...(Object.hasOwn(submission, 'retry') ? ['retry'] : []),\n      ]);\n      assert.ok(!Object.hasOwn(submission, 'retry') || submission.retry === true);\n"
+        },
+        {
+          "start": 4535,
+          "before": "",
+          "after": "      // The retry marker is consumed here; downstream owners keep their exact input.\n      retryMarked = submission.retry === true;\n      delete submission.retry;\n"
+        },
+        {
+          "start": 8092,
+          "before": "    assert.ok(entry && entry.state === (attempted ? 'attempted' : 'prepared'));\n",
+          "after": "    // The sender's one explicit, marked retry hands off its own snapshot of an\n    // attempted entry that has not reserved its retry; every other caller is unchanged.\n    const retryHandoff = retryMarked && !attempted;\n    assert.ok(entry && entry.state === (attempted || retryHandoff ? 'attempted' : 'prepared'));\n    if (retryHandoff) assert.ok(!entry.retry);\n"
+        },
+        {
+          "start": 8669,
+          "before": "    if (attempted) {\n",
+          "after": "    if (attempted || retryHandoff) {\n"
+        }
+      ]
+    },
+    {
+      "file": "test/railgun-poi-submit-data.test.js",
+      "beforeSha256": "ed83cfc04c2c7efe79131f4cb789a35d534fba0e1757f222c4f013e14ae686d6",
+      "afterSha256": "4f248ad6911ad23daba45d81f7e938b049ffd6d1a70e71489ccb1d7382cfbaf2",
+      "replacements": [
+        {
+          "start": 7103,
+          "before": "",
+          "after": "  diagnostic: null,\n"
+        },
+        {
+          "start": 7260,
+          "before": "",
+          "after": "const DIAGNOSTIC_KEYS = ['dataCategory', 'envelope', 'messageCategory', 'rpcCode'];\n"
+        },
+        {
+          "start": 7459,
+          "before": "  expect(observed).toEqual(expectedInspection(classification, evidence));\n",
+          "after": "  const { diagnostic, ...rest } = observed;\n  expect({ ...rest, diagnostic: null }).toEqual(expectedInspection(classification, evidence));\n  // Only error-shaped outcomes carry a redacted category; never a result.\n  if (['http-failure', 'rpc-error', 'unmatched', 'malformed'].includes(classification)) {\n    expect(Object.keys(diagnostic).sort()).toEqual(DIAGNOSTIC_KEYS);\n    expect(Object.isFrozen(diagnostic)).toBe(true);\n  } else expect(diagnostic).toBeNull();\n"
+        }
+      ]
+    }
+  ]
+}

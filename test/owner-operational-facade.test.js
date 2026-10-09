@@ -236,6 +236,7 @@ function fixture() {
         "submit",
         "recoverOutput",
         "recoverAttemptedOutput",
+        "retryAttempted",
       ])
         value[name] = jest.fn(() =>
           Promise.resolve({ status: "refused", stage: "controlled" }),
@@ -1366,6 +1367,7 @@ test("retained POI companion uses fixed owners and excludes simultaneous lanes",
       "submit",
       "recoverOutput",
       "recoverAttemptedOutput",
+      "retryAttempted",
       "signal",
       "closed",
       "close",
@@ -1534,6 +1536,53 @@ test("one-shot owned POI uses genuine tuple and only returns bounded false-autho
   expect(
     (await state.openCompleted.mock.results[0].value).close,
   ).toHaveBeenCalledTimes(1);
+  await session.close();
+});
+test("a completed owned POI read leaves session-private retry evidence for the POI lane only", async () => {
+  const f = observerFixture(),
+    session = await f.api.openAccount(f.options);
+  const commitment = "0x" + "5".repeat(64);
+  f.value.statuses = [{ blindedCommitment: commitment, type: "Transact", status: "Missing" }];
+  const before = performance.now();
+  const result = await session.observeOwnedPoi(f.input);
+  expect(result.statuses).toEqual(["Missing"]);
+  expect(Object.keys(result)).not.toContain("evidence");
+  const lane = await session.openPoiRecovery({
+    signal: f.caller.signal,
+    reviewDisclosures: jest.fn(() => true),
+  });
+  const evidence = state.createPoi.mock.results[0].value.input.ownedPoiEvidence();
+  expect(Object.isFrozen(evidence)).toBe(true);
+  expect(Object.keys(evidence).sort()).toEqual(["at", "blindedCommitment", "listKey", "status", "type"]);
+  expect(evidence).toMatchObject({
+    blindedCommitment: commitment,
+    type: "Transact",
+    status: "Missing",
+    listKey: require("../src/data/railgun-poi-records.js").REQUIRED_LIST,
+  });
+  expect(evidence.at).toBeGreaterThanOrEqual(before);
+  await lane.retryAttempted("a".repeat(64));
+  const original = state.createPoi.mock.results[0].value;
+  expect(original.retryAttempted).toHaveBeenCalledWith("a".repeat(64));
+  expect(original.retryAttempted.mock.calls[0]).toHaveLength(1);
+  lane.close();
+  await lane.closed;
+  await session.close();
+});
+test("a later failed owned POI read clears earlier retry evidence", async () => {
+  const f = observerFixture(),
+    session = await f.api.openAccount(f.options);
+  f.value.statuses = [{ blindedCommitment: "0x" + "5".repeat(64), type: "Transact", status: "Missing" }];
+  await session.observeOwnedPoi(f.input);
+  f.reviewDisclosure.mockReturnValue(false);
+  await expect(session.observeOwnedPoi(f.input)).rejects.toThrow();
+  const lane = await session.openPoiRecovery({
+    signal: f.caller.signal,
+    reviewDisclosures: jest.fn(() => true),
+  });
+  expect(state.createPoi.mock.results[0].value.input.ownedPoiEvidence()).toBeNull();
+  lane.close();
+  await lane.closed;
   await session.close();
 });
 test.each([false, null, 1])(

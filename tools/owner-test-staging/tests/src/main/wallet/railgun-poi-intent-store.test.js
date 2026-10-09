@@ -316,6 +316,7 @@ test('exposes only bounded persistence methods without sender or recovered proof
     'inspect',
     'list',
     'prepare',
+    'reserveRetry',
     'signal',
   ]);
   expect(Object.isFrozen(store)).toBe(true);
@@ -649,7 +650,7 @@ const corruptions = [
   [
     'version',
     (v) => {
-      v.version = 4;
+      v.version = 5;
     },
   ],
   [

@@ -1,0 +1,50 @@
+{
+  "baseRevision": "5b8379e480e4436a789c8a0cd778c99e709905f0",
+  "productionTransforms": false,
+  "reason": "The explicit POI retry deliberately changes two public contracts: the intent store gains exactly reserveRetry and a V4 document, and response inspection gains a redacted diagnostic. The store method list stays exact with the one added name; the unsupported-version case moves from 4 (now valid) to 5; exact inspection equality is kept for every other field, with the diagnostic shape checked exactly. No assertion is skipped or widened.",
+  "reviewedSource": {
+    "path": "src/owners/railgun-poi-intent-store.js",
+    "sha256": "e421031f58f2c174b62896654cb4bcb745b2c06c15c19e189953d0a7c1777ec3"
+  },
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-intent-store.test.js",
+      "beforeSha256": "0e397905a4d8664f1b416a76bb5e17bd42480c434cc2404eb9c3c64050df50df",
+      "afterSha256": "312dee7835da6573d3ba94f465bb9afdd5046e5402c80f78ad835f49545d73ae",
+      "replacements": [
+        {
+          "start": 10696,
+          "before": "",
+          "after": "    'reserveRetry',\n"
+        },
+        {
+          "start": 21992,
+          "before": "      v.version = 4;\n",
+          "after": "      v.version = 5;\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-submit-data.test.js",
+      "beforeSha256": "f6c7bdc3693954d4186874d4e041a6046f0ff91bbcbb99726bf2567b7e66b59f",
+      "afterSha256": "d52ddc17d7cca66fdc0cf7f439ad988d8334eef3f531f8119b762592f362a805",
+      "replacements": [
+        {
+          "start": 7154,
+          "before": "",
+          "after": "  diagnostic: null,\n"
+        },
+        {
+          "start": 7311,
+          "before": "",
+          "after": "const DIAGNOSTIC_KEYS = ['dataCategory', 'envelope', 'messageCategory', 'rpcCode'];\n"
+        },
+        {
+          "start": 7510,
+          "before": "  expect(observed).toEqual(expectedInspection(classification, evidence));\n",
+          "after": "  const { diagnostic, ...rest } = observed;\n  expect({ ...rest, diagnostic: null }).toEqual(expectedInspection(classification, evidence));\n  // Only error-shaped outcomes carry a redacted category; never a result.\n  if (['http-failure', 'rpc-error', 'unmatched', 'malformed'].includes(classification)) {\n    expect(Object.keys(diagnostic).sort()).toEqual(DIAGNOSTIC_KEYS);\n    expect(Object.isFrozen(diagnostic)).toBe(true);\n  } else expect(diagnostic).toBeNull();\n"
+        }
+      ]
+    }
+  ]
+}

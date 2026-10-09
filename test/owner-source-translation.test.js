@@ -4,6 +4,7 @@ const fs = require("fs"),
   vm = require("vm"),
   { createHash } = require("crypto");
 const root = path.join(__dirname, "..");
+const poiRetryTransitions = require("../docs/owners/POI-RETRY-TRANSITIONS.json");
 const facadeTransitions = require("../docs/owners/FACADE-TRANSITIONS.json");
 const policyTransitions = require("../docs/owners/POLICY-TRANSITIONS.json");
 const signerTransitions = require("../docs/owners/SIGNER-LIFETIME-TRANSITIONS.json");
@@ -69,6 +70,15 @@ test("every translated algorithm reconstructs its exact immutable original bytes
     reused = 0;
   for (const row of translation.files) {
     let text = fs.readFileSync(sourceFile(row.destination), "utf8");
+    // Newest phase first: the explicit POI retry.
+    const poiRetryTransition = poiRetryTransitions.changes.find(
+      (change) => change.file === row.destination,
+    );
+    if (poiRetryTransition) {
+      expect(sha(text)).toBe(poiRetryTransition.afterSha256);
+      text = undo(text, poiRetryTransition.replacements);
+      expect(sha(text)).toBe(poiRetryTransition.beforeSha256);
+    }
     const facadeTransition = facadeTransitions.changes.find(
       (change) => change.file === row.destination,
     );
@@ -315,9 +325,16 @@ test("all reused static named export surfaces were checked, including the full c
     const found = audit.rows.find((item) => item.source === row.source);
     expect(found.destination).toBe(row.destination);
     expect(found.sourceSha256).toBe(row.sourceSha256);
-    expect(found.destinationSha256).toBe(
-      sha(fs.readFileSync(path.join(root, row.destination))),
+    // The audited bytes are the pre-retry basis; the retry phase is undone.
+    let text = fs.readFileSync(path.join(root, row.destination), "utf8");
+    const poiRetry = poiRetryTransitions.changes.find(
+      (change) => change.file === row.destination,
     );
+    if (poiRetry) {
+      expect(sha(text)).toBe(poiRetry.afterSha256);
+      text = undo(text, poiRetry.replacements);
+    }
+    expect(found.destinationSha256).toBe(sha(text));
     expect(found.destinationExports).toEqual(found.exports);
   }
   const capsule = audit.rows.find((row) =>

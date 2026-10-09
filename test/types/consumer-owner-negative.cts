@@ -95,6 +95,10 @@ poi.submit({ proof: {}, plan: {} });
 poi.prepare("id", "Shield");
 // @ts-expect-error no retained store access
 poi.store;
+// @ts-expect-error a retry accepts no caller status, evidence or flag
+poi.retryAttempted("id", { status: "Missing" });
+// @ts-expect-error submit takes no retry flag
+poi.submit("id", true);
 declare const output: Extract<owner.PoiOutputOutcome, { status: "matched" }>;
 // @ts-expect-error output matching cannot grant membership acceptance
 const acceptedMembership: true = output.membershipAuthenticated;

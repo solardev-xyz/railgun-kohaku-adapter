@@ -3,6 +3,7 @@ const { readFileSync } = require('fs');
 const { execFileSync } = require('child_process');
 const path = require('path');
 const provenance = require('./fixtures/poi-data-provenance.json');
+const poiRetry = require('../docs/owners/POI-RETRY-TRANSITIONS.json');
 const hash = (bytes) => createHash('sha256').update(bytes).digest('hex');
 
 test('POI source copies and exact binder function retain immutable source provenance', () => {
@@ -11,6 +12,16 @@ test('POI source copies and exact binder function retain immutable source proven
   const host = require('../host-poi.cjs');
   for (const [file, pin] of Object.entries(provenance.files)) {
     let text = readFileSync(path.join(__dirname, '..', file), 'utf8');
+    // The explicit POI retry is a later reviewed phase: undo it to the pinned copy.
+    const retry = poiRetry.changes.find((change) => change.file === file);
+    if (retry) {
+      expect(hash(text)).toBe(retry.afterSha256);
+      for (const edit of [...retry.replacements].reverse()) {
+        expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(edit.after);
+        text = text.slice(0, edit.start) + edit.before + text.slice(edit.start + edit.after.length);
+      }
+      expect(hash(text)).toBe(retry.beforeSha256);
+    }
     expect(hash(text)).toBe(pin.copySha256);
     if (!file.startsWith('src/data/')) continue;
     if (pin.extractedFunction) {

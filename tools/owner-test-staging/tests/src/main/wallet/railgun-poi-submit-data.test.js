@@ -167,12 +167,20 @@ const expectedInspection = (classification, evidence) => ({
   acceptanceVerified: false,
   disclosureEnabled: false,
   spendingEnabled: false,
+  diagnostic: null,
 });
 const classify = (evidence, submission = prepare({ requestId, payload: payload() })) =>
   inspectResponse({ submission, evidence });
+const DIAGNOSTIC_KEYS = ['dataCategory', 'envelope', 'messageCategory', 'rpcCode'];
 const expectClass = (classification, evidence, submission) => {
   const observed = classify(evidence, submission);
-  expect(observed).toEqual(expectedInspection(classification, evidence));
+  const { diagnostic, ...rest } = observed;
+  expect({ ...rest, diagnostic: null }).toEqual(expectedInspection(classification, evidence));
+  // Only error-shaped outcomes carry a redacted category; never a result.
+  if (['http-failure', 'rpc-error', 'unmatched', 'malformed'].includes(classification)) {
+    expect(Object.keys(diagnostic).sort()).toEqual(DIAGNOSTIC_KEYS);
+    expect(Object.isFrozen(diagnostic)).toBe(true);
+  } else expect(diagnostic).toBeNull();
   expect(Object.isFrozen(observed)).toBe(true);
   expect(observed).not.toBeInstanceOf(Promise);
   return observed;
