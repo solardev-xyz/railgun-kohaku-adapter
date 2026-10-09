@@ -3051,3 +3051,38 @@ test("a refused further attempt marks the refusal in its preparation interval", 
   expect(marks).not.toContain("broadcast:start");
   expect(calls.some(([k]) => k === "broadcast")).toBe(false);
 });
+test("a custody unit bound to another attempt id immediately before a further reservation is refused", () => {
+  const { p, j5, attemptId } = refusedJourney5();
+  const j6 = journey6Of(p, j5, attemptId);
+  verify(p, j6, attemptId);
+  const fourth = refusedAttempt6(p, j6);
+  const file = ledger.ledgerFile(p, ledger.JOURNEY6);
+  const before = fs.readFileSync(file, "utf8");
+  // Hand-written tail: a custody unit naming another attempt id (one with no
+  // earlier unit, so only the attempt binding can refuse it), then its report.
+  // Spaced well past the finish.
+  const late = Date.now() + 10 * 60 * 1000;
+  const other = crypto6.randomBytes(16).toString("hex");
+  expect(other).not.toBe(fourth);
+  fs.appendFileSync(
+    file,
+    JSON.stringify({ type: "budget", kind: "custody-verify", n: 2, at: late, attemptId: other }) +
+      "\n" +
+      JSON.stringify({ type: "report", mode: "live-custody-verify", sha256: uniq(), at: late }) +
+      "\n",
+  );
+  expect(() => ledger.inspect(p, j6)).toThrow();
+  expect(() => at(late + 1000, () => ledger.reserve(p, j6, "unshield", {}))).toThrow();
+  // The same tail bound to the last refused attempt admits the reservation.
+  fs.writeFileSync(file, before);
+  fs.appendFileSync(
+    file,
+    JSON.stringify({ type: "budget", kind: "custody-verify", n: 2, at: late, attemptId: fourth }) +
+      "\n" +
+      JSON.stringify({ type: "report", mode: "live-custody-verify", sha256: uniq(), at: late }) +
+      "\n",
+  );
+  expect(ledger.inspect(p, j6).sends).toHaveLength(4);
+  at(late + 1000, () => ledger.reserve(p, j6, "unshield", {}));
+  expect(ledger.inspect(p, j6).sends).toHaveLength(5);
+});
