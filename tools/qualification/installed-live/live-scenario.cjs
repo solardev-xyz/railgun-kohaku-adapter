@@ -371,7 +371,7 @@ function finishReport(context, value) {
 // digest and mode as a report row of that predecessor. Nothing is relabelled.
 function assertChained(context, previous) {
   if (previous.ledgerHeaderSha256 === sha(JSON.stringify(context.header))) return;
-  assert.ok([ledger.JOURNEY2, ...ledger.UPGRADES].includes(context.header.name), 'Report from another campaign');
+  assert.ok([ledger.JOURNEY2, ...ledger.UPGRADES, ledger.JOURNEY5].includes(context.header.name), 'Report from another campaign');
   if (context.header.name === ledger.JOURNEY2)
     assert.equal(previous.ledgerHeaderSha256, context.header.binding.predecessor.headerSha256, 'Report from another campaign');
   // Exact producer header, digest and mode as one ancestor recorded them.
@@ -857,6 +857,22 @@ async function unshield(context) {
     assert.equal(output.spentTxid, false);
     assert.equal(output.asset?.contract?.toLowerCase(), WETH);
     const beforeIds = new Set((await holds(session, signal, owner, milestone)).map((record) => record.holdId));
+    // The amendment's one further unshield: the same output, recipient, amount
+    // and asset as the refused reservation, and no held operation since it.
+    if (header.name === ledger.JOURNEY5) {
+      const { amendment } = header.binding;
+      const sends = ledger.inspect(profile, header).sends;
+      assert.equal(sends.length, 2, 'The amendment admits one further unshield only');
+      const unsent = sends[1];
+      assert.equal(unsent.pending.attemptId, amendment.attemptId);
+      assert.equal(previous.outputNoteIdSha256, amendment.unsent.outputNoteIdSha256);
+      assert.deepEqual({ amount: String(output.amount), recipient: owner, asset: WETH }, amendment.unsent.unshield);
+      assert.deepEqual(
+        [...beforeIds].map(sha).sort(),
+        unsent.pending.binding.holdIdsBeforeSha256,
+        'A held operation appeared after the refused reservation'
+      );
+    }
     // The pre-existing holds, hashed, let a later reconcile find the new one.
     const attemptId = ledger.reserve(profile, header, 'unshield', {
       outputNoteIdSha256: previous.outputNoteIdSha256,
@@ -900,6 +916,7 @@ async function unshield(context) {
       failure = typeof error?.code === 'string' ? error.code : 'unknown-error';
     }
     const immediate = failure ? { classification: 'not-acknowledged', error: failure } : classify(outcome);
+    milestone('unshield-attempt:' + (failure ?? 'returned'));
     fault(context, 'exit-before-finish');
     // A known hash finishes the attempt at once; its readback is best effort.
     if (immediate.transactionHash) ledger.finish(profile, header, attemptId, immediate);
@@ -909,9 +926,19 @@ async function unshield(context) {
     let after = null,
       added;
     // Without the new hold's binding a hash cannot be observed: the report is
-    // deferred to live-reconcile, which finds the hold by set difference.
-    fault(context, 'history-unavailable-after-send');
-    added = (await holds(session, signal, owner, milestone)).filter((record) => !beforeIds.has(record.holdId));
+    // deferred to live-reconcile, which finds the hold by set difference. A
+    // failure here keeps the attempt's own outcome as its primary refusal.
+    try {
+      fault(context, 'history-unavailable-after-send');
+      added = (await holds(session, signal, owner, milestone)).filter((record) => !beforeIds.has(record.holdId));
+    } catch (error) {
+      try {
+        Object.defineProperty(error, 'primaryRefusal', { value: failure ?? 'returned' });
+      } catch {
+        /* The later failure still propagates unchanged. */
+      }
+      throw error;
+    }
     assert.ok(added.length <= 1, 'More than one new held operation');
     if (immediate.transactionHash) assert.equal(added.length, 1, 'A sent unshield without its hold');
     if (added.length === 1) {
@@ -970,10 +997,31 @@ async function summary(context) {
     retry = null,
     reproofRebuild = null,
     reproof = null,
+    unsent = null,
   } = lineage;
-  const upgraded = ledger.UPGRADES.includes(context.header.name);
-  const circuit = context.header.name === ledger.JOURNEY4;
+  // The send amendment continues the circuit link's generation and lineage.
+  const amended = context.header.name === ledger.JOURNEY5;
+  const upgraded = ledger.UPGRADES.includes(context.header.name) || amended;
+  const circuit = context.header.name === ledger.JOURNEY4 || amended;
   assert.equal(upgrade !== null, upgraded);
+  // The amendment's refused reservation stays in the lineage, unsent: its own
+  // reconcile report, exactly as the ledger and launcher bound it.
+  assert.equal(unsent !== null, amended);
+  if (amended) {
+    const { reconcile, unsent: bound } = context.header.binding.amendment;
+    assertChained(context, unsent);
+    assert.equal(unsent.reportSha256, reconcile.reportSha256);
+    assert.equal(unsent.reportMode, 'live-reconcile');
+    assert.equal(unsent.schema, 'railgun-installed-live-unshield-v1');
+    assert.equal(unsent.reconciled, 'finished');
+    assert.deepEqual(unsent.outcome, { ...ledger.UNSENT });
+    assert.equal(unsent.holdIdSha256, null);
+    assert.equal(unsent.g1, null);
+    assert.equal(unsent.outputNoteIdSha256, bound.outputNoteIdSha256);
+    // The actual unshield is a different, journaled operation with its own hash.
+    assert.notEqual(previous.holdIdSha256, null);
+    assert.ok(previous.transactionHash);
+  }
   // The circuit link's lineage: the consumed retry, its own rebuild and its
   // own replacement report.
   assert.equal(reproofRebuild !== null, circuit);
@@ -1085,6 +1133,22 @@ async function summary(context) {
       ...(upgraded ? { upgrade: { anchor: upgrade.anchor, ranges: upgrade.ranges, identity: upgrade.upgrade } } : {}),
       ...(circuit
         ? { circuit: { anchor: reproofRebuild.anchor, ranges: reproofRebuild.ranges, identity: reproofRebuild.upgrade } }
+        : {}),
+      // Three operator reservations, two chain transactions: the refused one
+      // stays recorded as unsent and has no receipt or fee.
+      ...(amended
+        ? {
+            reservations: {
+              operator: ledger.AMENDMENT_RESERVATIONS,
+              chainTransactions: 2,
+              unsent: {
+                attemptId: context.header.binding.amendment.attemptId,
+                outcome: unsent.outcome,
+                reportSha256: unsent.reportSha256,
+              },
+              unshield: { holdIdSha256: previous.holdIdSha256, transactionHash: previous.transactionHash },
+            },
+          }
         : {}),
     });
   } finally {

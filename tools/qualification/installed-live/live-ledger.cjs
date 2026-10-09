@@ -44,7 +44,14 @@ const JOURNEY3 = 'installed-journey-sentio-journey-3';
 // consumed first handoff and retry included) and adds the same bounded phase
 // allowances to its own boundary counts, plus one replacement handoff.
 const JOURNEY4 = 'installed-journey-sentio-journey-4';
-const CHAIN = Object.freeze([FIRST, CONTINUATION, RESUME, RESUME2, RESUME3, JOURNEY2, JOURNEY3, JOURNEY4]);
+// The one reviewed send amendment: journey-4's unshield reservation was
+// refused before any hold or journal entry and reconciled as unjournaled, so
+// it spent the second send allowance without a chain transaction. Same
+// package, host and generation; only the runner changes. It carries the
+// complete state and admits exactly one more unshield reservation: three
+// operator reservations, at most two chain transactions.
+const JOURNEY5 = 'installed-journey-sentio-journey-5';
+const CHAIN = Object.freeze([FIRST, CONTINUATION, RESUME, RESUME2, RESUME3, JOURNEY2, JOURNEY3, JOURNEY4, JOURNEY5]);
 // The links that start a new generation under a phase of their own.
 const UPGRADES = Object.freeze([JOURNEY3, JOURNEY4]);
 const UPGRADE_ADDITIONS = Object.freeze({
@@ -92,6 +99,10 @@ const DIRECTORY_SUFFIX = '.installed-journey-ledger';
 const MAX_BYTES = 1024 * 1024;
 const SENDS = Object.freeze(['transfer', 'unshield']);
 const CONTINUING = Object.freeze(['acknowledged', 'unknown']);
+// The amendment's predecessor outcome, exactly as live-reconcile finishes a
+// reservation with no new hold: no journal, no hash, observed by reconcile.
+const UNSENT = Object.freeze({ classification: 'unjournaled-after-refusal', readback: 'reconcile' });
+const AMENDMENT_RESERVATIONS = 3;
 const fail = (reason) =>
   Object.assign(new Error('Installed journey ledger refused: ' + reason), {
     code: 'INSTALLED_JOURNEY_LEDGER_REFUSED',
@@ -171,10 +182,86 @@ function predecessor(directory, header) {
     if (!UPGRADES.includes(header.name) || !['freedomCommit', 'packageTarSha256'].includes(key))
       check(same(previous[key], header[key]), 'predecessor-scope:' + key);
   check(previous.binding?.heldTransferReportSha256 === header.binding.heldTransferReportSha256, 'predecessor-held');
-  if ([RESUME, RESUME2, RESUME3, JOURNEY2, JOURNEY3, JOURNEY4].includes(header.name))
+  if ([RESUME, RESUME2, RESUME3, JOURNEY2, JOURNEY3, JOURNEY4, JOURNEY5].includes(header.name))
     check(same(previous.binding?.rpc?.url, header.binding?.rpc?.url), 'predecessor-endpoint');
   const carried = index - 1 > 0 ? predecessor(directory, previous) : {};
   const state = replay(records, previous, carried);
+  if (header.name === JOURNEY5) {
+    check(previous.name === JOURNEY4, 'predecessor-amendment');
+    const identity = (value) => ({
+      freedomCommit: value.freedomCommit,
+      packageCommit: value.packageCommit,
+      packageTarSha256: value.packageTarSha256,
+      runnerSha256: value.runnerSha256,
+    });
+    const amendment = header.binding?.amendment;
+    // The same host and package; only the reviewed runner identity changes.
+    // No upgrade or phase: the amendment starts no generation.
+    check(
+      !Object.hasOwn(header.binding, 'upgrade') &&
+        !Object.hasOwn(header.binding, 'phase') &&
+        amendment &&
+        same(Object.keys(amendment).sort(), ['attemptId', 'caps', 'from', 'reason', 'reconcile', 'to', 'unsent']) &&
+        same(amendment.from, identity(previous)) &&
+        same(amendment.to, identity(header)) &&
+        amendment.to.freedomCommit === amendment.from.freedomCommit &&
+        amendment.to.packageTarSha256 === amendment.from.packageTarSha256 &&
+        id(amendment.attemptId) &&
+        typeof amendment.reason === 'string' &&
+        amendment.reason.length > 0,
+      'predecessor-amendment'
+    );
+    // Exactly the continuing transfer and the bound unshield reservation,
+    // finished unsent by reconcile; nothing pending.
+    const unsent = state.sends[1];
+    check(
+      state.sends.length === 2 &&
+        state.sends[0].pending.send === 'transfer' &&
+        CONTINUING.includes(state.sends[0].finished?.outcome?.classification) &&
+        unsent.pending.send === 'unshield' &&
+        unsent.pending.attemptId === amendment.attemptId &&
+        same(unsent.finished?.outcome, UNSENT),
+      'predecessor-amendment-send'
+    );
+    check(
+      same(
+        canonical(amendment.unsent),
+        canonical({ outputNoteIdSha256: unsent.pending.binding?.outputNoteIdSha256, unshield: unsent.pending.binding?.unshield })
+      ),
+      'predecessor-amendment-unsent'
+    );
+    // Its reconcile report, recorded by journey-4 itself immediately after
+    // that finish, under journey-4's own header.
+    const own = records.slice(1);
+    const at = own.findIndex((record) => record.type === 'send-finished' && record.attemptId === amendment.attemptId);
+    const reconcile = amendment.reconcile;
+    check(
+      reconcile &&
+        same(Object.keys(reconcile).sort(), ['headerSha256', 'mode', 'report', 'reportSha256']) &&
+        reconcile.mode === 'live-reconcile' &&
+        reconcile.headerSha256 === bound.headerSha256 &&
+        typeof reconcile.report === 'string' &&
+        path.isAbsolute(reconcile.report) &&
+        at >= 0 &&
+        own[at + 1]?.type === 'report' &&
+        own[at + 1].mode === 'live-reconcile' &&
+        own[at + 1].sha256 === reconcile.reportSha256,
+      'predecessor-amendment-report'
+    );
+    // Every POI handoff reservation preserved and finished.
+    check(
+      state.poi.pending && state.poi.finished && state.retry.pending && state.retry.finished && state.reproof.pending && state.reproof.finished,
+      'predecessor-amendment-poi'
+    );
+    // Journey-4's caps exactly, plus the operator reservation count. The send
+    // cap stays two: it counts chain transactions.
+    check(
+      same(canonical(amendment.caps), canonical(previous.caps)) &&
+        same(canonical(header.caps), canonical({ ...previous.caps, sendReservations: AMENDMENT_RESERVATIONS })),
+      'predecessor-amendment-caps'
+    );
+    return state;
+  }
   if (header.name === JOURNEY4) {
     check(previous.name === JOURNEY3, 'predecessor-circuit');
     const identity = (value) => ({
@@ -375,7 +462,7 @@ function predecessor(directory, header) {
 // link admits its bound predecessor's rows; the upgrade link admits the rows of
 // every verified ancestor, each only with its own producer header.
 function predecessorReports(profile, header) {
-  if (![JOURNEY2, ...UPGRADES].includes(header.name)) return [];
+  if (![JOURNEY2, ...UPGRADES, JOURNEY5].includes(header.name)) return [];
   const directory = path.dirname(ledgerFile(profile, header.name));
   const rows = [];
   let current = header;
@@ -446,7 +533,18 @@ function replay(records, header, carried = {}) {
   for (const record of records.slice(1)) {
     if (record?.type === 'send-pending') {
       check(sends.every((send) => send.finished), 'pending-attempt');
-      const kind = SENDS[sends.length];
+      // The amendment's one further unshield: only after exactly its bound,
+      // reconciled unsent reservation. A fourth reservation never.
+      const amended = header.name === JOURNEY5 && sends.length === 2;
+      if (amended)
+        check(
+          header.caps?.sendReservations === AMENDMENT_RESERVATIONS &&
+            sends[1].pending.send === 'unshield' &&
+            sends[1].pending.attemptId === header.binding?.amendment?.attemptId &&
+            same(sends[1].finished?.outcome, UNSENT),
+          'send-order'
+        );
+      const kind = amended ? 'unshield' : SENDS[sends.length];
       check(kind && record.send === kind && id(record.attemptId), 'send-order');
       if (kind === 'unshield')
         check(CONTINUING.includes(sends[0].finished.outcome?.classification), 'transfer-not-continuable');
@@ -457,6 +555,8 @@ function replay(records, header, carried = {}) {
       last.finished = record;
     } else if (record?.type === 'budget') {
       check(typeof record.kind === 'string' && Number.isSafeInteger(record.at), 'budget');
+      // The amendment opens no generation: no scan openers of its own.
+      if (header.name === JOURNEY5) check(!record.kind.startsWith('scan-open:'), 'amendment-opener');
       // A third-link opener needs progress since the previous one, allowing
       // at most two consecutive sessions without a returned checkpoint.
       if (header.name === RESUME3 && record.kind === 'scan-open:pending') {
@@ -746,6 +846,9 @@ function resumeDeadline(profile, header) {
   return first ? first.at + RESUME3_WINDOW_MS : null;
 }
 module.exports = {
+  JOURNEY5,
+  UNSENT,
+  AMENDMENT_RESERVATIONS,
   JOURNEY4,
   UPGRADES,
   REPROOF_ADDITIONS,

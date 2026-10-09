@@ -99,6 +99,7 @@ function headerFor(request, binding, syntheticCaps) {
       ledger.JOURNEY2,
       ledger.JOURNEY3,
       ledger.JOURNEY4,
+      ledger.JOURNEY5,
     ].includes(name)
   );
   const resuming = [ledger.RESUME, ledger.RESUME2, ledger.RESUME3].includes(name);
@@ -127,8 +128,26 @@ function headerFor(request, binding, syntheticCaps) {
   // its phase allowances are derived from its bound boundary counts.
   const upgrading = ledger.UPGRADES.includes(name);
   const circuit = name === ledger.JOURNEY4;
+  const amending = name === ledger.JOURNEY5;
   assert.equal(Object.hasOwn(binding, 'upgrade'), upgrading);
   assert.equal(Object.hasOwn(binding, 'phase'), upgrading);
+  // The send amendment names this exact host, package and runner, the same
+  // host and package as its predecessor's, and carries that ledger's caps.
+  assert.equal(Object.hasOwn(binding, 'amendment'), amending);
+  if (amending) {
+    const { amendment } = binding;
+    assert.deepEqual(amendment.to, {
+      freedomCommit: request.hostCommit,
+      packageCommit: request.packageCommit,
+      packageTarSha256: request.packageTarPin.sha256,
+      runnerSha256,
+    });
+    assert.equal(amendment.from.freedomCommit, request.hostCommit);
+    assert.equal(amendment.from.packageTarSha256, request.packageTarPin.sha256);
+    // Two chain transactions and the fee caps stay exactly as they were.
+    for (const [key, value] of Object.entries(FIXED_CAPS)) assert.equal(amendment.caps?.[key], value);
+    assert.equal(Object.hasOwn(amendment.caps, 'sendReservations'), false);
+  }
   let phaseCaps = {};
   if (upgrading) {
     assert.deepEqual(binding.upgrade.to, {
@@ -177,16 +196,40 @@ function headerFor(request, binding, syntheticCaps) {
     packageTarSha256: request.packageTarPin.sha256,
     runnerSha256,
     binding,
-    caps: {
-      ...FIXED_CAPS,
-      ...(request.transport === 'live' ? LIVE_CAPS : syntheticCaps),
-      // The reviewed resume extension: five pending openers in aggregate, nothing else.
-      ...(resuming ? { scanResumes: name === ledger.RESUME3 ? RESUME3_SCAN_RESUMES : RESUME_SCAN_RESUMES } : {}),
-      // The post-send link keeps its predecessor's caps exactly.
-      ...(name === ledger.JOURNEY2 || upgrading ? { scanResumes: RESUME3_SCAN_RESUMES } : {}),
-      ...phaseCaps,
-    },
+    caps: amending
+      ? { ...binding.amendment.caps, sendReservations: ledger.AMENDMENT_RESERVATIONS }
+      : {
+          ...FIXED_CAPS,
+          ...(request.transport === 'live' ? LIVE_CAPS : syntheticCaps),
+          // The reviewed resume extension: five pending openers in aggregate, nothing else.
+          ...(resuming ? { scanResumes: name === ledger.RESUME3 ? RESUME3_SCAN_RESUMES : RESUME_SCAN_RESUMES } : {}),
+          // The post-send link keeps its predecessor's caps exactly.
+          ...(name === ledger.JOURNEY2 || upgrading ? { scanResumes: RESUME3_SCAN_RESUMES } : {}),
+          ...phaseCaps,
+        },
   };
+}
+// The amendment's unsent evidence, read from the bound reconcile report itself:
+// that exact reservation finished unsent with no hold, no G1 read and no hash.
+// A present-but-unjournaled hold reconciles to the same classification, so the
+// classification alone never qualifies.
+function assertUnsentEvidence(request) {
+  const { amendment } = request.ledgerHeader.binding;
+  const { reconcile, unsent } = amendment;
+  const report = read(reconcile.report, reconcile.reportSha256);
+  assert.equal(report.mode, 'live-reconcile');
+  assert.equal(report.transport, request.transport);
+  const value = report.scenario;
+  assert.equal(value.schema, 'railgun-installed-live-unshield-v1');
+  assert.equal(value.send, 'unshield');
+  assert.equal(value.reconciled, 'finished');
+  assert.deepEqual(value.outcome, { ...ledger.UNSENT });
+  assert.equal(value.holdIdSha256, null);
+  assert.equal(value.g1, null);
+  assert.equal(value.stop, true);
+  assert.equal(value.outputNoteIdSha256, unsent.outputNoteIdSha256);
+  assert.deepEqual(value.unshield, unsent.unshield);
+  assert.equal(value.ledgerHeaderSha256, reconcile.headerSha256);
 }
 const RESUME_SCAN_RESUMES = 5;
 // Each upgrade link runs only its own modes and the continuation stages; its
@@ -195,6 +238,8 @@ const RESUME_SCAN_RESUMES = 5;
 const UPGRADE_MODES = Object.freeze({
   [ledger.JOURNEY3]: Object.freeze(['live-upgrade-rebuild', 'live-poi-retry']),
   [ledger.JOURNEY4]: Object.freeze(['live-reproof-rebuild', 'live-poi-reproof']),
+  // The send amendment has no modes of its own: continuation stages only.
+  [ledger.JOURNEY5]: Object.freeze([]),
 });
 const CONTINUATION_MODES = Object.freeze(['live-poi-status', 'live-unshield', 'live-observe', 'live-summary', 'live-reconcile']);
 function assertModeAdmitted(name, mode) {
@@ -277,9 +322,17 @@ function validate(request) {
     assert.ok(['primary', 'limited'].includes(request.synthetic.endpoint));
     for (const [key, value] of Object.entries(request.synthetic.faults))
       assert.ok(
-        ['failLogsFrom', 'failApplyRefreshTo', 'denseFrom', 'denseTo', 'latencyMs', 'failValidatedTxid', 'rejectPoiSubmits', 'failPoisPerList'].includes(
-          key
-        ) &&
+        [
+          'failLogsFrom',
+          'failApplyRefreshTo',
+          'denseFrom',
+          'denseTo',
+          'latencyMs',
+          'failValidatedTxid',
+          'rejectPoiSubmits',
+          'failPoisPerList',
+          'failRootHistoryRead',
+        ].includes(key) &&
           Number.isSafeInteger(value),
         'Synthetic fault ' + key
       );
@@ -288,6 +341,7 @@ function validate(request) {
   assert.equal(file(request.heldReport.file).sha256, request.heldReport.sha256);
   assert.equal(request.heldReport.sha256, request.ledgerHeader.binding.heldTransferReportSha256);
   const state = ledger.inspect(request.profileDirectory, request.ledgerHeader);
+  if (request.ledgerHeader.name === ledger.JOURNEY5) assertUnsentEvidence(request);
   // The third link's claim is derived from its predecessor's records by the ledger.
   if ([ledger.RESUME, ledger.RESUME2].includes(request.ledgerHeader.name)) assertResumeClaim(request);
   return state;
@@ -304,7 +358,9 @@ function admit(request) {
   const kind = SEND_MODES[request.mode];
   if (kind) {
     assert.ok(sends.every((send) => send.finished), 'Unfinished send: observation only');
-    assert.equal(ledger.SENDS[sends.length], kind, 'Send order or allowance exhausted');
+    // The amendment's one further unshield (the ledger binds its predecessor).
+    const next = request.ledgerHeader.name === ledger.JOURNEY5 && sends.length === 2 ? 'unshield' : ledger.SENDS[sends.length];
+    assert.equal(next, kind, 'Send order or allowance exhausted');
   }
   return sends.length;
 }
@@ -473,4 +529,4 @@ if (require.main === module)
     );
     process.exitCode = 1;
   });
-module.exports = { makeRequest, validate, admit, headerFor, assertModeAdmitted, RECIPE, LIVE_CAPS };
+module.exports = { makeRequest, validate, admit, headerFor, assertModeAdmitted, assertUnsentEvidence, RECIPE, LIVE_CAPS };

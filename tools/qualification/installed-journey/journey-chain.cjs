@@ -110,6 +110,7 @@ function createJourneyChain({
           'failValidatedTxid',
           'rejectPoiSubmits',
           'failPoisPerList',
+          'failRootHistoryRead',
         ].includes(key)
     ),
     []
@@ -120,7 +121,16 @@ function createJourneyChain({
   //   its end header once more; the next read is the coordinator's refresh
   //   inside apply, after its journal entry is prepared and the window applied.
   //   That read fails, leaving a pending application for recovery.
-  const scanFaults = { logsFired: false, refreshFired: false, servedTo: new Set(), endReads: 0, txidReads: 0, poiRejected: 0, statusFailed: 0 };
+  const scanFaults = {
+    logsFired: false,
+    refreshFired: false,
+    servedTo: new Set(),
+    endReads: 0,
+    txidReads: 0,
+    poiRejected: 0,
+    statusFailed: 0,
+    rootHistoryReads: 0,
+  };
   const servedLogs = [];
   // A dense interval [denseFrom, denseTo], as Sepolia around 9.0M: a request
   // wider than 20000 blocks covering it answers with 600 well-formed Railgun
@@ -500,6 +510,13 @@ function createJourneyChain({
     const to = target.to.toLowerCase(),
       data = target.data.toLowerCase();
     if (to === PROXY && data.startsWith(SELECTOR.rootHistory)) {
+      // The n-th merkle-root read of this process fails once at the transport,
+      // as a Tor drop would: a preparation-time read before any hold exists.
+      scanFaults.rootHistoryReads++;
+      if (Number.isSafeInteger(faults.failRootHistoryRead) && scanFaults.rootHistoryReads === faults.failRootHistoryRead) {
+        injected++;
+        throw Object.assign(Error('Synthetic Tor request failure'), { code: 'SYNTHETIC_INJECTED_FAULT' });
+      }
       const [tree, root] = coder.decode(['uint256', 'bytes32'], '0x' + data.slice(10));
       assert.equal(tree, 0n);
       return word(derived.roots.includes(root.toLowerCase()) ? 1 : 0);
@@ -890,6 +907,7 @@ function createJourneyChain({
       unknownSends,
       injectedFaults: injected,
       servedLogs: copy(servedLogs),
+      rootHistoryReads: scanFaults.rootHistoryReads,
       poiVerification: {
         ...(poiVerifier?.report?.() ?? { key: null, circuits: [] }),
         invalidProofs: poiInvalid,

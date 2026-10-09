@@ -2031,3 +2031,390 @@ test("the replacement and circuit rebuild modes run on the circuit link only", a
     }),
   ).rejects.toThrow();
 });
+
+// --- The send amendment (journey-5) ------------------------------------------
+const UNSHIELD = Object.freeze({
+  amount: "997500000000000",
+  recipient: "0x" + "1".repeat(40),
+  asset: "0xfff9976782d46cc05630d1f6ebab18b2324d6b14",
+});
+// Journey-4 through the replacement, then one unshield reservation finished as
+// reconcile finishes an attempt with no new hold, and that reconcile's report.
+function reconciledJourney4({ outcome = ledger.UNSENT, report = true, between = null } = {}) {
+  const { p, j3 } = retriedJourney3();
+  const j4 = journey4Of(p, j3);
+  ledger.startPhase(p, j4);
+  const reproofId = ledger.poiReproofReserve(p, j4, { holdIdSha256: "a".repeat(64) });
+  ledger.poiReproofFinish(p, j4, reproofId, { status: "recovery-required" });
+  ledger.recordReport(p, j4, "live-poi-status", "7".repeat(64));
+  const attemptId = ledger.reserve(p, j4, "unshield", {
+    outputNoteIdSha256: "e".repeat(64),
+    holdIdsBeforeSha256: ["f".repeat(64)],
+    unshield: { ...UNSHIELD },
+  });
+  if (outcome) ledger.finish(p, j4, attemptId, outcome);
+  if (between) between(p, j4);
+  if (report) ledger.recordReport(p, j4, "live-reconcile", "6".repeat(64));
+  return { p, j3, j4, attemptId };
+}
+function journey5Of(p, j4, attemptId, change = (value) => value) {
+  const crypto = require("crypto");
+  const hash = (v) => crypto.createHash("sha256").update(v).digest("hex");
+  const identity = (v) => ({
+    freedomCommit: v.freedomCommit,
+    packageCommit: v.packageCommit,
+    packageTarSha256: v.packageTarSha256,
+    runnerSha256: v.runnerSha256,
+  });
+  const { upgrade: _upgrade, phase: _phase, ...rest } = j4.binding;
+  const next = {
+    ...j4,
+    name: ledger.JOURNEY5,
+    packageCommit: "5".repeat(40),
+    runnerSha256: "0".repeat(64),
+    caps: { ...j4.caps, sendReservations: 3 },
+  };
+  next.binding = {
+    ...rest,
+    predecessor: {
+      name: ledger.JOURNEY4,
+      ledgerSha256: hash(fs.readFileSync(ledger.ledgerFile(p, ledger.JOURNEY4))),
+      headerSha256: hash(JSON.stringify(j4)),
+      reason: "the second unshield reservation was refused before any send",
+    },
+    amendment: {
+      from: identity(j4),
+      to: identity(next),
+      reason: "one further unshield after a pre-send refusal",
+      attemptId,
+      reconcile: {
+        report: "/synthetic/reconcile/report.json",
+        reportSha256: "6".repeat(64),
+        mode: "live-reconcile",
+        headerSha256: hash(JSON.stringify(j4)),
+      },
+      unsent: { outputNoteIdSha256: "e".repeat(64), unshield: { ...UNSHIELD } },
+      caps: { ...j4.caps },
+    },
+  };
+  return change(next);
+}
+test("the send amendment carries the complete state and admits exactly one more unshield reservation", () => {
+  const { p, j4, attemptId } = reconciledJourney4();
+  const j5 = journey5Of(p, j4, attemptId);
+  const state = ledger.inspect(p, j5);
+  expect(state.sends).toHaveLength(2);
+  expect(state.sends[1].finished.outcome).toEqual(ledger.UNSENT);
+  expect(state.reproof.finished).not.toBeNull();
+  expect(state.retry.finished).not.toBeNull();
+  // Neither a transfer nor anything but the one unshield.
+  expect(() => ledger.reserve(p, j5, "transfer", {})).toThrow();
+  const third = ledger.reserve(p, j5, "unshield", { holdIdsBeforeSha256: ["f".repeat(64)] });
+  expect(ledger.inspect(p, j5).sends).toHaveLength(3);
+  // The journey-4 ledger is closed to new writes once the amendment exists.
+  expect(() => ledger.recordReport(p, j4, "live-observe", "5".repeat(64))).toThrow();
+  // Pending: observation only; then finished; a fourth reservation never.
+  expect(() => ledger.reserve(p, j5, "unshield", {})).toThrow();
+  ledger.finish(p, j5, third, { classification: "acknowledged", transactionHash: "0x" + "9".repeat(64) });
+  expect(() => ledger.reserve(p, j5, "unshield", {})).toThrow();
+  expect(ledger.inspect(p, j5).sends.map((send) => send.pending.send)).toEqual(["transfer", "unshield", "unshield"]);
+});
+test("a crash after the amendment's reservation leaves it consumed; reconcile finishes it once", () => {
+  const { p, j4, attemptId } = reconciledJourney4();
+  const j5 = journey5Of(p, j4, attemptId);
+  const third = ledger.reserve(p, j5, "unshield", { holdIdsBeforeSha256: ["f".repeat(64)] });
+  expect(ledger.inspect(p, j5).sends.at(-1).finished).toBeNull();
+  expect(() => ledger.reserve(p, j5, "unshield", {})).toThrow();
+  expect(() => ledger.finish(p, j5, attemptId, ledger.UNSENT)).toThrow();
+  ledger.finish(p, j5, third, ledger.UNSENT);
+  ledger.recordReport(p, j5, "live-reconcile", "4".repeat(64));
+  // Even an unsent third reservation admits no fourth.
+  expect(() => ledger.reserve(p, j5, "unshield", {})).toThrow();
+});
+test.each([
+  ["a journaled unknown attempt", { outcome: { classification: "unknown", transactionHash: "0x" + "9".repeat(64), readback: "reconcile" } }],
+  ["an acknowledged attempt", { outcome: { classification: "acknowledged", transactionHash: "0x" + "9".repeat(64) } }],
+  ["an unsent outcome the unshield itself recorded", { outcome: { classification: "unjournaled-after-refusal", error: "X" } }],
+  ["an unsent outcome with a hash", { outcome: { ...ledger.UNSENT, transactionHash: "0x" + "9".repeat(64) } }],
+  ["no reconcile report", { report: false }],
+  [
+    "a record between the finish and its report",
+    { between: (p, j4) => ledger.recordReport(p, j4, "live-observe", "3".repeat(64)) },
+  ],
+])("the amendment refuses a predecessor with %s", (_name, options) => {
+  const { p, j4, attemptId } = reconciledJourney4(options);
+  expect(() => ledger.inspect(p, journey5Of(p, j4, attemptId))).toThrow();
+});
+test("the amendment refuses a predecessor whose unshield is still pending", () => {
+  const { p, j4, attemptId } = reconciledJourney4({ outcome: null, report: false });
+  expect(() => ledger.inspect(p, journey5Of(p, j4, attemptId))).toThrow();
+});
+test.each([
+  ["another attempt id", (v) => ({ ...v, binding: { ...v.binding, amendment: { ...v.binding.amendment, attemptId: "0".repeat(32) } } })],
+  [
+    "another reconcile report digest",
+    (v) => ({ ...v, binding: { ...v.binding, amendment: { ...v.binding.amendment, reconcile: { ...v.binding.amendment.reconcile, reportSha256: "1".repeat(64) } } } }),
+  ],
+  [
+    "another producer header",
+    (v) => ({ ...v, binding: { ...v.binding, amendment: { ...v.binding.amendment, reconcile: { ...v.binding.amendment.reconcile, headerSha256: "1".repeat(64) } } } }),
+  ],
+  [
+    "a mode other than reconcile",
+    (v) => ({ ...v, binding: { ...v.binding, amendment: { ...v.binding.amendment, reconcile: { ...v.binding.amendment.reconcile, mode: "live-unshield" } } } }),
+  ],
+  [
+    "a changed recipient",
+    (v) => ({
+      ...v,
+      binding: {
+        ...v.binding,
+        amendment: { ...v.binding.amendment, unsent: { ...v.binding.amendment.unsent, unshield: { ...UNSHIELD, recipient: "0x" + "2".repeat(40) } } },
+      },
+    }),
+  ],
+  [
+    "a changed output",
+    (v) => ({ ...v, binding: { ...v.binding, amendment: { ...v.binding.amendment, unsent: { ...v.binding.amendment.unsent, outputNoteIdSha256: "d".repeat(64) } } } }),
+  ],
+  ["another host", (v) => ({ ...v, freedomCommit: "9".repeat(40) })],
+  ["another package", (v) => ({ ...v, packageTarSha256: "9".repeat(64) })],
+  ["a third chain send", (v) => ({ ...v, caps: { ...v.caps, sends: 3 } })],
+  ["no reservation count", (v) => ({ ...v, caps: { ...v.caps, sendReservations: undefined } })],
+  ["a replenished status allowance", (v) => ({ ...v, caps: { ...v.caps, poiStatus: { ...v.caps.poiStatus, max: v.caps.poiStatus.max + 1 } } })],
+  ["an upgrade binding", (v) => ({ ...v, binding: { ...v.binding, upgrade: {} } })],
+])("the amendment refuses %s", (_name, change) => {
+  const { p, j4, attemptId } = reconciledJourney4();
+  let header = journey5Of(p, j4, attemptId, change);
+  // Keep the amendment's own identity consistent where the change is elsewhere.
+  if (header.freedomCommit !== j4.freedomCommit || header.packageTarSha256 !== j4.packageTarSha256)
+    header = {
+      ...header,
+      binding: {
+        ...header.binding,
+        amendment: {
+          ...header.binding.amendment,
+          to: {
+            freedomCommit: header.freedomCommit,
+            packageCommit: header.packageCommit,
+            packageTarSha256: header.packageTarSha256,
+            runnerSha256: header.runnerSha256,
+          },
+        },
+      },
+    };
+  expect(() => ledger.inspect(p, header)).toThrow();
+});
+test("altered journey-4 bytes refuse the amendment", () => {
+  const { p, j4, attemptId } = reconciledJourney4();
+  const j5 = journey5Of(p, j4, attemptId);
+  expect(ledger.inspect(p, j5).sends).toHaveLength(2);
+  const file = ledger.ledgerFile(p, ledger.JOURNEY4);
+  fs.appendFileSync(file, JSON.stringify({ type: "report", mode: "live-observe", sha256: "2".repeat(64), at: 1 }) + "\n");
+  expect(() => ledger.inspect(p, j5)).toThrow();
+});
+test("hand-written amendment records refuse on replay: openers, phases and POI handoffs", () => {
+  for (const record of [
+    { type: "budget", kind: "scan-open:pending", n: 1, at: Date.now() },
+    { type: "phase-start", phase: "upgrade", at: Date.now() },
+    { type: "poi-pending", handoffId: "b".repeat(32), reservedAt: "x", binding: {} },
+    { type: "poi-retry-pending", retryId: "b".repeat(32), reservedAt: "x", binding: {} },
+    { type: "poi-reproof-pending", reproofId: "b".repeat(32), reservedAt: "x", binding: {} },
+  ]) {
+    const { p, j4, attemptId } = reconciledJourney4();
+    const j5 = journey5Of(p, j4, attemptId);
+    ledger.recordReport(p, j5, "live-poi-status", "1".repeat(64));
+    const file = ledger.ledgerFile(p, ledger.JOURNEY5);
+    fs.appendFileSync(file, JSON.stringify(record) + "\n");
+    expect(() => ledger.inspect(p, j5)).toThrow();
+  }
+});
+test("the amendment admits only the continuation modes", () => {
+  const { assertModeAdmitted } = require("../tools/qualification/installed-live/live-launcher.cjs");
+  for (const mode of ["live-unshield", "live-observe", "live-reconcile", "live-poi-status", "live-summary"])
+    expect(() => assertModeAdmitted(ledger.JOURNEY5, mode)).not.toThrow();
+  for (const mode of [
+    "live-submit",
+    "live-poi",
+    "live-rebuild",
+    "live-upgrade-rebuild",
+    "live-poi-retry",
+    "live-reproof-rebuild",
+    "live-poi-reproof",
+  ])
+    expect(() => assertModeAdmitted(ledger.JOURNEY5, mode)).toThrow();
+});
+
+// --- The amendment's unsent evidence (launcher) ------------------------------
+function unsentEvidence(change = (scenario) => scenario, outer = {}) {
+  const crypto = require("crypto");
+  const sha = (v) => crypto.createHash("sha256").update(v).digest("hex");
+  const dir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "amendment-evidence-")));
+  const headerSha256 = "8".repeat(64);
+  const scenario = change({
+    schema: "railgun-installed-live-unshield-v1",
+    send: "unshield",
+    holdIdSha256: null,
+    outputNoteIdSha256: "e".repeat(64),
+    unshield: { ...UNSHIELD },
+    outcome: { ...ledger.UNSENT },
+    reconciled: "finished",
+    g1: null,
+    ledgerSends: 2,
+    stop: true,
+    reviews: { held: [] },
+    ledgerHeaderSha256: headerSha256,
+  });
+  const report = path.join(dir, "report.json");
+  fs.writeFileSync(report, JSON.stringify({ schema: "railgun-installed-live-native-v1", mode: "live-reconcile", transport: "synthetic", scenario, ...outer }));
+  return {
+    transport: "synthetic",
+    ledgerHeader: {
+      binding: {
+        amendment: {
+          reconcile: { report, reportSha256: sha(fs.readFileSync(report)), mode: "live-reconcile", headerSha256 },
+          unsent: { outputNoteIdSha256: "e".repeat(64), unshield: { ...UNSHIELD } },
+        },
+      },
+    },
+  };
+}
+test("the unsent evidence is the exact reconcile report of an attempt with no hold", () => {
+  const { assertUnsentEvidence } = require("../tools/qualification/installed-live/live-launcher.cjs");
+  expect(() => assertUnsentEvidence(unsentEvidence())).not.toThrow();
+});
+test.each([
+  ["a present but unjournaled hold", (s) => ({ ...s, holdIdSha256: "a".repeat(64) })],
+  ["a G1 read", (s) => ({ ...s, g1: { status: "unjournaled", observation: null } })],
+  ["a transaction hash", (s) => ({ ...s, outcome: { ...s.outcome, transactionHash: "0x" + "9".repeat(64) } })],
+  ["a journaled outcome", (s) => ({ ...s, outcome: { classification: "unknown", transactionHash: "0x" + "9".repeat(64), readback: "reconcile" } })],
+  ["a reissued report", (s) => ({ ...s, reconciled: "reissued" })],
+  ["another output", (s) => ({ ...s, outputNoteIdSha256: "d".repeat(64) })],
+  ["another recipient", (s) => ({ ...s, unshield: { ...UNSHIELD, recipient: "0x" + "2".repeat(40) } })],
+  ["another producer", (s) => ({ ...s, ledgerHeaderSha256: "7".repeat(64) })],
+  ["no stop", (s) => ({ ...s, stop: false })],
+])("the unsent evidence refuses %s", (_name, change) => {
+  const { assertUnsentEvidence } = require("../tools/qualification/installed-live/live-launcher.cjs");
+  expect(() => assertUnsentEvidence(unsentEvidence(change))).toThrow();
+});
+test("the unsent evidence refuses another mode or changed bytes", () => {
+  const { assertUnsentEvidence } = require("../tools/qualification/installed-live/live-launcher.cjs");
+  expect(() => assertUnsentEvidence(unsentEvidence((s) => s, { mode: "live-unshield" }))).toThrow();
+  const request = unsentEvidence();
+  fs.appendFileSync(request.ledgerHeader.binding.amendment.reconcile.report, " ");
+  expect(() => assertUnsentEvidence(request)).toThrow();
+});
+
+// --- The amendment's unshield over a mocked facade ----------------------------
+function amendmentContext({ holdIds = ["hold-1"], prepare = null, params = {} } = {}) {
+  const crypto = require("crypto");
+  const sha = (v) => crypto.createHash("sha256").update(String(v)).digest("hex");
+  const { p, j4 } = reconciledJourney4Sha(sha);
+  const calls = [];
+  const closable = (value) => ({ ...value, close: () => {}, closed: Promise.resolve() });
+  const noteId = "0:7";
+  const session = closable({
+    openRead: async () =>
+      closable({
+        notes: async () => [
+          { id: noteId, txid: "0x" + "a".repeat(64), spentTxid: false, amount: 997500000000000n, asset: { contract: UNSHIELD.asset } },
+        ],
+      }),
+    openRecovery: async () =>
+      closable({
+        history: async () => ({ records: holdIds.map((holdId) => ({ holdId, kind: "railgun-private-transfer" })), nextAfter: null }),
+      }),
+    openPrivate: async () =>
+      closable({
+        prepareUnshield: async () => {
+          calls.push(["prepare"]);
+          if (prepare) throw prepare;
+          return { handle: {} };
+        },
+        broadcast: async () => {
+          calls.push(["broadcast"]);
+          return { hash: "0x" + "9".repeat(64) };
+        },
+      }),
+  });
+  const j5 = j4.__j5;
+  const context = {
+    facade: { openAccount: async () => session },
+    signal: new AbortController().signal,
+    milestone: (value) => calls.push(["milestone", value]),
+    owner: UNSHIELD.recipient,
+    previous: {
+      schema: "railgun-installed-live-poi-status-v1",
+      ledgerHeaderSha256: sha(JSON.stringify(j5)),
+      continuable: true,
+      owned: { statuses: ["Valid"], allValid: true, inputType: "Transact" },
+      observedAt: Date.now(),
+      transactionHash: "0x" + "a".repeat(64),
+      outputNoteIdSha256: sha(noteId),
+      outputAmount: "997500000000000",
+    },
+    params,
+    synthetic: true,
+    mode: "live-unshield",
+    expectedRpc: "https://synthetic.invalid/",
+    vault: { unlockedAt: performance.now(), lifetimeMs: 15 * 60 * 1000 },
+    crash: () => {
+      throw Object.assign(Error("crashed"), { code: "TEST_CRASH" });
+    },
+    profile: p,
+    header: j5,
+  };
+  return { context, calls, p, j5 };
+}
+// The reconciled journey-4 with the real output hash and the hold set the
+// mocked facade reports, then its amendment.
+function reconciledJourney4Sha(sha) {
+  const { p, j3 } = retriedJourney3();
+  const j4 = journey4Of(p, j3);
+  ledger.startPhase(p, j4);
+  const reproofId = ledger.poiReproofReserve(p, j4, { holdIdSha256: "a".repeat(64) });
+  ledger.poiReproofFinish(p, j4, reproofId, { status: "recovery-required" });
+  const attemptId = ledger.reserve(p, j4, "unshield", {
+    outputNoteIdSha256: sha("0:7"),
+    holdIdsBeforeSha256: [sha("hold-1")],
+    unshield: { ...UNSHIELD },
+  });
+  ledger.finish(p, j4, attemptId, ledger.UNSENT);
+  ledger.recordReport(p, j4, "live-reconcile", "6".repeat(64));
+  const j5 = journey5Of(p, j4, attemptId, (value) => ({
+    ...value,
+    binding: {
+      ...value.binding,
+      amendment: { ...value.binding.amendment, unsent: { outputNoteIdSha256: sha("0:7"), unshield: { ...UNSHIELD } } },
+    },
+  }));
+  return { p, j4: { ...j4, __j5: j5 } };
+}
+const unshieldMode = () => require("../tools/qualification/installed-live/live-scenario.cjs").MODES["live-unshield"];
+test("the amendment's unshield refuses before reserving when a held operation appeared", async () => {
+  const { context, calls, p, j5 } = amendmentContext({ holdIds: ["hold-1", "hold-2"] });
+  await expect(unshieldMode()(context)).rejects.toThrow(/held operation appeared/);
+  expect(calls.some(([k]) => k === "prepare")).toBe(false);
+  expect(ledger.inspect(p, j5).sends).toHaveLength(2);
+});
+test("a preparation refusal keeps its primary code apart from a later history failure", async () => {
+  const { context, calls, p, j5 } = amendmentContext({
+    prepare: Object.assign(Error("chain read failed"), { code: "RAILGUN_PRIVATE_OPERATION_REFUSED" }),
+    params: { fault: "history-unavailable-after-send" },
+  });
+  const error = await unshieldMode()(context).then(
+    () => null,
+    (value) => value,
+  );
+  expect(error.code).toBe("LIVE_SYNTHETIC_HISTORY_UNAVAILABLE");
+  expect(error.primaryRefusal).toBe("RAILGUN_PRIVATE_OPERATION_REFUSED");
+  expect(calls.filter(([k]) => k === "milestone").map(([, v]) => v)).toContain(
+    "unshield-attempt:RAILGUN_PRIVATE_OPERATION_REFUSED",
+  );
+  expect(calls.some(([k]) => k === "broadcast")).toBe(false);
+  // The third reservation is consumed and unfinished; a fourth never.
+  const sends = ledger.inspect(p, j5).sends;
+  expect(sends).toHaveLength(3);
+  expect(sends[2].finished).toBeNull();
+  expect(() => ledger.reserve(p, j5, "unshield", {})).toThrow();
+});

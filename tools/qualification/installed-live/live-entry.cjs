@@ -363,6 +363,11 @@ async function main() {
       write(path.join(request.evidenceDirectory, 'failure.json'), {
         code: typeof error?.code === 'string' ? error.code : null,
         name: typeof error?.name === 'string' ? error.name : null,
+        // An attempt's own closed outcome code, kept apart from a later failure.
+        primaryRefusal:
+          typeof error?.primaryRefusal === 'string' && /^[A-Za-z0-9_:-]{1,80}$/.test(error.primaryRefusal)
+            ? error.primaryRefusal
+            : null,
         ...(live ? {} : { message: String(error?.message ?? '').slice(0, 240) }),
         frames: String(error?.stack ?? '')
           .split('\n')
