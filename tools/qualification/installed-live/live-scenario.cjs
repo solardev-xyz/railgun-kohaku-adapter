@@ -841,6 +841,9 @@ async function unshield(context) {
   }
   const previous = attempting ? context.lineage.poi : context.previous;
   assert.ok(previous, 'The allValid status read');
+  // The very status read the custody verification admitted: a refresh after
+  // it would stand between the custody unit and the reservation.
+  if (attempting) assert.equal(previous.reportSha256, custody.statusReportSha256, 'Not the status the custody admitted');
   // A genuine allValid status read: a status report, or a retry or
   // replacement report whose own fresh read was already allValid and
   // therefore skipped the handoff.
@@ -1719,13 +1722,17 @@ async function reconcile(context) {
   }
 }
 // Journey-6 transport evidence, read from an attempt's own frozen telemetry.
-// Qualifies only a refusal of prepareUnshield itself (no broadcast began) with
-// at least one primary transport failure inside that preparation interval and
-// before its refusal; aborts only as fallout after such a failure; no provider
-// error, malformed answer, non-200 status or unclassified failure anywhere; a
-// complete trace and an unexpired vault. Anything else stops: a transport
-// failure outside the interval, abort-only, mixed or truncated evidence. A
-// qualifying trace is eligibility evidence, not proof of no local defect.
+// Qualifies only a refusal of prepareUnshield itself (no broadcast began) in
+// which every primary transport failure of the whole trace lies inside that
+// preparation interval, before its refusal, and every abort is attributed to
+// such a failure that completed no later than the abort. Anything else stops:
+// a primary transport failure before or after the interval (a mixed trace),
+// abort-only, a provider error, malformed answer, non-200 status, unclassified
+// failure or any null result anywhere (a null header, block or root is never
+// read as harmless here; no RPC is treated as nullable), a truncated trace or
+// an expired vault. This is an eligibility guard only: it interprets no RPC
+// for the production owners. A qualifying trace is eligibility evidence, not
+// proof of no local defect.
 const PRIMARY_TRANSPORT = Object.freeze({
   live: Object.freeze(['TOR_REQUEST_FAILED', 'TOR_REQUEST_TIMEOUT']),
   synthetic: Object.freeze(['SYNTHETIC_INJECTED_FAULT']),
@@ -1746,37 +1753,53 @@ function transportQualified(telemetry, transport) {
   const primary = PRIMARY_TRANSPORT[transport];
   const entries = telemetry.entries ?? [];
   const failed = (row) => row.code !== null || row.status !== 200 || row.rpcError !== null || row.shapeInvalid === true;
+  // A null result anywhere: an unexpected missing header, block or root.
+  if (entries.some((row) => row.resultNull === true)) return refuse('null-result');
   // Integrity-class evidence anywhere: a provider error, malformed answer,
   // non-200 status or an unclassified error never qualifies a repetition.
-  if (
-    entries.some(
-      (row) =>
-        failed(row) &&
-        !primary.includes(row.code) &&
-        row.code !== 'PRIVACY_REQUEST_ABORTED'
-    )
-  )
+  if (entries.some((row) => failed(row) && !primary.includes(row.code) && row.code !== 'PRIVACY_REQUEST_ABORTED'))
     return refuse('non-transport-failure');
   // The interval: requests begun after the start mark and before the refusal,
   // and completed by it.
-  const inside = (row) => row.seq > start.seq && row.seq <= refused.seq && row.startAt + row.ms <= refused.at;
+  const end = (row) => row.startAt + row.ms;
+  const inside = (row) => row.seq > start.seq && row.seq <= refused.seq && end(row) <= refused.at;
   const transportFailures = entries.filter((row) => primary.includes(row.code));
-  const primaryInside = transportFailures.filter(inside);
-  if (primaryInside.length === 0)
-    return refuse(transportFailures.length ? 'transport-outside-interval' : entries.some(failed) ? 'abort-only' : 'no-failure');
-  const first = Math.min(...primaryInside.map((row) => row.startAt + row.ms));
-  // Aborts: only after a primary transport failure, attributed to one.
+  if (transportFailures.length === 0) return refuse(entries.some(failed) ? 'abort-only' : 'no-failure');
+  // Every primary transport failure inside the interval: a mixed trace with
+  // one before or after it never qualifies.
+  if (!transportFailures.every(inside)) return refuse('transport-outside-interval');
+  // Aborts: each inside the interval and attributed (temporally only: the
+  // latest other failure completed before it) to a primary transport failure
+  // inside the interval that completed no later than the abort itself.
   for (const row of entries.filter((value) => value.code === 'PRIVACY_REQUEST_ABORTED')) {
     if (!inside(row)) return refuse('abort-outside-interval');
-    const after = entries.find((value) => value.seq === row.afterFailureSeq);
-    if (!after || !primary.includes(after.code) || row.startAt + row.ms < first) return refuse('abort-provenance');
+    const cause = entries.find((value) => value.seq === row.afterFailureSeq);
+    if (!cause || !primary.includes(cause.code) || !inside(cause) || end(cause) > end(row)) return refuse('abort-provenance');
   }
   return Object.freeze({
     qualified: true,
     reason: 'transport-in-preparation',
-    primaryFailures: primaryInside.length,
+    primaryFailures: transportFailures.length,
     aborts: entries.filter((value) => value.code === 'PRIVACY_REQUEST_ABORTED').length,
   });
+}
+// Journey-6 status ordering: an allValid status read must be fresh when the
+// custody unit is consumed, with this much of its six hours left, so the
+// reservation can follow that unit and its report directly. A refresh comes
+// before the custody verification, never between it and the reservation.
+const POI_FRESHNESS_MS = 6 * 3600 * 1000;
+const CUSTODY_STATUS_MARGIN_MS = 30 * 60 * 1000;
+function assertAllValidStatus(context, status) {
+  assert.ok(status, 'The allValid status read');
+  assert.ok(
+    status.schema === 'railgun-installed-live-poi-status-v1' ||
+      (['railgun-installed-live-poi-retry-v1', 'railgun-installed-live-poi-reproof-v1'].includes(status.schema) &&
+        status.skipped === true)
+  );
+  assertChained(context, status);
+  assert.equal(status.continuable, true);
+  assert.equal(status.owned.allValid, true);
+  assert.equal(status.owned.inputType, 'Transact');
 }
 // Journey-6: the custody report a further unshield follows, as it stands.
 function assertCustodyAdmits(context, custody) {
@@ -1786,6 +1809,7 @@ function assertCustodyAdmits(context, custody) {
   assert.equal(custody.verdict, 'no-hold', 'Custody not established');
   assert.ok(['first-instrumented', 'transport-qualified'].includes(custody.eligibility), 'No eligibility');
   assert.equal(custody.stop, false);
+  assert.match(custody.statusReportSha256, /^[0-9a-f]{64}$/);
   const sends = ledger.inspect(context.profile, context.header).sends;
   const last = sends.at(-1);
   assert.ok(last?.finished, 'A pending reservation: observation only');
@@ -1844,6 +1868,16 @@ async function custodyVerify(context) {
   };
   // Not eligible: no read, no budget; the batch stops here.
   if (!eligibility) return finishReport(context, { ...base, verdict: 'not-eligible', unit: null, stop: true });
+  // The allValid status the reservation will use, evaluated before the unit:
+  // a stale or nearly stale status refuses here, consuming nothing. Refresh it
+  // with live-poi-status first; after the unit, nothing may intervene.
+  const status = context.lineage?.poi;
+  assertAllValidStatus(context, status);
+  assert.equal(status.outputNoteIdSha256, attempts.previous.unsent.outputNoteIdSha256);
+  assert.ok(
+    Date.now() - status.observedAt <= POI_FRESHNESS_MS - CUSTODY_STATUS_MARGIN_MS,
+    'POI status would expire: refresh it before the custody verification'
+  );
   const unit = budget(context, 'custody-verify', { attemptId: last.pending.attemptId });
   let session;
   try {
@@ -1864,6 +1898,8 @@ async function custodyVerify(context) {
     session = null;
     return finishReport(context, {
       ...base,
+      statusReportSha256: status.reportSha256,
+      statusObservedAt: status.observedAt,
       verdict: matched ? 'no-hold' : 'hold-present',
       holdCount: current.length,
       beforeSetMatched: matched,

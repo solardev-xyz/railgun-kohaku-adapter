@@ -124,7 +124,8 @@ async function main() {
       shapeInvalid: outcome.shapeInvalid === true,
       bytes: Number.isSafeInteger(outcome.bytes) ? outcome.bytes : null,
     };
-    // Abort provenance: the latest other failure completed before this one.
+    // Abort provenance, temporal attribution only: the latest other failure
+    // completed before this one. It does not establish causation.
     if (code === 'PRIVACY_REQUEST_ABORTED') {
       const prior = [...telemetry.entries].reverse().find((row) => failureLike(row) && row.code !== 'PRIVACY_REQUEST_ABORTED');
       entry.afterFailureSeq = prior ? prior.seq : null;

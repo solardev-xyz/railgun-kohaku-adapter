@@ -422,6 +422,8 @@ function admit(request) {
       assert.equal(custody.scenario.verdict, 'no-hold', 'Custody not established');
       assert.ok(['first-instrumented', 'transport-qualified'].includes(custody.scenario.eligibility), 'No eligibility');
       assert.equal(custody.scenario.attemptId, sends.at(-1).pending.attemptId);
+      // The very allValid status read the custody verification admitted.
+      assert.equal(request.lineage?.poi?.reportSha256, custody.scenario.statusReportSha256, 'Not the status the custody admitted');
     }
   }
   return sends.length;

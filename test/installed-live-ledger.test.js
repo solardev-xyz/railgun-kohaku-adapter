@@ -2828,9 +2828,14 @@ test("live telemetry qualifies only on a Tor failure or timeout", () => {
 });
 
 // --- Journey-6 custody verification and unshield over a mocked facade -------
+const STATUS_DIGEST = uniq();
 function attemptsContext({ holdIds = ["hold-1"], previous = {}, prepare = null, j6Setup = null, mode = "live-custody-verify" } = {}) {
   const { p, j5, attemptId } = refusedJourney5();
   const j6 = journey6Of(p, j5, attemptId);
+  // A refreshed allValid status read recorded on journey-6 first: the custody
+  // verification and the reservation follow it, in that order.
+  const statusDigest = uniq();
+  ledger.recordReport(p, j6, "live-poi-status", statusDigest);
   if (j6Setup) j6Setup(p, j6, attemptId);
   const calls = [];
   const closable = (value) => ({ ...value, close: () => {}, closed: Promise.resolve() });
@@ -2884,7 +2889,7 @@ function attemptsContext({ holdIds = ["hold-1"], previous = {}, prepare = null, 
     mark: (value) => calls.push(["mark", value]),
     owner: UNSHIELD.recipient,
     previous: bound,
-    lineage: {},
+    lineage: { poi: statusReport(j6, Date.now(), statusDigest) },
     params: {},
     synthetic: true,
     mode,
@@ -2896,7 +2901,7 @@ function attemptsContext({ holdIds = ["hold-1"], previous = {}, prepare = null, 
     profile: p,
     header: j6,
   };
-  return { context, calls, p, j5, j6, attemptId };
+  return { context, calls, p, j5, j6, attemptId, statusDigest };
 }
 const custodyMode = () => require("../tools/qualification/installed-live/live-scenario.cjs").MODES["live-custody-verify"];
 test("the first custody verification after the bound refusal is an instrumented attempt, with no hold", async () => {
@@ -2973,7 +2978,7 @@ test("after a further attempt, only qualifying transport evidence admits the nex
   expect(() => ledger.reserve(bad.p, bad.j6, "unshield", {})).toThrow();
 });
 const unshieldMode6 = () => require("../tools/qualification/installed-live/live-scenario.cjs").MODES["live-unshield"];
-function statusReport(j5, observedAt = Date.now()) {
+function statusReport(j5, observedAt = Date.now(), digest = STATUS_DIGEST) {
   return Object.defineProperties(
     {
       schema: "railgun-installed-live-poi-status-v1",
@@ -2985,15 +2990,13 @@ function statusReport(j5, observedAt = Date.now()) {
       outputNoteIdSha256: sha6("0:7"),
       outputAmount: "997500000000000",
     },
-    { reportSha256: { value: STATUS_DIGEST }, reportMode: { value: "live-poi-status" } },
+    { reportSha256: { value: digest }, reportMode: { value: "live-poi-status" } },
   );
 }
-const STATUS_DIGEST = uniq();
 test("a further unshield follows only an admitting custody report, with interval marks", async () => {
-  const value = attemptsContext({ mode: "live-unshield", j6Setup: (p, j6) => ledger.recordReport(p, j6, "live-poi-status", STATUS_DIGEST) });
-  const { context, calls, p, j6, j5, attemptId } = value;
+  const value = attemptsContext({ mode: "live-unshield" });
+  const { context, calls, p, j6, attemptId, statusDigest } = value;
   // Not a custody report: refused before any read or reservation.
-  context.lineage = { poi: statusReport(j6) };
   await expect(unshieldMode6()(context)).rejects.toThrow();
   expect(ledger.inspect(p, j6).sends).toHaveLength(3);
   // The custody verification, then its report as the previous.
@@ -3006,15 +3009,16 @@ test("a further unshield follows only an admitting custody report, with interval
       verdict: "no-hold",
       stop: false,
       outputNoteIdSha256: sha6("0:7"),
+      statusReportSha256: statusDigest,
       ledgerHeaderSha256: sha6(JSON.stringify(j6)),
     },
     { reportSha256: { value: custodyDigest }, reportMode: { value: "live-custody-verify" } },
   );
   context.previous = custody;
-  // A stale status read: refused.
-  context.lineage = { poi: statusReport(j6, Date.now() - 7 * 3600 * 1000) };
+  // The admitted status gone stale since: refused (no custody repeat).
+  context.lineage = { poi: statusReport(j6, Date.now() - 7 * 3600 * 1000, statusDigest) };
   await expect(unshieldMode6()(context)).rejects.toThrow(/stale/);
-  context.lineage = { poi: statusReport(j6) };
+  context.lineage = { poi: statusReport(j6, Date.now(), statusDigest) };
   const report = await unshieldMode6()(context).catch((error) => error);
   expect(calls.filter(([k]) => k === "mark").map(([, v]) => v)).toEqual(
     expect.arrayContaining(["open-private:start", "open-private:end", "prepare:start", "prepare:end", "broadcast:start", "broadcast:end"]),
@@ -3027,8 +3031,7 @@ test("a refused further attempt marks the refusal in its preparation interval", 
     mode: "live-unshield",
     prepare: Object.assign(Error("refused"), { code: "RAILGUN_KOHAKU_REFUSED" }),
   });
-  const { context, calls, p, j6, j5, attemptId } = value;
-  ledger.recordReport(p, j6, "live-poi-status", STATUS_DIGEST);
+  const { context, calls, p, j6, attemptId, statusDigest } = value;
   const custodyDigest = verify(p, j6, attemptId);
   context.previous = Object.defineProperties(
     {
@@ -3038,11 +3041,11 @@ test("a refused further attempt marks the refusal in its preparation interval", 
       verdict: "no-hold",
       stop: false,
       outputNoteIdSha256: sha6("0:7"),
+      statusReportSha256: statusDigest,
       ledgerHeaderSha256: sha6(JSON.stringify(j6)),
     },
     { reportSha256: { value: custodyDigest }, reportMode: { value: "live-custody-verify" } },
   );
-  context.lineage = { poi: statusReport(j6) };
   const report = await unshieldMode6()(context);
   expect(report.outcome).toEqual({ classification: "unjournaled-after-refusal", error: "RAILGUN_KOHAKU_REFUSED" });
   expect(report.stop).toBe(true);
@@ -3085,4 +3088,99 @@ test("a custody unit bound to another attempt id immediately before a further re
   expect(ledger.inspect(p, j6).sends).toHaveLength(4);
   at(late + 1000, () => ledger.reserve(p, j6, "unshield", {}));
   expect(ledger.inspect(p, j6).sends).toHaveLength(5);
+});
+
+// --- Journey-6 amendments: mixed traces, null results, status ordering --------
+test.each([
+  ["a primary failure before and one inside the interval", [fault6, {}, fault6, {}], [2, 4]],
+  ["a primary failure inside and one after the interval", [{}, fault6, {}, fault6], [1, 3]],
+])("transport evidence refuses %s", (_name, entries, [start, refused]) => {
+  expect(qualified(trace({ entries, marks: interval(start, refused) }))).toMatchObject({
+    qualified: false,
+    reason: "transport-outside-interval",
+  });
+});
+test("an abort attributed to a primary failure outside the interval refuses", () => {
+  // seq 1 fault (before), seq 3 abort pointing at seq 1, seq 4 inside fault.
+  const value = trace({
+    entries: [fault6, {}, { status: null, code: "PRIVACY_REQUEST_ABORTED", afterFailureSeq: 1 }],
+    marks: interval(1, 3),
+  });
+  expect(qualified(value)).toMatchObject({ qualified: false });
+  const mixed = trace({
+    entries: [{}, fault6, { status: null, code: "PRIVACY_REQUEST_ABORTED", afterFailureSeq: 1 }],
+    marks: interval(1, 3),
+  });
+  expect(qualified(mixed)).toMatchObject({ qualified: false, reason: "abort-provenance" });
+});
+test("an abort attributed to a primary failure completed after it refuses", () => {
+  const value = trace({
+    entries: [{}, { ...fault6, ms: 40 }, { status: null, code: "PRIVACY_REQUEST_ABORTED", afterFailureSeq: 2, ms: 1 }],
+    marks: [
+      { label: "prepare:start", seq: 1, at: 11 },
+      { label: "prepare:refused", seq: 3, at: 200 },
+    ],
+  });
+  expect(qualified(value)).toMatchObject({ qualified: false, reason: "abort-provenance" });
+});
+test("abort-only stays refused", () => {
+  const value = trace({ entries: [{}, { status: null, code: "PRIVACY_REQUEST_ABORTED", afterFailureSeq: null }], marks: interval(0, 2) });
+  expect(qualified(value)).toMatchObject({ qualified: false, reason: "abort-only" });
+});
+test.each([
+  ["a null header with an inside primary failure", [{}, { method: "eth_getBlockByNumber", resultNull: true }, fault6], [0, 3]],
+  ["a null result before the interval", [{ method: "eth_getBlockByNumber", resultNull: true }, {}, fault6], [1, 3]],
+  ["a null receipt (no RPC is treated as nullable)", [{}, { method: "eth_getTransactionReceipt", resultNull: true }, fault6], [0, 3]],
+])("transport evidence refuses %s", (_name, entries, [start, refused]) => {
+  expect(qualified(trace({ entries, marks: interval(start, refused) }))).toMatchObject({ qualified: false, reason: "null-result" });
+});
+test("refreshed status, then custody, then the further unshield is admitted", async () => {
+  const value = attemptsContext();
+  const { context, p, j6, attemptId, statusDigest } = value;
+  const custody = await custodyMode()(context);
+  expect(custody).toMatchObject({ verdict: "no-hold", statusReportSha256: statusDigest });
+  const custodyDigest = uniq();
+  ledger.recordReport(p, j6, "live-custody-verify", custodyDigest);
+  context.previous = Object.defineProperties(
+    { ...custody },
+    { reportSha256: { value: custodyDigest }, reportMode: { value: "live-custody-verify" } },
+  );
+  context.mode = "live-unshield";
+  // Admitted: the reservation is written and the attempt reaches broadcast.
+  // (The mocked history adds no hold afterwards, so the run ends there.)
+  await unshieldMode6()(context).catch((error) => error);
+  expect(value.calls.some(([k]) => k === "broadcast")).toBe(true);
+  expect(ledger.inspect(p, j6).sends).toHaveLength(4);
+  expect(ledger.inspect(p, j6).sends[3].pending.attemptId).not.toBe(attemptId);
+});
+test("a status read between the custody verification and the reservation is refused", async () => {
+  const value = attemptsContext();
+  const { context, p, j6 } = value;
+  const custody = await custodyMode()(context);
+  const custodyDigest = uniq();
+  ledger.recordReport(p, j6, "live-custody-verify", custodyDigest);
+  // A refresh after the custody unit: its report stands between them.
+  const late = uniq();
+  ledger.recordReport(p, j6, "live-poi-status", late);
+  expect(() => ledger.reserve(p, j6, "unshield", {})).toThrow(/attempt-custody/);
+  context.previous = Object.defineProperties(
+    { ...custody },
+    { reportSha256: { value: custodyDigest }, reportMode: { value: "live-custody-verify" } },
+  );
+  context.mode = "live-unshield";
+  // The scenario refuses a status other than the admitted one before reserving.
+  context.lineage = { poi: statusReport(j6, Date.now(), late) };
+  await expect(unshieldMode6()(context)).rejects.toThrow(/Not the status the custody admitted/);
+  expect(ledger.inspect(p, j6).sends).toHaveLength(3);
+});
+test("a status that would expire refuses the custody verification before its unit", async () => {
+  const value = attemptsContext();
+  const { context, p, j6, statusDigest } = value;
+  context.lineage = { poi: statusReport(j6, Date.now() - (6 * 3600 - 20 * 60) * 1000, statusDigest) };
+  await expect(custodyMode()(context)).rejects.toThrow(/refresh it before the custody verification/);
+  expect(ledger.inspect(p, j6).budgets["custody-verify"]).toBeUndefined();
+  // No status at all: the same, nothing consumed.
+  context.lineage = {};
+  await expect(custodyMode()(context)).rejects.toThrow();
+  expect(ledger.inspect(p, j6).budgets["custody-verify"]).toBeUndefined();
 });
