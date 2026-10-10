@@ -177,7 +177,7 @@ function install(destination) {
     const inventory = JSON.parse(
       fs.readFileSync(path.join(example, "host/sources.json")),
     );
-    for (const name of [...inventory, "README.md", "JOURNEY.md"]) {
+    for (const name of [...inventory, "README.md", "JOURNEY.md", "ARTI.md"]) {
       const to = path.join(app, name);
       fs.mkdirSync(path.dirname(to), { recursive: true, mode: 0o700 });
       fs.copyFileSync(path.join(example, name), to, fs.constants.COPYFILE_EXCL);
