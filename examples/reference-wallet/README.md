@@ -142,14 +142,21 @@ and npm overrides refuse startup. Parent/global user module trees also refuse
 installation, and every locked package must be physically present. Dependencies
 are fetched from the lockfile's registry URLs; this setup is not routed through
 wallet Tor. It creates no wallet and downloads no engine or circuit artifacts.
-The separately pinned runtime and Arti configuration below is still required for
-account operations. Inside the installed `app`, `npm start -- <command>` launches
+Acquire the pinned runtime separately from the clean adapter checkout:
+
+```sh
+node tools/conformance/setup-reference-runtime.cjs /absolute/new-reference-runtime
+```
+
+This fresh setup writes `RUNTIME.json`; resolve its three runtime paths against
+that new directory in your wallet configuration. It does not open a profile.
+Arti remains a separately reviewed, hash-pinned platform prerequisite. Inside the installed `app`, `npm start -- <command>` launches
 its own Electron. The equivalent direct executable interface is:
 
 ```sh
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs init --profile "$NEW_EMPTY_PROFILE"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs restore --profile "$NEW_EMPTY_PROFILE"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs backup --profile "$PROFILE"
+"$ELECTRON_BINARY" main.cjs init --profile "$NEW_EMPTY_PROFILE"
+"$ELECTRON_BINARY" main.cjs restore --profile "$NEW_EMPTY_PROFILE"
+"$ELECTRON_BINARY" main.cjs backup --profile "$PROFILE"
 ```
 
 These commands use a real terminal; redirected credential input/output is
@@ -222,9 +229,7 @@ data (transaction/block/gas) and belongs in local evidence, not public reports.
 
 Runtime data is not copied from Freedom by the application. The repository owns
 [engine/prover build tooling](../../tools/railgun-runtime-build/README.md), with
-separate pinned inputs, licensing and distribution constraints. Local native
-checks reused already-verified archives as data only; those observations do not
-establish a fresh reproducible build or permission to redistribute dependencies.
+separate pinned inputs, licensing and distribution constraints. Earlier native checks reused already-verified archives as data only. The later [fresh setup record](../../docs/qualification/reference-installation-2026-10-10/README.md) reproduced the pinned engine/prover archives and acquired all 18 circuit artifacts independently. Reproducible bytes do not grant redistribution rights.
 
 ## Custody boundaries
 

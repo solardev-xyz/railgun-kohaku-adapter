@@ -57,3 +57,20 @@ Windows/Linux Electron qualification, mainnet or relay-privacy claim follows.
 Reproduce the application installation with the instructions in the
 [example README](../../../examples/reference-wallet/README.md). Every run uses a
 new directory and preserves failures. No installer opens or funds a wallet.
+
+## Single-command runtime setup
+
+Clean source `b591c6b` subsequently passed
+`node tools/conformance/setup-reference-runtime.cjs <new-directory>` with fresh
+caches. That run copied tracked tooling, installed the locked build tools and
+engine inputs, acquired the prover closure, rebuilt both archives and downloaded
+all 18 artifacts. Final archive checks used the adapter's runtime manifests,
+which also matched the historical builder manifests. Circuit acquisition used
+the copied pure-data pin snapshot and built-ins only. No root checkout modules
+were borrowed by the build or acquisition steps. The runtime report digest is in
+INDEX. Four focused tool suites passed 27 tests; lint passed.
+
+Arti remains a separately pinned platform prerequisite. This setup does not open
+a profile or execute proofs, and its outputs did not replace the running live
+profiles' byte-identical pinned runtime. No release or distribution approval is
+implied by reproducing the files.

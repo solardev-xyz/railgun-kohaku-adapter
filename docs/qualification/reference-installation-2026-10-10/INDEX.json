@@ -87,6 +87,18 @@
       "tests": 24
     },
     "lint": "passed",
-    "exactPushedHeadCI": "pending"
+    "exactPushedHeadCI": "pending",
+    "runtimeSetupFocused": {
+      "suites": 4,
+      "tests": 27
+    }
+  },
+  "runtimeSetup": {
+    "sourceCommit": "b591c6b22c481bc9b2d36fb796d55564df3b3b2a",
+    "reportSha256": "e06195662c2a9405092c2fbffbe6bc6fb92cb6670495abec36af3e786afe771d",
+    "passed": true,
+    "profileOpened": false,
+    "archivePinsMatched": true,
+    "circuitFilesMatched": 18
   }
 }
