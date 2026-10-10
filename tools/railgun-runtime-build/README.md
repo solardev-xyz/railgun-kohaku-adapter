@@ -104,3 +104,26 @@ CIDs locally; acceptance rests on the adapter's pinned sizes and SHA-256 hashes.
 Install the separate locked toolchain in a new directory with an isolated npm
 cache and distinct empty user/global npm config files. `--ignore-scripts` skips
 esbuild's postinstall; its executable comes from the locked platform package.
+
+## Single-command runtime setup
+
+From a clean committed adapter checkout, with Node 24, npm and Python 3:
+
+```sh
+node tools/conformance/setup-reference-runtime.cjs /absolute/new-reference-runtime
+```
+
+This copies the tracked tooling into the new directory, installs the locked
+build toolchain and engine inputs with scripts disabled and an isolated cache,
+acquires the prover closure, runs the unchanged builders and downloads the
+circuits. It checks final archives against the adapter's own runtime manifests,
+which must also equal the historical tooling manifests. Circuit acquisition uses
+only built-ins and `CIRCUITS.json` from the copied tooling; a source hash and tests
+bind that pure-data snapshot to the runtime's artifact pins. It borrows no root
+checkout dependency for acquisition or assembly.
+
+`RUNTIME.json` records the source identity, versions, pinned archives and
+acquisition digests. Resolve its relative configuration paths against the new
+setup directory when writing the wallet's absolute-path configuration. The
+setup does not download Arti, modify an installed application, open a vault or
+execute a proof. Failures preserve the entire directory and `setup.log`.

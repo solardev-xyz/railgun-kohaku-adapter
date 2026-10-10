@@ -6,6 +6,11 @@ const { brotliCompressSync } = require("node:zlib");
 const { createHash } = require("node:crypto");
 const { location, decode, acquire } = require("../tools/railgun-runtime-build/acquire-circuits.cjs");
 const entry = (kind, bytes) => ({ kind, size: bytes.length, sha256: createHash("sha256").update(bytes).digest("hex") });
+test("pure-data acquisition pins exactly match runtime authority and source", () => {
+  const pins = require("../tools/railgun-runtime-build/CIRCUITS.json");
+  expect(pins.manifest).toEqual(require("../src/execution/railgun-artifacts").manifest);
+  expect(pins.runtimeSourceSha256).toBe(createHash("sha256").update(fs.readFileSync(path.join(__dirname, "../src/execution/railgun-artifacts.js"))).digest("hex"));
+});
 test("circuit locations are fixed to the reviewed bundles", () => {
   expect(location("POI_3x3", "wasm")).toBe("https://ipfs-lb.com/ipfs/QmZ2MyM6TKxffkv6stuo2hFwmUfs3q4xgMYN164Sje8new/prover/snarkjs/03x03.wasm.br");
   expect(location("01x01", "zkey")).toBe("https://ipfs-lb.com/ipfs/QmUsmnK4PFc7zDp2cmC4wBZxYLjNyRgWfs5GNcJJ2uLcpU/circuits/01x01/zkey.br");

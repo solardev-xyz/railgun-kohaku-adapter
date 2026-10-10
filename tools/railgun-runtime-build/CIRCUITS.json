@@ -1,0 +1,126 @@
+{
+  "schema": "railgun-circuit-acquisition-pins-v1",
+  "runtimeSourceSha256": "7c376d35e7f083292f70cb1a63b21772b1e0db919726d7707dfd93bef1c56552",
+  "manifest": {
+    "01x01": [
+      {
+        "kind": "wasm",
+        "name": "01x01.wasm",
+        "size": 3602116,
+        "sha256": "37a1528543305c64805e3c607940341abf61ba8516f73cfeb625cd09e5bda7a6"
+      },
+      {
+        "kind": "zkey",
+        "name": "01x01.zkey",
+        "size": 5888790,
+        "sha256": "27443e834f807f0d4ce8a0c2a0e028d1d540cba9c3e4d64b864b367e797215f4"
+      },
+      {
+        "kind": "vkey",
+        "name": "01x01.vkey",
+        "size": 3089,
+        "sha256": "b1295384591b05481ad16d579a64d0d4a4e014e251e90f1027d2bdf2dcc1a8f7"
+      }
+    ],
+    "01x02": [
+      {
+        "kind": "wasm",
+        "name": "01x02.wasm",
+        "size": 3007613,
+        "sha256": "6ce87ddb4e33cff9564338a8b1f58047b22809e5d198f243c777d1aa4eaaa1e3"
+      },
+      {
+        "kind": "zkey",
+        "name": "01x02.zkey",
+        "size": 6121318,
+        "sha256": "8ef8e7abcfb5e60fb593d4d961657465f498435a0835adef05acc09534d7557b"
+      },
+      {
+        "kind": "vkey",
+        "name": "01x02.vkey",
+        "size": 3256,
+        "sha256": "9369fa6ad3d7a1becf4b10cf4bd6a7eb83725cfb5cf75a08b191c5bc2cd479f4"
+      }
+    ],
+    "02x02": [
+      {
+        "kind": "wasm",
+        "name": "02x02.wasm",
+        "size": 3936627,
+        "sha256": "8595023762a3067b70960be81e1a983c1630c9900d4caef3d608b9d849568829"
+      },
+      {
+        "kind": "zkey",
+        "name": "02x02.zkey",
+        "size": 8461426,
+        "sha256": "47c279ec3fcc8bdcc7a2fb80078e38ba8ca3a7bbaa608967c3c3af82f1d454e5"
+      },
+      {
+        "kind": "vkey",
+        "name": "02x02.vkey",
+        "size": 3422,
+        "sha256": "27ac4fc50fde0ca2dc62046f5f38715b6094676bcdbe4e2987875aba65cac620"
+      }
+    ],
+    "POI_3x3": [
+      {
+        "kind": "wasm",
+        "name": "POI_3x3.wasm",
+        "size": 4588991,
+        "sha256": "b82a6d545d94cb774592b652b3d6b3d73f032eac946119b5de631d0609da7cbe"
+      },
+      {
+        "kind": "zkey",
+        "name": "POI_3x3.zkey",
+        "size": 14192542,
+        "sha256": "a128e273f8a7b9fa9e04e17da079b89a57e416db845864d0d5c88570564a2066"
+      },
+      {
+        "kind": "vkey",
+        "name": "POI_3x3.vkey",
+        "size": 4206,
+        "sha256": "b7ca7ba048666fb0e17efd0af1e407a8dcb0906bfaf2f20e362ed40cbec6f4d8"
+      }
+    ],
+    "01x03": [
+      {
+        "kind": "wasm",
+        "name": "01x03.wasm",
+        "size": 3918931,
+        "sha256": "72e55865fccca077f443bae9f1e6762a156ea478a137efc1324fb79153050276"
+      },
+      {
+        "kind": "zkey",
+        "name": "01x03.zkey",
+        "size": 6361742,
+        "sha256": "477aeca6a8ed3706f572bce0e99a7054e700a4e3c2ee4499d7013a4d7770e0d0"
+      },
+      {
+        "kind": "vkey",
+        "name": "01x03.vkey",
+        "size": 3420,
+        "sha256": "649561f264ee8dc6cfbf78a989d2978d848f6a5c730bb1817659edfa54266130"
+      }
+    ],
+    "02x03": [
+      {
+        "kind": "wasm",
+        "name": "02x03.wasm",
+        "size": 4098477,
+        "sha256": "20ab2f0987f94b6e959fcf11c9d37415c98848acd6a900a0ca75768db3938afa"
+      },
+      {
+        "kind": "zkey",
+        "name": "02x03.zkey",
+        "size": 8700194,
+        "sha256": "75611fffbc675993e55964404136df2a4e59821b40103ebe7afafc6c76863d11"
+      },
+      {
+        "kind": "vkey",
+        "name": "02x03.vkey",
+        "size": 3585,
+        "sha256": "2c9162607a77773b5d030012bf0d87eecf27201ad8f2f0a319a7c1661df2fb71"
+      }
+    ]
+  }
+}

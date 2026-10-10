@@ -4,7 +4,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { createHash } = require("node:crypto");
 const { brotliDecompressSync } = require("node:zlib");
-const { manifest } = require("../../src/execution/railgun-artifacts");
+const { manifest } = require("./CIRCUITS.json");
 const sha = (bytes) => createHash("sha256").update(bytes).digest("hex");
 const transactionBundle = "QmUsmnK4PFc7zDp2cmC4wBZxYLjNyRgWfs5GNcJJ2uLcpU";
 const poiBundle = "QmZ2MyM6TKxffkv6stuo2hFwmUfs3q4xgMYN164Sje8new";
