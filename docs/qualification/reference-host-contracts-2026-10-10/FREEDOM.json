@@ -1,0 +1,35 @@
+{
+  "schema": "reference-host-conformance-v1",
+  "freedomCommit": "eba426b2ec8c52b82300e23fa9283a99f9f2d630",
+  "source": {
+    "context": "10b07e3c4e35044401fde2bf11fe933c96a3fa014d752bb47601ae69954b5133",
+    "storage": "cf8379a4ab2395538ef009f06ff7edc5b92cf1cf9bf26807cae4f41b9c9887e0"
+  },
+  "checker": {
+    "context": "e905f5c7cb09183025411a3d981f0bb63915077c059255949bb79034cab78f35",
+    "storage": "adf51062610de5025b3784d78fdcafaf9aa77dd8318e39a2bc1b49b2897ef833"
+  },
+  "context": {
+    "handlesOpaque": true,
+    "scopesIndependent": true,
+    "revocationPermanent": true
+  },
+  "tasks": {
+    "ownsHandles": true,
+    "boundedTasks": true,
+    "cancellationObserved": true,
+    "lateResultRefused": true
+  },
+  "storage": {
+    "encrypted": true,
+    "reopen": true,
+    "revoked": true,
+    "serialized": true,
+    "tamperRefused": true
+  },
+  "limits": [
+    "Real Freedom context and encrypted storage primitives, no modified source.",
+    "Public disposable fixture only; profile inventory guard is an explicit seam.",
+    "No existing profile, vault, network, engine, signer or live transaction."
+  ]
+}

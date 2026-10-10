@@ -29,7 +29,7 @@ node tools/railgun-runtime-build/scripts/build-railgun-prover.js "$PINNED_PROVER
 node tools/railgun-runtime-build/scripts/check-railgun-prover-build.js "$FIRST_PROVER_ASAR" "$SECOND_PROVER_ASAR" "$HISTORICAL_PROVER_ASAR" "$NEW_CHECK_REPORT"
 ```
 
-Argument ordering is unchanged. Engine builder locates the fixture under this directory, not the caller's working directory. It verifies installed inputs before copying and again afterward. Prover checker additionally requires distinct source inodes and the existing pinned historical verifier body. There is no general `--check` CLI mode: `node --check <script>` checks syntax only; invoking these CLIs without required arguments refuses before creating an output. A successful real build/check must be separately observed and recorded.
+Argument ordering is unchanged. Engine builder locates the fixture under this directory, not the caller's working directory. It verifies installed inputs before copying and again afterward. Prover checker additionally requires distinct source inodes and the existing pinned historical verifier body. There is no general `--check` CLI mode: `node --check <script>` checks syntax only; invoking these CLIs without required arguments refuses before creating an output. A successful real build/check must be separately observed and recorded. The [October 10 rebuild](../../docs/qualification/reference-runtime-rebuild-2026-10-10/README.md) reproduced both pinned archives from existing authenticated inputs using these repository-owned builders; it does not establish a fresh dependency download.
 
 Run the new source/input tests with the package's existing Jest installation:
 

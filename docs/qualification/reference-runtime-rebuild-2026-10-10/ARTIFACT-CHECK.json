@@ -1,0 +1,678 @@
+{
+  "observedDate": "2026-10-10",
+  "scope": "public npm metadata and local artifact pin comparison only",
+  "npm": {
+    "version": "11.2.0",
+    "dist.integrity": "sha512-/pFyxYMHG8tfYzXabDl6mKKtU4SCznIIjiNu1KR1e1BqXxe4+y8yfzbso865BCMNSZqnpEdCFiJEBk2L5StTSQ==",
+    "dist.tarball": "https://registry.npmjs.org/@railgun-community/wallet/-/wallet-11.2.0.tgz"
+  },
+  "matchesRecordedArchiveIntegrity": true,
+  "checkerSha256": "e8ff34cb9b782d470ff3134700d2ab16939ca424b484306f959872fab0821030",
+  "comparison": {
+    "schema": "railgun-artifact-compatibility-v1",
+    "scope": "artifact-pin-comparison",
+    "pinsMatch": true,
+    "suppliedManifestSha256": "169b3c957b01169e6705245deaf24cfba21c0e108f7b0c2483929d747f402f2e",
+    "localArtifactsChecked": true,
+    "checks": [
+      {
+        "circuit": "01x01",
+        "kind": "wasm",
+        "source": "supplied-manifest",
+        "status": "match",
+        "expected": "37a1528543305c64805e3c607940341abf61ba8516f73cfeb625cd09e5bda7a6",
+        "observed": "37a1528543305c64805e3c607940341abf61ba8516f73cfeb625cd09e5bda7a6"
+      },
+      {
+        "circuit": "01x01",
+        "kind": "wasm",
+        "source": "local-artifact",
+        "status": "match",
+        "expected": "37a1528543305c64805e3c607940341abf61ba8516f73cfeb625cd09e5bda7a6",
+        "observed": "37a1528543305c64805e3c607940341abf61ba8516f73cfeb625cd09e5bda7a6",
+        "expectedBytes": 3602116,
+        "observedBytes": 3602116
+      },
+      {
+        "circuit": "01x01",
+        "kind": "zkey",
+        "source": "supplied-manifest",
+        "status": "match",
+        "expected": "27443e834f807f0d4ce8a0c2a0e028d1d540cba9c3e4d64b864b367e797215f4",
+        "observed": "27443e834f807f0d4ce8a0c2a0e028d1d540cba9c3e4d64b864b367e797215f4"
+      },
+      {
+        "circuit": "01x01",
+        "kind": "zkey",
+        "source": "local-artifact",
+        "status": "match",
+        "expected": "27443e834f807f0d4ce8a0c2a0e028d1d540cba9c3e4d64b864b367e797215f4",
+        "observed": "27443e834f807f0d4ce8a0c2a0e028d1d540cba9c3e4d64b864b367e797215f4",
+        "expectedBytes": 5888790,
+        "observedBytes": 5888790
+      },
+      {
+        "circuit": "01x01",
+        "kind": "vkey",
+        "source": "local-artifact",
+        "status": "match",
+        "expected": "b1295384591b05481ad16d579a64d0d4a4e014e251e90f1027d2bdf2dcc1a8f7",
+        "observed": "b1295384591b05481ad16d579a64d0d4a4e014e251e90f1027d2bdf2dcc1a8f7",
+        "expectedBytes": 3089,
+        "observedBytes": 3089
+      },
+      {
+        "circuit": "01x02",
+        "kind": "wasm",
+        "source": "supplied-manifest",
+        "status": "match",
+        "expected": "6ce87ddb4e33cff9564338a8b1f58047b22809e5d198f243c777d1aa4eaaa1e3",
+        "observed": "6ce87ddb4e33cff9564338a8b1f58047b22809e5d198f243c777d1aa4eaaa1e3"
+      },
+      {
+        "circuit": "01x02",
+        "kind": "wasm",
+        "source": "local-artifact",
+        "status": "match",
+        "expected": "6ce87ddb4e33cff9564338a8b1f58047b22809e5d198f243c777d1aa4eaaa1e3",
+        "observed": "6ce87ddb4e33cff9564338a8b1f58047b22809e5d198f243c777d1aa4eaaa1e3",
+        "expectedBytes": 3007613,
+        "observedBytes": 3007613
+      },
+      {
+        "circuit": "01x02",
+        "kind": "zkey",
+        "source": "supplied-manifest",
+        "status": "match",
+        "expected": "8ef8e7abcfb5e60fb593d4d961657465f498435a0835adef05acc09534d7557b",
+        "observed": "8ef8e7abcfb5e60fb593d4d961657465f498435a0835adef05acc09534d7557b"
+      },
+      {
+        "circuit": "01x02",
+        "kind": "zkey",
+        "source": "local-artifact",
+        "status": "match",
+        "expected": "8ef8e7abcfb5e60fb593d4d961657465f498435a0835adef05acc09534d7557b",
+        "observed": "8ef8e7abcfb5e60fb593d4d961657465f498435a0835adef05acc09534d7557b",
+        "expectedBytes": 6121318,
+        "observedBytes": 6121318
+      },
+      {
+        "circuit": "01x02",
+        "kind": "vkey",
+        "source": "local-artifact",
+        "status": "match",
+        "expected": "9369fa6ad3d7a1becf4b10cf4bd6a7eb83725cfb5cf75a08b191c5bc2cd479f4",
+        "observed": "9369fa6ad3d7a1becf4b10cf4bd6a7eb83725cfb5cf75a08b191c5bc2cd479f4",
+        "expectedBytes": 3256,
+        "observedBytes": 3256
+      },
+      {
+        "circuit": "02x02",
+        "kind": "wasm",
+        "source": "supplied-manifest",
+        "status": "match",
+        "expected": "8595023762a3067b70960be81e1a983c1630c9900d4caef3d608b9d849568829",
+        "observed": "8595023762a3067b70960be81e1a983c1630c9900d4caef3d608b9d849568829"
+      },
+      {
+        "circuit": "02x02",
+        "kind": "wasm",
+        "source": "local-artifact",
+        "status": "match",
+        "expected": "8595023762a3067b70960be81e1a983c1630c9900d4caef3d608b9d849568829",
+        "observed": "8595023762a3067b70960be81e1a983c1630c9900d4caef3d608b9d849568829",
+        "expectedBytes": 3936627,
+        "observedBytes": 3936627
+      },
+      {
+        "circuit": "02x02",
+        "kind": "zkey",
+        "source": "supplied-manifest",
+        "status": "match",
+        "expected": "47c279ec3fcc8bdcc7a2fb80078e38ba8ca3a7bbaa608967c3c3af82f1d454e5",
+        "observed": "47c279ec3fcc8bdcc7a2fb80078e38ba8ca3a7bbaa608967c3c3af82f1d454e5"
+      },
+      {
+        "circuit": "02x02",
+        "kind": "zkey",
+        "source": "local-artifact",
+        "status": "match",
+        "expected": "47c279ec3fcc8bdcc7a2fb80078e38ba8ca3a7bbaa608967c3c3af82f1d454e5",
+        "observed": "47c279ec3fcc8bdcc7a2fb80078e38ba8ca3a7bbaa608967c3c3af82f1d454e5",
+        "expectedBytes": 8461426,
+        "observedBytes": 8461426
+      },
+      {
+        "circuit": "02x02",
+        "kind": "vkey",
+        "source": "local-artifact",
+        "status": "match",
+        "expected": "27ac4fc50fde0ca2dc62046f5f38715b6094676bcdbe4e2987875aba65cac620",
+        "observed": "27ac4fc50fde0ca2dc62046f5f38715b6094676bcdbe4e2987875aba65cac620",
+        "expectedBytes": 3422,
+        "observedBytes": 3422
+      },
+      {
+        "circuit": "POI_3x3",
+        "kind": "wasm",
+        "source": "supplied-manifest",
+        "status": "match",
+        "expected": "b82a6d545d94cb774592b652b3d6b3d73f032eac946119b5de631d0609da7cbe",
+        "observed": "b82a6d545d94cb774592b652b3d6b3d73f032eac946119b5de631d0609da7cbe"
+      },
+      {
+        "circuit": "POI_3x3",
+        "kind": "wasm",
+        "source": "local-artifact",
+        "status": "match",
+        "expected": "b82a6d545d94cb774592b652b3d6b3d73f032eac946119b5de631d0609da7cbe",
+        "observed": "b82a6d545d94cb774592b652b3d6b3d73f032eac946119b5de631d0609da7cbe",
+        "expectedBytes": 4588991,
+        "observedBytes": 4588991
+      },
+      {
+        "circuit": "POI_3x3",
+        "kind": "zkey",
+        "source": "supplied-manifest",
+        "status": "match",
+        "expected": "a128e273f8a7b9fa9e04e17da079b89a57e416db845864d0d5c88570564a2066",
+        "observed": "a128e273f8a7b9fa9e04e17da079b89a57e416db845864d0d5c88570564a2066"
+      },
+      {
+        "circuit": "POI_3x3",
+        "kind": "zkey",
+        "source": "local-artifact",
+        "status": "match",
+        "expected": "a128e273f8a7b9fa9e04e17da079b89a57e416db845864d0d5c88570564a2066",
+        "observed": "a128e273f8a7b9fa9e04e17da079b89a57e416db845864d0d5c88570564a2066",
+        "expectedBytes": 14192542,
+        "observedBytes": 14192542
+      },
+      {
+        "circuit": "POI_3x3",
+        "kind": "vkey",
+        "source": "local-artifact",
+        "status": "match",
+        "expected": "b7ca7ba048666fb0e17efd0af1e407a8dcb0906bfaf2f20e362ed40cbec6f4d8",
+        "observed": "b7ca7ba048666fb0e17efd0af1e407a8dcb0906bfaf2f20e362ed40cbec6f4d8",
+        "expectedBytes": 4206,
+        "observedBytes": 4206
+      },
+      {
+        "circuit": "01x03",
+        "kind": "wasm",
+        "source": "supplied-manifest",
+        "status": "match",
+        "expected": "72e55865fccca077f443bae9f1e6762a156ea478a137efc1324fb79153050276",
+        "observed": "72e55865fccca077f443bae9f1e6762a156ea478a137efc1324fb79153050276"
+      },
+      {
+        "circuit": "01x03",
+        "kind": "wasm",
+        "source": "local-artifact",
+        "status": "match",
+        "expected": "72e55865fccca077f443bae9f1e6762a156ea478a137efc1324fb79153050276",
+        "observed": "72e55865fccca077f443bae9f1e6762a156ea478a137efc1324fb79153050276",
+        "expectedBytes": 3918931,
+        "observedBytes": 3918931
+      },
+      {
+        "circuit": "01x03",
+        "kind": "zkey",
+        "source": "supplied-manifest",
+        "status": "match",
+        "expected": "477aeca6a8ed3706f572bce0e99a7054e700a4e3c2ee4499d7013a4d7770e0d0",
+        "observed": "477aeca6a8ed3706f572bce0e99a7054e700a4e3c2ee4499d7013a4d7770e0d0"
+      },
+      {
+        "circuit": "01x03",
+        "kind": "zkey",
+        "source": "local-artifact",
+        "status": "match",
+        "expected": "477aeca6a8ed3706f572bce0e99a7054e700a4e3c2ee4499d7013a4d7770e0d0",
+        "observed": "477aeca6a8ed3706f572bce0e99a7054e700a4e3c2ee4499d7013a4d7770e0d0",
+        "expectedBytes": 6361742,
+        "observedBytes": 6361742
+      },
+      {
+        "circuit": "01x03",
+        "kind": "vkey",
+        "source": "local-artifact",
+        "status": "match",
+        "expected": "649561f264ee8dc6cfbf78a989d2978d848f6a5c730bb1817659edfa54266130",
+        "observed": "649561f264ee8dc6cfbf78a989d2978d848f6a5c730bb1817659edfa54266130",
+        "expectedBytes": 3420,
+        "observedBytes": 3420
+      },
+      {
+        "circuit": "02x03",
+        "kind": "wasm",
+        "source": "supplied-manifest",
+        "status": "match",
+        "expected": "20ab2f0987f94b6e959fcf11c9d37415c98848acd6a900a0ca75768db3938afa",
+        "observed": "20ab2f0987f94b6e959fcf11c9d37415c98848acd6a900a0ca75768db3938afa"
+      },
+      {
+        "circuit": "02x03",
+        "kind": "wasm",
+        "source": "local-artifact",
+        "status": "match",
+        "expected": "20ab2f0987f94b6e959fcf11c9d37415c98848acd6a900a0ca75768db3938afa",
+        "observed": "20ab2f0987f94b6e959fcf11c9d37415c98848acd6a900a0ca75768db3938afa",
+        "expectedBytes": 4098477,
+        "observedBytes": 4098477
+      },
+      {
+        "circuit": "02x03",
+        "kind": "zkey",
+        "source": "supplied-manifest",
+        "status": "match",
+        "expected": "75611fffbc675993e55964404136df2a4e59821b40103ebe7afafc6c76863d11",
+        "observed": "75611fffbc675993e55964404136df2a4e59821b40103ebe7afafc6c76863d11"
+      },
+      {
+        "circuit": "02x03",
+        "kind": "zkey",
+        "source": "local-artifact",
+        "status": "match",
+        "expected": "75611fffbc675993e55964404136df2a4e59821b40103ebe7afafc6c76863d11",
+        "observed": "75611fffbc675993e55964404136df2a4e59821b40103ebe7afafc6c76863d11",
+        "expectedBytes": 8700194,
+        "observedBytes": 8700194
+      },
+      {
+        "circuit": "02x03",
+        "kind": "vkey",
+        "source": "local-artifact",
+        "status": "match",
+        "expected": "2c9162607a77773b5d030012bf0d87eecf27201ad8f2f0a319a7c1661df2fb71",
+        "observed": "2c9162607a77773b5d030012bf0d87eecf27201ad8f2f0a319a7c1661df2fb71",
+        "expectedBytes": 3585,
+        "observedBytes": 3585
+      }
+    ],
+    "unpinned": [
+      {
+        "circuit": "POI_3x3",
+        "kind": "dat"
+      },
+      {
+        "circuit": "POI_13x13",
+        "kind": null
+      },
+      {
+        "circuit": "01x01",
+        "kind": "dat"
+      },
+      {
+        "circuit": "01x02",
+        "kind": "dat"
+      },
+      {
+        "circuit": "01x03",
+        "kind": "dat"
+      },
+      {
+        "circuit": "01x04",
+        "kind": null
+      },
+      {
+        "circuit": "01x05",
+        "kind": null
+      },
+      {
+        "circuit": "01x06",
+        "kind": null
+      },
+      {
+        "circuit": "01x07",
+        "kind": null
+      },
+      {
+        "circuit": "01x08",
+        "kind": null
+      },
+      {
+        "circuit": "01x09",
+        "kind": null
+      },
+      {
+        "circuit": "01x10",
+        "kind": null
+      },
+      {
+        "circuit": "01x11",
+        "kind": null
+      },
+      {
+        "circuit": "01x12",
+        "kind": null
+      },
+      {
+        "circuit": "01x13",
+        "kind": null
+      },
+      {
+        "circuit": "02x01",
+        "kind": null
+      },
+      {
+        "circuit": "02x02",
+        "kind": "dat"
+      },
+      {
+        "circuit": "02x03",
+        "kind": "dat"
+      },
+      {
+        "circuit": "02x04",
+        "kind": null
+      },
+      {
+        "circuit": "02x05",
+        "kind": null
+      },
+      {
+        "circuit": "02x06",
+        "kind": null
+      },
+      {
+        "circuit": "02x07",
+        "kind": null
+      },
+      {
+        "circuit": "02x08",
+        "kind": null
+      },
+      {
+        "circuit": "02x09",
+        "kind": null
+      },
+      {
+        "circuit": "02x10",
+        "kind": null
+      },
+      {
+        "circuit": "02x11",
+        "kind": null
+      },
+      {
+        "circuit": "02x12",
+        "kind": null
+      },
+      {
+        "circuit": "03x01",
+        "kind": null
+      },
+      {
+        "circuit": "03x02",
+        "kind": null
+      },
+      {
+        "circuit": "03x03",
+        "kind": null
+      },
+      {
+        "circuit": "03x04",
+        "kind": null
+      },
+      {
+        "circuit": "03x05",
+        "kind": null
+      },
+      {
+        "circuit": "03x06",
+        "kind": null
+      },
+      {
+        "circuit": "03x07",
+        "kind": null
+      },
+      {
+        "circuit": "03x08",
+        "kind": null
+      },
+      {
+        "circuit": "03x09",
+        "kind": null
+      },
+      {
+        "circuit": "03x10",
+        "kind": null
+      },
+      {
+        "circuit": "03x11",
+        "kind": null
+      },
+      {
+        "circuit": "04x01",
+        "kind": null
+      },
+      {
+        "circuit": "04x02",
+        "kind": null
+      },
+      {
+        "circuit": "04x03",
+        "kind": null
+      },
+      {
+        "circuit": "04x04",
+        "kind": null
+      },
+      {
+        "circuit": "04x05",
+        "kind": null
+      },
+      {
+        "circuit": "04x06",
+        "kind": null
+      },
+      {
+        "circuit": "04x07",
+        "kind": null
+      },
+      {
+        "circuit": "04x08",
+        "kind": null
+      },
+      {
+        "circuit": "04x09",
+        "kind": null
+      },
+      {
+        "circuit": "04x10",
+        "kind": null
+      },
+      {
+        "circuit": "05x01",
+        "kind": null
+      },
+      {
+        "circuit": "05x02",
+        "kind": null
+      },
+      {
+        "circuit": "05x03",
+        "kind": null
+      },
+      {
+        "circuit": "05x04",
+        "kind": null
+      },
+      {
+        "circuit": "05x05",
+        "kind": null
+      },
+      {
+        "circuit": "05x06",
+        "kind": null
+      },
+      {
+        "circuit": "05x07",
+        "kind": null
+      },
+      {
+        "circuit": "05x08",
+        "kind": null
+      },
+      {
+        "circuit": "05x09",
+        "kind": null
+      },
+      {
+        "circuit": "06x01",
+        "kind": null
+      },
+      {
+        "circuit": "06x02",
+        "kind": null
+      },
+      {
+        "circuit": "06x03",
+        "kind": null
+      },
+      {
+        "circuit": "06x04",
+        "kind": null
+      },
+      {
+        "circuit": "06x05",
+        "kind": null
+      },
+      {
+        "circuit": "06x06",
+        "kind": null
+      },
+      {
+        "circuit": "06x07",
+        "kind": null
+      },
+      {
+        "circuit": "06x08",
+        "kind": null
+      },
+      {
+        "circuit": "07x01",
+        "kind": null
+      },
+      {
+        "circuit": "07x02",
+        "kind": null
+      },
+      {
+        "circuit": "07x03",
+        "kind": null
+      },
+      {
+        "circuit": "07x04",
+        "kind": null
+      },
+      {
+        "circuit": "07x05",
+        "kind": null
+      },
+      {
+        "circuit": "07x06",
+        "kind": null
+      },
+      {
+        "circuit": "07x07",
+        "kind": null
+      },
+      {
+        "circuit": "08x01",
+        "kind": null
+      },
+      {
+        "circuit": "08x02",
+        "kind": null
+      },
+      {
+        "circuit": "08x03",
+        "kind": null
+      },
+      {
+        "circuit": "08x04",
+        "kind": null
+      },
+      {
+        "circuit": "08x05",
+        "kind": null
+      },
+      {
+        "circuit": "08x06",
+        "kind": null
+      },
+      {
+        "circuit": "09x01",
+        "kind": null
+      },
+      {
+        "circuit": "09x02",
+        "kind": null
+      },
+      {
+        "circuit": "09x03",
+        "kind": null
+      },
+      {
+        "circuit": "09x04",
+        "kind": null
+      },
+      {
+        "circuit": "09x05",
+        "kind": null
+      },
+      {
+        "circuit": "10x01",
+        "kind": null
+      },
+      {
+        "circuit": "10x02",
+        "kind": null
+      },
+      {
+        "circuit": "10x03",
+        "kind": null
+      },
+      {
+        "circuit": "10x04",
+        "kind": null
+      },
+      {
+        "circuit": "11x01",
+        "kind": null
+      },
+      {
+        "circuit": "11x02",
+        "kind": null
+      },
+      {
+        "circuit": "11x03",
+        "kind": null
+      },
+      {
+        "circuit": "12x01",
+        "kind": null
+      },
+      {
+        "circuit": "12x02",
+        "kind": null
+      },
+      {
+        "circuit": "13x01",
+        "kind": null
+      }
+    ],
+    "limits": [
+      "Supplied manifest provenance and freshness must be established separately.",
+      "A matching published manifest does not establish the deployed POI node's verifier.",
+      "No proof, signature, download, profile or network operation was performed.",
+      "Verification keys are compared to pinned bytes, not derived from the supplied zkey."
+    ]
+  },
+  "deployedVerifierObserved": false,
+  "networkAction": "npm registry metadata read only; no download/install or service submission"
+}
