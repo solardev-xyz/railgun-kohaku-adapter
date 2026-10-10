@@ -16,6 +16,15 @@ currentness on every call, including handles issued earlier. Currentness include
 the active profile, vault unlock epoch and application lifetime. A new unlock
 must not revive old handles.
 
+`isCurrent` predicates must be synchronous and side-effect free: no storage,
+network, signing or other custody work. They may authenticate parent contexts.
+The reference brackets an entire synchronous nested validation stack with its
+physical profile-lock check at entry and exit; every logical predicate, signal
+and lifetime check still runs. No result is reused across calls or awaits.
+Vault key loans/publication and storage/transaction commit boundaries retain
+independent currentness checks. This avoids millions of redundant filesystem
+checks in deeply nested recovered-submission scopes without extending deadlines.
+
 `run(handle, task)` requires a handle issued by that particular scope, admits at
 most 32 outstanding tasks, and invokes the task after a microtask with the scope
 signal. It rejects promptly on revocation while continuing to observe original

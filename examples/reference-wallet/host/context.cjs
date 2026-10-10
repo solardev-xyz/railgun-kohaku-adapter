@@ -71,6 +71,7 @@ function requirements(value = {}) {
  * the transport must independently enforce it. */
 function createContextHost({ assertCurrent = () => {} } = {}) {
   const registry = new WeakMap();
+  let validationDepth = 0;
   function getPrivacyContext(handle, chainId) {
     const entry = registry.get(handle);
     if (!entry) refuse();
@@ -99,13 +100,23 @@ function createContextHost({ assertCurrent = () => {} } = {}) {
       lifetime.abort(failure("PRIVACY_CONTEXT_REVOKED"));
     }
     function active() {
-      assertCurrent();
+      // Parent scopes can authenticate each other repeatedly in one synchronous
+      // validation stack. Check the host's physical custody boundary at both
+      // ends of that stack, not once per nested edge. No logical currentness or
+      // signal check is cached, and nothing survives this call or an await.
+      const outer = validationDepth++ === 0;
       try {
-        if (signal.aborted || isCurrent() !== true) close();
-      } catch {
-        close();
+        if (outer) assertCurrent();
+        try {
+          if (signal.aborted || isCurrent() !== true) close();
+        } catch {
+          close();
+        }
+        if (outer) assertCurrent();
+        if (lifetime.signal.aborted) refuse("PRIVACY_CONTEXT_REVOKED");
+      } finally {
+        validationDepth--;
       }
-      if (lifetime.signal.aborted) refuse("PRIVACY_CONTEXT_REVOKED");
     }
     signal.addEventListener("abort", close, { once: true });
     if (signal.aborted) close();
