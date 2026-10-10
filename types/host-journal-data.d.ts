@@ -12,17 +12,19 @@ export type TransactJournalIntent = TransactJournalBase &
   (
     | {
         readonly operation: "railgun-private-transfer";
+        readonly version?: never;
         readonly commitment: string;
       }
     | {
         readonly operation: "railgun-token-unshield";
+        readonly version?: 3;
         readonly commitment: string;
         readonly recipient: string;
         readonly amount: string;
       }
     | {
         readonly operation: "railgun-partial-unshield";
-        readonly version: 2;
+        readonly version: 2 | 4;
         readonly changeCommitment: string;
         readonly unshieldCommitment: string;
         readonly recipient: string;
@@ -43,6 +45,7 @@ export function freezeRailgunTransactResolution<T extends object>(
   value: T,
 ): Readonly<T>;
 export interface ShieldIntentBinding {
+  readonly version?: 2;
   npk: string;
   token: string;
   amount: string;

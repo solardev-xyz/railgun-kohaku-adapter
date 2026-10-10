@@ -1,14 +1,13 @@
-const { SEPOLIA } = require('../deployment');
+const { SEPOLIA } = require('../../../src/deployment');
 /** Durable own-hash private outcome. It never releases the input reservation. */
 const { validRailgunTransactIntent } = require("./railgun-transact-intent.js");
-const { selectTransactFormat } = require("../operation-formats");
-const pins = require("../railgun-shield-pins.json");
-const receiptPolicy = require("./railgun-transact-receipt-policy.js");
+const pins = require("../../../src/railgun-shield-pins.json");
+const receiptPolicy = require("../../../src/owners/railgun-transact-receipt-policy.js");
 const hash = (v) => typeof v === 'string' && /^0x[0-9a-f]{64}$/.test(v);
 const integer = (v) => Number.isSafeInteger(v) && v >= 0;
 const quantity = (v) => typeof v === 'string' && /^0x(?:0|[1-9a-f][0-9a-f]*)$/.test(v);
 const index = (v) => quantity(v) && BigInt(v) <= BigInt(Number.MAX_SAFE_INTEGER);
-const amount = (v, maximum) => typeof v === 'string' && /^(?:0|[1-9][0-9]{0,36})$/.test(v) && BigInt(v) <= maximum;
+const amount = (v) => typeof v === 'string' && /^(?:0|[1-9][0-9]{0,16})$/.test(v);
 const exact = (v, keys) =>
   v &&
   !Array.isArray(v) &&
@@ -19,14 +18,12 @@ function validRailgunTransactResolution(value, record) {
     const o = record.observation,
       i = record.intent;
     const partial = i?.operation === 'railgun-partial-unshield';
-    const format = selectTransactFormat(i?.operation, i?.unshieldAmount ?? i?.amount);
     if (
       !validRailgunTransactIntent(i) ||
-      (format.versionField === null ? Object.hasOwn(i, "version") : i.version !== format.versionField) ||
       !['railgun-private-transfer', 'railgun-token-unshield', 'railgun-partial-unshield'].includes(
         i.operation
       ) ||
-      (partial && receiptPolicy.chainId !== pins.chainId) ||
+      (partial && (i.version !== 2 || receiptPolicy.chainId !== pins.chainId)) ||
       !hash(record.hash) ||
       !o ||
       !integer(o.blockNumber) ||
@@ -44,8 +41,7 @@ function validRailgunTransactResolution(value, record) {
       value.outcome !== 'matched' ||
       o.status !== 'included' ||
       !exact(t, [
-        ...(format.versionField === null ? [] : ['version']),
-        ...(partial ? ['receiptPolicy'] : []),
+        ...(partial ? ['version', 'receiptPolicy'] : []),
         'status',
         'transactionHash',
         'blockHash',
@@ -62,8 +58,7 @@ function validRailgunTransactResolution(value, record) {
         'spendingEnabled',
       ]) ||
       t.status !== 'matched' ||
-      (format.versionField !== null && t.version !== format.versionField) ||
-      (partial && t.receiptPolicy !== receiptPolicy.id) ||
+      (partial && (t.version !== 2 || t.receiptPolicy !== receiptPolicy.id)) ||
       t.transactionHash !== record.hash ||
       t.blockHash !== o.blockHash ||
       !index(t.blockNumber) ||
@@ -112,9 +107,9 @@ function validRailgunTransactResolution(value, record) {
         u.token !== pins.wrappedNative ||
         u.treasury !== receiptPolicy.treasury ||
         u.unshieldAmount !== i.unshieldAmount ||
-        !amount(u.received, format.maximum) ||
+        !amount(u.received) ||
         BigInt(u.received) <= 0n ||
-        !amount(u.fee, format.maximum) ||
+        !amount(u.fee) ||
         BigInt(u.received) + BigInt(u.fee) !== BigInt(i.unshieldAmount) ||
         u.feeDeviation !== (BigInt(u.fee) !== (BigInt(i.unshieldAmount) * BigInt(SEPOLIA.fees.unshieldBps)) / 10000n)
       )
@@ -156,9 +151,9 @@ function validRailgunTransactResolution(value, record) {
       out.recipient === i.recipient &&
       out.token === pins.wrappedNative &&
       out.amount === i.amount &&
-      amount(out.received, format.maximum) &&
+      amount(out.received) &&
       BigInt(out.received) > 0n &&
-      amount(out.fee, format.maximum) &&
+      amount(out.fee) &&
       BigInt(out.received) + BigInt(out.fee) === BigInt(i.amount) &&
       out.feeDeviation === (BigInt(out.fee) !== (BigInt(i.amount) * BigInt(SEPOLIA.fees.unshieldBps)) / 10000n)
     );
@@ -168,7 +163,7 @@ function validRailgunTransactResolution(value, record) {
 }
 function freezeRailgunTransactResolution(value) {
   if (value.transact) {
-    if (value.transact.operation === 'railgun-partial-unshield' || [2, 4].includes(value.transact.version)) {
+    if (value.transact.version === 2) {
       Object.freeze(value.transact.output.change);
       Object.freeze(value.transact.output.unshield);
     }

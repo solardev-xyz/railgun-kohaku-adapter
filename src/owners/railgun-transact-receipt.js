@@ -168,7 +168,8 @@ function inspectRailgunTransactReceipt(record, transaction, receipt) {
       });
     }
     return Object.freeze({
-      ...(partial ? { version: 2, receiptPolicy: receiptPolicy.id } : {}),
+      ...(Object.hasOwn(intent, 'version') ? { version: intent.version } : {}),
+      ...(partial ? { receiptPolicy: receiptPolicy.id } : {}),
       status: 'matched',
       transactionHash: record.hash,
       blockHash: receipt.blockHash,

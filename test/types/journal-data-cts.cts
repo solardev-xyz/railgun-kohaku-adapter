@@ -3,7 +3,10 @@ const intent = data.railgunTransactJournalIntent({});
 const accepted: boolean = data.validRailgunTransactIntent(intent);
 const target: boolean = data.isRailgunTarget("0x12");
 if (intent.operation === "railgun-partial-unshield") {
-  const version: 2 = intent.version;
+  const version: 2 | 4 = intent.version;
+  // @ts-expect-error a partial journal may use the explicit wide v4 format
+  const legacyOnly: 2 = intent.version;
+  void legacyOnly;
   const amount: string = intent.unshieldAmount;
   void version;
   void amount;

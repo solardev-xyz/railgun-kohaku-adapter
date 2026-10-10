@@ -1,0 +1,246 @@
+{
+  "baseRevision": "2cb2b4a11ae7f493524665655f569c74877a1bc4",
+  "label": "Canonical public-amount journal versions and settlement readers; legacy admission validator unchanged. No private input amount enters transaction journals.",
+  "changes": [
+    {
+      "file": "src/owners/railgun-transact-intent.js",
+      "beforeSha256": "e07edb7c2a3210070ac7c95fe7ac9ae446cf96d9e963528e61f2b6170f20f20f",
+      "afterSha256": "30d30c0cd47b639cdd1e73bedd9197da5f7f6b94d1ef337b191872b7888013f9",
+      "replacements": [
+        {
+          "start": 376,
+          "before": "",
+          "after": "const policy = require(\"../data/railgun-private-policy-core\").createPrivatePolicy(require(\"../amount-bounds\").NOTE_MAX);\n"
+        },
+        {
+          "start": 574,
+          "before": "} = require(\"../data/railgun-private-policy.js\");\nconst { validateRailgunPrivateSigningIntent } = require(\"../data/railgun-private-intent.js\");\nconst pins = require(\"../railgun-shield-pins.json\");\n",
+          "after": "} = policy;\nconst { validateRailgunPrivateSigningIntent } = require(\"../data/railgun-private-intent-core\").createPrivateIntent(policy);\nconst { selectTransactFormat } = require(\"../operation-formats\");\n"
+        },
+        {
+          "start": 3856,
+          "before": "",
+          "after": "  const format = selectTransactFormat(kind, fields.unshieldAmount ?? fields.amount);\n"
+        },
+        {
+          "start": 3966,
+          "before": "    ...(kind === 'railgun-partial-unshield' ? { version: 2 } : {}),\n",
+          "after": "    ...(format.versionField === null ? {} : { version: format.versionField }),\n"
+        },
+        {
+          "start": 4424,
+          "before": "            binding.version === 2 ? 'railgun-transact-v2' : 'railgun-transact',\n",
+          "after": "            selectTransactFormat(binding.operation, binding.unshieldAmount ?? binding.amount).domain,\n"
+        },
+        {
+          "start": 4909,
+          "before": "",
+          "after": "    const publicAmount = partial ? value.unshieldAmount : value?.amount;\n    const format = selectTransactFormat(value?.operation, publicAmount);\n"
+        },
+        {
+          "start": 5088,
+          "before": "      ...(partial ? ['version'] : []),\n",
+          "after": "      ...(format.versionField === null ? [] : ['version']),\n"
+        },
+        {
+          "start": 5551,
+          "before": "      (partial && value.version !== 2) ||\n",
+          "after": "      (format.versionField !== null && value.version !== format.versionField) ||\n"
+        },
+        {
+          "start": 6197,
+          "before": "    const publicAmount = partial ? value.unshieldAmount : value.amount;\n",
+          "after": ""
+        },
+        {
+          "start": 6411,
+          "before": "        /^[1-9][0-9]{0,16}$/.test(publicAmount) &&\n        BigInt(publicAmount) <= BigInt(pins.maxQualificationAmount))\n",
+          "after": "        /^[1-9][0-9]{0,36}$/.test(publicAmount) &&\n        BigInt(publicAmount) <= format.maximum)\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-transact-resolution.js",
+      "beforeSha256": "6b9e4ca23b6f76746ddb4e9341160a1730ac47214023e960600c96b021d14f24",
+      "afterSha256": "7c0e3ac2c22b9713650214a90f79f58c1e35c4d49496e353998776ad505d20d9",
+      "replacements": [
+        {
+          "start": 208,
+          "before": "",
+          "after": "const { selectTransactFormat } = require(\"../operation-formats\");\n"
+        },
+        {
+          "start": 699,
+          "before": "const amount = (v) => typeof v === 'string' && /^(?:0|[1-9][0-9]{0,16})$/.test(v);\n",
+          "after": "const amount = (v, maximum) => typeof v === 'string' && /^(?:0|[1-9][0-9]{0,36})$/.test(v) && BigInt(v) <= maximum;\n"
+        },
+        {
+          "start": 1146,
+          "before": "",
+          "after": "    const format = selectTransactFormat(i?.operation, i?.unshieldAmount ?? i?.amount);\n"
+        },
+        {
+          "start": 1282,
+          "before": "",
+          "after": "      (format.versionField === null ? Object.hasOwn(i, \"version\") : i.version !== format.versionField) ||\n"
+        },
+        {
+          "start": 1519,
+          "before": "      (partial && (i.version !== 2 || receiptPolicy.chainId !== pins.chainId)) ||\n",
+          "after": "      (partial && receiptPolicy.chainId !== pins.chainId) ||\n"
+        },
+        {
+          "start": 2261,
+          "before": "        ...(partial ? ['version', 'receiptPolicy'] : []),\n",
+          "after": "        ...(format.versionField === null ? [] : ['version']),\n        ...(partial ? ['receiptPolicy'] : []),\n"
+        },
+        {
+          "start": 2792,
+          "before": "      (partial && (t.version !== 2 || t.receiptPolicy !== receiptPolicy.id)) ||\n",
+          "after": "      (format.versionField !== null && t.version !== format.versionField) ||\n      (partial && t.receiptPolicy !== receiptPolicy.id) ||\n"
+        },
+        {
+          "start": 4545,
+          "before": "        !amount(u.received) ||\n",
+          "after": "        !amount(u.received, format.maximum) ||\n"
+        },
+        {
+          "start": 4628,
+          "before": "        !amount(u.fee) ||\n",
+          "after": "        !amount(u.fee, format.maximum) ||\n"
+        },
+        {
+          "start": 5945,
+          "before": "      amount(out.received) &&\n",
+          "after": "      amount(out.received, format.maximum) &&\n"
+        },
+        {
+          "start": 6026,
+          "before": "      amount(out.fee) &&\n",
+          "after": "      amount(out.fee, format.maximum) &&\n"
+        },
+        {
+          "start": 6365,
+          "before": "    if (value.transact.version === 2) {\n",
+          "after": "    if (value.transact.operation === 'railgun-partial-unshield' || [2, 4].includes(value.transact.version)) {\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-transact-receipt.js",
+      "beforeSha256": "62317c516063dec5e68d7c1f253cc902ddcd5d3fa3ae6f5e48386cffe749194f",
+      "afterSha256": "402ea9e03ce15180c9f682b40cb2dda0bd9cf50467af61660ef56604b4be754f",
+      "replacements": [
+        {
+          "start": 8057,
+          "before": "      ...(partial ? { version: 2, receiptPolicy: receiptPolicy.id } : {}),\n",
+          "after": "      ...(Object.hasOwn(intent, 'version') ? { version: intent.version } : {}),\n      ...(partial ? { receiptPolicy: receiptPolicy.id } : {}),\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-shield-policy.js",
+      "beforeSha256": "1d9da61d8da42e37891dbab11932eb1427e43f8549f32179c6683126230d6f49",
+      "afterSha256": "058fffdc1d88355beda38757d6ccc9bc3116a522d1987764600251c365285324",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "/** Main-process validation of the sole supported native shield call. No generic\n * RelayAdapt calls, zero/all-balance amounts, token approvals or batch shields.\n * Calldata validation is not deployment verification or submission authority.\n */\nconst { Interface, keccak256, AbiCoder } = require('ethers');\nconst pins = require(\"../railgun-shield-pins.json\");\nconst SHIELD_ABI = Object.freeze([\n  'function wrapBase(uint256 _amount)',\n  'function shield(((bytes32 npk,(uint8 tokenType,address tokenAddress,uint256 tokenSubID) token,uint120 value) preimage,(bytes32[3] encryptedBundle,bytes32 shieldKey) ciphertext)[] _shieldRequests)',\n  'function multicall(bool _requireSuccess,(address to,bytes data,uint256 value)[] _calls) payable',\n]);\nconst abi = new Interface(SHIELD_ABI);\nconst FIELD = 21888242871839275222246405745257275088548364400416034343698204186575808495617n;\nconst fail = () =>\n  Object.assign(new Error('Railgun native shield refused'), { code: 'RAILGUN_SHIELD_REFUSED' });\nconst check = (value) => {\n  if (!value) throw fail();\n};\nfunction shieldAmount(value) {\n  check(typeof value === 'string' && /^[1-9][0-9]{0,16}$/.test(value));\n  const amount = BigInt(value);\n  check(amount <= BigInt(pins.maxQualificationAmount));\n  return amount;\n}\nfunction decode(name, data) {\n  check(typeof data === 'string' && /^0x[0-9a-f]+$/.test(data) && data.length <= 8194);\n  const values = abi.decodeFunctionData(name, data);\n  check(abi.encodeFunctionData(name, values) === data);\n  return values;\n}\nfunction validateRailgunNativeShield(transaction, expected) {\n  try {\n    check(\n      expected &&\n        Object.keys(expected).length === 2 &&\n        Object.hasOwn(expected, 'amount') &&\n        Object.hasOwn(expected, 'npk')\n    );\n    const amount = shieldAmount(expected.amount);\n    check(\n      typeof expected.npk === 'string' &&\n        /^0x[0-9a-f]{64}$/.test(expected.npk) &&\n        BigInt(expected.npk) > 0n &&\n        BigInt(expected.npk) < FIELD\n    );\n    check(\n      transaction &&\n        !Array.isArray(transaction) &&\n        Object.keys(transaction).length === 4 &&\n        ['chainId', 'to', 'value', 'data'].every((k) => Object.hasOwn(transaction, k))\n    );\n    check(\n      transaction.chainId === pins.chainId &&\n        transaction.to === pins.relayAdapt &&\n        transaction.value === expected.amount\n    );\n    const [required, calls] = decode('multicall', transaction.data);\n    check(required === true && calls.length === 2);\n    for (const call of calls) check(call.to.toLowerCase() === pins.relayAdapt && call.value === 0n);\n    check(decode('wrapBase', calls[0].data)[0] === amount);\n    const [requests] = decode('shield', calls[1].data);\n    check(requests.length === 1);\n    const { preimage, ciphertext } = requests[0];\n    check(\n      preimage.npk === expected.npk &&\n        preimage.value === amount &&\n        preimage.token.tokenType === 0n &&\n        preimage.token.tokenAddress.toLowerCase() === pins.wrappedNative &&\n        preimage.token.tokenSubID === 0n\n    );\n    check(\n      ciphertext.encryptedBundle.every((v) => /^0x[0-9a-f]{64}$/.test(v)) &&\n        /^0x[0-9a-f]{64}$/.test(ciphertext.shieldKey) &&\n        BigInt(ciphertext.shieldKey) !== 0n\n    );\n    return Object.freeze({\n      kind: 'railgun-native-shield',\n      ...transaction,\n      npk: expected.npk,\n      token: pins.wrappedNative,\n      shieldFeeBps: pins.shieldFeeBps,\n      noteValue: (amount - (amount * BigInt(pins.shieldFeeBps)) / 10000n).toString(),\n      digest: keccak256(\n        AbiCoder.defaultAbiCoder().encode(\n          ['string', 'uint256', 'address', 'uint256', 'bytes'],\n          ['railgun-native-shield', pins.chainId, pins.relayAdapt, amount, transaction.data]\n        )\n      ),\n    });\n  } catch {\n    throw fail();\n  }\n}\nmodule.exports = { SHIELD_ABI, shieldAmount, validateRailgunNativeShield };\n",
+          "after": "\"use strict\";\nconst { LEGACY_MAX } = require(\"../amount-bounds\");\nmodule.exports = require(\"./railgun-shield-policy-core\").createShieldPolicy(LEGACY_MAX);\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-shield-intent.js",
+      "beforeSha256": "f2d3d54d5171454d7acaa40378b87de7fb5f86856d237fe8648348f32b724516",
+      "afterSha256": "f969cdd49a053e7ff03f336a1004bc99cb61c8805946c85b449d1386d64ffd67",
+      "replacements": [
+        {
+          "start": 275,
+          "before": "} = require(\"./railgun-shield-policy.js\");\n",
+          "after": "} = require(\"./railgun-shield-policy-core\").createShieldPolicy(require(\"../amount-bounds\").NOTE_MAX);\nconst { selectShieldFormat } = require(\"../operation-formats\");\n"
+        },
+        {
+          "start": 1452,
+          "before": "  return { npk: checked.npk, token: checked.token, amount, noteValue: checked.noteValue };\n",
+          "after": "  const format = selectShieldFormat(amount);\n  return { ...(format.versionField === null ? {} : { version: format.versionField }), npk: checked.npk, token: checked.token, amount, noteValue: checked.noteValue };\n"
+        },
+        {
+          "start": 1709,
+          "before": "",
+          "after": "    if (!value) return value;\n    const format = selectShieldFormat(value.amount);\n    const keys = [\"kind\", \"digest\", \"npk\", \"token\", \"amount\", \"noteValue\",\n      ...(format.versionField === null ? [] : [\"version\"])];\n"
+        },
+        {
+          "start": 1941,
+          "before": "      value &&\n      Object.keys(value).length === 6 &&\n",
+          "after": "      Object.keys(value).length === keys.length &&\n      keys.every(key => Object.hasOwn(value, key)) &&\n      (format.versionField === null || value.version === format.versionField) &&\n"
+        },
+        {
+          "start": 2502,
+          "before": "      /^[1-9][0-9]{0,16}$/.test(value.noteValue) &&\n",
+          "after": "      /^[1-9][0-9]{0,36}$/.test(value.noteValue) &&\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-shield-resolution.js",
+      "beforeSha256": "3da55173dbfdadf4688e8b4a82b7eabab18a72d08e38f7e853b065bafa319e51",
+      "afterSha256": "44becc9c95d6265d7a40e940665b47be89b71e562168abecca2a3fb66d42c489",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "const { validShieldIntent } = require(\"./railgun-shield-intent\");\nconst { selectShieldFormat } = require(\"../operation-formats\");\n"
+        },
+        {
+          "start": 770,
+          "before": "      record.intent?.kind !== 'railgun-native-shield'\n",
+          "after": "      !validShieldIntent(record.intent)\n"
+        },
+        {
+          "start": 1000,
+          "before": "",
+          "after": "    const format = selectShieldFormat(i.amount);\n"
+        },
+        {
+          "start": 1116,
+          "before": "      Object.keys(s).length === 15 &&\n",
+          "after": "      Object.keys(s).length === (format.versionField === null ? 15 : 16) &&\n      (format.versionField === null ? !Object.hasOwn(s, \"version\") : s.version === format.versionField) &&\n"
+        },
+        {
+          "start": 1846,
+          "before": "      /^[1-9][0-9]{0,16}$/.test(s.noteValue) &&\n",
+          "after": "      /^[1-9][0-9]{0,36}$/.test(s.noteValue) &&\n"
+        },
+        {
+          "start": 1929,
+          "before": "      /^(?:0|[1-9][0-9]{0,16})$/.test(s.fee) &&\n",
+          "after": "      /^(?:0|[1-9][0-9]{0,36})$/.test(s.fee) &&\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-shield-receipt.js",
+      "beforeSha256": "99e013d176d855a73db7dce370a0f8fa677271524b7ae8cd72333a5d218a1aa8",
+      "afterSha256": "484dcba7b6aac20a25f24b5adcc8ed825a5f02dbfdd1353b58e61dc3a668a0de",
+      "replacements": [
+        {
+          "start": 1788,
+          "before": "        ['npk', 'token', 'amount'].every((k) => intent[k] === record.intent[k])\n",
+          "after": "        ['version', 'npk', 'token', 'amount'].every((k) => intent[k] === record.intent[k])\n"
+        },
+        {
+          "start": 4567,
+          "before": "",
+          "after": "      ...(Object.hasOwn(record.intent, 'version') ? { version: record.intent.version } : {}),\n"
+        }
+      ]
+    }
+  ],
+  "addedSources": [
+    {
+      "file": "src/owners/railgun-shield-policy-core.js",
+      "sha256": "e0e641a04ff2cf64ccc7010961d3b924215b37435254adc4bc26619421bdfab8"
+    }
+  ]
+}

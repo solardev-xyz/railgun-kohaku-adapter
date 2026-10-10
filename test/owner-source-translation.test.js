@@ -1,3 +1,4 @@
+const { undoJournalFormats } = require("./journal-format-transitions.cjs");
 const { undoRetainedHelpers } = require("./retained-helper-transitions.cjs");
 "use strict";
 const operationFormatTransitions = require("../docs/owners/OPERATION-FORMATS-TRANSITIONS.json");
@@ -80,6 +81,7 @@ test("every translated algorithm reconstructs its exact immutable original bytes
     reused = 0;
   for (const row of translation.files) {
     let text = fs.readFileSync(sourceFile(row.destination), "utf8");
+    text = undoJournalFormats(text, row.destination);
     text = undoRetainedHelpers(text, row.destination);
     text = undoOperationFormats(text, row.destination);
     text = undoRecoveredSource(text, row.destination);
@@ -379,6 +381,7 @@ test("all reused static named export surfaces were checked, including the full c
     expect(found.sourceSha256).toBe(row.sourceSha256);
     // The audited bytes are the pre-retry basis; the retry phase is undone.
     let text = fs.readFileSync(path.join(root, row.destination), "utf8");
+    text = undoJournalFormats(text, row.destination);
     text = undoRetainedHelpers(text, row.destination);
     text = undoOperationFormats(text, row.destination);
     text = undoRecoveredSource(text, row.destination);
@@ -455,6 +458,7 @@ test("high-authority host family imports have an exact reviewed source allowlist
     ).toEqual(files);
   for (const [file, digest] of Object.entries(audit.files)) {
     let text = fs.readFileSync(path.join(root, file), "utf8");
+    text = undoJournalFormats(text, file);
     text = undoRetainedHelpers(text, file);
   text = undoOperationFormats(text, file);
     text = undoRecoveredSource(text, file);

@@ -1,3 +1,4 @@
+const { undoJournalFormats } = require("./journal-format-transitions.cjs");
 const deploymentTransitions = require("../docs/owners/DEPLOYMENT-TRANSITIONS.json");
 const sourceSha = value => createHash("sha256").update(value).digest("hex");
 const {
@@ -246,6 +247,7 @@ test("reconstructs the committed canonical data algorithms through the reviewed 
 });
 
 function undoDeployment(text, file) {
+  text = undoJournalFormats(text, file);
   const change = deploymentTransitions.changes.find((row) => row.file === file);
   if (!change) return text;
   expect(sourceSha(text)).toBe(change.afterSha256);

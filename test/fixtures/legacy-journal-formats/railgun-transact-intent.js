@@ -4,14 +4,13 @@
  * Railgun's Poseidon TXID is deliberately not computed in the main process.
  */
 const { AbiCoder, Interface, keccak256 } = require('ethers');
-const policy = require("../data/railgun-private-policy-core").createPrivatePolicy(require("../amount-bounds").NOTE_MAX);
 const {
   TRANSACT_ABI,
   BOUND_PARAMS,
   validateRailgunPrivateTransaction,
-} = policy;
-const { validateRailgunPrivateSigningIntent } = require("../data/railgun-private-intent-core").createPrivateIntent(policy);
-const { selectTransactFormat } = require("../operation-formats");
+} = require("../../../src/data/railgun-private-policy.js");
+const { validateRailgunPrivateSigningIntent } = require("../../../src/data/railgun-private-intent.js");
+const pins = require("../../../src/railgun-shield-pins.json");
 const FIELD = 21888242871839275222246405745257275088548364400416034343698204186575808495617n;
 const abi = new Interface([TRANSACT_ABI]),
   coder = AbiCoder.defaultAbiCoder();
@@ -94,9 +93,8 @@ function extractRailgunTransactIntent(tx) {
 function railgunTransactIntentBinding(tx) {
   const { expected, intentDigest } = extractRailgunTransactIntent(tx);
   const { kind, ...fields } = expected;
-  const format = selectTransactFormat(kind, fields.unshieldAmount ?? fields.amount);
   return Object.freeze({
-    ...(format.versionField === null ? {} : { version: format.versionField }),
+    ...(kind === 'railgun-partial-unshield' ? { version: 2 } : {}),
     operation: kind,
     ...fields,
     intentDigest,
@@ -112,7 +110,7 @@ function railgunTransactJournalIntent(tx) {
         coder.encode(
           ['string', 'uint256', 'address', 'address', 'uint256', 'bytes'],
           [
-            selectTransactFormat(binding.operation, binding.unshieldAmount ?? binding.amount).domain,
+            binding.version === 2 ? 'railgun-transact-v2' : 'railgun-transact',
             tx.chainId,
             tx.from,
             tx.to,
@@ -130,11 +128,9 @@ function validRailgunTransactIntent(value) {
   try {
     const partial = value?.operation === 'railgun-partial-unshield';
     const unshield = partial || value?.operation === 'railgun-token-unshield';
-    const publicAmount = partial ? value.unshieldAmount : value?.amount;
-    const format = selectTransactFormat(value?.operation, publicAmount);
     const keys = [
       'kind',
-      ...(format.versionField === null ? [] : ['version']),
+      ...(partial ? ['version'] : []),
       'digest',
       'operation',
       'tree',
@@ -149,7 +145,7 @@ function validRailgunTransactIntent(value) {
       !value ||
       Array.isArray(value) ||
       value.kind !== 'railgun-transact' ||
-      (format.versionField !== null && value.version !== format.versionField) ||
+      (partial && value.version !== 2) ||
       (!unshield && value.operation !== 'railgun-private-transfer') ||
       Object.keys(value).length !== keys.length ||
       !keys.every((k) => Object.hasOwn(value, k)) ||
@@ -166,14 +162,15 @@ function validRailgunTransactIntent(value) {
       ].every((k) => field(value[k]))
     )
       return false;
+    const publicAmount = partial ? value.unshieldAmount : value.amount;
     return (
       !unshield ||
       (typeof value.recipient === 'string' &&
         /^0x[0-9a-f]{40}$/.test(value.recipient) &&
         BigInt(value.recipient) > 0n &&
         typeof publicAmount === 'string' &&
-        /^[1-9][0-9]{0,36}$/.test(publicAmount) &&
-        BigInt(publicAmount) <= format.maximum)
+        /^[1-9][0-9]{0,16}$/.test(publicAmount) &&
+        BigInt(publicAmount) <= BigInt(pins.maxQualificationAmount))
     );
   } catch {
     return false;

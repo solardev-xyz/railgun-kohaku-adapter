@@ -4,10 +4,12 @@ const Module = require("module");
 const { pathToFileURL } = require("url");
 const root = path.resolve(__dirname, "../..");
 const allowed = new Set([
-  "src/deployment.js",
   "src/amount-bounds.js",
+  "src/operation-formats.js",
   "src/data/railgun-private-policy-core.js",
   "src/data/railgun-private-intent-core.js",
+  "src/owners/railgun-shield-policy-core.js",
+  "src/deployment.js",
   "src/owners/railgun-transact-intent.js",
   "src/owners/railgun-transact-resolution.js",
   "src/owners/railgun-transact-receipt-policy.js",

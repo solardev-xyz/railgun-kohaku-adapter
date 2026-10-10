@@ -81,3 +81,26 @@ root, partial change and wide POI selector bindings. They do not establish real
 ownership or prove that a wider operation can execute. Owner and utility callers
 still use their legacy compositions until the amount-admission integration is
 complete and qualified.
+
+## Public transaction journals and outcomes
+
+The trusted-host `/host/journal-data` readers accept canonical additional formats:
+full unshield v3, partial unshield v4, and native Shield v2. The version is selected
+only from the public calldata amount, with the same uint120 bound as the note
+format. Legacy full-unshield/Shield records remain unversioned; partial v2 stays
+unchanged. A wider private input with a small public partial-unshield amount still
+has a v2 journal. Transfers stay unversioned and disclose no private input amount.
+
+Receipt and durable-outcome validation require matching versions and conservation
+against the authenticated journal. These are data readers, not spending grants.
+The admission-facing Shield validator and current owner selection limits remain
+legacy-bound in this stage. Historical digest transcripts, legacy reader fixtures,
+and explicit downgrade refusals are covered by tests. Hosts that exhaustively
+narrow partial journal versions must handle both 2 and 4 before enabling a wider
+application policy. No migration rewrites existing journal records.
+
+A downgrade after writing a wide public journal record is unsupported: an older
+reader refuses the containing EOA journal, preserving its bytes and custody
+without allowing operation. A wide-input partial with a small public amount has
+a legacy v2 journal but still requires the new v4 capsule reader. Back up retained
+state before an upgrade; never strip a version to make an older reader accept it.

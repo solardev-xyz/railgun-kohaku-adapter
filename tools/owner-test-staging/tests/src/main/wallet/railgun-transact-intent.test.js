@@ -282,9 +282,15 @@ test.each([
     },
   ],
   [
-    'over cap',
+    'over uint120 format',
     (f) => {
-      f.inner.unshieldPreimage.value = BigInt(pins.maxQualificationAmount) + 1n;
+      // Preserve the real ABI wire shape but inject an out-of-format word.
+      // A wider public amount is valid classification, not a spending grant.
+      const encoded = f.encode(), words = encoded.slice(10).match(/.{64}/g);
+      const original = BigInt(f.inner.unshieldPreimage.value).toString(16).padStart(64, '0');
+      expect(words.filter(word => word === original)).toHaveLength(1);
+      words[words.indexOf(original)] = (1n << 120n).toString(16).padStart(64, '0');
+      f.encode = () => encoded.slice(0, 10) + words.join('');
     },
   ],
 ])('refuses malformed partial calldata %s', (_name, change) => {

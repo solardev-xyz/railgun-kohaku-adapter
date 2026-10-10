@@ -36,7 +36,7 @@ function inspectRailgunShieldReceipt(record, transaction, receipt) {
     });
     check(
       intent.digest === record.intent.digest &&
-        ['npk', 'token', 'amount'].every((k) => intent[k] === record.intent[k])
+        ['version', 'npk', 'token', 'amount'].every((k) => intent[k] === record.intent[k])
     );
     check(
       receipt?.status === '0x1' &&
@@ -106,6 +106,7 @@ function inspectRailgunShieldReceipt(record, transaction, receipt) {
       position: Number(args.startPosition),
       npk: note.npk,
       token: record.intent.token,
+      ...(Object.hasOwn(record.intent, 'version') ? { version: record.intent.version } : {}),
       amount: record.intent.amount,
       noteValue: note.value.toString(),
       fee: fee.toString(),

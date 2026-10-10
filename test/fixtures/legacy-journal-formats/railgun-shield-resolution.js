@@ -1,5 +1,3 @@
-const { validShieldIntent } = require("./railgun-shield-intent");
-const { selectShieldFormat } = require("../operation-formats");
 /** Durable shield outcome schema shared by live and compacted journals. */
 const HASH = /^0x[0-9a-f]{64}$/;
 const quantity = (v) => typeof v === 'string' && /^0x(?:0|[1-9a-f][0-9a-f]*)$/.test(v);
@@ -14,19 +12,17 @@ function validRailgunShieldResolution(value, record) {
       !integer(value.finalizedBlockNumber) ||
       !HASH.test(value.finalizedBlockHash) ||
       value.finalizedBlockNumber < observation.blockNumber ||
-      !validShieldIntent(record.intent)
+      record.intent?.kind !== 'railgun-native-shield'
     )
       return false;
     if (value.outcome === 'reverted')
       return observation.status === 'reverted' && value.shield === null;
     const s = value.shield,
       i = record.intent;
-    const format = selectShieldFormat(i.amount);
     return (
       observation.status === 'included' &&
       s &&
-      Object.keys(s).length === (format.versionField === null ? 15 : 16) &&
-      (format.versionField === null ? !Object.hasOwn(s, "version") : s.version === format.versionField) &&
+      Object.keys(s).length === 15 &&
       s.status === 'matched' &&
       s.transactionHash === record.hash &&
       s.blockHash === observation.blockHash &&
@@ -42,9 +38,9 @@ function validRailgunShieldResolution(value, record) {
       s.token === i.token &&
       s.amount === i.amount &&
       typeof s.noteValue === 'string' &&
-      /^[1-9][0-9]{0,36}$/.test(s.noteValue) &&
+      /^[1-9][0-9]{0,16}$/.test(s.noteValue) &&
       typeof s.fee === 'string' &&
-      /^(?:0|[1-9][0-9]{0,36})$/.test(s.fee) &&
+      /^(?:0|[1-9][0-9]{0,16})$/.test(s.fee) &&
       BigInt(s.noteValue) + BigInt(s.fee) === BigInt(i.amount) &&
       s.feeDeviation === (s.noteValue !== i.noteValue) &&
       s.trust === 'unverified-rpc' &&

@@ -6,9 +6,8 @@ const {
   SHIELD_ABI,
   validateRailgunNativeShield,
   shieldAmount,
-} = require("./railgun-shield-policy-core").createShieldPolicy(require("../amount-bounds").NOTE_MAX);
-const { selectShieldFormat } = require("../operation-formats");
-const pins = require("../railgun-shield-pins.json");
+} = require("../../../src/owners/railgun-shield-policy.js");
+const pins = require("../../../src/railgun-shield-pins.json");
 const abi = new Interface(SHIELD_ABI);
 const FIELD = 21888242871839275222246405745257275088548364400416034343698204186575808495617n;
 const isRailgunTarget = (to) =>
@@ -30,19 +29,13 @@ function shieldIntentBinding(tx) {
     },
     { amount, npk: notes[0].preimage.npk.toLowerCase() }
   );
-  const format = selectShieldFormat(amount);
-  return { ...(format.versionField === null ? {} : { version: format.versionField }), npk: checked.npk, token: checked.token, amount, noteValue: checked.noteValue };
+  return { npk: checked.npk, token: checked.token, amount, noteValue: checked.noteValue };
 }
 function validShieldIntent(value) {
   try {
-    if (!value) return value;
-    const format = selectShieldFormat(value.amount);
-    const keys = ["kind", "digest", "npk", "token", "amount", "noteValue",
-      ...(format.versionField === null ? [] : ["version"])];
     return (
-      Object.keys(value).length === keys.length &&
-      keys.every(key => Object.hasOwn(value, key)) &&
-      (format.versionField === null || value.version === format.versionField) &&
+      value &&
+      Object.keys(value).length === 6 &&
       value.kind === 'railgun-native-shield' &&
       /^0x[0-9a-f]{64}$/.test(value.digest) &&
       typeof value.npk === 'string' &&
@@ -52,7 +45,7 @@ function validShieldIntent(value) {
       value.token === pins.wrappedNative &&
       shieldAmount(value.amount) > 0n &&
       typeof value.noteValue === 'string' &&
-      /^[1-9][0-9]{0,36}$/.test(value.noteValue) &&
+      /^[1-9][0-9]{0,16}$/.test(value.noteValue) &&
       BigInt(value.noteValue) <= BigInt(value.amount)
     );
   } catch {

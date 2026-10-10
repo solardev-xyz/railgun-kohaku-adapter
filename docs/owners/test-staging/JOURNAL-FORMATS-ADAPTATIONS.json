@@ -1,0 +1,23 @@
+{
+  "baseRevision": "2cb2b4a11ae7f493524665655f569c74877a1bc4",
+  "reason": "The journal classifies public amounts, not application spending limits. Preserve the cap negative at the uint120 format boundary by injecting an invalid ABI word.",
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-transact-intent.test.js",
+      "beforeSha256": "dba0a39445a6a025e0519d5cea8f87f315e75e1cb6bc19d138aa316055bee009",
+      "afterSha256": "e99c3143b16da3f4397073ea2250f337d9b5c7c2efba8c10576a405c8ddcbe71",
+      "replacements": [
+        {
+          "start": 7701,
+          "before": "    'over cap',\n",
+          "after": "    'over uint120 format',\n"
+        },
+        {
+          "start": 7741,
+          "before": "      f.inner.unshieldPreimage.value = BigInt(pins.maxQualificationAmount) + 1n;\n",
+          "after": "      // Preserve the real ABI wire shape but inject an out-of-format word.\n      // A wider public amount is valid classification, not a spending grant.\n      const encoded = f.encode(), words = encoded.slice(10).match(/.{64}/g);\n      const original = BigInt(f.inner.unshieldPreimage.value).toString(16).padStart(64, '0');\n      expect(words.filter(word => word === original)).toHaveLength(1);\n      words[words.indexOf(original)] = (1n << 120n).toString(16).padStart(64, '0');\n      f.encode = () => encoded.slice(0, 10) + words.join('');\n"
+        }
+      ]
+    }
+  ]
+}

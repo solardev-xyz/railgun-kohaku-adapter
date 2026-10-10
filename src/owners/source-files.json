@@ -214,6 +214,7 @@
   "src/owners/railgun-shield-operation.js",
   "src/owners/railgun-shield-origin-data.js",
   "src/owners/railgun-shield-origin.js",
+  "src/owners/railgun-shield-policy-core.js",
   "src/owners/railgun-shield-policy.js",
   "src/owners/railgun-shield-preflight.js",
   "src/owners/railgun-shield-prepare.js",
