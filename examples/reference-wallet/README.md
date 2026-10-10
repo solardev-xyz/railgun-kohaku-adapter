@@ -235,7 +235,9 @@ a disposable one-day TLS certificate. They establish neither Tor circuit
 isolation nor live latency. This first transport creates a connection for each
 request. The initial public scan screen used a refilling pool, so its 76-second
 header result did not qualify production batch timing. The tool now uses the
-owner's batch-barrier schedule; private-service latency remains a separate live gate.
+owner's batch-barrier schedule. A separate live check of the same 304-header
+window passed in 97.4 seconds under that schedule. Private-service latency
+remains a separate live gate.
 Proxy readiness requires its exact listener message, bootstrap,
 and a drained SOCKS method-only probe. No destination or isolation token is sent
 by that probe. A conflicting/read-only Arti state refuses; it is never silently

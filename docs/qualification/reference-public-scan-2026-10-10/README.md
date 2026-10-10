@@ -10,6 +10,14 @@ owner waits for each batch of eight to finish. The original timing does not
 establish that the owner would meet its 180-second acquisition limit. The slowest
 inventory log request took 7.828 seconds.
 
+The corrected tool then measured **only that same dense public window** using
+sorted batches of eight with a barrier. It passed on exact tool commit `3d895a0`:
+313 requests, all HTTP 200, and the full boundary/log/header acquisition took
+**97.428 seconds for 304 event headers**, within 180 seconds. The application
+source digests were unchanged. This follow-up measures the event-header schedule
+the owner uses; it does not re-run the whole inventory or production projection.
+The index keeps both observations and their source/report digests separately.
+
 The screen used the actual example context registry, managed Arti guardian,
 remote-DNS SOCKS and TLS transport with no direct fallback. It started a fresh
 dedicated Arti 2.6.0 process pinned by binary hash, using the explicit public
@@ -18,7 +26,7 @@ owned-status, signing or transaction request. The preserved result includes the
 exact public endpoint, finalized anchor, per-window counts and per-request timing.
 That result, window inventory and executed tool snapshot are retained locally,
 not published. The [index](INDEX.json) records their digests and source identities
-for later verification; it is not a independently replayable evidence archive.
+for later verification; it is not an independently replayable evidence archive.
 
 See [the tool's invocation and bounds](../../../tools/conformance/REFERENCE-PUBLIC-SCREEN.md).
 The index distinguishes the executed diagnostic tool from its subsequent

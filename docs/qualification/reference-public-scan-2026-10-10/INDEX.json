@@ -46,5 +46,26 @@
   "diagnosticToolDelta": "The live tool snapshot preceded f5727c9 failure-path hardening: reset an incoming result to false, preserve the first worker failure, and reject a symlink/oversized config before reading. Live source bytes are preserved and match the recorded digest. Positive acquisition and application host bytes were unchanged. The final diagnostic tool has 20 passing tests; its complete live screen was not rerun.",
   "batchedTimingEstimateMs": 83046,
   "batchedTimingEstimateScope": "Offline sum of maxima in consecutive eight-request chunks of observed dispatch order, plus serial boundary/log/finalized durations. Different launch times change network latency; not a measured production acquisition or guarantee.",
-  "evidenceAvailability": "Raw report, window inventory and executed tool snapshot are retained locally; only these digests and scoped aggregate observations are published."
+  "evidenceAvailability": "Raw report, window inventory and executed tool snapshot are retained locally; only these digests and scoped aggregate observations are published.",
+  "batchedFollowup": {
+    "passed": true,
+    "coverage": "selected-window",
+    "toolCommit": "3d895a0a1e0bf00d7856eeca46f5b3cc5a572e71",
+    "reportSha256": "4b9258ee5743b9a9e558c1b0defdb63d76b5b35c4348f352c08833e72349e58b",
+    "windowInventorySha256": "df783f7b656413a313bd6853e501a9fe6bbdab319baa8041a419ec7ed1f05091",
+    "sourceSha256": "0dfdd17b4c0537aa550071793b13c579ee102f7ceccf249d87339b9aca8f7473",
+    "allApplicationSourceDigestsUnchanged": true,
+    "requests": 313,
+    "methods": {
+      "eth_chainId": 1,
+      "eth_getBlockByNumber": 310,
+      "eth_getLogs": 2
+    },
+    "allHttp200": true,
+    "transportFailures": 0,
+    "headers": 304,
+    "elapsedMs": 97428,
+    "schedule": "sorted-fixed-batches-of-eight",
+    "evidenceAvailability": "Raw report and window inventory retained locally; digests and aggregate result published."
+  }
 }
