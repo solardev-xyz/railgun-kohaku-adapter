@@ -30,7 +30,8 @@ jobs:
         with:
           node-version: 24.18.1
           cache: npm
-      # The existing locked better-sqlite3 peer needs its native installation.
+      # The locked better-sqlite3 peer ships N-API prebuilds for these runners.
+      # Native test success here does not establish a source build.
       # No Electron, engine, prover or circuit artifact is downloaded here.
       - run: npm ci
       - run: npm test -- --runInBand

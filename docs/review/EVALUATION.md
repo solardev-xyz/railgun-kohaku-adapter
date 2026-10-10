@@ -28,9 +28,10 @@ They exercise real Node CJS/ESM package resolution, shared operation identities,
 and the restricted adapter contract. A successful fixture submission is not a
 chain transaction or a genuine owner-host test.
 
-The install deliberately does not build `better-sqlite3`. Native account/storage
-tests require a compatible real addon and further host fixtures. Do not interpret
-missing-native-module failures after this install as a supported native setup.
+This install suppresses builds but does not disable a bundled native addon.
+The locked `better-sqlite3` 13.0.3 includes N-API prebuilds; on a covered platform,
+native tests may run even with lifecycle scripts disabled. Other platforms need
+a compatible source build. The two consumer checks above do not exercise it.
 
 ## Check the packaged evidence record
 
@@ -55,12 +56,15 @@ node test/consumer/smoke.mjs
 python3 tools/generate-owner-source-list.py --check
 ```
 
-`npm ci` runs the locked native dependency's installation/build step. The full
-suite includes native storage and worker tests, controlled owner fixtures,
+The clean CI runs below loaded the locked dependency's bundled N-API prebuild
+on Linux x64 and macOS arm64; they did not establish a native source build.
+Their npm logs reported lifecycle scripts awaiting allow-scripts policy.
+A platform without a compatible prebuild requires a separately approved source
+build and toolchain. The full suite includes native storage and worker tests, controlled owner fixtures,
 consumer contracts and example-host tests. It does not run the real Electron
 Alice-to-Bob journey, fetch proof artifacts or reach Railgun services. The
-scripts-disabled consumer setup above remains useful but cannot run these native
-checks. Node 24.18.1 on macOS arm64 passed 302 suites (12,793 tests), including
+scripts-disabled consumer setup above remains useful and may also load the
+bundled addon on covered platforms. Node 24.18.1 on macOS arm64 passed 302 suites (12,793 tests), including
 the cache-compatibility and captured application-policy changes. The later
 artifact checker and receipt command have focused tests recorded separately;
 this count does not include tests added after that full run.
@@ -85,6 +89,20 @@ RAILGUN_JOURNEY_ENGINE_MODULES=/absolute/path/to/pinned-engine/node_modules npm 
 An explicitly supplied invalid path fails. The separate installed native journey
 also exercises this chain with the real engine. Node CI does not qualify the Electron wallet,
 Tor circuits or packaged distribution on either platform.
+
+For the three archived POI verifier/chain tests, explicitly supply an authenticated
+runtime-build root with `privacy-build/railgun-engine-oct3-a/source/node_modules`
+and `privacy-build/railgun-prover-oct3-f/source/serial-prover.cjs`:
+
+```sh
+RAILGUN_PINNED_INPUTS_ROOT=/absolute/path/to/runtime-build-root npm test -- --runInBand test/journey-chain-poi-verify.test.js
+```
+
+The default public fixture is committed in this repository. An optional
+`RAILGUN_JOURNEY_PUBLIC_SOURCE` must name an existing absolute fixture path and
+requires the runtime root too. Omitted runtime inputs skip only the three
+external-input tests; invalid explicit inputs fail. Neither command downloads
+or silently discovers artifacts in another developer's checkout.
 
 Type checks use an explicitly supplied TypeScript installation:
 

@@ -15,20 +15,24 @@ const family = path.join(__dirname, "../tools/qualification/installed-journey");
 // The pinned local research inputs: engine source tree, unpacked serial prover
 // (byte-identical to railgun-prover.asar/serial-prover.cjs) and the published
 // disposable public source. Absent inputs skip only the cryptographic tests.
-const ROOT =
-  process.env.RAILGUN_PINNED_INPUTS_ROOT ||
-  "/Users/florian/Git/freedom-dev/freedom-privacy-roadmap/tmp";
+const ROOT = process.env.RAILGUN_PINNED_INPUTS_ROOT;
+const pinned = ROOT !== undefined;
 const inputs = {
-  engineModules: path.join(ROOT, "privacy-build/railgun-engine-oct3-a/source/node_modules"),
-  serialProver: path.join(ROOT, "privacy-build/railgun-prover-oct3-f/source/serial-prover.cjs"),
+  engineModules: pinned ? path.join(ROOT, "privacy-build/railgun-engine-oct3-a/source/node_modules") : undefined,
+  serialProver: pinned ? path.join(ROOT, "privacy-build/railgun-prover-oct3-f/source/serial-prover.cjs") : undefined,
   publicSource:
-    process.env.RAILGUN_JOURNEY_PUBLIC_SOURCE ||
-    "/private/tmp/railgun-owner-bridge-oct8/docs/freedom-qualification/railgun-unsigned-relay-preparation-2026-10-06/public-source.json",
+    process.env.RAILGUN_JOURNEY_PUBLIC_SOURCE ??
+    path.join(__dirname, "../docs/freedom-qualification/railgun-unsigned-relay-preparation-2026-10-06/public-source.json"),
 };
-const pinned = fs.existsSync(inputs.engineModules) && fs.existsSync(inputs.serialProver);
-const withChain = pinned && fs.existsSync(inputs.publicSource);
+// No personal-machine fallback. Absent inputs opt out; explicitly supplied bad
+// inputs fail before a test starts, rather than manufacturing a skipped result.
+if (pinned || process.env.RAILGUN_JOURNEY_PUBLIC_SOURCE !== undefined) {
+  if (!pinned || !path.isAbsolute(ROOT) || !path.isAbsolute(inputs.publicSource) ||
+    !fs.existsSync(inputs.engineModules) || !fs.existsSync(inputs.serialProver) || !fs.existsSync(inputs.publicSource))
+    throw Error("Explicit pinned verifier inputs are unavailable");
+}
 const cryptographic = pinned ? test : test.skip;
-const chainTest = withChain ? test : test.skip;
+const chainTest = pinned ? test : test.skip;
 jest.setTimeout(180000);
 
 // The real package serializer, then the node's view: JSON.parse of the body.
