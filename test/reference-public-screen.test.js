@@ -239,3 +239,61 @@ test("an empty deployment never passes even with a caller-supplied true result",
   );
   expect(f.report.passed).toBe(false);
 });
+test("the next sorted batch waits for every header in the first batch", async () => {
+  let release, ready;
+  const barrier = new Promise((resolve) => {
+    release = resolve;
+  });
+  const entered = new Promise((resolve) => {
+    ready = resolve;
+  });
+  const f = fixture(async ({ request, response }) => {
+    if (request.method === "eth_getLogs") {
+      const data = JSON.parse(response.body);
+      data.result.reverse();
+      response.body = Buffer.from(JSON.stringify(data));
+    }
+    if (request.params[0] === "0x8") ready();
+    if (request.params[0] === "0x1") await barrier;
+  });
+  const pending = f.run();
+  try {
+    await entered;
+    await new Promise(setImmediate);
+    expect(f.calls.some((c) => c.params[0] === "0x9")).toBe(false);
+  } finally {
+    release();
+  }
+  expect((await pending).acquisition.schedule).toBe(
+    "sorted-fixed-batches-of-eight",
+  );
+});
+test("selected-window mode is separately labeled and rejects a target beyond finalized", async () => {
+  const f = fixture();
+  expect((await f.run({ windowFrom: 0 })).coverage).toBe("selected-window");
+  await expect(fixture().run({ windowFrom: 41 })).rejects.toThrow();
+});
+test("the real acquisition timer is reported distinctly from transport failure", async () => {
+  jest.useFakeTimers();
+  try {
+    let ready;
+    const entered = new Promise((resolve) => {
+      ready = resolve;
+    });
+    const f = fixture(async ({ request, options }) => {
+      if (request.params[0] === "0x1") {
+        ready();
+        await new Promise((resolve) =>
+          options.signal.addEventListener("abort", resolve, { once: true }),
+        );
+      }
+    });
+    const pending = f.run().catch((error) => error);
+    await entered;
+    jest.advanceTimersByTime(LIMITS.acquisitionMs);
+    expect((await pending).code).toBe("SCREEN_ACQUISITION_LIMIT");
+    expect(f.report.passed).toBe(false);
+  } finally {
+    jest.useRealTimers();
+  }
+});

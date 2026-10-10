@@ -21,6 +21,11 @@ Then, using the documented Node development installation:
 node tools/conformance/reference-public-screen.cjs /absolute/path/to/screen.json
 ```
 
+To measure one public window again without repeating the whole inventory, append
+its starting block, for example `9080000`. This produces `coverage:
+"selected-window"`, not a full-inventory result. The end is the next application
+schedule boundary, capped at finalized.
+
 The tool prints its temporary directory immediately. `windows.jsonl` records
 each completed window; `report.json` records the final result, including failures,
 timings, closed transport errors, response byte counts and source hashes. No
@@ -37,7 +42,9 @@ The screen makes only `eth_chainId`, `eth_getBlockByNumber` and address-only
 - each window's 4,096-log, 4 MiB and 512-distinct-block bounds, plus address,
   range, removal flag and block-hash consistency;
 - a fresh acquisition of the densest observed window: canonical boundary headers,
-  logs, and **all** event headers at concurrency eight, within three minutes.
+  logs, and **all** event headers in sorted batches of eight, within three minutes.
+  Each batch drains before the next starts, matching the production event-header
+  schedule. The earlier refilling-pool observation is explicitly historical.
 
 The entire tool is bounded to one hour (including bootstrap), 500 windows and
 1,100 RPC requests. Requests use the application's 30-second timeout and its

@@ -27,7 +27,8 @@
   "maxWindowLogMs": 7828,
   "densestAcquisition": {
     "headers": 304,
-    "elapsedMs": 76367
+    "elapsedMs": 76367,
+    "schedule": "refilling-eight-worker-pool-not-production-batches"
   },
   "sources": {
     "tools/conformance/reference-public-screen.cjs": "07688ba5771a96318de69fe24532b91476fee41a82377ddf51ff48234dd4bf72",
@@ -42,5 +43,8 @@
     "src/railgun-shield-pins.json": "0f38d69a9acb5ecdaeb7197f4410a1c6068b8896e4204a179631176223e31a75"
   },
   "diagnosticToolCommit": "f5727c9",
-  "diagnosticToolDelta": "The live tool snapshot preceded f5727c9 failure-path hardening: reset an incoming result to false, preserve the first worker failure, and reject a symlink/oversized config before reading. Live source bytes are preserved and match the recorded digest. Positive acquisition and application host bytes were unchanged. The final diagnostic tool has 20 passing tests; its complete live screen was not rerun."
+  "diagnosticToolDelta": "The live tool snapshot preceded f5727c9 failure-path hardening: reset an incoming result to false, preserve the first worker failure, and reject a symlink/oversized config before reading. Live source bytes are preserved and match the recorded digest. Positive acquisition and application host bytes were unchanged. The final diagnostic tool has 20 passing tests; its complete live screen was not rerun.",
+  "batchedTimingEstimateMs": 83046,
+  "batchedTimingEstimateScope": "Offline sum of maxima in consecutive eight-request chunks of observed dispatch order, plus serial boundary/log/finalized durations. Different launch times change network latency; not a measured production acquisition or guarantee.",
+  "evidenceAvailability": "Raw report, window inventory and executed tool snapshot are retained locally; only these digests and scoped aggregate observations are published."
 }

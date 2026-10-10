@@ -107,11 +107,19 @@ async function screen({
   report,
   now = () => performance.now(),
   progress = () => {},
+  windowFrom,
 }) {
   const started = now();
   report.passed = false;
   report.trace = [];
   report.windows = [];
+  check(
+    windowFrom === undefined ||
+      (Number.isSafeInteger(windowFrom) && windowFrom >= 0),
+    "SCREEN_INPUT_REFUSED",
+  );
+  report.coverage =
+    windowFrom === undefined ? "all-schedule-windows" : "selected-window";
   async function call(method, params, localSignal = signal) {
     check(METHODS.has(method), "SCREEN_METHOD_REFUSED");
     check(!signal.aborted && !localSignal.aborted, "SCREEN_CANCELLED");
@@ -184,7 +192,11 @@ async function screen({
   );
   report.anchor = anchor;
   let densest = null;
-  for (const range of windowsTo(anchor.number)) {
+  const ranges =
+    windowFrom === undefined
+      ? windowsTo(anchor.number)
+      : [{ from: windowFrom, to: windowEnd(windowFrom, anchor.number) }];
+  for (const range of ranges) {
     const began = now();
     const logs = await call("eth_getLogs", [
       {
@@ -201,14 +213,18 @@ async function screen({
       densest = { ...row, blocks };
   }
   check(
-    report.windows.some((row) => row.count > 0),
+    windowFrom !== undefined || report.windows.some((row) => row.count > 0),
     "SCREEN_EMPTY_DEPLOYMENT",
   );
   // Exercise one complete header acquisition, not a latency extrapolation.
   // Re-read its logs and canonical boundaries: the inventory above is a snapshot.
   const acquisition = new AbortController();
   const combined = AbortSignal.any([signal, acquisition.signal]);
-  const timer = setTimeout(() => acquisition.abort(), LIMITS.acquisitionMs);
+  let timedOut = false;
+  const timer = setTimeout(() => {
+    timedOut = true;
+    acquisition.abort();
+  }, LIMITS.acquisitionMs);
   const began = now();
   try {
     const fresh = header(
@@ -248,30 +264,30 @@ async function screen({
       combined,
     );
     const { blocks } = logCounts(logs, densest.from, densest.to);
-    const jobs = [...blocks];
-    let cursor = 0,
-      firstFailure;
-    const results = await Promise.allSettled(
-      Array.from({ length: Math.min(8, jobs.length) }, async () => {
-        try {
-          while (cursor < jobs.length) {
-            const [n, expected] = jobs[cursor++];
+    // The production normalizer orders blocks and waits for the slowest header
+    // in each batch of eight before admitting the next batch. Do not refill a
+    // pool: that would understate the effect of heavy-tailed Tor latency.
+    const jobs = [...blocks].sort(([a], [b]) => a - b);
+    for (let start = 0; start < jobs.length; start += 8) {
+      let firstFailure;
+      const results = await Promise.allSettled(
+        jobs.slice(start, start + 8).map(async ([n, expected]) => {
+          try {
             check(
               header(
                 await call("eth_getBlockByNumber", [tag(n), false], combined),
                 n,
               ).hash === expected,
             );
+          } catch (error) {
+            firstFailure ||= error;
+            acquisition.abort();
+            throw error;
           }
-        } catch (error) {
-          firstFailure ||= error;
-          acquisition.abort();
-          throw error;
-        }
-      }),
-    );
-    const failed = results.find((r) => r.status === "rejected");
-    if (failed) throw firstFailure;
+        }),
+      );
+      if (results.some((r) => r.status === "rejected")) throw firstFailure;
+    }
     check(
       !combined.aborted && now() - began < LIMITS.acquisitionMs,
       "SCREEN_ACQUISITION_LIMIT",
@@ -281,7 +297,11 @@ async function screen({
       to: densest.to,
       headers: blocks.size,
       elapsedMs: Math.round(now() - began),
+      schedule: "sorted-fixed-batches-of-eight",
     };
+  } catch (error) {
+    if (timedOut && !signal.aborted) check(false, "SCREEN_ACQUISITION_LIMIT");
+    throw error;
   } finally {
     clearTimeout(timer);
     acquisition.abort();
@@ -289,7 +309,16 @@ async function screen({
   report.passed = true;
   return report;
 }
-async function main(file) {
+async function main(file, selected) {
+  check(
+    selected === undefined || /^(?:0|[1-9][0-9]*)$/.test(selected),
+    "SCREEN_INPUT_REFUSED",
+  );
+  const windowFrom = selected === undefined ? undefined : Number(selected);
+  check(
+    windowFrom === undefined || Number.isSafeInteger(windowFrom),
+    "SCREEN_INPUT_REFUSED",
+  );
   const stat = fs.lstatSync(file);
   check(
     stat.isFile() && !stat.isSymbolicLink() && stat.size <= 16384,
@@ -339,7 +368,9 @@ async function main(file) {
     source: {},
     trust: "unverified-rpc",
     scope:
-      "log count/bytes/distinct-block bounds for all schedule windows, plus one full densest-window header acquisition; no projection, proof or service acceptance",
+      windowFrom === undefined
+        ? "all schedule window size checks and densest-window batched header acquisition; no projection, proof or service acceptance"
+        : "selected public window size checks and batched header acquisition only; no full inventory, projection, proof or service acceptance",
   };
   for (const name of [
     "tools/conformance/reference-public-screen.cjs",
@@ -369,6 +400,7 @@ async function main(file) {
       rpcUrl: input.rpcUrl,
       signal: lifetime.signal,
       report,
+      windowFrom,
       progress: (row) => {
         fs.appendFileSync(
           path.join(root, "windows.jsonl"),
@@ -391,10 +423,22 @@ async function main(file) {
         ? error.code
         : "SCREEN_REFUSED";
   } finally {
-    transport.close();
-    scope.close();
-    lifetime.abort();
-    await Promise.all([transport.closed, tor.close()]);
+    const drains = await Promise.allSettled([
+      Promise.resolve().then(() => {
+        transport.close();
+        return transport.closed;
+      }),
+      Promise.resolve().then(() => {
+        scope.close();
+        lifetime.abort();
+        return tor.close();
+      }),
+    ]);
+    if (drains.some((r) => r.status === "rejected")) {
+      report.passed = false;
+      report.primaryCode = report.code ?? null;
+      report.code = "SCREEN_DRAIN_FAILED";
+    }
     clearTimeout(timer);
     process.removeListener("SIGINT", stop);
     process.removeListener("SIGTERM", stop);
@@ -415,13 +459,13 @@ async function main(file) {
   process.exitCode = report.passed ? 0 : 1;
 }
 if (require.main === module) {
-  if (process.argv.length !== 3) {
+  if (process.argv.length < 3 || process.argv.length > 4) {
     process.stderr.write(
-      "Usage: node reference-public-screen.cjs CONFIG.json\n",
+      "Usage: node reference-public-screen.cjs CONFIG.json [PUBLIC_WINDOW_FROM]\n",
     );
     process.exitCode = 1;
   } else
-    main(process.argv[2]).catch(() => {
+    main(process.argv[2], process.argv[3]).catch(() => {
       process.stderr.write("SCREEN_INPUT_REFUSED\n");
       process.exitCode = 1;
     });
