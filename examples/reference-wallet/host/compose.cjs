@@ -80,8 +80,9 @@ function initializeReferenceOwner({
   });
   const transactions = createTransactionHost({ transactionNetwork, leases });
   const { signers, submitter } = createSignerHost({ vault, profiles });
-  const hostDigest = createSourceIdentityHost().readDigest();
-  const sourceIdentity = Object.freeze({ readDigest: () => hostDigest });
+  const sourceIdentity = createSourceIdentityHost();
+  const hostDigest = sourceIdentity.readDigest();
+  const cacheDigests = sourceIdentity.readCacheDigests();
   const host = Object.freeze({
     context,
     credentials,
@@ -119,14 +120,27 @@ function initializeReferenceOwner({
     ]),
     journalRetention: fixed(require("./retention.cjs"), ["validArchive"]),
   });
+  const applicationPolicy = Object.freeze({ maxGasFee: 2000000000000000n });
   const owner =
     require("@freedom/railgun-kohaku-adapter/host/owner").initializeRailgunMain(
-      { host, runtime },
+      { host, runtime, applicationPolicy },
     );
   return Object.freeze({
     owner,
+    readReceipt: require("./receipts.cjs").createReceiptReader({
+      context,
+      sessions: sessions.sessions,
+      submissionJournal,
+      submitter,
+      transport,
+      rpcUrl,
+      tor,
+      maxGasFee: applicationPolicy.maxGasFee,
+    }),
     close: sessions.close,
     hostDigest,
+    cacheDigests,
+    applicationPolicy,
   });
 }
 module.exports = { initializeReferenceOwner };

@@ -16,6 +16,11 @@ function fixture(anchorNumber = 200001) {
   let checkpoint = -1,
     fault = null;
   const session = {
+    recoverPublic: jest.fn(async () =>
+      checkpoint === -1
+        ? { status: "unscanned", to: null }
+        : { status: "applied-unverified", to: { number: checkpoint, hash } },
+    ),
     advancePublic: jest.fn(async ({ to }) => {
       if (fault === "before") {
         fault = null;
@@ -78,30 +83,43 @@ test.each(["before", "after"])(
       checkpoint: -1,
       attempt: { to: 99999, number: 0 },
     });
-    if (fault === "after") {
-      await expect(scanAccount(f.options)).rejects.toThrow("out of range");
-      expect(f.saved()).toMatchObject({
-        checkpoint: -1,
-        attempt: { to: 99999, number: 1 },
-      });
-    }
     expect(await scanAccount(f.options)).toMatchObject({ status: "complete" });
     expect(f.checkpoint()).toBe(200001);
   },
 );
-test("two failed recovery targets stop, and a too-far target never skips data", async () => {
+test("unknown recovery failure stops without a window or rebuild", async () => {
   const f = fixture();
   f.fault("before");
   await expect(scanAccount({ ...f.options, fresh: true })).rejects.toThrow();
-  f.fault("before");
-  await expect(scanAccount(f.options)).rejects.toThrow();
-  await expect(scanAccount(f.options)).rejects.toThrow("out of range");
+  f.options.session.recoverPublic.mockRejectedValue(
+    Error("unknown source failure"),
+  );
   const calls = f.options.session.advancePublic.mock.calls.length;
-  await expect(scanAccount(f.options)).rejects.toMatchObject({
-    code: "REFERENCE_SCAN_RECOVERY_REQUIRED",
-  });
+  await expect(scanAccount(f.options)).rejects.toThrow(
+    "unknown source failure",
+  );
   expect(f.options.session.advancePublic).toHaveBeenCalledTimes(calls);
-  expect(f.checkpoint()).toBe(-1);
+  expect(f.saved().checkpoint).toBe(-1);
+});
+test("a completed final window with a lost acknowledgment recovers without another range", async () => {
+  const f = fixture(99999);
+  f.fault("after");
+  await expect(scanAccount({ ...f.options, fresh: true })).rejects.toThrow();
+  expect(await scanAccount(f.options)).toMatchObject({
+    status: "complete",
+    ranges: 1,
+  });
+  expect(f.options.session.advancePublic).toHaveBeenCalledTimes(1);
+});
+test("a lower recovered checkpoint never downgrades recorded progress", async () => {
+  const f = fixture();
+  await scanAccount({ ...f.options, fresh: true });
+  f.options.session.recoverPublic.mockResolvedValue({
+    status: "applied-unverified",
+    to: { number: 99999, hash },
+  });
+  await expect(scanAccount(f.options)).rejects.toThrow("checkpoint changed");
+  expect(f.saved().checkpoint).toBe(200001);
 });
 test("pause starts no window near expiry; changed identity refuses before a window", async () => {
   const f = fixture();
@@ -115,6 +133,6 @@ test("pause starts no window near expiry; changed identity refuses before a wind
   expect(f.options.session.advancePublic).not.toHaveBeenCalled();
   await expect(
     scanAccount({ ...f.options, identity: "c".repeat(64) }),
-  ).rejects.toThrow("identity");
+  ).rejects.toMatchObject({ code: "REFERENCE_SCAN_PHASE_STALE" });
   expect(f.options.session.advancePublic).not.toHaveBeenCalled();
 });

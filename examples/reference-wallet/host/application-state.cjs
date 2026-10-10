@@ -7,8 +7,8 @@ const { createInventoryGuard, profileId } = require("./inventory.cjs");
 /** Application bookkeeping, not an adapter receipt or submission permit.
  * It uses a separate derivation domain and genuine inventory/storage guards.
  * Only trusted command code receives it; it is not a captured owner family. */
-function createApplicationState({ profile, vault }) {
-  const context = createContextHost(),
+function createApplicationState({ profile, vault, assertCustody = () => {} }) {
+  const context = createContextHost({ assertCurrent: assertCustody }),
     unlock = vault.currentSession();
   if (unlock.aborted || profileId(profile) !== profileId(vault.profile))
     throw Error("Application state is locked");

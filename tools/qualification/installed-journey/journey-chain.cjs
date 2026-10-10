@@ -22,6 +22,12 @@ const CHAIN_HEX = '0xaa36a7';
 const SUBMITTER = '0x9858effd232b4033e47d90003d41ec34ecaeda94';
 const PROXY = '0xecfcf3b4ec647c4ca6d49108b311b7a7c9543fea';
 const TOKEN = '0xfff9976782d46cc05630d1f6ebab18b2324d6b14';
+const RELAY_ADAPT = '0x7e3d929ebd5bdc84d02bd3205c777578f33a214d';
+const SHIELD_CALLS = [
+  'function wrapBase(uint256 _amount)',
+  'function shield(((bytes32 npk,(uint8 tokenType,address tokenAddress,uint256 tokenSubID) token,uint120 value) preimage,(bytes32[3] encryptedBundle,bytes32 shieldKey) ciphertext)[] _shieldRequests)',
+  'function multicall(bool _requireSuccess,(address to,bytes data,uint256 value)[] _calls) payable',
+];
 const ENDPOINT = 'https://synthetic.invalid/installed-owner-private';
 // A second endpoint with a public gateway's eth_getLogs span limit: spans above
 // 1000 blocks get JSON-RPC error -32602 in an HTTP 200 response.
@@ -93,7 +99,17 @@ function createJourneyChain({
   faults = {},
   autoMine = null,
   poiVerifier = null,
+  submitters = [SUBMITTER],
 }) {
+  // Explicit synthetic actors only. Older recorded lineages retain their fixed
+  // default; independent adopter tests bind separate generated public EOAs.
+  assert.ok(Array.isArray(submitters) && submitters.length > 0 && submitters.length <= 4);
+  assert.ok(submitters.every(address => /^0x[0-9a-f]{40}$/.test(address) && BigInt(address) > 0n));
+  assert.equal(new Set(submitters).size, submitters.length);
+  const admittedSubmitters = new Set(submitters);
+  const assertSubmitter = address => assert.ok(admittedSubmitters.has(address.toLowerCase()), 'Unknown synthetic actor');
+  const senderOf = tx => tx.from ?? SUBMITTER;
+  const ownTransactions = address => state.transactions.filter(tx => senderOf(tx) === address.toLowerCase());
   // Dry runs of polling callers: pending sends are mined once they are this old.
   assert.ok(autoMine === null || (Number.isSafeInteger(autoMine.afterMs) && autoMine.afterMs >= 0));
   assert.ok(['acknowledge', 'unknown-after-delivery'].includes(sendMode));
@@ -169,7 +185,7 @@ function createJourneyChain({
   const fixture = publicFixture(sourceBytes);
   assert.ok(fixture.logs.every((log) => log.address.toLowerCase() === PROXY));
   state = primary(state);
-  const abi = new ethers.Interface([transactAbi, ...EVENTS]);
+  const abi = new ethers.Interface([transactAbi, ...SHIELD_CALLS, ...EVENTS]);
   const coder = ethers.AbiCoder.defaultAbiCoder();
   const counts = {},
     refusals = [];
@@ -196,6 +212,21 @@ function createJourneyChain({
   // see the same timestamp until the next 'latest' read.
   let clock = { base: Math.floor(Date.now() / 1000), head: state.head };
 
+  function decodeShield(data, value) {
+    const [required, calls] = abi.decodeFunctionData('multicall', data);
+    assert.equal(required, true); assert.equal(calls.length, 2);
+    for (const call of calls) {assert.equal(call.to.toLowerCase(), RELAY_ADAPT);assert.equal(call.value, 0n);}
+    const [amount] = abi.decodeFunctionData('wrapBase', calls[0].data);
+    assert.equal(amount, BigInt(value)); assert.ok(amount > 0n && amount <= 10000000000000000n);
+    const [requests] = abi.decodeFunctionData('shield', calls[1].data);
+    assert.equal(requests.length, 1);
+    const request = requests[0];
+    assert.equal(request.preimage.value, amount);
+    assert.equal(request.preimage.token.tokenType, 0n);
+    assert.equal(request.preimage.token.tokenSubID, 0n);
+    assert.equal(request.preimage.token.tokenAddress.toLowerCase(), TOKEN);
+    return request;
+  }
   const decodeTransact = (data) => {
     const [transactions] = abi.decodeFunctionData('transact', data);
     assert.equal(transactions.length, 1);
@@ -245,6 +276,13 @@ function createJourneyChain({
       .filter((tx) => tx.blockNumber !== null && tx.status === '0x1')
       .sort((a, b) => a.blockNumber - b.blockNumber || a.transactionIndex - b.transactionIndex);
     for (const tx of mined) {
+      if (tx.kind === 'shield') {
+        const shield = decodeShield(tx.input, tx.value);
+        const value = shield.preimage.value - shield.preimage.value * FEE_BASIS_POINTS / 10000n;
+        leaves.push(await worker.call('poseidon', {values:[shield.preimage.npk, TOKEN, value.toString()]}));
+        roots.push((await worker.call('merkle', {kind:'utxo', leaves})).root);
+        continue;
+      }
       const inner = decodeTransact(tx.input);
       const inserted = insertedOf(inner);
       const start = leaves.length;
@@ -291,7 +329,7 @@ function createJourneyChain({
     }
     // POI list: the reviewed Shield vector at index 0, then accepted outputs.
     const poiLeaves = [VECTOR.blindedCommitment.toLowerCase(), ...state.poi.accepted.map((row) => row.blindedCommitment)];
-    const poiTypes = ['Shield', ...state.poi.accepted.map(() => 'Transact')];
+    const poiTypes = ['Shield', ...state.poi.accepted.map(row => row.type ?? 'Transact')];
     const poiRoots = [];
     for (let count = 1; count <= poiLeaves.length; count++)
       poiRoots.push(bare((await worker.call('merkle', { kind: 'poi', leaves: poiLeaves.slice(0, count) })).root));
@@ -340,9 +378,9 @@ function createJourneyChain({
     state.transactions.filter((tx) => tx.blockNumber !== null && tx.blockNumber <= through);
   function nonceAt(params) {
     assert.equal(params.length, 2);
-    assert.equal(params[0].toLowerCase(), SUBMITTER);
-    if (params[1] === 'pending') return q(state.transactions.length);
-    return q(minedThrough(blockNumberOf(params[1])).length);
+    assertSubmitter(params[0]);
+    if (params[1] === 'pending') return q(ownTransactions(params[0]).length);
+    return q(minedThrough(blockNumberOf(params[1])).filter(tx => senderOf(tx) === params[0].toLowerCase()).length);
   }
   const spentAt = (tree, nullifier, through) =>
     derived.spent.some(
@@ -356,7 +394,8 @@ function createJourneyChain({
       Object.keys(tx).filter((key) => !['from', 'to', 'value', 'data', 'gas'].includes(key)),
       []
     );
-    assert.equal(tx.from.toLowerCase(), SUBMITTER);
+    assertSubmitter(tx.from);
+    if (tx.to.toLowerCase() === RELAY_ADAPT) return decodeShield(tx.data, tx.value);
     assert.equal(tx.to.toLowerCase(), PROXY);
     assert.ok(tx.value === undefined || BigInt(tx.value) === 0n);
     const inner = decodeTransact(tx.data);
@@ -369,10 +408,10 @@ function createJourneyChain({
     const tx = ethers.Transaction.from(raw);
     assert.equal(tx.isSigned(), true);
     assert.equal(tx.chainId, BigInt(CHAIN_ID));
-    assert.equal(tx.from.toLowerCase(), SUBMITTER);
-    assert.equal(tx.to.toLowerCase(), PROXY);
-    assert.equal(tx.value, 0n);
-    assert.equal(tx.nonce, state.transactions.length);
+    assertSubmitter(tx.from);
+    assert.ok([PROXY,RELAY_ADAPT].includes(tx.to.toLowerCase()));
+    if (tx.to.toLowerCase() === PROXY) assert.equal(tx.value, 0n);
+    assert.equal(tx.nonce, ownTransactions(tx.from).length);
     assert.equal(tx.type, 0);
     assert.ok(tx.gasPrice > 0n && tx.gasLimit > 0n && tx.gasLimit <= 3000000n);
     assert.ok(tx.gasPrice * tx.gasLimit <= MAX_FEE_WEI, 'Fee exposure above cap');
@@ -381,10 +420,15 @@ function createJourneyChain({
     simulate({ from: tx.from, to: tx.to, value: q(tx.value), data: tx.data });
     state.transactions.push({
       hash,
+      from: tx.from.toLowerCase(),
+      to: tx.to.toLowerCase(),
+      value: tx.value.toString(),
+      kind: tx.to.toLowerCase() === RELAY_ADAPT ? 'shield' : 'transact',
       nonce: tx.nonce,
       input: tx.data.toLowerCase(),
       gas: tx.gasLimit.toString(),
       gasPrice: tx.gasPrice.toString(),
+      signature: { r: q(BigInt(tx.signature.r)), s: q(BigInt(tx.signature.s)), v: q(tx.signature.networkV) },
       blockNumber: null,
       transactionIndex: null,
       status: null,
@@ -399,15 +443,16 @@ function createJourneyChain({
   function transactionObject(tx) {
     return {
       hash: tx.hash,
-      from: SUBMITTER,
-      to: PROXY,
+      from: senderOf(tx),
+      to: tx.to ?? PROXY,
       chainId: CHAIN_HEX,
       nonce: q(tx.nonce),
-      value: '0x0',
+      value: q(tx.value ?? '0'),
       input: tx.input,
       gas: q(tx.gas),
       gasPrice: q(tx.gasPrice),
       type: '0x0',
+      ...(tx.signature ?? {}),
       blockNumber: tx.blockNumber === null ? null : q(tx.blockNumber),
       blockHash: tx.blockNumber === null ? null : blockHash(tx.blockNumber),
       transactionIndex: tx.transactionIndex === null ? null : q(tx.transactionIndex),
@@ -420,8 +465,8 @@ function createJourneyChain({
       effectiveGasPrice: q(tx.gasPrice),
       cumulativeGasUsed: q(ESTIMATE),
       transactionHash: tx.hash,
-      from: SUBMITTER,
-      to: PROXY,
+      from: senderOf(tx),
+      to: tx.to ?? PROXY,
       contractAddress: null,
       type: '0x0',
       blockNumber: q(tx.blockNumber),
@@ -460,19 +505,29 @@ function createJourneyChain({
     const pending = state.transactions.filter((tx) => tx.blockNumber === null);
     const block = state.head + 1;
     let position = derived.leaves.length;
-    pending.forEach((tx, index) => {
-      const inner = decodeTransact(tx.input);
+    for (const [index, tx] of pending.entries()) {
+      const shield = tx.kind === 'shield';
+      const inner = shield ? decodeShield(tx.input, tx.value) : decodeTransact(tx.input);
       let status = '0x1';
       try {
-        simulate({ from: SUBMITTER, to: PROXY, value: '0x0', data: tx.input }, block - 1);
+        simulate({ from: senderOf(tx), to: tx.to ?? PROXY, value: q(tx.value ?? '0'), data: tx.input }, block - 1);
       } catch {
         status = '0x0';
       }
       tx.blockNumber = block;
       tx.transactionIndex = index;
       tx.status = status;
-      if (status !== '0x1') return;
-      tx.logs = eventsFor(inner, position).map(([address, name, values], logIndex) => ({
+      if (status !== '0x1') continue;
+      let events;
+      if (shield) {
+        const value = inner.preimage.value, fee = value * FEE_BASIS_POINTS / 10000n, net = value - fee;
+        events = [[PROXY,'Shield',[0,position,[[inner.preimage.npk,[0,TOKEN,0],net]],[[[...inner.ciphertext.encryptedBundle],inner.ciphertext.shieldKey]],[fee]]]];
+        const commitment = await worker.call('poseidon', {values:[inner.preimage.npk,TOKEN,net.toString()]});
+        const blindedCommitment = await worker.call('poseidon', {values:[commitment,inner.preimage.npk,String(position)]});
+        assert.ok(!state.poi.accepted.some(row => row.blindedCommitment === blindedCommitment));
+        state.poi.accepted.push({blindedCommitment,type:'Shield'});
+      } else events = eventsFor(inner, position);
+      tx.logs = events.map(([address, name, values], logIndex) => ({
         ...abi.encodeEventLog(name, values),
         address,
         transactionHash: tx.hash,
@@ -481,8 +536,8 @@ function createJourneyChain({
         transactionIndex: q(index),
         logIndex: q(logIndex),
       }));
-      position += insertedOf(inner).length;
-    });
+      position += shield ? 1 : insertedOf(inner).length;
+    }
     state.head = block + confirmations - 1;
     state.finalized = state.head - finalizedDepth;
     assert.ok(state.finalized >= block);
@@ -552,7 +607,7 @@ function createJourneyChain({
         return CHAIN_HEX;
       case 'eth_getCode':
       case 'eth_getBalance':
-        assert.deepEqual(params, [SUBMITTER, 'pending']);
+        assert.equal(params.length,2);assert.equal(params[1],'pending');assertSubmitter(params[0]);
         return method === 'eth_getCode' ? '0x' : BALANCE;
       case 'eth_gasPrice':
         assert.deepEqual(params, []);
@@ -844,7 +899,7 @@ function createJourneyChain({
     assert.ok([ENDPOINT, LIMITED_ENDPOINT].includes(url));
     if (subject.role === 'transaction-rpc') {
       assert.equal(subject.kind, 'public-address');
-      assert.equal(subject.principal, SUBMITTER);
+      assertSubmitter(subject.principal);
       return 'transaction-rpc';
     }
     assert.equal(subject.kind, 'private-account');

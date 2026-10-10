@@ -1,14 +1,15 @@
-# Standalone reference wallet — implementation in progress
+# Standalone reference wallet
 
-This example is being built to exercise the installed adapter without Freedom
-source or a Freedom profile. It is not yet a qualified wallet: the custody
-commands and host are implemented; scan/transaction commands, installed-package
-execution and Alice-to-Bob qualification are still in progress. Do not fund it.
-
+This example exercises the installed adapter without Freedom source or profiles.
+The [synthetic Alice-to-Bob journey](../../docs/qualification/reference-alice-bob-synthetic-2026-10-10/README.md)
+passes with independent vaults, root Kohaku adapters over real account lanes,
+current-circuit POI verification, cold recovery and Bob's unshield. It remains an
+experimental wallet: fresh standalone installation, live two-account execution
+and cross-platform behavior are separate gates. Use new test-only profiles.
 The first runtime is headless Electron main, with no BrowserWindow. The fixed
 utility and storage-worker entries load only public adapter exports. Each realm
 owns a real context registry; its host families share that registry. Alice and
-Bob will use different seeds, data roots and OS processes.
+Bob use different seeds, data roots and OS processes.
 
 ## Implemented foundation
 
@@ -35,8 +36,9 @@ separately (Electron 44.7.0, ethers 6.17.0, better-sqlite3 13.0.3). No new depen
 has been added by this foundation slice. Existing installed Electron 44.7.0 on
 macOS arm64 created and cold-reopened a genuine account with the same identity
 and zero connections to a refusing loopback fixture. The fixed utility bootstrap
-was exercised too. These are checkout tests, not an installed tar, live Tor,
-proof, Alice-to-Bob or platform qualification.
+was exercised too. Those earlier checkout checks remain separate. Later installed-package evidence
+covers the synthetic Alice-to-Bob and retained-submission paths, plus read-only
+receipt accounting. Neither establishes live Tor or platform qualification.
 
 The six adapted network/journal modules retain MPL-2.0 and have an immutable
 [Freedom source basis](../../docs/owners/REFERENCE-HOST-PROVENANCE.json). They
@@ -67,6 +69,10 @@ admit only their own marked disposable roots, never an existing wallet profile.
 
 ## Current commands
 
+See the [Alice-to-Bob workflow](JOURNEY.md) for the complete command order,
+separate recipient custody and interruption handling. The live stage still
+requires its own reviewed configuration, funding and evidence.
+
 With the reviewed Electron executable, the entry is `main.cjs`:
 
 ```sh
@@ -82,10 +88,65 @@ and preserves the seed, not an old profile's derived caches. `backup` always
 reauthenticates the password and requires an explicit reveal confirmation.
 Paths must be absolute and canonical, with an existing parent directory.
 
-`account-create` and `account-info` additionally require `--config` and start the
-pinned proxy. `account-info --cache pending` selects an interrupted public
-generation explicitly. The independent installation/configuration guide and
-remaining commands are being completed; the example is not ready for funding.
+All account and network commands additionally require `--config` and start the
+pinned proxy. The configuration must allow the package's pinned Sepolia POI and
+indexer origins; a missing origin is a startup configuration error. Each command
+runs in a fresh process and opens its own bounded vault session.
+
+| Command | Purpose |
+| --- | --- |
+| `funding-address` | Show the fixed public funding EOA without opening a network connection. |
+| `account-create`, `account-info` | Enroll or inspect this profile's account. |
+| `scan` | Authenticate/recover the public checkpoint, then scan to finalized within the application allowance. Repeat after a clean pause. |
+| `scan-new` | Explicitly begin a fresh public generation and scan phase after typing `REBUILD`. |
+| `wallet-rebuild`, `wallet-resume`, `wallet-sync` | Build, resume or advance the derived private wallet against the public scan. |
+| `address`, `notes`, `balance` | Read the active wallet. |
+| `shield --amount <wei>` | Prepare and separately review one native Sepolia Shield. |
+| `pay-note --note <id> --to <Railgun address>` | Transfer one exact unspent note's full value. No automatic coin selection. |
+| `unshield-note --note <id> --to <funding EOA>` | Unshield one exact note to this profile's fixed public EOA. |
+| `receipt --transaction <hash>` | Read actual gas for an own settled Shield/private transaction, matched against its journal inclusion and RPC transaction. No account-cache open, journal write or send. |
+| `shield-history`, `shield-observe --transaction <hash>`, `shield-resolve --transaction <hash>` | Inspect and settle a Shield's existing public journal entry. |
+| `holds`, `observe --hold <id>`, `resolve --hold <id>` | Inspect private custody and settle an existing transaction. |
+| `submit-stored --hold <id>` | Explicitly review the first broadcast of an existing proved operation. The owner refuses an already journaled operation; this is never an automatic retry. |
+| `txid-sync` | Explicitly consent to at most 80 public TXID pages, within 10 minutes. |
+| `poi-prepare-shield --hold <id>`, `poi-prepare-transact --hold <id>` | Prepare POI for an existing operation using the original input's creation route. No automatic handoff. |
+| `poi-submit --capsule <digest>` | Separately review and hand off that prepared POI capsule once. |
+| `poi-recover --capsule <digest>` | Read attempted-output recovery. Does not resubmit. |
+| `poi-status --note <id>` | Explicitly query owned POI status for the selected note. |
+| `operations` | Read application bookkeeping offline; this is **not** transaction authority. |
+
+Read disclosures use `ALLOW`; preparation uses `PREPARE`; signing/broadcast uses
+`SEND`. Journal settlement uses **`RESOLVE`** because it changes local journal
+state and permits the next transaction from the public address. Resolution does
+not credit a private note: scan and synchronize the wallet to discover it.
+
+Do not repeat a payment after an uncertain result or process interruption. For
+Shield, use `shield-history`, then observe/resolve its original transaction hash.
+For a private payment, use `holds`, then observe/resolve the original hold. The
+package journal and authenticated custody decide what happened; the `operations`
+list can lag a durable operation and never authorizes a resend. A held operation
+can remain marked `prepared` there even after explicit recovery; that row is not
+updated by `submit-stored`. Use authenticated `holds` and `observe` instead. A hold
+without a send remains held. Inspect it before choosing `submit-stored`; the
+owner checks its eligibility and reviews the original operation again. This
+example does not automatically release or submit a hold.
+
+The implemented commands have the scoped synthetic evidence above. Live execution
+and independent dependency installation are still being completed.
+
+`receipt` requires an own authenticated, resolved journal record (including the
+archive), then `ALLOW` for chain identity, receipt and transaction reads through
+the frozen RPC over Tor. Its 30-second network window begins after consent. It
+checks hash, sender, nonce, chain and inclusion, then reconstructs the signed
+legacy transaction from its RPC fields and verifies its hash and recovered
+sender. The gas limit and price are therefore bound to the recorded transaction.
+The receipt's execution, gas used and inclusion remain **unverified RPC claims**.
+Legacy effective gas price must equal the signed gas price. A missing RPC chain
+field is accepted only when the EIP-155 signature establishes Sepolia. Reverted
+transactions also report the gas they consumed. The current application gas
+ceiling is informational for historical fees; no estimate substitutes for a
+missing receipt. Expiry during the final journal read or transport drain also refuses the result. Railgun protocol fees are separate. Output contains linking
+data (transaction/block/gas) and belongs in local evidence, not public reports.
 
 Runtime data is not copied from Freedom by the application. The repository owns
 [engine/prover build tooling](../../tools/railgun-runtime-build/README.md), with
@@ -155,3 +216,9 @@ system calls. Network filesystems (NFS/SMB), copied seeds, Linux and Windows loc
 behavior are not qualified. Plain-Node conformance uses the same lock core and
 only marked disposable roots. A second interrupt may force exit before graceful
 draining; the next launch must recover the preserved journals.
+
+`REFERENCE_SCAN_PHASE_STALE` means the application scan phase is bound to another
+compatibility identity. Inspect the generation state before explicitly choosing
+`scan-new`; nothing resets automatically. `REFERENCE_SCAN_FINALITY_BEHIND` means
+the RPC's finalized anchor trails retained progress and does not authorize a
+reset. Terminal presentation edits alone preserve compatible scan budgets.

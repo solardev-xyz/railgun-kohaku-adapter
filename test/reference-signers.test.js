@@ -32,9 +32,11 @@ test("fixed EOA matches the standard account-zero path and exposes no broadcaste
   expect(host.submitter.readMetadata()).toEqual({
     index: 0,
     type: "mnemonic",
-    address: expected.address,
+    address: expected.address.toLowerCase(),
   });
   expect(Object.keys(signer).sort()).toEqual(["getAddress", "signTransaction"]);
+  expect(host.submitter.readMetadata().address).toMatch(/^0x[0-9a-f]{40}$/);
+  expect(await signer.getAddress()).toBe(expected.address);
   expect(() => host.signers.getSigner(1)).toThrow();
   const tx = {
     chainId: 11155111,

@@ -74,12 +74,54 @@ async function run() {
     secret: true,
     signal: lifetime.signal,
   });
+  const unlockStarted = Date.now();
   try {
     await vault.unlock(password);
   } finally {
     password.fill(0);
   }
   const signal = AbortSignal.any([lifetime.signal, vault.currentSession()]);
+  if (options.command === "funding-address") {
+    const { submitter } = require("./host/signers.cjs").createSignerHost({
+      vault,
+      profiles: { getActiveProfile: () => profile },
+    });
+    return Object.freeze({
+      status: "funding-address",
+      chainId: 11155111,
+      address: submitter.readMetadata().address,
+    });
+  }
+  if (options.command === "operations") {
+    const state =
+      require("./host/application-state.cjs").createApplicationState({
+        profile,
+        vault,
+        assertCustody: lock.verify,
+      });
+    try {
+      return Object.freeze({
+        status: "operations",
+        operations: (await state.get("operations")) ?? [],
+      });
+    } finally {
+      state.close();
+    }
+  }
+  if (options.command === "unshield-note") {
+    const { submitter } = require("./host/signers.cjs").createSignerHost({
+      vault,
+      profiles: { getActiveProfile: () => profile },
+    });
+    if (
+      options.recipient.toLowerCase() !==
+      submitter.readMetadata().address.toLowerCase()
+    )
+      throw Object.assign(
+        Error("Unshield recipient must be the enrolled funding address"),
+        { code: "REFERENCE_UNSHIELD_RECIPIENT" },
+      );
+  }
   const torDirectory = directory(path.join(lock.directory, "tor"), true);
   tor = require("./host/tor.cjs").createTorManager({
     ...config.tor,
@@ -94,21 +136,69 @@ async function run() {
     vault,
     tor,
   });
-  session = await composition.owner[
-    options.command === "account-create" ? "createAccount" : "openAccount"
-  ]({
-    accountIndex: 0,
-    signal,
-    ...(options.command === "account-info" && options.cache === "pending"
-      ? { publicCache: "pending" }
-      : {}),
-  });
-  return Object.freeze({ status: "account-opened", ...session.describe() });
+  if (options.command === "receipt")
+    return composition.readReceipt(
+      options.transactionHash,
+      require("./review.cjs").createReviews(terminal).disclosure,
+    );
+  let chain, state;
+  try {
+    if (
+      ["scan", "scan-new", "shield", "pay-note", "unshield-note"].includes(
+        options.command,
+      )
+    ) {
+      state = require("./host/application-state.cjs").createApplicationState({
+        profile,
+        vault,
+        assertCustody: lock.verify,
+      });
+    }
+    if (["scan", "scan-new"].includes(options.command)) {
+      chain = require("./chain.cjs").createChainReader({
+        tor,
+        rpcUrl: config.rpcUrl,
+        signal,
+      });
+    }
+    return await require("./account-command.cjs").accountCommand({
+      owner: composition.owner,
+      ...options,
+      signal,
+      state,
+      chain,
+      onSession: (value) => {
+        session = value;
+      },
+      scanCacheDigest: composition.cacheDigests.public,
+      deadline: unlockStarted + config.unlockMinutes * 60000,
+      reviews: require("./review.cjs").createReviews(terminal),
+      confirm: () =>
+        terminal.confirm(
+          options.command === "scan-new"
+            ? "Begin a new public scan generation and application scan phase? This is a full rescan. Existing custody remains retained."
+            : "Begin a new derived wallet generation? Existing custody remains retained.",
+          "REBUILD",
+          signal,
+        ),
+      progress: (value) =>
+        process.stderr.write(
+          JSON.stringify({ status: "scanning", ...value }) + "\n",
+        ),
+    });
+  } finally {
+    state?.close();
+    if (chain) await chain.close();
+  }
 }
 operation = run();
 operation
   .then(async (result) => {
-    process.stdout.write(JSON.stringify(result) + "\n");
+    process.stdout.write(
+      JSON.stringify(result, (_key, value) =>
+        typeof value === "bigint" ? value.toString() : value,
+      ) + "\n",
+    );
     await shutdown.quit();
   })
   .catch(async (error) => {

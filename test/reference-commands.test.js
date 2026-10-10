@@ -91,3 +91,75 @@ test("password mismatch writes nothing; denied backup never asks for credentials
   });
   expect(terminal.read).not.toHaveBeenCalled();
 });
+
+test.each([
+  ["shield", ["--amount", "1000"]],
+  ["pay-note", ["--note", "0:1", "--to", "public-fixture-recipient"]],
+  ["unshield-note", ["--note", "0:1", "--to", "0x" + "a1".repeat(20)]],
+  ["shield-resolve", ["--transaction", "0x" + "1".repeat(64)]],
+  ["receipt", ["--transaction", "0x" + "1".repeat(64)]],
+  ["resolve", ["--hold", "1".repeat(64)]],
+  ["submit-stored", ["--hold", "1".repeat(64)]],
+  ["poi-prepare-shield", ["--hold", "1".repeat(64)]],
+  ["poi-submit", ["--capsule", "1".repeat(64)]],
+  ["poi-status", ["--note", "0:1"]],
+])(
+  "%s requires its own selectors and rejects irrelevant authority",
+  (command, extra) => {
+    const base = [
+      command,
+      "--profile",
+      "/fixture",
+      "--config",
+      "/fixture.json",
+    ];
+    expect(parseArguments([...base, ...extra]).command).toBe(command);
+    expect(() => parseArguments(base)).toThrow();
+    expect(() =>
+      parseArguments([...base, ...extra, "--seed", "never"]),
+    ).toThrow();
+  },
+);
+test("read commands cannot carry a transaction, capsule or recipient", () => {
+  const base = ["notes", "--profile", "/fixture", "--config", "/fixture.json"];
+  for (const extra of [
+    ["--transaction", "0x" + "1".repeat(64)],
+    ["--capsule", "1".repeat(64)],
+    ["--to", "recipient"],
+  ])
+    expect(() => parseArguments([...base, ...extra])).toThrow();
+});
+
+test("configuration rejects missing pinned service origins before network startup", () => {
+  const {
+    loadConfiguration,
+  } = require("../examples/reference-wallet/config.cjs");
+  const root = fs.realpathSync(
+    fs.mkdtempSync(path.join(os.tmpdir(), "reference-config-")),
+  );
+  const filename = path.join(root, "settings.json");
+  const configuration = {
+    version: 1,
+    runtime: {
+      archive: path.join(root, "engine.asar"),
+      proverArchive: path.join(root, "prover.asar"),
+      artifactDirectory: root,
+    },
+    tor: { binary: path.join(root, "arti"), sha256: "1".repeat(64) },
+    rpcUrl: "https://synthetic.invalid",
+    serviceOrigins: [
+      "https://ppoi.fdi.network",
+      "https://rail-squid.squids.live",
+    ],
+    unlockMinutes: 60,
+  };
+  fs.writeFileSync(filename, JSON.stringify(configuration), { mode: 0o600 });
+  expect(loadConfiguration(filename).serviceOrigins).toEqual(
+    configuration.serviceOrigins,
+  );
+  configuration.serviceOrigins = ["https://another.invalid"];
+  fs.writeFileSync(filename, JSON.stringify(configuration));
+  expect(() => loadConfiguration(filename)).toThrow(
+    expect.objectContaining({ code: "REFERENCE_TXID_CONFIGURATION_REFUSED" }),
+  );
+});

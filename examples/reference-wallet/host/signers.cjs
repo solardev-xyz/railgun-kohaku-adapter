@@ -68,7 +68,9 @@ function createSignerHost({ vault, profiles }) {
     return Object.freeze({
       index: 0,
       type: "mnemonic",
-      address: retained.address,
+      // Custody records and retained-operation recovery use canonical lowercase
+      // public metadata. The signer may still return ethers' checksum address.
+      address: retained.address.toLowerCase(),
     });
   }
   return Object.freeze({

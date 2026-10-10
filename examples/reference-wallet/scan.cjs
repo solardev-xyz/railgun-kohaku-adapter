@@ -28,14 +28,14 @@ function valid(state) {
     (state.attempt !== null &&
       (!Number.isSafeInteger(state.attempt.to) ||
         state.attempt.to <= state.checkpoint ||
-        ![0, 1, 2].includes(state.attempt.number)))
+        state.attempt.number !== 0))
   )
     throw Error("Invalid saved scan progress");
   return state;
 }
-/** The saved checkpoint is a lower bound only. An unacknowledged commit can be
- * ahead of it. Each such interval has two fixed targets; refusal never implies
- * that a commit did/didn't happen, and the third attempt is refused. */
+/** Saved progress is bookkeeping only. Every explicit invocation first asks the
+ * owner to recover/revalidate its authenticated cursor; only that returned cursor
+ * chooses the next target. No automatic retry, cursor inference or rebuild. */
 async function scanAccount({
   session,
   state,
@@ -56,7 +56,7 @@ async function scanAccount({
     !/^0x[0-9a-f]{64}$/i.test(anchor.hash)
   )
     throw Error("Invalid scan lifetime or anchor");
-  if (fresh)
+  if (fresh || (await state.get("scan")) === null)
     await state.update("scan", () => ({
       version: 1,
       phase: randomUUID(),
@@ -64,12 +64,65 @@ async function scanAccount({
       checkpoint: -1,
       checkpointHash: null,
       ranges: 0,
+      recoveries: 0,
       attempt: null,
       status: "pending",
     }));
   let saved = valid(await state.get("scan"));
-  if (saved.identity !== identity || saved.checkpoint > anchor.number)
-    throw Error("Scan identity or finality changed");
+  if (saved.identity !== identity)
+    throw Object.assign(
+      Error(
+        "Scan phase compatibility changed; inspect before an explicit scan-new",
+      ),
+      {
+        code: "REFERENCE_SCAN_PHASE_STALE",
+      },
+    );
+  if (saved.checkpoint > anchor.number)
+    throw Object.assign(
+      Error("Finalized anchor is behind retained scan progress"),
+      {
+        code: "REFERENCE_SCAN_FINALITY_BEHIND",
+      },
+    );
+  if (!Number.isSafeInteger(saved.recoveries) || saved.recoveries >= 16)
+    throw Object.assign(Error("Scan recovery limit reached"), {
+      code: "REFERENCE_SCAN_LIMIT",
+    });
+  if (signal.aborted)
+    throw Object.assign(Error("Scan cancelled"), {
+      code: "REFERENCE_CANCELLED",
+    });
+  if (Date.now() >= deadline - 5 * 60000)
+    return Object.freeze({
+      status: "paused",
+      checkpoint: saved.checkpoint,
+      ranges: saved.ranges,
+    });
+  saved = { ...saved, recoveries: saved.recoveries + 1 };
+  await state.update("scan", () => saved);
+  const recovered = await session.recoverPublic();
+  const cursor = recovered.to?.number ?? -1;
+  if (
+    !Number.isSafeInteger(cursor) ||
+    cursor < saved.checkpoint ||
+    cursor > anchor.number ||
+    (cursor === -1
+      ? recovered.status !== "unscanned" || recovered.to !== null
+      : recovered.status !== "applied-unverified" ||
+        !/^0x[0-9a-f]{64}$/i.test(recovered.to.hash)) ||
+    (cursor === saved.checkpoint &&
+      cursor >= 0 &&
+      saved.checkpointHash !== recovered.to.hash)
+  )
+    throw Error("Authenticated scan checkpoint changed");
+  saved = {
+    ...saved,
+    checkpoint: cursor,
+    checkpointHash: recovered.to?.hash ?? null,
+    attempt: null,
+  };
+  await state.update("scan", () => saved);
   while (saved.checkpoint < anchor.number) {
     if (signal.aborted)
       throw Object.assign(Error("Scan cancelled"), {
@@ -85,29 +138,11 @@ async function scanAccount({
       throw Object.assign(Error("Scan range limit reached"), {
         code: "REFERENCE_SCAN_LIMIT",
       });
-    let to,
-      attempt = 0;
-    if (saved.attempt) {
-      if (saved.attempt.number === 2)
-        throw Object.assign(Error("Scan needs checkpoint diagnosis"), {
-          code: "REFERENCE_SCAN_RECOVERY_REQUIRED",
-        });
-      if (saved.attempt.number === 0) {
-        to = saved.attempt.to;
-        attempt = 1;
-      } else {
-        if (saved.attempt.to >= anchor.number)
-          throw Object.assign(Error("Final checkpoint needs diagnosis"), {
-            code: "REFERENCE_SCAN_RECOVERY_REQUIRED",
-          });
-        to = windowEnd(saved.attempt.to + 1, anchor.number);
-        attempt = 2;
-      }
-    } else to = windowEnd(saved.checkpoint + 1, anchor.number);
+    const to = windowEnd(saved.checkpoint + 1, anchor.number);
     saved = {
       ...saved,
       ranges: saved.ranges + 1,
-      attempt: { to, number: attempt },
+      attempt: { to, number: 0 },
       status: "pending",
     };
     await state.update("scan", () => saved);

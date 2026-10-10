@@ -8,6 +8,33 @@ const COMMANDS = new Set([
   "backup",
   "account-create",
   "account-info",
+  "scan",
+  "wallet-rebuild",
+  "wallet-resume",
+  "wallet-sync",
+  "address",
+  "balance",
+  "notes",
+  "holds",
+  "submit-stored",
+  "observe",
+  "resolve",
+  "poi-status",
+  "txid-sync",
+  "funding-address",
+  "operations",
+  "scan-new",
+  "receipt",
+  "shield-history",
+  "shield-observe",
+  "shield-resolve",
+  "poi-prepare-shield",
+  "poi-prepare-transact",
+  "poi-submit",
+  "poi-recover",
+  "shield",
+  "pay-note",
+  "unshield-note",
 ]);
 function refuse() {
   throw Object.assign(Error("Reference configuration refused"), {
@@ -34,15 +61,30 @@ function parseArguments(args) {
   for (let i = 0; i < rest.length; i += 2) {
     const name = rest[i];
     if (
-      !["--profile", "--config", "--cache"].includes(name) ||
+      ![
+        "--profile",
+        "--config",
+        "--cache",
+        "--note",
+        "--to",
+        "--amount",
+        "--hold",
+        "--transaction",
+        "--capsule",
+      ].includes(name) ||
       Object.hasOwn(options, name)
     )
       refuse();
-    options[name] = name === "--cache" ? rest[i + 1] : absolute(rest[i + 1]);
+    options[name] = ["--profile", "--config"].includes(name)
+      ? absolute(rest[i + 1])
+      : rest[i + 1];
   }
   if (
     !options["--profile"] ||
-    (command.startsWith("account-") && !options["--config"])
+    (!["init", "restore", "backup", "funding-address", "operations"].includes(
+      command,
+    ) &&
+      !options["--config"])
   )
     refuse();
   if (
@@ -51,8 +93,65 @@ function parseArguments(args) {
       !["active", "pending"].includes(options["--cache"]))
   )
     refuse();
+  if (
+    [
+      "submit-stored",
+      "observe",
+      "resolve",
+      "poi-prepare-shield",
+      "poi-prepare-transact",
+    ].includes(command)
+      ? typeof options["--hold"] !== "string" ||
+        !options["--hold"] ||
+        options["--hold"].length > 256
+      : options["--hold"] !== undefined
+  )
+    refuse();
+  if (
+    ["receipt", "shield-observe", "shield-resolve"].includes(command)
+      ? !/^0x[0-9a-f]{64}$/.test(options["--transaction"] ?? "")
+      : options["--transaction"] !== undefined
+  )
+    refuse();
+  if (
+    ["poi-submit", "poi-recover"].includes(command)
+      ? !/^[0-9a-f]{64}$/.test(options["--capsule"] ?? "")
+      : options["--capsule"] !== undefined
+  )
+    refuse();
+  const privatePayment = ["pay-note", "unshield-note"].includes(command);
+  if (
+    privatePayment || command === "poi-status"
+      ? typeof options["--note"] !== "string" ||
+        !options["--note"] ||
+        options["--note"].length > 256 ||
+        (privatePayment &&
+          (typeof options["--to"] !== "string" ||
+            !options["--to"] ||
+            options["--to"].length > 256)) ||
+        (!privatePayment && options["--to"] !== undefined)
+      : options["--note"] !== undefined || options["--to"] !== undefined
+  )
+    refuse();
+  if (
+    command === "unshield-note" &&
+    !/^0x[0-9a-fA-F]{40}$/.test(options["--to"])
+  )
+    refuse();
+  if (
+    command === "shield"
+      ? !/^[1-9][0-9]{0,23}$/.test(options["--amount"] ?? "")
+      : options["--amount"] !== undefined
+  )
+    refuse();
   return Object.freeze({
     command,
+    noteId: options["--note"],
+    holdId: options["--hold"],
+    transactionHash: options["--transaction"],
+    capsuleDigest: options["--capsule"],
+    recipient: options["--to"],
+    amount: options["--amount"],
     profile: options["--profile"],
     config: options["--config"],
     cache: options["--cache"] ?? "active",
@@ -105,6 +204,16 @@ function loadConfiguration(filename) {
     )
       refuse();
   }
+  // The package fixes its Sepolia POI/indexer destinations. Validate the host
+  // allowlist here, before startup, rather than failing every consented page.
+  if (
+    !["https://ppoi.fdi.network", "https://rail-squid.squids.live"].every(
+      (origin) => value.serviceOrigins.includes(origin),
+    )
+  )
+    throw Object.assign(new Error("Required TXID service origins missing"), {
+      code: "REFERENCE_TXID_CONFIGURATION_REFUSED",
+    });
   return Object.freeze({
     ...value,
     runtime: Object.freeze(value.runtime),

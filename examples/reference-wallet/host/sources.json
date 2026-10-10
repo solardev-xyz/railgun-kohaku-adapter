@@ -1,4 +1,5 @@
 [
+  "account-command.cjs",
   "chain.cjs",
   "config.cjs",
   "custody.cjs",
@@ -18,6 +19,7 @@
   "host/platform.cjs",
   "host/profile-lock-core.cjs",
   "host/profile-lock.cjs",
+  "host/receipts.cjs",
   "host/reconciler.cjs",
   "host/registry.cjs",
   "host/retention.cjs",
@@ -37,7 +39,12 @@
   "host/utility-entry.cjs",
   "host/vault.cjs",
   "main.cjs",
+  "payment-command.cjs",
+  "poi-command.cjs",
+  "recovery-command.cjs",
+  "review.cjs",
   "scan.cjs",
   "shutdown.cjs",
-  "terminal.cjs"
+  "terminal.cjs",
+  "txid-command.cjs"
 ]
