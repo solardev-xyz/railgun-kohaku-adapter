@@ -8,7 +8,9 @@ must create the lanes used by the root Kohaku factories.
 ## The first vertical slice
 
 1. Pin the package, native runtime and artifacts. Reproduce the consumer checks
-   in [local evaluation](../review/EVALUATION.md) before using credentials.
+   in [local evaluation](../review/EVALUATION.md) before using credentials. Follow
+   the [standalone installation and runtime setup](../../examples/reference-wallet/README.md#current-commands)
+   to obtain a runnable example outside the checkout.
 2. Implement one context registry per realm and share it between that realm's
    capabilities. Check the real registry with `tools/conformance/context.cjs`.
 3. Provide a disposable vault, profile lock, authenticated inventory and encrypted

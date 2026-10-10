@@ -20,20 +20,12 @@ const { createVault, readVaultProfile } = require("./host/vault.cjs");
 const shutdown = require("./shutdown.cjs").createShutdown({
   app,
   lifetime,
+  runtime: process,
   resources: () => ({ vault, tor, composition, session, operation }),
-  onForced: () =>
+  onForced: (code) =>
     process.stderr.write(
-      '{"status":"recovery-required","code":"REFERENCE_SHUTDOWN_TIMEOUT"}\n',
+      JSON.stringify({ status: "recovery-required", code }) + "\n",
     ),
-});
-process.once("SIGINT", () => {
-  void shutdown.quit();
-});
-process.once("SIGTERM", () => {
-  void shutdown.quit();
-});
-process.once("SIGHUP", () => {
-  void shutdown.quit();
 });
 function directory(filename, create) {
   if (!fs.existsSync(filename) && create) {

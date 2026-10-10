@@ -4,8 +4,9 @@ This example exercises the installed adapter without Freedom source or profiles.
 The [synthetic Alice-to-Bob journey](../../docs/qualification/reference-alice-bob-synthetic-2026-10-10/README.md)
 passes with independent vaults, root Kohaku adapters over real account lanes,
 current-circuit POI verification, cold recovery and Bob's unshield. It remains an
-experimental wallet: fresh standalone installation, live two-account execution
-and cross-platform behavior are separate gates. Use new test-only profiles.
+experimental wallet: fresh installation and runtime setup (Arti excluded) have
+been exercised on macOS arm64. Live two-account execution and cross-platform
+behavior remain separate gates. Use new test-only profiles.
 The first runtime is headless Electron main, with no BrowserWindow. The fixed
 utility and storage-worker entries load only public adapter exports. Each realm
 owns a real context registry; its host families share that registry. Alice and
@@ -104,7 +105,10 @@ an integer from 1 to 60. The app verifies the exact Arti binary hash, not a vers
 label. Arti 2.6.0 has local configuration/state-lock evidence; this reference
 host now has a [bounded public scan observation](../../docs/qualification/reference-public-scan-2026-10-10/README.md)
 with Arti 2.6.0. It does not qualify private-service availability or circuit
-isolation. Do not borrow another host's routing claim.
+isolation. [Arti acquisition](ARTI.md) explains the source and binary pin.
+The public scan observation used `https://sepolia.rpc.sentio.xyz`; this names the
+measured destination, not a reliability recommendation or a failover endpoint.
+Do not borrow another host's routing claim.
 [Runtime assembly](../../tools/railgun-runtime-build/README.md)
 and [artifact checks](../../docs/review/MAINTENANCE.md) remain separate steps.
 The [public scan screen](../../tools/conformance/REFERENCE-PUBLIC-SCREEN.md)
@@ -117,8 +121,22 @@ See the [Alice-to-Bob workflow](JOURNEY.md) for the complete command order,
 separate recipient custody and interruption handling. The live stage still
 requires its own reviewed configuration, funding and evidence.
 
+Prerequisites: a clean Git checkout, Git, Node 24 (recorded: 24.18.1), npm
+(recorded: 11.16.0), and Python 3 for runtime assembly. Installation has been
+exercised on **macOS arm64 only**; Linux is untested and Windows is unsupported
+by this example. A source build of Arti additionally needs Rust/Cargo and its
+platform dependencies; see [Arti acquisition](ARTI.md).
+
+Allow several GiB of free space for the checkout, isolated dependency caches,
+Electron and runtime artifacts. The retained installation and runtime setup
+occupied about 1 GiB together on the measured macOS filesystem; this excludes
+the development checkout and Arti's Rust build and is not a portable size bound.
+Setup fetches directly over HTTPS from `registry.npmjs.org`, Electron's GitHub
+release/download infrastructure, and `ipfs-lb.com`. These downloads do not use
+the wallet's Tor transport. Arti acquisition has its own upstream destinations.
+
 Install into a **new absolute directory outside the checkout**, under an existing
-canonical parent, using Node 24 and npm (macOS/Linux; Windows is not qualified):
+canonical parent:
 
 ```sh
 node tools/conformance/install-reference.cjs /absolute/new-reference-install
@@ -150,13 +168,13 @@ node tools/conformance/setup-reference-runtime.cjs /absolute/new-reference-runti
 
 This fresh setup writes `RUNTIME.json`; resolve its three runtime paths against
 that new directory in your wallet configuration. It does not open a profile.
-Arti remains a separately reviewed, hash-pinned platform prerequisite. Inside the installed `app`, `npm start -- <command>` launches
-its own Electron. The equivalent direct executable interface is:
+Complete the separate [Arti acquisition and binary pin](ARTI.md). Inside the
+installed `app`, `npm start -- <command>` launches its own Electron:
 
 ```sh
-"$ELECTRON_BINARY" main.cjs init --profile "$NEW_EMPTY_PROFILE"
-"$ELECTRON_BINARY" main.cjs restore --profile "$NEW_EMPTY_PROFILE"
-"$ELECTRON_BINARY" main.cjs backup --profile "$PROFILE"
+npm start -- init --profile "$NEW_EMPTY_PROFILE"
+npm start -- restore --profile "$NEW_EMPTY_PROFILE"
+npm start -- backup --profile "$PROFILE"
 ```
 
 These commands use a real terminal; redirected credential input/output is
@@ -211,7 +229,8 @@ example does not automatically release or submit a hold.
 
 The implemented commands have the scoped synthetic evidence above. Live two-account execution remains a separate acceptance gate. Fresh dependency
 installation and offline vault creation/reopening have now been exercised on
-macOS arm64; this is not full runtime acquisition or cross-platform acceptance.
+macOS arm64. Fresh engine/prover assembly and all 18 circuit artifacts were also
+verified; Arti acquisition is separate. This is not cross-platform acceptance.
 
 `receipt` requires an own authenticated, resolved journal record (including the
 archive), then `ALLOW` for chain identity, receipt and transaction reads through
@@ -280,7 +299,9 @@ closed. Main-process death is covered; simultaneous guardian failure is not an
 OS-level parent-death guarantee. State-lock refusal surfaces a surviving proxy
 at restart. During graceful quit, cancellation immediately revokes operations
 and the proxy; the entry then waits for original command/session work and proxy
-exit before locking the vault. A 15-second drain deadline reports a forced exit.
+exit before locking the vault. A 15-second drain deadline reports `REFERENCE_SHUTDOWN_TIMEOUT`; a deliberate
+later interrupt reports `REFERENCE_SHUTDOWN_INTERRUPTED`. Both mean a forced
+exit whose retained journals must be inspected.
 Fatal exceptions/rejections exit without Electron's blocking error dialog.
 
 Do not infer Tor routing from a context's `origin:'tor'` requirement, or delivery
@@ -296,8 +317,8 @@ custody and exits the application. This detects replacement at a boundary, not
 an atomic guarantee against a hostile same-user process replacing paths between
 system calls. Network filesystems (NFS/SMB), copied seeds, Linux and Windows lock
 behavior are not qualified. Plain-Node conformance uses the same lock core and
-only marked disposable roots. A second interrupt may force exit before graceful
-draining; the next launch must recover the preserved journals.
+only marked disposable roots. Forwarded signal bursts within 1.5 seconds of the first signal share the same
+graceful shutdown. A later interrupt may force exit before drainage completes; the next launch must recover the preserved journals.
 
 `REFERENCE_SCAN_PHASE_STALE` means the application scan phase is bound to another
 compatibility identity. Inspect the generation state before explicitly choosing

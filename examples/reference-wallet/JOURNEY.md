@@ -12,17 +12,20 @@ No step copies Alice's storage or credentials to Bob.
 
 ## Prepare each independent wallet
 
-Run these commands with a reviewed Electron executable and an explicit local
-runtime/Tor configuration. The `init` and password prompts require a real
-terminal; passwords and recovery phrases are never command-line arguments.
+First follow the [standalone installation and runtime setup](README.md#current-commands).
+Run every command below from `/absolute/new-reference-install/app`, using that
+installation's `npm start` and an explicit local runtime/Tor configuration.
+Set `ALICE_PROFILE`, `BOB_PROFILE` and their configuration variables to absolute
+canonical paths outside the installation; use different profile directories.
+The `init` and password prompts require a real terminal; passwords and recovery phrases are never command-line arguments.
 
 ```sh
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs init --profile "$ALICE_PROFILE"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs funding-address --profile "$ALICE_PROFILE"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs account-create --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs scan --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs wallet-rebuild --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs address --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
+npm start -- init --profile "$ALICE_PROFILE"
+npm start -- funding-address --profile "$ALICE_PROFILE"
+npm start -- account-create --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
+npm start -- scan --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
+npm start -- wallet-rebuild --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
+npm start -- address --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
 ```
 
 Repeat for Bob, and optionally Charlie. Each invocation is a new process.
@@ -49,13 +52,13 @@ qualification/format bounds, not Railgun protocol maxima. Use the exact
 [configuration schema](README.md#configuration), not an inferred config.
 
 ```sh
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs shield --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG" --amount "$SHIELD_WEI"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs shield-history --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs shield-observe --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG" --transaction "$SHIELD_HASH"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs shield-resolve --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG" --transaction "$SHIELD_HASH"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs scan --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs wallet-sync --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs notes --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
+npm start -- shield --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG" --amount "$SHIELD_WEI"
+npm start -- shield-history --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
+npm start -- shield-observe --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG" --transaction "$SHIELD_HASH"
+npm start -- shield-resolve --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG" --transaction "$SHIELD_HASH"
+npm start -- scan --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
+npm start -- wallet-sync --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
+npm start -- notes --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
 ```
 
 Take the transaction hash and note ID from the actual results. Do not invent a
@@ -66,15 +69,15 @@ before finality is a reason to observe the existing hash, never to shield again.
 ## Alice transfers the note and submits its POI
 
 ```sh
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs pay-note --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG" --note "$ALICE_NOTE" --to "$BOB_RAILGUN_ADDRESS"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs holds --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs observe --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG" --hold "$TRANSFER_HOLD"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs resolve --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG" --hold "$TRANSFER_HOLD"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs scan --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs wallet-sync --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs txid-sync --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs poi-prepare-shield --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG" --hold "$TRANSFER_HOLD"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs poi-submit --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG" --capsule "$PREPARED_CAPSULE"
+npm start -- pay-note --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG" --note "$ALICE_NOTE" --to "$BOB_RAILGUN_ADDRESS"
+npm start -- holds --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
+npm start -- observe --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG" --hold "$TRANSFER_HOLD"
+npm start -- resolve --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG" --hold "$TRANSFER_HOLD"
+npm start -- scan --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
+npm start -- wallet-sync --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
+npm start -- txid-sync --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
+npm start -- poi-prepare-shield --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG" --hold "$TRANSFER_HOLD"
+npm start -- poi-submit --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG" --capsule "$PREPARED_CAPSULE"
 ```
 
 `pay-note` sends the selected note's full value; there is no automatic coin
@@ -93,12 +96,12 @@ transfer value. Alice must have no unspent copy of that note; Charlie must not
 discover it. Alice's sent history is separate from note ownership.
 
 ```sh
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs poi-status --profile "$BOB_PROFILE" --config "$BOB_CONFIG" --note "$BOB_NOTE"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs txid-sync --profile "$BOB_PROFILE" --config "$BOB_CONFIG"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs unshield-note --profile "$BOB_PROFILE" --config "$BOB_CONFIG" --note "$BOB_NOTE" --to "$BOB_FUNDING_EOA"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs holds --profile "$BOB_PROFILE" --config "$BOB_CONFIG"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs observe --profile "$BOB_PROFILE" --config "$BOB_CONFIG" --hold "$UNSHIELD_HOLD"
-"$ELECTRON_BINARY" examples/reference-wallet/main.cjs resolve --profile "$BOB_PROFILE" --config "$BOB_CONFIG" --hold "$UNSHIELD_HOLD"
+npm start -- poi-status --profile "$BOB_PROFILE" --config "$BOB_CONFIG" --note "$BOB_NOTE"
+npm start -- txid-sync --profile "$BOB_PROFILE" --config "$BOB_CONFIG"
+npm start -- unshield-note --profile "$BOB_PROFILE" --config "$BOB_CONFIG" --note "$BOB_NOTE" --to "$BOB_FUNDING_EOA"
+npm start -- holds --profile "$BOB_PROFILE" --config "$BOB_CONFIG"
+npm start -- observe --profile "$BOB_PROFILE" --config "$BOB_CONFIG" --hold "$UNSHIELD_HOLD"
+npm start -- resolve --profile "$BOB_PROFILE" --config "$BOB_CONFIG" --hold "$UNSHIELD_HOLD"
 ```
 
 Wait for genuine Valid status. The unshield preparation rechecks its own current

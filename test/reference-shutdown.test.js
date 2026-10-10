@@ -113,3 +113,68 @@ test("shutdown waits for an in-flight opener and closes the session it returns l
   await closing;
   expect(resources.session.close).toHaveBeenCalledTimes(1);
 });
+test("forwarded signal bursts preserve drainage, but a later interrupt can force exit", async () => {
+  const app = new EventEmitter(), runtime = new EventEmitter();
+  app.quit = jest.fn(); app.exit = jest.fn();
+  const lifetime = new AbortController(), lock = jest.fn(), forced = jest.fn();
+  let finish, time = 0;
+  const operation = new Promise(resolve => { finish = resolve; });
+  const shutdown = createShutdown({ app, lifetime, runtime, now: () => time,
+    onForced: forced, resources: () => ({ operation, vault: { lock } }) });
+  runtime.emit("SIGINT");
+  expect(lifetime.signal.aborted).toBe(true);
+  time = 10; runtime.emit("SIGINT");
+  time = 20; runtime.emit("SIGTERM");
+  expect(app.exit).not.toHaveBeenCalled();
+  expect(app.quit).not.toHaveBeenCalled();
+  time = 1499; runtime.emit("SIGHUP");
+  expect(app.exit).not.toHaveBeenCalled();
+  time = 1500; runtime.emit("SIGINT");
+  expect(forced).toHaveBeenCalledWith("REFERENCE_SHUTDOWN_INTERRUPTED");
+  expect(lock).toHaveBeenCalledTimes(1);
+  expect(app.exit).toHaveBeenCalledWith(1);
+  runtime.emit("SIGINT");
+  expect(app.exit).toHaveBeenCalledTimes(1);
+  finish(); await shutdown.close();
+  await new Promise(resolve => setImmediate(resolve));
+  expect(app.quit).not.toHaveBeenCalled();
+});
+test("a real child drains after two SIGINT deliveries ten milliseconds apart", async () => {
+  const { spawn } = require("node:child_process");
+  const modulePath = require.resolve("../examples/reference-wallet/shutdown.cjs");
+  const child = spawn(process.execPath, ["-e", `
+    const {EventEmitter}=require('node:events');
+    const {createShutdown}=require(${JSON.stringify(modulePath)});
+    const app=new EventEmitter(), lifetime=new AbortController();
+    let finish; const operation=new Promise(resolve=>{finish=resolve;});
+    app.quit=()=>process.exit(0); app.exit=code=>process.exit(code);
+    createShutdown({app,lifetime,runtime:process,resources:()=>({operation}),timeoutMs:2000});
+    lifetime.signal.addEventListener('abort',()=>setTimeout(()=>{
+      process.stdout.write('DRAINED\\n');finish();
+    },100));
+    setInterval(()=>{},1000);
+    process.stdout.write('READY\\n');
+  `], { stdio: ["ignore", "pipe", "pipe"] });
+  let output = "", error = "", sent = false;
+  const timers = [];
+  const watchdog = setTimeout(() => child.kill("SIGKILL"), 8000);
+  child.stdout.on("data", bytes => {
+    output += bytes;
+    if (!sent && output.includes("READY\n")) {
+      sent = true; child.kill("SIGINT");
+      timers.push(setTimeout(() => child.kill("SIGINT"), 10));
+    }
+  });
+  child.stderr.on("data", bytes => { error += bytes; });
+  try {
+    const result = await new Promise((resolve, reject) => {
+      child.on("error", reject);
+      child.on("close", (code, signal) => resolve({code, signal}));
+    });
+    expect(result).toEqual({code: 0, signal: null});
+    expect(output).toContain("DRAINED\n");
+    expect(error).toBe("");
+  } finally {
+    clearTimeout(watchdog); timers.forEach(clearTimeout);
+  }
+});

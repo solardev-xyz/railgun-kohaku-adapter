@@ -154,8 +154,9 @@ Still required before outreach: the separately funded live Alice-to-Bob demonstr
 and a final independent review of the exact documented installation. Clean
 Linux/macOS Node CI, including the approved lint and root typecheck gates, passed
 at `b27a25b` ([run 38079408586](https://github.com/solardev-xyz/railgun-kohaku-adapter/actions/runs/38079408586)).
-The newer deployment foundation and separate owner typecheck gate need their own
-new-head CI result. The independent host's
+The deployment foundation and separate owner typecheck gate also passed on
+both platforms at `c0c8acd` ([run 38081661500](https://github.com/solardev-xyz/railgun-kohaku-adapter/actions/runs/38081661500)).
+The independent host's
 [bounded public scan screen](qualification/reference-public-scan-2026-10-10/README.md)
 also passed. These scoped results do not close the remaining acceptance gates or
 inherit claims from the historical Freedom campaign.
