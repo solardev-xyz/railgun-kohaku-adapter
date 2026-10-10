@@ -8,20 +8,19 @@ Between October 8 and 10, 2026, the installed package completed one bounded live
 
 ## What happened
 
-1. **Transfer.** The private self-transfer was sent and observed to finality on October 8.
-2. **First POI handoff and identical retry.** Both got HTTP 400; the retry's response was classified as invalid-proof.
-   - Cause: Railgun's `@railgun-community/wallet` 11.2.0 rotated the POI circuits (bundle `QmZ2MyM6TKxffkv6stuo2hFwmUfs3q4xgMYN164Sje8new`), and the package still proved with the retired POI_3x3 artifacts.
-   - Offline evidence: a public engine vector proved with the retired artifacts fails the node's verification path under the current key, and passes under the retired key.
-   - Live evidence: before the replacement, the transition check confirmed that the stored original proof verifies under the retired key and is rejected by the current key.
-   - Not observed: the deployed node's exact verifier revision, and the first response's body.
+1. **Transfer.** On the resume-3 link (candidate E4), the private self-transfer was sent and observed to finality on October 8. Journey-2 carried it and made the first POI handoff.
+2. **First POI handoff and identical retry.** Both got HTTP 400.
+   - **Observed:** the retry's error category (invalid-params, invalid-proof). Before the replacement, the live transition check found that the stored original proof verifies under the retired POI_3x3 key and is rejected by the current key. The replacement under the current circuit then reached Valid.
+   - **Inferred:** a retired-circuit proof was the cause of the first refusal. Railgun's `@railgun-community/wallet` 11.2.0 rotated the POI circuits (bundle `QmZ2MyM6TKxffkv6stuo2hFwmUfs3q4xgMYN164Sje8new`), and offline a public engine vector proved with the retired artifacts fails the node's verification path under the current key. The observations above establish the compatibility defect; they do not reconstruct the first response.
+   - **Not observed:** the first response's body and the deployed verifier's revision.
 3. **Replacement proof.** Package `ee64dc0` and its fixes (`bcd8607`: the original Shield membership route; `7d75c13`: field-wise capture binding) pin the current POI_3x3 artifacts.
    - It adds one replacement proof for the same output (intent store V5) and its single handoff.
    - The handoff was answered with HTTP 200; the 36-byte body was discarded and classified malformed. The later owned status read decided: **Valid, allValid**.
 4. **Unshield.** Three reservations were refused before any send, then the next one succeeded.
-   - The first refusal's stage is unknown, because a later history read masked it.
+   - The first refusal's retained trace shows a Tor failure, but a later history read masked its primary stage. The second refusal's cause is unknown: telemetry did not exist yet.
    - The third was instrumented: inside preparation, the only request was `ppoi_validated_txid`, which failed with `TOR_REQUEST_FAILED` at the 10-second limit.
    - After an authenticated no-hold check, the next attempt was acknowledged, included and finalized, and matched its journal.
-5. **Summary.** The first summary refused before any request, because the host's live read helper did not allow receipt reads. Host `09eb25d6` added `eth_getTransactionReceipt` only; the host policy digest is unchanged. A summary-only link then recorded the passing summary.
+5. **Summary.** The first summary scanned two catch-up ranges. Its receipt read was then refused before network dispatch, because the host's live read helper did not allow receipt reads. That run is preserved as failed, with its two consumed ranges. Host `09eb25d6` added `eth_getTransactionReceipt` only; the host policy digest is unchanged. A summary-only link then recorded the passing summary.
 
 Totals: five operator reservations and **two chain transactions** (the transfer and the unshield). The three unsent reservations are listed separately, each with its own report.
 
@@ -36,7 +35,7 @@ Each continuation is a fixed, immutable link that binds its predecessor's exact 
   - later attempts only with a primary Tor failure inside the refused preparation interval and no null result.
 - **journey-7:** summary only.
 
-None of these links adds chain sends, raises gas caps or replenishes POI allowances.
+Journey-4 added exactly one replacement-proof handoff and four status units. Journeys 5–7 carried those without adding POI authority. No link adds chain transactions or raises gas caps.
 
 ## Live and synthetic coverage
 
@@ -62,3 +61,13 @@ Transaction hashes, block numbers, the recipient, amounts, exact receipt gas, no
 - **Response classification guesses.** Handoff responses should be classified only from bytes actually observed and retained, never inferred from length.
 
 These are recorded, not started.
+
+## Operational lessons for the next live run
+
+- **Plan for the rebuild.** A package change means about 4–5 h of Tor scanning across several sessions. Expect pauses and single Tor failures, and keep resume openers and range headroom.
+- **Budget TXID headroom.** TXID sync and preparation make many `ppoi_validated_txid` calls, and that call often reaches the 10 s limit over Tor. Restarts consume units, and a bounded batch of at most 8 invocations was needed once.
+- **Generate continuation specs from the link's first spec.** A ledger closes to reads and writes once its successor exists, so a generator must not re-inspect the predecessor.
+- **Chain an observe to its send report**, not to an earlier observe, and leave at least 90 s between observes.
+- **Refresh POI status before custody verification.** A reservation must follow its custody report directly, and allValid is only usable for 6 h.
+- **Rehearse every live mode, including the summary, on the live transport path.** The synthetic chain answered receipts that the live helper's allowlist refused.
+- **Keep request telemetry on every outcome.** Before journey-6, successful reports kept none, which left the L60 refusal unexplained.

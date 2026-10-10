@@ -47,12 +47,20 @@
   },
   "links": [
     {
+      "ledger": "installed-journey-sentio-resume-3",
+      "freedom": "2018288fe2094a74002473b374bfa0a7dae93736",
+      "packageCommit": "59c7d7bcd16d20564ff84cdf37226eb2c7108702",
+      "tarSha256": "2ad2b4ad09f84c80936a78dbcbb5a2441ba53a863e9f8570a53ce80a78986f80",
+      "runnerSha256": "6d3cf7c83c6c864ea4755d7b05a5981c3ce3b8cc45ba3b048463a9389fa7090c",
+      "covers": "original rebuild (L08), private self-transfer (L09) and its finality (L13)"
+    },
+    {
       "ledger": "installed-journey-sentio-journey-2",
       "freedom": "2018288fe2094a74002473b374bfa0a7dae93736",
       "packageCommit": "7234a724bd13c6263b2ef01d2dc2fd95efad4846",
       "tarSha256": "2ad2b4ad09f84c80936a78dbcbb5a2441ba53a863e9f8570a53ce80a78986f80",
       "runnerSha256": "6146e8986f56002d6f9a20d0161afa51f55e57c36c81b21962eaf9d048ac6b58",
-      "covers": "transfer, first POI handoff"
+      "covers": "carried the finished transfer; first POI handoff (L21)"
     },
     {
       "ledger": "installed-journey-sentio-journey-3",
@@ -68,7 +76,7 @@
       "packageCommit": "7d75c1373a8afa3212cfe8ace1f784425e1057c5",
       "tarSha256": "eff8dc891345535bf27b1442a4157027fc976541a596e930a9adb6b525de2633",
       "runnerSha256": "f235e04404a363cefce054b5b4fbd1b79eb339bb7fe9a90720cb4cf8049b5fc5",
-      "covers": "circuit rebuild, replacement proof, Valid status, first unshield reservation"
+      "covers": "circuit rebuild; adds exactly one replacement-proof handoff and four status units; replacement proof, Valid status, first unshield reservation"
     },
     {
       "ledger": "installed-journey-sentio-journey-5",
@@ -76,7 +84,7 @@
       "packageCommit": "86413d70460bdbe3b40de2f490bb160d82ba84ad",
       "tarSha256": "eff8dc891345535bf27b1442a4157027fc976541a596e930a9adb6b525de2633",
       "runnerSha256": "5d3803c03b4559c7fc7aae6fc83bd9474f0b6e19caf6478fcbb244e4fc3d1e2f",
-      "covers": "one further unshield reservation after a pre-send refusal"
+      "covers": "one further unshield reservation after a pre-send refusal; carries journey-4 POI allowances without adding POI authority"
     },
     {
       "ledger": "installed-journey-sentio-journey-6",
@@ -84,7 +92,7 @@
       "packageCommit": "9b0e60c1bd037f2f111f28dbd7214781ec6dfa0e",
       "tarSha256": "eff8dc891345535bf27b1442a4157027fc976541a596e930a9adb6b525de2633",
       "runnerSha256": "545847dec8b8c31b60b5a00e8e327af79d5bdd4de8e3a2bc3ac56c8f8a4f15a4",
-      "covers": "status refresh, custody verification, bounded instrumented attempts, unshield, finality"
+      "covers": "status refresh, custody verification, bounded instrumented attempts, unshield, finality; carries journey-4 POI allowances without adding POI authority"
     },
     {
       "ledger": "installed-journey-sentio-journey-7",
@@ -92,7 +100,7 @@
       "packageCommit": "411674d8b93ba23cf353d0f360bc4d04d1efc3bd",
       "tarSha256": "eff8dc891345535bf27b1442a4157027fc976541a596e930a9adb6b525de2633",
       "runnerSha256": "8edb2bc14307bcad3cbccc66bfbb104a81141aac5761f01865046f836899027c",
-      "covers": "summary only: receipts, gas and conservation"
+      "covers": "summary only: receipts, gas and conservation; carries journey-4 POI allowances without adding POI authority"
     }
   ],
   "final": {
@@ -273,7 +281,7 @@
       "passed": false,
       "reportRecorded": false,
       "failureCode": "ERR_ASSERTION",
-      "role": "unshield reservation refused before any send (stage unknown)"
+      "role": "unshield reservation refused before any send; retained trace shows a Tor failure, but the primary stage was masked by a later history read"
     },
     {
       "tag": "L59-reconcile",
@@ -295,7 +303,7 @@
       "reportRecorded": true,
       "failureCode": null,
       "reportSha256": "4bc5d8e4ebdd2f2d21e8a02df046f00111207720b496757801bd1855cb15cd72",
-      "role": "journey-5 unshield refused before any send"
+      "role": "journey-5 unshield refused before any send; cause unknown (no telemetry)"
     },
     {
       "tag": "L61-poi-status",
@@ -402,7 +410,7 @@
       "passed": false,
       "reportRecorded": false,
       "failureCode": "ERR_ASSERTION",
-      "role": "refused at receipt read (host helper allowlist)"
+      "role": "summary: scanned two catch-up ranges, then its receipt read was refused before network dispatch (host helper allowlist)"
     },
     {
       "tag": "L71-summary",
@@ -440,5 +448,20 @@
     ],
     "service": "SNARK-verifying synthetic POI service (current POI_3x3 key); roots, list signatures and finality synthetic; 3x3 only"
   },
-  "localEvidence": "The live run directories, ledgers, profile and worklog stay outside Git. Their digests above allow a holder of the local evidence to join them."
+  "localEvidence": "The live run directories, ledgers, profile and worklog stay outside Git. Their digests above allow a holder of the local evidence to join them.",
+  "observation": {
+    "observed": [
+      "L40 response category invalid-params / invalid-proof",
+      "live transition check: the stored original proof verifies under the retired POI_3x3 key and is rejected by the current key",
+      "replacement accepted to Valid/allValid",
+      "L63 primary ppoi_validated_txid TOR_REQUEST_FAILED at 10 s inside preparation"
+    ],
+    "notObserved": [
+      "L21 response body",
+      "L56 response body",
+      "deployed POI verifier revision",
+      "L58 primary refusal stage",
+      "L60 cause"
+    ]
+  }
 }
