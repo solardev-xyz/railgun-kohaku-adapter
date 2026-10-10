@@ -1,0 +1,46 @@
+{
+  "schema": "reference-public-scan-evidence-v1",
+  "scope": "log count/bytes/distinct-block bounds for all schedule windows, plus one full densest-window header acquisition; no projection, proof or service acceptance",
+  "trust": "unverified-rpc",
+  "passed": true,
+  "reportSha256": "7c10ef13cd72f1359a11ed8f1beacde3edbe3625fb712defdb56dd99618a8d51",
+  "windowInventorySha256": "d21a4cb1a917fb11154f1ec258727bafdbd9400b70f6d4213581be3af92ed10f",
+  "artiSha256": "9d67b310f6d73848a83c5be54454ffc42565076cf46395782d7f7d80fc856d34",
+  "limits": {
+    "requests": 1100,
+    "windows": 500,
+    "elapsedMs": 3600000,
+    "acquisitionMs": 180000
+  },
+  "windows": 367,
+  "requests": 679,
+  "methods": {
+    "eth_chainId": 1,
+    "eth_getBlockByNumber": 310,
+    "eth_getLogs": 368
+  },
+  "allHttp200": true,
+  "transportFailures": 0,
+  "maxLogs": 616,
+  "maxLogJsonBytes": 841166,
+  "maxDistinctBlocks": 304,
+  "maxWindowLogMs": 7828,
+  "densestAcquisition": {
+    "headers": 304,
+    "elapsedMs": 76367
+  },
+  "sources": {
+    "tools/conformance/reference-public-screen.cjs": "07688ba5771a96318de69fe24532b91476fee41a82377ddf51ff48234dd4bf72",
+    "examples/reference-wallet/scan.cjs": "83cee1261f0301ce7dfc829604bfbc2d7a5b749a32cb4f33cadfa8f7f98dc501",
+    "examples/reference-wallet/host/tor.cjs": "949186c7c2b2b700080cd561be42a29307b4cb0be9235e5d97c08a5c552094b4",
+    "examples/reference-wallet/host/tor-supervisor.cjs": "f269047b6717f47881628e38d7a3c9e2bdfadeba6034dcc91aa47985d8466c3d",
+    "examples/reference-wallet/host/transport.cjs": "003125d7bbc0bec32914fb96b88eccf0c16f85b08f36a09ecf522a6ae17e028a",
+    "examples/reference-wallet/host/socks.cjs": "015b51cd8ee54a95b66d3f86732550b90527c9ca9dec7ca24276d0b88ebc116b",
+    "examples/reference-wallet/host/context.cjs": "4618c60d2b6e2dc9633951b2257a5b28ea8282d4b2761dd6b8b7d2c255887371",
+    "examples/reference-wallet/host/files.cjs": "d2ce7ef1849795aac6ff45998167b5d78a906bfb436cabb9a904e2f3afe172fb",
+    "examples/reference-wallet/host/errors.cjs": "4cfbe394b358219276f19b00718f3962ace5a34eef35b29a42d7d499e6870f59",
+    "src/railgun-shield-pins.json": "0f38d69a9acb5ecdaeb7197f4410a1c6068b8896e4204a179631176223e31a75"
+  },
+  "diagnosticToolCommit": "f5727c9",
+  "diagnosticToolDelta": "The live tool snapshot preceded f5727c9 failure-path hardening: reset an incoming result to false, preserve the first worker failure, and reject a symlink/oversized config before reading. Live source bytes are preserved and match the recorded digest. Positive acquisition and application host bytes were unchanged. The final diagnostic tool has 20 passing tests; its complete live screen was not rerun."
+}

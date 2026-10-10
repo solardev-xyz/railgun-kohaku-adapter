@@ -67,8 +67,13 @@ this count does not include tests added after that full run.
 
 [Package CI](../../.github/workflows/package-checks.yml) runs this clean-checkout
 path on Ubuntu 24.04 and macOS 14 with immutable action pins and read-only GitHub
-permissions. Adding the workflow does not establish either runner's result: CI
-must pass on the pushed candidate. The existing archive-backed cryptographic
+permissions. [Run 38059676646](https://github.com/solardev-xyz/railgun-kohaku-adapter/actions/runs/38059676646)
+passed on exact head `fb6a71d96c38b2255b607799112a9acc6337ccd0` on both platforms:
+303 suites and 12,848 tests passed; one suite and four tests were explicitly
+skipped. Clean `npm ci`, consumer smoke and source-list checks also passed.
+This count precedes the later public-screen tool's 20 tests. The skipped cases
+are three archive-backed POI verifier/chain tests and the reference chain's
+real-engine fixture. The existing archive-backed cryptographic
 fixtures and the reference chain's real-engine fixture are opt-in and explicitly
 skipped without their external pinned inputs. CI does not download them or claim
 their native coverage. To run the latter with an already authenticated engine:

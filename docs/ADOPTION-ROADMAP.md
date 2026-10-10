@@ -149,9 +149,11 @@ maintenance/release guidance and clean-checkout CI configuration are present.
 
 Still required before outreach: approved standalone dependency manifest and
 fresh installation, the separately funded live Alice-to-Bob demonstration,
-CI on the pushed candidate and a final independent review of the exact documented
-installation. These remain actual acceptance gates, not claims inherited from
-the historical Freedom campaign.
+and a final independent review of the exact documented installation. Clean
+Linux/macOS Node CI passed at `fb6a71d`; the independent host's
+[bounded public scan screen](qualification/reference-public-scan-2026-10-10/README.md)
+also passed. These scoped results do not close the remaining acceptance gates or
+inherit claims from the historical Freedom campaign.
 
 Other roadmap items stay explicit: the authenticated deployment descriptor and
 broader operation-policy generalization are not implemented; Sepolia pins and

@@ -103,8 +103,10 @@ explicit, unkeyed HTTPS destination with no URL credentials, query or fragment.
 There is no redirect, source discovery or direct fallback. `unlockMinutes` is
 an integer from 1 to 60. The app verifies the exact Arti binary hash, not a version
 label. Arti 2.6.0 has local configuration/state-lock evidence; this reference
-host has not yet qualified a live Arti version. Do not borrow another host's
-routing claim. [Runtime assembly](../../tools/railgun-runtime-build/README.md)
+host now has a [bounded public scan observation](../../docs/qualification/reference-public-scan-2026-10-10/README.md)
+with Arti 2.6.0. It does not qualify private-service availability or circuit
+isolation. Do not borrow another host's routing claim.
+[Runtime assembly](../../tools/railgun-runtime-build/README.md)
 and [artifact checks](../../docs/review/MAINTENANCE.md) remain separate steps.
 The [public scan screen](../../tools/conformance/REFERENCE-PUBLIC-SCREEN.md)
 exercises this application's actual Tor transport and the planned scan windows
@@ -231,12 +233,14 @@ the local proxy. The app must own its Arti process and endpoint. The current
 transport tests use a loopback fixture, and require OpenSSL or LibreSSL to make
 a disposable one-day TLS certificate. They establish neither Tor circuit
 isolation nor live latency. This first transport creates a connection for each
-request; bounded keep-alive or measured latency qualification is needed before
-the live stage. Proxy readiness requires its exact listener message, bootstrap,
+request. The public scan screen measured the densest observed window's 304
+headers in 76 seconds; private-service latency remains a separate live gate.
+Proxy readiness requires its exact listener message, bootstrap,
 and a drained SOCKS method-only probe. No destination or isolation token is sent
 by that probe. A conflicting/read-only Arti state refuses; it is never silently
 shared. Arti 2.6.0's configuration and state-lock messages were checked under an
-outbound-network-denied macOS sandbox. Live bootstrap remains unqualified here.
+outbound-network-denied macOS sandbox. The later public screen bootstrapped a
+fresh dedicated proxy and completed 679 public RPC requests on macOS arm64.
 
 The guardian currently needs Electron's RunAsNode fuse. A packaged adopter that
 disables that fuse must qualify a different guardian launcher; startup fails
