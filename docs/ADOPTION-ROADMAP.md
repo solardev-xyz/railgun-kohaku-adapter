@@ -3,7 +3,7 @@
 Agreed direction, October 10, 2026: make this repository independently usable
 before resuming Freedom product integration. Prepare review materials now;
 external outreach follows the reference application and adoption work below.
-The user will choose and contact reviewers. No outreach has been sent.
+Maintainers will choose and contact reviewers. No outreach has been sent.
 
 The completed Freedom Sepolia campaign is the baseline, not the reference app.
 Its evidence and retained profiles stay intact. New development uses independent
@@ -24,9 +24,17 @@ Document and execute the published evaluation commands on a clean checkout.
 
 Build `examples/reference-wallet/` as a small terminal application with explicit
 commands and progress, independently installed against the packed public package.
-A GUI is not required for this milestone. The process runtime is selected after
-checking the genuine host contract; "terminal application" does not imply that
-the existing Electron utility contract already works under plain Node.
+A GUI is not required for this milestone. The first runtime is a headless
+Electron main process: utilities, message ports and ASAR loading match the
+existing package. A plain Node launcher is a later separately qualified target.
+The example's concrete dependency/build manifest must be reviewed before adding
+Electron or other dependencies; no dependency is added by this plan.
+
+First document every captured host function from the package's actual call sites:
+arguments, returned values and follow-up calls, identity, lifetime, cancellation,
+settlement and errors. Add black-box conformance checks and apply them to the
+existing Freedom host as well as the new host. This part of milestone 4 is a
+prerequisite: an opaque callback type is not an implementable contract.
 
 The example must own its credentials, context registry, process lifetime,
 encrypted persistence and transport. It must not import Freedom source, use a
@@ -38,14 +46,22 @@ Deliver in three verifiable stages:
 
 1. Installed application bootstrap, actual host conformance, account creation,
    bounded scanning and cold reopening with genuine encrypted persistence.
-2. Independent Alice and Bob credentials/stores. Alice shields and privately
-   transfers to Bob; Bob discovers the note through his own scan, closes and
-   restarts, obtains the required POI state, then spends or unshields it. Bob must
+   Route at least one private operation through the root Kohaku private adapter
+   wrapping a genuine owner lane; the prior journeys exercised the lane directly.
+2. Independent Alice and Bob credentials/stores in separate OS processes and
+   data roots, with different vault seeds. Alice shields and privately
+   transfers to Bob. Alice's process submits the transaction's POI covering Bob's
+   output, with the foreign recipient and output-POI disclosure in her review.
+   Bob discovers the note through his own scan, closes and restarts, observes
+   Valid through his own status read, then spends or unshields it. Bob must
    not need Alice's credentials, local database or a fabricated received note.
+   Alice must not see Bob's received note as her own, and an unrelated account C
+   must not discover it. The tests retain Alice's sent record separately.
 3. The same lifecycle on Sepolia, with recorded inclusion/finality, conservation,
    actual gas and explicit network/privacy scope. Direct submission and authentic
-   relay submission are separate acceptance cases. Direct submission cannot close
-   the relay/privacy goal.
+   relay submission are separate acceptance cases. Authentic relay discovery and
+   handoff require new package/host work: today's relay lanes stop at local
+   custody. Direct submission cannot close the relay/privacy goal.
 
 Interruption cases include scan outage, lock/close, restart with a held operation,
 uncertain submission and POI unavailability. No response timeout alone permits a
@@ -55,7 +71,9 @@ completed or refused without exposing private inputs.
 Before a live run, prepare a concrete account/funding plan, service destinations,
 disclosures, operation/fee bounds and stop/recovery conditions. Do not reuse the
 previous campaign's allowance or silently reopen its funded profile. Synthetic
-success is a prerequisite, not evidence of live acceptance.
+success is a prerequisite, not evidence of live acceptance. A direct-submission
+test needs Bob's own gas-funded EOA; that funding creates a public link and must
+not be described as a relay-privacy demonstration.
 
 ## 3. Reusable protocol behavior and application policy
 

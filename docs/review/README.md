@@ -33,14 +33,18 @@ or its existing profiles. A full second host has not yet been qualified.
 | Evidence | Established | Not established |
 | --- | --- | --- |
 | Package consumer and type checks | Restricted CJS/ESM interfaces, shared operation identity, structural compatibility with the recorded Kohaku types | Generic Kohaku `Host`/`CreatePluginFn` compatibility or account authority from a host-shaped object |
-| Native synthetic journeys | Real package/engine/prover execution, retained custody and refusal/recovery cases under the recorded fixtures | Live provider behavior, authentic list roots or circuit isolation |
-| Installed live Sepolia journey | Private self-transfer, output POI, cold/rebuild recovery, finalized unshield and receipt/conservation checks | Live two-account spend, mainnet, ordinary startup or relayer privacy |
-| E8 unsigned macOS packaged initialization | Exact package resolution, paired initialization, loading and zero network attempts during that probe | Packaged wallet operations, a distributable application or other platforms |
+| Native synthetic journeys | Real package/engine/prover execution, retained custody and refusal/recovery cases under the recorded fixtures | An independent non-Freedom host, live provider behavior, authentic list roots or circuit isolation |
+| Installed live Sepolia journey | Private self-transfer, output POI, fresh-process reopens and source-policy upgrade rebuilds, finalized unshield and receipt/conservation checks | An independent non-Freedom host, live two-account spend, live crash recovery, mainnet, ordinary startup or relayer privacy |
+| E8 unsigned macOS packaged initialization | Exact package resolution, paired initialization, loading and zero network attempts during that probe | Packaged wallet operations, ordinary app startup, a signed build, a distributable application or other platforms |
 
 The live journey used earlier package candidates before E8. Historical tar-D and
 0.5 results remain separate; a later package does not inherit their qualification.
 RPC observations retain the `unverified-rpc` trust label. No independent security
 audit of this integration is claimed.
+
+The synthetic and live journeys exercised account-owner lanes directly. The
+root Kohaku factories have separate fixture-host tests; their composition over
+genuine owner lanes is part of the reference application's acceptance work.
 
 ## Questions for reviewers
 

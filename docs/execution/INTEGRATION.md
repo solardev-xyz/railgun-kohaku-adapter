@@ -1,5 +1,23 @@
 # Fixed private execution kernel: integration boundary
 
+## Current integration scope (October 10, 2026)
+
+The extraction below is a historical design record for the earlier kernel
+phase. Its future-tense Freedom patches, nine-job inventory and temporary
+duplicate model are not the current owner inventory. The later owner extraction
+moved account coordination, process supervision and the storage-worker bootstrap
+into the package. Freedom now supplies application bindings and fixed entry
+stubs. Use the [current owner contract](../owners/INTEGRATION.md),
+[architecture](../review/ARCHITECTURE.md) and public exports for new integrations.
+
+E8 has native synthetic journey evidence, the bounded installed-package
+[live Sepolia journey](../qualification/installed-live-sepolia-journey-0.6.0-2026-10-10/README.md)
+and its own [unsigned packaged initialization](../qualification/installed-owner-packaged-e8-0.6.0-2026-10-10/README.md).
+The latter does not execute packaged account or proof operations. Utility
+execution still requires Electron; there is no qualified plain-Node launcher.
+
+## Historical kernel extraction record
+
 This package-only candidate extracts the fixed private utility closure from
 Freedom `a146331f63276ea5cbb90ef723195b65bc29e458`. It layers on the exact .3/.4
 shared data cores and preserves published package `b77c7c1` documentation and

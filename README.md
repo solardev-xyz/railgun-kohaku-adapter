@@ -6,7 +6,7 @@ The package owns Railgun enrollment, scanning, account storage, note preparation
 
 The existing five root factories retain their restricted data/session contracts. The new trusted-main `/host/owner` entry creates account sessions without exporting internal account objects, keys, receipt constructors or a selectable module loader. Shared transaction hosts use separate data-only and branded-authority entries.
 
-**Current status (October 10, 2026):** a bounded installed-package [live Sepolia journey](docs/qualification/installed-live-sepolia-journey-0.6.0-2026-10-10/README.md) completed through Freedom: private self-transfer, output POI, restart/rebuild recovery, unshield, finality, receipt gas and conservation checks. The campaign used E4/E5b and finished on E8; it is not an all-E8 replay. E8 also has its own [unsigned packaged-initialization check](docs/qualification/installed-owner-packaged-e8-0.6.0-2026-10-10/README.md) and native synthetic journey evidence. These results do not qualify mainnet, an independent adopter, ordinary application startup, live Alice-to-Bob spending, authentic relay transport, or cross-platform isolation. This is an experimental integration, not a production release or security audit.
+**Current status (October 10, 2026):** a bounded installed-package [live Sepolia journey](docs/qualification/installed-live-sepolia-journey-0.6.0-2026-10-10/README.md) completed through Freedom: private self-transfer, output POI, fresh-process reopens and source-policy upgrade rebuilds, unshield, finality, receipt gas and conservation checks. The campaign used E4/E5b and finished on E8; it is not an all-E8 replay. E8 also has its own [unsigned packaged-initialization check](docs/qualification/installed-owner-packaged-e8-0.6.0-2026-10-10/README.md) and native synthetic journey evidence. E8 is the 281-file tar from source `7d75c1373a8afa3212cfe8ace1f784425e1057c5`, SHA-256 `eff8dc891345535bf27b1442a4157027fc976541a596e930a9adb6b525de2633`; documentation changes on main do not redefine that artifact. These results do not qualify mainnet, an independent adopter, ordinary application startup, live Alice-to-Bob spending, authentic relay transport, or cross-platform isolation. This is an experimental integration, not a production release or security audit.
 
 ## Start here
 
@@ -15,7 +15,7 @@ The existing five root factories retain their restricted data/session contracts.
 - [Local evaluation](docs/review/EVALUATION.md): reproducible checks with explicit evidence limits.
 - [Adoption milestones](docs/ADOPTION-ROADMAP.md): a standalone reference application, live Alice-to-Bob qualification, portable policy, host integration and maintenance.
 
-There are two integration levels. The five root factories wrap already-authoritative host operations in restricted Kohaku-compatible interfaces. A complete wallet instead composes the `/host/owner` entry with genuine application capabilities; those owners supply the Railgun account and operation machinery behind the adapters. A mock implementation of the root callbacks is useful for API tests but is not an independent wallet integration.
+There are two integration levels. The five root factories wrap already-authoritative host operations in restricted Kohaku-compatible interfaces. A complete wallet composes the `/host/owner` entry with genuine application capabilities. Its private/public lanes have the root-host shapes, but wrapping those genuine lanes in the root factories has not yet been exercised end to end: the recorded journeys call the owner lanes directly. The reference application will test that composition explicitly. A mock implementation of the root callbacks is useful for API tests but is not an independent wallet integration.
 
 Host-shaped objects and readable notes do not establish authority. Host callbacks run in-process and are not sandboxed.
 
@@ -116,8 +116,9 @@ override or general-chain support.
 
 ## Requirements
 
-- Node.js 24 or later. Tested on Node 24.18.1 and on Electron 44.5.1's bundled Node 24.21.0. The floor is real; see [Native Promise contract](#native-promise-contract).
+- Node.js 24 or later for the restricted adapters and data APIs. The recorded portable consumer uses Node 24.18.1. Full account execution currently requires Electron utility processes and ASAR loading; plain Node is not a complete owner host. The E8 packaged-initialization check used Electron 44.7.0 on macOS arm64. See [Native Promise contract](#native-promise-contract).
 - Peer dependency `ethers` `^6.17.0`, used for checksum validation and the capsule data reader’s ABI decoding and hashing. It is not bundled.
+- Account owners require the exact optional peer `better-sqlite3@13.0.3`, built for the actual host runtime's ABI. Data-only consumers do not need a native addon. Engine/prover archives and circuit artifacts are separately supplied and authenticated; see [runtime preparation](tools/railgun-runtime-build/README.md).
 - CommonJS is the canonical runtime. `index.mjs` is a thin ESM wrapper that re-exports the same CommonJS module objects. `require()` and `import` of this package therefore return the same five functions and share one set of operation registries. The `./read` subpath works the same way: `read.mjs` wraps `read.cjs`, so both return the same four functions. Separate physical copies of the package do not share registries, so each copy must use its own hosts.
 
 ## Exports
@@ -368,6 +369,12 @@ The runner, `test/types/typecheck.cjs`, compiles programs and never emits or run
 - **Controls** compile the bridge's positive program without that setup, under NodeNext and under Bundler without the alias. Both must fail inside the upstream files with the diagnostics recorded in the runner.
 
 `test/types/typecheck-record.json` holds the last recorded run: TypeScript 5.9.3 on Node 24.18.1, `lib/typescript.js` SHA-256 `3ae902c92cc44dace175c0e69e13a4b0899f6983c6121d76b9ab8dd5795e7675`. It also holds the options, resolutions, export parity, upstream declaration hashes, alias uses and each case's diagnostics. Regenerate it with `npm run typecheck -- --record test/types/typecheck-record.json`.
+
+## Historical extraction evidence
+
+The following phase reports preserve their original API scope, counts and
+limitations. Their statements about modules not yet extracted describe that
+phase, not the complete 0.6 owner package. Current evidence is linked above.
 
 ### E2a qualification (0.2.0 historical result)
 

@@ -42,10 +42,13 @@ packaged application, load a vault or reproduce the live journey.
 ## Deeper checks
 
 `npm test` discovers package tests and staged owner suites. Their dependencies
-and evidence differ. The final E8 package campaign recorded thirteen baseline
-environmental staging failures; its native Freedom-host runs are separate
-evidence. A new clean-host result must record its own passing, failing and
-skipped tests rather than silently treating that baseline as an exception.
+and evidence differ. A full run after the scripts-disabled installation above
+is expected to fail native-storage/worker suites: the real `better-sqlite3` addon
+has not been built, and staged host tests need their host environment. The
+portable consumer checks are not a green full-suite result. Record each new
+environment's passing, failing and skipped suites; historical environmental
+failures are not an exemption from making the reference application's required
+CI reproducible. Native Freedom-host evidence remains separately scoped.
 
 Type checks use an explicitly supplied TypeScript installation:
 

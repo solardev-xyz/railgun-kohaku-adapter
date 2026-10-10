@@ -13,8 +13,9 @@ flowchart TD
     Jobs[Package private execution jobs]
     Runtime[Pinned Railgun engine and prover archives]
     Network[RPC, indexer, POI and broadcaster services]
-    App --> Owner
-    Owner --> Adapter
+    App -->|accounts, reviews and lanes| Owner
+    App --> Adapter
+    Adapter -.->|lane as host: composition to qualify| Owner
     Owner --> Jobs
     Owner --> Host
     Jobs --> Runtime
@@ -30,7 +31,7 @@ capabilities, not a sandbox.
 
 | Layer | Owns | Supplied by the adopter |
 | --- | --- | --- |
-| Root adapters | Restricted read/prepare/submit shapes, copying, lifecycle and one-use operation identity | Authoritative host operations; the owner entry is one way to provide them |
+| Root adapters | Restricted read/prepare/submit shapes, copying, lifecycle and one-use operation identity | Authoritative host operations; owner lanes have the required host shapes, but wrapping them in the root adapters is not yet qualified |
 | Account owners (`/host/owner`) | Enrollment, public/wallet/TXID coordination, note ownership, account lanes, retained operations and POI recovery | Genuine host capabilities and authenticated runtime locations |
 | Private execution kernel | Fixed job purposes, guarded bootstrap, runtime/artifact checks and proof execution | Process/channel launch, termination and observed closure |
 | Host application | User/profile identity, vault lifetime, fixed credential derivation, context ownership, storage facilities, network routing, EOA signing/journal integration and reviews | The application implements these and tests their authority boundaries |
@@ -51,8 +52,12 @@ Replacing those loans with fixture bytes proves no real ownership boundary.
   entry support. They are not a caller-selectable module execution API.
 - `/data` and `/read`: bounded capsule reading and read projections with their
   documented limits. They do not authenticate ownership or grant spending power.
+- `/host/execution`: trusted execution composition. Do not initialize it alongside
+  `/host/owner` in the same main realm; the owner initializer captures the paired
+  execution binding.
 - Other `/host/*` entries: trusted composition/data/authority helpers, documented
-  in the root README and declarations. They are not renderer-facing services.
+  in the root README, [owner contract](../owners/INTEGRATION.md) and declarations.
+  They are not renderer-facing services.
 
 Use the package exports rather than importing `src/**`. A second physical package
 copy has separate authority registries. Serializable records, matching method
@@ -67,8 +72,21 @@ standalone host cannot be inferred from their TypeScript shapes alone. The
 
 Existing native evidence uses Electron utilities and workers. Node can load the
 restricted adapters and main initializer, but that alone does not qualify a
-Node-only execution host. The reference app must select and qualify an actual
-process implementation before claiming portability.
+Node-only execution host. The utility bootstrap requires an Electron utility
+parent port, the supervisor transfers Electron message ports, and the runtime
+loads modules from ASAR archives. The first reference app will therefore use a
+headless Electron main process, without Freedom or a browser window. A plain
+Node launcher is a separate process/loader portability project.
+
+The host's `origin: 'tor'` requirement is an attestation, not proof that traffic
+used Tor or that circuits were isolated. Archive verification precedes loading;
+the host must keep verified runtime files immutable over that interval and their
+use. These assumptions need actual host and egress qualification.
+
+Engine/prover inputs retain their separate licenses, including GPL-3.0 inputs;
+the build tooling records `productionDistributionApproved: false`. The package's
+MPL-2.0 license does not clear redistribution of every runtime dependency. See
+[runtime build provenance](../../tools/railgun-runtime-build/README.md).
 
 The deployed chain, supported operations, amount limits, service policy and
 circuit artifacts are currently pinned narrowly. Source identity also binds
@@ -87,3 +105,9 @@ The live campaign's fixed continuation ledgers are qualification tooling. A
 reference wallet must expose its own understandable operation lifecycle and
 recovery commands. It must not require developers to reproduce the historical
 journey-number sequence to use the package.
+
+Some source comments still describe an earlier extraction slice, including the
+owner binding's "skeleton" label and the worker bootstrap's old export status.
+The exports and current contracts above are authoritative. Those comments will
+be corrected with the next corresponding source change, because even a comment
+edit currently changes the source-policy fingerprint.
