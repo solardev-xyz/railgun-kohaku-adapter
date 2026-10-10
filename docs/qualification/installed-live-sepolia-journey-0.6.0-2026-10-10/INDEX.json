@@ -1,0 +1,444 @@
+{
+  "schema": "railgun-installed-live-journey-index-v1",
+  "result": "complete",
+  "scope": "bounded installed-package Sepolia journey: private self-transfer, output POI (replacement proof after the POI_3x3 circuit rotation), unshield to the enrolled EOA, finality, receipt gas and conservation summary",
+  "notClaimed": [
+    "mainnet",
+    "production or ordinary app startup",
+    "Tor circuit isolation",
+    "other platforms",
+    "deployed POI verifier revision",
+    "L21 and L56 response bodies (discarded)",
+    "independent chain verification (trust: unverified-rpc)"
+  ],
+  "package": {
+    "name": "@freedom/railgun-kohaku-adapter",
+    "version": "0.6.0",
+    "runtimeSource": "7d75c1373a8afa3212cfe8ace1f784425e1057c5",
+    "tarSha256": "eff8dc891345535bf27b1442a4157027fc976541a596e930a9adb6b525de2633",
+    "tarIntegrity": "sha512-kAXYGY7KrvFR5l3H6gBjtuXcjmxyaVD5UmJHEfcTjVhrkaK1VcwmHHadacNNSw9wU1H1iNiisX/KTaMsYXhZyA==",
+    "files": 281,
+    "engineArchiveSha256": "019f10880abf1c448aee02ec77c5c2d68c3561c7b4eef02095d66bb5fecd6a7a",
+    "proverArchiveSha256": "dd50a29f297867b3bf91cb425066e1d257ea02230a94b02e4cf34c5c70a0c7ab"
+  },
+  "artifacts": {
+    "POI_3x3": {
+      "bundle": "QmZ2MyM6TKxffkv6stuo2hFwmUfs3q4xgMYN164Sje8new",
+      "selectedBy": "@railgun-community/wallet 11.2.0 (registry integrity sha512-/pFyxYMHG8tfYzXabDl6mKKtU4SCznIIjiNu1KR1e1BqXxe4+y8yfzbso865BCMNSZqnpEdCFiJEBk2L5StTSQ==, read as data only)",
+      "wasm": {
+        "bytes": 4588991,
+        "sha256": "b82a6d545d94cb774592b652b3d6b3d73f032eac946119b5de631d0609da7cbe"
+      },
+      "zkey": {
+        "bytes": 14192542,
+        "sha256": "a128e273f8a7b9fa9e04e17da079b89a57e416db845864d0d5c88570564a2066"
+      },
+      "vkey": {
+        "bytes": 4206,
+        "sha256": "b7ca7ba048666fb0e17efd0af1e407a8dcb0906bfaf2f20e362ed40cbec6f4d8",
+        "derivation": "snarkjs 0.7.5 zKey.exportVerificationKey, JSON.stringify(v, null, 1); semantically equal to the published vkey.json"
+      },
+      "retiredVkey": {
+        "bytes": 4207,
+        "sha256": "2f4dcbf58d383204e09240863a6f6eff249071849e5161801ebfe83691037b23",
+        "use": "transition check only"
+      }
+    }
+  },
+  "links": [
+    {
+      "ledger": "installed-journey-sentio-journey-2",
+      "freedom": "2018288fe2094a74002473b374bfa0a7dae93736",
+      "packageCommit": "7234a724bd13c6263b2ef01d2dc2fd95efad4846",
+      "tarSha256": "2ad2b4ad09f84c80936a78dbcbb5a2441ba53a863e9f8570a53ce80a78986f80",
+      "runnerSha256": "6146e8986f56002d6f9a20d0161afa51f55e57c36c81b21962eaf9d048ac6b58",
+      "covers": "transfer, first POI handoff"
+    },
+    {
+      "ledger": "installed-journey-sentio-journey-3",
+      "freedom": "b13a36c17771ed7a9040a9827f9cff4e0f98b770",
+      "packageCommit": "72d39ba2ed1dbb76718749d698b1fba20f68d3a5",
+      "tarSha256": "f3ce849cde073599a3dd2b4d80b38d19a29a05268369fb4e86cd00cdb3edf4c2",
+      "runnerSha256": "3c6ca3d0e7195c7e0d9a789451d8fe31152dfe1e2128430d3a1021d21409d151",
+      "covers": "upgrade rebuild, identical retry"
+    },
+    {
+      "ledger": "installed-journey-sentio-journey-4",
+      "freedom": "7fd112e98ea146448176462f0df3d1500e367832",
+      "packageCommit": "7d75c1373a8afa3212cfe8ace1f784425e1057c5",
+      "tarSha256": "eff8dc891345535bf27b1442a4157027fc976541a596e930a9adb6b525de2633",
+      "runnerSha256": "f235e04404a363cefce054b5b4fbd1b79eb339bb7fe9a90720cb4cf8049b5fc5",
+      "covers": "circuit rebuild, replacement proof, Valid status, first unshield reservation"
+    },
+    {
+      "ledger": "installed-journey-sentio-journey-5",
+      "freedom": "7fd112e98ea146448176462f0df3d1500e367832",
+      "packageCommit": "86413d70460bdbe3b40de2f490bb160d82ba84ad",
+      "tarSha256": "eff8dc891345535bf27b1442a4157027fc976541a596e930a9adb6b525de2633",
+      "runnerSha256": "5d3803c03b4559c7fc7aae6fc83bd9474f0b6e19caf6478fcbb244e4fc3d1e2f",
+      "covers": "one further unshield reservation after a pre-send refusal"
+    },
+    {
+      "ledger": "installed-journey-sentio-journey-6",
+      "freedom": "7fd112e98ea146448176462f0df3d1500e367832",
+      "packageCommit": "9b0e60c1bd037f2f111f28dbd7214781ec6dfa0e",
+      "tarSha256": "eff8dc891345535bf27b1442a4157027fc976541a596e930a9adb6b525de2633",
+      "runnerSha256": "545847dec8b8c31b60b5a00e8e327af79d5bdd4de8e3a2bc3ac56c8f8a4f15a4",
+      "covers": "status refresh, custody verification, bounded instrumented attempts, unshield, finality"
+    },
+    {
+      "ledger": "installed-journey-sentio-journey-7",
+      "freedom": "09eb25d6cab136211742a05d126b9308e51c25a6",
+      "packageCommit": "411674d8b93ba23cf353d0f360bc4d04d1efc3bd",
+      "tarSha256": "eff8dc891345535bf27b1442a4157027fc976541a596e930a9adb6b525de2633",
+      "runnerSha256": "8edb2bc14307bcad3cbccc66bfbb104a81141aac5761f01865046f836899027c",
+      "covers": "summary only: receipts, gas and conservation"
+    }
+  ],
+  "final": {
+    "reportSha256": "09163719051afce18d02e5ae77d0fb9d7fa51e9184fbbb8ccd99dcd7c091fd47",
+    "conservation": {
+      "transferFullValue": true,
+      "unshieldFullOutput": true,
+      "receivedPlusFee": true,
+      "residualAsExpected": true
+    },
+    "operatorReservations": 5,
+    "chainTransactions": 2,
+    "unsentReservations": 3,
+    "poi": [
+      "first 400/86 B",
+      "retry 400/86 B invalid-proof",
+      "replacement 200/36 B (body discarded; classified malformed)",
+      "final owned status Valid/allValid"
+    ],
+    "gas": "per-transaction receipt gas within 0.002 ETH and combined within 0.004 ETH; exact receipt values kept in local evidence (privacy)",
+    "railgunUnshieldFee": "0.25 %, recorded separately from gas"
+  },
+  "runs": [
+    {
+      "tag": "L08-resume3-b",
+      "mode": "live-rebuild",
+      "ledger": "installed-journey-sentio-resume-3",
+      "requestSha256": "c8919465d542118d89ff443ebb9ac1b262b2ef8826bc391a39626ac9b007c753",
+      "passed": true,
+      "reportRecorded": true,
+      "failureCode": null,
+      "reportSha256": "00fb2e08268aac2d9490f95d6fdf09fb74e7c71d1acc833cdf170ae7afbd3094",
+      "role": "original rebuild (journey resume-3)"
+    },
+    {
+      "tag": "L09-submit",
+      "mode": "live-submit",
+      "ledger": "installed-journey-sentio-resume-3",
+      "requestSha256": "2aedb9e3ffbe9d3bb9dc0cd26f5cfbe1206dfb68ac120b3913e6d4393aba9d8d",
+      "passed": true,
+      "reportRecorded": true,
+      "failureCode": null,
+      "reportSha256": "533036880cf09628715b35983c371057068d8f56231d670666111af0b9075ef3",
+      "role": "private self-transfer submission"
+    },
+    {
+      "tag": "L13-observe",
+      "mode": "live-observe",
+      "ledger": "installed-journey-sentio-resume-3",
+      "requestSha256": "377efeeaf6d95ea41f5b112d594afb5a2189b09ebabd62bd9bd8c0443f5a5a39",
+      "passed": true,
+      "reportRecorded": true,
+      "failureCode": null,
+      "reportSha256": "861f5c38a968c0d63c98eca5f4813d5cf8a675b26e2df74985d2e6c7de732d6b",
+      "role": "transfer finality and resolution"
+    },
+    {
+      "tag": "L21-poi",
+      "mode": "live-poi",
+      "ledger": "installed-journey-sentio-journey-2",
+      "requestSha256": "03470dbb3d2bf97755996e12719420b8bbf96fdd43cb0b9319977d4323ed852c",
+      "passed": true,
+      "reportRecorded": true,
+      "failureCode": null,
+      "reportSha256": "e4c29c1f805e8f7cb7cea20e0d216b5108d5260ef461bb200f04ce6178c745fe",
+      "role": "first POI handoff (HTTP 400; retired circuit)"
+    },
+    {
+      "tag": "L27-upgrade",
+      "mode": "live-upgrade-rebuild",
+      "ledger": "installed-journey-sentio-journey-3",
+      "requestSha256": "6083a82d0f5a0eb482a6a33376161f3f199fed99c1af149d6c96e4bafa378706",
+      "passed": true,
+      "reportRecorded": true,
+      "failureCode": null,
+      "reportSha256": "5a65c7db0b3c7db662cc137d153d643aa149c3d86fa52a4eaf1c673c2f091b4c",
+      "role": "journey-3 upgrade rebuild"
+    },
+    {
+      "tag": "L40-retry",
+      "mode": "live-poi-retry",
+      "ledger": "installed-journey-sentio-journey-3",
+      "requestSha256": "e623e0aea7e0a843d799b8e7e7ace2728ae031a0d3e9aa8eed5fa3447e459d38",
+      "passed": true,
+      "reportRecorded": true,
+      "failureCode": null,
+      "reportSha256": "d88bfe8c787be87914a452b6dd62c760f1bceb07f928919781f8d22a4a063cdb",
+      "role": "identical POI retry (HTTP 400, invalid-proof)"
+    },
+    {
+      "tag": "L50-reproof-rebuild",
+      "mode": "live-reproof-rebuild",
+      "ledger": "installed-journey-sentio-journey-4",
+      "requestSha256": "87fc75519564237b47c0a38ea7d83d22361c3beafff6bfe08ae957354ceaa019",
+      "passed": false,
+      "reportRecorded": false,
+      "failureCode": "ERR_ASSERTION",
+      "role": "journey-4 rebuild session (Tor drop)"
+    },
+    {
+      "tag": "L51-reproof-rebuild",
+      "mode": "live-reproof-rebuild",
+      "ledger": "installed-journey-sentio-journey-4",
+      "requestSha256": "7d03626be25662a5132fde47b1375784ce94f7e25c3292cbb87d754635bb8c86",
+      "passed": false,
+      "reportRecorded": false,
+      "failureCode": "ERR_ASSERTION",
+      "role": "journey-4 rebuild session (clean pause)"
+    },
+    {
+      "tag": "L52-reproof-rebuild",
+      "mode": "live-reproof-rebuild",
+      "ledger": "installed-journey-sentio-journey-4",
+      "requestSha256": "65ba1cdcffd16ce85c3db5f9fdb192af8ab4f67cc27d4ca90e482570768428c0",
+      "passed": true,
+      "reportRecorded": true,
+      "failureCode": null,
+      "reportSha256": "a010902fee2715ab9db66e2adb202605ad4099a2707471da672bbe2270b11fe3",
+      "role": "journey-4 rebuild complete"
+    },
+    {
+      "tag": "L53-poi-reproof",
+      "mode": "live-poi-reproof",
+      "ledger": "installed-journey-sentio-journey-4",
+      "requestSha256": "b989e48d2d1ee5aa320a281e20e0e8a14a023b8e9e1d29f434e58c1533189b57",
+      "passed": false,
+      "reportRecorded": false,
+      "failureCode": "ERR_ASSERTION",
+      "role": "replacement attempt: TXID sync Tor drop before preparation"
+    },
+    {
+      "tag": "L54-reproof",
+      "mode": "live-poi-reproof",
+      "ledger": "installed-journey-sentio-journey-4",
+      "requestSha256": "854cefcfaa83fef32094da1d90a91b3a466592fe88d23ed16b81884cc2e245a9",
+      "passed": false,
+      "reportRecorded": false,
+      "failureCode": "ERR_ASSERTION",
+      "role": "bounded TXID restart"
+    },
+    {
+      "tag": "L55-reproof",
+      "mode": "live-poi-reproof",
+      "ledger": "installed-journey-sentio-journey-4",
+      "requestSha256": "7a60dd648f4b938a6c560bb9addd0b2ce97956a8166140cd6e22db13f030b342",
+      "passed": false,
+      "reportRecorded": false,
+      "failureCode": "ERR_ASSERTION",
+      "role": "bounded TXID restart"
+    },
+    {
+      "tag": "L56-reproof",
+      "mode": "live-poi-reproof",
+      "ledger": "installed-journey-sentio-journey-4",
+      "requestSha256": "99c50d54d468ac56e61374ed77b09f306213212a1e80fd395a98758b8f3eee04",
+      "passed": true,
+      "reportRecorded": true,
+      "failureCode": null,
+      "reportSha256": "3ffd45fbe0e98bfb19fd31ca43fa712d79b4b7939791a422983616c94c4908ac",
+      "role": "replacement proof prepared and handed off once"
+    },
+    {
+      "tag": "L57-poi-status",
+      "mode": "live-poi-status",
+      "ledger": "installed-journey-sentio-journey-4",
+      "requestSha256": "dd30e54c56269d20c52fc83bea6abd3f41bde8b4cbdb05081cdebae1a75c940a",
+      "passed": true,
+      "reportRecorded": true,
+      "failureCode": null,
+      "reportSha256": "4f9ffc9af740516ff76cde14ee7c975ecbaf971a351fd8d9917669f52b4d224c",
+      "role": "owned status Valid, allValid"
+    },
+    {
+      "tag": "L58-unshield",
+      "mode": "live-unshield",
+      "ledger": "installed-journey-sentio-journey-4",
+      "requestSha256": "85a43b29feda8e8ddbe39520625be891861520c33cdfe58fc19754e8cef12b42",
+      "passed": false,
+      "reportRecorded": false,
+      "failureCode": "ERR_ASSERTION",
+      "role": "unshield reservation refused before any send (stage unknown)"
+    },
+    {
+      "tag": "L59-reconcile",
+      "mode": "live-reconcile",
+      "ledger": "installed-journey-sentio-journey-4",
+      "requestSha256": "735b1d3ebe8a11ee08ffac82db95895e2d5d721fcb13cd8dd049847c3d157813",
+      "passed": true,
+      "reportRecorded": true,
+      "failureCode": null,
+      "reportSha256": "533e56a1537272a4a1b6d14873e9be1d48d61128658b61c9c362bb3a579d7645",
+      "role": "no-hold reconciliation of L58"
+    },
+    {
+      "tag": "L60-unshield",
+      "mode": "live-unshield",
+      "ledger": "installed-journey-sentio-journey-5",
+      "requestSha256": "209baba0dbc87b7af83982b71325e2bbb2e78031d2e28c529c5affa550a2bda3",
+      "passed": true,
+      "reportRecorded": true,
+      "failureCode": null,
+      "reportSha256": "4bc5d8e4ebdd2f2d21e8a02df046f00111207720b496757801bd1855cb15cd72",
+      "role": "journey-5 unshield refused before any send"
+    },
+    {
+      "tag": "L61-poi-status",
+      "mode": "live-poi-status",
+      "ledger": "installed-journey-sentio-journey-6",
+      "requestSha256": "2d0e1e8ca45c4a8a65eeee2ce7795a03ffa97115f5a4cac338251deb5b8babe0",
+      "passed": true,
+      "reportRecorded": true,
+      "failureCode": null,
+      "reportSha256": "58d0129385bd6ab6edc637053a3e21491a2e57239d66dcedc9f94af7c0fba0c6",
+      "role": "journey-6 status refresh: Valid, allValid"
+    },
+    {
+      "tag": "L62-custody",
+      "mode": "live-custody-verify",
+      "ledger": "installed-journey-sentio-journey-6",
+      "requestSha256": "ee56c9c32556ab8652244f4ca767cdcaaffb0df1ffaa8d89ff5805163fbfea89",
+      "passed": true,
+      "reportRecorded": true,
+      "failureCode": null,
+      "reportSha256": "9152340e7aa0ce6445b7be81438f6d84d3f4823d11883edf792a0caeea41d3ff",
+      "role": "custody: first-instrumented, no hold"
+    },
+    {
+      "tag": "L63-unshield",
+      "mode": "live-unshield",
+      "ledger": "installed-journey-sentio-journey-6",
+      "requestSha256": "31d83dd12c2abd40725a5626c52c9c077785442ee78168a7fe39b7ef6a9dccff",
+      "passed": true,
+      "reportRecorded": true,
+      "failureCode": null,
+      "reportSha256": "2a8d8fea35acfde7773654fb9206d4c20df83c731e2dfb1b5c172f63b67d5a3f",
+      "role": "instrumented attempt refused: ppoi_validated_txid TOR_REQUEST_FAILED at 10 s inside preparation"
+    },
+    {
+      "tag": "L64-custody",
+      "mode": "live-custody-verify",
+      "ledger": "installed-journey-sentio-journey-6",
+      "requestSha256": "07eb14d6bc629dd46cad312c041a62c3aa740f50ce7af57ff477654bfa9d9e26",
+      "passed": true,
+      "reportRecorded": true,
+      "failureCode": null,
+      "reportSha256": "76bbacb56e6284bb8b7b2aceb733e9064cf6c28ec5936d43090cd19f076d3eb0",
+      "role": "custody: transport-qualified, no hold"
+    },
+    {
+      "tag": "L65-unshield",
+      "mode": "live-unshield",
+      "ledger": "installed-journey-sentio-journey-6",
+      "requestSha256": "1c64acb91ec72a08f9b06ab0aff04772c4caabc4ebcdfb313e766e448f40da38",
+      "passed": true,
+      "reportRecorded": true,
+      "failureCode": null,
+      "reportSha256": "7b0b86001de1dd17d2d611b68828adac65e087d2e1479e7e29a3a210b1a89866",
+      "role": "unshield acknowledged"
+    },
+    {
+      "tag": "L66-observe",
+      "mode": "live-observe",
+      "ledger": "installed-journey-sentio-journey-6",
+      "requestSha256": "b20b32aa3869e1e26d3e4d852881dad580dcfa172287ab37e3e479c94ba6525a",
+      "passed": true,
+      "reportRecorded": true,
+      "failureCode": null,
+      "reportSha256": "8d0b0c5c5cb33610e8aec69ba36bf4d9460cfc68991fe4955ea69020df11976a",
+      "role": "included and matched, not yet finalized"
+    },
+    {
+      "tag": "L67-observe",
+      "mode": "live-observe",
+      "ledger": "installed-journey-sentio-journey-6",
+      "requestSha256": "f219389c614a235d13d8da5ea46d7f2e003659857ddfd9d48116dee02fd19604",
+      "passed": false,
+      "reportRecorded": false,
+      "failureCode": "ERR_ASSERTION",
+      "role": "refused before work (wrong predecessor)"
+    },
+    {
+      "tag": "L68-observe",
+      "mode": "live-observe",
+      "ledger": "installed-journey-sentio-journey-6",
+      "requestSha256": "9f2d47b11be75b8d36b63ebafeb2e141710caa5ab8cf27277c97e3a7c0470885",
+      "passed": false,
+      "reportRecorded": false,
+      "failureCode": "ERR_ASSERTION",
+      "role": "refused before work (observe spacing)"
+    },
+    {
+      "tag": "L69-observe",
+      "mode": "live-observe",
+      "ledger": "installed-journey-sentio-journey-6",
+      "requestSha256": "ff7191a614a510950b167053cee148c46f96c739d0cdda842cb94452521e8da5",
+      "passed": true,
+      "reportRecorded": true,
+      "failureCode": null,
+      "reportSha256": "0380a8afd971d394a47fd13b9acea78ca40408c34055049f529d2ca2e5915ec8",
+      "role": "resolved, matched, finalized"
+    },
+    {
+      "tag": "L70-summary",
+      "mode": "live-summary",
+      "ledger": "installed-journey-sentio-journey-6",
+      "requestSha256": "cd08b5265f97fd9867dda3223561783cf8941384ca5ff838f26588f017d35733",
+      "passed": false,
+      "reportRecorded": false,
+      "failureCode": "ERR_ASSERTION",
+      "role": "refused at receipt read (host helper allowlist)"
+    },
+    {
+      "tag": "L71-summary",
+      "mode": "live-summary",
+      "ledger": "installed-journey-sentio-journey-7",
+      "requestSha256": "35f814c46cec3e6e35f7cbe21fa3f1c6a9e7920b3639ce0e81db8924ce54d504",
+      "passed": true,
+      "reportRecorded": true,
+      "failureCode": null,
+      "reportSha256": "09163719051afce18d02e5ae77d0fb9d7fa51e9184fbbb8ccd99dcd7c091fd47",
+      "role": "summary passed: receipts, gas, conservation"
+    }
+  ],
+  "ledgerSha256": {
+    "installed-journey-1.jsonl": "c118fadb63d1b216873ca962d7f5368d02a8f0fda2dc89a2499832a21e2544dd",
+    "installed-journey-sentio-1.jsonl": "4703593d42cffd7d0208f43d871c49203a23dd343cc6595b667070d863e8dfe0",
+    "installed-journey-sentio-journey-2.jsonl": "303190aeacac0970f82e4c2c9ebabdc7703885ebbe1ce9e15177f5b7f3c8cfa5",
+    "installed-journey-sentio-journey-3.jsonl": "db7234971fbe5a7273c8b568437bb43e2c92b5d03afc1f668d124ff06d7b00a1",
+    "installed-journey-sentio-journey-4.jsonl": "8803a182b8d94aff2593d53b7cb7427d3f524949ac53ec0e7a0b1808cbbafa87",
+    "installed-journey-sentio-journey-5.jsonl": "50b06079c357bb710a123f63f0d2d622e475be6d3ffd592ace3c4697cee08a5b",
+    "installed-journey-sentio-journey-6.jsonl": "d6de8a7a44bb6d1e039b77f3e550c2c2e83db7bc84a08cd1609cace97090f39f",
+    "installed-journey-sentio-journey-7.jsonl": "94db576ea745c52efc83acaa7a1c99d1a2d1fff64df5bdce37260301c790b7a8",
+    "installed-journey-sentio-resume-1.jsonl": "6f17b54015a5522972254abc79dcff12589176e5d8879f4106d056ece82ac1eb",
+    "installed-journey-sentio-resume-2.jsonl": "ac3efdcac5ab34302bf104403aceb7322bacc9c91ce64fd76a0929e5106f8db1",
+    "installed-journey-sentio-resume-3.jsonl": "e816f94a32ec1630c4df95031349eba32e8c6cc79851c96102d5e4aed1c4accb"
+  },
+  "nativeSynthetic": {
+    "logs": [
+      "TM-journey4-main.log",
+      "TC-journey4-crash.log",
+      "AM-journey5-main.log",
+      "AC-journey5-crash.log",
+      "CM-journey6 (v20) main and crash",
+      "CM-journey7-summary.log"
+    ],
+    "service": "SNARK-verifying synthetic POI service (current POI_3x3 key); roots, list signatures and finality synthetic; 3x3 only"
+  },
+  "localEvidence": "The live run directories, ledgers, profile and worklog stay outside Git. Their digests above allow a holder of the local evidence to join them."
+}
