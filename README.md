@@ -1,12 +1,21 @@
 # @freedom/railgun-kohaku-adapter
 
-A Kohaku-compatible Railgun integration for trusted wallet applications. The source is public at https://github.com/solardev-xyz/railgun-kohaku-adapter and is not published to npm (`"private": true`). The 0.6 candidate adds fixed account owners to the previously extracted adapters, data helpers and utility kernel. See [the owner integration contract](docs/owners/INTEGRATION.md) and `NOTICE.md` for the boundary and provenance.
+A Kohaku-compatible Railgun integration for trusted wallet applications. The source is public at https://github.com/solardev-xyz/railgun-kohaku-adapter and is not published to npm (`"private": true`). Version 0.6 includes account owners, restricted Kohaku adapters, data helpers and a private execution kernel. See [the owner integration contract](docs/owners/INTEGRATION.md) and `NOTICE.md` for the boundary and provenance.
 
 The package owns Railgun enrollment, scanning, account storage, note preparation, proving, recovery, POI/TXID processing and local relay custody. It authenticates separately supplied engine/prover archives; those archives are not bundled. An adopting application supplies its vault-backed credential loans, context and profile identity, filesystem/storage facilities, RPC/Tor transport, EOA signing and journal services, and process launcher. It also supplies the UI. In-process host callbacks are trusted capabilities, not a sandbox.
 
 The existing five root factories retain their restricted data/session contracts. The new trusted-main `/host/owner` entry creates account sessions without exporting internal account objects, keys, receipt constructors or a selectable module loader. Shared transaction hosts use separate data-only and branded-authority entries.
 
-**Candidate status:** the source and controlled compositions are tested. Final installed-host, native and packaged-owner acceptance is in progress; earlier 0.5 kernel evidence is not relabeled as covering the new account-owner boundary. No additional live spend is qualified by this extraction.
+**Current status (October 10, 2026):** a bounded installed-package [live Sepolia journey](docs/qualification/installed-live-sepolia-journey-0.6.0-2026-10-10/README.md) completed through Freedom: private self-transfer, output POI, restart/rebuild recovery, unshield, finality, receipt gas and conservation checks. The campaign used E4/E5b and finished on E8; it is not an all-E8 replay. E8 also has its own [unsigned packaged-initialization check](docs/qualification/installed-owner-packaged-e8-0.6.0-2026-10-10/README.md) and native synthetic journey evidence. These results do not qualify mainnet, an independent adopter, ordinary application startup, live Alice-to-Bob spending, authentic relay transport, or cross-platform isolation. This is an experimental integration, not a production release or security audit.
+
+## Start here
+
+- [Review guide](docs/review/README.md): what exists, what has been exercised, and the questions for external reviewers.
+- [Architecture and responsibilities](docs/review/ARCHITECTURE.md): how Kohaku, this package, the Railgun engine and an adopting wallet fit together.
+- [Local evaluation](docs/review/EVALUATION.md): reproducible checks with explicit evidence limits.
+- [Adoption milestones](docs/ADOPTION-ROADMAP.md): a standalone reference application, live Alice-to-Bob qualification, portable policy, host integration and maintenance.
+
+There are two integration levels. The five root factories wrap already-authoritative host operations in restricted Kohaku-compatible interfaces. A complete wallet instead composes the `/host/owner` entry with genuine application capabilities; those owners supply the Railgun account and operation machinery behind the adapters. A mock implementation of the root callbacks is useful for API tests but is not an independent wallet integration.
 
 Host-shaped objects and readable notes do not establish authority. Host callbacks run in-process and are not sandboxed.
 
@@ -164,7 +173,7 @@ A projection's `filter` must be `null` or a frozen array of strings, as `normali
 
 Every failure rejects with the value that `ports.refused()` returns, and the original reason is discarded. Failures include an unknown method, a throw from `capture`, the view lookup or the view call, a rejected result and a throw from `recheck`. A failure before `retain` is not retained, and an exception from `refused` itself escapes instead. The helper detects no stale read of its own: currentness is exactly what `recheck` asserts. Unlike the adapters, it applies no shape or native-Promise checks, so a thenable result is adopted. Its stale-read, exception, retention and rejection behavior is unchanged from Freedom; the five E1 adapter sources under `src/` are byte-identical (see `NOTICE.md`).
 
-## Restrictions
+## Root adapter restrictions
 
 These are integration limits carried over from Freedom. They are not Railgun protocol limits.
 
@@ -247,9 +256,9 @@ Every host must be a plain object (`Object.prototype`) with **exactly** the list
 | `prepareShield(input, to)`             | Receives a frozen `{ asset: { __type: 'native' }, amount }` and `to` (`undefined` or a `0zk` address). Resolves to `{ handle }` with a frozen, empty handle.                                                                    |
 | `submit(handle)`                       | Resolves to the acknowledgement: `hash`, `nonce`, `from`, `to`, `value` (the decimal gross amount), `chainId`, `broadcastSource` and `explorerUrl` (`null` or an `https:` URL). A rejection carries the host's original reason. |
 
-### Responsibilities the host owns
+### Responsibilities behind the root host
 
-The adapters check shapes and lifecycles; they do not supply any of the following. A host that claims compatibility must provide each one itself:
+The five root adapters check shapes and lifecycles; they do not themselves supply the following. A host using them directly must provide these responsibilities. The package's `/host/owner` composition implements much of the Railgun-specific machinery while delegating vault, platform, transport, signing and storage facilities to the application, as described in the [architecture](docs/review/ARCHITECTURE.md).
 
 - **Ownership:** which Railgun account and EOA belong to the user.
 - **Keys and signing:** spending, viewing and EOA keys, plus the wallet vault.
@@ -262,9 +271,9 @@ The adapters check shapes and lifecycles; they do not supply any of the followin
 - **Private Proof of Innocence (POI) services:** eligibility queries and submissions, and their approvals.
 - **Prompt cancellation and closure:** honouring `signal` and `close()`, and settling `closed`.
 
-### Non-goals
+### Limits of the root adapter surface
 
-This package is deliberately narrow. It has:
+The five root factories do not by themselves provide:
 
 - no engine, prover, storage, RPC, Tor, vault or UI;
 - no generic Kohaku `Host` or `CreatePluginFn` compatibility;
@@ -272,7 +281,7 @@ This package is deliberately narrow. It has:
 - no chains other than Sepolia and no mainnet;
 - no recovery companion.
 
-Freedom's own fixed hosts, controllers and qualification fixtures stay in Freedom.
+The package's separate owner and execution entries do provide account controllers, storage coordination, recovery and private jobs. The engine/prover archives and circuit artifacts are supplied separately and authenticated by the package. Freedom retains application-specific host bindings. The preserved historical extraction records below describe their own earlier versions, not the current package's complete contents.
 
 ## Types
 
@@ -316,7 +325,7 @@ One limitation is unchanged from the pinned revision. In Kohaku's `PluginInstanc
 
 ## Tests
 
-`npm test` runs the adapter and data-reader suites. The original adapter suites are:
+`npm test` runs the package suites and the configured staged owner tests. Some staged tests require native storage or host fixtures; see [local evaluation](docs/review/EVALUATION.md) before interpreting a full-suite result. The original adapter suites are:
 
 - the five Freedom suites for the copied modules;
 - the pinned contract-oracle suite;
@@ -488,4 +497,4 @@ The package owns archive verification and artifact content pins. The `/host/owne
 its private account-owner bindings. The host must not initialize a second main
 execution instance. No key lease or generic job runner is exported. See [the integration contract](docs/execution/INTEGRATION.md)
 for exact roles, deferred main changes, provenance, testing limits and packaging
-requirements. Existing qualification archives predate this kernel layout.
+requirements. Historical archives retain their own layout and runtime scope; the current E8 results are linked at the top of this README.
