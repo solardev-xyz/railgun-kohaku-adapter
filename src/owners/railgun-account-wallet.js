@@ -1,3 +1,4 @@
+const { RELAY_FEE_MAX } = require("../amount-bounds");
 const { withRailgunEnrollmentGenerationKeys } = require('./railgun-account-enrollment');
 /** One enrolled wallet scan/restore window. Main composes the authenticated
  * generation store, coverage, journal and opaque engine receipt before exposing
@@ -1050,7 +1051,7 @@ async function openAccount(
       const binding = normalizeRailgunRelayQuote(request.quote, request.gas);
       const cap = decimal(
         request.maxFee,
-        BigInt(require("../railgun-shield-pins.json").maxQualificationAmount)
+        RELAY_FEE_MAX
       );
       check(cap > 0n && BigInt(binding.feeAmount) <= cap);
       const before = current();

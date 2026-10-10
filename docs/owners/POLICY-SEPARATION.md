@@ -35,6 +35,14 @@ check and an aggregate deadline. A proof submission, signing operation or
 transaction broadcast cannot inherit that retry rule. The CLI currently makes
 no automatic retry after either a read failure or an uncertain send.
 
+The amount-bound foundation distinguishes the immutable historical operation
+limit, the uint120 note representation, and the separately fixed relay fee/input
+limits in `src/amount-bounds.js`. The relay consumers retain their old accepted
+range. The canonical decimal parser is format-only: it grants no policy or
+spending authority. This prerequisite does not enable wider amounts; that still
+requires versioned capsules/intents, legacy reader compatibility, main-owned
+admission and a fresh-signature check on retained submission.
+
 ## First compatibility boundary
 
 The `sources-v2` attestation still hashes every enrolled package file and the

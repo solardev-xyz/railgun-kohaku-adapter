@@ -1,3 +1,4 @@
+const { RELAY_FEE_MAX } = require("../amount-bounds");
 /** Bounded public quote/legacy-gas data. No signature, peer trust or authority. */
 const assert = require('assert/strict');
 const { isProxy } = require('util').types;
@@ -113,7 +114,7 @@ function normalizeRailgunRelayQuote(quote, gas) {
   const gasLimit = (estimate * 12000n) / 10000n;
   const maximumGasWei = gasLimit * price;
   const fee = (BigInt(rate) * maximumGasWei) / 10n ** 18n;
-  assert.ok(fee > 0n && fee <= BigInt(pins.maxQualificationAmount));
+  assert.ok(fee > 0n && fee <= RELAY_FEE_MAX);
   return freeze({
     quote: { data: quote.data, signature: quote.signature },
     fields: value,

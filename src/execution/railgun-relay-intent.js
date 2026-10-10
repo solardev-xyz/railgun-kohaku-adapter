@@ -1,3 +1,4 @@
+const { RELAY_FEE_MAX, RELAY_INPUT_MAX } = require("../amount-bounds");
 /** Internal unsigned relay data only. No identity, ciphertext, signature, proof,
  * ownership, review, reservation or spending authority is authenticated here. */
 const { AbiCoder, Interface, keccak256 } = require('ethers');
@@ -65,7 +66,7 @@ function normalizeRailgunRelayUnsignedContext(value) {
     check(peer.address === binding.fields.railgunAddress);
     const amounts = {};
     for (const k of ['inputAmount', 'feeAmount', 'selfAmount', 'feeCap']) {
-      check(decimal(c[k], BigInt(pins.maxQualificationAmount)) > 0n);
+      check(decimal(c[k], ['feeAmount', 'feeCap'].includes(k) ? RELAY_FEE_MAX : RELAY_INPUT_MAX) > 0n);
       amounts[k] = c[k];
     }
     check(c.feeAmount === binding.feeAmount);

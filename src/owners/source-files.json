@@ -20,6 +20,7 @@
   "package.json",
   "read.cjs",
   "read.mjs",
+  "src/amount-bounds.js",
   "src/data/index.js",
   "src/data/railgun-own-poi-binding.js",
   "src/data/railgun-own-poi-payload-binding.js",

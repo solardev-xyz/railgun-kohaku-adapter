@@ -1,0 +1,96 @@
+{
+  "baseRevision": "c0c8acd2ca8de5fea8ab6f053eb4aa419917ff48",
+  "label": "Separate unchanged relay fee/input bounds from the historical operation qualification pin. No broader amount admission.",
+  "changes": [
+    {
+      "file": "src/execution/railgun-relay-intent.js",
+      "beforeSha256": "af91328bf1a844a15dd8845a4870354368be242d06b2fab21d4acb65fc55c132",
+      "afterSha256": "bdf2da6ecfccd513f68b4da07e14f837d9726848abff6b3eafa1a83e02cefcba",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "const { RELAY_FEE_MAX, RELAY_INPUT_MAX } = require(\"../amount-bounds\");\n"
+        },
+        {
+          "start": 2549,
+          "before": "      check(decimal(c[k], BigInt(pins.maxQualificationAmount)) > 0n);\n",
+          "after": "      check(decimal(c[k], ['feeAmount', 'feeCap'].includes(k) ? RELAY_FEE_MAX : RELAY_INPUT_MAX) > 0n);\n"
+        }
+      ]
+    },
+    {
+      "file": "src/execution/railgun-relay-quote-data.js",
+      "beforeSha256": "2809f671c4391b61cf9116912b60c205bd4a6796666c2255a655c79f9f71513a",
+      "afterSha256": "4cc674d7f55e9851f6081da5286ea6c44021bb8721f850ac3afb411eb0079779",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "const { RELAY_FEE_MAX } = require(\"../amount-bounds\");\n"
+        },
+        {
+          "start": 5173,
+          "before": "  assert.ok(fee > 0n && fee <= BigInt(pins.maxQualificationAmount));\n",
+          "after": "  assert.ok(fee > 0n && fee <= RELAY_FEE_MAX);\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-account-wallet.js",
+      "beforeSha256": "595f532aa5af6e8267c1b189f4d95984adf8394a05ec7c217aa0ac4d2b4dfa7c",
+      "afterSha256": "47b6e1da5239e63342884ae6b4276f66277acaf2d1ffd3bc631210044fe5b61b",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "const { RELAY_FEE_MAX } = require(\"../amount-bounds\");\n"
+        },
+        {
+          "start": 39703,
+          "before": "        BigInt(require(\"../railgun-shield-pins.json\").maxQualificationAmount)\n",
+          "after": "        RELAY_FEE_MAX\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-relay-review.js",
+      "beforeSha256": "075101631a1f4f4ba7841ce5a0535002901b6377048ffb6a9480b73c2d119e8c",
+      "afterSha256": "72306b12314cfa78a175c9db17c27eb878c191654be2c190d9014654b2dafc50",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "const { RELAY_FEE_MAX } = require(\"../amount-bounds\");\n"
+        },
+        {
+          "start": 4595,
+          "before": "      const cap = decimal(request.maxFee, BigInt(pins.maxQualificationAmount));\n",
+          "after": "      const cap = decimal(request.maxFee, RELAY_FEE_MAX);\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-relay-transact-staging.js",
+      "beforeSha256": "eef6f3f15b663f0872fc3aa46b173df819451f7c0f9e5f7e642565213c731bb6",
+      "afterSha256": "e44e8338d054eb0e44912ae38f45d9404cf5c75aab1e7f91b5bff789b54fee56",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "const { RELAY_FEE_MAX, RELAY_INPUT_MAX } = require(\"../amount-bounds\");\n"
+        },
+        {
+          "start": 2826,
+          "before": "  const cap = decimal(request.maxFee, BigInt(pins.maxQualificationAmount));\n",
+          "after": "  const cap = decimal(request.maxFee, RELAY_FEE_MAX);\n"
+        },
+        {
+          "start": 3974,
+          "before": "      note.amount <= BigInt(pins.maxQualificationAmount)\n",
+          "after": "      note.amount <= RELAY_INPUT_MAX\n"
+        }
+      ]
+    }
+  ]
+}

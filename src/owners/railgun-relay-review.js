@@ -1,3 +1,4 @@
+const { RELAY_FEE_MAX } = require("../amount-bounds");
 /** Local main-owned fee/peer preference only. Requires a LIVE wallet with a
  * completed read; completedOnly handles cannot reserve its real handoff.
  * Owners are borrowed. No persistence, POI, spending or transport grant. */
@@ -130,7 +131,7 @@ function create(options) {
       );
       const noteId = request.noteId;
       const binding = normalizeRailgunRelayQuote(request.quote, request.gas);
-      const cap = decimal(request.maxFee, BigInt(pins.maxQualificationAmount));
+      const cap = decimal(request.maxFee, RELAY_FEE_MAX);
       assert.ok(cap > 0n && BigInt(binding.feeAmount) <= cap);
       const before = current(),
         baseline = selected(before, noteId);

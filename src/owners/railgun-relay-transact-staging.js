@@ -1,3 +1,4 @@
+const { RELAY_FEE_MAX, RELAY_INPUT_MAX } = require("../amount-bounds");
 /** Main-owned relay Transact staging before the held relay operation window.
  * Creator/TXID evidence is immutable data, never disclosure or signing authority.
  */
@@ -57,7 +58,7 @@ function captureRequest(request) {
     typeof request.noteId === 'string' && request.noteId.length > 0 && request.noteId.length <= 160
   );
   const binding = normalizeRailgunRelayQuote(request.quote, request.gas);
-  const cap = decimal(request.maxFee, BigInt(pins.maxQualificationAmount));
+  const cap = decimal(request.maxFee, RELAY_FEE_MAX);
   assert.ok(cap > 0n && BigInt(binding.feeAmount) <= cap);
   return {
     data: freeze({
@@ -88,7 +89,7 @@ function selectionSnapshot(owned, request, descriptor) {
   assert.equal(typeof note.amount, 'bigint');
   assert.ok(
     note.amount > BigInt(request.binding.feeAmount) &&
-      note.amount <= BigInt(pins.maxQualificationAmount)
+      note.amount <= RELAY_INPUT_MAX
   );
   assert.equal(note.asset.__type, 'erc20');
   assert.equal(note.asset.contract, pins.wrappedNative);
