@@ -1,5 +1,9 @@
 # Standalone reference wallet
 
+In an installed copy, links beginning with `../../` refer to the adapter
+repository at the `sourceCommit` recorded in `INSTALLATION.json`. The installer
+also includes `LICENSE` and `REFERENCE-HOST-PROVENANCE.json` beside this file.
+
 This example exercises the installed adapter without Freedom source or profiles.
 The [synthetic Alice-to-Bob journey](../../docs/qualification/reference-alice-bob-synthetic-2026-10-10/README.md)
 passes with independent vaults, root Kohaku adapters over real account lanes,
@@ -72,7 +76,9 @@ admit only their own marked disposable roots, never an existing wallet profile.
 
 ## Configuration
 
-Keep a configuration JSON file outside the application source and profile. It
+Keep a configuration JSON file outside the application source, profile and
+adapter checkout. The installation and runtime setup tools require a clean
+checkout, including no untracked files. It
 must contain exactly these fields and be at most 16 KiB; replace every placeholder:
 
 ```json

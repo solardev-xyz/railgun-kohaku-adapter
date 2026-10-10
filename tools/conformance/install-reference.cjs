@@ -182,6 +182,18 @@ function install(destination) {
       fs.mkdirSync(path.dirname(to), { recursive: true, mode: 0o700 });
       fs.copyFileSync(path.join(example, name), to, fs.constants.COPYFILE_EXCL);
     }
+    for (const [from, name] of [
+      ["LICENSE", "LICENSE"],
+      [
+        "docs/owners/REFERENCE-HOST-PROVENANCE.json",
+        "REFERENCE-HOST-PROVENANCE.json",
+      ],
+    ])
+      fs.copyFileSync(
+        path.join(source, from),
+        path.join(app, name),
+        fs.constants.COPYFILE_EXCL,
+      );
     // Registry packages come from the committed lock. Lifecycle scripts are off;
     // Electron's pinned downloader is the sole explicit installation script.
     run("npm", ["ci", "--ignore-scripts", "--no-audit", "--no-fund"], app);
