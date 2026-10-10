@@ -1,0 +1,60 @@
+{
+  "schema": "railgun-e8-owner-packaged-publication-manifest-v1",
+  "files": {
+    "RESULT.json": {
+      "bytes": 5416,
+      "sha256": "a6d5bededea146e815adf940c77f3c49077d612e127fa614da331c0074ecaef3",
+      "representation": "byte-exact original"
+    },
+    "INITIALIZED.json": {
+      "bytes": 17953,
+      "sha256": "e73c7b906115cb657609eaddb34ee8aa45e2a77fa1a9f7e6e1cfcb87f6707a92",
+      "representation": "byte-exact original"
+    },
+    "INVENTORY-FINAL.json": {
+      "bytes": 12597,
+      "sha256": "d4943c537986247ae0a90c53004ed2de4acc58cc4704eae4e83fc473a8e39424",
+      "representation": "byte-exact original"
+    },
+    "POST.json": {
+      "bytes": 357,
+      "sha256": "0140b01e006dc1027c1ad09ad8aa8b9969b33274ff05f8bb0887cf484bbbf271",
+      "representation": "byte-exact original"
+    },
+    "INITIALIZE.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "representation": "byte-exact original"
+    },
+    "BUILD-PROCESS.json": {
+      "bytes": 1091,
+      "sha256": "cc9f0dde8980063016c2fc92fdc7db909669e733daf3b5a0d6ecf33fd03c6780",
+      "representation": "derived JSON; not byte-exact original"
+    },
+    "INITIALIZE-PROCESS.json": {
+      "bytes": 960,
+      "sha256": "769f0228220982e0d5743fcd7507ca39bd9b0e344fc9993deabb1073fb98be96",
+      "representation": "derived JSON; not byte-exact original"
+    },
+    "PROVENANCE.json": {
+      "bytes": 4946,
+      "sha256": "28f1c0a74612745efd72ae599ad5a4923bf002992fbb44f78a73da86fbed2b04",
+      "representation": "derived JSON; not byte-exact original"
+    },
+    "README.md": {
+      "bytes": 4282,
+      "sha256": "80b012e7300ee60fb1d8b83396dfaeea58b63f49373cbf758e5c0908c9b385bb",
+      "representation": "publication documentation"
+    },
+    "verify.cjs": {
+      "bytes": 6007,
+      "sha256": "b24cd742008cfd963068359b02c554362742b1206f5499a034fcea553ed80631",
+      "representation": "offline metadata verifier"
+    },
+    "CHECKS.json": {
+      "bytes": 631,
+      "sha256": "e31c3bc0f871dc47527dec718e14f81f72b0ececaf0ac7e14f3558a62717f08c",
+      "representation": "derived validation record"
+    }
+  }
+}

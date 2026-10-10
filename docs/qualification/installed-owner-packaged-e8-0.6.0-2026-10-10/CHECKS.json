@@ -1,0 +1,28 @@
+{
+  "schema": "railgun-e8-packaged-publication-checks-v1",
+  "checks": [
+    {
+      "name": "archive verifier",
+      "exitCode": 0
+    },
+    {
+      "name": "strict verifier ESLint and Prettier (Freedom config)",
+      "exitCode": 0
+    },
+    {
+      "name": "wrong-original-build-pid",
+      "manifestRehashed": true,
+      "exitCode": 1,
+      "expectedRefusal": true
+    },
+    {
+      "name": "dropped-loaded-package-file",
+      "manifestRehashed": true,
+      "exitCode": 1,
+      "expectedRefusal": true
+    }
+  ],
+  "profilePayloadRead": false,
+  "nativeExecutedByPublication": false,
+  "buildPayloadArchived": false
+}

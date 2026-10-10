@@ -1,0 +1,136 @@
+{
+  "schema": "railgun-e8-installed-owner-packaged-v1",
+  "qualified": true,
+  "hostCommit": "f6a5d35635414bfec5853094a3a61cac2e651054",
+  "hostDescription": "integrate/wallet-privacy-foundation-main-oct10: feat/wallet-privacy-foundation 6b092ea8 plus merge of origin/main 50a59d69",
+  "packageCommit": "7d75c1373a8afa3212cfe8ace1f784425e1057c5",
+  "packageTarSha256": "eff8dc891345535bf27b1442a4157027fc976541a596e930a9adb6b525de2633",
+  "asar": {
+    "bytes": 197567141,
+    "sha256": "1d4ece4c7be65c1ce8a1e5a9daad67d8a276e58250faab9be93ec1d11b9364ac"
+  },
+  "asarUnchangedByProbe": true,
+  "npmFiles": 281,
+  "shipped": 265,
+  "omitted": 16,
+  "loadedPackageHashesJoined": 155,
+  "electron": "44.7.0",
+  "electronZipSha256MatchesElectronChecksums": true,
+  "electronDistMembersEqualZip": true,
+  "hostSourceIdentity": "0d78ca3061d3c561361a7bc541a36487c24636d85eb4dd7f7bff37229a351b28",
+  "sourceDependenciesRuntimeAndTarUnchanged": true,
+  "originalBuildNaturalZero": true,
+  "originalProbeNaturalZero": true,
+  "originalBuildPid": 63721,
+  "originalProbePid": 63811,
+  "firstProbeAttemptPassed": true,
+  "deviationsFromTarD": [
+    "host is the integrated branch tip (feature branch plus merge of main 50a59d69)",
+    "package E8 (281 npm files) instead of tar D (279)",
+    "Electron 44.7.0 from the integrated lock, dist members verified against the checksummed upstream zip",
+    "no platform payloads (Ant, freedom-ipfs, Myotis, Radicle, Arti) were copied or packaged: none matching the integrated pins exist locally; owner initialization does not load them",
+    "inventory checker written directly with knownWholeRepositoryPackaging=false and the actual files patterns (the tar-D r2 form)"
+  ],
+  "scope": "unsigned macOS arm64 app.asar package resolution and genuine main facade initialization only",
+  "limits": [
+    "No account, vault, utility, storage worker, native addon, proof, signing or live service behavior",
+    "No ordinary application startup, distributed executable launch, signing, notarization or publication",
+    "Built app omits platform payloads, so it is not a distributable build",
+    "Node network-entrypoint refusal is not OS network confinement",
+    "Real afterPack and actual installed Electron 44.7.0; package source identity is compatibility, not authority"
+  ],
+  "files": {
+    "INPUTS.json": {
+      "bytes": 3190,
+      "sha256": "7463cf881e461f05e67d4c7ac89d3a1a903ab436453213bc7260a1c62d2e1800"
+    },
+    "PREPARATION.json": {
+      "bytes": 533,
+      "sha256": "1d6c34b5c64bced97106227206dfc70acbcdf62175b27e3717c85ac03bd5ad70"
+    },
+    "PRE.json": {
+      "bytes": 8124319,
+      "sha256": "bf0a81942807760117bdaa9f963bafa28c1831f9808769c33c2514147ab95334"
+    },
+    "POST-INVENTORY.json": {
+      "bytes": 8124319,
+      "sha256": "bf0a81942807760117bdaa9f963bafa28c1831f9808769c33c2514147ab95334"
+    },
+    "POST.json": {
+      "bytes": 357,
+      "sha256": "0140b01e006dc1027c1ad09ad8aa8b9969b33274ff05f8bb0887cf484bbbf271"
+    },
+    "EXTERNAL-PRE.json": {
+      "bytes": 1096,
+      "sha256": "501fbbdc272b5ae2d470f12491698b3e6338430ffce75639e8b99415a7343904"
+    },
+    "ASAR-BEFORE-PROBE.json": {
+      "bytes": 140,
+      "sha256": "c5595893d99ccc6faa2e95cbc1a116925cd9f7ba526fa1a13020ad36501c1b81"
+    },
+    "build-PROCESS.json": {
+      "bytes": 691,
+      "sha256": "c0507bbe9c3f4687c0f712a7a4f2baf5809e6dd023641c32a393bf41a38ac508"
+    },
+    "initialize-PROCESS.json": {
+      "bytes": 586,
+      "sha256": "cd009b012bb3f7446d3ea531928db39d9922fee16663119277e27597d4282005"
+    },
+    "INITIALIZED.json": {
+      "bytes": 17953,
+      "sha256": "e73c7b906115cb657609eaddb34ee8aa45e2a77fa1a9f7e6e1cfcb87f6707a92"
+    },
+    "INVENTORY-FINAL.json": {
+      "bytes": 12597,
+      "sha256": "d4943c537986247ae0a90c53004ed2de4acc58cc4704eae4e83fc473a8e39424"
+    },
+    "prepare.py": {
+      "bytes": 3455,
+      "sha256": "7d983a32df775128a77b91ed609f67254ecf4e4c24d9d19075dfa248b6a621e0"
+    },
+    "preflight.py": {
+      "bytes": 2358,
+      "sha256": "52c8c914c31781c49baedbb9ba4e9590a0f9415cc55307d732df80105e6759a7"
+    },
+    "initialize.cjs": {
+      "bytes": 4039,
+      "sha256": "0231537d48d474829a6ffa5352c2b745c0623e3df03faa5b7270378871d20eae"
+    },
+    "check-inventory.cjs": {
+      "bytes": 3470,
+      "sha256": "9ee4be2c3ce4443e3069f173ef389b9d0fa540e8cdb403838fe3b85c2ccffcdb"
+    },
+    "run.py": {
+      "bytes": 2246,
+      "sha256": "b0c4f2ada1f3a75911fa39ffb0e7d4e6586524445712596e6613ce770e0176db"
+    },
+    "post.py": {
+      "bytes": 2165,
+      "sha256": "ca493847f1dbfd438d0489ff1e3141f80b6dbbdfed0de46e24ca1dcba32c13e8"
+    },
+    "PREPARE.log": {
+      "bytes": 165,
+      "sha256": "f10411454211ccf6fbd373cd3434cf93a6fa178a0d60acfc3bfbf69e1d907086"
+    },
+    "PREFLIGHT.log": {
+      "bytes": 174,
+      "sha256": "c0b0601695f430b73ba9f58fb782c91d55055208709e3ba8f787ef17a97c26c9"
+    },
+    "build.log": {
+      "bytes": 4279,
+      "sha256": "285690ae11ec45745e6404c0499b179950c8f2af35dcb0c490ab506bdf3232ca"
+    },
+    "initialize.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "INVENTORY.log": {
+      "bytes": 58,
+      "sha256": "088fbc12f684aceac18042471ac4fa0f55412c107f82e06524734e3eec42647c"
+    },
+    "POST.log": {
+      "bytes": 339,
+      "sha256": "0351b44ebb315be12d01fe5370474cc79be5245169bf8d001b89b0514ea47dad"
+    }
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "schema": "railgun-e8-owner-packaged-publication-v1",
+  "hostCommit": "f6a5d35635414bfec5853094a3a61cac2e651054",
+  "hostDescription": "integrate/wallet-privacy-foundation-main-oct10: feat/wallet-privacy-foundation 6b092ea8 plus merge of origin/main 50a59d69",
+  "packageCommit": "7d75c1373a8afa3212cfe8ace1f784425e1057c5",
+  "tarSha256": "eff8dc891345535bf27b1442a4157027fc976541a596e930a9adb6b525de2633",
+  "originalResult": {
+    "bytes": 5416,
+    "sha256": "a6d5bededea146e815adf940c77f3c49077d612e127fa614da331c0074ecaef3"
+  },
+  "originalInputs": {
+    "INPUTS.json": {
+      "bytes": 3190,
+      "sha256": "7463cf881e461f05e67d4c7ac89d3a1a903ab436453213bc7260a1c62d2e1800"
+    },
+    "PREPARATION.json": {
+      "bytes": 533,
+      "sha256": "1d6c34b5c64bced97106227206dfc70acbcdf62175b27e3717c85ac03bd5ad70"
+    },
+    "PRE.json": {
+      "bytes": 8124319,
+      "sha256": "bf0a81942807760117bdaa9f963bafa28c1831f9808769c33c2514147ab95334"
+    },
+    "POST-INVENTORY.json": {
+      "bytes": 8124319,
+      "sha256": "bf0a81942807760117bdaa9f963bafa28c1831f9808769c33c2514147ab95334"
+    },
+    "EXTERNAL-PRE.json": {
+      "bytes": 1096,
+      "sha256": "501fbbdc272b5ae2d470f12491698b3e6338430ffce75639e8b99415a7343904"
+    },
+    "ASAR-BEFORE-PROBE.json": {
+      "bytes": 140,
+      "sha256": "c5595893d99ccc6faa2e95cbc1a116925cd9f7ba526fa1a13020ad36501c1b81"
+    }
+  },
+  "sourceArchive": {
+    "bytes": 76482560,
+    "sha256": "0a485951927c46f702d481b871077077e70831fdf7af43e4cf4c538b34663218",
+    "mode": 420
+  },
+  "physicalCopy": {
+    "files": 49989,
+    "links": 95,
+    "sourceGitParity": true,
+    "independentRegularFileInodes": true,
+    "copiedDependencyAndResourceBytesEqual": true
+  },
+  "platformResourcesCopied": [],
+  "runtimePins": {
+    "engine": {
+      "bytes": 81790332,
+      "sha256": "019f10880abf1c448aee02ec77c5c2d68c3561c7b4eef02095d66bb5fecd6a7a",
+      "mode": 420
+    },
+    "prover": {
+      "bytes": 1613882,
+      "sha256": "dd50a29f297867b3bf91cb425066e1d257ea02230a94b02e4cf34c5c70a0c7ab",
+      "mode": 420
+    },
+    "electronFramework": {
+      "bytes": 202681296,
+      "sha256": "10ca7a224b24aaa0ac6f7e0a9a9a63afca7391057ef4db27a05355b353e695b1",
+      "mode": 493
+    },
+    "electron": {
+      "bytes": 33968,
+      "sha256": "6c7bfa625e72ad31e564b262c916aa6a9d5b88f570dea195dec52255e9c6305d",
+      "mode": 493
+    },
+    "electronDefaultApp": {
+      "bytes": 110862,
+      "sha256": "0eb2491b0a9ac94790389d39c09dd5005c6c1f0665842943829bbd0193f6cc4f",
+      "mode": 420
+    }
+  },
+  "electronZip": {
+    "version": "44.7.0",
+    "bytes": 130394296,
+    "sha256": "e04e411b58a0a14375dd21b0ab4a378fd38930a702e4e20e322fee4849404c0b",
+    "matchesElectronChecksums": true,
+    "distMembersEqualZip": true
+  },
+  "tarPin": {
+    "bytes": 559806,
+    "sha256": "eff8dc891345535bf27b1442a4157027fc976541a596e930a9adb6b525de2633",
+    "mode": 420
+  },
+  "vendorTarAndLockIntegrityMatchTar": true,
+  "toolPins": {
+    "prepare.py": {
+      "bytes": 3455,
+      "sha256": "7d983a32df775128a77b91ed609f67254ecf4e4c24d9d19075dfa248b6a621e0"
+    },
+    "preflight.py": {
+      "bytes": 2358,
+      "sha256": "52c8c914c31781c49baedbb9ba4e9590a0f9415cc55307d732df80105e6759a7"
+    },
+    "initialize.cjs": {
+      "bytes": 4039,
+      "sha256": "0231537d48d474829a6ffa5352c2b745c0623e3df03faa5b7270378871d20eae"
+    },
+    "check-inventory.cjs": {
+      "bytes": 3470,
+      "sha256": "9ee4be2c3ce4443e3069f173ef389b9d0fa540e8cdb403838fe3b85c2ccffcdb"
+    },
+    "run.py": {
+      "bytes": 2246,
+      "sha256": "b0c4f2ada1f3a75911fa39ffb0e7d4e6586524445712596e6613ce770e0176db"
+    },
+    "post.py": {
+      "bytes": 2165,
+      "sha256": "ca493847f1dbfd438d0489ff1e3141f80b6dbbdfed0de46e24ca1dcba32c13e8"
+    }
+  },
+  "toolsPublished": false,
+  "toolsOmissionReason": "Fixed local input paths; exact source hashes identify the original local tools.",
+  "toolDeltaFromTarD": [
+    "fixed paths, host commit and tar pin",
+    "281 instead of 279 exact npm files",
+    "preflight also checks the vendored tar, lock integrity and Electron dist pins",
+    "prepare copies no platform resources",
+    "inventory checker starts from the tar-D r2 form"
+  ],
+  "probeAttempts": 1,
+  "limits": [
+    "No account, vault, utility, storage worker, native addon, proof, signing or live service behavior",
+    "No ordinary application startup, distributed executable launch, signing, notarization or publication",
+    "Built app omits platform payloads, so it is not a distributable build",
+    "Node network-entrypoint refusal is not OS network confinement",
+    "Real afterPack and actual installed Electron 44.7.0; package source identity is compatibility, not authority"
+  ],
+  "processHistoryAuthority": "Original parent-held build and probe processes; archive metadata is not self-authenticating process history.",
+  "sourceAndRuntimeContentsArchived": false,
+  "profilePayloadReadForPublication": false
+}
