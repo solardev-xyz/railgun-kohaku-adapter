@@ -56,3 +56,46 @@ reacquisition. An unknown failure is a stop, not permission to rebuild, skip a
 range, resend or bypass policy. Applications should bound explicit resumptions;
 this method adds no automatic retry. Pending-first selection leaves dependent
 lanes unavailable until that generation reaches the required coverage.
+
+### Clearing a Shield submission journal
+
+`session.openShieldRecovery({ signal, reviewDisclosures, reviewResolution })`
+opens an exclusive companion for the host's fixed wallet-0 EOA. This closes a
+public API gap in E8: the original Shield recovery owner existed internally, but
+an adopter could not open it to resolve its own Shield before another send.
+The new companion uses that original receipt, finality and permit path.
+
+`list()` reads authenticated local rows and their resolved archive without an
+RPC request or consent prompt. It returns only hashes, nonces, observation
+summaries and the resolution flag. Missing or unreadable custody refuses rather
+than reporting an empty list. `observe(hash)` and
+`resolve(hash, { minimumConfirmations: 12 })` accept only an unresolved Shield
+in that EOA's journal. They bind the transaction endpoint to the account's
+captured scan endpoint, disclose the exact public-address request inventory,
+and require explicit consent. Resolution separately reviews the matched or
+reverted outcome and finality. Each review requires exact `true` within 30
+seconds; native promises must settle after cancellation. Unknown settlement
+quarantines the lane and its same-profile/EOA exclusion.
+
+The lane exposes no signing, submission, resend or permit capability. A
+nonce-consumed observation, insufficient finality or an included transaction
+without its matched Shield remains unresolved. A durable resolution can persist
+before an interrupted call returns; inspect `list()` again instead of assuming
+that refusal means nothing changed.
+
+This is **EOA journal recovery**, not proof that the current account received a
+note. An EOA may have shielded to a different account. Scanning and wallet
+synchronization establish received-note ownership. The companion is available
+with a pending public generation (`publicCache: 'recover'`), but still requires
+an admissible current-policy public generation and host destination. Within one
+process it excludes another Shield companion for the same profile and EOA; host
+journal revision guards remain in force. Separate application processes must
+also obey the host's profile exclusion contract.
+
+The same-endpoint condition is deliberate: a host routing scans and transaction
+recovery to different URLs or transports is refused. After disclosure consent,
+a five-minute destination constraint bounds recovery; the original reconciler
+retains its two-minute network-plus-review window. The separate human review is
+still limited to 30 seconds. `PRIVATE_JOURNAL_UNAVAILABLE` distinguishes absent
+journal custody from other fixed refusal codes; it is not a successful empty
+journal result.

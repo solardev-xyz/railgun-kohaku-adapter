@@ -74,6 +74,9 @@ jest.mock("../src/owners/railgun-public-services.js", () => ({
 jest.mock("../src/owners/operational-poi-lane.js", () => ({
   createRailgunPoiLane: (input) => state.createPoi(input),
 }));
+jest.mock("../src/owners/operational-shield-lane.js", () => ({
+  createRailgunShieldLane: (input) => state.createSubmission(input),
+}));
 jest.mock("../src/owners/operational-submission-lane.js", () => ({
   createRailgunSubmissionLane: (input) => state.createSubmission(input),
 }));
@@ -310,6 +313,7 @@ test("closed one-shot initializer and exact account options expose no owner auth
       "openRecovery",
       "openPoiRecovery",
       "openSubmissionRecovery",
+      "openShieldRecovery",
       "openRelayLocal",
       "openRelayRecovery",
       "rebuildPublic",
@@ -2106,4 +2110,37 @@ test("recoverPublic cancellation retains the original operation until drained", 
   gate.resolve({ status: "unscanned", to: null });
   await expect(work).rejects.toThrow();
   await account.closed;
+});
+
+test("shield recovery opens over a pending generation, captures both reviews and excludes other lanes", async () => {
+  const f = fixture(), session = await f.api.openAccount({ ...f.options, publicCache: "recover" });
+  const reviewDisclosures = jest.fn(() => true), reviewResolution = jest.fn(() => true);
+  const lane = await session.openShieldRecovery({signal: f.caller.signal, reviewDisclosures, reviewResolution});
+  const original = state.createSubmission.mock.results[0].value;
+  original.list = jest.fn(async () => []);
+  expect(Object.keys(original.input).sort()).toEqual(["owners", "destination", "signal", "reviewDisclosures", "reviewResolution"].sort());
+  expect(original.input.reviewResolution).toBe(reviewResolution);
+  expect(Object.keys(lane).sort()).toEqual(["list", "observe", "resolve", "signal", "closed", "close"].sort());
+  expect(await lane.list()).toEqual([]);
+  expect(() => session.recoverPublic()).toThrow();
+  expect(() => session.openPublic(laneOptions(f.caller.signal, "public"))).toThrow();
+  await lane.observe("0x" + "1".repeat(64));
+  await lane.resolve("0x" + "1".repeat(64), { minimumConfirmations: 12 });
+  expect(original.resolve).toHaveBeenCalledWith("0x" + "1".repeat(64), { minimumConfirmations: 12 });
+  lane.close(); await lane.closed; await session.close();
+});
+test.each([{owner: "foreign"}, {gasLimit: 1n}, {reviewResolution: null}, {reviewDisclosures: null}])(
+  "shield recovery refuses caller authority or missing reviews %p before construction", async extra => {
+    const f = fixture(), session = await f.api.openAccount(f.options);
+    expect(() => session.openShieldRecovery({signal:f.caller.signal, reviewDisclosures:()=>true,reviewResolution:()=>true,...extra})).toThrow();
+    expect(state.createSubmission).not.toHaveBeenCalled();await session.close();
+  },
+);
+test("shield recovery retains the original closure and quarantines an unobserved drain", async () => {
+  const f=fixture(),session=await f.api.openAccount(f.options);
+  const lane=await session.openShieldRecovery({signal:f.caller.signal,reviewDisclosures:()=>true,reviewResolution:()=>true});
+  const original=state.createSubmission.mock.results[0].value;
+  original.close.mockImplementation(()=>original.drain.reject(Error("unobserved shield closure")));
+  lane.close();await expect(lane.closed).rejects.toThrow();await expect(session.closed).rejects.toThrow();
+  expect(()=>f.api.openAccount(f.options)).toThrow();
 });

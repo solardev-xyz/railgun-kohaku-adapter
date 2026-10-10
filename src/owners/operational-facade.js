@@ -127,6 +127,7 @@ function initializeRailgunMain(options) {
   const recoveryApi = require("./railgun-kohaku-recovery.js");
   const poiApi = require("./operational-poi-lane.js");
   const submissionApi = require("./operational-submission-lane.js");
+  const shieldApi = require("./operational-shield-lane.js");
   const ownedPoiApi = require("./railgun-account-poi.js");
   const {
     REQUIRED_LIST: requiredPoiList,
@@ -538,10 +539,13 @@ function initializeRailgunMain(options) {
     }
     function recovery(options, kind = "private") {
       const poi = kind === "poi",
-        submission = kind === "submission";
+        submission = kind === "submission",
+        shield = kind === "shield";
       const data = record(
         options,
-        poi || submission
+        shield
+          ? ["signal", "reviewDisclosures", "reviewResolution"]
+          : poi || submission
           ? ["signal", "reviewDisclosures"]
           : [
               "signal",
@@ -552,7 +556,9 @@ function initializeRailgunMain(options) {
             ],
       );
       signal(data.signal);
-      for (const callback of poi || submission
+      for (const callback of shield
+        ? [data.reviewDisclosures, data.reviewResolution]
+        : poi || submission
         ? [data.reviewDisclosures]
         : [data.reviewDisclosures, data.reviewTransaction])
         if (typeof callback !== "function" || types.isProxy(callback))
@@ -560,6 +566,7 @@ function initializeRailgunMain(options) {
       if (
         !poi &&
         !submission &&
+        !shield &&
         (typeof data.gasLimit !== "bigint" ||
           data.gasLimit <= 0n ||
           data.gasLimit > 3000000n ||
@@ -577,7 +584,12 @@ function initializeRailgunMain(options) {
           );
           // The held-submission companion needs no engine/prover runtime: it
           // reads local custody and the EOA journal, and never proves or signs.
-          companion = submission
+          companion = shield
+            ? shieldApi.createRailgunShieldLane({
+                owners: owners(), destination, ...data,
+                signal: AbortSignal.any([lifetime, data.signal]),
+              })
+            : submission
             ? submissionApi.createRailgunSubmissionLane({
                 owners: owners(),
                 destination,
@@ -615,6 +627,27 @@ function initializeRailgunMain(options) {
             closing = true;
             if (state.lane === companion) state.lane = null;
           }).catch(() => {});
+          if (shield)
+            return Object.freeze({
+              list(...extra) {
+                active();
+                return retain(companion.list(...extra));
+              },
+              observe(transactionHash, ...extra) {
+                active();
+                return retain(companion.observe(transactionHash, ...extra));
+              },
+              resolve(transactionHash, options, ...extra) {
+                active();
+                return retain(companion.resolve(transactionHash, options, ...extra));
+              },
+              signal: companion.signal,
+              closed: companion.closed,
+              close() {
+                closing = true;
+                stop(companion, "lane");
+              },
+            });
           if (submission)
             return Object.freeze({
               describe(holdId) {
@@ -1490,6 +1523,7 @@ function initializeRailgunMain(options) {
       openRecovery: (options) => recovery(options),
       openPoiRecovery: (options) => recovery(options, "poi"),
       openSubmissionRecovery: (options) => recovery(options, "submission"),
+      openShieldRecovery: (options) => recovery(options, "shield"),
       openRelayLocal: (options) => relay(options, false),
       openRelayRecovery: (options) => relay(options, true),
       openRead: (options) => lane("read", options),

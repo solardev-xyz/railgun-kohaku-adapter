@@ -81,6 +81,7 @@
   "src/owners/host-bindings.js",
   "src/owners/operational-facade.js",
   "src/owners/operational-poi-lane.js",
+  "src/owners/operational-shield-lane.js",
   "src/owners/operational-submission-lane.js",
   "src/owners/process-jobs.js",
   "src/owners/railgun-account-enrollment.js",

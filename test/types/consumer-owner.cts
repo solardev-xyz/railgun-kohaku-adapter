@@ -271,3 +271,15 @@ async function authenticatedScanRecovery(session: import("@freedom/railgun-kohak
   return cursor;
 }
 void authenticatedScanRecovery;
+
+async function shieldRecovery(session: import("@freedom/railgun-kohaku-adapter/host/owner").AccountSession, signal: AbortSignal) {
+  const lane = await session.openShieldRecovery({signal,reviewDisclosures: summary => summary.sendEnabled === false,reviewResolution: summary => summary.trust === "unverified-rpc"});
+  const rows = await lane.list();
+  if (rows[0]) await lane.resolve(rows[0].transactionHash, {minimumConfirmations:12});
+  // @ts-expect-error no signer or send authority on recovery
+  lane.submit("0x00");
+  // @ts-expect-error callers cannot select a foreign EOA
+  await session.openShieldRecovery({signal,owner:"0x00",reviewDisclosures:()=>true,reviewResolution:()=>true});
+  lane.close(); await lane.closed;
+}
+void shieldRecovery;

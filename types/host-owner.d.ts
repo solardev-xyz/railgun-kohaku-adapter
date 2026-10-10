@@ -800,6 +800,80 @@ export interface SubmissionRecoveryLane extends LaneLifetime {
     options: { minimumConfirmations: number },
   ): Promise<HeldSubmissionResolution>;
 }
+/** Own-EOA journal recovery. A matched Shield does not establish that this
+ * account owns its note; scanning and wallet synchronization establish that. */
+export interface ShieldJournalRow {
+  readonly transactionHash: string;
+  readonly nonce: number;
+  readonly observation: HeldSubmissionObservationFields | null;
+  readonly resolved: boolean;
+}
+export interface ShieldObservationReview {
+  readonly purpose: "railgun-shield-observation-v1";
+  readonly chainId: 11155111;
+  readonly submitter: string;
+  readonly transactionHash: string;
+  readonly destination: { readonly url: string; readonly transport: string };
+  readonly requests: readonly [
+    "eth_blockNumber",
+    "eth_chainId",
+    "eth_getBlockByNumber",
+    "eth_getTransactionByHash",
+    "eth_getTransactionCount",
+    "eth_getTransactionReceipt",
+  ];
+  readonly disclosures: readonly [
+    "public-submitter",
+    "journaled-transaction-hash",
+    "nonce-reconciliation",
+    "observation-timing",
+  ];
+  readonly signingEnabled: false;
+  readonly sendEnabled: false;
+  readonly retryEnabled: false;
+}
+export interface ShieldResolutionReview {
+  readonly purpose: "railgun-shield-resolution-v1";
+  readonly chainId: 11155111;
+  readonly submitter: string;
+  readonly transactionHash: string;
+  readonly destination: { readonly url: string; readonly transport: string };
+  readonly observation: HeldSubmissionObservationFields | null;
+  readonly shield: Readonly<{ status: "matched" | "anomaly" }> | null;
+  readonly finalizedBlockNumber: number | null;
+  readonly minimumConfirmations: number;
+  readonly allowsNextTransaction: true;
+  readonly retryEnabled: false;
+  readonly trust: "unverified-rpc";
+}
+export interface ShieldRecoveryLane extends LaneLifetime {
+  /** Local authenticated rows, including compacted resolutions; no request. */
+  list(): Promise<readonly ShieldJournalRow[]>;
+  observe(transactionHash: string): Promise<
+    Readonly<{
+      status: "observed";
+      transactionHash: string;
+      observation: HeldSubmissionObservationFields | null;
+      shield: Readonly<{ status: "matched" | "anomaly" }> | null;
+      resolved: boolean;
+      trust: "unverified-rpc";
+      retryEnabled: false;
+    }>
+  >;
+  resolve(
+    transactionHash: string,
+    options: { minimumConfirmations: number },
+  ): Promise<
+    Readonly<{
+      status: "resolved";
+      transactionHash: string;
+      outcome: "matched" | "reverted";
+      finalizedBlockNumber: number;
+      retryEnabled: false;
+      trust: "unverified-rpc";
+    }>
+  >;
+}
 export interface RelayQuote {
   data: string;
   signature: string;
@@ -1164,6 +1238,13 @@ export interface AccountSession {
       HeldSubmissionDisclosure | HeldSubmissionResolutionReview
     >;
   }): Promise<SubmissionRecoveryLane>;
+  /** Exclusive with other lanes and recovery of the same profile/EOA.
+   * Each callback must return exact true within 30 seconds. */
+  openShieldRecovery(options: {
+    signal: AbortSignal;
+    reviewDisclosures: Review<ShieldObservationReview>;
+    reviewResolution: Review<ShieldResolutionReview>;
+  }): Promise<ShieldRecoveryLane>;
   openRelayLocal(options: RelayLocalOptions): Promise<RelayLocalLane>;
   openRelayRecovery(options: {
     signal: AbortSignal;
