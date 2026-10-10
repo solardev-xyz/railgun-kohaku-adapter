@@ -1752,3 +1752,25 @@ describe('recovered review budget arithmetic over Tor (mocked service)', () => {
     expect(mock.events).not.toContain('sign');
   });
 });
+
+test('a retained proof uses the current lower lane budget at actual signing', async () => {
+  options.maxGasFee = 99999n; // Fixture quote: gasLimit 1000 × gasPrice 100.
+  const result = await submit(options);
+  expect(result.status).toBe('recovery-required');
+  expect(mock.events).not.toContain('broadcast');
+});
+test('raising the application ceiling does not authorize a prior-attempt resend', async () => {
+  require('../../../../../../src/owners/application-policy').captureRailgunApplicationPolicy({
+    maxGasFee: 3000000000000000n,
+  });
+  options.maxGasFee = 3000000000000000n;
+  mock.history.records = [{
+    resolution: { status: 'unknown' },
+    intent: { kind: 'railgun-transact', tree: 0,
+      nullifier: mock.capsule.preparation.expected.nullifier },
+  }];
+  expect((await submit(options)).stage).toBe('prior-attempt');
+  expect(mock.events).not.toContain('disclosure-review');
+  expect(mock.events).not.toContain('send-enter');
+  expect(mock.events).not.toContain('broadcast');
+});

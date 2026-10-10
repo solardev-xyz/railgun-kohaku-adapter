@@ -288,3 +288,5 @@ const compatibleHost: owner.RailgunMainHost = { ...host, sourceIdentity: {
   readDigest: () => "full-digest", readCacheDigests: () => ({ public: "public", wallet: "wallet", txid: "txid" }),
 }};
 void compatibleHost;
+
+owner.initializeRailgunMain({ host, runtime: { archive: "/engine", proverArchive: "/prover", artifactDirectory: "/artifacts" }, applicationPolicy: { maxGasFee: 1000000n } });

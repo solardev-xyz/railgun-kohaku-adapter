@@ -1,0 +1,34 @@
+{
+  "reason": "The private preparation owner now requires the selected lane gas budget. Supply the historical default in the fixture and test missing/excessive and gas-payer balance boundaries.",
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-operation.test.js",
+      "beforeSha256": "35f0b3129a34ed382ad68f852555bc5d093ef7bd1251d8286717ea96480ec793",
+      "afterSha256": "a97d96406e03fcbb9e3ed59bdd5565047a65ad18f09ad7ae23c6db6204d94d69",
+      "replacements": [
+        {
+          "start": 12886,
+          "before": "",
+          "after": "    maxGasFee: 2000000000000000n,\n"
+        },
+        {
+          "start": 51500,
+          "before": "",
+          "after": "\ntest('missing or excessive gas budget refuses before ownership, network or proving', async () => {\n  for (const maxGasFee of [undefined, 0n, 2000000000000001n]) {\n    mock.events.length = 0;\n    expect(await prove({ ...options, maxGasFee })).toEqual({ status: 'refused', stage: 'local' });\n    expect(mock.events).toEqual([]);\n  }\n});\ntest('private preparation uses the selected lane gas budget for the gas-payer balance', async () => {\n  options.maxGasFee = 10n;\n  mock.balance = '0xa';\n  const result = await prove(options);\n  expect(result.status).toBe('proved');\n  result.completion.close();\n});\ntest('one wei below the selected gas budget refuses before the proving window', async () => {\n  options.maxGasFee = 10n;\n  mock.balance = '0x9';\n  expect(await prove(options)).toEqual({ status: 'refused', stage: 'submitter' });\n  expect(mock.events).not.toContain('A-enter');\n  expect(mock.events).not.toContain('derive');\n});\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-submission-recovered.test.js",
+      "beforeSha256": "47800151ab46460011423a6020663a593b0dcaf26c43a7d88dfb7a147da5d7ec",
+      "afterSha256": "8ea9723e6fb7e121d75a3e7fe5487a6380fbbc15d866eb5c0e4ea03fc5a08c50",
+      "replacements": [
+        {
+          "start": 67482,
+          "before": "",
+          "after": "\ntest('a retained proof uses the current lower lane budget at actual signing', async () => {\n  options.maxGasFee = 99999n; // Fixture quote: gasLimit 1000 \u00d7 gasPrice 100.\n  const result = await submit(options);\n  expect(result.status).toBe('recovery-required');\n  expect(mock.events).not.toContain('broadcast');\n});\ntest('raising the application ceiling does not authorize a prior-attempt resend', async () => {\n  require('../../../../../../src/owners/application-policy').captureRailgunApplicationPolicy({\n    maxGasFee: 3000000000000000n,\n  });\n  options.maxGasFee = 3000000000000000n;\n  mock.history.records = [{\n    resolution: { status: 'unknown' },\n    intent: { kind: 'railgun-transact', tree: 0,\n      nullifier: mock.capsule.preparation.expected.nullifier },\n  }];\n  expect((await submit(options)).stage).toBe('prior-attempt');\n  expect(mock.events).not.toContain('disclosure-review');\n  expect(mock.events).not.toContain('send-enter');\n  expect(mock.events).not.toContain('broadcast');\n});\n"
+        }
+      ]
+    }
+  ]
+}

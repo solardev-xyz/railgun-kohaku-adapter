@@ -76,6 +76,7 @@
   "src/execution/railgun-wallet-job.js",
   "src/execution/railgun-wallet-records.js",
   "src/execution/railgun-wallet-scan.js",
+  "src/owners/application-policy.js",
   "src/owners/context-bindings.js",
   "src/owners/credential-loan.js",
   "src/owners/host-bindings.js",

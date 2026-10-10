@@ -3,6 +3,7 @@
 const path = require("path");
 const { types } = require("util");
 const host = require("./host-bindings");
+const { captureRailgunApplicationPolicy, isRailgunGasBudget } = require("./application-policy");
 const fail = () =>
   Object.assign(new Error("Railgun account facade unavailable"), {
     code: "RAILGUN_ACCOUNT_FACADE_REFUSED",
@@ -103,10 +104,24 @@ let initialized = false;
 function initializeRailgunMain(options) {
   if (initialized) throw fail();
   initialized = true;
-  const { host: capabilities, runtime: input } = record(options, [
-    "host",
-    "runtime",
-  ]);
+  let data;
+  try {
+    try {
+      data = record(options, ["host", "runtime", "applicationPolicy"]);
+    } catch {
+      data = record(options, ["host", "runtime"]);
+    }
+    captureRailgunApplicationPolicy(...(Object.hasOwn(data, "applicationPolicy")
+      ? [data.applicationPolicy] : []));
+  } catch (error) {
+    // Reserve and poison paired bootstrap even before host validation, so a
+    // second physical copy cannot adopt a malformed/preempted main attempt.
+    try { host.initializeRailgunOwnerHost(undefined); } catch {
+      /* Refusal is the intended reservation; preserve the original error. */
+    }
+    throw error;
+  }
+  const { host: capabilities, runtime: input } = data;
   host.initializeRailgunOwnerHost(capabilities);
   const runtime = Object.freeze(
     record(input, ["archive", "proverArchive", "artifactDirectory"]),
@@ -379,9 +394,7 @@ function initializeRailgunMain(options) {
           typeof data.gasLimit !== "bigint" ||
           data.gasLimit <= 0n ||
           data.gasLimit > 3000000n ||
-          typeof data.maxGasFee !== "bigint" ||
-          data.maxGasFee <= 0n ||
-          data.maxGasFee > 2000000000000000n
+          !isRailgunGasBudget(data.maxGasFee)
         )
           throw fail();
       }
@@ -570,9 +583,7 @@ function initializeRailgunMain(options) {
         (typeof data.gasLimit !== "bigint" ||
           data.gasLimit <= 0n ||
           data.gasLimit > 3000000n ||
-          typeof data.maxGasFee !== "bigint" ||
-          data.maxGasFee <= 0n ||
-          data.maxGasFee > 2000000000000000n)
+          !isRailgunGasBudget(data.maxGasFee))
       )
         throw fail();
       return run(async () => {

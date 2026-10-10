@@ -392,6 +392,7 @@ beforeEach(() => {
     archive: '/engine.asar',
     proverArchive: '/prover.asar',
     artifactDirectory: '/artifacts',
+    maxGasFee: 2000000000000000n,
   };
 });
 afterEach(() => {
@@ -1422,4 +1423,26 @@ test('a malformed foreign destination refuses before network, A or receive work'
   options.request = { ...options.request, recipient: '0zk1' + 'P'.repeat(123) };
   expect(await prove(options)).toEqual({ status: 'refused', stage: 'local' });
   expect(mock.events).toEqual([]);
+});
+
+test('missing or excessive gas budget refuses before ownership, network or proving', async () => {
+  for (const maxGasFee of [undefined, 0n, 2000000000000001n]) {
+    mock.events.length = 0;
+    expect(await prove({ ...options, maxGasFee })).toEqual({ status: 'refused', stage: 'local' });
+    expect(mock.events).toEqual([]);
+  }
+});
+test('private preparation uses the selected lane gas budget for the gas-payer balance', async () => {
+  options.maxGasFee = 10n;
+  mock.balance = '0xa';
+  const result = await prove(options);
+  expect(result.status).toBe('proved');
+  result.completion.close();
+});
+test('one wei below the selected gas budget refuses before the proving window', async () => {
+  options.maxGasFee = 10n;
+  mock.balance = '0x9';
+  expect(await prove(options)).toEqual({ status: 'refused', stage: 'submitter' });
+  expect(mock.events).not.toContain('A-enter');
+  expect(mock.events).not.toContain('derive');
 });

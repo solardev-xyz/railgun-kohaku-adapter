@@ -172,3 +172,6 @@ const invalidCacheHost: owner.RailgunMainHost = { ...host, sourceIdentity: {
   readCacheDigests: () => ({ public: "digest", wallet: "digest" }),
 }};
 void invalidCacheHost;
+
+// @ts-expect-error fee policy requires bigint, not a number
+owner.initializeRailgunMain({ host, runtime: { archive: "/engine", proverArchive: "/prover", artifactDirectory: "/artifacts" }, applicationPolicy: { maxGasFee: 1 } });

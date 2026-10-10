@@ -99,3 +99,11 @@ retains its two-minute network-plus-review window. The separate human review is
 still limited to 30 seconds. `PRIVATE_JOURNAL_UNAVAILABLE` distinguishes absent
 journal custody from other fixed refusal codes; it is not a successful empty
 journal result.
+
+## Application limits
+
+The trusted initializer may capture `applicationPolicy: { maxGasFee }` once.
+Omission preserves 0.002 ETH; each lane retains its own equal or lower budget.
+See [application spending policy](APPLICATION-POLICY.md) for units, bounds,
+retained-operation behavior and the unchanged signing/uncertainty checks. This
+is not a deployment selector or an override of custody and cache identities.

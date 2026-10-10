@@ -167,7 +167,7 @@ const runtime = Object.freeze({
   proverArchive: "/public/prover.asar",
   artifactDirectory: "/public/artifacts",
 });
-function fixture() {
+function fixture(initialization = {}) {
   jest.resetModules();
   state = {
     application: new AbortController(),
@@ -268,6 +268,7 @@ function fixture() {
   const api = initialize({
     host: Object.freeze({ controlled: true }),
     runtime,
+    ...initialization,
   });
   const caller = new AbortController();
   const options = { accountIndex: 0, signal: caller.signal };
@@ -2143,4 +2144,32 @@ test("shield recovery retains the original closure and quarantines an unobserved
   original.close.mockImplementation(()=>original.drain.reject(Error("unobserved shield closure")));
   lane.close();await expect(lane.closed).rejects.toThrow();await expect(session.closed).rejects.toThrow();
   expect(()=>f.api.openAccount(f.options)).toThrow();
+});
+
+test.each(["private", "recovery"])("application ceiling controls %s admission before any owner lane", async (kind) => {
+  const f = fixture({ applicationPolicy: { maxGasFee: 10n } });
+  const account = await f.api.openAccount(f.options);
+  const options = kind === "private" ? laneOptions(f.options.signal, "private") : recoveryOptions(f.options.signal);
+  const open = kind === "private" ? account.openPrivate : account.openRecovery;
+  expect(() => open({ ...options, maxGasFee: 11n })).toThrow();
+  expect(state.createPlugin).not.toHaveBeenCalled();
+  expect(state.createRecovery).not.toHaveBeenCalled();
+  const lane = await open({ ...options, maxGasFee: 10n });
+  const actual = (kind === "private" ? state.createPlugin : state.createRecovery).mock.calls[0][0];
+  expect(actual.maxGasFee).toBe(10n);
+  lane.close(); await lane.closed; await account.close();
+});
+test("a larger ceiling is available only through main initialization", async () => {
+  const ceiling = 3000000000000000n;
+  const f = fixture({ applicationPolicy: { maxGasFee: ceiling } });
+  const account = await f.api.openAccount(f.options);
+  expect(() => account.openPrivate({ ...laneOptions(f.options.signal, "private"), applicationPolicy: { maxGasFee: ceiling } })).toThrow();
+  const lane = await account.openRecovery({ ...recoveryOptions(f.options.signal), maxGasFee: ceiling });
+  expect(state.createRecovery.mock.calls[0][0].maxGasFee).toBe(ceiling);
+  lane.close(); await lane.closed; await account.close();
+});
+test.each([undefined, {}, { maxGasFee: 0n }, { maxGasFee: 1000000000000000001n }])("invalid explicit application policy refuses before host initialization: %p", (applicationPolicy) => {
+  expect(() => fixture({ applicationPolicy })).toThrow();
+  expect(state.host).toBeUndefined();
+  expect(state.openIdentity).not.toHaveBeenCalled();
 });

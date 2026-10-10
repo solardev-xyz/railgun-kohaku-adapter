@@ -56,3 +56,5 @@ const compatibleHost: RailgunMainHost = { ...host, sourceIdentity: {
   readDigest: () => "full-digest", readCacheDigests: () => ({ public: "public", wallet: "wallet", txid: "txid" }),
 }};
 void compatibleHost;
+
+initializeRailgunMain({ host, runtime: { archive: "/engine", proverArchive: "/prover", artifactDirectory: "/artifacts" }, applicationPolicy: { maxGasFee: 1000000n } });

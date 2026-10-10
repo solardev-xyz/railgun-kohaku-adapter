@@ -4,6 +4,7 @@ const fs = require("fs"),
   vm = require("vm"),
   { createHash } = require("crypto");
 const root = path.join(__dirname, "..");
+const applicationTransitions = require("../docs/owners/APPLICATION-POLICY-TRANSITIONS.json");
 const cacheTransitions = require("../docs/owners/CACHE-COMPATIBILITY-TRANSITIONS.json");
 const walletDrainTransitions = require("../docs/owners/WALLET-DRAIN-TRANSITIONS.json");
 const publicRecoveryTransitions = require("../docs/owners/PUBLIC-RECOVERY-TRANSITIONS.json");
@@ -74,6 +75,12 @@ test("every translated algorithm reconstructs its exact immutable original bytes
     reused = 0;
   for (const row of translation.files) {
     let text = fs.readFileSync(sourceFile(row.destination), "utf8");
+    const applicationChange = applicationTransitions.changes.find(change => change.file === row.destination);
+    if (applicationChange) {
+      expect(sha(text)).toBe(applicationChange.afterSha256);
+      text = undo(text, applicationChange.replacements);
+      expect(sha(text)).toBe(applicationChange.beforeSha256);
+    }
     const cacheChange = cacheTransitions.changes.find(change => change.file === row.destination);
     if (cacheChange) {
       expect(sha(text)).toBe(cacheChange.afterSha256);
@@ -433,6 +440,12 @@ test("high-authority host family imports have an exact reviewed source allowlist
     ).toEqual(files);
   for (const [file, digest] of Object.entries(audit.files)) {
     let text = fs.readFileSync(path.join(root, file), "utf8");
+    const applicationChange = applicationTransitions.changes.find(change => change.file === file);
+    if (applicationChange) {
+      expect(sha(text)).toBe(applicationChange.afterSha256);
+      text = undo(text, applicationChange.replacements);
+      expect(sha(text)).toBe(applicationChange.beforeSha256);
+    }
     const transition = facadeTransitions.changes.find(
       (row) => row.file === file,
     );

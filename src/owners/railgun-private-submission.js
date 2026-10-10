@@ -1,6 +1,7 @@
 /** Exact completed private operation -> one EOA attempt under account exclusion.
  * No caller-supplied proof, completion snapshot or generic review grants authority.
  */
+const { isRailgunGasBudget } = require('./application-policy');
 const assert = require('assert/strict');
 const { createPrivacyScope, getPrivacyContext } = require('./context-bindings');
 const { claimRailgunPrivateCompletion } = require("./railgun-private-operation.js");
@@ -641,7 +642,7 @@ async function submitRailgunPrivateTransaction({
   try {
     assert.equal(typeof review, 'function');
     assert.ok(typeof gasLimit === 'bigint' && gasLimit > 0n && gasLimit <= 3000000n);
-    assert.ok(typeof maxGasFee === 'bigint' && maxGasFee > 0n && maxGasFee <= 2000000000000000n);
+    assert.ok(isRailgunGasBudget(maxGasFee));
     claim = claimRailgunPrivateCompletion(completion, identity, enrollment);
     const snapshot = claim.assertCurrent();
     const kind = snapshot.stored.capsule.selection.kind;
@@ -792,7 +793,7 @@ async function submitRailgunRecoveredPrivateTransaction(options) {
     assert.equal(typeof reviewDisclosures, 'function');
     assert.equal(typeof reviewTransaction, 'function');
     assert.ok(typeof gasLimit === 'bigint' && gasLimit > 0n && gasLimit <= 3000000n);
-    assert.ok(typeof maxGasFee === 'bigint' && maxGasFee > 0n && maxGasFee <= 2000000000000000n);
+    assert.ok(isRailgunGasBudget(maxGasFee));
     assert.ok(require('path').isAbsolute(artifactDirectory));
     const archive = require("../execution/railgun-engine-runtime.js").verifyRailgunEngineRuntime(options.archive);
     const proverArchive = require("../execution/railgun-prover-runtime.js").verifyRailgunProverRuntime(

@@ -1,6 +1,7 @@
 /** Fixed main-owned companion for authenticated discovery and explicit retained
  * operation recovery. Owners remain borrowed; no operation token is recreated. */
 const assert = require('assert/strict');
+const { isRailgunGasBudget } = require('./application-policy');
 const path = require('path');
 const { isProxy, isPromise } = require('util').types;
 const { isRailgunAccountEnrollment } = require("./railgun-account-enrollment.js");
@@ -62,7 +63,7 @@ function createRailgunKohakuRecovery(options) {
     assert.equal(typeof reviewDisclosures, 'function');
     assert.equal(typeof reviewTransaction, 'function');
     assert.ok(typeof gasLimit === 'bigint' && gasLimit > 0n && gasLimit <= 3000000n);
-    assert.ok(typeof maxGasFee === 'bigint' && maxGasFee > 0n && maxGasFee <= 2000000000000000n);
+    assert.ok(isRailgunGasBudget(maxGasFee));
     const parent = enrollment.getContext('engine');
     const descriptor = JSON.stringify(assertRailgunIdentity(identity, parent));
     assert.equal(JSON.stringify(enrollment.descriptor), descriptor);

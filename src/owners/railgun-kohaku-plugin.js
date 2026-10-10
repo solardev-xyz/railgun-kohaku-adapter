@@ -3,6 +3,7 @@
  * Trusted review adapters must settle after abort: exclusion waits for them.
  */
 const assert = require('assert/strict');
+const { isRailgunGasBudget } = require('./application-policy');
 const path = require('path');
 const { isProxy } = require('util').types;
 const { dispatchRailgunKohakuRead } = require("./railgun-kohaku-read-dispatch.js");
@@ -152,9 +153,7 @@ function create(options) {
       typeof options.gasLimit === 'bigint' && options.gasLimit > 0n && options.gasLimit <= 3000000n
     );
     assert.ok(
-      typeof options.maxGasFee === 'bigint' &&
-        options.maxGasFee > 0n &&
-        options.maxGasFee <= 2000000000000000n
+      isRailgunGasBudget(options.maxGasFee)
     );
   } else
     assert.ok(
@@ -660,6 +659,7 @@ function create(options) {
             archive: resources.archive,
             proverArchive: resources.proverArchive,
             artifactDirectory: resources.artifactDirectory,
+            maxGasFee: resources.maxGasFee,
             destinationConstraints,
             ...(staging ? { stagingReceipt: staging.receipt } : {}),
           });

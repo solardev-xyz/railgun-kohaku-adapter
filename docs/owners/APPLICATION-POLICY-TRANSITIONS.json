@@ -1,0 +1,111 @@
+{
+  "baseRevision": "e88ae4b2d96d03966e6e2ee230a5de6546f0a596",
+  "label": "Capture the host application gas ceiling once; each lane and actual signing keep their own bound; preparation checks the selected budget.",
+  "changes": [
+    {
+      "file": "src/owners/railgun-kohaku-plugin.js",
+      "beforeSha256": "ecaa2cba7c99b71034395af4fc0602babd63e15773cab6e10bce04df4decba2f",
+      "afterSha256": "83d6d7ce5e5f5bb8aa1386f648976df6b41b59fbed58e7af609790c08e220711",
+      "replacements": [
+        {
+          "start": 301,
+          "before": "",
+          "after": "const { isRailgunGasBudget } = require('./application-policy');\n"
+        },
+        {
+          "start": 6449,
+          "before": "      typeof options.maxGasFee === 'bigint' &&\n        options.maxGasFee > 0n &&\n        options.maxGasFee <= 2000000000000000n\n",
+          "after": "      isRailgunGasBudget(options.maxGasFee)\n"
+        },
+        {
+          "start": 25618,
+          "before": "",
+          "after": "            maxGasFee: resources.maxGasFee,\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-kohaku-recovery.js",
+      "beforeSha256": "28c9b9b8505fc6433a3a9baf1fbd189bc0da6d907c03308a4c0c0354e8cd077f",
+      "afterSha256": "70253a6e1e7f9a0206a01486d509d8623cb2d2655b4ddabcde2c0abf8ecc789e",
+      "replacements": [
+        {
+          "start": 205,
+          "before": "",
+          "after": "const { isRailgunGasBudget } = require('./application-policy');\n"
+        },
+        {
+          "start": 2882,
+          "before": "    assert.ok(typeof maxGasFee === 'bigint' && maxGasFee > 0n && maxGasFee <= 2000000000000000n);\n",
+          "after": "    assert.ok(isRailgunGasBudget(maxGasFee));\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-shield-operation.js",
+      "beforeSha256": "f070078e8f8f947b15ec84fe08d7f525026ac4c10af314d3747127bfa9fbc573",
+      "afterSha256": "06b6df7c667344a380b635960968fd37bbc71f576584f4d2d769e38c9974e85f",
+      "replacements": [
+        {
+          "start": 159,
+          "before": "",
+          "after": "const { isRailgunGasBudget } = require('./application-policy');\n"
+        },
+        {
+          "start": 10795,
+          "before": "        check(typeof maxGasFee === 'bigint' && maxGasFee > 0n && maxGasFee <= 2000000000000000n);\n",
+          "after": "        check(isRailgunGasBudget(maxGasFee));\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-private-submission.js",
+      "beforeSha256": "6eed619e6c24d7a6e4b54ced4ddb9e444defd5409916da147bce267386434faf",
+      "afterSha256": "5612b49390ec5018f5150009be15540c84c8cfdf47f30cecaa66d8b459a8fc8f",
+      "replacements": [
+        {
+          "start": 171,
+          "before": "",
+          "after": "const { isRailgunGasBudget } = require('./application-policy');\n"
+        },
+        {
+          "start": 26225,
+          "before": "    assert.ok(typeof maxGasFee === 'bigint' && maxGasFee > 0n && maxGasFee <= 2000000000000000n);\n",
+          "after": "    assert.ok(isRailgunGasBudget(maxGasFee));\n"
+        },
+        {
+          "start": 30783,
+          "before": "    assert.ok(typeof maxGasFee === 'bigint' && maxGasFee > 0n && maxGasFee <= 2000000000000000n);\n",
+          "after": "    assert.ok(isRailgunGasBudget(maxGasFee));\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-private-operation.js",
+      "beforeSha256": "17aeaab6031547ab6cf025b6a346d20eb819635164ffa2d502b6b2858f5df8af",
+      "afterSha256": "306e465b31a07be1b2380051ec96d49048c31f1ef8fe1784de6be4464d412907",
+      "replacements": [
+        {
+          "start": 385,
+          "before": "",
+          "after": "const { isRailgunGasBudget } = require('./application-policy');\n"
+        },
+        {
+          "start": 4201,
+          "before": "",
+          "after": "  maxGasFee,\n"
+        },
+        {
+          "start": 4219,
+          "before": "",
+          "after": "  assert.ok(isRailgunGasBudget(maxGasFee));\n"
+        },
+        {
+          "start": 9386,
+          "before": "    assert.ok(BigInt(balance.result) >= 2000000000000000n);\n",
+          "after": "    assert.ok(BigInt(balance.result) >= maxGasFee);\n"
+        }
+      ]
+    }
+  ]
+}

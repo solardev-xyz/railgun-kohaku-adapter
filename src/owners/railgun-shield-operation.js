@@ -1,6 +1,7 @@
 /** One-use main-owned Sepolia shield handoff. Receipt-bound authority ends at
  * broadcast; durable reconciliation is a separate journal-owned operation.
  */
+const { isRailgunGasBudget } = require('./application-policy');
 const { createPrivacyScope, getPrivacyContext } = require('./context-bindings');
 const { isProxy } = require('util').types;
 const { createPrivateRpc } = require('./host-bindings').rpc;
@@ -326,7 +327,7 @@ async function openRailgunShieldOperation(options) {
         check(Date.now() < reviewDeadline);
         check(!consumed && typeof review === 'function');
         check(typeof gasLimit === 'bigint' && gasLimit > 0n && gasLimit <= 3000000n);
-        check(typeof maxGasFee === 'bigint' && maxGasFee > 0n && maxGasFee <= 2000000000000000n);
+        check(isRailgunGasBudget(maxGasFee));
       } catch {
         throw fail();
       }

@@ -4,6 +4,7 @@
  * C must verify before saving; saved proof data is not submission authority.
  * EOA submission/recovery must obtain its own fresh C and chain evidence.
  */
+const { isRailgunGasBudget } = require('./application-policy');
 const assert = require('assert/strict');
 const { createHash, randomBytes } = require('crypto');
 const { createPrivacyScope, getPrivacyContext } = require('./context-bindings');
@@ -122,7 +123,9 @@ async function prove({
   artifactDirectory,
   stagingReceipt,
   destinationConstraints,
+  maxGasFee,
 }) {
+  assert.ok(isRailgunGasBudget(maxGasFee));
   // Internal admission retains the same genuine wallet, POI and signing gates.
   assert.ok(
     ['railgun-private-transfer', 'railgun-token-unshield', 'railgun-partial-unshield'].includes(
@@ -254,7 +257,7 @@ async function prove({
       '0x'
     );
     const balance = await network.request(pins.chainId, 'eth_getBalance', [submitter, 'pending']);
-    assert.ok(BigInt(balance.result) >= 2000000000000000n);
+    assert.ok(BigInt(balance.result) >= maxGasFee);
     active();
     stage = 'window';
     const result = await operateRailgunAccountPrivateIntent(

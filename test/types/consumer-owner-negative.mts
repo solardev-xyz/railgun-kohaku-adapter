@@ -1,3 +1,4 @@
+import { initializeRailgunMain } from "@freedom/railgun-kohaku-adapter/host/owner";
 // @ts-expect-error ESM facade has no default export
 import ownerDefault from "@freedom/railgun-kohaku-adapter/host/owner";
 // @ts-expect-error raw bootstrap is not the operational facade
@@ -21,3 +22,6 @@ const invalidCacheHost: RailgunMainHost = { ...host, sourceIdentity: {
   readCacheDigests: () => ({ public: "digest", wallet: "digest" }),
 }};
 void invalidCacheHost;
+
+// @ts-expect-error fee policy requires bigint, not a number
+initializeRailgunMain({ host, runtime: { archive: "/engine", proverArchive: "/prover", artifactDirectory: "/artifacts" }, applicationPolicy: { maxGasFee: 1 } });

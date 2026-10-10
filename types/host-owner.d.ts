@@ -1263,10 +1263,13 @@ export interface RailgunMain {
   openAccount(options: OpenAccountOptions): Promise<AccountSession>;
 }
 /** Once per realm; exact data properties only. Invalid options may throw before
- * returning a promise. No key, raw store, receipt, module getter or policy override.
+ * returning a promise. No key, raw store, receipt, module getter or cache-identity override.
  * createAccount is explicit fresh cooperative enrollment; openAccount never creates.
  * Closing revokes and waits for original work; the account fence lasts to main exit. */
 export function initializeRailgunMain(options: {
   host: RailgunMainHost;
   runtime: RailgunRuntime;
+  /** Captured once. Default 0.002 ETH; positive and at most the implementation's
+   * 1 ETH sanity ceiling. Each lane still supplies its own lower fee budget. */
+  applicationPolicy?: { maxGasFee: bigint };
 }): RailgunMain;
