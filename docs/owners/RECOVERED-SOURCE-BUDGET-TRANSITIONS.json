@@ -1,0 +1,80 @@
+{
+  "baseRevision": "a10720809300df426b08d1bdadfaeb927cfa42a7",
+  "label": "Bounded cold source workload allocation for both input types: source 120 seconds, recovery phase 260 seconds including attestation slack, reserved through earlier work. Include conservative source age in signing admission. Actual freshness, integrity, default recovery window and send authority unchanged.",
+  "changes": [
+    {
+      "file": "src/owners/railgun-private-submission.js",
+      "beforeSha256": "5612b49390ec5018f5150009be15540c84c8cfdf47f30cecaa66d8b459a8fc8f",
+      "afterSha256": "2f7ce41f77cfd5327679a86326a5e40ee62f6f1e5568d0b2b5a49e765f018e67",
+      "replacements": [
+        {
+          "start": 41925,
+          "before": "",
+          "after": "    // Preserve the full cold-source allocation through the earlier wallet/TXID work.\n    const sourceWindowMs = 120000, recoveryWindowMs = 260000;\n"
+        },
+        {
+          "start": 42112,
+          "before": "    assert.equal(await bounded(30000, 175000, () => reviewDisclosures(summary, lifetime)), true);\n",
+          "after": "    assert.equal(await bounded(30000, recoveryWindowMs, () => reviewDisclosures(summary, lifetime)), true);\n"
+        },
+        {
+          "start": 42321,
+          "before": "    await bounded(180000, 175000, async (budget) => {\n",
+          "after": "    await bounded(180000, recoveryWindowMs, async (budget) => {\n"
+        },
+        {
+          "start": 43924,
+          "before": "      await bounded(180000, 175000, async () => {\n",
+          "after": "      await bounded(180000, recoveryWindowMs, async () => {\n"
+        },
+        {
+          "start": 45065,
+          "before": "",
+          "after": "    // Both input types project the complete retained source. Transact recovery\n    // also visits it to bind the creator. The phase reserves 125 seconds for\n    // later checks and 15 for attestation. The source evidence's 60-second age\n    // additionally constrains later work; these allocations never renew it.\n"
+        },
+        {
+          "start": 45735,
+          "before": "        let proofStarted, poiStarted, rootStarted;\n",
+          "after": "        let proofStarted, poiStarted, rootStarted, sourceReturnedAt;\n"
+        },
+        {
+          "start": 45913,
+          "before": "",
+          "after": "          if (sourceReturnedAt !== undefined &&\n              performance.now() >= sourceReturnedAt + require(\"./railgun-scan-source.js\").MAX_AGE_MS)\n            throw budgetFail();\n"
+        },
+        {
+          "start": 47164,
+          "before": "              { destination, signal: phaseSignal, timeoutMs: phaseBudget(45000, 125000) },\n",
+          "after": "              { destination, signal: phaseSignal, timeoutMs: phaseBudget(sourceWindowMs, 125000) },\n"
+        },
+        {
+          "start": 48177,
+          "before": "",
+          "after": "                  // The final canonical pass follows this callback. This origin\n                  // is earlier than its evidence timestamp, never a renewal.\n                  sourceReturnedAt = performance.now();\n"
+        },
+        {
+          "start": 56270,
+          "before": "",
+          "after": "              sourceReturnedAt + require(\"./railgun-scan-source.js\").MAX_AGE_MS,\n"
+        },
+        {
+          "start": 59404,
+          "before": "      { timeoutMs: remaining(175000) }\n",
+          "after": "      { timeoutMs: remaining(recoveryWindowMs) }\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-private-reservations.js",
+      "beforeSha256": "8f6d0a0f514d23c50183b3739efcc050de0c74e77101e28a068bc4bae14fc609",
+      "afterSha256": "3668b674d5675dece9984f61f4e46d719238e4d947ebb21985e1586ebe55eac6",
+      "replacements": [
+        {
+          "start": 19013,
+          "before": "    check(Number.isSafeInteger(timeoutMs) && timeoutMs >= 1 && timeoutMs <= 175000);\n",
+          "after": "    check(Number.isSafeInteger(timeoutMs) && timeoutMs >= 1 && timeoutMs <= 260000);\n"
+        }
+      ]
+    }
+  ]
+}

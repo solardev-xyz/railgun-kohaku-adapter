@@ -30,7 +30,7 @@ const {
 } = require("../../qualification/installed-journey/synthetic-copy-contract.cjs");
 const { createFixtureServer } = require("./server.cjs");
 assert.ok(
-  [undefined, "acknowledged", "retained-unknown"].includes(inputs.variant),
+  [undefined, "acknowledged", "retained-unknown", "retained-upgrade"].includes(inputs.variant),
 );
 const { TRANSACT_ABI } = require("../../../src/data/railgun-private-policy.js");
 const hash = (bytes) => crypto.createHash("sha256").update(bytes).digest("hex");
@@ -69,9 +69,14 @@ const installed = path.join(
   "node_modules/@freedom/railgun-kohaku-adapter",
 );
 fs.mkdirSync(installed, { recursive: true });
+const previousTar = inputs.variant === "retained-upgrade" ? inputs.previousTar : null;
+if (previousTar) {
+  assert.equal(hash(fs.readFileSync(previousTar)),
+    "5cb040aa6c28343d31a1db14db679cf45ef132e48e62f98df1cb1a9e184a5821");
+} else assert.notEqual(inputs.variant, "retained-upgrade");
 execFileSync("tar", [
   "-xzf",
-  path.join(root, packed.filename),
+  previousTar ?? path.join(root, packed.filename),
   "-C",
   installed,
   "--strip-components=1",
@@ -82,8 +87,19 @@ for (const dependency of ["ethers", "better-sqlite3"])
     path.join(root, "node_modules", dependency),
     "dir",
   );
+const exampleSource = previousTar ? inputs.previousHost : path.join(repo, "examples/reference-wallet");
+if (previousTar) {
+  // Measure the old host as data before executing any of its modules.
+  const files = JSON.parse(fs.readFileSync(path.join(exampleSource, "host/sources.json"), "utf8"));
+  const rows = files.map((name) => {
+    assert.ok(typeof name === "string" && !path.isAbsolute(name) && !name.split("/").includes(".."));
+    return [name, hash(fs.readFileSync(path.join(exampleSource, name)))];
+  });
+  assert.equal(hash(JSON.stringify(["railgun-reference-host-v1", rows])),
+    "ac34e683eabd8b6c8f5eb3f44999c18edaf6ae69441a8bbc0ec8033d50c2d495");
+}
 fs.cpSync(
-  path.join(repo, "examples/reference-wallet"),
+  exampleSource,
   path.join(root, "example"),
   {
     recursive: true,
@@ -97,6 +113,7 @@ fs.writeFileSync(target, after);
 const installation = {
   tarSha256: hash(fs.readFileSync(path.join(root, packed.filename))),
   files: packed.files.length,
+  ...(previousTar ? { initialTarSha256: hash(fs.readFileSync(previousTar)) } : {}),
   transform: { target: TARGET, before: hash(before), after: hash(after) },
   scope: "synthetic list only; no production package mutation",
 };
@@ -259,10 +276,11 @@ async function actor(name, command, extra = {}) {
   }
 }
 async function main() {
+  const actors = inputs.variant === "retained-upgrade" ? ["alice", "bob"] : ["alice", "bob", "charlie"];
   const funding = {};
-  for (const name of ["alice", "bob", "charlie"])
+  for (const name of actors)
     funding[name] = (await actor(name, "fixture-init")).funding;
-  assert.equal(new Set(Object.values(funding)).size, 3);
+  assert.equal(new Set(Object.values(funding)).size, actors.length);
   worker = createJourneyCrypto({ engineModules: inputs.engineModules });
   chain = createJourneyChain({
     ethers: require("ethers"),
@@ -283,14 +301,14 @@ async function main() {
     cert: fs.readFileSync(path.join(root, "cert.pem")),
   });
   const addresses = {};
-  for (const name of ["alice", "bob", "charlie"]) {
+  for (const name of actors) {
     await actor(name, "account-create");
     await actor(name, "scan");
     await actor(name, "wallet-rebuild");
     addresses[name] = (await actor(name, "address")).address;
     assert.equal((await actor(name, "notes")).notes.length, 0);
   }
-  assert.equal(new Set(Object.values(addresses)).size, 3);
+  assert.equal(new Set(Object.values(addresses)).size, actors.length);
   const shield = await actor("alice", "shield", { amount: "1000000000000000" });
   const shieldHash = shield.outcome.hash ?? shield.outcome.transactionHash;
   assert.match(shieldHash, /^0x[0-9a-f]{64}$/);
@@ -396,7 +414,7 @@ async function main() {
   });
   assert.equal(prepared.status, "prepared");
   await actor("alice", "poi-submit", { capsuleDigest: prepared.capsuleDigest });
-  for (const name of ["bob", "charlie"]) {
+  for (const name of actors.filter((name) => name !== "alice")) {
     await actor(name, "scan");
     await actor(name, "wallet-sync");
   }
@@ -405,7 +423,7 @@ async function main() {
   );
   assert.equal(bobNotes.length, 1);
   assert.equal(bobNotes[0].amount, notes[0].amount);
-  assert.equal(
+  if (actors.includes("charlie")) assert.equal(
     (await actor("charlie", "notes")).notes.filter((n) => n.spentTxid === false)
       .length,
     0,
@@ -418,10 +436,64 @@ async function main() {
   const status = await actor("bob", "poi-status", { noteId: bobNotes[0].id });
   assert.deepEqual(status.statuses, ["Valid"]);
   await actor("bob", "txid-sync");
-  const unshield = await actor("bob", "unshield-note", {
-    noteId: bobNotes[0].id,
-    recipient: funding.bob,
-  });
+  let unshield;
+  if (inputs.variant === "retained-upgrade") {
+    const crashed = await actor("bob", "unshield-note", {
+      noteId: bobNotes[0].id, recipient: funding.bob, fixtureCrash: "after-prepared",
+    });
+    assert.equal(crashed.expectedCrash, true);
+    const retained = (await actor("bob", "holds")).records;
+    assert.equal(retained.length, 1);
+    assert.equal(retained[0].localState, "proof-present");
+    const holdId = retained[0].holdId;
+    assert.equal((await actor("bob", "observe", { holdId })).status, "unjournaled");
+    const oldDelay = server.armColdSourceDelay();
+    await actor("bob", "submit-stored", {
+      holdId,
+      expectedOutcome: { status: "recovery-required", stage: "source",
+        sourceOutcome: { fatal: false, reason: "expired", rpcFailure: null } },
+    });
+    server.clearColdSourceDelay();
+    assert.ok(oldDelay.requests > 0);
+    assert.equal(chain.state().transactions.length, 2);
+    assert.equal((await actor("bob", "observe", { holdId })).status, "unjournaled");
+    fs.renameSync(path.join(root, "example"), path.join(root, "retired-example"));
+    fs.cpSync(path.join(repo, "examples/reference-wallet"), path.join(root, "example"), {
+      recursive: true, filter: (filename) => !filename.split(path.sep).includes("node_modules"),
+    });
+    // Preserve the old install. Only the normal public new-generation and
+    // wallet rebuild APIs admit the new policy; custody is never copied/edited.
+    fs.renameSync(installed, path.join(root, "retired-package"));
+    fs.mkdirSync(installed);
+    execFileSync("tar", ["-xzf", path.join(root, packed.filename), "-C", installed, "--strip-components=1"]);
+    const original = fs.readFileSync(path.join(installed, TARGET));
+    const transformed = transformTestList(original);
+    fs.writeFileSync(path.join(installed, TARGET), transformed);
+    const upgradeTransform = { target: TARGET, before: hash(original), after: hash(transformed) };
+    await actor("bob", "account-info", { expectedRefusal: "RAILGUN_ACCOUNT_PUBLIC_REFUSED" });
+    for (const name of ["bob"]) {
+      await actor(name, "scan-new");
+      await actor(name, "wallet-rebuild");
+      await actor(name, "txid-sync");
+    }
+    const same = (await actor("bob", "holds")).records;
+    assert.deepEqual(same, retained);
+    assert.equal((await actor("bob", "observe", { holdId })).status, "unjournaled");
+    const delay = server.armColdSourceDelay();
+    unshield = await actor("bob", "submit-stored", { holdId });
+    server.clearColdSourceDelay();
+    assert.equal(delay.passes, 4);
+    assert.ok(delay.requests > 0);
+    write("RETAINED-UPGRADE.json", { previousTarSha256: hash(fs.readFileSync(previousTar)),
+      currentTarSha256: installation.tarSha256, oldDelay, delay, sameHold: true,
+      policyRebuild: true, transactionsBeforeSubmit: 2, upgradeTransform,
+      reviewTimings: results.at(-1).result.reviewTimings,
+      timingScope: "Wire final-pass start and observed review times; not an owner-internal timestamp" });
+  } else {
+    unshield = await actor("bob", "unshield-note", {
+      noteId: bobNotes[0].id, recipient: funding.bob,
+    });
+  }
   await chain.mine();
   const bobHolds = (await actor("bob", "holds")).records;
   assert.equal(bobHolds.length, 1);
@@ -461,7 +533,7 @@ async function main() {
   // Mutations apply only to this extracted disposable install, never repository
   // source. Each subsequent command is a fresh real Electron owner process.
   const compatibility = [];
-  for (const [scope, name, reusable] of [
+  for (const [scope, name, reusable] of inputs.variant === "retained-upgrade" ? [] : [
     ["host", "review.cjs", true],
     ["package", "src/data/railgun-poi-submit-data.js", true],
     ["package", "src/owners/railgun-event-projector.js", false],
@@ -526,7 +598,7 @@ async function main() {
     installation,
     broadcastRequests: 3,
     shieldRecoveryElapsedMs: recovery.elapsedMs,
-    independentActors: 3,
+    independentActors: actors.length,
     transactions: 3,
     transfer,
     unshield,
@@ -540,6 +612,7 @@ async function main() {
       "real current-circuit POI verification",
       "loopback SOCKS/TLS, not Tor",
       "fresh processes and random independent vaults",
+      ...(inputs.variant === "retained-upgrade" ? ["two-actor migration only; unrelated Charlie and cache controls stay in other variants"] : []),
       "installed package with recorded test-list transform",
     ],
   };

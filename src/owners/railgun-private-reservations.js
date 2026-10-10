@@ -538,7 +538,7 @@ async function createRailgunPrivateReservations({
   async function withSigningRecovery(use, { timeoutMs = 45000 } = {}) {
     active();
     check(!busy && typeof use === 'function');
-    check(Number.isSafeInteger(timeoutMs) && timeoutMs >= 1 && timeoutMs <= 175000);
+    check(Number.isSafeInteger(timeoutMs) && timeoutMs >= 1 && timeoutMs <= 260000);
     const phase = claimRecovery(),
       group = { phase, pending: 0, done: false },
       controller = new AbortController(),

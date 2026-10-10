@@ -1,0 +1,45 @@
+{
+  "baseRevision": "a10720809300df426b08d1bdadfaeb927cfa42a7",
+  "label": "Add healthy slow-source, deadline and fixed-ceiling regressions; extend existing receipt-expiry/drain test to the admitted phase bounds. Preserve all original assertions.",
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-submission-recovered.test.js",
+      "beforeSha256": "8ea9723e6fb7e121d75a3e7fe5487a6380fbbc15d866eb5c0e4ea03fc5a08c50",
+      "afterSha256": "cc9587561333c0f2348ee46b7a49e44131cfa620eb887463dacd3bc5f64193da",
+      "replacements": [
+        {
+          "start": 68482,
+          "before": "",
+          "after": "\n// Added workload regressions; the earlier c6 assertions above remain unchanged.\n// This models a healthy completed-source owner taking time, not real network\n// latency or proof validity. The real coordinator's expiry/drain is tested apart.\ntest.each([\n  ['Transact', 90000, 600000, true],\n  ['Transact', 120001, 600000, false],\n  ['Shield', 90000, 600000, true],\n  ['Shield', 120001, 600000, false],\n])('cold %s source workload %ims with outer %ims stays bounded', async (type, elapsed, timeoutMs, succeeds) => {\n  setup('railgun-token-unshield', type);\n  jest.spyOn(performance, 'now').mockImplementation(() => mock.clock);\n  const source = mock.coordinator.withCompletedPublicSnapshot;\n  const deadlineError = Error('completed source deadline');\n  mock.sourceOutcome = Object.freeze({ fatal: false, reason: 'expired', rpcFailure: null });\n  mock.coordinator.withCompletedPublicSnapshot = async (input, use) => {\n    const end = performance.now() + input.timeoutMs;\n    return source(input, async (snapshot) => {\n      mock.clock += elapsed;\n      if (performance.now() >= end) {\n        mock.sourceError = deadlineError;\n        throw deadlineError;\n      }\n      return use(snapshot);\n    });\n  };\n  const stored = copy(mock.stored);\n  const result = await submit({ ...options, timeoutMs });\n  if (succeeds) {\n    expect(result).toEqual({ transactionHash: hex(17), submissionStatus: 'acknowledged' });\n    expect(mock.events.filter((event) => event === 'sign')).toHaveLength(1);\n  } else {\n    expect(result).toEqual({ status: 'recovery-required', stage: 'source', sourceOutcome: mock.sourceOutcome });\n    expect(mock.events).not.toContain('transaction-review');\n    expect(mock.events).not.toContain('sign');\n    expect(mock.events).not.toContain('broadcast');\n  }\n  expect(mock.stored).toEqual(stored);\n  expect(mock.phase).toBeNull();\n});\n\n\ntest('a short outer deadline refuses before disclosure instead of clipping cold recovery', async () => {\n  jest.spyOn(performance, 'now').mockImplementation(() => mock.clock);\n  expect(await submit({ ...options, timeoutMs: 200000 })).toEqual({ status: 'recovery-required', stage: 'disclosure-review' });\n  expect(mock.events).not.toContain('disclosure-review');\n  expect(mock.events).not.toContain('source');\n  expect(mock.events).not.toContain('sign');\n});\n\ntest('earlier wallet and TXID work preserves the full source acquisition window', async () => {\n  setup('railgun-token-unshield', 'Transact');\n  jest.spyOn(performance, 'now').mockImplementation(() => mock.clock);\n  mock.hooks['wallet-open'] = () => { mock.clock += 179999; };\n  mock.hooks['mirror-open'] = () => { mock.clock += 159999; };\n  mock.hooks.source = () => { mock.clock += 90000; };\n  expect(await submit({ ...options, timeoutMs: 600000 })).toEqual(SENT);\n  expect(mock.sourceOptions.timeoutMs).toBe(120000);\n});\n\ntest.each([26000, 60001])('post-source work of %ims refuses before EOA review', async (elapsed) => {\n  setup('railgun-token-unshield', 'Transact');\n  jest.spyOn(performance, 'now').mockImplementation(() => mock.clock);\n  // Creator verification is after the final source pass and before fresh proof,\n  // POI and root receipts. Only the source age should constrain this case.\n  mock.hooks['creator-verify'] = () => { mock.clock += elapsed; };\n  const result = await submit(options);\n  expect(result.status).toBe('recovery-required');\n  expect(diagnosticOf(result).code).toBe('RAILGUN_PRIVATE_REVIEW_BUDGET');\n  expect(mock.events).not.toContain('preflight-open');\n  expect(mock.events).not.toContain('transaction-review');\n  expect(mock.events).not.toContain('sign');\n  expect(mock.events).not.toContain('broadcast');\n});\n\n\ntest('TXID work that would consume the reserved recovery phase stops before source', async () => {\n  setup('railgun-token-unshield', 'Transact');\n  jest.spyOn(performance, 'now').mockImplementation(() => mock.clock);\n  mock.hooks['wallet-open'] = () => { mock.clock += 179999; };\n  mock.hooks['mirror-open'] = () => { mock.clock += 179999; };\n  expect(await submit({ ...options, timeoutMs: 600000 })).toEqual({ status: 'recovery-required', stage: 'txid' });\n  expect(mock.events).not.toContain('source');\n  expect(mock.events).not.toContain('transaction-review');\n  expect(mock.events).not.toContain('sign');\n});\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-reservations.test.js",
+      "beforeSha256": "00f093ed54fa7b2a06c4956de2db4a662d0eb72970fa6e2aea67546fbc08be89",
+      "afterSha256": "481a74cd95d08760abdc8f81504bfc38193498d64237d7c48ce7a977b9fbd54b",
+      "replacements": [
+        {
+          "start": 17292,
+          "before": "test('expiry revokes recovery receipts but holds the account phase until the callback drains', async () => {\n",
+          "after": "test.each([10, 175000, 260000])('expiry at %ims revokes recovery receipts but holds the account phase until the callback drains', async (timeoutMs) => {\n"
+        },
+        {
+          "start": 18219,
+          "before": "      { timeoutMs: 10 }\n",
+          "after": "      { timeoutMs }\n"
+        },
+        {
+          "start": 18406,
+          "before": "    await jest.advanceTimersByTimeAsync(11);\n",
+          "after": "    await jest.advanceTimersByTimeAsync(timeoutMs + 1);\n"
+        },
+        {
+          "start": 42078,
+          "before": "",
+          "after": "\ntest('recovery rejects a duration beyond the fixed 250-second ceiling before its callback', async () => {\n  const s = await open(true);\n  const callback = jest.fn();\n  await expect(s.withSigningRecovery(callback, { timeoutMs: 260001 })).rejects.toThrow();\n  expect(callback).not.toHaveBeenCalled();\n});\n"
+        }
+      ]
+    }
+  ]
+}

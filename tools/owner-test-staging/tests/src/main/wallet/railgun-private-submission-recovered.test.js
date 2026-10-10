@@ -1774,3 +1774,89 @@ test('raising the application ceiling does not authorize a prior-attempt resend'
   expect(mock.events).not.toContain('send-enter');
   expect(mock.events).not.toContain('broadcast');
 });
+
+// Added workload regressions; the earlier c6 assertions above remain unchanged.
+// This models a healthy completed-source owner taking time, not real network
+// latency or proof validity. The real coordinator's expiry/drain is tested apart.
+test.each([
+  ['Transact', 90000, 600000, true],
+  ['Transact', 120001, 600000, false],
+  ['Shield', 90000, 600000, true],
+  ['Shield', 120001, 600000, false],
+])('cold %s source workload %ims with outer %ims stays bounded', async (type, elapsed, timeoutMs, succeeds) => {
+  setup('railgun-token-unshield', type);
+  jest.spyOn(performance, 'now').mockImplementation(() => mock.clock);
+  const source = mock.coordinator.withCompletedPublicSnapshot;
+  const deadlineError = Error('completed source deadline');
+  mock.sourceOutcome = Object.freeze({ fatal: false, reason: 'expired', rpcFailure: null });
+  mock.coordinator.withCompletedPublicSnapshot = async (input, use) => {
+    const end = performance.now() + input.timeoutMs;
+    return source(input, async (snapshot) => {
+      mock.clock += elapsed;
+      if (performance.now() >= end) {
+        mock.sourceError = deadlineError;
+        throw deadlineError;
+      }
+      return use(snapshot);
+    });
+  };
+  const stored = copy(mock.stored);
+  const result = await submit({ ...options, timeoutMs });
+  if (succeeds) {
+    expect(result).toEqual({ transactionHash: hex(17), submissionStatus: 'acknowledged' });
+    expect(mock.events.filter((event) => event === 'sign')).toHaveLength(1);
+  } else {
+    expect(result).toEqual({ status: 'recovery-required', stage: 'source', sourceOutcome: mock.sourceOutcome });
+    expect(mock.events).not.toContain('transaction-review');
+    expect(mock.events).not.toContain('sign');
+    expect(mock.events).not.toContain('broadcast');
+  }
+  expect(mock.stored).toEqual(stored);
+  expect(mock.phase).toBeNull();
+});
+
+
+test('a short outer deadline refuses before disclosure instead of clipping cold recovery', async () => {
+  jest.spyOn(performance, 'now').mockImplementation(() => mock.clock);
+  expect(await submit({ ...options, timeoutMs: 200000 })).toEqual({ status: 'recovery-required', stage: 'disclosure-review' });
+  expect(mock.events).not.toContain('disclosure-review');
+  expect(mock.events).not.toContain('source');
+  expect(mock.events).not.toContain('sign');
+});
+
+test('earlier wallet and TXID work preserves the full source acquisition window', async () => {
+  setup('railgun-token-unshield', 'Transact');
+  jest.spyOn(performance, 'now').mockImplementation(() => mock.clock);
+  mock.hooks['wallet-open'] = () => { mock.clock += 179999; };
+  mock.hooks['mirror-open'] = () => { mock.clock += 159999; };
+  mock.hooks.source = () => { mock.clock += 90000; };
+  expect(await submit({ ...options, timeoutMs: 600000 })).toEqual(SENT);
+  expect(mock.sourceOptions.timeoutMs).toBe(120000);
+});
+
+test.each([26000, 60001])('post-source work of %ims refuses before EOA review', async (elapsed) => {
+  setup('railgun-token-unshield', 'Transact');
+  jest.spyOn(performance, 'now').mockImplementation(() => mock.clock);
+  // Creator verification is after the final source pass and before fresh proof,
+  // POI and root receipts. Only the source age should constrain this case.
+  mock.hooks['creator-verify'] = () => { mock.clock += elapsed; };
+  const result = await submit(options);
+  expect(result.status).toBe('recovery-required');
+  expect(diagnosticOf(result).code).toBe('RAILGUN_PRIVATE_REVIEW_BUDGET');
+  expect(mock.events).not.toContain('preflight-open');
+  expect(mock.events).not.toContain('transaction-review');
+  expect(mock.events).not.toContain('sign');
+  expect(mock.events).not.toContain('broadcast');
+});
+
+
+test('TXID work that would consume the reserved recovery phase stops before source', async () => {
+  setup('railgun-token-unshield', 'Transact');
+  jest.spyOn(performance, 'now').mockImplementation(() => mock.clock);
+  mock.hooks['wallet-open'] = () => { mock.clock += 179999; };
+  mock.hooks['mirror-open'] = () => { mock.clock += 179999; };
+  expect(await submit({ ...options, timeoutMs: 600000 })).toEqual({ status: 'recovery-required', stage: 'txid' });
+  expect(mock.events).not.toContain('source');
+  expect(mock.events).not.toContain('transaction-review');
+  expect(mock.events).not.toContain('sign');
+});

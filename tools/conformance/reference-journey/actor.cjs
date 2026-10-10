@@ -89,7 +89,7 @@ async function run() {
     path.join(example, "host/application-state.cjs"),
   ).createApplicationState({ profile, vault, assertCustody: lock.verify });
   if (config.fixtureCrash === "after-prepared") {
-    if (config.command !== "pay-note") throw Error("Invalid crash fixture");
+    if (!["pay-note", "unshield-note"].includes(config.command)) throw Error("Invalid crash fixture");
     const actual = appState;
     appState = Object.freeze({
       get: actual.get,
@@ -111,6 +111,7 @@ async function run() {
     rpcUrl: config.rpcUrl,
     signal,
   });
+  const reviewTimings = [];
   let reviews = 0,
     disclosedShieldRequests = null;
   // ONLY this marked offline harness consents automatically. No production
@@ -119,6 +120,7 @@ async function run() {
     if (summary?.purpose === "railgun-shield-observation-v1")
       disclosedShieldRequests = [...summary.requests];
     reviews++;
+    reviewTimings.push({ purpose: summary?.purpose ?? null, at: Date.now() });
     return true;
   };
   const result = await require(
@@ -150,6 +152,7 @@ async function run() {
   return {
     result,
     reviews,
+    reviewTimings,
     disclosedShieldRequests,
     hostDigest: composition.hostDigest,
     applicationPolicy: {

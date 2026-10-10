@@ -1087,11 +1087,13 @@ async function submitRailgunRecoveredPrivateTransaction(options) {
       automaticRetry: false,
       chainStateVerified: false,
     });
+    // Preserve the full cold-source allocation through the earlier wallet/TXID work.
+    const sourceWindowMs = 120000, recoveryWindowMs = 260000;
     state.stage = 'disclosure-review';
-    assert.equal(await bounded(30000, 175000, () => reviewDisclosures(summary, lifetime)), true);
+    assert.equal(await bounded(30000, recoveryWindowMs, () => reviewDisclosures(summary, lifetime)), true);
     state.stage = 'wallet';
     const owners = Object.freeze({ identity, enrollment, coordinator });
-    await bounded(180000, 175000, async (budget) => {
+    await bounded(180000, recoveryWindowMs, async (budget) => {
       account = await require("./railgun-account-wallet.js").openRailgunCompletedAccountWallet({
         ...owners,
         archive,
@@ -1136,7 +1138,7 @@ async function submitRailgunRecoveredPrivateTransaction(options) {
     let mirrorState, noteWitness;
     if (record.type === 'Transact') {
       state.stage = 'txid';
-      await bounded(180000, 175000, async () => {
+      await bounded(180000, recoveryWindowMs, async () => {
         mirror = await require("./railgun-account-txid.js").openRailgunAccountTxid({
           enrollment,
           coordinator,
@@ -1168,16 +1170,23 @@ async function submitRailgunRecoveredPrivateTransaction(options) {
         }
       });
     } else assert.equal(record.type, 'Shield');
+    // Both input types project the complete retained source. Transact recovery
+    // also visits it to bind the creator. The phase reserves 125 seconds for
+    // later checks and 15 for attestation. The source evidence's 60-second age
+    // additionally constrains later work; these allocations never renew it.
     state.stage = 'recovery';
     await reservations.withSigningRecovery(
       async (records, context) => {
         const phaseSignal = AbortSignal.any([lifetime, context.signal]);
         let eligibilityScope, sourceReceipt, membership, rootReceipt, rootPoint, verifiedCreator;
         // Taken before each acquisition, so at or before its age origin.
-        let proofStarted, poiStarted, rootStarted;
+        let proofStarted, poiStarted, rootStarted, sourceReturnedAt;
         const phaseCurrent = (margin = 0) => {
           current(margin);
           context.assertCurrent();
+          if (sourceReturnedAt !== undefined &&
+              performance.now() >= sourceReturnedAt + require("./railgun-scan-source.js").MAX_AGE_MS)
+            throw budgetFail();
           assert.ok(
             Number.isFinite(context.deadline) && performance.now() + margin < context.deadline
           );
@@ -1204,7 +1213,7 @@ async function submitRailgunRecoveredPrivateTransaction(options) {
           let snapshot;
           try {
             snapshot = await coordinator.withCompletedPublicSnapshot(
-              { destination, signal: phaseSignal, timeoutMs: phaseBudget(45000, 125000) },
+              { destination, signal: phaseSignal, timeoutMs: phaseBudget(sourceWindowMs, 125000) },
               async (source) => {
                 try {
                   phaseCurrent();
@@ -1225,6 +1234,9 @@ async function submitRailgunRecoveredPrivateTransaction(options) {
                           assert.ok(!source.signal.aborted);
                         },
                       });
+                  // The final canonical pass follows this callback. This origin
+                  // is earlier than its evidence timestamp, never a renewal.
+                  sourceReturnedAt = performance.now();
                   return { creator };
                 } catch {
                   return null;
@@ -1410,6 +1422,7 @@ async function submitRailgunRecoveredPrivateTransaction(options) {
             Math.min(
               deadline,
               context.deadline,
+              sourceReturnedAt + require("./railgun-scan-source.js").MAX_AGE_MS,
               proofStarted + PROOF_RECEIPT_MS,
               poiStarted + require("./railgun-poi-source.js").MAX_AGE_MS,
               rootPoint ? rootStarted + require("./railgun-txid-root.js").MAX_AGE_MS : Infinity
@@ -1492,7 +1505,7 @@ async function submitRailgunRecoveredPrivateTransaction(options) {
           }
         }
       },
-      { timeoutMs: remaining(175000) }
+      { timeoutMs: remaining(recoveryWindowMs) }
     );
   } catch (error) {
     // Never promote thrown transaction hashes or recovery diagnostics; only

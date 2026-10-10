@@ -4,6 +4,7 @@ const path = require('path');
 const { createHash } = require('crypto');
 const root = path.join(__dirname, '..');
 const manifest = require('../docs/owners/test-staging/MANIFEST.json');
+const recoveredSourceAdaptations = require('../docs/owners/test-staging/RECOVERED-SOURCE-BUDGET-ADAPTATIONS.json');
 const adaptations = require('../docs/owners/test-staging/CLOSED-ADAPTATIONS.json');
 const contextAdaptations = require('../docs/owners/test-staging/CONTEXT-ADAPTATIONS.json');
 const hostAdaptations = require('../docs/owners/test-staging/HOST-ADAPTATIONS.json');
@@ -41,6 +42,15 @@ test('all staged tests and fixtures preserve exact c6 bytes through reversible i
   expect(new Set(manifest.files.map((row) => row.destination)).size).toBe(168);
   for (const row of manifest.files) {
     let text = fs.readFileSync(path.join(root, row.destination), 'utf8');
+    const recoveredSource = recoveredSourceAdaptations.changes.find((entry) => entry.file === row.destination);
+    if (recoveredSource) {
+      expect(sha(text)).toBe(recoveredSource.afterSha256);
+      for (const edit of [...recoveredSource.replacements].reverse()) {
+        expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(edit.after);
+        text = text.slice(0, edit.start) + edit.before + text.slice(edit.start + edit.after.length);
+      }
+      expect(sha(text)).toBe(recoveredSource.beforeSha256);
+    }
     const application = applicationAdaptations.changes.find((entry) => entry.file === row.destination);
     if (application) {
       expect(sha(text)).toBe(application.afterSha256);

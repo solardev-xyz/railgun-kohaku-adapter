@@ -109,3 +109,19 @@ Omission preserves 0.002 ETH; each lane retains its own equal or lower budget.
 See [application spending policy](APPLICATION-POLICY.md) for units, bounds,
 retained-operation behavior and the unchanged signing/uncertainty checks. This
 is not a deployment selector or an override of custody and cache identities.
+
+
+## Cold retained-submission workload
+
+A cold `submitStored` may authenticate and project the full retained public
+history; Transact inputs also traverse it to bind their creator. It allocates
+up to 120 seconds to that work inside a 260-second recovery phase, within the
+unchanged ten-minute command limit. Earlier wallet and TXID work reserves that
+phase. Other recovery callers retain the 45-second default.
+
+This does not extend evidence validity. A conservative timestamp preceding the
+final canonical pass bounds the source evidence to 60 seconds, including the
+later proof, POI, root and signing work. The early signing gate needs at least
+35 seconds remaining. Long acquisition can therefore finish successfully and
+still refuse before signing if subsequent checks are too slow. Such a refusal
+preserves the held operation; it is not permission to re-prepare or resend.

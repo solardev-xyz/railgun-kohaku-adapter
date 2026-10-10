@@ -15,6 +15,7 @@ async function createFixtureServer({ chain, submitters, key, cert }) {
   const allowed = new Set(
     [ENDPOINT, POI_URL, INDEXER_URL].map((url) => new URL(url).hostname),
   );
+  let coldSourceDelay = null;
   let readDelayMs = 0,
     loseSendResponse = false;
   const methods = [];
@@ -107,6 +108,25 @@ async function createFixtureServer({ chain, submitters, key, cert }) {
           typeof wire.method === "string" ? wire.method : "indexer-page",
         );
         assert.ok(methods.length <= 100000);
+        // Fixture-only bounded latency: four canonical passes plus the source
+        // log/header reads. Each request stays below the real ten-second limit.
+        // No decoded response or validation is changed.
+        const cold = coldSourceDelay;
+        if (cold && wire.method === "eth_getBlockByNumber" && wire.params[0] === "finalized")
+          cold.seenPasses++;
+        // The completed-wallet restore has its own four canonical passes.
+        // Leave them fast: target only the later recovery source acquisition.
+        if (cold && cold.seenPasses > 4 &&
+            ["eth_getBlockByNumber", "eth_getLogs"].includes(wire.method)) {
+          const last = wire.method === "eth_getBlockByNumber" &&
+            wire.params[0] === "finalized" && ++cold.passes === 4;
+          cold.requests++;
+          cold.firstRequestAt ??= Date.now();
+          if (last) cold.finalPassRequestAt = Date.now();
+          await new Promise((resolve) => setTimeout(resolve, 8000));
+          cold.lastDelayFinishedAt = Date.now();
+          if (last) coldSourceDelay = null;
+        }
         if (readDelayMs && wire.method !== "eth_sendRawTransaction")
           await new Promise((resolve) => setTimeout(resolve, readDelayMs));
         const result = await chain.request(subject, url, wire);
@@ -217,6 +237,13 @@ async function createFixtureServer({ chain, submitters, key, cert }) {
       assert.equal(loseSendResponse, false);
       loseSendResponse = true;
     },
+    armColdSourceDelay() {
+      assert.equal(coldSourceDelay, null);
+      const record = { seenPasses: 0, passes: 0, requests: 0 };
+      coldSourceDelay = record;
+      return record;
+    },
+    clearColdSourceDelay() { coldSourceDelay = null; },
     setReadDelay(value) {
       assert.ok([0, 2000].includes(value));
       readDelayMs = value;

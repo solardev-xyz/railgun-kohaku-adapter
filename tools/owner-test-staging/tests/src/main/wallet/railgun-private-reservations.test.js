@@ -466,7 +466,7 @@ test('recovery receipts expire after callback and distinguish operation receipts
   expect(() => s.assertReceiptContext(retained, 'recovery')).toThrow();
   expect((await s.assertReceipt(operation)).state).toBe('signing');
 });
-test('expiry revokes recovery receipts but holds the account phase until the callback drains', async () => {
+test.each([10, 175000, 260000])('expiry at %ims revokes recovery receipts but holds the account phase until the callback drains', async (timeoutMs) => {
   jest.useFakeTimers();
   let released = false,
     observed = false,
@@ -494,12 +494,12 @@ test('expiry revokes recovery receipts but holds the account phase until the cal
         expect(released).toBe(false);
         await done;
       },
-      { timeoutMs: 10 }
+      { timeoutMs }
     );
     const rejected = expect(pending).rejects.toThrow();
     for (let i = 0; i < 20 && !observed; i++) await Promise.resolve();
     expect(observed).toBe(true);
-    await jest.advanceTimersByTimeAsync(11);
+    await jest.advanceTimersByTimeAsync(timeoutMs + 1);
     expect(released).toBe(false);
     finish();
     await rejected;
@@ -1176,3 +1176,10 @@ test.each([false, true])(
     }
   }
 );
+
+test('recovery rejects a duration beyond the fixed 250-second ceiling before its callback', async () => {
+  const s = await open(true);
+  const callback = jest.fn();
+  await expect(s.withSigningRecovery(callback, { timeoutMs: 260001 })).rejects.toThrow();
+  expect(callback).not.toHaveBeenCalled();
+});

@@ -1,4 +1,5 @@
 "use strict";
+const recoveredSourceTransitions = require("../docs/owners/RECOVERED-SOURCE-BUDGET-TRANSITIONS.json");
 const amountBoundsTransitions = require("../docs/owners/AMOUNT-BOUNDS-TRANSITIONS.json");
 const deploymentTransitions = require("../docs/owners/DEPLOYMENT-TRANSITIONS.json");
 const fs = require("fs"),
@@ -77,6 +78,7 @@ test("every translated algorithm reconstructs its exact immutable original bytes
     reused = 0;
   for (const row of translation.files) {
     let text = fs.readFileSync(sourceFile(row.destination), "utf8");
+    text = undoRecoveredSource(text, row.destination);
     text = undoAmountBounds(text, row.destination);
     text = undoDeployment(text, row.destination);
     const applicationChange = applicationTransitions.changes.find(change => change.file === row.destination);
@@ -373,6 +375,7 @@ test("all reused static named export surfaces were checked, including the full c
     expect(found.sourceSha256).toBe(row.sourceSha256);
     // The audited bytes are the pre-retry basis; the retry phase is undone.
     let text = fs.readFileSync(path.join(root, row.destination), "utf8");
+    text = undoRecoveredSource(text, row.destination);
     text = undoAmountBounds(text, row.destination);
     text = undoDeployment(text, row.destination);
     const drainage = walletDrainTransitions.changes.find(
@@ -446,6 +449,7 @@ test("high-authority host family imports have an exact reviewed source allowlist
     ).toEqual(files);
   for (const [file, digest] of Object.entries(audit.files)) {
     let text = fs.readFileSync(path.join(root, file), "utf8");
+    text = undoRecoveredSource(text, file);
     text = undoAmountBounds(text, file);
     text = undoDeployment(text, file);
     const applicationChange = applicationTransitions.changes.find(change => change.file === file);
@@ -538,6 +542,15 @@ function undoAmountBounds(text, file) {
     expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(edit.after);
     text = text.slice(0, edit.start) + edit.before + text.slice(edit.start + edit.after.length);
   }
+  expect(sha(text)).toBe(change.beforeSha256);
+  return text;
+}
+
+function undoRecoveredSource(text, file) {
+  const change = recoveredSourceTransitions.changes.find((row) => row.file === file);
+  if (!change) return text;
+  expect(sha(text)).toBe(change.afterSha256);
+  text = undo(text, change.replacements);
   expect(sha(text)).toBe(change.beforeSha256);
   return text;
 }
