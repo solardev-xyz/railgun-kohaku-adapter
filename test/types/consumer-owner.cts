@@ -252,3 +252,13 @@ async function rebuildOpen(
   await resumed.closed;
 }
 void rebuildOpen;
+
+// Implementable context/storage signatures remain self-contained.
+const parentScope = host.sessions.openPrivacySession();
+const rpcContext = parentScope.getContext({
+  kind: "public-address", principal: "0x00", chainId: 11155111, role: "transaction-rpc",
+});
+const scopedValue: Promise<number> = parentScope.run(rpcContext, async () => 1);
+const normalizedOperation: string | null = host.context.getPrivacyContext(rpcContext).subject.operation;
+const storagePath: string = host.storage.getPrivacyStoragePath(rpcContext, "/profile");
+void scopedValue; void normalizedOperation; void storagePath;

@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "license": "MPL-2.0",
+  "repository": "https://github.com/solardev-xyz/freedom-browser",
+  "commit": "eba426b2ec8c52b82300e23fa9283a99f9f2d630",
+  "copies": "adapted; not byte-identical or runtime imports",
+  "files": [
+    {
+      "source": "src/main/networks/private-rpc.js",
+      "sourceSha256": "5e36ee72f3d9ad78209c9f89c8e88d4cbf127e527d8956f77e0a2cdd4bf0a1a6",
+      "destination": "examples/reference-wallet/host/rpc.cjs"
+    },
+    {
+      "source": "src/main/wallet/private-submission-journal.js",
+      "sourceSha256": "e98318aa57937aa0c9afbf0f07aaed8cc643d3afd2b8801d0af3da8fe376e67d",
+      "destination": "examples/reference-wallet/host/journal.cjs"
+    },
+    {
+      "source": "src/main/wallet/privacy-journal-retention.js",
+      "sourceSha256": "e031f6b67ddf1717de9ca928195c765dd3f961f075a5d3ead31da086882e393a",
+      "destination": "examples/reference-wallet/host/retention.cjs"
+    },
+    {
+      "source": "src/main/wallet/privacy-journal-archiver.js",
+      "sourceSha256": "e1bccb688c77364641e7bdefee1f3503ece7f0a572533ece98f6ee9d7295de7e",
+      "destination": "examples/reference-wallet/host/archiver.cjs"
+    },
+    {
+      "source": "src/main/wallet/private-submission-reconciler.js",
+      "sourceSha256": "786ce5f69cdf9a491e08687fb95cc169d38c7939d5b9cd59706c9547cbc9f47b",
+      "destination": "examples/reference-wallet/host/reconciler.cjs"
+    },
+    {
+      "source": "src/main/wallet/private-transaction-network.js",
+      "sourceSha256": "8318ca393d3d2458af0bb78de874cf8c823171ecb17ec1b8ebfef934e9a7c980",
+      "destination": "examples/reference-wallet/host/transaction-network.cjs"
+    }
+  ]
+}

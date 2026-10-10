@@ -6,6 +6,8 @@ The main entry is `@freedom/railgun-kohaku-adapter/host/owner`. It exports only 
 
 The declarations still leave many captured host functions opaque. A complete per-family contract and executable host conformance are prerequisites of the [standalone reference application](../ADOPTION-ROADMAP.md). The current account execution path uses Electron utilities and ASAR runtime loading; passing main initialization in Node alone does not qualify a Node execution host.
 
+Repository documentation specifies [context, session and encrypted storage](https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/owners/HOST-CONTEXT-STORAGE.md), with shared conformance checks and a [host capability map](https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/owners/HOST-PORTS.md). These repository-only documents and the reference implementation are under development; they do not establish a qualified application journey.
+
 ## Account sessions
 
 A session owns its original identity, enrollment, public cache and at most one wallet/operation lane. It exposes describe, public advance/rebuild/resume, reviewed public TXID synchronization, and fixed read/private/public/recovery/local-relay/completed-relay lanes. The exact declarations accompany the root host entry; stage-specific design notes preserve how the interface was reviewed. A recovery companion can inspect retained operations without opening an active wallet. Relay lanes manage local proof/signature custody only; they do not add broadcaster discovery or transport.

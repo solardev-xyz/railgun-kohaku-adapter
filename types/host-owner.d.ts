@@ -29,10 +29,19 @@ export interface PrivacySubject {
   readonly kind: string;
   readonly principal: string;
   readonly chainId: number;
-  readonly protocol: string;
-  readonly deployment: string;
+  readonly protocol: string | null;
+  readonly deployment: string | null;
   readonly role: string;
-  readonly operation?: string | null;
+  readonly operation: string | null;
+}
+export interface PrivacySubjectInput {
+  readonly kind: string;
+  readonly principal: string;
+  readonly chainId: number;
+  readonly protocol?: string;
+  readonly deployment?: string;
+  readonly role: string;
+  readonly operation?: string;
 }
 export interface PrivacyRequirements {
   readonly origin: "tor";
@@ -56,14 +65,39 @@ export interface OwnerContextHost {
     profileId: string;
     signal: AbortSignal;
     isCurrent?: () => boolean;
-  }): {
-    readonly signal: AbortSignal;
-    getContext(
-      subject: PrivacySubject,
-      requirements?: PrivacyRequirements,
-    ): object;
-    close(): void;
-  };
+  }): OwnerPrivacyScope;
+}
+export interface OwnerPrivacyScope {
+  readonly signal: AbortSignal;
+  getContext(
+    subject: PrivacySubjectInput,
+    requirements?: PrivacyRequirements,
+  ): object;
+  run<T>(handle: object, task: (signal: AbortSignal) => T | Promise<T>): Promise<T>;
+  close(): void;
+}
+/** Minimum owner-facing interface. Concrete stores may offer other methods.
+ * update is a serialized synchronous read/modify/commit; its callback cannot
+ * await. A failed write may have committed (storageCommitted on the error). */
+export interface OwnerPrivacyStorage {
+  get(name: string): Promise<string | null>;
+  update(
+    name: string,
+    change: (previous: string | null) => string,
+  ): Promise<void>;
+}
+export interface OwnerStorageHost {
+  createPrivacyStorage(options: {
+    handle: object;
+    directory: string;
+    /** Runtime requires a 32-byte Node Buffer; it is copied synchronously. */
+    key: Uint8Array;
+    profileGuard: {
+      assert(file: string): void;
+      remember(file: string): void;
+    };
+  }): OwnerPrivacyStorage;
+  getPrivacyStoragePath(handle: object, directory: string): string;
 }
 export interface OwnerStorageWorkerInput {
   workerData: {
@@ -139,11 +173,9 @@ export interface RailgunMainHost {
     spawnStorageWorker(input: OwnerStorageWorkerInput): object;
   };
   profiles: { getActiveProfile(): { id: string; userDataDir: string } };
-  sessions: { openPrivacySession: CapturedHostOriginal };
-  storage: {
-    createPrivacyStorage: CapturedHostOriginal;
-    getPrivacyStoragePath: CapturedHostOriginal;
-  };
+  /** Parent lifetime belongs to the host, not an individual account owner. */
+  sessions: { openPrivacySession(): OwnerPrivacyScope };
+  storage: OwnerStorageHost;
   rpc: {
     assertPrivateRpcDestination: CapturedHostOriginal;
     createPrivateRpc: CapturedHostOriginal;
