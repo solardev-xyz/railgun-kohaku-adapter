@@ -4,7 +4,7 @@
 const { createHash } = require('crypto');
 const { verifyRailgunEngineRuntime } = require("../execution/railgun-engine-runtime.js");
 const engine = require("../execution/railgun-engine-manifest.json");
-const { readRailgunPolicySourceIdentity } = require('./source-identity');
+const { readRailgunCacheSourceIdentity } = require('./source-identity');
 const SOURCES = Object.freeze(require('./source-files.json'));
 const sha = (v) => createHash('sha256').update(v).digest('hex');
 function railgunTxidBinding(binding) {
@@ -18,12 +18,12 @@ function getRailgunTxidPolicy(archive) {
   verifyRailgunEngineRuntime(archive);
   return sha(
     JSON.stringify([
-      'freedom:railgun:txid-policy-v1',
+      'freedom:railgun:txid-policy-v2',
       'sepolia',
       11155111,
       engine.sha256,
       engine.inventory.sha256,
-      readRailgunPolicySourceIdentity(),
+      readRailgunCacheSourceIdentity('txid'),
     ])
   );
 }

@@ -109,7 +109,8 @@ for (const name of files) {
       families.map((symbol) => symbol.name).sort(),
       rows.map(([name]) => name).sort(),
     );
-    for (const [name, methods] of rows) {
+    for (const [name, requiredMethods] of rows) {
+      const methods = name === "sourceIdentity" ? [...requiredMethods, "readCacheDigests"].sort() : requiredMethods;
       const family = families.find((symbol) => symbol.name === name);
       assert.deepEqual(
         checker

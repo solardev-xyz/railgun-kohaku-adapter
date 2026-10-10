@@ -122,8 +122,8 @@ beforeEach(() => {
   };
 });
 afterEach(() => state.controller.abort());
-const open = (create = false) =>
-  createRailgunPoiIntentStore({
+const open = (create = false, factory = createRailgunPoiIntentStore) =>
+  factory({
     enrollment: state.enrollment,
     handle: state.intentHandle,
     directory: state.directory,
@@ -348,4 +348,35 @@ test('the pre-retry reader still reads V3 but refuses a genuine V4 retry documen
   await expect(openWith(v3)).rejects.toMatchObject({ code: 'RAILGUN_POI_INTENT_STORE_REFUSED' });
   // A downgrade cannot strip the reservation by rewriting under the old reader.
   expect(stored().entries[0].retry).toBeDefined();
+});
+
+test('a serializer byte change refuses an existing attempted document, even when derived caches remain compatible', async () => {
+  const serializerFile = path.join(__dirname, '../src/data/railgun-poi-submit-data.js');
+  const storeFile = path.join(__dirname, '../src/owners/railgun-poi-intent-store.js');
+  const load = (filename, text, replacement) => {
+    const module = {exports: {}};
+    const read = request => replacement && request === '../data/railgun-poi-submit-data.js'
+      ? replacement : require(request.startsWith('.') ? path.resolve(path.dirname(filename), request) : request);
+    // Same test realm, local source only; no file is modified or new module path enrolled.
+    new Function('require', 'module', text)(read, module);
+    return module.exports;
+  };
+  const originalText = fs.readFileSync(serializerFile, 'utf8');
+  const replacementText = originalText.replace('    id: requestId,\n  });', '    id: requestId,\n  }) + "\\n";');
+  expect(replacementText).not.toBe(originalText);
+  const changed = load(serializerFile, replacementText);
+  const original = entry();
+  // The modified implementation works for new documents; only existing exact bytes conflict.
+  const next = changed.prepareRailgunPoiSubmission({requestId: attemptedAt, payload: payload()});
+  expect(changed.normalizeRailgunPoiSubmission(next)).toEqual(next);
+  expect(next.bodySha256).not.toBe(original.attempt.submission.bodySha256);
+  expect(() => changed.normalizeRailgunPoiSubmission(original.attempt.submission)).toThrow();
+  seed(3, [original]);
+  const first = await open(); first.close(); await first.closed;
+  const before = state.records.get(RECORD), floor = state.floor, writes = state.writes;
+  const alteredStore = load(storeFile, fs.readFileSync(storeFile, 'utf8'), changed);
+  await expect(open(false, alteredStore.createRailgunPoiIntentStore)).rejects.toThrow();
+  expect(state.records.get(RECORD)).toBe(before);
+  expect(state.floor).toBe(floor);
+  expect(state.writes).toBe(writes);
 });

@@ -71,7 +71,6 @@ test.each([
   'src/data/railgun-own-poi-binding.js',
   'src/data/railgun-own-poi-shape-data.js',
   'src/data/railgun-owned-poi-records.js',
-  'src/data/railgun-poi-submit-data.js',
   'src/data/railgun-txid-note-witness.js',
   'src/data/railgun-txid-projection.js',
   'src/data/railgun-txid-omissions.js',
@@ -86,4 +85,11 @@ test.each([
   const first = fresh().f.policy('railgun-txid-policy').getRailgunTxidPolicy('/engine.asar');
   expect(files).toContain(name);
   expect(fresh(name).f.policy('railgun-txid-policy').getRailgunTxidPolicy('/engine.asar')).not.toBe(first);
+});
+
+test('TXID cache excludes the outbound POI serializer while full source attestation retains it', () => {
+  const name = 'src/data/railgun-poi-submit-data.js';
+  expect(files).toContain(name);
+  const first = fresh().f.policy('railgun-txid-policy').getRailgunTxidPolicy('/engine.asar');
+  expect(fresh(name).f.policy('railgun-txid-policy').getRailgunTxidPolicy('/engine.asar')).toBe(first);
 });

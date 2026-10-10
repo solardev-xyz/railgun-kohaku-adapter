@@ -355,3 +355,39 @@ test("recovery failure stays unknown and does not create or publish another gene
     assertRailgunAccountPublic(recovered.coordinator, mockEnrollment),
   ).toThrow();
 });
+
+// The real encrypted catalog selects generations. Only the public apply/source
+// and runtime verification are controlled by this test's existing fixture.
+function policyDomain(version) {
+  const vm = require("node:vm");
+  const module = {exports: {}};
+  let text = fs.readFileSync(path.join(__dirname, "../src/owners/railgun-public-policy.js"), "utf8");
+  if (version === 1) text = text.replace("public-policy-v2", "public-policy-v1")
+    .replaceAll("readRailgunCacheSourceIdentity", "readRailgunPolicySourceIdentity")
+    .replace("readRailgunPolicySourceIdentity('public')", "readRailgunPolicySourceIdentity()");
+  vm.runInNewContext(text, {module, require(name) {
+    if (name.includes("railgun-engine-runtime")) return {verifyRailgunEngineRuntime() {}};
+    if (name.includes("railgun-engine-manifest")) return require("../src/execution/railgun-engine-manifest.json");
+    if (name === "./source-files.json") return require("../src/owners/source-files.json");
+    if (name === "./source-identity") return {
+      readRailgunPolicySourceIdentity: () => ({layout: "sources-v2", packageDigest: "c".repeat(64), hostDigest: "d".repeat(64)}),
+      readRailgunCacheSourceIdentity: kind => ({layout: "cache-sources-v1", kind, packageDigest: "e".repeat(64), hostDigest: "d".repeat(64)}),
+    };
+    return require(name);
+  }});
+  return module.exports.getRailgunPublicPolicy("/fixture.asar");
+}
+test.each(["active", "pending"])("v1 %s generation cannot silently open under v2", async (state) => {
+  mockPolicy = policyDomain(1);
+  const prior = await open(true), oldId = prior.generationId;
+  if (state === "active") await prior.publish();
+  await prior.close();
+  mockPolicy = policyDomain(2);
+  const files = retainedFiles(mockEnrollment.directory), calls = mockOpen.mock.calls.length;
+  for (const mode of [undefined, "recover", "pending"])
+    await expect(open(false, mode)).rejects.toThrow();
+  expect(mockOpen.mock.calls).toHaveLength(calls);
+  expect(retainedFiles(mockEnrollment.directory)).toEqual(files);
+  const fresh = await open(false, "new");
+  expect(fresh.generationId).not.toBe(oldId);
+});

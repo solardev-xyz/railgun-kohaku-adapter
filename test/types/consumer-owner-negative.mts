@@ -3,6 +3,7 @@ import ownerDefault from "@freedom/railgun-kohaku-adapter/host/owner";
 // @ts-expect-error raw bootstrap is not the operational facade
 import { initializeRailgunOwnerHost } from "@freedom/railgun-kohaku-adapter/host/owner";
 import type {
+  RailgunMainHost,
   PublicPreparedHandle,
   PrivateLane,
 } from "@freedom/railgun-kohaku-adapter/host/owner";
@@ -12,3 +13,11 @@ declare const privateLane: PrivateLane;
 privateLane.broadcast(publicHandle);
 void ownerDefault;
 void initializeRailgunOwnerHost;
+
+declare const host: RailgunMainHost;
+const invalidCacheHost: RailgunMainHost = { ...host, sourceIdentity: {
+  readDigest: () => "digest",
+  // @ts-expect-error every cache family must have a synchronous digest
+  readCacheDigests: () => ({ public: "digest", wallet: "digest" }),
+}};
+void invalidCacheHost;

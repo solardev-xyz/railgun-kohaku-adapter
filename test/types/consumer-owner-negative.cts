@@ -165,3 +165,10 @@ declare const heldResolution: owner.HeldSubmissionResolution;
 // @ts-expect-error resolution never releases the private signing hold
 const released: true = heldResolution.releasesHold;
 void released;
+
+const invalidCacheHost: owner.RailgunMainHost = { ...host, sourceIdentity: {
+  readDigest: () => "digest",
+  // @ts-expect-error every cache family must have a synchronous digest
+  readCacheDigests: () => ({ public: "digest", wallet: "digest" }),
+}};
+void invalidCacheHost;

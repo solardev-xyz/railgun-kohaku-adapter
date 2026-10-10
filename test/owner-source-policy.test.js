@@ -14,7 +14,7 @@ const original = new Map(
   files.map((name) => [name, fs.readFileSync(path.join(root, name))]),
 );
 const sha = (bytes) => createHash("sha256").update(bytes).digest("hex");
-function fixture() {
+function fixture({ helperText = helper, cacheHost } = {}) {
   const bytes = new Map(original),
     reads = [],
     lstat = [],
@@ -57,13 +57,18 @@ function fixture() {
     const module = { exports: {} };
     vm.runInNewContext(
       text,
-      { module, require: requireModule, __dirname: path.dirname(filename) },
+      {
+        module,
+        require: requireModule,
+        __dirname: path.dirname(filename),
+        Object,
+      },
       { filename },
     );
     return module.exports;
   }
   const source = load(
-    helper,
+    helperText,
     path.join(root, "src/owners/source-identity.js"),
     (name) => {
       if (name === "fs") return fakeFs;
@@ -86,7 +91,12 @@ function fixture() {
         return {
           verifyRailgunEngineRuntime: (archive) => {
             checks.push(archive);
-            if (!["/public-fixture.asar", "/second-location/public-fixture.asar"].includes(archive))
+            if (
+              ![
+                "/public-fixture.asar",
+                "/second-location/public-fixture.asar",
+              ].includes(archive)
+            )
               throw Error("Unverified archive");
           },
         };
@@ -105,7 +115,11 @@ function fixture() {
     fakeFs,
     checks,
     source,
-    capture: () => source.captureRailgunPolicySourceIdentity(hostRead()),
+    capture: () =>
+      source.captureRailgunPolicySourceIdentity(
+        hostRead(),
+        ...(cacheHost ? [cacheHost()] : []),
+      ),
     policy,
     hostRead,
     assertHost,
@@ -223,7 +237,7 @@ test("historical qualification limit, domains, archive checks and TXID binding s
       path.join(root, "src/owners", name + ".js"),
       "utf8",
     );
-    expect(text).toContain(`freedom:railgun:${name.split("-")[1]}-policy-v1`);
+    expect(text).toContain(`freedom:railgun:${name.split("-")[1]}-policy-v2`);
     expect(text).not.toMatch(
       /require\.resolve|adapterSources|fs\.readFileSync/,
     );
@@ -325,10 +339,11 @@ test("source initialization refuses ancestor symlinks and escaping canonical pat
 // shipped sources now enter the single initialization snapshot. The list itself
 // has a separate exact-membership refusal control above, rather than rotation.
 test.each(files.filter((name) => name !== "src/owners/source-files.json"))(
-  "fresh owner wallet policy binds the actual shipped %s bytes",
+  "full attestation binds %s; cache policy includes it unless explicitly excluded",
   (name) => {
     const f = fixture();
     f.capture();
+    const full = f.source.readRailgunPolicySourceIdentity();
     const first = f
       .policy("railgun-wallet-policy")
       .getRailgunWalletPolicy("/public-fixture.asar");
@@ -345,11 +360,13 @@ test.each(files.filter((name) => name !== "src/owners/source-files.json"))(
     const next = fixture();
     next.bytes.set(name, changed);
     next.capture();
-    expect(
-      next
-        .policy("railgun-wallet-policy")
-        .getRailgunWalletPolicy("/public-fixture.asar"),
-    ).not.toBe(first);
+    expect(next.source.readRailgunPolicySourceIdentity()).not.toEqual(full);
+    const updated = next
+      .policy("railgun-wallet-policy")
+      .getRailgunWalletPolicy("/public-fixture.asar");
+    if (name === "src/data/railgun-poi-submit-data.js")
+      expect(updated).toBe(first);
+    else expect(updated).not.toBe(first);
     expect(next.fakeFs.readdirSync).not.toHaveBeenCalled();
   },
 );
@@ -374,12 +391,110 @@ test("every fixed relative import in listed runtime source stays within the expl
   }
 });
 
-
 test("authenticated archive location alone cannot change captured policy identity", () => {
   const f = fixture();
   f.capture();
   for (const [name, method] of policies) {
     const get = f.policy(name)[method];
-    expect(get("/second-location/public-fixture.asar")).toBe(get("/public-fixture.asar"));
+    expect(get("/second-location/public-fixture.asar")).toBe(
+      get("/public-fixture.asar"),
+    );
+  }
+});
+
+const cacheHost = () => ({
+  public: "b".repeat(64),
+  wallet: "c".repeat(64),
+  txid: "d".repeat(64),
+});
+test("UI-only host attestation and POI serializer changes preserve all three caches", () => {
+  const first = fixture({ cacheHost });
+  first.capture();
+  const next = fixture({ cacheHost });
+  next.setHost("f".repeat(64));
+  const file = "src/data/railgun-poi-submit-data.js";
+  next.bytes.set(
+    file,
+    Buffer.concat([
+      next.bytes.get(file),
+      Buffer.from("\n// diagnostic-only revision\n"),
+    ]),
+  );
+  next.capture();
+  expect(next.source.readRailgunPolicySourceIdentity()).not.toEqual(
+    first.source.readRailgunPolicySourceIdentity(),
+  );
+  for (const [name, method] of policies) {
+    expect(next.policy(name)[method]("/public-fixture.asar")).toBe(
+      first.policy(name)[method]("/public-fixture.asar"),
+    );
+  }
+});
+test("optional host cache digests are read once, detached and fixed by kind", () => {
+  const values = cacheHost(),
+    read = jest.fn(() => values),
+    f = fixture({ cacheHost: read });
+  f.capture();
+  values.public = "e".repeat(64);
+  expect(f.source.readRailgunCacheSourceIdentity("public").hostDigest).toBe(
+    "b".repeat(64),
+  );
+  expect(f.source.readRailgunCacheSourceIdentity("wallet").hostDigest).toBe(
+    "c".repeat(64),
+  );
+  expect(read).toHaveBeenCalledTimes(1);
+  expect(() => f.source.readRailgunCacheSourceIdentity("any")).toThrow();
+  expect(() => f.source.readRailgunCacheSourceIdentity("public", {})).toThrow();
+});
+test("malformed optional cache records fail closed without invoking getters or proxy traps", () => {
+  const trap = jest.fn();
+  const getter = cacheHost();
+  Object.defineProperty(getter, "public", { get: trap });
+  for (const value of [
+    undefined,
+    null,
+    {},
+    Promise.resolve(cacheHost()),
+    { ...cacheHost(), extra: "a" },
+    { ...cacheHost(), public: "A".repeat(64) },
+    getter,
+    new Proxy(cacheHost(), { ownKeys: trap }),
+    Object.assign(Object.create({}), cacheHost()),
+  ]) {
+    expect(() => fixture({ cacheHost: () => value }).capture()).toThrow();
+  }
+  expect(trap).not.toHaveBeenCalled();
+});
+test("a newly enrolled package file is included in all cache identities by default", () => {
+  const first = fixture();
+  first.capture();
+  const added = "src/owners/future-projection.js";
+  const list = Buffer.from(
+    JSON.stringify([...files, added].sort(), null, 2) + "\n",
+  );
+  const next = fixture({
+    helperText: helper.replace(
+      /const LIST_SHA256 = '[a-f0-9]+';/,
+      `const LIST_SHA256 = '${sha(list)}';`,
+    ),
+  });
+  next.bytes.set("src/owners/source-files.json", list);
+  next.bytes.set(added, Buffer.from("// new projection semantics\n"));
+  next.capture();
+  for (const [name, method] of policies) {
+    expect(next.policy(name)[method]("/public-fixture.asar")).not.toBe(
+      first.policy(name)[method]("/public-fixture.asar"),
+    );
+  }
+});
+
+test("legacy hosts use their full digest for every cache family", () => {
+  const before = fixture(); before.capture();
+  const after = fixture(); after.setHost("e".repeat(64)); after.capture();
+  for (const [name, method] of policies) {
+    const kind = name.split("-")[1];
+    expect(before.source.readRailgunCacheSourceIdentity(kind).hostDigest).toBe("a".repeat(64));
+    expect(after.source.readRailgunCacheSourceIdentity(kind).hostDigest).toBe("e".repeat(64));
+    expect(after.policy(name)[method]("/public-fixture.asar")).not.toBe(before.policy(name)[method]("/public-fixture.asar"));
   }
 });

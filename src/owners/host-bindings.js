@@ -98,9 +98,18 @@ function initializeRailgunOwnerHost(input, ...extra) {
     if (extra.length) throw fail();
     const families = record(input, Object.keys(SCHEMA));
     const next = Object.create(null);
-    for (const [family, names] of Object.entries(SCHEMA)) {
-      const receiver = families[family],
-        functions = record(receiver, names),
+    for (const [family, required] of Object.entries(SCHEMA)) {
+      const receiver = families[family];
+      // Inspect no proxy/getter. The optional port is bootstrap-only, captured
+      // with its original receiver just like the required complete attestation.
+      if (!receiver || typeof receiver !== "object" || isProxy(receiver))
+        throw fail();
+      const names =
+        family === "sourceIdentity" &&
+        Object.hasOwn(receiver, "readCacheDigests")
+          ? [...required, "readCacheDigests"]
+          : required;
+      const functions = record(receiver, names),
         methods = Object.create(null);
       for (const name of names) {
         const original = functions[name];
@@ -113,6 +122,9 @@ function initializeRailgunOwnerHost(input, ...extra) {
     // later change, but this process must never silently rotate generations.
     require("./source-identity").captureRailgunPolicySourceIdentity(
       next.sourceIdentity.readDigest(),
+      ...(next.sourceIdentity.readCacheDigests
+        ? [next.sourceIdentity.readCacheDigests()]
+        : []),
     );
     initializeExecution({
       context: next.context,

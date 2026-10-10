@@ -4,6 +4,7 @@ const fs = require("fs"),
   vm = require("vm"),
   { createHash } = require("crypto");
 const root = path.join(__dirname, "..");
+const cacheTransitions = require("../docs/owners/CACHE-COMPATIBILITY-TRANSITIONS.json");
 const walletDrainTransitions = require("../docs/owners/WALLET-DRAIN-TRANSITIONS.json");
 const publicRecoveryTransitions = require("../docs/owners/PUBLIC-RECOVERY-TRANSITIONS.json");
 const poiReproofTransitions = require("../docs/owners/POI-REPROOF-TRANSITIONS.json");
@@ -73,6 +74,12 @@ test("every translated algorithm reconstructs its exact immutable original bytes
     reused = 0;
   for (const row of translation.files) {
     let text = fs.readFileSync(sourceFile(row.destination), "utf8");
+    const cacheChange = cacheTransitions.changes.find(change => change.file === row.destination);
+    if (cacheChange) {
+      expect(sha(text)).toBe(cacheChange.afterSha256);
+      text = undo(text, cacheChange.replacements);
+      expect(sha(text)).toBe(cacheChange.beforeSha256);
+    }
     const drainage = walletDrainTransitions.changes.find(
       (change) => change.file === row.destination,
     );

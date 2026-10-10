@@ -140,7 +140,12 @@ export interface RailgunMainHost {
   };
   /** Lowercase SHA-256 of the complete host source-identity inventory. Captured
    * exactly once, before any operational owner algorithm is loaded. */
-  sourceIdentity: { readDigest(): string };
+  sourceIdentity: {
+    readDigest(): string;
+    /** Optional conservative cache identities from the same immutable snapshot.
+     * Omission retains full-host-source invalidation. No operation override. */
+    readCacheDigests?(): Readonly<{ public: string; wallet: string; txid: string }>;
+  };
   credentials: {
     currentSession(): AbortSignal;
     withMaterial(

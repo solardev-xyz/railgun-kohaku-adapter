@@ -1,0 +1,117 @@
+{
+  "baseRevision": "7479a7a1376b72a20544ff76ad109072ddd61271",
+  "label": "separate full attestation from conservative derived-cache compatibility; v2 policy domains; no custody migration",
+  "changes": [
+    {
+      "file": "src/owners/railgun-public-policy.js",
+      "beforeSha256": "2aa3095194710d41dec99f7c5d82ef02c3d9d79e206ecd9c2c1377e7fd591bed",
+      "afterSha256": "251274b24338de51846851168d43b2768e908e439cfccdf9774f4a4b5940a470",
+      "replacements": [
+        {
+          "start": 418,
+          "before": "Poli",
+          "after": "Ca"
+        },
+        {
+          "start": 421,
+          "before": "y",
+          "after": "he"
+        },
+        {
+          "start": 765,
+          "before": "1",
+          "after": "2"
+        },
+        {
+          "start": 938,
+          "before": "Poli",
+          "after": "Ca"
+        },
+        {
+          "start": 941,
+          "before": "y",
+          "after": "he"
+        },
+        {
+          "start": 958,
+          "before": "",
+          "after": "'public'"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-wallet-policy.js",
+      "beforeSha256": "f951955ae4e409652098a46a4eaf0b6c6232e879fea0bcef462edc82c0f957c7",
+      "afterSha256": "bf963299cd1ccac22394c9d400887f1fc412931ff5ef8025bae13d983d979651",
+      "replacements": [
+        {
+          "start": 535,
+          "before": "Poli",
+          "after": "Ca"
+        },
+        {
+          "start": 538,
+          "before": "y",
+          "after": "he"
+        },
+        {
+          "start": 819,
+          "before": "1",
+          "after": "2"
+        },
+        {
+          "start": 964,
+          "before": "Poli",
+          "after": "Ca"
+        },
+        {
+          "start": 967,
+          "before": "y",
+          "after": "he"
+        },
+        {
+          "start": 984,
+          "before": "",
+          "after": "'wallet'"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-txid-policy.js",
+      "beforeSha256": "03dff0da039fe5ac1c9afd6f8c2376ebb1d8f90f1ba545a5a0fc2c071313024e",
+      "afterSha256": "300038ac6d6dbd458ae33f1f00b4a4fd9585dd870ab66b732a59872319a1d0f9",
+      "replacements": [
+        {
+          "start": 374,
+          "before": "Poli",
+          "after": "Ca"
+        },
+        {
+          "start": 377,
+          "before": "y",
+          "after": "he"
+        },
+        {
+          "start": 1017,
+          "before": "1",
+          "after": "2"
+        },
+        {
+          "start": 1123,
+          "before": "Poli",
+          "after": "Ca"
+        },
+        {
+          "start": 1126,
+          "before": "y",
+          "after": "he"
+        },
+        {
+          "start": 1143,
+          "before": "",
+          "after": "'txid'"
+        }
+      ]
+    }
+  ]
+}

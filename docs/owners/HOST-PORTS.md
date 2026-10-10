@@ -23,6 +23,7 @@ public bootstraps, synchronously during entry evaluation.
 | storage.createPrivacyStorage, storage.getPrivacyStoragePath | See context/storage contract. |
 | credentials.currentSession, credentials.withMaterial | Exact purpose-specific loans and root-drain rules in credential contract. |
 | sourceIdentity.readDigest | Synchronous lowercase SHA-256 over the complete fixed host implementation inventory. Captured before owner algorithms load. Not a mutable version label or authentication against a malicious local user. |
+| sourceIdentity.readCacheDigests (optional) | Synchronous exact `{public,wallet,txid}` lowercase SHA-256 record from the same immutable source snapshot as `readDigest`. Bind every host byte affecting cache interpretation or persistence. Omission uses the complete host digest for all three. This is trusted host bootstrap, never an account or operation override. |
 | artifacts.createPrivacyArtifactLoader | Synchronous `{handle,directory,manifest}` → `{load(name):Promise<Uint8Array>}`. Manifest entries contain kind/name/size/sha256. Authenticate artifacts context, use fixed local names and bounded owned buffers, verify actual bytes and close original descriptors before settlement. No download fallback. The package verifies its pinned manifest again. |
 | platform.applicationLifetime | Actual application's one-way shutdown AbortSignal. |
 | platform.spawnUtility | `{entry:'railgun-utility-v1',heapMb}` → original Electron UtilityProcess. Fixed entry, environment cleanup and heap bound; `.once('spawn'/'exit'/'error')`, `.on('message')`, `.postMessage(wire,[port])` and genuine pid. No arbitrary code path. |
@@ -92,7 +93,7 @@ Call-site anchors: `railgun-scan-source.js`, `railgun-private-preflight.js`,
 
 | Family and function | Owner-facing contract |
 | --- | --- |
-| submitter.readMetadata | Synchronous `{index:0,type:'mnemonic',address}` for the enrolled EOA. No key. Must remain bound to the current vault/profile. |
+| submitter.readMetadata | Synchronous `{index:0,type:'mnemonic',address}` for the enrolled EOA; `address` is canonical lowercase `0x` plus 40 hex digits, matching authenticated custody. No key is returned. Must remain bound to the current vault/profile. A checksummed signer address is not the metadata representation. |
 | signers.getSigner | Index 0 → address/signTransaction signer, with no sendTransaction method. Currentness before and after awaited work; the signer never bypasses the owner's review or the durable broadcast journal. |
 | transactionIntent.transactionIntent | `(kind,transaction)` → immutable normalized intent. Railgun transact and shield bindings use the public `/host/journal-data` helpers. Recompute from signed bytes at send admission. |
 | transactionIntent.validIntent | Validate supported intent data; no signing authority follows. |

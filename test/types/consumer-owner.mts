@@ -51,3 +51,8 @@ async function shieldRecovery(session: import("@freedom/railgun-kohaku-adapter/h
   lane.close(); await lane.closed;
 }
 void shieldRecovery;
+
+const compatibleHost: RailgunMainHost = { ...host, sourceIdentity: {
+  readDigest: () => "full-digest", readCacheDigests: () => ({ public: "public", wallet: "wallet", txid: "txid" }),
+}};
+void compatibleHost;

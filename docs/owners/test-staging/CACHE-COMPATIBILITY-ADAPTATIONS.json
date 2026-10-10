@@ -1,0 +1,22 @@
+{
+  "reason": "TXID cache compatibility excludes only outbound POI serialization. The default-inclusion assertions remain for all cache interpretation and validation sources. Full-source attestation and retained-body refusal controls are in package-owned tests.",
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-txid-policy.test.js",
+      "beforeSha256": "1659bfc9a26797d0a6be2a8b06ec0471d75d9060270eb348859fca09a3e3613f",
+      "afterSha256": "6ee520fdd44005ee0c9d23b3e44f086587ac0c4aeb9e677d1e714ee6f44baa08",
+      "replacements": [
+        {
+          "start": 4097,
+          "before": "  'src/data/railgun-poi-submit-data.js',\n",
+          "after": ""
+        },
+        {
+          "start": 4839,
+          "before": "",
+          "after": "\ntest('TXID cache excludes the outbound POI serializer while full source attestation retains it', () => {\n  const name = 'src/data/railgun-poi-submit-data.js';\n  expect(files).toContain(name);\n  const first = fresh().f.policy('railgun-txid-policy').getRailgunTxidPolicy('/engine.asar');\n  expect(fresh(name).f.policy('railgun-txid-policy').getRailgunTxidPolicy('/engine.asar')).toBe(first);\n});\n"
+        }
+      ]
+    }
+  ]
+}

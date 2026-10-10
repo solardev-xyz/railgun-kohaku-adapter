@@ -1,4 +1,5 @@
-/** Conservative cache source identity, not execution-coverage or code trust.
+/** Complete source attestation and conservative derived-cache compatibility.
+ * Neither is execution-coverage or code trust.
  * Membership is generated at build/review time. Initialization reads only this exact
  * list; no caller supplies a path, source selector, hash or replacement reader.
  */
@@ -6,6 +7,7 @@
 const fs = require('fs');
 const path = require('path');
 const { createHash } = require('crypto');
+const { isProxy } = require('util').types;
 const ROOT = path.resolve(__dirname, '../..');
 const LIST_FILE = 'src/owners/source-files.json';
 const LIST_SHA256 = '142be8e986ebf1db207a8dd4e73f2f1349191492d8c446585f16a42ef90fc57e';
@@ -14,7 +16,26 @@ const sha = (value) => createHash('sha256').update(value).digest('hex');
 const fail = () => Object.assign(new Error('Railgun policy source unavailable'), {
   code: 'RAILGUN_POLICY_SOURCE_REFUSED',
 });
-let snapshot, captureAttempted = false;
+// Default include: an unknown or newly shipped source rotates all cache policies.
+// This module only serializes/classifies POI handoffs; it cannot interpret or
+// write public, wallet or TXID generations. Full attestation still includes it.
+const CACHE_EXCLUDED = new Set(['src/data/railgun-poi-submit-data.js']);
+const CACHE_KINDS = Object.freeze(['public', 'wallet', 'txid']);
+let snapshot, cacheSnapshots, captureAttempted = false;
+function cacheDigests(value) {
+  if (!value || typeof value !== 'object' || isProxy(value) ||
+      ![Object.prototype, null].includes(Object.getPrototypeOf(value))) throw fail();
+  const descriptors = Object.getOwnPropertyDescriptors(value);
+  if (Reflect.ownKeys(descriptors).length !== CACHE_KINDS.length) throw fail();
+  const result = Object.create(null);
+  for (const kind of CACHE_KINDS) {
+    const entry = descriptors[kind];
+    if (!entry || !Object.hasOwn(entry, 'value') || !entry.enumerable ||
+        typeof entry.value !== 'string' || !/^[0-9a-f]{64}$/.test(entry.value)) throw fail();
+    result[kind] = entry.value;
+  }
+  return result;
+}
 function read(filename, limit) {
   try {
     const target = path.join(ROOT, filename);
@@ -33,10 +54,13 @@ function read(filename, limit) {
     return bytes;
   } catch { throw fail(); }
 }
-function captureRailgunPolicySourceIdentity(hostDigest) {
+function captureRailgunPolicySourceIdentity(hostDigest, hostCaches) {
   if (captureAttempted) throw fail();
   captureAttempted = true;
-  if (arguments.length !== 1 || typeof hostDigest !== 'string' || !/^[0-9a-f]{64}$/.test(hostDigest)) throw fail();
+  if (arguments.length < 1 || arguments.length > 2 || typeof hostDigest !== 'string' || !/^[0-9a-f]{64}$/.test(hostDigest)) throw fail();
+  const host = arguments.length === 1
+    ? Object.fromEntries(CACHE_KINDS.map((kind) => [kind, hostDigest]))
+    : cacheDigests(hostCaches);
   const listBytes = read(LIST_FILE, 65536);
   if (sha(listBytes) !== LIST_SHA256) throw fail();
   const files = JSON.parse(listBytes.toString('utf8'));
@@ -52,6 +76,10 @@ function captureRailgunPolicySourceIdentity(hostDigest) {
     if (total > 32 * 1024 * 1024) throw fail();
     return [name, bytes.byteLength, sha(bytes)];
   });
+  const packageDigest = sha(JSON.stringify([PACKAGE, sources.filter(([name]) => !CACHE_EXCLUDED.has(name))]));
+  cacheSnapshots = Object.freeze(Object.fromEntries(CACHE_KINDS.map((kind) => [kind, Object.freeze({
+    layout: 'cache-sources-v1', kind, package: PACKAGE, packageDigest, hostDigest: host[kind],
+  })])));
   snapshot = Object.freeze({
     layout: 'sources-v2',
     package: PACKAGE,
@@ -65,4 +93,10 @@ function readRailgunPolicySourceIdentity() {
   if (!snapshot) throw fail();
   return snapshot;
 }
-module.exports = { captureRailgunPolicySourceIdentity, readRailgunPolicySourceIdentity };
+function readRailgunCacheSourceIdentity(kind) {
+  if (arguments.length !== 1 || !CACHE_KINDS.includes(kind)) throw fail();
+  require('./host-bindings').assertRailgunOwnerHost();
+  if (!cacheSnapshots) throw fail();
+  return cacheSnapshots[kind];
+}
+module.exports = { captureRailgunPolicySourceIdentity, readRailgunPolicySourceIdentity, readRailgunCacheSourceIdentity };

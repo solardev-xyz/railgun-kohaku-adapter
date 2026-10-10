@@ -416,3 +416,59 @@ test("actual private initializer captures source bytes without loading operation
   expect(result.stderr).toBe("");
   expect(result.stdout).toBe("source-initialization-ok");
 });
+
+test("captures optional cache port after the complete digest, once, with its original receiver", () => {
+  const r = realm(),
+    port = r.copy(),
+    input = bindings(),
+    order = [];
+  const caches = Object.freeze({
+    public: "b".repeat(64),
+    wallet: "c".repeat(64),
+    txid: "d".repeat(64),
+  });
+  input.sourceIdentity.readDigest.mockImplementation(() => {
+    order.push("full");
+    return "a".repeat(64);
+  });
+  const original = jest.fn(function () {
+    expect(this).toBe(input.sourceIdentity);
+    order.push("caches");
+    return caches;
+  });
+  input.sourceIdentity.readCacheDigests = original;
+  port.initializeRailgunOwnerHost(input);
+  input.sourceIdentity.readCacheDigests = () => {
+    throw Error("replacement");
+  };
+  expect(order).toEqual(["full", "caches"]);
+  expect(original).toHaveBeenCalledTimes(1);
+  expect(r.captureSource).toHaveBeenCalledWith("a".repeat(64), caches);
+  expect(Object.keys(port.sourceIdentity)).toEqual(["readDigest"]);
+});
+test("optional cache port rejects getters, proxies, nonfunctions and extra selectors", () => {
+  const trap = jest.fn();
+  for (const mutate of [
+    (i) =>
+      Object.defineProperty(i.sourceIdentity, "readCacheDigests", {
+        get: trap,
+      }),
+    (i) => {
+      i.sourceIdentity.readCacheDigests = new Proxy(() => {}, { apply: trap });
+    },
+    (i) => {
+      i.sourceIdentity.readCacheDigests = {};
+    },
+    (i) => {
+      i.sourceIdentity.readCacheDigests = () => ({});
+      i.sourceIdentity.policy = () => "override";
+    },
+  ]) {
+    const input = bindings();
+    mutate(input);
+    expect(() => realm().copy().initializeRailgunOwnerHost(input)).toThrow(
+      refused,
+    );
+  }
+  expect(trap).not.toHaveBeenCalled();
+});

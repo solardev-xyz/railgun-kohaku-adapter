@@ -6,19 +6,19 @@ const { createHash } = require('crypto');
 const { verifyRailgunEngineRuntime } = require("../execution/railgun-engine-runtime.js");
 const engine = require("../execution/railgun-engine-manifest.json");
 const { getRailgunPublicPolicy } = require("./railgun-public-policy.js");
-const { readRailgunPolicySourceIdentity } = require('./source-identity');
+const { readRailgunCacheSourceIdentity } = require('./source-identity');
 const hash = (bytes) => createHash('sha256').update(bytes).digest('hex');
 function getRailgunWalletPolicy(archive) {
   verifyRailgunEngineRuntime(archive);
   return hash(
     JSON.stringify([
-      'freedom:railgun:wallet-policy-v1',
+      'freedom:railgun:wallet-policy-v2',
       'sepolia',
       11155111,
       engine.sha256,
       engine.inventory.sha256,
       getRailgunPublicPolicy(archive),
-      readRailgunPolicySourceIdentity(),
+      readRailgunCacheSourceIdentity('wallet'),
     ])
   );
 }
