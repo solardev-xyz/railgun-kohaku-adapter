@@ -112,3 +112,41 @@ test("parent and global user module trees refuse dependency borrowing", () => {
     "Parent node_modules",
   );
 });
+test("runtime identity covers framework bytes and refuses an escaping link", () => {
+  const {
+    treeIdentity,
+  } = require("../tools/conformance/install-reference.cjs");
+  const root = fs.realpathSync(
+    fs.mkdtempSync(path.join(os.tmpdir(), "reference-dist-")),
+  );
+  fs.mkdirSync(path.join(root, "Frameworks"));
+  fs.writeFileSync(path.join(root, "launcher"), "same-launcher");
+  fs.writeFileSync(path.join(root, "Frameworks", "runtime"), "runtime-a");
+  fs.symlinkSync("Frameworks/runtime", path.join(root, "Current"));
+  const before = treeIdentity(root);
+  fs.writeFileSync(path.join(root, "Frameworks", "runtime"), "runtime-b");
+  expect(treeIdentity(root).sha256).not.toBe(before.sha256);
+  fs.symlinkSync(os.tmpdir(), path.join(root, "outside"));
+  expect(() => treeIdentity(root)).toThrow("escapes distribution");
+});
+test("zip evidence measures downloaded bytes against the expected checksum", () => {
+  const { measuredZip } = require("../tools/conformance/install-reference.cjs");
+  const { createHash } = require("node:crypto");
+  const root = fs.realpathSync(
+    fs.mkdtempSync(path.join(os.tmpdir(), "reference-zip-")),
+  );
+  fs.mkdirSync(path.join(root, "cache-key"));
+  const bytes = Buffer.from("public zip fixture"),
+    expected = createHash("sha256").update(bytes).digest("hex");
+  fs.writeFileSync(path.join(root, "cache-key", "electron.zip"), bytes);
+  expect(measuredZip(root, "electron.zip", expected).measuredSha256).toBe(
+    expected,
+  );
+  expect(() => measuredZip(root, "electron.zip", "0".repeat(64))).toThrow(
+    "checksum differs",
+  );
+  fs.writeFileSync(path.join(root, "electron.zip"), bytes);
+  expect(() => measuredZip(root, "electron.zip", expected)).toThrow(
+    "exactly one",
+  );
+});

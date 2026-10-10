@@ -48,6 +48,52 @@ function assertLockedDependencies(before, after) {
         throw new Error(`Locked dependency changed: ${name}`);
   }
 }
+function treeIdentity(directory) {
+  const root = fs.realpathSync(directory),
+    rows = [];
+  function walk(current) {
+    for (const name of fs.readdirSync(current).sort()) {
+      const file = path.join(current, name),
+        stat = fs.lstatSync(file);
+      const relative = path.relative(root, file).split(path.sep).join("/");
+      if (stat.isSymbolicLink()) {
+        const resolved = fs.realpathSync(file);
+        if (resolved !== root && !resolved.startsWith(root + path.sep))
+          throw new Error("Runtime symlink escapes distribution");
+        rows.push([relative, "symlink", fs.readlinkSync(file)]);
+      } else if (stat.isDirectory()) walk(file);
+      else if (stat.isFile())
+        rows.push([
+          relative,
+          "file",
+          hash(fs.readFileSync(file)),
+          stat.mode & 0o777,
+        ]);
+      else throw new Error("Unexpected runtime file type");
+    }
+  }
+  walk(root);
+  rows.sort((a, b) => a[0].localeCompare(b[0], "en"));
+  return { sha256: hash(JSON.stringify(rows)), entries: rows.length };
+}
+function measuredZip(cache, name, expected) {
+  const matches = [];
+  function walk(directory) {
+    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+      if (entry.isSymbolicLink()) throw new Error("Unexpected cache symlink");
+      const file = path.join(directory, entry.name);
+      if (entry.isDirectory()) walk(file);
+      else if (entry.name === name) matches.push(file);
+    }
+  }
+  walk(cache);
+  if (matches.length !== 1)
+    throw new Error("Expected exactly one downloaded Electron zip");
+  const actual = hash(fs.readFileSync(matches[0]));
+  if (actual !== expected)
+    throw new Error("Downloaded Electron zip checksum differs");
+  return { name, expectedSha256: expected, measuredSha256: actual };
+}
 function install(destination) {
   if (
     !path.isAbsolute(destination) ||
@@ -252,8 +298,15 @@ function install(destination) {
       committedLockSha256: hash(
         fs.readFileSync(path.join(example, "package-lock.json")),
       ),
-      electronExecutableSha256: hash(fs.readFileSync(electron)),
-      electronZip: { name: zipName, sha256: checksums[zipName] },
+      electronLauncherSha256: hash(fs.readFileSync(electron)),
+      electronDistribution: treeIdentity(
+        path.join(app, "node_modules/electron/dist"),
+      ),
+      electronZip: measuredZip(
+        env.electron_config_cache,
+        zipName,
+        checksums[zipName],
+      ),
       electronChecksumManifestSha256: hash(
         fs.readFileSync(path.join(app, "node_modules/electron/checksums.json")),
       ),
@@ -313,4 +366,6 @@ module.exports = {
   childEnvironment,
   assertLockedDependencies,
   assertNoParentModules,
+  treeIdentity,
+  measuredZip,
 };
