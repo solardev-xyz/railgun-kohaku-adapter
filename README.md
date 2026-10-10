@@ -287,7 +287,8 @@ The package's separate owner and execution entries do provide account controller
 
 ## Types
 
-The declarations are verified with TypeScript 5.9.3 under strict NodeNext, for a CommonJS and an ESM consumer, without `skipLibCheck`, path mappings or ambient shims. See [Type checks](#type-checks).
+The historical declaration record uses TypeScript 5.9.3; current development and
+CI checks use the locked 5.9.2 compiler. Both check strict NodeNext, for a CommonJS and an ESM consumer, without `skipLibCheck`, path mappings or ambient shims. See [Type checks](#type-checks).
 
 - `require` and the top-level `types` field use `types/index.d.ts`, a CommonJS-format declaration.
 - `import` uses `types/index.d.mts`, an ESM-format declaration. It forwards `index.d.ts` rather than copying it, so both conditions share one identity for each operation brand and adapter type. Like `index.mjs`, it has no default export.
@@ -345,10 +346,13 @@ The same process checks the `./read` subpath:
 
 The typecheck harness requires a physical `node_modules` directory under the package root, not a symlink to another checkout.
 
-TypeScript is not a dependency. `npm run typecheck` uses the compiler that the `TYPESCRIPT_PATH` environment variable names, either an installed `typescript` package directory or its `lib/typescript.js`, and fails if the variable is unset:
+TypeScript 5.9.2 is a locked development dependency, not a runtime dependency.
+`npm run typecheck` uses it by default. An explicit `TYPESCRIPT_PATH` may select
+another installed compiler; an invalid or empty override refuses:
 
 ```sh
-TYPESCRIPT_PATH=/path/to/node_modules/typescript npm run typecheck
+npm run typecheck
+npm run lint
 ```
 
 The runner, `test/types/typecheck.cjs`, compiles programs and never emits or runs them. Every program must produce exactly the diagnostics that its `// expect TS<code>` markers name, and no others.

@@ -147,10 +147,15 @@ deployment, operation-format and security bounds remain explicitly classified.
 The artifact drift checker, runtime build evidence, host conformance checks,
 maintenance/release guidance and clean-checkout CI configuration are present.
 
-Still required before outreach: approved standalone dependency manifest and
-fresh installation, the separately funded live Alice-to-Bob demonstration,
+The standalone dependency manifest is approved and implemented. Its installer
+checks a clean source commit, exact packed bytes, physical locked dependencies
+and an isolated Electron acquisition. Dry installs and offline wallet creation
+have passed; the final clean-commit acceptance is in progress.
+Still required before outreach: the separately funded live Alice-to-Bob demonstration,
 and a final independent review of the exact documented installation. Clean
-Linux/macOS Node CI passed at `fb6a71d`; the independent host's
+Linux/macOS Node CI passed at `cff84c9` (304 suites, 12,871 tests; four explicit
+external-input skips). The newly approved lint/typecheck gates need their own
+new-head CI result; the independent host's
 [bounded public scan screen](qualification/reference-public-scan-2026-10-10/README.md)
 also passed. These scoped results do not close the remaining acceptance gates or
 inherit claims from the historical Freedom campaign.

@@ -1,0 +1,52 @@
+{
+  "test/installed-live-ledger.test.js": {
+    "no-unused-vars": {
+      "count": 2
+    }
+  },
+  "test/owner-poi-lane.test.js": {
+    "no-unused-vars": {
+      "count": 1
+    }
+  },
+  "test/owner-poi-reproof-handoff.test.js": {
+    "no-unused-vars": {
+      "count": 12
+    }
+  },
+  "test/owner-poi-reproof-sender.test.js": {
+    "no-unused-vars": {
+      "count": 6
+    }
+  },
+  "test/owner-poi-reproof-validation.test.js": {
+    "no-unused-vars": {
+      "count": 13
+    }
+  },
+  "test/owner-poi-retry-handoff.test.js": {
+    "no-unused-vars": {
+      "count": 13
+    }
+  },
+  "test/owner-poi-retry-sender.test.js": {
+    "no-unused-vars": {
+      "count": 3
+    }
+  },
+  "test/owner-submission-lane.test.js": {
+    "no-unused-vars": {
+      "count": 1
+    }
+  },
+  "tools/qualification/installed-live/live-entry.cjs": {
+    "no-useless-assignment": {
+      "count": 2
+    }
+  },
+  "tools/qualification/installed-live/poi-node-status-probe.cjs": {
+    "no-unused-vars": {
+      "count": 1
+    }
+  }
+}

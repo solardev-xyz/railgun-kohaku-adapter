@@ -82,6 +82,8 @@ test.each(["review.cjs", "terminal.cjs"])(
 );
 test.each([
   "main.cjs",
+  "package.json",
+  "package-lock.json",
   "host/vault.cjs",
   "host/files.cjs",
   "host/source-identity.cjs",

@@ -34,6 +34,8 @@ jobs:
       # Native test success here does not establish a source build.
       # No Electron, engine, prover or circuit artifact is downloaded here.
       - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
       - run: npm test -- --runInBand
       - run: node test/consumer/smoke.mjs
       - run: python3 tools/generate-owner-source-list.py --check

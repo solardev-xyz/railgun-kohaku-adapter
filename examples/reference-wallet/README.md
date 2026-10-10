@@ -32,9 +32,8 @@ Bob use different seeds, data roots and OS processes.
 
 These components import Node built-ins, Electron, the adapter’s ethers and
 better-sqlite3 peers, and public adapter exports;
-none imports Freedom modules. The example dependency manifest has been proposed
-separately (Electron 44.7.0, ethers 6.17.0, better-sqlite3 13.0.3). No new dependency
-has been added by this foundation slice. Existing installed Electron 44.7.0 on
+none imports Freedom modules. The example locks Electron 44.7.0, ethers 6.17.0
+and better-sqlite3 13.0.3 in its own approved manifest. Existing installed Electron 44.7.0 on
 macOS arm64 created and cold-reopened a genuine account with the same identity
 and zero connections to a refusing loopback fixture. The fixed utility bootstrap
 was exercised too. Those earlier checkout checks remain separate. Later installed-package evidence
@@ -118,10 +117,34 @@ See the [Alice-to-Bob workflow](JOURNEY.md) for the complete command order,
 separate recipient custody and interruption handling. The live stage still
 requires its own reviewed configuration, funding and evidence.
 
-Until the example dependency manifest is approved there is no supported fresh
-installation of its runtime. These commands document the interface. Existing
-native checks use an authenticated Electron 44.7.0 executable; the entry is
-`main.cjs`:
+Install into a **new absolute directory outside the checkout**, under an existing
+canonical parent, using Node 24 and npm (macOS/Linux; Windows is not qualified):
+
+```sh
+node tools/conformance/install-reference.cjs /absolute/new-reference-install
+cd /absolute/new-reference-install/app
+npm start -- init --profile /absolute/new-test-profile
+```
+
+The installer requires a clean committed checkout, records its exact Git identity,
+and packs it using npm's real file whitelist. It copies this
+example, installs its locked dependencies, and adds that tarball as a local file
+dependency. It executes only the explicitly pinned Electron downloader; npm
+lifecycle scripts otherwise stay disabled. It verifies every installed adapter
+file against the tar and requires every pre-existing dependency lock entry to
+retain its version, URL and integrity. The generated application manifest and
+lock are part of host attestation and cache identity. Preserve the whole install
+directory, including the tar, `INSTALLATION.json` and `installation.log`.
+Never rerun the installer into an existing directory; a failure is preserved.
+Both npm and Electron use new, isolated caches. Child processes receive only
+PATH/HOME/TMPDIR/locale variables and the installer's cache setting; Node, Electron
+and npm overrides refuse startup. Parent/global user module trees also refuse
+installation, and every locked package must be physically present. Dependencies
+are fetched from the lockfile's registry URLs; this setup is not routed through
+wallet Tor. It creates no wallet and downloads no engine or circuit artifacts.
+The separately pinned runtime and Arti configuration below is still required for
+account operations. Inside the installed `app`, `npm start -- <command>` launches
+its own Electron. The equivalent direct executable interface is:
 
 ```sh
 "$ELECTRON_BINARY" examples/reference-wallet/main.cjs init --profile "$NEW_EMPTY_PROFILE"
@@ -179,8 +202,9 @@ without a send remains held. Inspect it before choosing `submit-stored`; the
 owner checks its eligibility and reviews the original operation again. This
 example does not automatically release or submit a hold.
 
-The implemented commands have the scoped synthetic evidence above. Live execution
-and independent dependency installation are still being completed.
+The implemented commands have the scoped synthetic evidence above. Live two-account execution remains a separate acceptance gate. Fresh dependency
+installation and offline vault creation/reopening have now been exercised on
+macOS arm64; this is not full runtime acquisition or cross-platform acceptance.
 
 `receipt` requires an own authenticated, resolved journal record (including the
 archive), then `ALLOW` for chain identity, receipt and transaction reads through

@@ -142,17 +142,22 @@
   },
   "scripts": {
     "test": "jest",
-    "typecheck": "node test/types/typecheck.cjs"
+    "typecheck": "node test/types/typecheck.cjs",
+    "lint": "eslint . --max-warnings 0"
   },
   "peerDependencies": {
-    "ethers": "^6.17.0",
-    "better-sqlite3": "13.0.3"
+    "better-sqlite3": "13.0.3",
+    "ethers": "^6.17.0"
   },
   "devDependencies": {
+    "@eslint/js": "10.0.1",
     "@kohaku-eth/plugins": "0.0.1-alpha.16",
+    "better-sqlite3": "13.0.3",
+    "eslint": "10.12.0",
     "ethers": "6.17.0",
+    "globals": "17.13.0",
     "jest": "30.5.2",
-    "better-sqlite3": "13.0.3"
+    "typescript": "5.9.2"
   },
   "peerDependenciesMeta": {
     "better-sqlite3": {

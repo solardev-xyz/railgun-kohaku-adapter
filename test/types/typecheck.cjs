@@ -1,13 +1,14 @@
 'use strict';
 // Type checks for the declarations in types/. TypeScript is not a dependency of
-// this package: TYPESCRIPT_PATH must name an installed `typescript` package
-// directory, or its lib/typescript.js. Programs are compiled, never emitted or run.
+// this package at runtime. The locked development compiler is the default;
+// TYPESCRIPT_PATH may select another explicit compiler. Programs are never emitted or run.
 //
 // - Portable: consumer-cjs.cts, consumer-esm.mts, the "./read" subpath consumers
 //   consumer-read-cjs.cts and consumer-read-esm.mts, the "./data" consumers,
 //   the trusted "./host/data" consumers, and negative/* under strict
 //   NodeNext, with no skipLibCheck, no paths and no ambient types. They import
-//   the package by its own name and must load no file from node_modules.
+//   the package by its own name and must load no dependency declarations (only
+//   the selected compiler's standard libraries may live under node_modules).
 // - Upstream bridge: upstream/* against the installed @kohaku-eth/plugins
 //   0.0.1-alpha.16. Its published declarations import "~/host" and "~/shared"
 //   and re-export "./base" without an extension, so NodeNext cannot load them.
@@ -84,11 +85,12 @@ function rel(file) {
 }
 
 function loadCompiler() {
-  const configured = process.env.TYPESCRIPT_PATH;
+  const configured = process.env.TYPESCRIPT_PATH === undefined
+    ? path.join(ROOT, 'node_modules', 'typescript')
+    : process.env.TYPESCRIPT_PATH;
   if (!configured) {
     fail(
-      'TYPESCRIPT_PATH is not set. Set it to an installed typescript package ' +
-        'directory (or its lib/typescript.js). TypeScript is not a dependency of this package.'
+      'TYPESCRIPT_PATH must not be empty; omit it for the locked development compiler.'
     );
   }
   const resolved = path.resolve(configured);
@@ -367,6 +369,10 @@ function main() {
     const { program, result } = runCase('portable', file, portable, expected);
     const external = program
       .getSourceFiles()
+      .filter((sourceFile) => !(
+        sourceFile.fileName.startsWith(path.dirname(entry) + path.sep) &&
+        program.isSourceFileDefaultLibrary(sourceFile)
+      ))
       .map((sourceFile) => sourceFile.fileName)
       .filter((name) => name.startsWith(path.join(ROOT, 'node_modules') + path.sep));
     result.nodeModulesFiles = external.map(rel);

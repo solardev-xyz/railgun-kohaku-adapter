@@ -1,0 +1,14 @@
+{
+  "name": "railgun-kohaku-reference-wallet",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Independent terminal reference host for the Railgun Kohaku adapter",
+  "license": "MPL-2.0",
+  "engines": { "node": ">=24" },
+  "scripts": { "start": "electron main.cjs" },
+  "dependencies": {
+    "ethers": "6.17.0",
+    "better-sqlite3": "13.0.3"
+  },
+  "devDependencies": { "electron": "44.7.0" }
+}

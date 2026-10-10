@@ -39,6 +39,8 @@
   "host/utility-entry.cjs",
   "host/vault.cjs",
   "main.cjs",
+  "package-lock.json",
+  "package.json",
   "payment-command.cjs",
   "poi-command.cjs",
   "recovery-command.cjs",

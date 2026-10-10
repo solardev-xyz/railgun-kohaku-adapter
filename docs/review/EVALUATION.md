@@ -104,16 +104,29 @@ requires the runtime root too. Omitted runtime inputs skip only the three
 external-input tests; invalid explicit inputs fail. Neither command downloads
 or silently discovers artifacts in another developer's checkout.
 
-Type checks use an explicitly supplied TypeScript installation:
+Type checks use the locked TypeScript 5.9.2 development dependency by default:
 
 ```sh
-TYPESCRIPT_PATH=/absolute/path/to/typescript npm run typecheck
+npm run typecheck
+npm run lint
 ```
 
 Historical records use compiler 5.9.3; the reference work also records a successful 5.9.2 check explicitly. This command requires a physical `node_modules`
 directory in the package checkout; no symlink to a separate installation. The
 root README describes the portable consumers and separate upstream bridge.
-Type checks do not execute account operations.
+Type checks do not execute account operations. `TYPESCRIPT_PATH` remains an
+explicit compiler override; invalid supplied paths fail. Standard compiler
+libraries are permitted, while portable consumers must load no other dependency
+declarations.
+
+ESLint 10 checks the maintained JavaScript/CommonJS/ESM tree. Historical docs (including their executable evidence verifiers),
+archived Freedom tooling and the immutable engine fixture are excluded.
+`eslint-suppressions.json` records 54 pre-existing findings in ten older test or
+qualification-tool files (52 unused bindings, two unused assignments). They were
+not introduced by this installation change, and are not suppressed globally.
+Like the existing host convention, `no-useless-escape` is disabled. New violations fail; this baseline is technical debt, not a claim that those
+files are warning-free. Runtime sources and the reference application have no
+baseline suppressions. CI runs lint and typecheck as well as the Node suite.
 
 Engine/prover assembly is documented in
 [runtime build tooling](../../tools/railgun-runtime-build/README.md). It requires
