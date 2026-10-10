@@ -1,0 +1,35 @@
+{
+  "sourceCommit": "549d40068789319345f38dc21c4f6c69ead63775",
+  "files": [
+    {
+      "file": "railgun-private-policy.js",
+      "originalSha256": "4fed357312c315250bac7a9b89988881601fe31975a7b267875d709af8e4b7dc",
+      "relocations": [
+        {
+          "from": "require('../railgun-shield-pins.json')",
+          "to": "require('../../../src/railgun-shield-pins.json')"
+        }
+      ]
+    },
+    {
+      "file": "railgun-private-intent.js",
+      "originalSha256": "5a5ae43e3b7c4384496e1e17caa1ddfb7bc11e555f28eb8df61d3170c94800b0",
+      "relocations": []
+    },
+    {
+      "file": "railgun-private-offer.js",
+      "originalSha256": "120f4b1f3ed31206a5311cf36557bb98c48ab14e6fc58dfad6e984cacee30f6d",
+      "relocations": [
+        {
+          "from": "require('../railgun-shield-pins.json')",
+          "to": "require('../../../src/railgun-shield-pins.json')"
+        }
+      ]
+    },
+    {
+      "file": "railgun-private-capsule.js",
+      "originalSha256": "b5c244d08e5185d52d3ef8e11a8d223df3a3f5e959cdd956a187646f5618b560",
+      "relocations": []
+    }
+  ]
+}

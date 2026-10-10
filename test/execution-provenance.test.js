@@ -12,6 +12,7 @@ const provenance = require("../docs/execution/PROVENANCE.json");
 const sha = (value) => createHash("sha256").update(value).digest("hex");
 function originalKernelText(file) {
   let text = fs.readFileSync(path.join(root, file), "utf8");
+  text = undoOperationFormats(text, file);
   text = undoAmountBounds(text, file);
   text = undoDeployment(text, file);
   const drainage = walletDrainTransitions.changes.find(
@@ -149,6 +150,19 @@ function undoDeployment(text, file) {
 
 function undoAmountBounds(text, file) {
   const change = amountBoundsTransitions.changes.find((row) => row.file === file);
+  if (!change) return text;
+  expect(sha(text)).toBe(change.afterSha256);
+  for (const edit of [...change.replacements].reverse()) {
+    expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(edit.after);
+    text = text.slice(0, edit.start) + edit.before + text.slice(edit.start + edit.after.length);
+  }
+  expect(sha(text)).toBe(change.beforeSha256);
+  return text;
+}
+
+function undoOperationFormats(text, file) {
+  const change = require("../docs/owners/OPERATION-FORMATS-TRANSITIONS.json").changes
+    .find(row => row.file === file);
   if (!change) return text;
   expect(sha(text)).toBe(change.afterSha256);
   for (const edit of [...change.replacements].reverse()) {

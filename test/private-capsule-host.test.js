@@ -237,7 +237,7 @@ test('all four copied core source hashes match the retained provenance fixture',
   expect(provenance.sourceCommit).toBe('c208245fa6edeb8eb79452cf399daca264622f4c');
   for (const file of coreFiles) {
     const actual = createHash('sha256')
-      .update(readFileSync(path.join(__dirname, '../src/data', file)))
+      .update(undoOperationFormat(file, readFileSync(path.join(__dirname, '../src/data', file), 'utf8')))
       .digest('hex');
     expect(actual).toBe(provenance.files[file].copy);
     expect(provenance.files[file].original).toMatch(/^[a-f0-9]{64}$/);
@@ -264,3 +264,16 @@ test('all recovery sources, adjacent tests and public fixture match their exact 
       expect(host[key]).toBe(value);
   expect(Object.keys(safe)).toHaveLength(3);
 });
+
+function undoOperationFormat(file, text) {
+  const change = require('../docs/owners/OPERATION-FORMATS-TRANSITIONS.json').changes
+    .find(row => row.file === 'src/data/' + file);
+  expect(change).toBeDefined();
+  expect(createHash('sha256').update(text).digest('hex')).toBe(change.afterSha256);
+  for (const edit of [...change.replacements].reverse()) {
+    expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(edit.after);
+    text = text.slice(0, edit.start) + edit.before + text.slice(edit.start + edit.after.length);
+  }
+  expect(createHash('sha256').update(text).digest('hex')).toBe(change.beforeSha256);
+  return text;
+}

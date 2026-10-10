@@ -164,8 +164,11 @@ inherit claims from the historical Freedom campaign.
 The initial [closed deployment descriptor](owners/DEPLOYMENT.md) centralizes
 existing Sepolia facts and rejects unsupported initialization choices. It is
 an assertion of the sole supported deployment, not a parametric network registry.
-Broader operation-policy generalization remains open; historical amount/shape
-bounds remain. Availability recovery is explicit resume,
+The [stored-format foundation](owners/OPERATION-FORMATS.md) now separates
+canonical wider internal capsule formats from the unchanged historical data
+readers, with genuine old-reader downgrade checks. Broader operation-policy
+integration remains open: owners and signing admission still enforce the
+historical amount/shape bounds. Availability recovery is explicit resume,
 not a general idempotent-read retry engine. Experimental versioning and a platform
 matrix are documented, private vulnerability reporting is enabled, and a tagged
 release's version/notes still require its concrete release decision. Authentic
