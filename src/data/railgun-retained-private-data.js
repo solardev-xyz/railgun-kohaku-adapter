@@ -13,4 +13,14 @@ const offer = createPrivateOffer(NOTE_MAX, intent);
 const capsule = createPrivateCapsule(offer, (value, partial) =>
   assertCapsuleFormat(value.version, value.selection.kind,
     partial ? value.preparation?.inputAmount : value.preparation?.amount).version);
-module.exports = Object.freeze({ ...policy, ...intent, ...offer, ...capsule });
+const preparation = require("./railgun-private-preparation-core").createPrivatePreparation(NOTE_MAX, offer, intent);
+// Selection must use the main-captured spending ceiling (or the independent
+// relay ceiling), not the storage format's capacity. Do not export that selector.
+const { selectRailgunPrivatePreparation: _formatSelector, ...preparationData } = preparation;
+const results = require("./railgun-private-results-core").createPrivateResults(NOTE_MAX, intent);
+const recovery = require("./railgun-private-recovery-data-core").createPrivateRecoveryData(NOTE_MAX, capsule, preparation);
+const poiShape = require("./railgun-own-poi-shape-data-core").createOwnPoiShapeData(capsule);
+const shieldSelector = require("./railgun-poi-shield-selector-data-core").createPoiShieldSelectorData(capsule);
+const transactSelector = require("./railgun-poi-transact-selector-data-core").createPoiTransactSelectorData(capsule);
+module.exports = Object.freeze({ ...policy, ...intent, ...offer, ...capsule,
+  ...preparationData, ...results, ...recovery, ...poiShape, ...shieldSelector, ...transactSelector });

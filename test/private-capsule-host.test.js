@@ -1,3 +1,4 @@
+const { undoRetainedHelpers } = require("./retained-helper-transitions.cjs");
 const { createHash } = require('crypto');
 const { readFileSync } = require('fs');
 const { execFileSync } = require('child_process');
@@ -251,7 +252,7 @@ test('all recovery sources, adjacent tests and public fixture match their exact 
   expect(recovery.sourceCommit).toBe('668e97ed19d37ce10f596cf19b1cdbd492a6226b');
   expect(Object.keys(recovery.files)).toHaveLength(13);
   for (const [file, row] of Object.entries(recovery.files)) {
-    let bytes = readFileSync(path.join(__dirname, '..', file), 'utf8');
+    let bytes = undoRetainedHelpers(readFileSync(path.join(__dirname, '..', file), 'utf8'), file);
     expect(createHash('sha256').update(bytes).digest('hex')).toBe(row.copySha256);
     for (const change of [...row.replacements].reverse()) {
       expect(bytes).toContain(change.to);

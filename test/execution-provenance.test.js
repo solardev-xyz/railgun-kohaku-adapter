@@ -1,3 +1,4 @@
+const { undoRetainedHelpers } = require("./retained-helper-transitions.cjs");
 "use strict";
 const fs = require("fs"),
   path = require("path"),
@@ -12,6 +13,7 @@ const provenance = require("../docs/execution/PROVENANCE.json");
 const sha = (value) => createHash("sha256").update(value).digest("hex");
 function originalKernelText(file) {
   let text = fs.readFileSync(path.join(root, file), "utf8");
+  text = undoRetainedHelpers(text, file);
   text = undoOperationFormats(text, file);
   text = undoAmountBounds(text, file);
   text = undoDeployment(text, file);

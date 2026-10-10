@@ -1,3 +1,4 @@
+const { undoRetainedHelpers } = require("./retained-helper-transitions.cjs");
 "use strict";
 const { createHash } = require("node:crypto");
 const { Interface } = require("ethers");
@@ -122,7 +123,7 @@ test("new structural sources are explicit provenance and remain private package 
   const path = require("node:path");
   const transitions = require("../docs/owners/OPERATION-FORMATS-TRANSITIONS.json");
   for (const row of transitions.addedSources)
-    expect(createHash("sha256").update(readFileSync(path.join(__dirname, "..", row.file))).digest("hex")).toBe(row.sha256);
+    expect(createHash("sha256").update(undoRetainedHelpers(readFileSync(path.join(__dirname, "..", row.file), "utf8"), row.file)).digest("hex")).toBe(row.sha256);
   expect(() => require("@freedom/railgun-kohaku-adapter/src/data/railgun-retained-private-data")).toThrow();
   expect(Object.keys(safe)).toHaveLength(3);
   expect(Object.keys(host)).toHaveLength(22);

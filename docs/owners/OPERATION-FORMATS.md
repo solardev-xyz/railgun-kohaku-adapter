@@ -60,3 +60,24 @@ intent's version, and check current application policy at fresh signature and
 send admission. It must also test lowered-policy recovery, both input origins,
 partial change, and a genuine installed wider-amount lifecycle before claiming
 support. Relay selection and fee limits remain separately bounded and unchanged.
+
+## Recovery and POI data helpers
+
+Internal preparation, guarded-result, original-signature recovery and POI
+selector helpers now compose the retained reader. Their historical `/host/data`
+and `/host/poi` counterparts still compose the legacy reader and bounds. They
+share algorithms, with matching fixtures proving old byte domains and refused
+wider inputs at the public host boundaries.
+
+A Shield-origin membership digest keeps its existing domain and binds the full
+canonical capsule. A Transact-origin membership digest selects from an explicit
+four-version table and also binds the canonical capsule. The own-transaction
+lookup domain remains selected by transaction shape (full/transfer versus
+partial): its inputs come from public calldata, so it must not depend on a
+transfer's private input amount or capsule version.
+
+Structural tests cover both origin types, exact note value and original signed
+root, partial change and wide POI selector bindings. They do not establish real
+ownership or prove that a wider operation can execute. Owner and utility callers
+still use their legacy compositions until the amount-admission integration is
+complete and qualified.

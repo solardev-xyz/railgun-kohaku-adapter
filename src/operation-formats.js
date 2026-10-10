@@ -55,11 +55,21 @@ function selectTransactFormat(kind, publicAmount) {
   const wide = parseAmount(publicAmount, NOTE_MAX) > LEGACY_MAX;
   return journalFormats[(partial ? 2 : 1) + (wide ? 2 : 0)];
 }
+function poiTransactSelectorDomain(version) {
+  const domains = [null,
+    "freedom:railgun:poi-transact-selector-v1\0",
+    "freedom:railgun:poi-transact-selector-v2\0",
+    "freedom:railgun:poi-transact-selector-v3\0",
+    "freedom:railgun:poi-transact-selector-v4\0",
+  ];
+  return domains[capsuleFormat(version).version];
+}
 function selectShieldFormat(grossAmount) {
   return shieldFormats[parseAmount(grossAmount, NOTE_MAX) > LEGACY_MAX ? 2 : 1];
 }
 module.exports = Object.freeze({
   capsuleFormat,
+  poiTransactSelectorDomain,
   selectCapsuleFormat,
   assertCapsuleFormat,
   selectTransactFormat,
