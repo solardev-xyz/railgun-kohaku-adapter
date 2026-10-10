@@ -1,3 +1,4 @@
+const { SEPOLIA } = require('../deployment');
 /** Main-only Kohaku capability-selected lanes. Adoption transfers account lifecycle ownership.
  * This is not a generic Kohaku Host, UI consent issuer or live activation route.
  * Trusted review adapters must settle after abort: exclusion waits for them.
@@ -576,8 +577,8 @@ function create(options) {
               retainedSource: sourceDetails.url,
               protocolRpc: rpcDetails.url,
               transactionRpc: transactionDetails.url,
-              poi: 'https://ppoi.fdi.network',
-              txid: baseline.record.type === 'Transact' ? 'https://ppoi.fdi.network' : null,
+              poi: SEPOLIA.services.poi,
+              txid: baseline.record.type === 'Transact' ? SEPOLIA.services.poi : null,
             },
             exposures: {
               source: ['public-proxy-logs', 'canonical-blocks', 'range-and-timing'],

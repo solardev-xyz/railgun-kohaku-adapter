@@ -175,3 +175,8 @@ void invalidCacheHost;
 
 // @ts-expect-error fee policy requires bigint, not a number
 owner.initializeRailgunMain({ host, runtime: { archive: "/engine", proverArchive: "/prover", artifactDirectory: "/artifacts" }, applicationPolicy: { maxGasFee: 1 } });
+
+// @ts-expect-error only the qualified deployment identifier is admitted
+owner.initializeRailgunMain({ host, runtime, deployment: "mainnet" });
+// @ts-expect-error a caller cannot supply custom deployment facts
+owner.initializeRailgunMain({ host, runtime, deployment: { chainId: 11155111 } });

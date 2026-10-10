@@ -3,6 +3,7 @@
 const path = require("path");
 const { types } = require("util");
 const host = require("./host-bindings");
+const { selectRailgunDeployment } = require("../deployment");
 const { captureRailgunApplicationPolicy, isRailgunGasBudget } = require("./application-policy");
 const fail = () =>
   Object.assign(new Error("Railgun account facade unavailable"), {
@@ -106,11 +107,16 @@ function initializeRailgunMain(options) {
   initialized = true;
   let data;
   try {
-    try {
-      data = record(options, ["host", "runtime", "applicationPolicy"]);
-    } catch {
-      data = record(options, ["host", "runtime"]);
+    for (const keys of [
+      ["host", "runtime", "applicationPolicy", "deployment"],
+      ["host", "runtime", "applicationPolicy"],
+      ["host", "runtime", "deployment"],
+      ["host", "runtime"],
+    ]) {
+      try { data = record(options, keys); break; } catch { /* Try the next exact supported shape. */ }
     }
+    if (!data) throw fail();
+    selectRailgunDeployment(Object.hasOwn(data, "deployment") ? data.deployment : "sepolia");
     captureRailgunApplicationPolicy(...(Object.hasOwn(data, "applicationPolicy")
       ? [data.applicationPolicy] : []));
   } catch (error) {

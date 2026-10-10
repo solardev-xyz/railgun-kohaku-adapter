@@ -1,3 +1,4 @@
+const deploymentTransitions = require("../docs/owners/DEPLOYMENT-TRANSITIONS.json");
 const { createHash } = require('crypto');
 const { readFileSync } = require('fs');
 const { execFileSync } = require('child_process');
@@ -13,6 +14,7 @@ test('POI source copies and exact binder function retain immutable source proven
   const host = require('../host-poi.cjs');
   for (const [file, pin] of Object.entries(provenance.files)) {
     let text = readFileSync(path.join(__dirname, '..', file), 'utf8');
+    text = undoDeployment(text, file);
     // The replacement proof and the explicit POI retry are later reviewed
     // phases: undo them, newest first, to the pinned copy.
     const reproof = poiReproof.changes.find((change) => change.file === file);
@@ -91,3 +93,15 @@ test('real CJS/ESM consumers share all 32 POI values without changing other entr
     })
   ).toBe('shared:32');
 });
+
+function undoDeployment(text, file) {
+  const change = deploymentTransitions.changes.find((row) => row.file === file);
+  if (!change) return text;
+  expect(hash(text)).toBe(change.afterSha256);
+  for (const edit of [...change.replacements].reverse()) {
+    expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(edit.after);
+    text = text.slice(0, edit.start) + edit.before + text.slice(edit.start + edit.after.length);
+  }
+  expect(hash(text)).toBe(change.beforeSha256);
+  return text;
+}

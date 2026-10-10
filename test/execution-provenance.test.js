@@ -3,6 +3,7 @@ const fs = require("fs"),
   path = require("path"),
   { createHash } = require("crypto");
 const root = path.join(__dirname, "..");
+const deploymentTransitions = require("../docs/owners/DEPLOYMENT-TRANSITIONS.json");
 const processTransitions = require("../docs/owners/PROCESS-TRANSITIONS.json");
 const poiReproofTransitions = require("../docs/owners/POI-REPROOF-TRANSITIONS.json");
 const walletDrainTransitions = require("../docs/owners/WALLET-DRAIN-TRANSITIONS.json");
@@ -10,6 +11,7 @@ const provenance = require("../docs/execution/PROVENANCE.json");
 const sha = (value) => createHash("sha256").update(value).digest("hex");
 function originalKernelText(file) {
   let text = fs.readFileSync(path.join(root, file), "utf8");
+  text = undoDeployment(text, file);
   const drainage = walletDrainTransitions.changes.find(
     (change) => change.file === file,
   );
@@ -130,3 +132,15 @@ test("staged duplicates pin all 40 integration sources and only the six reviewed
       .disposition,
   ).toContain("explicit E2");
 });
+
+function undoDeployment(text, file) {
+  const change = deploymentTransitions.changes.find((row) => row.file === file);
+  if (!change) return text;
+  expect(sha(text)).toBe(change.afterSha256);
+  for (const edit of [...change.replacements].reverse()) {
+    expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(edit.after);
+    text = text.slice(0, edit.start) + edit.before + text.slice(edit.start + edit.after.length);
+  }
+  expect(sha(text)).toBe(change.beforeSha256);
+  return text;
+}

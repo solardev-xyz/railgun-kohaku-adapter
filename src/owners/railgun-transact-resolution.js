@@ -1,3 +1,4 @@
+const { SEPOLIA } = require('../deployment');
 /** Durable own-hash private outcome. It never releases the input reservation. */
 const { validRailgunTransactIntent } = require("./railgun-transact-intent.js");
 const pins = require("../railgun-shield-pins.json");
@@ -110,7 +111,7 @@ function validRailgunTransactResolution(value, record) {
         BigInt(u.received) <= 0n ||
         !amount(u.fee) ||
         BigInt(u.received) + BigInt(u.fee) !== BigInt(i.unshieldAmount) ||
-        u.feeDeviation !== (BigInt(u.fee) !== (BigInt(i.unshieldAmount) * 25n) / 10000n)
+        u.feeDeviation !== (BigInt(u.fee) !== (BigInt(i.unshieldAmount) * BigInt(SEPOLIA.fees.unshieldBps)) / 10000n)
       )
         return false;
       const indices = [
@@ -154,7 +155,7 @@ function validRailgunTransactResolution(value, record) {
       BigInt(out.received) > 0n &&
       amount(out.fee) &&
       BigInt(out.received) + BigInt(out.fee) === BigInt(i.amount) &&
-      out.feeDeviation === (BigInt(out.fee) !== (BigInt(i.amount) * 25n) / 10000n)
+      out.feeDeviation === (BigInt(out.fee) !== (BigInt(i.amount) * BigInt(SEPOLIA.fees.unshieldBps)) / 10000n)
     );
   } catch {
     return false;

@@ -1,3 +1,4 @@
+const { SEPOLIA } = require('../deployment');
 /** Main-only anchored private-spend prerequisites. Input binding is data, not
  * ownership authority. Querying an unspent nullifier discloses it to the RPC;
  * callers must use only the explicitly selected operation input and transport.
@@ -22,7 +23,7 @@ const abi = new Interface([
 ]);
 // Matched by the October 3 Sepolia deployment qualification. A changed fee
 // requires a reviewed policy change, never silent acceptance during signing.
-const UNSHIELD_FEE_BPS = 25;
+const UNSHIELD_FEE_BPS = SEPOLIA.fees.unshieldBps;
 // Closed deployment sub-steps of railgun-shield-preflight.js, forwarded as a
 // refusal diagnostic only. Anything else is dropped, never echoed.
 const DEPLOYMENT_STEPS = Object.freeze([

@@ -1,4 +1,5 @@
 "use strict";
+const deploymentTransitions = require("../docs/owners/DEPLOYMENT-TRANSITIONS.json");
 const fs = require("fs");
 const path = require("path");
 const { createHash } = require("crypto");
@@ -47,6 +48,7 @@ test("all caller transitions reconstruct exact base bytes without changing any o
   );
   for (const row of transitions.changes) {
     let text = fs.readFileSync(path.join(root, row.file), "utf8");
+    text = undoDeployment(text, row.file);
     // Later reviewed phases (the replacement proof, then the explicit POI
     // retry) are undone first, newest first.
     const newest = poiReproof.changes.find((change) => change.file === row.file);
@@ -142,3 +144,15 @@ test("no process caller retains a legacy filename/key selector", () => {
   }
   expect(callers).toBe(20);
 });
+
+function undoDeployment(text, file) {
+  const change = deploymentTransitions.changes.find((row) => row.file === file);
+  if (!change) return text;
+  expect(sha(text)).toBe(change.afterSha256);
+  for (const edit of [...change.replacements].reverse()) {
+    expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(edit.after);
+    text = text.slice(0, edit.start) + edit.before + text.slice(edit.start + edit.after.length);
+  }
+  expect(sha(text)).toBe(change.beforeSha256);
+  return text;
+}

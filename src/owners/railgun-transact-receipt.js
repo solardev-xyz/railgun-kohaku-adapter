@@ -1,3 +1,4 @@
+const { SEPOLIA } = require('../deployment');
 /** Exact own-hash private outcome matching against unverified RPC data.
  * No proof, finality, POI, balance or retry authority follows from a match.
  * An alternate hash needs separate public input-spent/TXID reconciliation.
@@ -145,7 +146,7 @@ function inspectRailgunTransactReceipt(record, transaction, receipt) {
           unshieldAmount: intent.unshieldAmount,
           received: args.amount.toString(),
           fee: args.fee.toString(),
-          feeDeviation: args.fee !== (BigInt(intent.unshieldAmount) * 25n) / 10000n,
+          feeDeviation: args.fee !== (BigInt(intent.unshieldAmount) * BigInt(SEPOLIA.fees.unshieldBps)) / 10000n,
           treasury: receiptPolicy.treasury,
           recipientTransferLogIndex: logs[1].logIndex,
           treasuryTransferLogIndex: logs[2].logIndex,
@@ -163,7 +164,7 @@ function inspectRailgunTransactReceipt(record, transaction, receipt) {
         amount: intent.amount,
         received: args.amount.toString(),
         fee: args.fee.toString(),
-        feeDeviation: args.fee !== (BigInt(intent.amount) * 25n) / 10000n,
+        feeDeviation: args.fee !== (BigInt(intent.amount) * BigInt(SEPOLIA.fees.unshieldBps)) / 10000n,
       });
     }
     return Object.freeze({

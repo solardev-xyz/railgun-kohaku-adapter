@@ -42,6 +42,8 @@ jest.mock("../src/owners/host-bindings", () => ({
       expect(request.vaultSession).toBe(mockVault.signal);
       expect(context.subject.principal).toBe(`railgun:${request.accountIndex}`);
       expect(context.subject.role).toBe("keystore");
+      expect(context.subject.deployment).toBe(require("../src/deployment").SEPOLIA.persistedNetwork);
+      expect(context.subject.chainId).toBe(require("../src/deployment").SEPOLIA.chainId);
       const operation = context.subject.operation,
         purpose = request.purpose;
       expect(

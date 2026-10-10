@@ -1,3 +1,5 @@
+const deploymentTransitions = require("../docs/owners/DEPLOYMENT-TRANSITIONS.json");
+const sourceSha = value => createHash("sha256").update(value).digest("hex");
 const {
   validRailgunTransactResolution: valid,
   freezeRailgunTransactResolution: freeze,
@@ -229,7 +231,7 @@ test("retains the source fixture bytes apart from the two declared import rewrit
   );
 });
 
-test("keeps the committed canonical data algorithms byte-identical", () => {
+test("reconstructs the committed canonical data algorithms through the reviewed deployment transition", () => {
   const fs = require("fs");
   const {
     canonicalModules,
@@ -237,8 +239,20 @@ test("keeps the committed canonical data algorithms byte-identical", () => {
   for (const [filename, hash] of Object.entries(canonicalModules)) {
     expect(
       createHash("sha256")
-        .update(fs.readFileSync(path.join(__dirname, "..", filename)))
+        .update(undoDeployment(fs.readFileSync(path.join(__dirname, "..", filename), "utf8"), filename))
         .digest("hex"),
     ).toBe(hash);
   }
 });
+
+function undoDeployment(text, file) {
+  const change = deploymentTransitions.changes.find((row) => row.file === file);
+  if (!change) return text;
+  expect(sourceSha(text)).toBe(change.afterSha256);
+  for (const edit of [...change.replacements].reverse()) {
+    expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(edit.after);
+    text = text.slice(0, edit.start) + edit.before + text.slice(edit.start + edit.after.length);
+  }
+  expect(sourceSha(text)).toBe(change.beforeSha256);
+  return text;
+}

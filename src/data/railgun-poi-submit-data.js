@@ -1,3 +1,4 @@
+const { SEPOLIA } = require('../deployment');
 /** Fixed POI submission bytes and bounded, non-authorizing response diagnostics.
  * No network, persistence, proof verification or disclosure permission. Payloads
  * and wire bodies are privacy-sensitive; diagnostics expose none of their contents.
@@ -6,7 +7,7 @@ const assert = require('assert/strict');
 const { createHash } = require('crypto');
 const { TextDecoder } = require('util');
 const { normalizeRailgunPoiPayload } = require('./railgun-poi-payload');
-const POI_URL = 'https://ppoi.fdi.network';
+const POI_URL = SEPOLIA.services.poi;
 const sha = (value) => createHash('sha256').update(value).digest('hex');
 const shape = (value, keys) => {
   assert.ok(value && typeof value === 'object' && !Array.isArray(value));

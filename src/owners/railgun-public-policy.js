@@ -4,7 +4,8 @@
 const { createHash } = require('crypto');
 const { verifyRailgunEngineRuntime } = require("../execution/railgun-engine-runtime.js");
 const manifest = require("../execution/railgun-engine-manifest.json");
-const QUALIFIED_THROUGH = 11829346;
+const { SEPOLIA } = require('../deployment');
+const QUALIFIED_THROUGH = SEPOLIA.qualification.governanceThrough;
 const { readRailgunCacheSourceIdentity } = require('./source-identity');
 const SOURCES = Object.freeze(require('./source-files.json'));
 function getRailgunPublicPolicy(archive) {
@@ -13,7 +14,7 @@ function getRailgunPublicPolicy(archive) {
   return sha(
     JSON.stringify({
       schema: 'freedom:railgun:public-policy-v2',
-      chainId: 11155111,
+      chainId: SEPOLIA.chainId,
       qualifiedThrough: QUALIFIED_THROUGH,
       engine: manifest.sha256,
       inventory: manifest.inventory.sha256,

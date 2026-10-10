@@ -143,6 +143,7 @@
   "scripts": {
     "test": "jest",
     "typecheck": "node test/types/typecheck.cjs",
+    "typecheck:owner": "node test/types/owner-typecheck.cjs",
     "lint": "eslint . --max-warnings 0"
   },
   "peerDependencies": {

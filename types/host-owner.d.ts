@@ -1272,4 +1272,6 @@ export function initializeRailgunMain(options: {
   /** Captured once. Default 0.002 ETH; positive and at most the implementation's
    * 1 ETH sanity ceiling. Each lane still supplies its own lower fee budget. */
   applicationPolicy?: { maxGasFee: bigint };
+  /** Closed supported deployment. Omission selects Sepolia; no custom facts or endpoints. */
+  deployment?: "sepolia";
 }): RailgunMain;

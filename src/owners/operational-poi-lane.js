@@ -1,5 +1,6 @@
 /** Private fixed retained-POI companion. No receipt, proof or store crosses it. */
 "use strict";
+const { SEPOLIA } = require('../deployment');
 const assert = require("assert/strict");
 const { types } = require("util");
 const {
@@ -308,9 +309,9 @@ function createRailgunPoiLane(options) {
       selection: selected,
       destinationSource: "authenticated-account-public-destination",
       endpoints: {
-        poi: "https://ppoi.fdi.network",
+        poi: SEPOLIA.services.poi,
         indexer:
-          "https://rail-squid.squids.live/squid-railgun-eth-sepolia-v2/graphql",
+          SEPOLIA.services.txidIndexer,
       },
       exposures: [
         "canonical-source-ranges-and-timing",

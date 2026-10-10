@@ -4,6 +4,7 @@ const Module = require("module");
 const { pathToFileURL } = require("url");
 const root = path.resolve(__dirname, "../..");
 const allowed = new Set([
+  "src/deployment.js",
   "src/owners/railgun-transact-intent.js",
   "src/owners/railgun-transact-resolution.js",
   "src/owners/railgun-transact-receipt-policy.js",

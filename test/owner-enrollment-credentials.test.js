@@ -22,6 +22,8 @@ jest.mock("../src/owners/host-bindings", () => ({
       expect(request.purpose).toBe("storage-root");
       expect(context.subject.operation).toBe("railgun-account-enrollment-v1");
       expect(context.subject.role).toBe("storage");
+      expect(context.subject.deployment).toBe(require("../src/deployment").SEPOLIA.persistedNetwork);
+      expect(context.subject.chainId).toBe(require("../src/deployment").SEPOLIA.chainId);
       expect(request.vaultSession).toBe(current.controller.signal);
       const bytes = Buffer.alloc(32, 9);
       current.root = bytes;

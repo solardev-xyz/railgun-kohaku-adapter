@@ -366,6 +366,7 @@ function policyDomain(version) {
     .replaceAll("readRailgunCacheSourceIdentity", "readRailgunPolicySourceIdentity")
     .replace("readRailgunPolicySourceIdentity('public')", "readRailgunPolicySourceIdentity()");
   vm.runInNewContext(text, {module, require(name) {
+    if (name === "../deployment") return require("../src/deployment");
     if (name.includes("railgun-engine-runtime")) return {verifyRailgunEngineRuntime() {}};
     if (name.includes("railgun-engine-manifest")) return require("../src/execution/railgun-engine-manifest.json");
     if (name === "./source-files.json") return require("../src/owners/source-files.json");

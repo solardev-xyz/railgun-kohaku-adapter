@@ -1,3 +1,4 @@
+const { SEPOLIA } = require('../deployment');
 /** Genuine main-owned review inventory and a fixed unwired submission controller.
  * Inventory exports check registered policy without utility/network work or
  * logical intent mutation. Submission separately pins runtime/validation and
@@ -31,7 +32,7 @@ const plans = new WeakMap(),
   live = new Map(),
   operations = new Map();
 const TTL_MS = 120000;
-const POI_URL = 'https://ppoi.fdi.network';
+const POI_URL = SEPOLIA.services.poi;
 // The explicit retry's or replacement's owned status evidence must be younger
 // than this at its durable reservation and again at send admission.
 const RETRY_EVIDENCE_MS = 300000;

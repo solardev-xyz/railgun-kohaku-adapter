@@ -1,3 +1,4 @@
+const { SEPOLIA } = require('../deployment');
 /** Fixed-root service observation only. A proof-specific historical root can
  * correlate activity even without a note selector; its caller owns disclosure
  * authorization. No live/renderer caller, note query or submission is installed.
@@ -7,7 +8,7 @@ const { randomUUID } = require('crypto');
 const { createPrivacyScope, getPrivacyContext } = require('./context-bindings');
 const { createWalletTorTransport } = require('./host-bindings').transport;
 const { REQUIRED_LIST } = require("../data/railgun-poi-records.js");
-const POI_URL = 'https://ppoi.fdi.network';
+const POI_URL = SEPOLIA.services.poi;
 const MAX_AGE_MS = 60000,
   ACQUIRE_TIMEOUT_MS = 15000,
   MAX_ACQUIRE_MS = 45000;

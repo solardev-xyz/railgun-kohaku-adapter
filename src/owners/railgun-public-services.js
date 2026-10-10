@@ -1,3 +1,4 @@
+const { SEPOLIA } = require('../deployment');
 /** Main-owned, read-only Sepolia service acquisition. Fixed public chain queries
  * only: no wallet commitments, nullifiers, addresses, proofs or submissions.
  * Replies remain unverified service assertions until checked against local data.
@@ -5,8 +6,8 @@
 const { randomUUID } = require('crypto');
 const { getPrivacyContext } = require('./context-bindings');
 const { createWalletTorTransport } = require('./host-bindings').transport;
-const POI_URL = 'https://ppoi.fdi.network';
-const INDEXER_URL = 'https://rail-squid.squids.live/squid-railgun-eth-sepolia-v2/graphql';
+const POI_URL = SEPOLIA.services.poi;
+const INDEXER_URL = SEPOLIA.services.txidIndexer;
 const TXID_VERSION = 'V2_PoseidonMerkle';
 const PAGE_SIZE = 100;
 const FIELD = 21888242871839275222246405745257275088548364400416034343698204186575808495617n;

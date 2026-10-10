@@ -36,6 +36,7 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
+      - run: npm run typecheck:owner
       - run: npm test -- --runInBand
       - run: node test/consumer/smoke.mjs
       - run: python3 tools/generate-owner-source-list.py --check

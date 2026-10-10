@@ -7,8 +7,10 @@ const fs = require("node:fs");
 const path = require("node:path");
 const os = require("node:os");
 const root = path.resolve(__dirname, "../..");
-const configured = process.env.TYPESCRIPT_PATH;
-assert.ok(configured, "TYPESCRIPT_PATH must identify a cached compiler");
+const configured = process.env.TYPESCRIPT_PATH === undefined
+  ? path.join(root, "node_modules", "typescript")
+  : process.env.TYPESCRIPT_PATH;
+assert.ok(configured, "TYPESCRIPT_PATH must identify a compiler directory; omit it for the locked compiler");
 const ts = require(path.join(path.resolve(configured), "lib/typescript.js"));
 const manifest = JSON.parse(
   fs.readFileSync(

@@ -352,10 +352,16 @@ another installed compiler; an invalid or empty override refuses:
 
 ```sh
 npm run typecheck
+npm run typecheck:owner
 npm run lint
 ```
 
 The runner, `test/types/typecheck.cjs`, compiles programs and never emits or runs them. Every program must produce exactly the diagnostics that its `// expect TS<code>` markers name, and no others.
+
+`typecheck:owner` separately checks the trusted-main owner facade and worker
+bootstrap in isolated CommonJS and ESM consumers. It checks the host families,
+closed configuration types and negative capability cases. Both harnesses use
+the locked compiler by default and run in CI; neither executes wallet operations.
 
 - **Portable checks** use `strict`, `noEmit`, `module` and `moduleResolution` `NodeNext`, `target` `ES2022`, `types: []`, and no `skipLibCheck` or `paths`. Programs must not load any file from `node_modules`.
   - A CommonJS (`.cts`) and an ESM (`.mts`) consumer import the package by its own name. They use all five factories with typed hosts and pass brands across the two conditions.

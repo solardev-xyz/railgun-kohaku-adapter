@@ -43,6 +43,7 @@
   "src/data/railgun-txid-note-witness.js",
   "src/data/railgun-txid-omissions.js",
   "src/data/railgun-txid-projection.js",
+  "src/deployment.js",
   "src/execution/host-bindings.js",
   "src/execution/job-locations.js",
   "src/execution/railgun-artifacts.js",

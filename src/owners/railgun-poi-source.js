@@ -1,3 +1,4 @@
+const { SEPOLIA } = require('../deployment');
 /** Main-owned, operation-scoped POI reads for a fixed set of blinded notes.
  * The caller must derive these notes from authenticated wallet state before
  * constructing this capability. This transport does not attest note ownership
@@ -13,7 +14,7 @@ const {
   normalizePoiProofs,
   verifyPoiEvent,
 } = require("../data/railgun-poi-records.js");
-const POI_URL = 'https://ppoi.fdi.network';
+const POI_URL = SEPOLIA.services.poi;
 const MAX_AGE_MS = 60000;
 const ACQUIRE_TIMEOUT_MS = 45000;
 const sources = new WeakMap();

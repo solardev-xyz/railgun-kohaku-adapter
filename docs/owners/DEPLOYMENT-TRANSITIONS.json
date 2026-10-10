@@ -1,0 +1,346 @@
+{
+  "baseRevision": "b27a25b2412d697863a821e52d37a617dfd429ce",
+  "label": "Centralize fixed Sepolia service, fee and qualification facts without changing persisted values or permitting overrides.",
+  "changes": [
+    {
+      "file": "src/data/railgun-owned-poi-records.js",
+      "beforeSha256": "d591d52f31955c00bfa421b8b961d26adb94b2ebdcf709553bea8c4ef34b943f",
+      "afterSha256": "366efc5277d985dd7374b03b44413c32552d07de33b7d97ba35fdcd625edaf25",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "const { SEPOLIA } = require('../deployment');\n"
+        },
+        {
+          "start": 450,
+          "before": "5944700",
+          "after": "SEPOLIA.qualification.poiLaunchBlock"
+        }
+      ]
+    },
+    {
+      "file": "src/data/railgun-poi-submit-data.js",
+      "beforeSha256": "73734d745a2c7cbe9244395ea5cc73717b43be0a526476a6441a19aefc3f236d",
+      "afterSha256": "686bd8a15fadff20d75c1330f7e62e86158a7e6c4146a62954fc451090af5512",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "const { SEPOLIA } = require('../deployment');\n"
+        },
+        {
+          "start": 512,
+          "before": "'http",
+          "after": "SEPOLIA."
+        },
+        {
+          "start": 521,
+          "before": "://p",
+          "after": "ervices."
+        },
+        {
+          "start": 532,
+          "before": ".fdi.network'",
+          "after": ""
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-kohaku-plugin.js",
+      "beforeSha256": "83d6d7ce5e5f5bb8aa1386f648976df6b41b59fbed58e7af609790c08e220711",
+      "afterSha256": "df0b425dd350b9bcc04fa5eeb2458401471c65da0aec5532e1257557bf0fae5e",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "const { SEPOLIA } = require('../deployment');\n"
+        },
+        {
+          "start": 22359,
+          "before": "'http",
+          "after": "SEPOLIA."
+        },
+        {
+          "start": 22368,
+          "before": "://p",
+          "after": "ervices."
+        },
+        {
+          "start": 22379,
+          "before": ".fdi.network'",
+          "after": ""
+        },
+        {
+          "start": 22439,
+          "before": "'http",
+          "after": "SEPOLIA."
+        },
+        {
+          "start": 22448,
+          "before": "://p",
+          "after": "ervices."
+        },
+        {
+          "start": 22459,
+          "before": ".fdi.network'",
+          "after": ""
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-poi-disclosure-plan.js",
+      "beforeSha256": "c1f5b5400510c62fe68122ab1332953db7442b4b5b279e4582a436801c74f388",
+      "afterSha256": "1f169bf6e1642856dfe2f470ccd918d4309e2fb95eb8730773f610770558a071",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "const { SEPOLIA } = require('../deployment');\n"
+        },
+        {
+          "start": 1652,
+          "before": "'http",
+          "after": "SEPOLIA."
+        },
+        {
+          "start": 1661,
+          "before": "://p",
+          "after": "ervices."
+        },
+        {
+          "start": 1672,
+          "before": ".fdi.network'",
+          "after": ""
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-poi-root.js",
+      "beforeSha256": "43d312495077bc978ca8474878b13f0bb4f12eaceda34c004cbc9ba1107e512f",
+      "afterSha256": "97777a55ebfb506b81ffb2a1599cbd0a1a037da84c535983eded767926b83626",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "const { SEPOLIA } = require('../deployment');\n"
+        },
+        {
+          "start": 613,
+          "before": "'http",
+          "after": "SEPOLIA."
+        },
+        {
+          "start": 622,
+          "before": "://p",
+          "after": "ervices."
+        },
+        {
+          "start": 633,
+          "before": ".fdi.network'",
+          "after": ""
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-poi-source.js",
+      "beforeSha256": "ef00508bf6b774d5ec1796a9234e0d5eaac5e7d5b7ab47cc9a540306273c0fb4",
+      "afterSha256": "e4128767a6f60c2cd7d3fcbd0cbc83468327fa799f065f5d206fcd62d5e69c19",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "const { SEPOLIA } = require('../deployment');\n"
+        },
+        {
+          "start": 736,
+          "before": "'http",
+          "after": "SEPOLIA."
+        },
+        {
+          "start": 745,
+          "before": "://p",
+          "after": "ervices."
+        },
+        {
+          "start": 756,
+          "before": ".fdi.network'",
+          "after": ""
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-private-preflight.js",
+      "beforeSha256": "6ed53054d4257ff13a0c3b3436a1cf037b880b2ee37fb1b8d56bbcf422479f0e",
+      "afterSha256": "e12429b3714e624568ddc30d7763c6e38ce4a60bf2f3c5ee6726a24fdecc8ee7",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "const { SEPOLIA } = require('../deployment');\n"
+        },
+        {
+          "start": 1531,
+          "before": "25",
+          "after": "SEPOLIA.fees.unshieldBps"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-public-policy.js",
+      "beforeSha256": "251274b24338de51846851168d43b2768e908e439cfccdf9774f4a4b5940a470",
+      "afterSha256": "485f7c3b14b7d8292056e235885dceef8079a0899c867f2ea38c1a30faceaf9a",
+      "replacements": [
+        {
+          "start": 369,
+          "before": "",
+          "after": "{ SEPOLIA } = require('../deployment');\nconst "
+        },
+        {
+          "start": 435,
+          "before": "11829346",
+          "after": "SEPOLIA.qualification.governanceThrough"
+        },
+        {
+          "start": 861,
+          "before": "11155111",
+          "after": "SEPOLIA.chainId"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-public-services.js",
+      "beforeSha256": "ae7fd25dab9f098406474b85c83b52b0a44019bd2a0f79f23129bceae54efe90",
+      "afterSha256": "ae74e75d9fd0d015c617026d7661cf014765f9a550a519f40b563d5668c6e6a6",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "const { SEPOLIA } = require('../deployment');\n"
+        },
+        {
+          "start": 486,
+          "before": "'http",
+          "after": "SEPOLIA."
+        },
+        {
+          "start": 495,
+          "before": "://p",
+          "after": "ervices."
+        },
+        {
+          "start": 506,
+          "before": ".fdi.network'",
+          "after": ""
+        },
+        {
+          "start": 528,
+          "before": "'h",
+          "after": "SEPOLIA.services."
+        },
+        {
+          "start": 546,
+          "before": "tps://rail-squ",
+          "after": "x"
+        },
+        {
+          "start": 549,
+          "before": ".squi",
+          "after": "In"
+        },
+        {
+          "start": 552,
+          "before": "s.liv",
+          "after": ""
+        },
+        {
+          "start": 553,
+          "before": "/squid-",
+          "after": "xe"
+        },
+        {
+          "start": 556,
+          "before": "ailgun-eth-sepolia-v2/graphql'",
+          "after": ""
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-transact-receipt.js",
+      "beforeSha256": "0781d1a7d73424e1e9284850c4af9ec92d27c81195eda79e276b0c003bc1dd37",
+      "afterSha256": "62317c516063dec5e68d7c1f253cc902ddcd5d3fa3ae6f5e48386cffe749194f",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "const { SEPOLIA } = require('../deployment');\n"
+        },
+        {
+          "start": 7226,
+          "before": "25",
+          "after": "BigI"
+        },
+        {
+          "start": 7231,
+          "before": "",
+          "after": "t(SEPOLIA.fees.unshieldBps)"
+        },
+        {
+          "start": 7970,
+          "before": "25",
+          "after": "BigI"
+        },
+        {
+          "start": 7975,
+          "before": "",
+          "after": "t(SEPOLIA.fees.unshieldBps)"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-transact-resolution.js",
+      "beforeSha256": "1f86f7e48b6fea3ccecb3452e3db4d2629c527d90b7909dee15703f6ddca07f7",
+      "afterSha256": "6b9e4ca23b6f76746ddb4e9341160a1730ac47214023e960600c96b021d14f24",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "const { SEPOLIA } = require('../deployment');\n"
+        },
+        {
+          "start": 4409,
+          "before": "25",
+          "after": "BigI"
+        },
+        {
+          "start": 4414,
+          "before": "",
+          "after": "t(SEPOLIA.fees.unshieldBps)"
+        },
+        {
+          "start": 5762,
+          "before": "25",
+          "after": "BigI"
+        },
+        {
+          "start": 5767,
+          "before": "",
+          "after": "t(SEPOLIA.fees.unshieldBps)"
+        }
+      ]
+    },
+    {
+      "file": "test/owner-identity-credentials.test.js",
+      "reason": "Add assertions connecting the unchanged credential AAD domain to the deployment descriptor. Historical test pins remain unchanged.",
+      "beforeSha256": "2448f851c4e6befd11440030a1437c2098372b6446a19ab8f1df05495ec0ad17",
+      "afterSha256": "0a039848dda71817e15c3c1317ba374bb35ec4f8b84ff36b0d85ef159d4db833",
+      "replacements": [
+        {
+          "start": 1679,
+          "before": "",
+          "after": "      expect(context.subject.deployment).toBe(require(\"../src/deployment\").SEPOLIA.persistedNetwork);\n      expect(context.subject.chainId).toBe(require(\"../src/deployment\").SEPOLIA.chainId);\n"
+        }
+      ]
+    }
+  ]
+}

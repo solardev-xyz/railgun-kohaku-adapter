@@ -188,3 +188,5 @@ Exact source hashes and destination mapping are in
 bootstrap admits a fixed enum, and artifact contents gain independent package
 checks. Existing shared data cores are reused; historical native evidence does
 not qualify these new execution paths.
+
+The 11 translated files changed by the closed deployment foundation retain reversible source edits in `docs/owners/DEPLOYMENT-TRANSITIONS.json`, layered over their existing provenance pins. No upstream or persisted identity is reattributed by that refactor.

@@ -2173,3 +2173,15 @@ test.each([undefined, {}, { maxGasFee: 0n }, { maxGasFee: 1000000000000000001n }
   expect(state.host).toBeUndefined();
   expect(state.openIdentity).not.toHaveBeenCalled();
 });
+
+test.each([{ deployment: "sepolia" }, { deployment: "sepolia", applicationPolicy: { maxGasFee: 10n } }])("explicit supported deployment composes with spending policy: %p", async (initialization) => {
+  const f = fixture(initialization);
+  const account = await f.api.openAccount(f.options);
+  expect(state.openIdentity).toHaveBeenCalled();
+  await account.close();
+});
+test.each([undefined, "mainnet", 11155111, { id: "sepolia" }])("unsupported deployment refuses before host enrollment: %p", (deployment) => {
+  expect(() => fixture({ deployment })).toThrow();
+  expect(state.host).toBeUndefined();
+  expect(state.openIdentity).not.toHaveBeenCalled();
+});

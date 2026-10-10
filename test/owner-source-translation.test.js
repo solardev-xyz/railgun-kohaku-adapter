@@ -1,4 +1,5 @@
 "use strict";
+const deploymentTransitions = require("../docs/owners/DEPLOYMENT-TRANSITIONS.json");
 const fs = require("fs"),
   path = require("path"),
   vm = require("vm"),
@@ -75,6 +76,7 @@ test("every translated algorithm reconstructs its exact immutable original bytes
     reused = 0;
   for (const row of translation.files) {
     let text = fs.readFileSync(sourceFile(row.destination), "utf8");
+    text = undoDeployment(text, row.destination);
     const applicationChange = applicationTransitions.changes.find(change => change.file === row.destination);
     if (applicationChange) {
       expect(sha(text)).toBe(applicationChange.afterSha256);
@@ -369,6 +371,7 @@ test("all reused static named export surfaces were checked, including the full c
     expect(found.sourceSha256).toBe(row.sourceSha256);
     // The audited bytes are the pre-retry basis; the retry phase is undone.
     let text = fs.readFileSync(path.join(root, row.destination), "utf8");
+    text = undoDeployment(text, row.destination);
     const drainage = walletDrainTransitions.changes.find(
       (change) => change.file === row.destination,
     );
@@ -440,6 +443,7 @@ test("high-authority host family imports have an exact reviewed source allowlist
     ).toEqual(files);
   for (const [file, digest] of Object.entries(audit.files)) {
     let text = fs.readFileSync(path.join(root, file), "utf8");
+    text = undoDeployment(text, file);
     const applicationChange = applicationTransitions.changes.find(change => change.file === file);
     if (applicationChange) {
       expect(sha(text)).toBe(applicationChange.afterSha256);
@@ -461,7 +465,7 @@ test("controlled credential tests pin their immutable source and copied context 
   const rows = require("../docs/owners/CREDENTIAL-TEST-SOURCES.json");
   expect(rows).toHaveLength(3);
   for (const row of rows) {
-    const bytes = fs.readFileSync(path.join(root, row.fixture));
+    const bytes = Buffer.from(undoDeployment(fs.readFileSync(path.join(root, row.fixture), "utf8"), row.fixture));
     expect({ bytes: bytes.length, sha256: sha(bytes) }).toEqual(row.current);
   }
   const issuer = rows.find((row) =>
@@ -509,3 +513,15 @@ test("generic filename loader is preserved as historical text and absent from ru
   const manifest = require("../package.json");
   expect(manifest.files).not.toContain("docs/owners/");
 });
+
+function undoDeployment(text, file) {
+  const change = deploymentTransitions.changes.find((row) => row.file === file);
+  if (!change) return text;
+  expect(sha(text)).toBe(change.afterSha256);
+  for (const edit of [...change.replacements].reverse()) {
+    expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(edit.after);
+    text = text.slice(0, edit.start) + edit.before + text.slice(edit.start + edit.after.length);
+  }
+  expect(sha(text)).toBe(change.beforeSha256);
+  return text;
+}

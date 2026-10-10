@@ -79,6 +79,7 @@ function fixture(verifyArchive) {
     if (loaded[name]) return loaded[name];
     const file = path.join(root, "src/owners", name + ".js");
     loaded[name] = load(fs.readFileSync(file, "utf8"), file, (request) => {
+      if (request === "../deployment") return require("../../src/deployment");
       if (request === "./source-identity") return source;
       if (request === "./source-files.json") return [...files];
       if (request.includes("railgun-engine-runtime"))

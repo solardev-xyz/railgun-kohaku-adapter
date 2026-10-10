@@ -28,12 +28,12 @@ test('does not invoke getters or proxy traps', () => {
   }
   expect(getter).not.toHaveBeenCalled(); expect(trap).not.toHaveBeenCalled();
 });
-test.each(['options', 'policy'])('malformed main %s poisons owner and execution bootstrap across module reload', (kind) => {
+test.each(['options', 'policy', 'deployment'])('malformed main %s poisons owner and execution bootstrap across module reload', (kind) => {
   const { execFileSync } = require('node:child_process');
   const script = `
     const assert = require('node:assert/strict');
     const facade = require.resolve('./src/owners/operational-facade');
-    const options = ${kind === 'options' ? 'null' : '{ host: {}, runtime: {}, applicationPolicy: { maxGasFee: 0n } }'};
+    const options = ${kind === 'options' ? 'null' : kind === 'deployment' ? '{ host: {}, runtime: {}, deployment: "mainnet" }' : '{ host: {}, runtime: {}, applicationPolicy: { maxGasFee: 0n } }'};
     assert.throws(() => require(facade).initializeRailgunMain(options));
     assert.ok(Object.hasOwn(globalThis, Symbol.for('@freedom/railgun-kohaku-adapter/owner-host-v1')));
     delete require.cache[facade];

@@ -159,9 +159,11 @@ new-head CI result; the independent host's
 also passed. These scoped results do not close the remaining acceptance gates or
 inherit claims from the historical Freedom campaign.
 
-Other roadmap items stay explicit: the authenticated deployment descriptor and
-broader operation-policy generalization are not implemented; Sepolia pins and
-historical amount/shape bounds remain. Availability recovery is explicit resume,
+The initial [closed deployment descriptor](owners/DEPLOYMENT.md) centralizes
+existing Sepolia facts and rejects unsupported initialization choices. It is
+an assertion of the sole supported deployment, not a parametric network registry.
+Broader operation-policy generalization remains open; historical amount/shape
+bounds remain. Availability recovery is explicit resume,
 not a general idempotent-read retry engine. Experimental versioning and a platform
 matrix are documented, private vulnerability reporting is enabled, and a tagged
 release's version/notes still require its concrete release decision. Authentic

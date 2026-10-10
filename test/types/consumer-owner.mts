@@ -11,6 +11,7 @@ declare const cjs: CjsHandle;
 const sharedBrand: PrivatePreparedHandle = cjs;
 const api = initializeRailgunMain({
   host,
+  deployment: "sepolia",
   runtime: {
     archive: "/engine",
     proverArchive: "/prover",

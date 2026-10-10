@@ -4,6 +4,7 @@ declare const host: owner.RailgunMainHost;
 declare const signal: AbortSignal;
 const api = owner.initializeRailgunMain({
   host,
+  deployment: "sepolia",
   runtime: {
     archive: "/engine",
     proverArchive: "/prover",

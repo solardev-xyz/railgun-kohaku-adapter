@@ -1,10 +1,11 @@
+const { SEPOLIA } = require('../deployment');
 /** Internal owned-note projection. These facts link private notes and must never
  * enter public reports or the Kohaku read surface. Ownership authority belongs
  * to the guarded scan receipt, not to these serializable records themselves.
  */
 const assert = require('assert/strict');
 const FIELD = 21888242871839275222246405745257275088548364400416034343698204186575808495617n;
-const POI_LAUNCH_BLOCK = 5944700;
+const POI_LAUNCH_BLOCK = SEPOLIA.qualification.poiLaunchBlock;
 function field(value) {
   assert.equal(typeof value, 'string');
   assert.match(value, /^0x[0-9a-f]{64}$/);
