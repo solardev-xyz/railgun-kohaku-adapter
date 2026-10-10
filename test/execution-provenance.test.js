@@ -5,10 +5,27 @@ const fs = require("fs"),
 const root = path.join(__dirname, "..");
 const processTransitions = require("../docs/owners/PROCESS-TRANSITIONS.json");
 const poiReproofTransitions = require("../docs/owners/POI-REPROOF-TRANSITIONS.json");
+const walletDrainTransitions = require("../docs/owners/WALLET-DRAIN-TRANSITIONS.json");
 const provenance = require("../docs/execution/PROVENANCE.json");
 const sha = (value) => createHash("sha256").update(value).digest("hex");
 function originalKernelText(file) {
   let text = fs.readFileSync(path.join(root, file), "utf8");
+  const drainage = walletDrainTransitions.changes.find(
+    (change) => change.file === file,
+  );
+  if (drainage) {
+    expect(sha(text)).toBe(drainage.afterSha256);
+    for (const edit of [...drainage.replacements].reverse()) {
+      expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(
+        edit.after,
+      );
+      text =
+        text.slice(0, edit.start) +
+        edit.before +
+        text.slice(edit.start + edit.after.length);
+    }
+    expect(sha(text)).toBe(drainage.beforeSha256);
+  }
   // The newer reviewed phase (current POI_3x3 artifact pins) is undone first.
   const reproof = poiReproofTransitions.changes.find(
     (change) => change.file === file,

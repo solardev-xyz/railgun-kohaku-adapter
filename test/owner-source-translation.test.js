@@ -4,6 +4,7 @@ const fs = require("fs"),
   vm = require("vm"),
   { createHash } = require("crypto");
 const root = path.join(__dirname, "..");
+const walletDrainTransitions = require("../docs/owners/WALLET-DRAIN-TRANSITIONS.json");
 const publicRecoveryTransitions = require("../docs/owners/PUBLIC-RECOVERY-TRANSITIONS.json");
 const poiReproofTransitions = require("../docs/owners/POI-REPROOF-TRANSITIONS.json");
 const poiRetryTransitions = require("../docs/owners/POI-RETRY-TRANSITIONS.json");
@@ -72,6 +73,14 @@ test("every translated algorithm reconstructs its exact immutable original bytes
     reused = 0;
   for (const row of translation.files) {
     let text = fs.readFileSync(sourceFile(row.destination), "utf8");
+    const drainage = walletDrainTransitions.changes.find(
+      (change) => change.file === row.destination,
+    );
+    if (drainage) {
+      expect(sha(text)).toBe(drainage.afterSha256);
+      text = undo(text, drainage.replacements);
+      expect(sha(text)).toBe(drainage.beforeSha256);
+    }
     const publicRecovery = publicRecoveryTransitions.changes.find(
       (change) => change.file === row.destination,
     );
@@ -346,6 +355,14 @@ test("all reused static named export surfaces were checked, including the full c
     expect(found.sourceSha256).toBe(row.sourceSha256);
     // The audited bytes are the pre-retry basis; the retry phase is undone.
     let text = fs.readFileSync(path.join(root, row.destination), "utf8");
+    const drainage = walletDrainTransitions.changes.find(
+      (change) => change.file === row.destination,
+    );
+    if (drainage) {
+      expect(sha(text)).toBe(drainage.afterSha256);
+      text = undo(text, drainage.replacements);
+      expect(sha(text)).toBe(drainage.beforeSha256);
+    }
     const poiReproof = poiReproofTransitions.changes.find(
       (change) => change.file === row.destination,
     );

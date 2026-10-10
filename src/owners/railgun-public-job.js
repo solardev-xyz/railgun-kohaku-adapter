@@ -39,6 +39,7 @@ async function apply(input, { request, signal, guardReport }) {
     signal,
     send: request,
   });
+  try {
   require("./railgun-tree-transactions.js").installRailgunTreeTransactions({
     Merkletree,
     remote,
@@ -122,6 +123,7 @@ async function apply(input, { request, signal, guardReport }) {
     chain,
     input.plan.to.number
   );
+  await remote.drain();
   assert.equal(guardReport().attempts, 0);
   return {
     inventory: inventory.sha256,
@@ -131,6 +133,7 @@ async function apply(input, { request, signal, guardReport }) {
     nullifiers: nullifiers.length,
     unshields: unshields.length,
   };
+  } finally { remote.close(); }
 }
 
 async function run(serialized, { request, signal, guardReport }) {

@@ -1,0 +1,22 @@
+{
+  "reason": "The wallet child now drains its actual public and wallet remotes before returning. The historical relay fixture supplies both explicit drain methods; added controls retain their original settlement. Existing assertions are unchanged.",
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-relay-proof-jobs.test.js",
+      "beforeSha256": "ed75721abc1a0f6e6aa5314702f69df5735b67fd829fe85210be53615e3d7c0b",
+      "afterSha256": "90aa1b732ee2b7d4c6713ac2accd3443f7b7564f9466528b4f5d29af8f33a0a8",
+      "replacements": [
+        {
+          "start": 4822,
+          "before": "",
+          "after": "), drain: jest.fn(async () => {}"
+        },
+        {
+          "start": 27141,
+          "before": "",
+          "after": "\n// The worker result must follow both original remote settlement barriers.\ntest('wallet result waits for both public and wallet drains', async () => {\n  const { wallet } = jobs(), f = prePoiWalletFixture();\n  const publicDrain = deferred(), walletDrain = deferred(), reached = deferred();\n  const original = wallet(JSON.stringify(f.input), f.context, 'relay-pre-poi', async () => {\n    mockRemotes[0].drain.mockImplementation(() => publicDrain.promise);\n    mockRemotes[1].drain.mockImplementation(() => { reached.resolve(); return walletDrain.promise; });\n    return {};\n  });\n  await reached.promise;\n  publicDrain.resolve();\n  await Promise.resolve();\n  expect(mockMessages.some((m) => m.method === 'result')).toBe(false);\n  walletDrain.resolve();\n  await original;\n  expect(mockRemotes.every((r) => r.drain.mock.calls.length === 1)).toBe(true);\n  expect(mockMessages.filter((m) => m.method === 'result')).toHaveLength(1);\n});\ntest('one failed drain retains the other original drain before closure and never reports success', async () => {\n  const { wallet } = jobs(), f = prePoiWalletFixture();\n  const held = deferred(), reached = deferred();\n  const failure = Error('remote drain refused');\n  const original = wallet(JSON.stringify(f.input), f.context, 'relay-pre-poi', async () => {\n    mockRemotes[0].drain.mockRejectedValue(failure);\n    mockRemotes[1].drain.mockImplementation(() => { reached.resolve(); return held.promise; });\n    return {};\n  });\n  const rejected = expect(original).rejects.toBe(failure);\n  await reached.promise;\n  await new Promise((resolve) => setImmediate(resolve));\n  expect(mockRemotes.every((r) => r.close.mock.calls.length === 0)).toBe(true);\n  expect(mockMessages.some((m) => m.method === 'result')).toBe(false);\n  held.resolve();\n  await rejected;\n  expect(mockRemotes.every((r) => r.close.mock.calls.length === 1)).toBe(true);\n});\n"
+        }
+      ]
+    }
+  ]
+}

@@ -15,6 +15,20 @@ function createRailgunRemote({ AbstractLevelDOWN, AbstractIterator, send, signal
     pending = 0,
     queuedBytes = 0;
   const queue = [];
+  const work = new Set();
+  let sealed = false, draining = false;
+  const track = (promise) => {
+    work.add(promise);
+    promise.then(() => work.delete(promise), () => work.delete(promise));
+    return promise;
+  };
+  const admit = (ending = false) => {
+    active();
+    if (sealed || (draining && !ending)) {
+      close();
+      throw fail();
+    }
+  };
   const iterators = new Set();
   const active = () => {
     if (lifetime.aborted) throw fail();
@@ -42,12 +56,10 @@ function createRailgunRemote({ AbstractLevelDOWN, AbstractIterator, send, signal
       pending++;
       const { method, args } = JSON.parse(item.payload);
       item.payload = '';
-      exchange(method, args)
-        .then(item.resolve, item.reject)
-        .finally(() => {
-          pending--;
-          pump();
-        });
+      exchange(method, args).then(
+        (value) => { pending--; pump(); item.resolve(value); },
+        (error) => { pending--; pump(); item.reject(error); }
+      );
     }
   }
   function call(method, args) {
@@ -76,11 +88,11 @@ function createRailgunRemote({ AbstractLevelDOWN, AbstractIterator, send, signal
         queuedBytes + bytes > 8 * 1024 * 1024
       )
         throw fail();
-      return new Promise((resolve, reject) => {
+      return track(new Promise((resolve, reject) => {
         queue.push({ payload, bytes, resolve, reject, deadline: setTimeout(close, 30000) });
         queuedBytes += bytes;
         pump();
-      });
+      }));
     } catch {
       close();
       return Promise.reject(fail());
@@ -170,6 +182,7 @@ function createRailgunRemote({ AbstractLevelDOWN, AbstractIterator, send, signal
   }
   const encode = (value) => Buffer.from(value).toString('base64');
   async function withTransaction(work) {
+    admit();
     if (writing || typeof work !== 'function') {
       close();
       throw fail();
@@ -260,8 +273,9 @@ function createRailgunRemote({ AbstractLevelDOWN, AbstractIterator, send, signal
     );
   // Keep user callback invocation outside the promise chain: a throwing callback
   // must not be mistaken for an operation failure and invoked a second time.
-  const finish = (callback, work) => {
-    Promise.resolve()
+  const finish = (callback, work, ending = false) => {
+    try { admit(ending); } catch { queueMicrotask(() => callback(fail())); return; }
+    track(Promise.resolve()
       .then(() => {
         active();
         return work();
@@ -269,16 +283,16 @@ function createRailgunRemote({ AbstractLevelDOWN, AbstractIterator, send, signal
       .then(
         (result) =>
           queueMicrotask(() => {
-            if (lifetime.aborted) callback(fail());
+            if (lifetime.aborted) { if (ending) callback(); else callback(fail()); }
             else callback(null, ...result);
           }),
-        () => queueMicrotask(() => callback(fail()))
-      );
+        () => queueMicrotask(() => { if (ending && lifetime.aborted) callback(); else callback(fail()); })
+      ));
   };
   class Iterator extends AbstractIterator {
     constructor(db, options) {
       super(db);
-      active();
+      admit();
       this.options = options;
       this.ended = false;
       this.rows = [];
@@ -336,13 +350,13 @@ function createRailgunRemote({ AbstractLevelDOWN, AbstractIterator, send, signal
       );
     }
     _seek(target) {
-      active();
+      admit();
       if (this.ended) throw fail();
-      this.enqueue(() => {
+      track(this.enqueue(() => {
         this.rows.length = 0;
         this.done = false;
         return call('seek', { cursor: this.cursor, target: encode(target) });
-      }).catch(() => {});
+      }).catch(() => {}));
     }
     _end(callback) {
       if (this.ended) {
@@ -359,7 +373,7 @@ function createRailgunRemote({ AbstractLevelDOWN, AbstractIterator, send, signal
       finish(callback, async () => {
         await this.enqueue(() => call('end', { cursor: this.cursor }));
         return [];
-      });
+      }, true);
     }
   }
   class Leveldown extends AbstractLevelDOWN {
@@ -383,7 +397,8 @@ function createRailgunRemote({ AbstractLevelDOWN, AbstractIterator, send, signal
     }
     _get(key, options, callback) {
       // NotFound is an ordinary LevelDB result, never a session failure.
-      call('get', { key: encode(key) }).then(
+      try { admit(); } catch { queueMicrotask(() => callback(fail())); return; }
+      track(call('get', { key: encode(key) }).then(
         (value) =>
           queueMicrotask(() => {
             if (lifetime.aborted) {
@@ -398,7 +413,7 @@ function createRailgunRemote({ AbstractLevelDOWN, AbstractIterator, send, signal
             callback(null, options.asBuffer === false ? bytes.toString() : bytes);
           }),
         () => queueMicrotask(() => callback(fail()))
-      );
+      ));
     }
     _getMany(keys, options, callback) {
       finish(callback, async () => {
@@ -442,7 +457,50 @@ function createRailgunRemote({ AbstractLevelDOWN, AbstractIterator, send, signal
     signal: lifetime,
     close,
     withTransaction,
-    provider: Object.freeze({ signal: lifetime, request: (input) => call('rpc', input) }),
+    async drain() {
+      admit();
+      draining = true;
+      const timer = setTimeout(close, 30000);
+      const turn = () => new Promise((resolve, reject) => {
+        let immediate;
+        const abort = () => { clearImmediate(immediate); reject(fail()); };
+        lifetime.addEventListener('abort', abort, { once: true });
+        immediate = setImmediate(() => {
+          lifetime.removeEventListener('abort', abort);
+          if (lifetime.aborted) reject(fail()); else resolve();
+        });
+        if (lifetime.aborted) abort();
+      });
+      try {
+        if (writing) throw fail();
+        // Stream 'end' may precede both the deferred iterator destruction and
+        // its real broker reply. Permit only those already-exhausted iterators'
+        // closes while draining. Never silently close an abandoned cursor.
+        for (let round = 0; round < 64; round++) {
+          active();
+          const before = sequence;
+          await Promise.all([...work]);
+          await turn();
+          active();
+          for (const iterator of iterators) {
+            if (iterator.error || !((iterator.done && !iterator.rows.length) ||
+              (iterator.options.limit >= 0 && iterator.count >= iterator.options.limit))) throw fail();
+          }
+          if (!work.size && !iterators.size && before === sequence) {
+            if (pending || queue.length || queuedBytes || writing) throw fail();
+            sealed = true;
+            return;
+          }
+        }
+        throw fail();
+      } catch {
+        close();
+        throw fail();
+      } finally {
+        clearTimeout(timer);
+      }
+    },
+    provider: Object.freeze({ signal: lifetime, request: async (input) => { admit(); return call('rpc', input); } }),
   });
 }
 module.exports = { createRailgunRemote };

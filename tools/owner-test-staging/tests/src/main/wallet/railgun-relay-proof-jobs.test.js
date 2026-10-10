@@ -132,7 +132,7 @@ jest.mock('module', () => ({
 }));
 jest.mock("../../../../../../src/execution/railgun-remote.js", () => ({
   createRailgunRemote: ({ send }) => {
-    const remote = { leveldown: {}, send, close: jest.fn() };
+    const remote = { leveldown: {}, send, close: jest.fn(), drain: jest.fn(async () => {}) };
     mockRemotes.push(remote);
     return remote;
   },
@@ -771,5 +771,42 @@ test('pre-POI original final acknowledgement stays owned through cancellation', 
   held.resolve();
   await expect(original).rejects.toThrow();
   expect(mockKey.every((v) => v === 0)).toBe(true);
+  expect(mockRemotes.every((r) => r.close.mock.calls.length === 1)).toBe(true);
+});
+
+// The worker result must follow both original remote settlement barriers.
+test('wallet result waits for both public and wallet drains', async () => {
+  const { wallet } = jobs(), f = prePoiWalletFixture();
+  const publicDrain = deferred(), walletDrain = deferred(), reached = deferred();
+  const original = wallet(JSON.stringify(f.input), f.context, 'relay-pre-poi', async () => {
+    mockRemotes[0].drain.mockImplementation(() => publicDrain.promise);
+    mockRemotes[1].drain.mockImplementation(() => { reached.resolve(); return walletDrain.promise; });
+    return {};
+  });
+  await reached.promise;
+  publicDrain.resolve();
+  await Promise.resolve();
+  expect(mockMessages.some((m) => m.method === 'result')).toBe(false);
+  walletDrain.resolve();
+  await original;
+  expect(mockRemotes.every((r) => r.drain.mock.calls.length === 1)).toBe(true);
+  expect(mockMessages.filter((m) => m.method === 'result')).toHaveLength(1);
+});
+test('one failed drain retains the other original drain before closure and never reports success', async () => {
+  const { wallet } = jobs(), f = prePoiWalletFixture();
+  const held = deferred(), reached = deferred();
+  const failure = Error('remote drain refused');
+  const original = wallet(JSON.stringify(f.input), f.context, 'relay-pre-poi', async () => {
+    mockRemotes[0].drain.mockRejectedValue(failure);
+    mockRemotes[1].drain.mockImplementation(() => { reached.resolve(); return held.promise; });
+    return {};
+  });
+  const rejected = expect(original).rejects.toBe(failure);
+  await reached.promise;
+  await new Promise((resolve) => setImmediate(resolve));
+  expect(mockRemotes.every((r) => r.close.mock.calls.length === 0)).toBe(true);
+  expect(mockMessages.some((m) => m.method === 'result')).toBe(false);
+  held.resolve();
+  await rejected;
   expect(mockRemotes.every((r) => r.close.mock.calls.length === 1)).toBe(true);
 });

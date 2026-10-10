@@ -54,6 +54,7 @@ async function run(text, { request, signal, guardReport }) {
       return JSON.stringify({ id, value: await call({ method, args }) });
     },
   });
+  try {
   const db = remote.leveldown;
   await promisify(db.open.bind(db))();
   const get = promisify(db.get.bind(db)),
@@ -172,6 +173,8 @@ async function run(text, { request, signal, guardReport }) {
   value.guards = guardReport();
   value.inventory = require("../execution/railgun-engine-manifest.json").inventory.sha256;
   assert.equal(value.guards.attempts, 0);
+  await remote.drain();
   assert.equal(await call({ method: 'result', value }), null);
+  } finally { remote.close(); }
 }
 module.exports = { run };

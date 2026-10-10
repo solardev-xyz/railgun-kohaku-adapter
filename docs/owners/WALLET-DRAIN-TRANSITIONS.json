@@ -1,0 +1,234 @@
+{
+  "baseRevision": "c9d29ab7755684ce9e597f31560cfd5fba54cc86",
+  "label": "bounded child storage drainage before wallet/public/TXID results; main broker and cursor-idle checks unchanged",
+  "changes": [
+    {
+      "file": "src/execution/railgun-remote.js",
+      "beforeSha256": "1ad3b7fad9b14be7e357ea117b7239cf2777ced44d3a3866602fbec20a3c4793",
+      "afterSha256": "8d874290bdb9a67f774394be02359209c51201c636038dad0cc9d86d0e487d67",
+      "replacements": [
+        {
+          "start": 845,
+          "before": "",
+          "after": "work = new Set();\n  let sealed = false, draining = false;\n  const track = (promise) => {\n    work.add(promise);\n    promise.then(() => work.delete(promise), () => work.delete(promise));\n    return promise;\n  };\n  const admit = (ending = false) => {\n    active();\n    if (sealed || (draining && !ending)) {\n      close();\n      throw fail();\n    }\n  };\n  const "
+        },
+        {
+          "start": 1996,
+          "before": "",
+          "after": ".then("
+        },
+        {
+          "start": 2011,
+          "before": ".th",
+          "after": "(value) => { p"
+        },
+        {
+          "start": 2027,
+          "before": "",
+          "after": "ding--; pump"
+        },
+        {
+          "start": 2040,
+          "before": "",
+          "after": "); "
+        },
+        {
+          "start": 2055,
+          "before": "",
+          "after": "(value); }"
+        },
+        {
+          "start": 2066,
+          "before": "",
+          "after": "\n        (error) => { pending--; pump();"
+        },
+        {
+          "start": 2118,
+          "before": "",
+          "after": "(error"
+        },
+        {
+          "start": 2125,
+          "before": "",
+          "after": "; }"
+        },
+        {
+          "start": 2135,
+          "before": "  .finally(() => {\n          pending--;\n          pump();\n        }",
+          "after": ""
+        },
+        {
+          "start": 3288,
+          "before": "",
+          "after": "track("
+        },
+        {
+          "start": 3475,
+          "before": "",
+          "after": ")"
+        },
+        {
+          "start": 6554,
+          "before": "",
+          "after": "admit();\n    "
+        },
+        {
+          "start": 9284,
+          "before": "",
+          "after": ", ending = false"
+        },
+        {
+          "start": 9311,
+          "before": "",
+          "after": "try { admit(ending); } catch { queueMicrotask(() => callback(fail())); return; }\n    track("
+        },
+        {
+          "start": 9590,
+          "before": "",
+          "after": "{ if (ending) callback(); else "
+        },
+        {
+          "start": 9638,
+          "before": "",
+          "after": " }"
+        },
+        {
+          "start": 9734,
+          "before": "",
+          "after": "{ if (ending && lifetime.aborted) callback(); else "
+        },
+        {
+          "start": 9801,
+          "before": "",
+          "after": "; }"
+        },
+        {
+          "start": 9812,
+          "before": "",
+          "after": ")"
+        },
+        {
+          "start": 9920,
+          "before": "c",
+          "after": "dmi"
+        },
+        {
+          "start": 9924,
+          "before": "ive",
+          "after": ""
+        },
+        {
+          "start": 11893,
+          "before": "c",
+          "after": "dmi"
+        },
+        {
+          "start": 11897,
+          "before": "ive",
+          "after": ""
+        },
+        {
+          "start": 11943,
+          "before": "",
+          "after": "track("
+        },
+        {
+          "start": 12128,
+          "before": "",
+          "after": ")"
+        },
+        {
+          "start": 12547,
+          "before": "",
+          "after": ", true"
+        },
+        {
+          "start": 13230,
+          "before": "",
+          "after": "try { admit(); } catch { queueMicrotask(() => callback(fail())); return; }\n      track("
+        },
+        {
+          "start": 13890,
+          "before": "",
+          "after": ")"
+        },
+        {
+          "start": 15120,
+          "before": "",
+          "after": "async drain() {\n      admit();\n      draining = true;\n      const timer = setTimeout(close, 30000);\n      const turn = () => new Promise((resolve, reject) => {\n        let immediate;\n        const abort = () => { clearImmediate(immediate); reject(fail()); };\n        lifetime.addEventListener('abort', abort, { once: true });\n        immediate = setImmediate(() => {\n          lifetime.removeEventListener('abort', abort);\n          if (lifetime.aborted) reject(fail()); else resolve();\n        });\n        if (lifetime.aborted) abort();\n      });\n      try {\n        if (writing) throw fail();\n        // Stream 'end' may precede both the deferred iterator destruction and\n        // its real broker reply. Permit only those already-exhausted iterators'\n        // closes while draining. Never silently close an abandoned cursor.\n        for (let round = 0; round < 64; round++) {\n          active();\n          const before = sequence;\n          await Promise.all([...work]);\n          await turn();\n          active();\n          for (const iterator of iterators) {\n            if (iterator.error || !((iterator.done && !iterator.rows.length) ||\n              (iterator.options.limit >= 0 && iterator.count >= iterator.options.limit))) throw fail();\n          }\n          if (!work.size && !iterators.size && before === sequence) {\n            if (pending || queue.length || queuedBytes || writing) throw fail();\n            sealed = true;\n            return;\n          }\n        }\n        throw fail();\n      } catch {\n        close();\n        throw fail();\n      } finally {\n        clearTimeout(timer);\n      }\n    },\n    "
+        },
+        {
+          "start": 16799,
+          "before": "",
+          "after": "async "
+        },
+        {
+          "start": 16815,
+          "before": "",
+          "after": " { admit(); return"
+        },
+        {
+          "start": 16852,
+          "before": "",
+          "after": "; }"
+        }
+      ]
+    },
+    {
+      "file": "src/execution/railgun-wallet-job.js",
+      "beforeSha256": "b09799a395e153374411df77f5382e9779ac0731f9ae91448ead5a4ae26dd7b9",
+      "afterSha256": "b37d41c719988ef718d57fb71c1a60fb94a7577fee5c04f1a9b590ea5a877285",
+      "replacements": [
+        {
+          "start": 6883,
+          "before": "",
+          "after": "const drained = await Promise.allSettled([publicRemote.drain(), walletRemote.drain()]);\n    for (const outcome of drained) if (outcome.status === 'rejected') throw outcome.reason;\n    "
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-txid-job.js",
+      "beforeSha256": "4494da9a83eb7061a054f07386fedd0762eaff5e15ced3cb53d65ccb18a2ac1d",
+      "afterSha256": "edc519a106604e26423aa117037b45fa552a531eaca5bb54627661c3d9fdaadd",
+      "replacements": [
+        {
+          "start": 2383,
+          "before": "",
+          "after": "\n  try {"
+        },
+        {
+          "start": 7840,
+          "before": "",
+          "after": "wait remote.drain();\n  a"
+        },
+        {
+          "start": 7924,
+          "before": "",
+          "after": "  } finally { remote.close(); }\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-public-job.js",
+      "beforeSha256": "66f92db74be9866c71f2dd6157b1a3faf295f30e3bf19878139cfa5b9523da3c",
+      "afterSha256": "b5fe4b80e023cd33aadf2ad582323afba5ee0d62d84c6c62dafb29aa5db581f7",
+      "replacements": [
+        {
+          "start": 2270,
+          "before": "",
+          "after": "\n  try {"
+        },
+        {
+          "start": 5232,
+          "before": "",
+          "after": "wait remote.drain();\n  a"
+        },
+        {
+          "start": 5537,
+          "before": "",
+          "after": "\n  } finally { remote.close(); }"
+        }
+      ]
+    }
+  ]
+}

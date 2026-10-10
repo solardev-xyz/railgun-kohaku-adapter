@@ -172,6 +172,8 @@ async function withWallet(
       : {};
     if (purpose === 'relay-prove-local' || purpose === 'relay-pre-poi')
       require('./railgun-relay-wallet-data').assertRailgunRelaySignal(signal);
+    const drained = await Promise.allSettled([publicRemote.drain(), walletRemote.drain()]);
+    for (const outcome of drained) if (outcome.status === 'rejected') throw outcome.reason;
     assert.equal(poiCalls, 0);
     assert.equal(guardReport().attempts, 0);
     const messageId = ++sequence;

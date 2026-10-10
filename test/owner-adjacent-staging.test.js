@@ -26,6 +26,7 @@ const heldAdaptations = require('../docs/owners/test-staging/HOST-HELD-ADAPTATIO
 const poiFacadeAdaptations = require('../docs/owners/test-staging/HOST-POI-FACADE-ADAPTATIONS.json');
 const poiReproofAdaptations = require('../docs/owners/test-staging/POI-REPROOF-ADAPTATIONS.json');
 const poiRetryAdaptations = require('../docs/owners/test-staging/POI-RETRY-ADAPTATIONS.json');
+const drainAdaptations = require('../docs/owners/test-staging/WALLET-DRAIN-ADAPTATIONS.json');
 const retired = require('../docs/owners/RETIRED-RUNTIME.json');
 const sha = (value) => createHash('sha256').update(value).digest('hex');
 test('all staged tests and fixtures preserve exact c6 bytes through reversible import-only edits', () => {
@@ -38,6 +39,15 @@ test('all staged tests and fixtures preserve exact c6 bytes through reversible i
   expect(new Set(manifest.files.map((row) => row.destination)).size).toBe(168);
   for (const row of manifest.files) {
     let text = fs.readFileSync(path.join(root, row.destination), 'utf8');
+    const drain = drainAdaptations.changes.find((entry) => entry.file === row.destination);
+    if (drain) {
+      expect(sha(text)).toBe(drain.afterSha256);
+      for (const edit of [...drain.replacements].reverse()) {
+        expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(edit.after);
+        text = text.slice(0, edit.start) + edit.before + text.slice(edit.start + edit.after.length);
+      }
+      expect(sha(text)).toBe(drain.beforeSha256);
+    }
     // Newest phase first: the replacement proof's contract adaptations.
     const poiReproof = poiReproofAdaptations.changes.find((entry) => entry.file === row.destination);
     if (poiReproof) {
