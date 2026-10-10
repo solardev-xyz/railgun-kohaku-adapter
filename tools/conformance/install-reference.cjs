@@ -73,8 +73,10 @@ function install(destination) {
     throw new Error("Commit the reviewed source before the qualifying install");
   const sourceCommit = git(["rev-parse", "HEAD"]);
   fs.mkdirSync(destination, { mode: 0o700 });
-  const npmrc = path.join(destination, "empty.npmrc");
+  const npmrc = path.join(destination, "empty-user.npmrc");
+  const globalNpmrc = path.join(destination, "empty-global.npmrc");
   fs.writeFileSync(npmrc, "", { flag: "wx", mode: 0o600 });
+  fs.writeFileSync(globalNpmrc, "", { flag: "wx", mode: 0o600 });
   env.electron_config_cache = path.join(destination, "electron-cache");
   const log = fs.openSync(
     path.join(destination, "installation.log"),
@@ -87,7 +89,7 @@ function install(destination) {
         "--userconfig",
         npmrc,
         "--globalconfig",
-        npmrc,
+        globalNpmrc,
         "--cache",
         path.join(destination, "npm-cache"),
         ...args,
