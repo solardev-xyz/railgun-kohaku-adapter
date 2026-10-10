@@ -30,15 +30,18 @@ Bob use different seeds, data roots and OS processes.
 - Terminal-only password/recovery entry, explicit backup display, bounded quit
   drainage and closed fatal-error reporting.
 
-These components import Node built-ins and the adapter's existing ethers peer;
+These components import Node built-ins, Electron, the adapter’s ethers and
+better-sqlite3 peers, and public adapter exports;
 none imports Freedom modules. The example dependency manifest has been proposed
 separately (Electron 44.7.0, ethers 6.17.0, better-sqlite3 13.0.3). No new dependency
 has been added by this foundation slice. Existing installed Electron 44.7.0 on
 macOS arm64 created and cold-reopened a genuine account with the same identity
 and zero connections to a refusing loopback fixture. The fixed utility bootstrap
 was exercised too. Those earlier checkout checks remain separate. Later installed-package evidence
-covers the synthetic Alice-to-Bob and retained-submission paths, plus read-only
-receipt accounting. Neither establishes live Tor or platform qualification.
+covers the synthetic Alice-to-Bob and retained-submission paths. Run H passed the full 75-step lifecycle, including signed receipt accounting
+and cache controls. A separate installed rerun of the final receipt reader
+verified all three signed hashes with minimal signature fields and unchanged
+profile bytes. The evidence identifies these revisions separately. Neither establishes live Tor or platform qualification.
 
 The six adapted network/journal modules retain MPL-2.0 and have an immutable
 [Freedom source basis](../../docs/owners/REFERENCE-HOST-PROVENANCE.json). They
@@ -67,13 +70,53 @@ account creation/cold reopening, actual lock exclusion, a blocked holder, lock
 release after SIGKILL, and fatal exceptions/rejections with proxy cleanup. They
 admit only their own marked disposable roots, never an existing wallet profile.
 
+## Configuration
+
+Keep a configuration JSON file outside the application source and profile. It
+must contain exactly these fields and be at most 16 KiB; replace every placeholder:
+
+```json
+{
+  "version": 1,
+  "runtime": {
+    "archive": "/absolute/path/to/railgun-engine.asar",
+    "proverArchive": "/absolute/path/to/railgun-prover.asar",
+    "artifactDirectory": "/absolute/path/to/circuit-artifacts"
+  },
+  "tor": {
+    "binary": "/absolute/path/to/arti",
+    "sha256": "REPLACE_WITH_REVIEWED_BINARY_SHA256"
+  },
+  "rpcUrl": "https://REPLACE_WITH_REVIEWED_SEPOLIA_RPC",
+  "serviceOrigins": [
+    "https://ppoi.fdi.network",
+    "https://rail-squid.squids.live"
+  ],
+  "unlockMinutes": 60
+}
+```
+
+Paths are absolute and canonical. The artifact directory must already exist and
+its contents must match the adapter's pins. The two service origins above are
+required; at most eight distinct HTTPS origins are allowed. The RPC is an
+explicit, unkeyed HTTPS destination with no URL credentials, query or fragment.
+There is no redirect, source discovery or direct fallback. `unlockMinutes` is
+an integer from 1 to 60. The app verifies the exact Arti binary hash, not a version
+label. Arti 2.6.0 has local configuration/state-lock evidence; this reference
+host has not yet qualified a live Arti version. Do not borrow another host's
+routing claim. [Runtime assembly](../../tools/railgun-runtime-build/README.md)
+and [artifact checks](../../docs/review/MAINTENANCE.md) remain separate steps.
+
 ## Current commands
 
 See the [Alice-to-Bob workflow](JOURNEY.md) for the complete command order,
 separate recipient custody and interruption handling. The live stage still
 requires its own reviewed configuration, funding and evidence.
 
-With the reviewed Electron executable, the entry is `main.cjs`:
+Until the example dependency manifest is approved there is no supported fresh
+installation of its runtime. These commands document the interface. Existing
+native checks use an authenticated Electron 44.7.0 executable; the entry is
+`main.cjs`:
 
 ```sh
 "$ELECTRON_BINARY" examples/reference-wallet/main.cjs init --profile "$NEW_EMPTY_PROFILE"
@@ -88,15 +131,15 @@ and preserves the seed, not an old profile's derived caches. `backup` always
 reauthenticates the password and requires an explicit reveal confirmation.
 Paths must be absolute and canonical, with an existing parent directory.
 
-All account and network commands additionally require `--config` and start the
-pinned proxy. The configuration must allow the package's pinned Sepolia POI and
+`init`, `restore`, `backup`, `funding-address` and `operations` run without
+`--config`. Every other command requires it and starts the pinned proxy. The configuration must allow the package's pinned Sepolia POI and
 indexer origins; a missing origin is a startup configuration error. Each command
 runs in a fresh process and opens its own bounded vault session.
 
 | Command | Purpose |
 | --- | --- |
 | `funding-address` | Show the fixed public funding EOA without opening a network connection. |
-| `account-create`, `account-info` | Enroll or inspect this profile's account. |
+| `account-create`, `account-info --cache active|pending` | Enroll or inspect this profile's account. |
 | `scan` | Authenticate/recover the public checkpoint, then scan to finalized within the application allowance. Repeat after a clean pause. |
 | `scan-new` | Explicitly begin a fresh public generation and scan phase after typing `REBUILD`. |
 | `wallet-rebuild`, `wallet-resume`, `wallet-sync` | Build, resume or advance the derived private wallet against the public scan. |

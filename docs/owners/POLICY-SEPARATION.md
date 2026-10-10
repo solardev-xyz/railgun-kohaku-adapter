@@ -5,22 +5,23 @@ distinguishes implemented compatibility work from further protocol and policy
 changes. Qualification evidence is scoped separately; this inventory alone is
 not a live or production qualification.
 
-| Current rule | Class | Current owner | Intended treatment |
-| --- | --- | --- | --- |
-| Note ownership, nullifier binding, recipient and amount conservation | Protocol/security invariant | Private preparation, witness, prover and recovery | Always enforced; no caller override. |
-| Exactly bound signature, destination, durable attempt and uncertainty handling | Custody invariant | Submission, journal, transaction network | Always enforced. Availability retries must not create a second transaction. |
-| Chain 11155111, deployment addresses, ABI/code pins and event-era coverage | Qualified deployment | Public/private policy and deployment inventories | An authenticated deployment descriptor can select a supported deployment; adding another chain requires its own evidence. |
-| Engine, transaction circuit and POI circuit hashes | Runtime compatibility | Runtime/artifact manifests | Keep immutable content verification. Detect circuit changes and give an actionable unsupported-artifact error before handoff. |
-| Public/wallet/TXID cache compatibility hashes over every package source and all host sources | Conservative implementation compatibility | `source-identity.js` and three policy modules | Separate complete implementation attestation from the specific semantics that invalidate each derived cache. No generic policy-hash override. |
-| Persisted `freedom:` and credential derivation domains | Persisted format/identity | Enrollment, wallet policy, credential contract | Preserve existing bytes. Renaming is a migration, not cosmetic cleanup. |
-| 512 distinct log blocks, 4 MiB/4096 logs, 100k block span | Bounded acquisition implementation | `railgun-scan-source.js` | Describe as implementation resource bounds. Plan smaller windows when necessary without accepting partial data. |
-| 8,000 TXID rows and 32,768 observed store records | Storage implementation capacity | TXID journal/projection and whole-store observation | Expose capacity clearly. Raising it needs measured memory/storage behavior and matching validators. |
-| Maximum gas fee (default 0.002 ETH) | Application policy | Trusted-main captured ceiling and per-lane budget | Explicit bootstrap `applicationPolicy`; actual signed-transaction fee, destination and custody checks stay invariant. See [spending policy](APPLICATION-POLICY.md). |
-| 650 ranges, 16 scan recoveries, 80 TXID pages per command | Example application budget | `examples/reference-wallet/{scan,txid-command}.cjs` | Keep in the example, report exhausted budgets clearly, and preserve authenticated progress. |
-| Vault unlock, explicit `PREPARE`/`SEND`/`RESOLVE` reviews | Host/user policy and custody lifecycle | Example vault and terminal | Stay host-owned; the adapter retains cancellation and genuine review binding. |
-| Historical campaign ledger names and per-run allowances | Qualification policy | `tools/qualification/installed-live/` | Remain evidence tooling, never the reference application's architecture. |
+| Current rule | Class | Current owner | Treatment | Status |
+| --- | --- | --- | --- | --- |
+| Note ownership, nullifier binding, recipient and amount conservation | Protocol/security invariant | Private preparation, witness, prover and recovery | Always enforced; no caller override. | Implemented; retained invariant |
+| Exactly bound signature, destination, durable attempt and uncertainty handling | Custody invariant | Submission, journal, transaction network | Always enforced. Availability retries must not create a second transaction. | Implemented; retained invariant |
+| Chain 11155111, deployment addresses, ABI/code pins and event-era coverage | Qualified deployment | Public/private policy and deployment inventories | An authenticated deployment descriptor can select a supported deployment; adding another chain requires its own evidence. | Descriptor not started; Sepolia pins retained |
+| Engine, transaction circuit and POI circuit hashes | Runtime compatibility | Runtime/artifact manifests | Keep immutable content verification. Detect circuit changes and give an actionable unsupported-artifact error before handoff. | Partial: maintainer drift checker; no handoff-time update discovery |
+| Public/wallet/TXID cache compatibility hashes with conservative reviewed exclusions | Conservative implementation compatibility | `source-identity.js` and three policy modules | Separate complete attestation from public/wallet/TXID compatibility; default include with the exclusions documented below. No generic policy-hash override. | Implemented; further narrowing needs evidence |
+| Persisted `freedom:` and credential derivation domains | Persisted format/identity | Enrollment, wallet policy, credential contract | Preserve existing bytes. Renaming is a migration, not cosmetic cleanup. | Implemented; retained invariant |
+| 512 distinct log blocks, 4 MiB/4096 logs, 100k block span | Bounded acquisition implementation | `railgun-scan-source.js` | Describe as implementation resource bounds. Plan smaller windows when necessary without accepting partial data. | Implemented; retained invariant |
+| 8,000 TXID rows and 32,768 observed store records | Storage implementation capacity | TXID journal/projection and whole-store observation | Expose capacity clearly. Raising it needs measured memory/storage behavior and matching validators. | Documented; capacity change not started |
+| Native-only Shield; one ERC-20 input; ≤10¹⁶ wei per Shield/private input; fixed proof shapes | Historical qualification and persisted-operation bounds | Root adapters, capsules and preparation validators | Document independently of protocol limits. Broader assets/amounts require a versioned contract, migration and qualification. | Documented; generalization not started |
+| Maximum gas fee (default 0.002 ETH) | Application policy | Trusted-main captured ceiling and per-lane budget | Explicit bootstrap `applicationPolicy`; actual signed-transaction fee, destination and custody checks stay invariant. See [spending policy](APPLICATION-POLICY.md). | Implemented |
+| 650 ranges, 16 scan recoveries, 80 TXID pages per command | Example application budget | `examples/reference-wallet/{scan,txid-command}.cjs` | Keep in the example, report exhausted budgets clearly, and preserve authenticated progress. | Implemented in example |
+| Vault unlock, explicit `PREPARE`/`SEND`/`RESOLVE` reviews | Host/user policy and custody lifecycle | Example vault and terminal | Stay host-owned; the adapter retains cancellation and genuine review binding. | Implemented; retained invariant |
+| Historical campaign ledger names and per-run allowances | Qualification policy | `tools/qualification/installed-live/` | Remain evidence tooling, never the reference application's architecture. | Separated from example |
 
-The first compatibility change should demonstrate both directions: changing a
+The compatibility controls demonstrate both directions: changing a
 terminal message or POI response classification leaves an authenticated public
 scan usable; changing event projection or its stored representation invalidates
 that scan. A wallet-key/storage interpretation change must still refuse old

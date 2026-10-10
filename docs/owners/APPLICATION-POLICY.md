@@ -3,6 +3,8 @@
 The trusted main initializer accepts an optional application gas ceiling:
 
 ```js
+const { initializeRailgunMain } = require("@freedom/railgun-kohaku-adapter/host/owner");
+
 const owner = initializeRailgunMain({
   host,
   runtime,

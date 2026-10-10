@@ -43,6 +43,10 @@ Alice pays for Shield and transfer; Bob pays for unshield. Funding from related
 addresses creates public links. This workflow does not demonstrate relay privacy.
 Prepare the exact funding and fee budget before a live run. The command's gas
 ceiling is 0.002 ETH per transaction; that ceiling is not an estimate of the fee.
+The current root adapter permits native Shield and one ERC-20 private input,
+with 0 < amount ≤ 10¹⁶ wei (0.01 ETH) for Shield and private inputs. These are
+qualification/format bounds, not Railgun protocol maxima. Use the exact
+[configuration schema](README.md#configuration), not an inferred config.
 
 ```sh
 "$ELECTRON_BINARY" examples/reference-wallet/main.cjs shield --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG" --amount "$SHIELD_WEI"

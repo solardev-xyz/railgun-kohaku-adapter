@@ -15,7 +15,8 @@ must create the lanes used by the root Kohaku factories.
    storage. Apply `tools/conformance/storage.cjs` to a fresh directory and your
    genuine context/guard. Then run the credential vectors and loan-lifetime tests.
 4. Bind fixed process entries and actual original child exit/drain barriers.
-   Initialize `/host/owner` exactly once in main. Utility and storage-worker
+   Initialize `/host/owner` exactly once in main with a captured
+   [application policy](APPLICATION-POLICY.md). Utility and storage-worker
    bootstraps have their own fixed realm-local initialization.
 5. Create an account, exit and reopen it before adding any network path. Confirm
    the account identity survives and a second process cannot open the same root.
@@ -89,3 +90,23 @@ account objects.
 The [shared-contract record](../qualification/reference-host-contracts-2026-10-10/README.md)
 applies these checkers to the existing Freedom primitives as well as the reference
 host tests, with the inventory seam and evidence limits stated explicitly.
+
+## Runnable local checks
+
+With the existing locked development dependencies installed:
+
+```sh
+npm test -- --runInBand test/reference-credentials.test.js test/reference-context.test.js test/reference-storage.test.js
+node tools/conformance/reference-journey/run.cjs /absolute/path/to/public-fixture-inputs.json
+```
+
+The second command requires authenticated `electron`, `runtime` (`archive`,
+`proverArchive`, `artifactDirectory`), `engineModules`, `serialProver` and
+`publicSource` paths in its input JSON. Set `variant` to `retained-unknown` for
+the prepared-operation crash/uncertain-send case. The runtime/prover builders
+and [qualification record](../qualification/reference-alice-bob-synthetic-2026-10-10/README.md)
+identify those inputs and their limits. The runner creates new marked temporary
+profiles and uses only loopback synthetic services; it does not accept an existing
+wallet path. It invokes real crypto and Electron, so the portable Node CI is not
+a substitute. The public source fixture is in
+`docs/freedom-qualification/railgun-unsigned-relay-preparation-2026-10-06/public-source.json`.

@@ -23,7 +23,7 @@ Document and execute the published evaluation commands on a clean checkout.
 ## 2. Standalone reference application and Alice-to-Bob journey
 
 Build `examples/reference-wallet/` as a small terminal application with explicit
-commands and progress, independently installed against the packed public package.
+commands and progress, independently installed against the packed tarball of this package.
 A GUI is not required for this milestone. The first runtime is a headless
 Electron main process: utilities, message ports and ASAR loading match the
 existing package. A plain Node launcher is a later separately qualified target.
@@ -130,3 +130,35 @@ this plan does not merge or activate them.
 
 The key outcome is that another wallet can use this package without inheriting
 Freedom's source tree or needing the original implementers to operate it.
+
+## Current implementation checkpoint
+
+The review guide, call-site host contracts and replacement-host path are written.
+The independent headless example owns genuine custody/process/network capabilities
+and exercises the installed root Kohaku adapters over real owner lanes. Its
+synthetic Alice-to-Bob lifecycle, retained interruption/unknown-send recovery,
+cold Bob unshield and real current-circuit POI verification have scoped evidence.
+It also provides own-journal receipt accounting; it never imports Freedom.
+
+The application gas ceiling is captured at initialization. Derived public,
+wallet and TXID cache identities are separate from complete source attestation,
+with conservative reviewed exclusions and reuse/refusal controls. Protocol,
+deployment, operation-format and security bounds remain explicitly classified.
+The artifact drift checker, runtime build evidence, host conformance checks,
+maintenance/release guidance and clean-checkout CI configuration are present.
+
+Still required before outreach: approved standalone dependency manifest and
+fresh installation, the separately funded live Alice-to-Bob demonstration,
+CI on the pushed candidate and a final independent review of the exact documented
+installation. These remain actual acceptance gates, not claims inherited from
+the historical Freedom campaign.
+
+Other roadmap items stay explicit: the authenticated deployment descriptor and
+broader operation-policy generalization are not implemented; Sepolia pins and
+historical amount/shape bounds remain. Availability recovery is explicit resume,
+not a general idempotent-read retry engine. Experimental versioning and a platform
+matrix are documented, private vulnerability reporting is enabled, and a tagged
+release's version/notes still require its concrete release decision. Authentic
+relay handoff/privacy and additional platforms remain open qualification targets;
+the planned direct-submission demonstration cannot close them. No mainnet or
+production-activation claim follows from any of these checks.

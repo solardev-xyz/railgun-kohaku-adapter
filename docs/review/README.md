@@ -14,9 +14,10 @@ the wallet's master seed, process lifecycle and network policy in the host.
 Railgun's engine and proving artifacts remain upstream implementations. This
 package does not implement a new privacy protocol or replace their cryptography.
 
-Freedom is the first adopting application. The next test of portability is a
-standalone example that uses the installed public package without Freedom source
-or its existing profiles. A full second host has not yet been qualified.
+Freedom is the first adopting application. The standalone reference host now uses the installed packed tarball (`npm pack`) of this package without
+Freedom source or its profiles. Its independent Alice-to-Bob flow passed against
+a synthetic chain and a real SNARK-verifying POI fixture. Live two-account use,
+fresh standalone setup and platform coverage remain separate gates.
 
 ## Read in this order
 
@@ -26,14 +27,15 @@ or its existing profiles. A full second host has not yet been qualified.
    [credential contract](../owners/CREDENTIAL-HOST-CONTRACT.md).
 4. [Live Sepolia evidence](../qualification/installed-live-sepolia-journey-0.6.0-2026-10-10/README.md)
    and [E8 packaged initialization](../qualification/installed-owner-packaged-e8-0.6.0-2026-10-10/README.md).
-5. [Adoption roadmap](../ADOPTION-ROADMAP.md) and [provenance](../../NOTICE.md).
+5. [Installation and maintenance](MAINTENANCE.md), then the [adoption roadmap](../ADOPTION-ROADMAP.md) and [provenance](../../NOTICE.md).
 
 ## What the evidence establishes
 
 | Evidence | Established | Not established |
 | --- | --- | --- |
 | Package consumer and type checks | Restricted CJS/ESM interfaces, shared operation identity, structural compatibility with the recorded Kohaku types | Generic Kohaku `Host`/`CreatePluginFn` compatibility or account authority from a host-shaped object |
-| Native synthetic journeys | Real package/engine/prover execution, retained custody and refusal/recovery cases under the recorded fixtures | An independent non-Freedom host, live provider behavior, authentic list roots or circuit isolation |
+| Historical Freedom native synthetic journeys | Real package/engine/prover execution, retained custody and refusal/recovery cases under the recorded fixtures | An independent non-Freedom host, live provider behavior, authentic list roots or circuit isolation |
+| Independent reference-host synthetic journey | Installed root adapters over genuine owners; three separate vaults/processes; Alice-to-Bob discovery, retained recovery and cold Bob unshield; real current-circuit POI verification | Live chain/service behavior, EVM execution, Tor or platform qualification |
 | Installed live Sepolia journey | Private self-transfer, output POI, fresh-process reopens and source-policy upgrade rebuilds, finalized unshield and receipt/conservation checks | An independent non-Freedom host, live two-account spend, live crash recovery, mainnet, ordinary startup or relayer privacy |
 | E8 unsigned macOS packaged initialization | Exact package resolution, paired initialization, loading and zero network attempts during that probe | Packaged wallet operations, ordinary app startup, a signed build, a distributable application or other platforms |
 
@@ -42,9 +44,9 @@ The live journey used earlier package candidates before E8. Historical tar-D and
 RPC observations retain the `unverified-rpc` trust label. No independent security
 audit of this integration is claimed.
 
-The synthetic and live journeys exercised account-owner lanes directly. The
-root Kohaku factories have separate fixture-host tests; their composition over
-genuine owner lanes is part of the reference application's acceptance work.
+The historical Freedom journeys exercised account-owner lanes directly. The
+reference application's newer evidence exercises root Kohaku adapters over
+genuine lanes; see its [scoped record](../qualification/reference-alice-bob-synthetic-2026-10-10/README.md).
 
 ## Questions for reviewers
 
@@ -60,8 +62,7 @@ genuine owner lanes is part of the reference application's acceptance work.
   documented lifecycle without private instructions or a Freedom checkout?
 - What compatibility and release commitments are necessary before adoption?
 
-The final question about running the reference application becomes actionable
-when that application is implemented. The current consumer fixture is not it.
+The fresh-host installation gate remains outstanding; a synthetic journey using existing authenticated runtime inputs does not establish that installation experience.
 
 ## Information kept out of public reports
 

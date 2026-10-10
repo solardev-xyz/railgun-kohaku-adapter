@@ -1,0 +1,2146 @@
+{
+  "schema": "reference-journey-evidence-v1",
+  "scope": "installed independent reference host; synthetic chain/list and loopback SOCKS/TLS; no EVM or Tor execution",
+  "runs": [
+    {
+      "name": "C",
+      "variant": "acknowledged",
+      "finalCandidate": false,
+      "note": "Passed before the final remote-drain lifecycle corrections and retained-submission command; retained as supporting evidence.",
+      "install": {
+        "tarSha256": "b649236985473c3216f220db8db667fc801ddcb1857a752e7ad720dc5010e422",
+        "files": 282,
+        "transform": {
+          "target": "src/data/railgun-poi-records.js",
+          "before": "c4511c0ea185835c67bbbc8b8ba74bec6271e4b3a457a2b6a1576b42593fd1ac",
+          "after": "16a8e5e15621d2da51568319717a43ca51e3517beb59441e44931539d47b45ab"
+        },
+        "scope": "synthetic list only; no production package mutation"
+      },
+      "resultSha256": "784dac658574086e30fc29132435fab3ac202f81472b8fe455bae8f3efcfb40a",
+      "independentActors": 3,
+      "separateProcessesPerCommand": true,
+      "transactions": 3,
+      "conservation": true,
+      "poiVerification": {
+        "key": "b7ca7ba048666fb0e17efd0af1e407a8dcb0906bfaf2f20e362ed40cbec6f4d8",
+        "circuits": [
+          "3x3"
+        ],
+        "verified": 1,
+        "rejected": 0,
+        "failed": 0,
+        "invalidProofs": 0,
+        "verifierFailures": 0
+      },
+      "steps": [
+        {
+          "step": "01-alice-fixture-init",
+          "sha256": "d8d49279d671f52c9500d6f89fc997dbff066058c94f552005878782694322f3",
+          "passed": true
+        },
+        {
+          "step": "02-bob-fixture-init",
+          "sha256": "d789bd65c88c052bd7c27f3fdeb37975e9cb106cb1beb46053d24174f70a871f",
+          "passed": true
+        },
+        {
+          "step": "03-charlie-fixture-init",
+          "sha256": "3b80654be1733d882280d194debb0e879dc03e3adbf5832aff1611b97d2cba7f",
+          "passed": true
+        },
+        {
+          "step": "04-alice-account-create",
+          "sha256": "522bd43639923afb153f2a0c0e83fad780dc10374492b0e60f1c146001730068",
+          "passed": true
+        },
+        {
+          "step": "05-alice-scan",
+          "sha256": "db12e8e46fefac7d6a82aa0ca46a09516e10c0733c59d7834a6345f8f8fefc60",
+          "passed": true
+        },
+        {
+          "step": "06-alice-wallet-rebuild",
+          "sha256": "abd1a9daa799ccf13d4ea4ba5252badaab8d079577a393e1356fc7a768162dea",
+          "passed": true
+        },
+        {
+          "step": "07-alice-address",
+          "sha256": "28c00663f76d35f2b1ce35fe5c12c16d60369e17b59f9e289c86f4b1a570af59",
+          "passed": true
+        },
+        {
+          "step": "08-alice-notes",
+          "sha256": "9ba1858f81e55a6a69e8c827a911062a55afa0c7456860fa80173a964a973883",
+          "passed": true
+        },
+        {
+          "step": "09-bob-account-create",
+          "sha256": "8254f22ab13d055604c99ae22ce05acdcb2c2c12e55673b278b70b5579d0db8b",
+          "passed": true
+        },
+        {
+          "step": "10-bob-scan",
+          "sha256": "db12e8e46fefac7d6a82aa0ca46a09516e10c0733c59d7834a6345f8f8fefc60",
+          "passed": true
+        },
+        {
+          "step": "11-bob-wallet-rebuild",
+          "sha256": "abd1a9daa799ccf13d4ea4ba5252badaab8d079577a393e1356fc7a768162dea",
+          "passed": true
+        },
+        {
+          "step": "12-bob-address",
+          "sha256": "9e8389a035f03c0f41f62c78cedb8e774ffe0af8e660c042e764950e53663507",
+          "passed": true
+        },
+        {
+          "step": "13-bob-notes",
+          "sha256": "9ba1858f81e55a6a69e8c827a911062a55afa0c7456860fa80173a964a973883",
+          "passed": true
+        },
+        {
+          "step": "14-charlie-account-create",
+          "sha256": "849460557c41b869d1f10d9f02b071a476739992ddc8314f81a6d57413118367",
+          "passed": true
+        },
+        {
+          "step": "15-charlie-scan",
+          "sha256": "db12e8e46fefac7d6a82aa0ca46a09516e10c0733c59d7834a6345f8f8fefc60",
+          "passed": true
+        },
+        {
+          "step": "16-charlie-wallet-rebuild",
+          "sha256": "abd1a9daa799ccf13d4ea4ba5252badaab8d079577a393e1356fc7a768162dea",
+          "passed": true
+        },
+        {
+          "step": "17-charlie-address",
+          "sha256": "c66ffd0785393cd6be4115ee29237cf828962d087c649fc1680a680ee97a71e1",
+          "passed": true
+        },
+        {
+          "step": "18-charlie-notes",
+          "sha256": "9ba1858f81e55a6a69e8c827a911062a55afa0c7456860fa80173a964a973883",
+          "passed": true
+        },
+        {
+          "step": "19-alice-shield",
+          "sha256": "197629109533f30ede037a4f3af0f29c6d847fcbc7f808d15fb0555280b6265d",
+          "passed": true
+        },
+        {
+          "step": "20-alice-shield-history",
+          "sha256": "3d7798beb0a76fb4d69d02998af6a1a650d3664f00aeff51fafe1e4db22a7688",
+          "passed": true
+        },
+        {
+          "step": "21-alice-shield-resolve",
+          "sha256": "509f41c13005d2900b0ddfea12cba64c4cd4637e9ae6a5bfb584f8f5048d42c5",
+          "passed": true
+        },
+        {
+          "step": "22-alice-shield-history",
+          "sha256": "aa7995ec0abc0e57cdc9a17918a48720420a34624e956415e0cce02007ce5c83",
+          "passed": true
+        },
+        {
+          "step": "23-alice-scan",
+          "sha256": "903ea4997892d6423479d33e9c05f895ed694c3e0f40ff66d86feb53abfcf630",
+          "passed": true
+        },
+        {
+          "step": "24-alice-wallet-sync",
+          "sha256": "0bfefef031418f1e2b0ee932837fa6c6cbdb4afecdbfcabb0800fce0d3f44d90",
+          "passed": true
+        },
+        {
+          "step": "25-alice-notes",
+          "sha256": "19c712cfe91ce2c66315985235a82fb415558b84c42d2ce8627860b70e630a72",
+          "passed": true
+        },
+        {
+          "step": "26-alice-pay-note",
+          "sha256": "aa3e718fa925dab3ae02ceb60e2cddedd16a6149d53024c558eee44bed636c71",
+          "passed": true
+        },
+        {
+          "step": "27-alice-holds",
+          "sha256": "26846fb984f09d25899070dd620bd20e079352e22daa51da40de677508bdaa0e",
+          "passed": true
+        },
+        {
+          "step": "28-alice-observe",
+          "sha256": "acfb0c2e505dcce435053983596c1603f290380c7c60846584abbfc8889a5c23",
+          "passed": true
+        },
+        {
+          "step": "29-alice-resolve",
+          "sha256": "a66e1647bfda9b325662c3978480f6584c14002871ddd64435f29b5d0cf728fd",
+          "passed": true
+        },
+        {
+          "step": "30-alice-scan",
+          "sha256": "238ede38a5f325f71a932fe23403b67983d3c678b90e13eb0025d886a0f29118",
+          "passed": true
+        },
+        {
+          "step": "31-alice-wallet-sync",
+          "sha256": "0bfefef031418f1e2b0ee932837fa6c6cbdb4afecdbfcabb0800fce0d3f44d90",
+          "passed": true
+        },
+        {
+          "step": "32-alice-txid-sync",
+          "sha256": "1f71ca47bae9a953b00f6f8819ad6b003250f8f0449418ced16142b7d01ffdea",
+          "passed": true
+        },
+        {
+          "step": "33-alice-poi-prepare-shield",
+          "sha256": "08fa572de1f5dedb66d98f44ab29052d58116aff9daa2d5796f6badb28b038e7",
+          "passed": true
+        },
+        {
+          "step": "34-alice-poi-submit",
+          "sha256": "6ba5432e6cf682c616e62a5d230629bd6825cc3316479d8b0e42f7148d03827b",
+          "passed": true
+        },
+        {
+          "step": "35-bob-scan",
+          "sha256": "509bd1ae6497b08312277403df1abe4025d32869af8dd0bee87822fe7ab9984d",
+          "passed": true
+        },
+        {
+          "step": "36-bob-wallet-sync",
+          "sha256": "9561a8a5280c00358b2bf3b5eb408b9ffefce7c5e8b21d7e51ebb1f6394f50da",
+          "passed": true
+        },
+        {
+          "step": "37-charlie-scan",
+          "sha256": "6ceb8c7105c473697e74c817a701b039aa63b2d3bbbe38303f7f4362a5fa02d6",
+          "passed": true
+        },
+        {
+          "step": "38-charlie-wallet-sync",
+          "sha256": "9561a8a5280c00358b2bf3b5eb408b9ffefce7c5e8b21d7e51ebb1f6394f50da",
+          "passed": true
+        },
+        {
+          "step": "39-bob-notes",
+          "sha256": "0884ad9a79f21fa8196d1a5de91879a1fe2112cbc7d372f47f1d802cd9aebb73",
+          "passed": true
+        },
+        {
+          "step": "40-charlie-notes",
+          "sha256": "030f98f2adc9e865d1544a638246b19c2aceb5d88ad694ed8ad7ffce467812ce",
+          "passed": true
+        },
+        {
+          "step": "41-alice-notes",
+          "sha256": "030f98f2adc9e865d1544a638246b19c2aceb5d88ad694ed8ad7ffce467812ce",
+          "passed": true
+        },
+        {
+          "step": "42-bob-poi-status",
+          "sha256": "118d5b4d44615c66ec5298a344907bd6879fffa3793ec820c75441b797cae4d9",
+          "passed": true
+        },
+        {
+          "step": "43-bob-txid-sync",
+          "sha256": "c3fc9f603b2a1c8cd74e23f01b50fc5634f27eeb041bef6b1a64e48dc537b09a",
+          "passed": true
+        },
+        {
+          "step": "44-bob-unshield-note",
+          "sha256": "281579de94401ce00cf1095429e89f7b9fde59a9463377e965eabc278e38072e",
+          "passed": true
+        },
+        {
+          "step": "45-bob-holds",
+          "sha256": "c776b0482a5ad6214fed34e7e3086c9ded17fb2031171e00ba7acf01586f29b6",
+          "passed": true
+        },
+        {
+          "step": "46-bob-observe",
+          "sha256": "3a109aa1271b244cce1c2307190c23c2a188e7439260d3d54eead7e476960a8d",
+          "passed": true
+        },
+        {
+          "step": "47-bob-resolve",
+          "sha256": "babe5de060efa67baa2cb3444b35ae7ca8daf34f2ad341b3995c0938a69944d4",
+          "passed": true
+        },
+        {
+          "step": "48-bob-scan",
+          "sha256": "059b0e4d1ffdd3fb386bddd77cda197c567345be7e8f1f645455e9ee15ee6b16",
+          "passed": true
+        },
+        {
+          "step": "49-bob-wallet-sync",
+          "sha256": "9561a8a5280c00358b2bf3b5eb408b9ffefce7c5e8b21d7e51ebb1f6394f50da",
+          "passed": true
+        },
+        {
+          "step": "50-bob-notes",
+          "sha256": "030f98f2adc9e865d1544a638246b19c2aceb5d88ad694ed8ad7ffce467812ce",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "F",
+      "variant": "retained-unknown",
+      "finalCandidate": false,
+      "mainLifecyclePassed": true,
+      "runPassed": false,
+      "note": "Main Alice-to-Bob/cold-unshield lifecycle passed. Subsequent cache-control harness advanced the public scan without wallet-sync, so the active wallet correctly refused at 59-alice-notes. The harness was corrected; final fresh G is separate.",
+      "install": {
+        "tarSha256": "a7a4a1a18006b2d86b6fc689f5f4d39210efae617fb202452a82c11837d08555",
+        "files": 282,
+        "transform": {
+          "target": "src/data/railgun-poi-records.js",
+          "before": "c4511c0ea185835c67bbbc8b8ba74bec6271e4b3a457a2b6a1576b42593fd1ac",
+          "after": "16a8e5e15621d2da51568319717a43ca51e3517beb59441e44931539d47b45ab"
+        },
+        "scope": "synthetic list only; no production package mutation"
+      },
+      "independentActors": 3,
+      "separateProcessesPerCommand": true,
+      "transactions": 3,
+      "conservation": true,
+      "poiVerification": {
+        "key": "b7ca7ba048666fb0e17efd0af1e407a8dcb0906bfaf2f20e362ed40cbec6f4d8",
+        "circuits": [
+          "3x3"
+        ],
+        "verified": 1,
+        "rejected": 0,
+        "failed": 0,
+        "invalidProofs": 0,
+        "verifierFailures": 0
+      },
+      "steps": [
+        {
+          "step": "01-alice-fixture-init",
+          "sha256": "30a8f4092e680e4010e9b7ef291b621a3357d2de6b29f43a6b65ea442f6d699a",
+          "outcome": "result"
+        },
+        {
+          "step": "02-bob-fixture-init",
+          "sha256": "89442d9df4828be7c482a5dababdd560b139bb84c7824d81d2b28ef5aa50eff6",
+          "outcome": "result"
+        },
+        {
+          "step": "03-charlie-fixture-init",
+          "sha256": "c29a366eeed9debcbcd8d14f8be6410fc71db89f325e642bbf41e451a5ecc50d",
+          "outcome": "result"
+        },
+        {
+          "step": "04-alice-account-create",
+          "sha256": "02ff2246db3ac6a0a6e3705a05fabf1841c3de7ee89f7905527d526bcd62a0af",
+          "outcome": "result"
+        },
+        {
+          "step": "05-alice-scan",
+          "sha256": "c072d1e182f056c1f24404a07ccbfedf37ea4392a81137bde2879ebbedd6b7a8",
+          "outcome": "result"
+        },
+        {
+          "step": "06-alice-wallet-rebuild",
+          "sha256": "1a70977939c3b7c561ff5bc0e6b9890b78dbabfc4e94cc240f945eca3591a045",
+          "outcome": "result"
+        },
+        {
+          "step": "07-alice-address",
+          "sha256": "6d935bda00f7e2c07c3e52c5bbfafa70a0e72150b64324802cec7c9ea56c9c2c",
+          "outcome": "result"
+        },
+        {
+          "step": "08-alice-notes",
+          "sha256": "bd7e205d5f2ba33f8b47ab378de335814d3159d1aa468ae3f7c0c06e54f01267",
+          "outcome": "result"
+        },
+        {
+          "step": "09-bob-account-create",
+          "sha256": "554bb2f810d70de04a25d21778027d04b13d978727d8c217cf2a42df9fc84af6",
+          "outcome": "result"
+        },
+        {
+          "step": "10-bob-scan",
+          "sha256": "a522fb617908f372d01c8e1e0cd219636e026a9dc6c155ee26ed4d5f04498700",
+          "outcome": "result"
+        },
+        {
+          "step": "11-bob-wallet-rebuild",
+          "sha256": "8c2282cabf94ff54f11d2845dee1458e3023aecfd76c44fac84967fc8e488278",
+          "outcome": "result"
+        },
+        {
+          "step": "12-bob-address",
+          "sha256": "156820133a1553b967b7b686112d3a8a818c42b9c4b822c185e17ffa2e5e0bd0",
+          "outcome": "result"
+        },
+        {
+          "step": "13-bob-notes",
+          "sha256": "ba3506b8eb39840f0b1ab72c8097444c248296589897c5edc9f0438c11330cf4",
+          "outcome": "result"
+        },
+        {
+          "step": "14-charlie-account-create",
+          "sha256": "d60cc6a6ef49d4e20252012adbf6c1ea8210fc00a5add29960dd3187d8816d79",
+          "outcome": "result"
+        },
+        {
+          "step": "15-charlie-scan",
+          "sha256": "95373519c771cd5a24a3ba59fefe8a85bcf5629deca2cd01098ede4d11e6aa84",
+          "outcome": "result"
+        },
+        {
+          "step": "16-charlie-wallet-rebuild",
+          "sha256": "f3e501569065d62b4251321b2caed4b9851f7761b86cfd583b033e921aafe726",
+          "outcome": "result"
+        },
+        {
+          "step": "17-charlie-address",
+          "sha256": "7bfe9ffcdff6e1e8075e674b1538a412dba970646c0c78893690e21170137949",
+          "outcome": "result"
+        },
+        {
+          "step": "18-charlie-notes",
+          "sha256": "cdf6c126f0f5c3ff92fff6bf652a1ed1175779de8808d2e71bc9a7a804149cf2",
+          "outcome": "result"
+        },
+        {
+          "step": "19-alice-shield",
+          "sha256": "fec6dabac8597f759327230d330bd5e7a1bdac32a8dd12425fcf1763453ad8dd",
+          "outcome": "result"
+        },
+        {
+          "step": "20-alice-shield-history",
+          "sha256": "82d6e49888badff26940452bcad8cf845915de816f1cafc6931c13ce489336a1",
+          "outcome": "result"
+        },
+        {
+          "step": "21-alice-shield-resolve",
+          "sha256": "d7b6b8298f2f15f9dedced30a7f972de79df4eddf469d7a8b96bcb380d7d6e29",
+          "outcome": "result"
+        },
+        {
+          "step": "22-alice-shield-history",
+          "sha256": "10016ab0322eaa20af48a94a6cb653dcf0c741dbae221507c000e7cd950878b6",
+          "outcome": "result"
+        },
+        {
+          "step": "23-alice-scan",
+          "sha256": "7c919d45a3f762fe4e9f7ad22940e43a2a92a9f3f81d249b217c2214fb034b55",
+          "outcome": "result"
+        },
+        {
+          "step": "24-alice-wallet-sync",
+          "sha256": "1a37d6ef2fd47f77ec709141626d5ad1a57aec32ba792223afcb3309f7ff3e02",
+          "outcome": "result"
+        },
+        {
+          "step": "25-alice-notes",
+          "sha256": "7342507d58ea3f04f2b369798a3c3cde9fb3b8c52d2ce081552c323baff1ce42",
+          "outcome": "result"
+        },
+        {
+          "step": "26-alice-pay-note",
+          "sha256": "3197ff4aa7e1ddc431b27bdfee8ebac5b906a2dc1dfda178c57dce64aacf7896",
+          "outcome": "expected-crash"
+        },
+        {
+          "step": "27-alice-holds",
+          "sha256": "e6c1c2e108b096a4c66f90ee729080f64cab599202f387c8abc8b9172fd5e009",
+          "outcome": "result"
+        },
+        {
+          "step": "28-alice-observe",
+          "sha256": "9565ebefe088a8c36d2552b4ad2bc5581bdfd78d6bde4801ee152bcdacdf9295",
+          "outcome": "result"
+        },
+        {
+          "step": "29-alice-pay-note",
+          "sha256": "926297e52a7d4392498d2fe3aca8c14b19d9cdfb4bf9181c7e9be275c62d56b6",
+          "outcome": "expected-refusal"
+        },
+        {
+          "step": "30-alice-submit-stored",
+          "sha256": "900554c3e4712a13b388c5845485785b395ab443435b7d9e42c63fe23b6fdb4e",
+          "outcome": "result"
+        },
+        {
+          "step": "31-alice-submit-stored",
+          "sha256": "f0c75142179669e5688111a950e15c9e1818f3087e802fb9ded8676c42f703ea",
+          "outcome": "result"
+        },
+        {
+          "step": "32-alice-holds",
+          "sha256": "c3e3dedebb7df213d305dbd08ec66dfb8e735592b3b6f6a840fabda677f674c9",
+          "outcome": "result"
+        },
+        {
+          "step": "33-alice-observe",
+          "sha256": "9edd162b4f5f7cccd8da9039fb9d254bd5f2270ce3fff0e92e17083188e2e0f4",
+          "outcome": "result"
+        },
+        {
+          "step": "34-alice-resolve",
+          "sha256": "fe7c86dd91ced616b67ae8d305ac41982270cf78e59ba0af47f8d25c521cc431",
+          "outcome": "result"
+        },
+        {
+          "step": "35-alice-scan",
+          "sha256": "b8d2bee911ea03a2491a5531dcb2b1a527a526f2546add72c08c4917a5fa3cee",
+          "outcome": "result"
+        },
+        {
+          "step": "36-alice-wallet-sync",
+          "sha256": "f6780db0d29c345f53b363b40945a4f5369be3c985d5ad248878aaa4b4e52f44",
+          "outcome": "result"
+        },
+        {
+          "step": "37-alice-txid-sync",
+          "sha256": "642d8f2f1d749deff53a059508bb6bd88aa0483f5b190d7fef854e78fb7a8404",
+          "outcome": "result"
+        },
+        {
+          "step": "38-alice-poi-prepare-shield",
+          "sha256": "5a37b2341f8845bc960b27a61dc1f9703623e7f1091dba7678a5a2fb83ca0b08",
+          "outcome": "result"
+        },
+        {
+          "step": "39-alice-poi-submit",
+          "sha256": "80e8d65f75bd7d84dc46bcf7c79b0d641f8c0e4b448278b6a9de6e0f753e77d6",
+          "outcome": "result"
+        },
+        {
+          "step": "40-bob-scan",
+          "sha256": "04313cb2f94c2af3c15adc46290ba5a804369d5ef9eab6402d1b83c866b993d1",
+          "outcome": "result"
+        },
+        {
+          "step": "41-bob-wallet-sync",
+          "sha256": "df63bfe3b750c0574102bf0329f389b5bfca1b0d29a326d0289b8204a2d1f774",
+          "outcome": "result"
+        },
+        {
+          "step": "42-charlie-scan",
+          "sha256": "7a580e252b2e813383277f7bf9aebe30d723d6b245d9c300248f3022a407840a",
+          "outcome": "result"
+        },
+        {
+          "step": "43-charlie-wallet-sync",
+          "sha256": "a820193b8c99563472b75963c45b6de2ce04c7ca3cd47298c02c356c3f334833",
+          "outcome": "result"
+        },
+        {
+          "step": "44-bob-notes",
+          "sha256": "c39129a5bfb622c469875223451ade9f86719961ff2f77c669f74b6e21627d28",
+          "outcome": "result"
+        },
+        {
+          "step": "45-charlie-notes",
+          "sha256": "75901c5e3b98be48416b573f64024bce1fac78a9201136ccb8b88f6c57a9d4bb",
+          "outcome": "result"
+        },
+        {
+          "step": "46-alice-notes",
+          "sha256": "08305eb19422b50d130b9de3b2d8ea40e9c2b5fc2d8eaad968e9bd2a216969f6",
+          "outcome": "result"
+        },
+        {
+          "step": "47-bob-poi-status",
+          "sha256": "70dbc727822c55380562351e327b03021a0945b31c82c28726008fa2f02222b5",
+          "outcome": "result"
+        },
+        {
+          "step": "48-bob-txid-sync",
+          "sha256": "40f9f5ee924a02e7438d207d440da6233f1cb74a9b4791801bfd2e537cfab42a",
+          "outcome": "result"
+        },
+        {
+          "step": "49-bob-unshield-note",
+          "sha256": "9dcf919c376aec909bf904ce61178716094264d14138d34d602bc55273a890df",
+          "outcome": "result"
+        },
+        {
+          "step": "50-bob-holds",
+          "sha256": "29a615bc88682ddf3ce89cd23975e56f0e7bdc3776b1dcff35b563d11893f6d2",
+          "outcome": "result"
+        },
+        {
+          "step": "51-bob-observe",
+          "sha256": "a2d733034819980a71b6a341d22ea7875a85043a43cb9e3c43e5eda052eb9bb2",
+          "outcome": "result"
+        },
+        {
+          "step": "52-bob-resolve",
+          "sha256": "a0babdbdd72a9944712813b6bd61ddc213ad5a4e159d58700d6553caae46b65d",
+          "outcome": "result"
+        },
+        {
+          "step": "53-bob-scan",
+          "sha256": "e0bee72b4f6f29221eefcc6a08beefa80e86a98b3da73b83c2aeaa9873662031",
+          "outcome": "result"
+        },
+        {
+          "step": "54-bob-wallet-sync",
+          "sha256": "8297e5d29a040707bba0b64d5d1e7480c040dfdce5a05ceee466dc176c144430",
+          "outcome": "result"
+        },
+        {
+          "step": "55-bob-notes",
+          "sha256": "73ee8da64657300ed7b19bf7bcf3ea046696429419e51a6c0c4b18289968de36",
+          "outcome": "result"
+        }
+      ]
+    },
+    {
+      "name": "G",
+      "variant": "retained-unknown",
+      "mainLifecyclePassed": true,
+      "runPassed": false,
+      "finalCandidate": false,
+      "note": "Main lifecycle and cache reuse passed. Original full runner stopped at a wrong expected pending-refusal code (catalog vs account). All cache controls then passed in a separate continuation on the identical installed package/host and restored synthetic chain. No extra send. Later receipt-only host addition is separately qualified.",
+      "install": {
+        "tarSha256": "7f110dddfeb5111440ac184feff097b5297f4c1029c3d678f70279f63632fc5d",
+        "files": 283,
+        "transform": {
+          "target": "src/data/railgun-poi-records.js",
+          "before": "c4511c0ea185835c67bbbc8b8ba74bec6271e4b3a457a2b6a1576b42593fd1ac",
+          "after": "16a8e5e15621d2da51568319717a43ca51e3517beb59441e44931539d47b45ab"
+        },
+        "scope": "synthetic list only; no production package mutation"
+      },
+      "independentActors": 3,
+      "transactions": 3,
+      "conservation": true,
+      "poiVerification": {
+        "key": "b7ca7ba048666fb0e17efd0af1e407a8dcb0906bfaf2f20e362ed40cbec6f4d8",
+        "circuits": [
+          "3x3"
+        ],
+        "verified": 1,
+        "rejected": 0,
+        "failed": 0,
+        "invalidProofs": 0,
+        "verifierFailures": 0
+      },
+      "steps": [
+        {
+          "step": "01-alice-fixture-init",
+          "sha256": "6c16c953cc33646fdde8cb719efb6919a04f5cf07a89a884dee007812cc107e0",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "02-bob-fixture-init",
+          "sha256": "9f2833036e4b23ed5fa5e4bc2deea12cfa5ed159ce95b03f320420c9bce916d8",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "03-charlie-fixture-init",
+          "sha256": "55cbe174a415c2f91571ab87a39f5e97147232af3200dbf64f68aad3b4fae83d",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "04-alice-account-create",
+          "sha256": "c38f2765519ef6ba74002bad1a88a739e3e1f3a29e885cbfc28174f5afa79d28",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "05-alice-scan",
+          "sha256": "caa2f25948de7ed040dc8638dc7d8633c46a8b9ff2f37f6b0cbdfae0055dcb23",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "06-alice-wallet-rebuild",
+          "sha256": "2a5c6be224c5a97f6c805bdc1c60ad2166967f84ae0aff12ee6e86fcc43eb44b",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "07-alice-address",
+          "sha256": "2f75d55f9c4cb9814ba8d35785db15e030697662580793481dab54e708889bf2",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "08-alice-notes",
+          "sha256": "517bd60b398cb4d6f06bafffbbddc629e63f85d1abb6d567abe2a291f4294004",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "09-bob-account-create",
+          "sha256": "027fe32b3030a6161d1235a6cf466883c6e4d57287507e0ae3d6a8de4fdbeb25",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "10-bob-scan",
+          "sha256": "ced1d6e47607153f0920dc34b39612460bb4221fc540a6022ee2b95d6018e64a",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "11-bob-wallet-rebuild",
+          "sha256": "4cb20aa7ca04569dc63292ea8a5ee976452b54d73a4f7399fdab640312dc0bd9",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "12-bob-address",
+          "sha256": "d4b2a155ea6017ab7c939258478f5f4e2ef591bef81552f6182f34ba6198d223",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "13-bob-notes",
+          "sha256": "72b9721e4489336359f163dbcaa027333475b5a0fac4714da304a8f56c0858d7",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "14-charlie-account-create",
+          "sha256": "159e27e27f98600eb96d0ffefae0973900851e9896adc3b45fd6881e1800bfe9",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "15-charlie-scan",
+          "sha256": "cea460a5d309d10903d8870ff06d263e87cc9ba3a3fe827551e5c2d479f74e6c",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "16-charlie-wallet-rebuild",
+          "sha256": "8c43d5cb54299da8c43a5686518b05f7215ebc100932adfd9cd5dadb288d85e6",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "17-charlie-address",
+          "sha256": "60106bac372a40c8b112fa5cd3e278b099e5c4ab9a50c6f7d81a0c7a4c78f703",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "18-charlie-notes",
+          "sha256": "9b8472a762066f0cc1105c39ebb9b7f0b5350826d1f4143400fb05f1f253ee2b",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "19-alice-shield",
+          "sha256": "47c8c577bacf38866cf46b13068fbc8cf75acb41a2c0ee17721faed0eacd134b",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "20-alice-shield-history",
+          "sha256": "8fbfdb28f10a2106d5cc326fa8411d9b352b49ff8e2667ae47bedc5cc82f2175",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "21-alice-shield-resolve",
+          "sha256": "28918318a4a85cbd8a35768cb35d2dae1601b9b30cc22c8d099d2c4eef334d3a",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "22-alice-shield-history",
+          "sha256": "193152010e102b0e13bbad6143e25df0a24f7099f0a51a1f83812badea2b3b36",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "23-alice-scan",
+          "sha256": "75c278eb9bd64676000a9d080346105ec19b270c81452ec8ae16f8407c94d3fd",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "24-alice-wallet-sync",
+          "sha256": "4df5d9047cef8ef54fb9011ba6dcf43f84194d616177f670b4c7d6dcee3a8ebe",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "25-alice-notes",
+          "sha256": "52793a7d91ac55090b00640c79650a1ea665e0dfc3fda17eef8742ad6485f784",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "26-alice-pay-note",
+          "sha256": "3197ff4aa7e1ddc431b27bdfee8ebac5b906a2dc1dfda178c57dce64aacf7896",
+          "passed": false,
+          "expectedRefusal": false,
+          "expectedCrash": true
+        },
+        {
+          "step": "27-alice-holds",
+          "sha256": "bf7763872229060b1f3cc3447bc9541002318fad2752dd53991e50a6691be984",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "28-alice-observe",
+          "sha256": "01dd3d00ea01da6a79370ece1ce91a032784bbebe742fa8d43f98ce0027b61a0",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "29-alice-pay-note",
+          "sha256": "926297e52a7d4392498d2fe3aca8c14b19d9cdfb4bf9181c7e9be275c62d56b6",
+          "passed": false,
+          "expectedRefusal": true,
+          "expectedCrash": false
+        },
+        {
+          "step": "30-alice-submit-stored",
+          "sha256": "1e11d9a3cd93a680190202b08ba5abb1e448dff0a7279bab766b947c9f8e905e",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "31-alice-submit-stored",
+          "sha256": "1c1ca7870c5b780c54c74f88807829f9306ccd8529dd29567415b9008fa77841",
+          "passed": true,
+          "expectedRefusal": true,
+          "expectedCrash": false
+        },
+        {
+          "step": "32-alice-holds",
+          "sha256": "96a7b3040f4abe49832d532c84c9d0a08be6cdc58d1628dcac13b5ca61ac7ae1",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "33-alice-observe",
+          "sha256": "a0776c278afc91bd53b587cd180709164fae755324a59b8ba06977610924d69b",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "34-alice-resolve",
+          "sha256": "3bb1caaaeedc326a1d6a7c94f69e852e0feb2bc7b8ec06ebcc6f688cb24a3104",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "35-alice-scan",
+          "sha256": "3af3770915ef7d4e679a76e9c4b847b525865ef1082922a785f3d8a9e1b04c2f",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "36-alice-wallet-sync",
+          "sha256": "9f06e1cb772cab599dea4578c40d835fbdb20ef4d0b06a493ae1676e1d83b2aa",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "37-alice-txid-sync",
+          "sha256": "41988cfcd6211a188887feec357868d72a8106bcc9975a2e269b71c74a48e7c3",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "38-alice-poi-prepare-shield",
+          "sha256": "6c62904dda525f9110c49c2c13657812e7abcc15e0a0315b4ceebac19012190c",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "39-alice-poi-submit",
+          "sha256": "290a4966427e8fedea4b0d41d4608e4c17e24f00d77ae879e963a0927be68b64",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "40-bob-scan",
+          "sha256": "0faeeb3512c699a0ad26137566d611a4dbdeffdf79077d80adeaeb0a036495ea",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "41-bob-wallet-sync",
+          "sha256": "e2368a946b77fc56543195244ae9bd33cb6a873d7f0ead125f67ccea4582dbca",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "42-charlie-scan",
+          "sha256": "2a9ea2f02f99a5423c65f17079cd3917d3b025dd8e725b1dd53819369567dfda",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "43-charlie-wallet-sync",
+          "sha256": "1f4ca98001c69699d2442f96734ee68cd423a70376ede287eeca10ddb453e264",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "44-bob-notes",
+          "sha256": "be2e14ecf48480ccac6f3c5c9e09998e6a8de5aa4201cbe6c2ca629a2e8b4a9e",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "45-charlie-notes",
+          "sha256": "b5b65bd32b7f6c7f11e52bc33d3de50b36213b21a5b0c61a808b4422c379fb5d",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "46-alice-notes",
+          "sha256": "1096ef1e14e516a5b596ba66ed934db92422fe6720f9b77fd6c2b582a17fdbe8",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "47-bob-poi-status",
+          "sha256": "b3eabfcd4745b31823af18e969ebb1dc2e926b010d0b4978c5098425cc23cf91",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "48-bob-txid-sync",
+          "sha256": "43fc127b6565899f72362a93af57da315b03502b96f61921458c4c3d140c0fb7",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "49-bob-unshield-note",
+          "sha256": "02e059772afe9a64baadaf226285644b46fe885fda7a6b419aa41af74a9b09cd",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "50-bob-holds",
+          "sha256": "2c2343d10597d0bda30c54eed442586859310000f582463887170f431bcef87d",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "51-bob-observe",
+          "sha256": "87fbec77328b6911cc8521cefe8f6aba7ed3401411f943e31474a8601e28abb0",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "52-bob-resolve",
+          "sha256": "9bb574d0b009b8f561244cecce3521334230093be3eb499a5c51d6a889ee6bc2",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "53-bob-scan",
+          "sha256": "11c699025616221724fdd65d3acc0631e9b379afa8e0062e3d2e8cef14935bf7",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "54-bob-wallet-sync",
+          "sha256": "5e360dbfe856693781a7091929a4bc49b6b4054a947b36db09570121c769a1f7",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "55-bob-notes",
+          "sha256": "9fa1538e68adf52b7bea0a619d4311b6df9074df17117ed55e684620ad4766d0",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "56-alice-notes",
+          "sha256": "797a99a8a9ab5a0a8d07c398c8486ca25ce3325e00fbf6c9024c5999f27b4681",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "57-alice-scan",
+          "sha256": "f54412835675a1c9841d1b29fbf1cbb7ef060f0010d01b57b8cb0e7259152eb8",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "58-alice-wallet-sync",
+          "sha256": "de6f8ea562c73f5ebe14ee13e8489aafdc24b96fbc4bcfba4c7ca517e9ff8041",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "59-alice-txid-sync",
+          "sha256": "8c73b3e7496ae02df7c9719a9c0ea0d810d2b0d668af58040d7acfead3f40f2b",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "60-alice-notes",
+          "sha256": "64d1ee0f0608f2f9751d014d837b279997d0dfc89a98fd4789316d5e9a5c1ca6",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "61-alice-notes",
+          "sha256": "a48fbe7e5fd889114a51db30a9a33c2147a802ad71c044150dc3e111c5e4115e",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "62-alice-scan",
+          "sha256": "fb844ef6589cd35113e7c66a0f51a2646e725ea405cd2f98558c2274c4d70f2d",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "63-alice-wallet-sync",
+          "sha256": "27ff481608aed1affd913ca8b1d3436d3d4ef3b9f1cad4fb3c5558c43552e1b6",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "64-alice-txid-sync",
+          "sha256": "a571b6439fff7fc398b63088b34e504fb19cadaa675b447c3e84c471d419280b",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "65-alice-notes",
+          "sha256": "5fff12fc8df6dc4101af35d37562a5fe16578f1d64f5d8550d8ca435689c04ba",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "66-alice-account-info",
+          "sha256": "5d03e0fe12b2c262b1ad73108cccb36e823d108190f289c952e6fadd16818e70",
+          "passed": false,
+          "expectedRefusal": true,
+          "expectedCrash": false
+        }
+      ],
+      "cacheContinuation": {
+        "passed": true,
+        "resultSha256": "67d9320b382a88805d69bfc92e336d74aa1e98fe21d7b5a876182848deb3d7df",
+        "scriptSha256": "fb1c35b1034a4e4446a94e32dd224d603a086652e7336a64a942969b3ea91db3",
+        "broadcasts": 0,
+        "controls": [
+          {
+            "scope": "host",
+            "file": "review.cjs",
+            "reusable": true,
+            "beforeSha256": "1f21c5a92f54ac1f1f85f800256e696b2c80228de804bf459dfddafee83cc6c4",
+            "afterSha256": "9613cab24240fda134002dd9dea73d6eb5c6bda5064fdd1f2b6695409518af23"
+          },
+          {
+            "scope": "package",
+            "file": "src/data/railgun-poi-submit-data.js",
+            "reusable": true,
+            "beforeSha256": "73734d745a2c7cbe9244395ea5cc73717b43be0a526476a6441a19aefc3f236d",
+            "afterSha256": "7e8e2fa01f830fb98fae1d4dc38303567e06eadf1ed8118116445aed979b9932"
+          },
+          {
+            "scope": "package",
+            "file": "src/owners/railgun-event-projector.js",
+            "reusable": false,
+            "beforeSha256": "d92529ec9f30200ef5099482ee374447fbd5b88ba328187091e0e554b4d8ec1c",
+            "afterSha256": "d2a400ec5f008b2a80b1affaa2da43112174f358379e2be7b5dd9196123fb90e"
+          },
+          {
+            "scope": "host",
+            "file": "host/vault.cjs",
+            "reusable": false,
+            "beforeSha256": "6161bcab6863f816b8280e2ebd458e39424638057e9fd5cf3fbf46c1fe199ef7",
+            "afterSha256": "9b175edad46f1e171e013d7f4cda45e5a64cd6a163547d232e6e7f80c9717a69"
+          }
+        ]
+      }
+    },
+    {
+      "name": "H",
+      "variant": "retained-unknown",
+      "runPassed": true,
+      "finalCandidate": false,
+      "note": "Full 75-step lifecycle passed including signed receipt accounting and all cache controls. The final minimal-r/s receipt encoding correction was independently rerun against these unchanged authenticated journals; see finalReceiptAccounting.",
+      "install": {
+        "tarSha256": "6f7ddc5d4c3faa44b6781e743ff302c871cc7f1a39905c352ec255ec3aed0617",
+        "files": 283,
+        "transform": {
+          "target": "src/data/railgun-poi-records.js",
+          "before": "c4511c0ea185835c67bbbc8b8ba74bec6271e4b3a457a2b6a1576b42593fd1ac",
+          "after": "16a8e5e15621d2da51568319717a43ca51e3517beb59441e44931539d47b45ab"
+        },
+        "scope": "synthetic list only; no production package mutation"
+      },
+      "resultSha256": "fceda764901975c34a6c2931dda8c2c80fde9d21cabd9fdb2b38289f3b76d5f2",
+      "independentActors": 3,
+      "separateProcessesPerCommand": true,
+      "transactions": 3,
+      "broadcastRequests": 3,
+      "conservation": true,
+      "poiVerification": {
+        "key": "b7ca7ba048666fb0e17efd0af1e407a8dcb0906bfaf2f20e362ed40cbec6f4d8",
+        "circuits": [
+          "3x3"
+        ],
+        "verified": 1,
+        "rejected": 0,
+        "failed": 0,
+        "invalidProofs": 0,
+        "verifierFailures": 0
+      },
+      "cacheControlsSha256": "4fd7879aebc2d24aaceb4c69f292f04864d0e7c24852f9197a1539b6200879ce",
+      "steps": [
+        {
+          "step": "01-alice-fixture-init",
+          "sha256": "0b0fe382cea4a533617290d107099ad98da1d671742d2bbca1525c1e827063f9",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "02-bob-fixture-init",
+          "sha256": "c2e44b79d1e65fbc0d30514bbcbd59f2b75607f2332921d61cfdb5b51e6b524c",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "03-charlie-fixture-init",
+          "sha256": "9b3b5521a5e2a5b9a15d2fbfa5af752486a74a352097027f3a8e2796cbc48ba3",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "04-alice-account-create",
+          "sha256": "2a125c7db0f636e3badda618958bd431ff16faee70671f662cde9110efdb49f5",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "05-alice-scan",
+          "sha256": "0f197409a8218e97369785873918b092ae99f0e9613c724b19d1aa59262ab40b",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "06-alice-wallet-rebuild",
+          "sha256": "041d4024383d7758e4db796925fc2cf774c769103cde681f6acbffefde0b30d7",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "07-alice-address",
+          "sha256": "6efbded478558f2f9597bc8d51adaee4cfe40897674e910628467aabb559c59b",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "08-alice-notes",
+          "sha256": "398109774a05cde956b69d46723ac43772d1fc2586fd7dc0ab5583d26656b02a",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "09-bob-account-create",
+          "sha256": "0c39b2ee388b1a6de92996126981a4e3f5e1404d8d4c11bba57e81338c80a877",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "10-bob-scan",
+          "sha256": "4d8e9ec4e8a292a0f0ccf4c265407deb5afbf4e45549073b5dfdd3e20c72ea3a",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "11-bob-wallet-rebuild",
+          "sha256": "4d082dbfe215a517b5dd3f8c9eb39756f58f969d3472b775c3502abfffbfd6d1",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "12-bob-address",
+          "sha256": "004888a0d1cbd340dbf8aca2d8f0002f7e86ae96f39947ecf0de9085d61b2d84",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "13-bob-notes",
+          "sha256": "b126d86242f29170e4fd8a5834f33365fb1745fd934044db2c47ea7c78dbbcd2",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "14-charlie-account-create",
+          "sha256": "a38706cdf643366a867031c0fae91f388ed11086cc8899bed4b8f50e11d28a2c",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "15-charlie-scan",
+          "sha256": "e389a2b149cebe19621de6ef56ad075b3f5990765a85260861040366526ac5f8",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "16-charlie-wallet-rebuild",
+          "sha256": "55529fdd2c3390ca8a2c2e2fc10af0e283ba9c6db3f8c137d81bce019c0d51a2",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "17-charlie-address",
+          "sha256": "f25b2d38dc7f0b4ed8a000e501dd7d8bc148de2f9546205e30e8f92b6335f247",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "18-charlie-notes",
+          "sha256": "e7a4fda253de09c9341d799c709dabb25c4863d6f949fa133be14d535661e97c",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "19-alice-shield",
+          "sha256": "f332ac6e96f67d339287f5486e258c25488ae83888c95a719e885c1593bd0776",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "20-alice-shield-history",
+          "sha256": "ed677f9459868427a9594605e97bbfdfdbc73d86c98690adac032f61f1b814ab",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "21-alice-shield-resolve",
+          "sha256": "f172ef3db7f6935bb99c290c9d49aea95b27a306345c18850546e84092c294bc",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "22-alice-shield-history",
+          "sha256": "20186f35366f3ae5c23efdce682da3ad84dc6bc0129ffa94dcf5e0c08d065aaf",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "23-alice-scan",
+          "sha256": "9a7712ec037b0ef1ebc40c9245c5b5cc37682253ff4b3160abf8ef67811fa482",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "24-alice-wallet-sync",
+          "sha256": "17aebf97ef4b09667eaf50e566cf6a87003446e023a051e13e15de0697df97ad",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "25-alice-notes",
+          "sha256": "1a452f8b8e2356a6badb0487e9b531b8372ea94a87ac9eb625ca014abac4a400",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "26-alice-pay-note",
+          "sha256": "3197ff4aa7e1ddc431b27bdfee8ebac5b906a2dc1dfda178c57dce64aacf7896",
+          "passed": false,
+          "expectedRefusal": false,
+          "expectedCrash": true
+        },
+        {
+          "step": "27-alice-holds",
+          "sha256": "8fbd3f9d158c0de34ea644c757c603000a874d963daaba91bd6250bbcc03eb90",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "28-alice-observe",
+          "sha256": "2870e109ce8096c2b7239f2360fb567be2716ab4059468197dcc0e66bde10389",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "29-alice-pay-note",
+          "sha256": "926297e52a7d4392498d2fe3aca8c14b19d9cdfb4bf9181c7e9be275c62d56b6",
+          "passed": false,
+          "expectedRefusal": true,
+          "expectedCrash": false
+        },
+        {
+          "step": "30-alice-submit-stored",
+          "sha256": "e6b51490f45ae20cce6f3eb0fd641d57f2fd4afbe51d62497f2954b09f7331a2",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "31-alice-submit-stored",
+          "sha256": "f7ea1f7338cd0609d29e8f88c4596561a5c47fa7da3d151aa78b9c04c4d0bfb2",
+          "passed": true,
+          "expectedRefusal": true,
+          "expectedCrash": false
+        },
+        {
+          "step": "32-alice-holds",
+          "sha256": "6b49967a278e430c8633580a09d965d67752019ee704d5ef7c97f8c744310217",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "33-alice-observe",
+          "sha256": "57f8d6fc55256f72a9fb28afb48f2e0de688341f4cd43eb7181f6e393a4c8706",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "34-alice-resolve",
+          "sha256": "ad7fb5964c7e609071f0099b55fd54dbf5e0ead64dba4eec64238ce02dcada96",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "35-alice-scan",
+          "sha256": "ca20671c79cd14c56aeaa8cd4934a56b605408329f7865e3d6418086fd7f74aa",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "36-alice-wallet-sync",
+          "sha256": "e21e09795a3cb7723de325d23cd83d842f900d14af54e2510fa25e4bd2dca73c",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "37-alice-txid-sync",
+          "sha256": "d8812bc697aadd70deef27951465e14963511c26bc01c9f7638e0ac7ce48bfad",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "38-alice-poi-prepare-shield",
+          "sha256": "cb5ec9da44ce835039d2bbc89b829fc0bcc054aa2d79fc3a53d2dfd7a28085c4",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "39-alice-poi-submit",
+          "sha256": "d128bff9010ad170bf6fb559909aa71109ce8ed0e66e5bad7845930757bdb4bd",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "40-bob-scan",
+          "sha256": "bfd7e57f7ed22a106b651d968111c8327507793ab6b8db231efeb7ec3b8b9846",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "41-bob-wallet-sync",
+          "sha256": "b1c97c21ff75f8ad0ca1a4fa462f02670731d347538d32048736f7f9393cd282",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "42-charlie-scan",
+          "sha256": "8f581d19a3f70588e11b0d06ead15ac42b5011e2a900d8db6ec07ec7865bf751",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "43-charlie-wallet-sync",
+          "sha256": "51bad5b85bac91f12b3fac97c5e623313077edbfbdb3f6cddbe46339a3ecf1c8",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "44-bob-notes",
+          "sha256": "92ed16f92c40f34da616be9c1fcd0871e3d9e79d8aadeab6fdb42db255b61654",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "45-charlie-notes",
+          "sha256": "6ab97295f04b3741f520e5b4a593cd650753389bba855e4bf53beb1ee8c6bdd6",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "46-alice-notes",
+          "sha256": "e7eb1f9dcb603f378d7b41bb79b5f7432b30fb2c03ee0bb320ec29c6b5a182e8",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "47-bob-poi-status",
+          "sha256": "1e0fd03562e5d4a22032be4092582750e6bd1c3271596ae4ecd64a21de072636",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "48-bob-txid-sync",
+          "sha256": "0c19434d029753a379b33c3de22f317cb0d432f13fea6cd5b09e435d2a27bb7d",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "49-bob-unshield-note",
+          "sha256": "4dd4cb771c6b4ca41467a16879b81275324ce4f68659eb847f3a7baa2a8fbcb1",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "50-bob-holds",
+          "sha256": "fb18c02e775ffc74313c4e09fbf663157459a93a62f53e18627d062f51fedd7b",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "51-bob-observe",
+          "sha256": "6d6c8201cd23ecc17d1d0c69c926c54fd9e2058627ada865d14ca665b02055ac",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "52-bob-resolve",
+          "sha256": "934a72bc176ab9fee660d466347071e4d97aa65acfc689e98034ea106f7dd28e",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "53-bob-scan",
+          "sha256": "a9a737913b75bb9d358e2a3d5383074273fe07ded6d364b3af0c9a311d1bf05e",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "54-bob-wallet-sync",
+          "sha256": "6f90820d21375a4718258d9d8c5670a70c26833293ac1515b4b74088a761459e",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "55-bob-notes",
+          "sha256": "af33d425ef873f86f9016069f498d714b59e3a2fa676195985e5dd2ec28b90c7",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "56-alice-receipt",
+          "sha256": "6fda1d8550fd78ee69ab4cae989e15dc09e4b8baede2742e4d7e2c2ff68b80d7",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "57-alice-receipt",
+          "sha256": "cd267263324527cf98ce1c0687c1698214f9715fba61cf234e6e1ec86068d015",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "58-bob-receipt",
+          "sha256": "c71eb734a9062cd579f908c6b0e687e1dcc3f943bfa2d91dded4868d58f2348c",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "59-alice-receipt",
+          "sha256": "ec513d12dce7e7799c1d1cc294c460fb61e5a84034575db6abd8947e19e64606",
+          "passed": false,
+          "expectedRefusal": true,
+          "expectedCrash": false
+        },
+        {
+          "step": "60-alice-notes",
+          "sha256": "06000378a0c2fdfbb76e9fb364c7ad8926e1fb21bb461737e7b15c3b6d4b264c",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "61-alice-scan",
+          "sha256": "3a672e7cd9a9cf905539c51e92e07a2dd982d749a46d5a6d73707271a8e0e193",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "62-alice-wallet-sync",
+          "sha256": "c60b0a1e75e585774045832bf75da76ae27e8aeb0254919f8b68689e11284fc5",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "63-alice-txid-sync",
+          "sha256": "5c311169464df4248ae87b4c7a473b2cc0c231a62ccdbbc048ab58161922dc57",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "64-alice-notes",
+          "sha256": "c480346767d1d446c23052a080ffe820741fbcc74137e7270bfb04dba6b158af",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "65-alice-notes",
+          "sha256": "fb192ddfe586f5af41ac07645d0988206bcb6763ef5baee4d5b9662708545122",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "66-alice-scan",
+          "sha256": "a46040d22b6992e9e50b71e883554ea781620893ed8f4e93e5631eb77fdad42b",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "67-alice-wallet-sync",
+          "sha256": "d2d0b80ca326e7055dd3ec0eaba3fa0d68924f14c2814ef6534ba7d5952751be",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "68-alice-txid-sync",
+          "sha256": "3bfcf8079d557d89358e224d463f2e490c7aca39fa576508f3683a0f29ada5a5",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "69-alice-notes",
+          "sha256": "f21ce5836f998f1946f281e9859acc6b25d96ae908a5261a910968a6ab7d0b34",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "70-alice-account-info",
+          "sha256": "5d03e0fe12b2c262b1ad73108cccb36e823d108190f289c952e6fadd16818e70",
+          "passed": false,
+          "expectedRefusal": true,
+          "expectedCrash": false
+        },
+        {
+          "step": "71-alice-account-info",
+          "sha256": "95d658964a9769b309c4e0109afab9601b579789f4f52721b560466cce78b509",
+          "passed": false,
+          "expectedRefusal": true,
+          "expectedCrash": false
+        },
+        {
+          "step": "72-alice-notes",
+          "sha256": "869549a667915cd9f03e367fb93f56f7a678d4021c98d2968e05e789ea7ccb4d",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        },
+        {
+          "step": "73-alice-account-info",
+          "sha256": "5d03e0fe12b2c262b1ad73108cccb36e823d108190f289c952e6fadd16818e70",
+          "passed": false,
+          "expectedRefusal": true,
+          "expectedCrash": false
+        },
+        {
+          "step": "74-alice-account-info",
+          "sha256": "95d658964a9769b309c4e0109afab9601b579789f4f52721b560466cce78b509",
+          "passed": false,
+          "expectedRefusal": true,
+          "expectedCrash": false
+        },
+        {
+          "step": "75-alice-notes",
+          "sha256": "5fe50dc7f8a98c3b28cae399e3d14b5be59adcaaaebe3f48a23e7e9ceff215f2",
+          "passed": true,
+          "expectedRefusal": false,
+          "expectedCrash": false
+        }
+      ]
+    }
+  ],
+  "runtime": {
+    "archive": {
+      "sha256": "019f10880abf1c448aee02ec77c5c2d68c3561c7b4eef02095d66bb5fecd6a7a"
+    },
+    "proverArchive": {
+      "sha256": "dd50a29f297867b3bf91cb425066e1d257ea02230a94b02e4cf34c5c70a0c7ab"
+    }
+  },
+  "notQualified": [
+    "live Sepolia Alice-to-Bob",
+    "EVM execution",
+    "Tor bootstrap or circuit isolation",
+    "relay privacy",
+    "Linux or Windows",
+    "fresh dependency/runtime installation",
+    "production release"
+  ],
+  "receiptAccounting": {
+    "passed": true,
+    "resultSha256": "807bb2b3f68a5d18daf0616fe12242675c438b71877110dcdbfd9006326d6a67",
+    "scriptSha256": "c35edc05199ed09c67bf75f7b22af4bf32958e8584fbf1b1064f898ec7915446",
+    "scope": "receipt-only continuation on G authenticated journals; new host; no account/cache session",
+    "profileBytesUnchanged": true,
+    "broadcasts": 0,
+    "ownReceipts": 3,
+    "foreignHashRefused": true,
+    "networkMethods": [
+      "eth_chainId",
+      "eth_getTransactionReceipt",
+      "eth_getTransactionByHash"
+    ],
+    "hostSources": [
+      [
+        "account-command.cjs",
+        "15856fa7b8e0aa6728b3cf11d80972615b931c14a4cd6d2e166176f3946d0077"
+      ],
+      [
+        "chain.cjs",
+        "a6c1b20774ebc773d34cae38f8581795b5435fefeeaee37f5cf147cdeccdc2f4"
+      ],
+      [
+        "config.cjs",
+        "d14444f4daca679e462d7a235e0bc5d16073ccc6fbf42e870783936b8c9f578a"
+      ],
+      [
+        "custody.cjs",
+        "7c2e3cc964890087563324a8ee3cd7c06359f3f3795a7a892969bd674823fadf"
+      ],
+      [
+        "fatal.cjs",
+        "d59e09c7ad9f2ed4704be27de3ce4a39de09af5cd302480a3597a90b53779c7a"
+      ],
+      [
+        "host/application-state.cjs",
+        "9330c08ab66d539c1d9bb09c20acd1bc4760c3213baf8d0ad02fe20132c5d09f"
+      ],
+      [
+        "host/archiver.cjs",
+        "cac4809c178b78fe97674a052eea4c6787aff2e81390e1446dc4df8e17f95b18"
+      ],
+      [
+        "host/artifacts.cjs",
+        "1cce6fd7dd887c5ebf6b84f8ff134e79513222ce004cae3488f7710adf41133b"
+      ],
+      [
+        "host/compose.cjs",
+        "0876277f06e5996e25bc696a5b4f18e1366e16053bd5fce136a4ad4f7d898f3f"
+      ],
+      [
+        "host/context.cjs",
+        "4618c60d2b6e2dc9633951b2257a5b28ea8282d4b2761dd6b8b7d2c255887371"
+      ],
+      [
+        "host/credentials.cjs",
+        "f7e46638714005467ac70016a934ecf1c5a034d0efcc7b89a4aace1eea29df94"
+      ],
+      [
+        "host/errors.cjs",
+        "4cfbe394b358219276f19b00718f3962ace5a34eef35b29a42d7d499e6870f59"
+      ],
+      [
+        "host/files.cjs",
+        "d2ce7ef1849795aac6ff45998167b5d78a906bfb436cabb9a904e2f3afe172fb"
+      ],
+      [
+        "host/intent.cjs",
+        "7b7bd2cff67da27211a69ee7dbf20fb8def8e9fa8953df3eb2539703413ded72"
+      ],
+      [
+        "host/inventory.cjs",
+        "b1b5f5b52ed46a7efd2369e2e5c9b013e4701337553daea0992dad66e05b4ecf"
+      ],
+      [
+        "host/journal.cjs",
+        "33f6ddf5046b5cb4b8cae2c12cf22a78e380cc951d9075e1d42471b925803fe3"
+      ],
+      [
+        "host/leases.cjs",
+        "3715cb71239383c318eaa31b0fd10a870c062176224cf3bb76a0ef8190102d1b"
+      ],
+      [
+        "host/platform.cjs",
+        "f6800fe5ec625ba267d2583b6a9d02316bc77b48c0e4223d527c76ca2db9c741"
+      ],
+      [
+        "host/profile-lock-core.cjs",
+        "fc94be03fe879c8514bc67ba21fcdb17faf71c514a924a28ab7ba70d1ca3eab3"
+      ],
+      [
+        "host/profile-lock.cjs",
+        "083e36ebc9ebb9181996485c0003db63bed96555ee0f20539915bf88e72c4ef3"
+      ],
+      [
+        "host/receipts.cjs",
+        "27bcd72372c6d6e8cf421076a56310c2acbe29d645f513dda5358fd9125a0900"
+      ],
+      [
+        "host/reconciler.cjs",
+        "71f7c847ef3af80e35ae66cf0c51a212284c2cac0e52c142ca7411553295a81e"
+      ],
+      [
+        "host/registry.cjs",
+        "32acba2b7092005bed8c876bc31ec2069d876e89364750d4e624247f7d01d57d"
+      ],
+      [
+        "host/retention.cjs",
+        "8dae21205d82e878a2192155b45271dd09a2b7c1370310ea61cc14612bc2e8bb"
+      ],
+      [
+        "host/rpc.cjs",
+        "24c9bfef6bd6243899dc6ab22dc2beef426a65924c78f2435bc04df5719b3620"
+      ],
+      [
+        "host/sessions.cjs",
+        "f46a95a3c40cfff2655d25cac3a89dc865221d227c7a927ecace51cad9e0fe99"
+      ],
+      [
+        "host/signers.cjs",
+        "8d2149bda67d0783eb6169b0270c392f36832dd6d52e10dcbc4fffd3fecccf30"
+      ],
+      [
+        "host/socks.cjs",
+        "015b51cd8ee54a95b66d3f86732550b90527c9ca9dec7ca24276d0b88ebc116b"
+      ],
+      [
+        "host/source-identity.cjs",
+        "d03b8472d365d40a712a50714fc798c3a3b257d45306fbbbe9e606514ea225e2"
+      ],
+      [
+        "host/sources.json",
+        "5cd3bdc40d0d522b5408fa935704f8cca1625649264b03f100d1cdf4f19ab646"
+      ],
+      [
+        "host/storage-entry.cjs",
+        "3b39b1c8ba922968bea9ea13018d7a2fc3ac32be480b3fdb8c6ddf87f8cb9125"
+      ],
+      [
+        "host/storage.cjs",
+        "482ef5b5db367d39819973c01d5a280563f726b9899e0b4b17d56f54567111ac"
+      ],
+      [
+        "host/tor-supervisor.cjs",
+        "f269047b6717f47881628e38d7a3c9e2bdfadeba6034dcc91aa47985d8466c3d"
+      ],
+      [
+        "host/tor.cjs",
+        "949186c7c2b2b700080cd561be42a29307b4cb0be9235e5d97c08a5c552094b4"
+      ],
+      [
+        "host/transaction-network.cjs",
+        "e8ec91d9673e3aebef2f9242e03fd0c09eb86b7f1cf369ab6787e9097f4e947a"
+      ],
+      [
+        "host/transactions.cjs",
+        "2553afc8fe6c5a5768d5b5dcdfdff1c6b375022a2db15c712fa25d266f8992cf"
+      ],
+      [
+        "host/transport.cjs",
+        "003125d7bbc0bec32914fb96b88eccf0c16f85b08f36a09ecf522a6ae17e028a"
+      ],
+      [
+        "host/utility-entry.cjs",
+        "6fe3494b20fa3699933c9de9e9aeaf1d9a8df34b2df8edf6ad6797296496d9a4"
+      ],
+      [
+        "host/vault.cjs",
+        "6161bcab6863f816b8280e2ebd458e39424638057e9fd5cf3fbf46c1fe199ef7"
+      ],
+      [
+        "main.cjs",
+        "9c563148ec557d896cf99abdfcbae4389ba488d84778c8fcd0d649f166396ca7"
+      ],
+      [
+        "payment-command.cjs",
+        "66e96cf4137c07d8dea2f8fc58ac24793a08739c3f238da5ce032ae382ba8851"
+      ],
+      [
+        "poi-command.cjs",
+        "d28903fb23429395bd00822910932d3c9a9c1df1e5710ebdfdb04603d703b205"
+      ],
+      [
+        "recovery-command.cjs",
+        "b8a9ca6c0f1de3cdf21244487314ba5ff6b81f08bb18d1257117b38ec886e7d9"
+      ],
+      [
+        "review.cjs",
+        "1f21c5a92f54ac1f1f85f800256e696b2c80228de804bf459dfddafee83cc6c4"
+      ],
+      [
+        "scan.cjs",
+        "83cee1261f0301ce7dfc829604bfbc2d7a5b749a32cb4f33cadfa8f7f98dc501"
+      ],
+      [
+        "shutdown.cjs",
+        "0c6b26feda75f6793d24941af4a2c4baa4d4e9f0eae01f4d22b7bf6ff7f5a1e7"
+      ],
+      [
+        "terminal.cjs",
+        "5eb93b0f53af793d4b02d8bd289cd2c6a1b28cc864d00304f80cb2965a5a9ffc"
+      ],
+      [
+        "txid-command.cjs",
+        "87b042b7432b6c484d9e10e1f1299a42c31b3cf02eb3fa626773f7f963a44194"
+      ]
+    ]
+  },
+  "finalReceiptAccounting": {
+    "passed": true,
+    "resultSha256": "67992f5095398b97b53ea953508d31bc67b6dafe6efe374e6bf29008ff75d78f",
+    "scriptSha256": "f00992bfaa1e8dc473abbcac39971c46505c70374405af16c60582227126b960",
+    "scope": "final signed-receipt continuation on H authenticated journals; minimal RPC signature fields; no account/cache session",
+    "profileBytesUnchanged": true,
+    "broadcasts": 0,
+    "ownReceipts": 3,
+    "signedHashesVerified": true,
+    "foreignHashRefused": true,
+    "networkMethods": [
+      "eth_chainId",
+      "eth_getTransactionReceipt",
+      "eth_getTransactionByHash"
+    ],
+    "hostSources": [
+      [
+        "account-command.cjs",
+        "15856fa7b8e0aa6728b3cf11d80972615b931c14a4cd6d2e166176f3946d0077"
+      ],
+      [
+        "chain.cjs",
+        "a6c1b20774ebc773d34cae38f8581795b5435fefeeaee37f5cf147cdeccdc2f4"
+      ],
+      [
+        "config.cjs",
+        "d14444f4daca679e462d7a235e0bc5d16073ccc6fbf42e870783936b8c9f578a"
+      ],
+      [
+        "custody.cjs",
+        "7c2e3cc964890087563324a8ee3cd7c06359f3f3795a7a892969bd674823fadf"
+      ],
+      [
+        "fatal.cjs",
+        "d59e09c7ad9f2ed4704be27de3ce4a39de09af5cd302480a3597a90b53779c7a"
+      ],
+      [
+        "host/application-state.cjs",
+        "9330c08ab66d539c1d9bb09c20acd1bc4760c3213baf8d0ad02fe20132c5d09f"
+      ],
+      [
+        "host/archiver.cjs",
+        "cac4809c178b78fe97674a052eea4c6787aff2e81390e1446dc4df8e17f95b18"
+      ],
+      [
+        "host/artifacts.cjs",
+        "1cce6fd7dd887c5ebf6b84f8ff134e79513222ce004cae3488f7710adf41133b"
+      ],
+      [
+        "host/compose.cjs",
+        "0876277f06e5996e25bc696a5b4f18e1366e16053bd5fce136a4ad4f7d898f3f"
+      ],
+      [
+        "host/context.cjs",
+        "4618c60d2b6e2dc9633951b2257a5b28ea8282d4b2761dd6b8b7d2c255887371"
+      ],
+      [
+        "host/credentials.cjs",
+        "f7e46638714005467ac70016a934ecf1c5a034d0efcc7b89a4aace1eea29df94"
+      ],
+      [
+        "host/errors.cjs",
+        "4cfbe394b358219276f19b00718f3962ace5a34eef35b29a42d7d499e6870f59"
+      ],
+      [
+        "host/files.cjs",
+        "d2ce7ef1849795aac6ff45998167b5d78a906bfb436cabb9a904e2f3afe172fb"
+      ],
+      [
+        "host/intent.cjs",
+        "7b7bd2cff67da27211a69ee7dbf20fb8def8e9fa8953df3eb2539703413ded72"
+      ],
+      [
+        "host/inventory.cjs",
+        "b1b5f5b52ed46a7efd2369e2e5c9b013e4701337553daea0992dad66e05b4ecf"
+      ],
+      [
+        "host/journal.cjs",
+        "33f6ddf5046b5cb4b8cae2c12cf22a78e380cc951d9075e1d42471b925803fe3"
+      ],
+      [
+        "host/leases.cjs",
+        "3715cb71239383c318eaa31b0fd10a870c062176224cf3bb76a0ef8190102d1b"
+      ],
+      [
+        "host/platform.cjs",
+        "f6800fe5ec625ba267d2583b6a9d02316bc77b48c0e4223d527c76ca2db9c741"
+      ],
+      [
+        "host/profile-lock-core.cjs",
+        "fc94be03fe879c8514bc67ba21fcdb17faf71c514a924a28ab7ba70d1ca3eab3"
+      ],
+      [
+        "host/profile-lock.cjs",
+        "083e36ebc9ebb9181996485c0003db63bed96555ee0f20539915bf88e72c4ef3"
+      ],
+      [
+        "host/receipts.cjs",
+        "70f7d771187d74e96893b9fd1d2aa5effa47afcbbbed4382bd10e00c476f9312"
+      ],
+      [
+        "host/reconciler.cjs",
+        "71f7c847ef3af80e35ae66cf0c51a212284c2cac0e52c142ca7411553295a81e"
+      ],
+      [
+        "host/registry.cjs",
+        "32acba2b7092005bed8c876bc31ec2069d876e89364750d4e624247f7d01d57d"
+      ],
+      [
+        "host/retention.cjs",
+        "8dae21205d82e878a2192155b45271dd09a2b7c1370310ea61cc14612bc2e8bb"
+      ],
+      [
+        "host/rpc.cjs",
+        "24c9bfef6bd6243899dc6ab22dc2beef426a65924c78f2435bc04df5719b3620"
+      ],
+      [
+        "host/sessions.cjs",
+        "f46a95a3c40cfff2655d25cac3a89dc865221d227c7a927ecace51cad9e0fe99"
+      ],
+      [
+        "host/signers.cjs",
+        "8d2149bda67d0783eb6169b0270c392f36832dd6d52e10dcbc4fffd3fecccf30"
+      ],
+      [
+        "host/socks.cjs",
+        "015b51cd8ee54a95b66d3f86732550b90527c9ca9dec7ca24276d0b88ebc116b"
+      ],
+      [
+        "host/source-identity.cjs",
+        "d03b8472d365d40a712a50714fc798c3a3b257d45306fbbbe9e606514ea225e2"
+      ],
+      [
+        "host/sources.json",
+        "5cd3bdc40d0d522b5408fa935704f8cca1625649264b03f100d1cdf4f19ab646"
+      ],
+      [
+        "host/storage-entry.cjs",
+        "3b39b1c8ba922968bea9ea13018d7a2fc3ac32be480b3fdb8c6ddf87f8cb9125"
+      ],
+      [
+        "host/storage.cjs",
+        "482ef5b5db367d39819973c01d5a280563f726b9899e0b4b17d56f54567111ac"
+      ],
+      [
+        "host/tor-supervisor.cjs",
+        "f269047b6717f47881628e38d7a3c9e2bdfadeba6034dcc91aa47985d8466c3d"
+      ],
+      [
+        "host/tor.cjs",
+        "949186c7c2b2b700080cd561be42a29307b4cb0be9235e5d97c08a5c552094b4"
+      ],
+      [
+        "host/transaction-network.cjs",
+        "e8ec91d9673e3aebef2f9242e03fd0c09eb86b7f1cf369ab6787e9097f4e947a"
+      ],
+      [
+        "host/transactions.cjs",
+        "2553afc8fe6c5a5768d5b5dcdfdff1c6b375022a2db15c712fa25d266f8992cf"
+      ],
+      [
+        "host/transport.cjs",
+        "003125d7bbc0bec32914fb96b88eccf0c16f85b08f36a09ecf522a6ae17e028a"
+      ],
+      [
+        "host/utility-entry.cjs",
+        "6fe3494b20fa3699933c9de9e9aeaf1d9a8df34b2df8edf6ad6797296496d9a4"
+      ],
+      [
+        "host/vault.cjs",
+        "6161bcab6863f816b8280e2ebd458e39424638057e9fd5cf3fbf46c1fe199ef7"
+      ],
+      [
+        "main.cjs",
+        "9c563148ec557d896cf99abdfcbae4389ba488d84778c8fcd0d649f166396ca7"
+      ],
+      [
+        "payment-command.cjs",
+        "66e96cf4137c07d8dea2f8fc58ac24793a08739c3f238da5ce032ae382ba8851"
+      ],
+      [
+        "poi-command.cjs",
+        "d28903fb23429395bd00822910932d3c9a9c1df1e5710ebdfdb04603d703b205"
+      ],
+      [
+        "recovery-command.cjs",
+        "b8a9ca6c0f1de3cdf21244487314ba5ff6b81f08bb18d1257117b38ec886e7d9"
+      ],
+      [
+        "review.cjs",
+        "1f21c5a92f54ac1f1f85f800256e696b2c80228de804bf459dfddafee83cc6c4"
+      ],
+      [
+        "scan.cjs",
+        "83cee1261f0301ce7dfc829604bfbc2d7a5b749a32cb4f33cadfa8f7f98dc501"
+      ],
+      [
+        "shutdown.cjs",
+        "0c6b26feda75f6793d24941af4a2c4baa4d4e9f0eae01f4d22b7bf6ff7f5a1e7"
+      ],
+      [
+        "terminal.cjs",
+        "5eb93b0f53af793d4b02d8bd289cd2c6a1b28cc864d00304f80cb2965a5a9ffc"
+      ],
+      [
+        "txid-command.cjs",
+        "87b042b7432b6c484d9e10e1f1299a42c31b3cf02eb3fa626773f7f963a44194"
+      ]
+    ]
+  },
+  "currentImplementationCommit": "9278ada",
+  "tests": {
+    "fullBeforeArtifactAndReceiptAdditions": {
+      "suites": 302,
+      "passed": 12793,
+      "failed": 0,
+      "skipped": 0
+    },
+    "laterArtifactChecker": {
+      "passed": 12
+    },
+    "finalReceiptTests": {
+      "passed": 46
+    },
+    "note": "Focused later checks are additional evidence, not included in the earlier full-suite count. CI on pushed head is recorded separately."
+  }
+}

@@ -11,7 +11,9 @@ The composition must create each realm's context registry once and share it
 between that realm's families. Initialization captures the original functions
 and receivers. Do not substitute an operation's callbacks for those originals.
 Utilities and storage workers initialize their own fixed contexts through the
-public bootstraps, synchronously during entry evaluation.
+public bootstraps, synchronously during entry evaluation. Main initialization
+can capture an [application gas policy](APPLICATION-POLICY.md); operation callbacks
+cannot replace that policy.
 
 ## Files, credentials and processes
 

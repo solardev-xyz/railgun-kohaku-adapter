@@ -24,7 +24,8 @@ not evidence of a repeatable dependency install.
 
 ## Detect circuit changes before a handoff
 
-Use the wallet package's artifact manifest extracted as data from an explicitly
+Use `@railgun-community/wallet`'s `artifact-v2-hashes.json` from its npm
+release tarball (`package/dist/services/artifacts/json/artifact-v2-hashes.json` in 11.2.0) extracted as data from an explicitly
 identified upstream release. Authenticate its release/archive separately; never
 execute an unreviewed package's install scripts merely to read the manifest.
 Then run:
@@ -96,8 +97,8 @@ Some production owner errors deliberately remain coarse. The reference CLI uses
 closed error codes; maintainers should reproduce a failure with public fixtures
 before requesting private state. Do not publish a seed, encrypted vault, raw
 proof, receipt/commitment set, private RPC payload or linked transaction timeline
-in an issue. Arrange a private reporting channel with maintainers before sharing
-sensitive reproduction material. No independent security audit is claimed.
+in a public issue. Use the repository’s [private security reporting route](../../SECURITY.md).
+A private report should still avoid credentials and funded custody files. No independent security audit is claimed.
 
 ## Release gates
 
@@ -111,3 +112,25 @@ An npm publication, signed distribution, version tag, mainnet activation or
 broader chain/relay support is a separate release decision. External reviewers
 should evaluate the exact candidate and its gaps before production commitments
 are made. Freedom product activation remains outside this adapter adoption work.
+
+## Experimental versioning and platform record
+
+Unreleased source is identified by commit and tar digest; a shared `0.6.0`
+package label does not imply compatibility between development candidates.
+Before a tagged/published candidate, allocate its own version and release notes
+covering API changes, cache invalidation, persisted-reader minimums, artifacts
+and tested platforms. During 0.x development, an incompatible public contract
+requires a new minor release; compatible fixes use patch releases. There is no
+long-term support or response-time commitment yet. No version tag or npm release
+is created by the reference-host work.
+
+| Target | Current evidence |
+| --- | --- |
+| Node 24.18.1, macOS arm64 | Full package suite and focused later additions; existing locked dependencies. |
+| Electron 44.7.0, macOS arm64 | Independent native synthetic reference lifecycle; fresh runtime installation and live Tor still pending. |
+| Node 24.18.1, Ubuntu 24.04 / macOS 14 CI | Workflow configured; result must be recorded on the pushed head. |
+| Electron Linux/Windows, browser, mobile | Not qualified. |
+
+This matrix describes evidence, not broad platform support. The remaining
+fresh-install/live evidence and an actual release candidate's version/notes
+must be completed before describing that candidate as installable for adopters.
