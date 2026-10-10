@@ -49,7 +49,8 @@ async function openRailgunAccountPublic({
   mode = create ? 'new' : 'active',
 }) {
   check(isRailgunAccountEnrollment(enrollment) && typeof create === 'boolean');
-  check(['new', 'pending', 'active'].includes(mode));
+  check(['new', 'pending', 'active', 'recover'].includes(mode));
+  check(mode !== 'recover' || !create);
   const handle = enrollment.getContext('engine'),
     context = getPrivacyContext(handle);
   const policy = getRailgunPublicPolicy(archive);
@@ -165,7 +166,15 @@ async function openRailgunAccountPublic({
     watch(catalog.signal);
     if (mode === 'new') candidate = generation = await catalog.begin(policy);
     else if (mode === 'pending') candidate = generation = catalog.resume();
-    else generation = catalog.activeFor(policy);
+    else if (mode === 'recover') {
+      // Authenticated selection is atomic within this retained catalog owner.
+      // Never abandon a pending generation, ignore a policy mismatch or begin one.
+      const selected = catalog.inspect();
+      if (selected.pending) {
+        check(selected.pending.policy === policy);
+        candidate = generation = catalog.resume();
+      } else generation = catalog.activeFor(policy);
+    } else generation = catalog.activeFor(policy);
     check(generation && generation.policy === policy);
     const open = async (kind) => {
       const filename = path.join(generation.directory, kind + '.sqlite');
@@ -260,6 +269,18 @@ async function openRailgunAccountPublic({
       close,
       signal: scope.signal,
       publish: () => track(publish),
+      async recover() {
+        return track(async () => {
+          // This can reacquire/reapply a pending window and publish a candidate;
+          // it is neither a local inspection nor an authority-bearing receipt.
+          const result = await coordinator.recover();
+          active();
+          if (candidate && result.to && result.to.number >= catalog.inspect().highWater)
+            await publish();
+          active();
+          return result;
+        });
+      },
       async advance(range) {
         return track(async () => {
           const result = await coordinator.advance(range);

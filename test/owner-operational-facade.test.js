@@ -129,6 +129,9 @@ function publicOwner() {
       return Promise.resolve();
     }),
     advance: jest.fn((range) => Promise.resolve(range)),
+    recover: jest.fn(async () =>
+      Object.freeze({ status: "unscanned", to: null }),
+    ),
   };
 }
 function walletOwner() {
@@ -297,6 +300,7 @@ test("closed one-shot initializer and exact account options expose no owner auth
   expect(Object.keys(account).sort()).toEqual(
     [
       "advancePublic",
+      "recoverPublic",
       "close",
       "closed",
       "describe",
@@ -664,11 +668,14 @@ test.each([
     await account.close();
   },
 );
-test.each(["new", "pending"])(
+test.each(["new", "pending", "recover"])(
   "openAccount publicCache %s opens the public cache like its replacement",
   async (mode) => {
     const f = fixture();
-    const account = await f.api.openAccount({ ...f.options, publicCache: mode });
+    const account = await f.api.openAccount({
+      ...f.options,
+      publicCache: mode,
+    });
     expect(state.openEnrollment.mock.calls[0][0]).toEqual({
       identity: await state.openIdentity.mock.results[0].value,
       create: false,
@@ -682,7 +689,7 @@ test.each(["new", "pending"])(
     await account.close();
   },
 );
-test.each(["new", "pending"])(
+test.each(["new", "pending", "recover"])(
   "close during a publicCache %s opening retains and closes the late public owner",
   async (publicCache) => {
     const f = fixture(),
@@ -705,7 +712,7 @@ test.each(["new", "pending"])(
     expect(value.close).toHaveBeenCalledTimes(1);
   },
 );
-test.each(["new", "pending"])(
+test.each(["new", "pending", "recover"])(
   "a refused publicCache %s opening keeps exclusion until acquired owners drain",
   async (publicCache) => {
     const f = fixture(),
@@ -753,6 +760,7 @@ test.each([
   ["rebuild", false],
   [undefined, false],
   ["new", true],
+  ["recover", true],
 ])(
   "public-cache opening %s (create %s) refuses before any owner opens",
   (publicCache, create) => {
@@ -2058,4 +2066,44 @@ test("wrapper successor fixed plugin construction refusal retains original acqui
   expect(wallet.close).toHaveBeenCalledTimes(1); expect(observed).not.toHaveBeenCalled();
   expect(() => f.api.openAccount(f.options)).toThrow();
   drain.resolve(); await account.closed;
+});
+
+test("recoverPublic forwards detached, refuses arguments and excludes other operations", async () => {
+  const f = fixture(),
+    account = await f.api.openAccount({ ...f.options, publicCache: "recover" });
+  const publicOwner = await state.openPublic.mock.results[0].value,
+    gate = deferred();
+  publicOwner.recover.mockReturnValue(gate.promise);
+  const recover = account.recoverPublic;
+  expect(() => recover({ to: 100 })).toThrow();
+  const work = recover();
+  await tick();
+  expect(publicOwner.recover).toHaveBeenCalledTimes(1);
+  expect(() => account.advancePublic({ to: 1, anchor: "public" })).toThrow();
+  expect(() => account.openRead(laneOptions(f.options.signal))).toThrow();
+  const result = Object.freeze({
+    status: "applied-unverified",
+    to: Object.freeze({ number: 10, hash: "public" }),
+  });
+  gate.resolve(result);
+  expect(await work).toBe(result);
+  await account.close();
+});
+test("recoverPublic cancellation retains the original operation until drained", async () => {
+  const f = fixture(),
+    account = await f.api.openAccount(f.options);
+  const publicOwner = await state.openPublic.mock.results[0].value,
+    gate = deferred();
+  publicOwner.recover.mockReturnValue(gate.promise);
+  const work = account.recoverPublic();
+  work.catch(() => {});
+  await tick();
+  f.caller.abort();
+  await tick();
+  expect(() =>
+    f.api.openAccount({ ...f.options, signal: new AbortController().signal }),
+  ).toThrow();
+  gate.resolve({ status: "unscanned", to: null });
+  await expect(work).rejects.toThrow();
+  await account.closed;
 });

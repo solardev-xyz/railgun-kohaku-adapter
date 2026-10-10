@@ -10,7 +10,7 @@ Repository documentation specifies [context, session and encrypted storage](http
 
 ## Account sessions
 
-A session owns its original identity, enrollment, public cache and at most one wallet/operation lane. It exposes describe, public advance/rebuild/resume, reviewed public TXID synchronization, and fixed read/private/public/recovery/local-relay/completed-relay lanes. The exact declarations accompany the root host entry; stage-specific design notes preserve how the interface was reviewed. A recovery companion can inspect retained operations without opening an active wallet. Relay lanes manage local proof/signature custody only; they do not add broadcaster discovery or transport.
+A session owns its original identity, enrollment, public cache and at most one wallet/operation lane. It exposes describe, public advance/recover/rebuild/resume, reviewed public TXID synchronization, and fixed read/private/public/recovery/local-relay/completed-relay lanes. The exact declarations accompany the root host entry; stage-specific design notes preserve how the interface was reviewed. A recovery companion can inspect retained operations without opening an active wallet. Relay lanes manage local proof/signature custody only; they do not add broadcaster discovery or transport.
 
 Private/public preparation returns one-use opaque tokens bound to the lane. No caller can supply a stored receipt or substitute an account. Completed relay recovery retains one original completed account and its original lifetime. TXID initialization is explicit create-if-missing and a bounded page, never a reset or unbounded sync loop.
 
@@ -29,3 +29,30 @@ The existing `better-sqlite3@13.0.3` is an exact optional peer: data-only users 
 The vault primitive remains in the adopting application's vault boundary. [The normative schedule](CREDENTIAL-HOST-CONTRACT.md), public vectors and [conformance harness](CREDENTIAL-CONFORMANCE.md) belong here. The package receives owned, limited Railgun key loans; it never receives the wallet master seed or a generic derivation oracle.
 
 The published historical source maps, original test inverses and immutable qualification archives preserve earlier layouts. They are not proof of a new application's installed owner composition. Each adopter needs an exact packed runtime manifest check, clean installed tests, native synthetic account/operation/cold-recovery evidence, genuine host closure and key boundaries, and packaged resolution. Freedom has completed its bounded [live Sepolia self-transfer/POI/unshield journey](../qualification/installed-live-sepolia-journey-0.6.0-2026-10-10/README.md) and E8 [packaged initialization](../qualification/installed-owner-packaged-e8-0.6.0-2026-10-10/README.md). Live two-account spending, authentic relay transport, mainnet and independent-host qualification remain open.
+
+## Interrupted public scans
+
+Open an existing account with `publicCache: "recover"` to select its authenticated
+same-policy pending generation, otherwise its same-policy active generation.
+A pending generation with another policy refuses; it is never ignored in favor
+of an active generation. No catalog or generation is begun by this mode. Existing
+opening still renews the catalog's authenticated lease and may initialize missing
+components of an already-recorded pending generation, under the existing empty-
+store checks. This is not a read-only inspection.
+
+Call `session.recoverPublic()` with no arguments before planning a resumed range.
+It reacquires and authenticates the journal's retained window; pending work may
+be re-applied. If a candidate has reached the catalog's protected high-water mark,
+recovery may publish it. The returned `{status, to}` is the same diagnostic shape
+as `advancePublic`, with `to: null` for an unscanned store. It is not a spending
+receipt or proof of RPC correctness. The next `advancePublic` target is chosen
+from this cursor; the coordinator still selects and checks the actual start.
+
+This also handles an interrupted publication: a committed publication selects
+active; an uncommitted one selects pending. Both retain the same generation.
+Recovery owns the session exclusively, shares its cancellation/drain barrier,
+and can perform network reads and writes. It can cost a complete window
+reacquisition. An unknown failure is a stop, not permission to rebuild, skip a
+range, resend or bypass policy. Applications should bound explicit resumptions;
+this method adds no automatic retry. Pending-first selection leaves dependent
+lanes unavailable until that generation reaches the required coverage.

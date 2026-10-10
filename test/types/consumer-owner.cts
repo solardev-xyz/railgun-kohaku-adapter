@@ -262,3 +262,12 @@ const scopedValue: Promise<number> = parentScope.run(rpcContext, async () => 1);
 const normalizedOperation: string | null = host.context.getPrivacyContext(rpcContext).subject.operation;
 const storagePath: string = host.storage.getPrivacyStoragePath(rpcContext, "/profile");
 void scopedValue; void normalizedOperation; void storagePath;
+
+async function authenticatedScanRecovery(session: import("@freedom/railgun-kohaku-adapter/host/owner").AccountSession) {
+  const recovered = await session.recoverPublic();
+  const cursor: number | undefined = recovered.to?.number;
+  // @ts-expect-error recovery never accepts a caller-selected checkpoint
+  await session.recoverPublic({ to: 100 });
+  return cursor;
+}
+void authenticatedScanRecovery;

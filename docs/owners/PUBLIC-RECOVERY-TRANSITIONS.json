@@ -1,0 +1,33 @@
+{
+  "baseRevision": "e035ca9f5ac9cab4c5854a81d24dd8efe4718040",
+  "label": "explicit authenticated public recovery and deterministic selection of an existing generation; no generation reset",
+  "changes": [
+    {
+      "file": "src/owners/railgun-account-public.js",
+      "beforeSha256": "9401e5866d8a2bf6f7491acec050329b9fa1ac39a6d20c925b72a61e380eb826",
+      "afterSha256": "ad776f3a5b07464dd995afc85aa95f75ad419b420060dcbd5f6912936936bbf0",
+      "replacements": [
+        {
+          "start": 2229,
+          "before": "",
+          "after": ", 'recover'"
+        },
+        {
+          "start": 2256,
+          "before": "",
+          "after": ");\n  check(mode !== 'recover' || !create"
+        },
+        {
+          "start": 6310,
+          "before": "",
+          "after": "if (mode === 'recover') {\n      // Authenticated selection is atomic within this retained catalog owner.\n      // Never abandon a pending generation, ignore a policy mismatch or begin one.\n      const selected = catalog.inspect();\n      if (selected.pending) {\n        check(selected.pending.policy === policy);\n        candidate = generation = catalog.resume();\n      } else generation = catalog.activeFor(policy);\n    } else "
+        },
+        {
+          "start": 9974,
+          "before": "",
+          "after": ",\n      async recover() {\n        return track(async () => {\n          // This can reacquire/reapply a pending window and publish a candidate;\n          // it is neither a local inspection nor an authority-bearing receipt.\n          const result = await coordinator.recover();\n          active();\n          if (candidate && result.to && result.to.number >= catalog.inspect().highWater)\n            await publish();\n          active();\n          return result;\n        });\n      }"
+        }
+      ]
+    }
+  ]
+}

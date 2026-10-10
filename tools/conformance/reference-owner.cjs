@@ -76,6 +76,8 @@ if (locked) {
         "initialize",
         "account",
         "account-hold",
+        "account-recover",
+        "reopen-recover",
         "reopen",
         "hold-lock",
       ].includes(mode)
@@ -89,7 +91,7 @@ if (locked) {
     }
     const password = Buffer.from("public reference conformance password");
     try {
-      if (mode !== "reopen") await vault.initialize(password);
+      if (!mode.startsWith("reopen")) await vault.initialize(password);
       await vault.unlock(password);
     } finally {
       password.fill(0);
@@ -130,14 +132,29 @@ if (locked) {
     let session;
     try {
       let description = null;
-      if (["account", "account-hold", "reopen"].includes(mode)) {
+      if (
+        [
+          "account",
+          "account-hold",
+          "reopen",
+          "account-recover",
+          "reopen-recover",
+        ].includes(mode)
+      ) {
         session = await composition.owner[
-          mode === "reopen" ? "openAccount" : "createAccount"
+          mode.startsWith("reopen") ? "openAccount" : "createAccount"
         ]({
           accountIndex: 0,
           signal: new AbortController().signal,
-          ...(mode === "reopen" ? { publicCache: "pending" } : {}),
+          ...(mode.startsWith("reopen")
+            ? { publicCache: mode === "reopen-recover" ? "recover" : "pending" }
+            : {}),
         });
+        if (mode.endsWith("recover")) {
+          const recovered = await session.recoverPublic();
+          if (recovered.status !== "unscanned" || recovered.to !== null)
+            throw Error("Unexpected empty recovery cursor");
+        }
         const value = session.describe();
         description = {
           accountIndex: value.accountIndex,

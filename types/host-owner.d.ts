@@ -224,9 +224,13 @@ export interface AccountOptions {
  * generation of the current source policy opens. After a package source change
  * none exists: "new" begins a fresh generation exactly as rebuildPublic and
  * "pending" resumes an interrupted one as resumePublic. Reads, lanes and
- * recovery keep their completed-public requirements; advance ranges first. */
+ * recovery keep their completed-public requirements; advance ranges first.
+ * "recover" selects a same-policy pending generation, otherwise the same-policy
+ * active generation. It never creates one and refuses a mismatched pending one.
+ * Opening authenticates and renews the catalog lease; recoverPublic then
+ * recovers/revalidates the window and may publish the pending generation. */
 export interface OpenAccountOptions extends AccountOptions {
-  publicCache?: "new" | "pending";
+  publicCache?: "new" | "pending" | "recover";
 }
 export type WalletMode = "active" | "advance" | "new" | "pending";
 export interface ReadLaneOptions {
@@ -1104,6 +1108,14 @@ export interface AccountSession {
     chainId: 11155111;
     deployment: "sepolia";
   }>;
+  /** Reacquires the retained window, may reapply it, and may publish a pending
+   * generation at its protected high-water mark. Exclusive, cancellable network
+   * and storage work; not a local inspection or a spending authorization.
+   * Unknown failure stops; it never authorizes an automatic rebuild. */
+  recoverPublic(): Promise<Readonly<{
+    status: "applied-unverified" | "unscanned";
+    to: { number: number; hash: string } | null;
+  }>>;
   advancePublic(range: {
     to: number;
     anchor: { number: number; hash: string };

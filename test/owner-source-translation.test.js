@@ -4,6 +4,7 @@ const fs = require("fs"),
   vm = require("vm"),
   { createHash } = require("crypto");
 const root = path.join(__dirname, "..");
+const publicRecoveryTransitions = require("../docs/owners/PUBLIC-RECOVERY-TRANSITIONS.json");
 const poiReproofTransitions = require("../docs/owners/POI-REPROOF-TRANSITIONS.json");
 const poiRetryTransitions = require("../docs/owners/POI-RETRY-TRANSITIONS.json");
 const facadeTransitions = require("../docs/owners/FACADE-TRANSITIONS.json");
@@ -71,7 +72,15 @@ test("every translated algorithm reconstructs its exact immutable original bytes
     reused = 0;
   for (const row of translation.files) {
     let text = fs.readFileSync(sourceFile(row.destination), "utf8");
-    // Newest phase first: the replacement proof after the POI circuit rotation.
+    const publicRecovery = publicRecoveryTransitions.changes.find(
+      (change) => change.file === row.destination,
+    );
+    if (publicRecovery) {
+      expect(sha(text)).toBe(publicRecovery.afterSha256);
+      text = undo(text, publicRecovery.replacements);
+      expect(sha(text)).toBe(publicRecovery.beforeSha256);
+    }
+    // The replacement proof after the POI circuit rotation.
     const poiReproofTransition = poiReproofTransitions.changes.find(
       (change) => change.file === row.destination,
     );

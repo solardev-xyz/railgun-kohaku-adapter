@@ -146,7 +146,8 @@ function initializeRailgunMain(options) {
     // An explicit public-cache opening for an existing account whose active
     // public generation belongs to another source policy: "new" begins a fresh
     // generation exactly as rebuildPublic, "pending" resumes it exactly as
-    // resumePublic. Absent keeps the active-only opening; never implicit.
+    // resumePublic. "recover" selects pending else active, without creating a
+    // generation. Absent keeps the active-only opening; never implicit.
     let data;
     try {
       data = record(options, ["accountIndex", "signal", "publicCache"]);
@@ -159,7 +160,7 @@ function initializeRailgunMain(options) {
       accountIndex < 0 ||
       accountIndex > 65535 ||
       (Object.hasOwn(data, "publicCache") &&
-        (create || !["new", "pending"].includes(publicCache)))
+        (create || !["new", "pending", "recover"].includes(publicCache)))
     )
       throw fail();
     signal(caller);
@@ -1468,6 +1469,14 @@ function initializeRailgunMain(options) {
           instanceId: state.identity.descriptor.instanceId,
           chainId: 11155111,
           deployment: "sepolia",
+        });
+      },
+      recoverPublic(...extra) {
+        if (extra.length) throw fail();
+        return run(async () => {
+          const result = await state.public.recover();
+          current();
+          return result;
         });
       },
       advancePublic(range) {
