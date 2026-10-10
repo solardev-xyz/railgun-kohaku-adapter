@@ -1,5 +1,6 @@
 /** @type {import('jest').Config} */
 module.exports = {
+  resolver: '<rootDir>/test/package-resolver.cjs',
   // Bound disposable worker/native-storage suite resources in local runs and CI.
   maxWorkers: 2,
   // Historical source snapshots are never executable modules or test discovery.
