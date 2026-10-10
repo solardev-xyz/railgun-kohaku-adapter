@@ -1,0 +1,80 @@
+{
+  "version": 1,
+  "scope": "Installed reference-host cold retained Transact-input recovery; synthetic chain and list, loopback SOCKS/TLS",
+  "sourceCommit": "1e749f35a039b6a0561a2b13af18b3a34a793cf5",
+  "candidateTarSha256": "0f3c1c6d1e943ae3fe7bda5bed16cfaf001cc1d7b8b41f4e45ebd6c1dfde0113",
+  "previousTarSha256": "5cb040aa6c28343d31a1db14db679cf45ef132e48e62f98df1cb1a9e184a5821",
+  "previousHostSha256": "ac34e683eabd8b6c8f5eb3f44999c18edaf6ae69441a8bbc0ec8033d50c2d495",
+  "candidateHostSha256": "5274d15058df1c559df39189a2daa96df6f38b52b901cfd8749828edb895ce44",
+  "installation": "I",
+  "nativeSteps": 56,
+  "independentActors": 2,
+  "oldOutcome": {
+    "status": "recovery-required",
+    "stage": "source",
+    "sourceOutcome": {
+      "fatal": false,
+      "reason": "expired",
+      "rpcFailure": null
+    }
+  },
+  "oldReviews": 1,
+  "newReviews": 2,
+  "sameAuthenticatedHold": true,
+  "supportedPolicyRebuild": true,
+  "recoverySourceDelayMs": 49170,
+  "wireFinalPassStartToEoaReviewMs": 14991,
+  "timingScope": "Wire final-pass start and observed review times; not an owner-internal timestamp",
+  "chainTransactions": 3,
+  "broadcastRequests": 3,
+  "conservation": true,
+  "tests": {
+    "suitesPassed": 310,
+    "suitesSkipped": 1,
+    "testsPassed": 12948,
+    "testsSkipped": 4,
+    "focusedTestsPassed": 270,
+    "mutationControls": 3,
+    "rootTypes": true,
+    "ownerTypes": true,
+    "lint": true
+  },
+  "evidence": [
+    {
+      "file": "INSTALL.json",
+      "sha256": "7743ac340082095cfbacadd03fffbf099c036e3013c2c749aa6cedb322476339"
+    },
+    {
+      "file": "RETAINED-UPGRADE.json",
+      "sha256": "ba13a2b8bf373b76575f5f1bbbdfb3074e291f51a912b7e7435d7f9e734ba5cc"
+    },
+    {
+      "file": "38-bob-submit-stored.result.json",
+      "sha256": "ca17f40b7d706cd6f5ad3733f2afd93f017e35105767eb96d0dd982090f42ba0"
+    },
+    {
+      "file": "40-bob-account-info.expected-refusal.json",
+      "sha256": "5d03e0fe12b2c262b1ad73108cccb36e823d108190f289c952e6fadd16818e70"
+    },
+    {
+      "file": "44-bob-holds.result.json",
+      "sha256": "4275b9f99cff5059cce0c8bb715443850c6f27ba0635732b06759764a36e1336"
+    },
+    {
+      "file": "46-bob-submit-stored.result.json",
+      "sha256": "3acdf7406d17f3752ee1cb8f6773c212c3ee5442d31603191666122f892af0a4"
+    },
+    {
+      "file": "RESULT.json",
+      "sha256": "a0267b755703cd695e89c143265d72aa06b6048948999f6ce672d1971a15af3d"
+    }
+  ],
+  "notQualified": [
+    "Tor timing",
+    "EVM execution",
+    "live completion",
+    "mainnet",
+    "relay transport",
+    "additional platforms"
+  ]
+}
