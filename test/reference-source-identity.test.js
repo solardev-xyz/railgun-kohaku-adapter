@@ -109,3 +109,22 @@ test("an unlisted runtime file is refused, not silently excluded", () => {
   f.bytes.set("extra.cjs", Buffer.from("unexpected"));
   expect(() => f.host().readDigest()).toThrow("inventory mismatch");
 });
+test("installed documentation does not become executable source identity", () => {
+  const f = fixture(),
+    before = f.host();
+  const digest = before.readDigest(),
+    caches = before.readCacheDigests();
+  for (const name of [
+    "README.md",
+    "JOURNEY.md",
+    "ARTI.md",
+    "LICENSE",
+    "REFERENCE-HOST-PROVENANCE.json",
+  ])
+    f.bytes.set(name, Buffer.from("documentation"));
+  const installed = f.host();
+  expect(installed.readDigest()).toBe(digest);
+  expect(installed.readCacheDigests()).toEqual(caches);
+  f.bytes.set("ARTI.cjs", Buffer.from("unexpected executable"));
+  expect(() => f.host().readDigest()).toThrow("inventory mismatch");
+});

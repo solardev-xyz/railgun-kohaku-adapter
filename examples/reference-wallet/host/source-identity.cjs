@@ -21,9 +21,15 @@ function createSourceIdentityHost() {
       .readdirSync(root)
       .flatMap((name) => {
         if (
-          ["README.md", "JOURNEY.md", ".DS_Store", "node_modules"].includes(
-            name,
-          )
+          [
+            "README.md",
+            "JOURNEY.md",
+            "ARTI.md",
+            "LICENSE",
+            "REFERENCE-HOST-PROVENANCE.json",
+            ".DS_Store",
+            "node_modules",
+          ].includes(name)
         )
           return [];
         if (name === "host")
