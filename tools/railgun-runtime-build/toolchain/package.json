@@ -1,0 +1,11 @@
+{
+  "name": "railgun-runtime-build-toolchain",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Locked development-only tools for the unchanged pinned runtime builders",
+  "engines": { "node": ">=24" },
+  "dependencies": {
+    "@electron/asar": "3.4.1",
+    "esbuild": "0.28.2"
+  }
+}

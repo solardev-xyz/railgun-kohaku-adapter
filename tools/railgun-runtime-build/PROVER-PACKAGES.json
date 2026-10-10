@@ -1,0 +1,152 @@
+{
+  "scope": "existing pinned prover build closure; no version changes",
+  "sourceLockSha256": "d35079faf9158baa4e21f438873981c4461f4412059b59ff77d5081e4cbac421",
+  "packages": [
+    {
+      "name": "@iden3/bigarray",
+      "version": "0.0.2",
+      "integrity": "sha512-Xzdyxqm1bOFF6pdIsiHLLl3HkSLjbhqJHVyqaTxXt3RqXBEnmsUmEW47H7VOi/ak7TdkRpNkxjyK5Zbkm+y52g==",
+      "directory": "node_modules/.pnpm/@iden3+bigarray@0.0.2/node_modules/@iden3/bigarray",
+      "dependencies": {}
+    },
+    {
+      "name": "@iden3/binfileutils",
+      "version": "0.0.12",
+      "integrity": "sha512-naAmzuDufRIcoNfQ1d99d7hGHufLA3wZSibtr4dMe6ZeiOPV1KwOZWTJ1YVz4HbaWlpDuzVU72dS4ATQS4PXBQ==",
+      "directory": "node_modules/.pnpm/@iden3+binfileutils@0.0.12/node_modules/@iden3/binfileutils",
+      "dependencies": {
+        "fastfile": "fastfile@0.0.20",
+        "ffjavascript": "ffjavascript@0.3.1"
+      }
+    },
+    {
+      "name": "b4a",
+      "version": "1.8.0",
+      "integrity": "sha512-qRuSmNSkGQaHwNbM7J78Wwy+ghLEYF1zNrSeMxj4Kgw6y33O3mXcQ6Ie9fRvfU/YnxWkOchPXbaLb73TkIsfdg==",
+      "directory": "node_modules/.pnpm/b4a@1.8.0/node_modules/b4a",
+      "dependencies": {}
+    },
+    {
+      "name": "blake2b-wasm",
+      "version": "2.4.0",
+      "integrity": "sha512-S1kwmW2ZhZFFFOghcx73+ZajEfKBqhP82JMssxtLVMxlaPea1p9uoLiUZ5WYyHn0KddwbLc+0vh4wR0KBNoT5w==",
+      "directory": "node_modules/.pnpm/blake2b-wasm@2.4.0/node_modules/blake2b-wasm",
+      "dependencies": {
+        "b4a": "b4a@1.8.0",
+        "nanoassert": "nanoassert@2.0.0"
+      }
+    },
+    {
+      "name": "circom_runtime",
+      "version": "0.1.28",
+      "integrity": "sha512-ACagpQ7zBRLKDl5xRZ4KpmYIcZDUjOiNRuxvXLqhnnlLSVY1Dbvh73TI853nqoR0oEbihtWmMSjgc5f+pXf/jQ==",
+      "directory": "node_modules/.pnpm/circom_runtime@0.1.28/node_modules/circom_runtime",
+      "dependencies": {
+        "ffjavascript": "ffjavascript@0.3.1"
+      }
+    },
+    {
+      "name": "ejs",
+      "version": "3.1.10",
+      "integrity": "sha512-UeJmFfOrAQS8OJWPZ4qtgHyWExa088/MtK5UEyoJGFH67cDEXkZSviOiKRCZ4Xij0zxI3JECgYs3oKx+AizQBA==",
+      "directory": "node_modules/.pnpm/ejs@3.1.10/node_modules/ejs",
+      "dependencies": {}
+    },
+    {
+      "name": "fastfile",
+      "version": "0.0.20",
+      "integrity": "sha512-r5ZDbgImvVWCP0lA/cGNgQcZqR+aYdFx3u+CtJqUE510pBUVGMn4ulL/iRTI4tACTYsNJ736uzFxEBXesPAktA==",
+      "directory": "node_modules/.pnpm/fastfile@0.0.20/node_modules/fastfile",
+      "dependencies": {}
+    },
+    {
+      "name": "ffjavascript",
+      "version": "0.3.0",
+      "integrity": "sha512-l7sR5kmU3gRwDy8g0Z2tYBXy5ttmafRPFOqY7S6af5cq51JqJWt5eQ/lSR/rs2wQNbDYaYlQr5O+OSUf/oMLoQ==",
+      "directory": "node_modules/.pnpm/ffjavascript@0.3.0/node_modules/ffjavascript",
+      "dependencies": {
+        "wasmbuilder": "wasmbuilder@0.0.16",
+        "wasmcurves": "wasmcurves@0.2.2",
+        "web-worker": "web-worker@1.2.0"
+      }
+    },
+    {
+      "name": "ffjavascript",
+      "version": "0.3.1",
+      "integrity": "sha512-4PbK1WYodQtuF47D4pRI5KUg3Q392vuP5WjE1THSnceHdXwU3ijaoS0OqxTzLknCtz4Z2TtABzkBdBdMn3B/Aw==",
+      "directory": "node_modules/.pnpm/ffjavascript@0.3.1/node_modules/ffjavascript",
+      "dependencies": {
+        "wasmbuilder": "wasmbuilder@0.0.16",
+        "wasmcurves": "wasmcurves@0.2.2",
+        "web-worker": "web-worker@1.2.0"
+      }
+    },
+    {
+      "name": "js-sha3",
+      "version": "0.8.0",
+      "integrity": "sha512-gF1cRrHhIzNfToc802P800N8PpXS+evLLXfsVpowqmAFR9uwbi89WvXg2QspOmXL8QL86J4T1EpFu+yUkwJY3Q==",
+      "directory": "node_modules/.pnpm/js-sha3@0.8.0/node_modules/js-sha3",
+      "dependencies": {}
+    },
+    {
+      "name": "nanoassert",
+      "version": "2.0.0",
+      "integrity": "sha512-7vO7n28+aYO4J+8w96AzhmU8G+Y/xpPDJz/se19ICsqj/momRbb9mh9ZUtkoJ5X3nTnPdhEJyc0qnM6yAsHBaA==",
+      "directory": "node_modules/.pnpm/nanoassert@2.0.0/node_modules/nanoassert",
+      "dependencies": {}
+    },
+    {
+      "name": "r1csfile",
+      "version": "0.0.48",
+      "integrity": "sha512-kHRkKUJNaor31l05f2+RFzvcH5XSa7OfEfd/l4hzjte6NL6fjRkSMfZ4BjySW9wmfdwPOtq3mXurzPvPGEf5Tw==",
+      "directory": "node_modules/.pnpm/r1csfile@0.0.48/node_modules/r1csfile",
+      "dependencies": {
+        "@iden3/bigarray": "@iden3/bigarray@0.0.2",
+        "@iden3/binfileutils": "@iden3/binfileutils@0.0.12",
+        "fastfile": "fastfile@0.0.20",
+        "ffjavascript": "ffjavascript@0.3.0"
+      }
+    },
+    {
+      "name": "snarkjs",
+      "version": "0.7.5",
+      "integrity": "sha512-h+3c4rXZKLhLuHk4LHydZCk/h5GcNvk5GjVKRRkHmfb6Ntf8gHOA9zea3g656iclRuhqQ3iKDWFgiD9ypLrKiA==",
+      "directory": "node_modules/.pnpm/snarkjs@0.7.5/node_modules/snarkjs",
+      "dependencies": {
+        "@iden3/binfileutils": "@iden3/binfileutils@0.0.12",
+        "blake2b-wasm": "blake2b-wasm@2.4.0",
+        "circom_runtime": "circom_runtime@0.1.28",
+        "ejs": "ejs@3.1.10",
+        "fastfile": "fastfile@0.0.20",
+        "ffjavascript": "ffjavascript@0.3.1",
+        "js-sha3": "js-sha3@0.8.0",
+        "r1csfile": "r1csfile@0.0.48"
+      }
+    },
+    {
+      "name": "wasmbuilder",
+      "version": "0.0.16",
+      "integrity": "sha512-Qx3lEFqaVvp1cEYW7Bfi+ebRJrOiwz2Ieu7ZG2l7YyeSJIok/reEQCQCuicj/Y32ITIJuGIM9xZQppGx5LrQdA==",
+      "directory": "node_modules/.pnpm/wasmbuilder@0.0.16/node_modules/wasmbuilder",
+      "dependencies": {}
+    },
+    {
+      "name": "wasmcurves",
+      "version": "0.2.2",
+      "integrity": "sha512-JRY908NkmKjFl4ytnTu5ED6AwPD+8VJ9oc94kdq7h5bIwbj0L4TDJ69mG+2aLs2SoCmGfqIesMWTEJjtYsoQXQ==",
+      "directory": "node_modules/.pnpm/wasmcurves@0.2.2/node_modules/wasmcurves",
+      "dependencies": {
+        "wasmbuilder": "wasmbuilder@0.0.16"
+      }
+    },
+    {
+      "name": "web-worker",
+      "version": "1.2.0",
+      "integrity": "sha512-PgF341avzqyx60neE9DD+XS26MMNMoUQRz9NOZwW32nPQrF6p77f1htcnjBSEV8BGMKZ16choqUG4hyI0Hx7mA==",
+      "directory": "node_modules/.pnpm/web-worker@1.2.0/node_modules/web-worker",
+      "dependencies": {}
+    }
+  ],
+  "schema": "railgun-prover-acquisition-v1",
+  "provenance": "Registry archive integrities from the historical pinned public PPv2 lock; consumed file identities are independently fixed by scripts/fixtures/railgun-prover-inputs.json."
+}

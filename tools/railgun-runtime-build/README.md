@@ -14,7 +14,7 @@ The closed local dependency graph is:
 
 No `scripts/lib` module or adjacent original builder test was present in that closure. New repository tests cover preserved bytes/modes, builder/manifest identity, inventory tamper/symlink rejection, CLI syntax and runtime-whitelist separation. They do not reproduce an ASAR build or qualify a new native runtime.
 
-Tools require Node 24, `@electron/asar` **3.4.1** and (prover builder) `esbuild` **0.28.2**. These are recorded build tools, not new package runtime/dev dependencies. Supply an already reviewed physical installation through `NODE_PATH`; no script installs dependencies. The prover source workspace must contain the exact recorded pnpm layout with snarkjs **0.7.5**. Ordinary builds compare all discovered inputs with the committed inventory. `--capture-inputs` creates an explicitly unapproved candidate for review and is not a bypass for a qualified build.
+Tools require Node 24, `@electron/asar` **3.4.1** and (prover builder) `esbuild` **0.28.2**. These are development-only build tools, separate from the adapter runtime dependencies. Their exact versions and transitive dependencies are locked in `toolchain/`. Install that manifest into a new build directory using `npm ci --ignore-scripts`, then set `NODE_PATH` to its physical `node_modules`. The unchanged builders install nothing. The prover source workspace must contain the exact recorded pnpm layout with snarkjs **0.7.5**. Ordinary builds compare all discovered inputs with the committed inventory. `--capture-inputs` creates an explicitly unapproved candidate for review and is not a bypass for a qualified build.
 
 The engine fixture requires its own separately approved, scripts-disabled installation matching its committed lock and full inventory. No installed dependency trees, engine/prover archives, WASM/zkeys, local profiles, secrets or runtime payloads are copied into this tooling directory. Do not treat a general application `node_modules` as that engine fixture.
 
@@ -44,3 +44,63 @@ Freedom can later replace its build commands with a thin invocation of these exa
 Freedom-authored scripts and metadata retain MPL-2.0 under this repository's root LICENSE. The locked third-party engine/prover inputs retain their separate licenses; the move does not relicense or clear them for distribution. The engine dependency inventory records mixed licenses including GPL-3.0/LGPL-3.0 and historical unresolved advisories. The prover inventory includes GPL-3.0 dependencies; `@iden3/bigarray` and `@iden3/binfileutils` record license identifiers but no packaged license text. Existing builders preserve that distinction and report `productionDistributionApproved: false`.
 
 See the immutable [engine dependency record](https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/377c2a5d1aca18f0ed328dfdda955bd7d1ba271c/docs/freedom-qualification/railgun-engine-dependencies-2026-10-02.json). Historical qualification evidence remains archival; this relocation claims source parity, not current security, portability or reproducible archive output on an untested toolchain.
+
+## Fresh dependency acquisition
+
+The engine fixture already has a complete npm lock. Copy this tooling directory
+into a **new** build workspace (exclude any existing `node_modules`), then run
+`npm ci --ignore-scripts` in `scripts/fixtures/railgun-engine`, with a new npm
+cache. The unchanged engine builder rechecks all 10,060 installed input files;
+the October 10 fresh download reproduced its pinned archive exactly.
+
+For the prover, the repository now carries the small authenticated build closure
+instead of requiring an entire unrelated application's pnpm workspace:
+
+```sh
+python3 tools/railgun-runtime-build/acquire-prover-inputs.py /absolute/new-prover-inputs
+NODE_PATH="$REVIEWED_BUILD_TOOL_NODE_MODULES" node tools/railgun-runtime-build/scripts/build-railgun-prover.js /absolute/new-prover-inputs /absolute/new-prover-output
+```
+
+The acquisition downloads 16 **existing pinned** npm tarballs as data into a
+new cache, verifies recipe integrities transcribed from the historical lock (whose digest is recorded; the lock itself is not committed), rejects unsafe tar
+paths, links and special files, and reconstructs only the dependency edges used
+by the pinned builder. It checks all 73 consumed files against the independent
+input inventory before reporting success. No install script or package entry is
+executed. All archives, extracted inputs and failures are retained. This is a
+build closure, not a general-purpose installation of snarkjs: unused declared
+package dependencies are intentionally absent. The unchanged builder refuses
+unexpected inputs and produced the exact pinned prover archive from this fresh
+closure. `PROVER-PACKAGES.json` records the archive/edge recipe and its provenance.
+
+A fresh scripts-disabled installation of the locked `toolchain/` also reproduced both archives. These successful fresh downloads do not change the
+runtime pins, licenses or `productionDistributionApproved: false` decision.
+
+## Public circuit acquisition
+
+```sh
+node tools/railgun-runtime-build/acquire-circuits.cjs /absolute/new-artifact-directory
+```
+
+This downloads the 18 supported artifact files from fixed upstream transaction
+and current POI IPFS bundles over direct HTTPS. It does not use a wallet, Tor
+context or credentials. Redirects and retries are disabled; each response has a
+120-second timeout and size bound, and Brotli decompression is bounded by the
+pinned output size. Every final file must match the existing size and SHA-256.
+Verification keys retain matching published bytes, or use the pinned JSON
+formatting if that reproduces the exact pinned bytes. This does not freshly
+derive a key or establish which verifier a deployed service uses.
+
+Downloads, final artifacts and `ACQUISITION.json` remain in the new directory.
+A failure preserves partial files and cannot overwrite an existing directory.
+The October 10 fresh run matched all 18 pins. The first trial failed on vkey
+formatting and is retained separately; no artifact pin changed to make it pass.
+These tools acquire public runtime data; they neither execute a proof nor open
+an account. The example's Arti binary is a separate explicitly pinned platform
+input, and full native platform coverage remains open.
+
+The HTTPS gateway is untrusted transport. These tools do not verify the IPFS
+CIDs locally; acceptance rests on the adapter's pinned sizes and SHA-256 hashes.
+`downloads/` contains raw, potentially unverified bytes retained for diagnosis.
+Install the separate locked toolchain in a new directory with an isolated npm
+cache and distinct empty user/global npm config files. `--ignore-scripts` skips
+esbuild's postinstall; its executable comes from the locked platform package.

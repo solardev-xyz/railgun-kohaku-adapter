@@ -1,0 +1,92 @@
+{
+  "schema": "railgun-reference-installation-v1",
+  "installation": {
+    "sourceCommit": "10df38ab640f63e6701d3978709b4f70f634ae24",
+    "node": "v24.18.1",
+    "npm": "11.16.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "package": {
+      "name": "@freedom/railgun-kohaku-adapter",
+      "version": "0.6.0",
+      "sha256": "5cb040aa6c28343d31a1db14db679cf45ef132e48e62f98df1cb1a9e184a5821",
+      "integrity": "sha512-6ioiwCoLsX2wWLKRiOb/Oeo3UFYKDvizX40ovV3bTvsFZY03aOPXTHOtrFDgmjiiUbAbD4aoLEbC4f+xcLktiA==",
+      "files": 283
+    },
+    "dependencies": {
+      "electron": "44.7.0",
+      "ethers": "6.17.0",
+      "better-sqlite3": "13.0.3"
+    },
+    "electronVersion": "v44.7.0",
+    "electronLauncherSha256": "6c7bfa625e72ad31e564b262c916aa6a9d5b88f570dea195dec52255e9c6305d",
+    "electronDistribution": {
+      "sha256": "9f00baca916352af000105ced63bdb49f4c242f42cc45ddf5c61198beea40af7",
+      "entries": 273
+    },
+    "electronZip": {
+      "name": "electron-v44.7.0-darwin-arm64.zip",
+      "expectedSha256": "e04e411b58a0a14375dd21b0ab4a378fd38930a702e4e20e322fee4849404c0b",
+      "measuredSha256": "e04e411b58a0a14375dd21b0ab4a378fd38930a702e4e20e322fee4849404c0b"
+    },
+    "electronChecksumManifestSha256": "37f259d3590e58b167834de3027a7afc83ee1763de6842f6743673e8bf89c9ed",
+    "committedManifestSha256": "d3c6ed077aecabb7714348c4dfe26a805932f299613c7f2e7f4d289ad51c3b61",
+    "committedLockSha256": "0f530d0687d9a5f0ade180d6441656d9339941fa5d26158b80a02bfda3d4f2ad",
+    "installedManifestSha256": "d06efbd06397f3fcdbefe74e2f7c35a3550128629ad26508abf0e7c6bfeaac7e",
+    "installedLockSha256": "92b12a36d7c97ae394055839ae5dc1d6a7885280a47ace6162a023a4721b3837",
+    "hostSourceSha256": "ac34e683eabd8b6c8f5eb3f44999c18edaf6ae69441a8bbc0ec8033d50c2d495",
+    "cacheDigests": {
+      "public": "a84e7a33340fdc6533a88ea4e56adc0ebf561465068322a31f5a07193fdf4919",
+      "wallet": "a92fa5a58240918cc12c25bf2b4d933bc941145e36da066f41ec75433dea43db",
+      "txid": "c0f3d94ec25ff6036e49688c2399741a572b614fbf0eb40543a3b41e77a67e27"
+    },
+    "caches": "isolated, initially empty"
+  },
+  "localInstallationReportSha256": "ebaa0afa246a60104ae6dd78425472c08d16b3f94a90c8e00d2f80fae877dd21",
+  "accountAcceptance": {
+    "independentActors": 2,
+    "createdUsingInstallSource": "71cdb64984d8cca5c0348f3b94e4943c2ebef838",
+    "packageAndHostIdenticalToFinalInstall": true,
+    "fundingAddressColdReopensMatched": true,
+    "accountIdentityColdReopensMatched": true,
+    "pendingCacheExplicit": true,
+    "network": "dedicated application-owned Arti; public scans running, not complete",
+    "sends": 0,
+    "vaultsInitializedBy": "dry install A (non-qualifying); custody files identical on D"
+  },
+  "runtimeAcquisition": {
+    "engineFreshLockedDownload": true,
+    "engineInputFiles": 10060,
+    "engineArchiveSha256": "019f10880abf1c448aee02ec77c5c2d68c3561c7b4eef02095d66bb5fecd6a7a",
+    "proverFreshDownload": "16 archives checked against recipe integrities transcribed from the historical lock (digest recorded, lock not committed), plus all 73 consumed file pins",
+    "buildTools": "fresh scripts-disabled install of locked @electron/asar 3.4.1 and esbuild 0.28.2; both archives reproduced",
+    "circuits": "18 freshly downloaded public artifacts matched all pinned sizes and hashes; verification keys normalized, not freshly derived",
+    "proverArchiveSha256": "dd50a29f297867b3bf91cb425066e1d257ea02230a94b02e4cf34c5c70a0c7ab",
+    "buildToolLockSha256": "f82eff7fdc7dd8a921065a6329c21352069f8730bf21c34a3764285390ef84f2",
+    "circuitAcquisitionReportSha256": "ccd7d5b4d7931da8180c3449ffa3ce35d1020a17de7e30d67aabc6aaca2452d0",
+    "proverRecipeSha256": "1602c46b522b305a70af4abf626e47705ee190625d9d6b77a58ca25da2e51922"
+  },
+  "limits": [
+    "macOS arm64 only for this native observation",
+    "No live Alice-to-Bob transaction yet",
+    "No runtime redistribution or release approval",
+    "Full final-head CI still pending",
+    "Public services and chain remain unverified"
+  ],
+  "validation": {
+    "fullSuite": {
+      "suitesPassed": 305,
+      "suitesSkipped": 1,
+      "testsPassed": 12887,
+      "testsSkipped": 4,
+      "failed": 0,
+      "reportSha256": "69fcf9571a696192547c77da30333a393d7f9c18c709912913a458c9a72b0526"
+    },
+    "acquisitionFocused": {
+      "suites": 3,
+      "tests": 24
+    },
+    "lint": "passed",
+    "exactPushedHeadCI": "pending"
+  }
+}

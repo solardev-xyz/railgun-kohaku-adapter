@@ -62,7 +62,7 @@ genuine lanes; see its [scoped record](../qualification/reference-alice-bob-synt
   documented lifecycle without private instructions or a Freedom checkout?
 - What compatibility and release commitments are necessary before adoption?
 
-The fresh-host installation gate remains outstanding; a synthetic journey using existing authenticated runtime inputs does not establish that installation experience.
+The [fresh installation record](../qualification/reference-installation-2026-10-10/README.md) now covers isolated application dependencies, runtime inputs and cold account reopens on macOS arm64. It remains separate from the synthetic lifecycle; live two-account completion and other native platforms are still open.
 
 ## Information kept out of public reports
 

@@ -18,9 +18,10 @@ interfaces and the full Node suite. The [runtime builders](../../tools/railgun-r
 reproduce the pinned archives from separately authenticated inputs. Their
 [recorded rebuild](../qualification/reference-runtime-rebuild-2026-10-10/README.md)
 used cached inputs; a fresh-machine installation is a separate acceptance case.
-The reference application's standalone dependency manifest and installation
-qualification are still being completed. An existing local Electron binary is
-not evidence of a repeatable dependency install.
+The reference application's [fresh installation](../qualification/reference-installation-2026-10-10/README.md)
+now has macOS arm64 evidence, including isolated downloads and actual cold account
+reopens. Fresh engine/prover inputs, locked build tools and circuit downloads also reproduced the pinned runtime. Arti acquisition and other native platforms remain separate.
+An existing local Electron binary alone is not installation evidence.
 
 ## Detect circuit changes before a handoff
 
@@ -127,7 +128,7 @@ is created by the reference-host work.
 | Target | Current evidence |
 | --- | --- |
 | Node 24.18.1, macOS arm64 | Full package suite and focused later additions; existing locked dependencies. |
-| Electron 44.7.0, macOS arm64 | Independent native synthetic reference lifecycle; fresh runtime installation and live Tor still pending. |
+| Electron 44.7.0, macOS arm64 | Independent native synthetic lifecycle; fresh example/runtime setup and live public Tor reads; live private two-account completion pending. |
 | Node 24.18.1, Ubuntu 24.04 / macOS 14 CI | Workflow configured; result must be recorded on the pushed head. |
 | Electron Linux/Windows, browser, mobile | Not qualified. |
 
