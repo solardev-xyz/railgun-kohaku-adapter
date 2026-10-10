@@ -210,7 +210,7 @@ runs in a fresh process and opens its own bounded vault session.
 | `shield-history`, `shield-observe --transaction <hash>`, `shield-resolve --transaction <hash>` | Inspect and settle a Shield's existing public journal entry. |
 | `holds`, `observe --hold <id>`, `resolve --hold <id>` | Inspect private custody and settle an existing transaction. |
 | `submit-stored --hold <id>` | Explicitly review the first broadcast of an existing proved operation. The owner refuses an already journaled operation; this is never an automatic retry. |
-| `txid-sync` | Explicitly consent to at most 80 public TXID pages, within 10 minutes. |
+| `txid-sync` | Explicitly consent to at most 80 public TXID pages, within 10 minutes. Reports completed page/count progress without roots or cursors; a failed page is never retried automatically. |
 | `poi-prepare-shield --hold <id>`, `poi-prepare-transact --hold <id>` | Prepare POI for an existing operation using the original input's creation route. No automatic handoff. |
 | `poi-submit --capsule <digest>` | Separately review and hand off that prepared POI capsule once. |
 | `poi-recover --capsule <digest>` | Read attempted-output recovery. Does not resubmit. |

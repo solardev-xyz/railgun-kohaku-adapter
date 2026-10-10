@@ -6,6 +6,7 @@ async function synchronizeTxids({
   signal,
   review,
   deadline = Date.now() + 10 * 60000,
+  progress = () => {},
 }) {
   let last = null;
   for (let page = 0; page < 80; page++) {
@@ -24,6 +25,15 @@ async function synchronizeTxids({
       (last && result.count < last.count)
     )
       throw Error("Invalid TXID progress");
+    // Only a completed owner result advances this lower bound. Do not print
+    // roots, indexer cursors or an inferred result for a failed page.
+    progress(
+      Object.freeze({
+        status: "txid-syncing",
+        pages: page + 1,
+        count: result.count,
+      }),
+    );
     if (
       result.serviceLatestIndex !== null &&
       result.count > result.serviceLatestIndex

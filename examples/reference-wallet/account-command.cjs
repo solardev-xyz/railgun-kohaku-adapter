@@ -117,6 +117,7 @@ async function accountCommand({
       session,
       signal,
       review,
+      progress,
       deadline: Math.min(deadline, Date.now() + 10 * 60000),
     });
   }

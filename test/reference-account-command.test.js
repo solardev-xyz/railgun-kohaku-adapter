@@ -89,3 +89,24 @@ test("a read failure drains the lane, without silently resuming or rebuilding", 
   expect(f.lane.close).toHaveBeenCalledTimes(1);
   expect(f.session.openRead).toHaveBeenCalledTimes(1);
 });
+test("public TXID synchronization reports completed page counts through the command", async () => {
+  const f = fixture("txid-sync"),
+    progress = jest.fn(),
+    review = jest.fn(() => true);
+  f.session.synchronizeTxid = jest.fn(async () => ({
+    count: 1,
+    serviceLatestIndex: 0,
+    pending: false,
+    capacityReached: false,
+  }));
+  const reviews = { txidConsent: jest.fn(async () => review) };
+  expect(await accountCommand({ ...f.options, progress, reviews })).toMatchObject({
+    status: "complete",
+  });
+  expect(progress.mock.calls).toEqual([
+    [{ status: "txid-syncing", pages: 1, count: 1 }],
+  ]);
+  expect(reviews.txidConsent).toHaveBeenCalledWith(f.options.signal);
+  expect(f.session.openRead).not.toHaveBeenCalled();
+  expect(f.session.advancePublic).not.toHaveBeenCalled();
+});

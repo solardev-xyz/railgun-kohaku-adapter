@@ -34,12 +34,17 @@ test("synchronizes create-if-missing one page at a time until the observed index
     });
 });
 test("a transport failure is returned, never retried", async () => {
-  const f = fixture();
+  const f = fixture(),
+    progress = jest.fn();
   f.session.synchronizeTxid
-    .mockResolvedValueOnce(row(100))
+    .mockResolvedValueOnce({ ...row(100), root: "not-for-output" })
     .mockRejectedValueOnce(Error("transport"));
-  await expect(synchronizeTxids(f)).rejects.toThrow("transport");
+  await expect(synchronizeTxids({ ...f, progress })).rejects.toThrow("transport");
   expect(f.session.synchronizeTxid).toHaveBeenCalledTimes(2);
+  expect(progress.mock.calls).toEqual([
+    [{ status: "txid-syncing", pages: 1, count: 100 }],
+  ]);
+  expect(Object.isFrozen(progress.mock.calls[0][0])).toBe(true);
 });
 test("no progress stops; a deadline pauses before another page", async () => {
   const f = fixture();
@@ -57,9 +62,11 @@ test("no progress stops; a deadline pauses before another page", async () => {
 test.each([{ count: -1 }, { pending: true }, { count: 1.5 }])(
   "invalid owner progress %p refuses",
   async (patch) => {
-    const f = fixture();
+    const f = fixture(),
+      progress = jest.fn();
     f.session.synchronizeTxid.mockResolvedValue({ ...row(100), ...patch });
-    await expect(synchronizeTxids(f)).rejects.toThrow("Invalid");
+    await expect(synchronizeTxids({ ...f, progress })).rejects.toThrow("Invalid");
+    expect(progress).not.toHaveBeenCalled();
   },
 );
 function summary() {
