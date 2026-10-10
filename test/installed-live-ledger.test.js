@@ -3184,3 +3184,260 @@ test("a status that would expire refuses the custody verification before its uni
   await expect(custodyMode()(context)).rejects.toThrow();
   expect(ledger.inspect(p, j6).budgets["custody-verify"]).toBeUndefined();
 });
+
+// --- The summary-only link (journey-7) ----------------------------------------
+const TRANSFER_HASH = "0x" + "a".repeat(64);
+const UNSHIELD_HASH = "0x" + "b".repeat(64);
+// Journey-6 to a finalized actual unshield: a refused further attempt, its
+// custody verification, the acknowledged unshield and its observe report.
+function finishedJourney6({ outcome = { classification: "acknowledged", transactionHash: UNSHIELD_HASH }, observe = true } = {}) {
+  const { p, j5, attemptId } = refusedJourney5();
+  const j6 = journey6Of(p, j5, attemptId);
+  // Journey-5's refused attempt finished 20 minutes ago (refusedJourney5).
+  const past = Date.now() - 14 * 60 * 1000;
+  const fifth = at(past, () => {
+    verify(p, j6, attemptId);
+    const fourth = refusedAttempt6(p, j6);
+    verify(p, j6, fourth);
+    return fourth;
+  });
+  const actual = at(past + 6 * 60 * 1000 + 1000, () => ledger.reserve(p, j6, "unshield", { holdIdsBeforeSha256: [sha6("hold-1")] }));
+  if (outcome) ledger.finish(p, j6, actual, outcome);
+  const observeSha = uniq();
+  if (outcome) ledger.recordReport(p, j6, "live-unshield", uniq());
+  if (observe && outcome) ledger.recordReport(p, j6, "live-observe", observeSha);
+  return { p, j5, j6, actual, fifth, observeSha };
+}
+function journey7Of(p, j6, { observeSha, actual }, change = (value) => value) {
+  const hash = (v) => crypto6.createHash("sha256").update(v).digest("hex");
+  const identity = (v) => ({
+    freedomCommit: v.freedomCommit,
+    packageCommit: v.packageCommit,
+    packageTarSha256: v.packageTarSha256,
+    runnerSha256: v.runnerSha256,
+  });
+  const { attempts: _attempts, ...rest } = j6.binding;
+  const sends = ledger.inspect(p, j6).sends;
+  const next = { ...j6, name: ledger.JOURNEY7, freedomCommit: "7".repeat(40), packageCommit: "8".repeat(40), runnerSha256: "2".repeat(64), caps: { ...j6.caps } };
+  next.binding = {
+    ...rest,
+    predecessor: {
+      name: ledger.JOURNEY6,
+      ledgerSha256: hash(fs.readFileSync(ledger.ledgerFile(p, ledger.JOURNEY6))),
+      headerSha256: hash(JSON.stringify(j6)),
+      reason: "the summary refused at a receipt read the host helper did not admit",
+    },
+    summary: {
+      from: identity(j6),
+      to: identity(next),
+      reason: "summary only: receipts and conservation",
+      transfer: { attemptId: sends[0].pending.attemptId, transactionHash: sends[0].finished.outcome.transactionHash },
+      unshield: { attemptId: actual, transactionHash: UNSHIELD_HASH },
+      observe: { report: "/synthetic/l69/report.json", reportSha256: observeSha, mode: "live-observe", headerSha256: hash(JSON.stringify(j6)) },
+      caps: { ...j6.caps },
+    },
+  };
+  return change(next);
+}
+test("journey-7 carries the complete state and admits the summary's scan and report only", () => {
+  const f = finishedJourney6();
+  const j7 = journey7Of(f.p, f.j6, f);
+  const state = ledger.inspect(f.p, j7);
+  expect(state.sends).toHaveLength(5);
+  expect(state.sends.at(-1).finished.outcome.transactionHash).toBe(UNSHIELD_HASH);
+  expect(state.budgets).toEqual(ledger.inspect(f.p, f.j6).budgets);
+  expect(state.reports).toEqual(ledger.inspect(f.p, f.j6).reports);
+  expect(j7.caps).toEqual(f.j6.caps);
+  // Its catch-up scan and its summary report.
+  const n = (state.budgets["scan-range"] ?? []).length + 1;
+  ledger.consume(f.p, j7, "scan-range", ledger.policyFor(j7.caps, "scan-range"), Date.now(), { target: 99999999 });
+  ledger.progress(f.p, j7, 99999999, "0x" + "4".repeat(64), n);
+  ledger.recordReport(f.p, j7, "live-summary", uniq());
+  // Journey-6 is closed to new writes once journey-7 exists.
+  expect(() => ledger.recordReport(f.p, f.j6, "live-observe", uniq())).toThrow();
+});
+test("journey-7 refuses every send, custody, status, opener, phase or other report", () => {
+  for (const write of [
+    (p, j7) => ledger.reserve(p, j7, "unshield", {}),
+    (p, j7) => ledger.reserve(p, j7, "transfer", {}),
+    (p, j7) => ledger.consume(p, j7, "custody-verify", { max: 3 }, Date.now(), { attemptId: "c".repeat(32) }),
+    (p, j7) => ledger.consume(p, j7, "poi-status", { max: 99 }, Date.now() + 3600 * 1000),
+    (p, j7) => ledger.consume(p, j7, "scan-open:pending", { max: 99 }),
+    (p, j7) => ledger.consume(p, j7, "observe:unshield", { max: 99 }),
+    (p, j7) => ledger.consume(p, j7, "txid-page", { max: 999 }),
+    (p, j7) => ledger.startPhase(p, j7),
+    (p, j7) => ledger.recordReport(p, j7, "live-observe", uniq()),
+    (p, j7) => ledger.recordReport(p, j7, "live-unshield", uniq()),
+    (p, j7) => ledger.poiReproofReserve(p, j7, {}),
+    (p, j7) => ledger.poiRetryReserve(p, j7, {}),
+    (p, j7) => ledger.resumeAttempt(p, j7, "first", 1, 2, 2),
+  ]) {
+    const f = finishedJourney6();
+    const j7 = journey7Of(f.p, f.j6, f);
+    expect(() => write(f.p, j7)).toThrow();
+    expect(fs.existsSync(ledger.ledgerFile(f.p, ledger.JOURNEY7))).toBe(false);
+  }
+});
+test("journey-7 refuses a predecessor whose actual unshield is pending, refused, hashless or unobserved", () => {
+  for (const options of [
+    { outcome: null },
+    { outcome: { classification: "unjournaled-after-refusal", error: "RAILGUN_KOHAKU_REFUSED" } },
+    { outcome: { classification: "acknowledged" } },
+    { observe: false },
+  ]) {
+    const f = finishedJourney6(options);
+    expect(() => ledger.inspect(f.p, journey7Of(f.p, f.j6, f))).toThrow();
+  }
+});
+const withSummary = (change) => (v) => ({ ...v, binding: { ...v.binding, summary: change(v.binding.summary) } });
+test.each([
+  ["another observe digest", withSummary((s) => ({ ...s, observe: { ...s.observe, reportSha256: "1".repeat(64) } }))],
+  ["another observe mode", withSummary((s) => ({ ...s, observe: { ...s.observe, mode: "live-reconcile" } }))],
+  ["another observe producer", withSummary((s) => ({ ...s, observe: { ...s.observe, headerSha256: "1".repeat(64) } }))],
+  ["another unshield hash", withSummary((s) => ({ ...s, unshield: { ...s.unshield, transactionHash: "0x" + "c".repeat(64) } }))],
+  ["another unshield attempt", withSummary((s) => ({ ...s, unshield: { ...s.unshield, attemptId: "0".repeat(32) } }))],
+  ["another transfer hash", withSummary((s) => ({ ...s, transfer: { ...s.transfer, transactionHash: "0x" + "c".repeat(64) } }))],
+  ["replenished ranges", (v) => ({ ...v, caps: { ...v.caps, scanRanges: v.caps.scanRanges + 1 } })],
+  ["replenished bound caps", withSummary((s) => ({ ...s, caps: { ...s.caps, poiStatus: { ...s.caps.poiStatus, max: 9 } } }))],
+  ["a third chain send", (v) => ({ ...v, caps: { ...v.caps, sends: 3 } })],
+  [
+    "another package tar",
+    (v) => ({
+      ...v,
+      packageTarSha256: "9".repeat(64),
+      binding: { ...v.binding, summary: { ...v.binding.summary, to: { ...v.binding.summary.to, packageTarSha256: "9".repeat(64) } } },
+    }),
+  ],
+  ["an attempts binding", (v) => ({ ...v, binding: { ...v.binding, attempts: {} } })],
+  ["an upgrade binding", (v) => ({ ...v, binding: { ...v.binding, upgrade: {} } })],
+  ["another profile", (v) => ({ ...v, profile: "/elsewhere" })],
+])("journey-7 refuses %s", (_name, change) => {
+  const f = finishedJourney6();
+  expect(() => ledger.inspect(f.p, journey7Of(f.p, f.j6, f, change))).toThrow();
+});
+test("altered journey-6 bytes refuse journey-7", () => {
+  const f = finishedJourney6();
+  const j7 = journey7Of(f.p, f.j6, f);
+  expect(ledger.inspect(f.p, j7).sends).toHaveLength(5);
+  fs.appendFileSync(ledger.ledgerFile(f.p, ledger.JOURNEY6), JSON.stringify({ type: "report", mode: "live-observe", sha256: uniq(), at: 1 }) + "\n");
+  expect(() => ledger.inspect(f.p, j7)).toThrow();
+});
+test("hand-written journey-7 records refuse on replay", () => {
+  for (const record of [
+    { type: "send-pending", send: "unshield", attemptId: "d".repeat(32), reservedAt: new Date().toISOString(), binding: {} },
+    { type: "budget", kind: "custody-verify", n: 3, at: Date.now(), attemptId: "d".repeat(32) },
+    { type: "budget", kind: "poi-status", n: 7, at: Date.now() },
+    { type: "phase-start", phase: "upgrade", at: Date.now() },
+    { type: "report", mode: "live-unshield", sha256: "e".repeat(64), at: Date.now() },
+    { type: "resume-attempt", mode: "first", lower: 1, upper: 2, target: 2, at: Date.now() },
+  ]) {
+    const f = finishedJourney6();
+    const j7 = journey7Of(f.p, f.j6, f);
+    ledger.recordReport(f.p, j7, "live-summary", uniq());
+    fs.appendFileSync(ledger.ledgerFile(f.p, ledger.JOURNEY7), JSON.stringify(record) + "\n");
+    expect(() => ledger.inspect(f.p, j7)).toThrow();
+  }
+});
+test("journey-7 admits the summary only", () => {
+  const { assertModeAdmitted } = require("../tools/qualification/installed-live/live-launcher.cjs");
+  expect(() => assertModeAdmitted(ledger.JOURNEY7, "live-summary")).not.toThrow();
+  for (const mode of [
+    "live-observe",
+    "live-reconcile",
+    "live-unshield",
+    "live-poi-status",
+    "live-custody-verify",
+    "live-submit",
+    "live-poi",
+    "live-rebuild",
+    "live-poi-retry",
+    "live-poi-reproof",
+    "live-reproof-rebuild",
+    "live-upgrade-rebuild",
+  ])
+    expect(() => assertModeAdmitted(ledger.JOURNEY7, mode)).toThrow();
+});
+
+// --- Journey-7 resolution evidence and receipt accounting ----------------------
+function summaryEvidence(change = (scenario) => scenario, outer = {}) {
+  const dir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "summary-evidence-")));
+  const headerSha256 = "8".repeat(64);
+  const scenario = change({
+    schema: "railgun-installed-live-observe-v1",
+    send: "unshield",
+    holdIdSha256: "5".repeat(64),
+    transactionHash: UNSHIELD_HASH,
+    continuable: true,
+    final: { observation: { status: "included", blockNumber: 100, blockHash: "0x" + "1".repeat(64) }, resolved: true },
+    resolution: { status: "resolved", outcome: "matched", transactionHash: UNSHIELD_HASH, finalizedBlockNumber: 101 },
+    ledgerHeaderSha256: headerSha256,
+  });
+  const report = path.join(dir, "report.json");
+  fs.writeFileSync(report, JSON.stringify({ schema: "railgun-installed-live-native-v1", mode: "live-observe", transport: "synthetic", scenario, ...outer }));
+  return {
+    transport: "synthetic",
+    ledgerHeader: {
+      binding: {
+        summary: {
+          observe: { report, reportSha256: sha6(fs.readFileSync(report)), mode: "live-observe", headerSha256 },
+          unshield: { attemptId: "c".repeat(32), transactionHash: UNSHIELD_HASH },
+        },
+      },
+    },
+  };
+}
+test("the summary evidence is journey-6's matched, finalized resolution of the actual unshield", () => {
+  const { assertSummaryEvidence } = require("../tools/qualification/installed-live/live-launcher.cjs");
+  expect(() => assertSummaryEvidence(summaryEvidence())).not.toThrow();
+  for (const change of [
+    (s) => ({ ...s, transactionHash: "0x" + "c".repeat(64) }),
+    (s) => ({ ...s, continuable: false }),
+    (s) => ({ ...s, final: { ...s.final, resolved: false } }),
+    (s) => ({ ...s, final: { ...s.final, observation: { ...s.final.observation, status: "pending" } } }),
+    (s) => ({ ...s, resolution: { ...s.resolution, outcome: "mismatched" } }),
+    (s) => ({ ...s, resolution: { ...s.resolution, finalizedBlockNumber: 99 } }),
+    (s) => ({ ...s, resolution: { ...s.resolution, transactionHash: "0x" + "c".repeat(64) } }),
+    (s) => ({ ...s, send: "transfer" }),
+    (s) => ({ ...s, ledgerHeaderSha256: "7".repeat(64) }),
+  ])
+    expect(() => assertSummaryEvidence(summaryEvidence(change))).toThrow();
+  expect(() => assertSummaryEvidence(summaryEvidence((s) => s, { mode: "live-reconcile" }))).toThrow();
+  const request = summaryEvidence();
+  fs.appendFileSync(request.ledgerHeader.binding.summary.observe.report, " ");
+  expect(() => assertSummaryEvidence(request)).toThrow();
+});
+const accountReceipts = (...args) => require("../tools/qualification/installed-live/live-scenario.cjs").accountReceipts(...args);
+const receipt = (overrides = {}) => ({
+  status: "0x1",
+  gasUsed: "1248446",
+  effectiveGasPrice: "1000000000",
+  blockNumber: 100,
+  blockHash: "0x" + "1".repeat(64),
+  ...overrides,
+});
+const inclusions = {
+  transfer: { blockNumber: 90, blockHash: "0x" + "2".repeat(64) },
+  unshield: { blockNumber: 100, blockHash: "0x" + "1".repeat(64) },
+};
+const transferReceipt = () => receipt({ blockNumber: 90, blockHash: "0x" + "2".repeat(64) });
+test("receipts account the actual gas of exactly the two transactions", () => {
+  const { fees, gasWei } = accountReceipts({ transfer: transferReceipt(), unshield: receipt() }, inclusions);
+  expect(fees.transfer).toBe(1248446n * 1000000000n);
+  expect(gasWei).toBe(2n * 1248446n * 1000000000n);
+});
+test.each([
+  ["a failed status", { status: "0x0" }],
+  ["a missing gas", { gasUsed: undefined }],
+  ["a malformed gas", { gasUsed: "0x1312" }],
+  ["a malformed price", { effectiveGasPrice: "1e9" }],
+  ["another block number", { blockNumber: 101 }],
+  ["another block hash", { blockHash: "0x" + "3".repeat(64) }],
+  ["a fee over the per-send cap", { effectiveGasPrice: "2000000000000" }],
+])("receipt accounting refuses %s", (_name, overrides) => {
+  expect(() => accountReceipts({ transfer: transferReceipt(), unshield: receipt(overrides) }, inclusions)).toThrow();
+});
+test("receipt accounting refuses a missing receipt or a third", () => {
+  expect(() => accountReceipts({ unshield: receipt() }, inclusions)).toThrow();
+  expect(() => accountReceipts({ transfer: null, unshield: receipt() }, inclusions)).toThrow();
+  expect(() => accountReceipts({ transfer: transferReceipt(), unshield: receipt(), extra: receipt() }, inclusions)).toThrow();
+});

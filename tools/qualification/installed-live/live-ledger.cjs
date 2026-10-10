@@ -58,7 +58,14 @@ const JOURNEY5 = 'installed-journey-sentio-journey-5';
 // previous refused attempt, at least five minutes after its finish. Still at
 // most two chain transactions.
 const JOURNEY6 = 'installed-journey-sentio-journey-6';
-const CHAIN = Object.freeze([FIRST, CONTINUATION, RESUME, RESUME2, RESUME3, JOURNEY2, JOURNEY3, JOURNEY4, JOURNEY5, JOURNEY6]);
+// The one reviewed summary-only link: journey-6's unshield finalized, but its
+// summary refused at the receipt read the host helper did not admit. A new
+// host (the helper's read allowlist) and runner; same package and generation.
+// It carries the complete state and admits the summary only: its bounded
+// catch-up scan and its report. No send, preparation, custody, POI, status,
+// opener or phase record.
+const JOURNEY7 = 'installed-journey-sentio-journey-7';
+const CHAIN = Object.freeze([FIRST, CONTINUATION, RESUME, RESUME2, RESUME3, JOURNEY2, JOURNEY3, JOURNEY4, JOURNEY5, JOURNEY6, JOURNEY7]);
 // The links that start a new generation under a phase of their own.
 const UPGRADES = Object.freeze([JOURNEY3, JOURNEY4]);
 const UPGRADE_ADDITIONS = Object.freeze({
@@ -199,13 +206,87 @@ function predecessor(directory, header) {
   // first continuation changes the endpoint; the resume keeps it.
   // Only the upgrade links change the host and artifact, under their binding.
   for (const key of ['type', 'version', 'transport', 'profile', 'freedomCommit', 'packageTarSha256'])
-    if (!UPGRADES.includes(header.name) || !['freedomCommit', 'packageTarSha256'].includes(key))
+    if (
+      !(UPGRADES.includes(header.name) && ['freedomCommit', 'packageTarSha256'].includes(key)) &&
+      !(header.name === JOURNEY7 && key === 'freedomCommit')
+    )
       check(same(previous[key], header[key]), 'predecessor-scope:' + key);
   check(previous.binding?.heldTransferReportSha256 === header.binding.heldTransferReportSha256, 'predecessor-held');
-  if ([RESUME, RESUME2, RESUME3, JOURNEY2, JOURNEY3, JOURNEY4, JOURNEY5, JOURNEY6].includes(header.name))
+  if ([RESUME, RESUME2, RESUME3, JOURNEY2, JOURNEY3, JOURNEY4, JOURNEY5, JOURNEY6, JOURNEY7].includes(header.name))
     check(same(previous.binding?.rpc?.url, header.binding?.rpc?.url), 'predecessor-endpoint');
   const carried = index - 1 > 0 ? predecessor(directory, previous) : {};
   const state = replay(records, previous, carried);
+  if (header.name === JOURNEY7) {
+    check(previous.name === JOURNEY6, 'predecessor-summary');
+    const identity = (value) => ({
+      freedomCommit: value.freedomCommit,
+      packageCommit: value.packageCommit,
+      packageTarSha256: value.packageTarSha256,
+      runnerSha256: value.runnerSha256,
+    });
+    const summary = header.binding?.summary;
+    // Old and new host and runner; the package tar never changes.
+    check(
+      !['upgrade', 'phase', 'amendment', 'attempts'].some((key) => Object.hasOwn(header.binding, key)) &&
+        summary &&
+        same(Object.keys(summary).sort(), ['caps', 'from', 'observe', 'reason', 'to', 'transfer', 'unshield']) &&
+        same(summary.from, identity(previous)) &&
+        same(summary.to, identity(header)) &&
+        summary.to.packageTarSha256 === summary.from.packageTarSha256 &&
+        typeof summary.reason === 'string' &&
+        summary.reason.length > 0,
+      'predecessor-summary'
+    );
+    // Both actual transactions finished with known hashes; every reservation
+    // between them finished unsent with no hash; nothing pending.
+    const sends = state.sends;
+    const hashOf = (send) => send?.finished?.outcome?.transactionHash;
+    const tx = (value) => typeof value === 'string' && /^0x[0-9a-f]{64}$/.test(value);
+    check(
+      sends.length >= 3 &&
+        sends.every((send) => send.finished) &&
+        sends[0].pending.send === 'transfer' &&
+        CONTINUING.includes(sends[0].finished.outcome?.classification) &&
+        sends.at(-1).pending.send === 'unshield' &&
+        CONTINUING.includes(sends.at(-1).finished.outcome?.classification) &&
+        tx(hashOf(sends[0])) &&
+        tx(hashOf(sends.at(-1))) &&
+        sends
+          .slice(1, -1)
+          .every(
+            (send) =>
+              send.pending.send === 'unshield' &&
+              [REFUSED].includes(send.finished.outcome?.classification) &&
+              !Object.hasOwn(send.finished.outcome, 'transactionHash')
+          ),
+      'predecessor-summary-sends'
+    );
+    check(
+      same(summary.transfer, { attemptId: sends[0].pending.attemptId, transactionHash: hashOf(sends[0]) }) &&
+        same(summary.unshield, { attemptId: sends.at(-1).pending.attemptId, transactionHash: hashOf(sends.at(-1)) }),
+      'predecessor-summary-bound'
+    );
+    // The recorded matched and finalized resolution: journey-6's own observe
+    // report row, under journey-6's own header.
+    const observe = summary.observe;
+    check(
+      observe &&
+        same(Object.keys(observe).sort(), ['headerSha256', 'mode', 'report', 'reportSha256']) &&
+        observe.mode === 'live-observe' &&
+        observe.headerSha256 === header.binding.predecessor.headerSha256 &&
+        typeof observe.report === 'string' &&
+        path.isAbsolute(observe.report) &&
+        records.slice(1).some((record) => record.type === 'report' && record.mode === 'live-observe' && record.sha256 === observe.reportSha256),
+      'predecessor-summary-observe'
+    );
+    check(
+      state.poi.pending && state.poi.finished && state.retry.pending && state.retry.finished && state.reproof.pending && state.reproof.finished,
+      'predecessor-summary-poi'
+    );
+    // Journey-6's caps exactly: nothing replenished, nothing added.
+    check(same(canonical(summary.caps), canonical(previous.caps)) && same(canonical(header.caps), canonical(previous.caps)), 'predecessor-summary-caps');
+    return state;
+  }
   if (header.name === JOURNEY6) {
     check(previous.name === JOURNEY5, 'predecessor-attempts');
     const identity = (value) => ({
@@ -569,7 +650,7 @@ function predecessor(directory, header) {
 // link admits its bound predecessor's rows; the upgrade link admits the rows of
 // every verified ancestor, each only with its own producer header.
 function predecessorReports(profile, header) {
-  if (![JOURNEY2, ...UPGRADES, JOURNEY5, JOURNEY6].includes(header.name)) return [];
+  if (![JOURNEY2, ...UPGRADES, JOURNEY5, JOURNEY6, JOURNEY7].includes(header.name)) return [];
   const directory = path.dirname(ledgerFile(profile, header.name));
   const rows = [];
   let current = header;
@@ -638,7 +719,10 @@ function replay(records, header, carried = {}) {
   let phase = null;
   const ownSoFar = [];
   for (const record of records.slice(1)) {
+    // The summary-only link records its catch-up scan and its report only.
+    if (header.name === JOURNEY7) check(['budget', 'scan-progress', 'report'].includes(record?.type), 'summary-record');
     if (record?.type === 'send-pending') {
+      check(header.name !== JOURNEY7, 'summary-send');
       check(sends.every((send) => send.finished), 'pending-attempt');
       // The amendment's one further unshield: only after exactly its bound,
       // reconciled unsent reservation. A fourth reservation never.
@@ -686,6 +770,7 @@ function replay(records, header, carried = {}) {
         check(CONTINUING.includes(sends[0].finished.outcome?.classification), 'transfer-not-continuable');
       sends.push({ pending: record, finished: null });
     } else if (record?.type === 'send-finished') {
+      check(header.name !== JOURNEY7, 'summary-send');
       const last = sends.at(-1);
       check(last && !last.finished && last.pending.attemptId === record.attemptId, 'send-finished');
       last.finished = record;
@@ -694,6 +779,8 @@ function replay(records, header, carried = {}) {
       // The amendment opens no generation: no scan openers of its own.
       if (header.name === JOURNEY5) check(!record.kind.startsWith('scan-open:'), 'amendment-opener');
       if (header.name === JOURNEY6) check(!record.kind.startsWith('scan-open:'), 'attempts-opener');
+      // The summary-only link: its catch-up scan ranges, nothing else.
+      if (header.name === JOURNEY7) check(record.kind === 'scan-range', 'summary-budget');
       // One custody verification per refused attempt, on journey-6 only: after
       // that attempt's own report (journey-5's bound one for the first), never
       // after a reconcile report, a hash or a pending reservation.
@@ -801,6 +888,7 @@ function replay(records, header, carried = {}) {
       progress.push(record);
     } else if (record?.type === 'report') {
       check(typeof record.mode === 'string' && /^[0-9a-f]{64}$/.test(record.sha256), 'report');
+      if (header.name === JOURNEY7) check(record.mode === 'live-summary', 'summary-report');
       check(!reports.some((row) => row.sha256 === record.sha256), 'report-duplicate');
       reports.push(record);
     } else throw fail('record');
@@ -999,6 +1087,7 @@ function resumeDeadline(profile, header) {
   return first ? first.at + RESUME3_WINDOW_MS : null;
 }
 module.exports = {
+  JOURNEY7,
   JOURNEY6,
   ATTEMPT_RESERVATIONS,
   CUSTODY_VERIFICATIONS,

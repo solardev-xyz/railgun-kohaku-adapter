@@ -273,7 +273,16 @@ async function main() {
         assert.match(hash, /^0x[0-9a-f]{64}$/);
         const value = await client.rpc('eth_getTransactionReceipt', [hash]);
         assert.ok(value && value.transactionHash?.toLowerCase() === hash);
-        return { status: value.status, gasUsed: BigInt(value.gasUsed).toString(), effectiveGasPrice: BigInt(value.effectiveGasPrice).toString(), blockNumber: Number(BigInt(value.blockNumber)) };
+        // Strict quantities: a missing or malformed field refuses, never a default.
+        for (const key of ['status', 'gasUsed', 'effectiveGasPrice', 'blockNumber']) assert.match(value[key], /^0x[0-9a-f]{1,64}$/);
+        assert.match(value.blockHash, /^0x[0-9a-f]{64}$/);
+        return {
+          status: value.status,
+          gasUsed: BigInt(value.gasUsed).toString(),
+          effectiveGasPrice: BigInt(value.effectiveGasPrice).toString(),
+          blockNumber: Number(BigInt(value.blockNumber)),
+          blockHash: value.blockHash.toLowerCase(),
+        };
       };
     } else {
       const family = path.join(__dirname, '../installed-journey');
@@ -364,7 +373,9 @@ async function main() {
       readReceipt = async (hash) => {
         const tx = chain.state().transactions.find((row) => row.hash === hash);
         assert.ok(tx && tx.blockNumber !== null);
-        return { status: tx.status, gasUsed: '1248446', effectiveGasPrice: tx.gasPrice, blockNumber: tx.blockNumber };
+        // The synthetic chain's block hash convention: the word of n + 1000.
+        const blockHash = '0x' + BigInt(tx.blockNumber + 1000).toString(16).padStart(64, '0');
+        return { status: tx.status, gasUsed: '1248446', effectiveGasPrice: tx.gasPrice, blockNumber: tx.blockNumber, blockHash };
       };
     }
     manager = fixed('identity-manager.js');

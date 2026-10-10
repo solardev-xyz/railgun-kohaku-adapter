@@ -372,7 +372,10 @@ function finishReport(context, value) {
 // digest and mode as a report row of that predecessor. Nothing is relabelled.
 function assertChained(context, previous) {
   if (previous.ledgerHeaderSha256 === sha(JSON.stringify(context.header))) return;
-  assert.ok([ledger.JOURNEY2, ...ledger.UPGRADES, ledger.JOURNEY5, ledger.JOURNEY6].includes(context.header.name), 'Report from another campaign');
+  assert.ok(
+    [ledger.JOURNEY2, ...ledger.UPGRADES, ledger.JOURNEY5, ledger.JOURNEY6, ledger.JOURNEY7].includes(context.header.name),
+    'Report from another campaign'
+  );
   if (context.header.name === ledger.JOURNEY2)
     assert.equal(previous.ledgerHeaderSha256, context.header.binding.predecessor.headerSha256, 'Report from another campaign');
   // Exact producer header, digest and mode as one ancestor recorded them.
@@ -1027,12 +1030,15 @@ async function unshield(context) {
 function sendReports(context) {
   const fs = require('fs');
   const chain = ledger.chainRecords(context.profile, context.header);
-  const own = fs
-    .readFileSync(ledger.ledgerFile(context.profile, context.header.name), 'utf8')
-    .trim()
-    .split('\n')
-    .slice(1)
-    .map((line) => JSON.parse(line));
+  const file = ledger.ledgerFile(context.profile, context.header.name);
+  const own = fs.existsSync(file)
+    ? fs
+        .readFileSync(file, 'utf8')
+        .trim()
+        .split('\n')
+        .slice(1)
+        .map((line) => JSON.parse(line))
+    : [];
   const result = {};
   for (const records of [...Object.values(chain), own])
     records.forEach((record, index) => {
@@ -1041,6 +1047,32 @@ function sendReports(context) {
       if (next?.type === 'report') result[record.attemptId] = { mode: next.mode, sha256: next.sha256 };
     });
   return result;
+}
+// The two actual transactions' receipts: success, integer quantities, the
+// recorded inclusion block when given, and the actual gas fee of each
+// (gasUsed * effectiveGasPrice) within the per-send and total caps. A missing,
+// mismatched or malformed receipt refuses; nothing falls back to an estimate.
+function accountReceipts(receipts, inclusions) {
+  assert.deepEqual(Object.keys(receipts).sort(), ['transfer', 'unshield']);
+  for (const [name, receipt] of Object.entries(receipts)) {
+    assert.ok(receipt && typeof receipt === 'object', 'Receipt of ' + name);
+    assert.equal(receipt.status, '0x1', 'Receipt status of ' + name);
+    assert.match(receipt.gasUsed, /^[0-9]{1,30}$/, 'Receipt gas of ' + name);
+    assert.match(receipt.effectiveGasPrice, /^[0-9]{1,30}$/, 'Receipt price of ' + name);
+    if (inclusions) {
+      const inclusion = inclusions[name];
+      assert.ok(Number.isSafeInteger(inclusion?.blockNumber) && typeof inclusion.blockHash === 'string', 'Recorded inclusion of ' + name);
+      assert.equal(receipt.blockNumber, inclusion.blockNumber, 'Receipt block of ' + name);
+      assert.equal(receipt.blockHash, inclusion.blockHash.toLowerCase(), 'Receipt block hash of ' + name);
+    }
+  }
+  const fees = Object.fromEntries(
+    Object.entries(receipts).map(([name, r]) => [name, BigInt(r.gasUsed) * BigInt(r.effectiveGasPrice)])
+  );
+  for (const fee of Object.values(fees)) assert.ok(fee <= MAX_GAS_FEE, 'Per-send fee cap');
+  const gasWei = fees.transfer + fees.unshield;
+  assert.ok(gasWei <= 2n * MAX_GAS_FEE, 'Total fee cap');
+  return { fees, gasWei };
 }
 // Read-only conservation account of the completed journey.
 async function summary(context) {
@@ -1064,10 +1096,13 @@ async function summary(context) {
     reproofRebuild = null,
     reproof = null,
     unsent = null,
+    unshield: unshieldReport = null,
+    transferObserve = null,
   } = lineage;
-  // The send amendment and the bounded-attempts link continue the circuit
-  // link's generation and lineage.
-  const attemptsLink = context.header.name === ledger.JOURNEY6;
+  // The send amendment, the bounded-attempts link and the summary-only link
+  // continue the circuit link's generation and lineage.
+  const summaryLink = context.header.name === ledger.JOURNEY7;
+  const attemptsLink = context.header.name === ledger.JOURNEY6 || summaryLink;
   const amended = context.header.name === ledger.JOURNEY5 || attemptsLink;
   const upgraded = ledger.UPGRADES.includes(context.header.name) || amended;
   const circuit = context.header.name === ledger.JOURNEY4 || amended;
@@ -1082,7 +1117,9 @@ async function summary(context) {
     const { reconcile, unsent: bound } = attemptsLink
       ? {
           reconcile: { reportSha256: rows[sendsNow[1].pending.attemptId]?.sha256 },
-          unsent: context.header.binding.attempts.previous.unsent,
+          unsent: summaryLink
+            ? { outputNoteIdSha256: sendsNow[1].pending.binding.outputNoteIdSha256 }
+            : context.header.binding.attempts.previous.unsent,
         }
       : context.header.binding.amendment;
     assertChained(context, unsent);
@@ -1097,6 +1134,25 @@ async function summary(context) {
     // The actual unshield is a different, journaled operation with its own hash.
     assert.notEqual(previous.holdIdSha256, null);
     assert.ok(previous.transactionHash);
+  }
+  // Journey-7: the bound actual unshield's own report and the transfer's own
+  // recorded inclusion, for the receipts' hash and block identity.
+  assert.equal(unshieldReport !== null, summaryLink);
+  assert.equal(transferObserve !== null, summaryLink);
+  if (summaryLink) {
+    const bound = context.header.binding.summary;
+    assert.equal(previous.reportSha256, bound.observe.reportSha256, 'The bound resolution report');
+    assert.equal(previous.transactionHash, bound.unshield.transactionHash);
+    assertChained(context, unshieldReport);
+    assert.equal(unshieldReport.schema, 'railgun-installed-live-unshield-v1');
+    assert.ok(['acknowledged', 'unknown'].includes(unshieldReport.outcome?.classification));
+    assert.equal(unshieldReport.outcome.transactionHash, bound.unshield.transactionHash);
+    assert.equal(unshieldReport.holdIdSha256, previous.holdIdSha256);
+    assertChained(context, transferObserve);
+    assert.equal(transferObserve.schema, 'railgun-installed-live-observe-v1');
+    assert.equal(transferObserve.send, 'transfer');
+    assert.equal(transferObserve.transactionHash, bound.transfer.transactionHash);
+    assert.equal(transferObserve.final?.observation?.status, 'included');
   }
   // Journey-6: every further refused attempt, journey-5's bound one first,
   // stays unsent with its own report; the last reservation is the actual one.
@@ -1188,22 +1244,21 @@ async function summary(context) {
     assert.equal(residual.unspent, before.unspent - 1);
     assert.equal(residual.unspentAmount, (BigInt(before.unspentAmount) - BigInt(poiReport.inputAmount)).toString());
     const receipts = {};
-    for (const [name, hash] of [['transfer', transfer.outcome.transactionHash], ['unshield', previous.transactionHash]]) {
+    for (const [name, hash] of [['transfer', transfer.outcome.transactionHash], ['unshield', previous.transactionHash]])
       receipts[name] = await readReceipt(hash);
-      assert.equal(receipts[name].status, '0x1', 'Receipt status of ' + name);
-    }
-    const fees = Object.fromEntries(
-      Object.entries(receipts).map(([name, r]) => [name, BigInt(r.gasUsed) * BigInt(r.effectiveGasPrice)])
+    // Journey-7: each receipt's block is exactly its recorded inclusion.
+    const { fees, gasWei } = accountReceipts(
+      receipts,
+      summaryLink ? { transfer: transferObserve.final.observation, unshield: previous.final.observation } : null
     );
-    for (const fee of Object.values(fees)) assert.ok(fee <= MAX_GAS_FEE, 'Per-send fee cap');
-    const gasWei = fees.transfer + fees.unshield;
-    assert.ok(gasWei <= 2n * MAX_GAS_FEE, 'Total fee cap');
     return finishReport(context, {
       schema: 'railgun-installed-live-summary-v1',
       trust: 'unverified-rpc',
       input: { amount: poiReport.inputAmount, spentBy: transfer.outcome.transactionHash },
       transferOutput: { amount: poiReport.outputAmount, spentBy: previous.transactionHash },
+      // The Railgun unshield fee, in the asset: never a chain gas fee.
       unshield: { amount: output.amount, received: output.received, fee: output.fee, recipient: output.recipient },
+      // Actual chain gas fees: receipt gasUsed * effectiveGasPrice, in wei.
       gas: {
         transfer: receipts.transfer,
         unshield: receipts.unshield,
@@ -1212,6 +1267,14 @@ async function summary(context) {
         withinCap: true,
       },
       conservation: { transferFullValue: true, unshieldFullOutput: true, receivedPlusFee: true, residualAsExpected: true },
+      ...(summaryLink
+        ? {
+            receiptInclusion: {
+              transfer: { blockNumber: receipts.transfer.blockNumber, blockHash: receipts.transfer.blockHash, matched: true },
+              unshield: { blockNumber: receipts.unshield.blockNumber, blockHash: receipts.unshield.blockHash, matched: true },
+            },
+          }
+        : {}),
       scanAnchor: anchor,
       residualNotes: residual,
       // Each POI handoff's own response, never merged; the final status decided.
@@ -1937,4 +2000,5 @@ module.exports = {
   sha,
   transportQualified,
   assertCustodyAdmits,
+  accountReceipts,
 };

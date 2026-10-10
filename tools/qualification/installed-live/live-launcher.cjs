@@ -101,6 +101,7 @@ function headerFor(request, binding, syntheticCaps) {
       ledger.JOURNEY4,
       ledger.JOURNEY5,
       ledger.JOURNEY6,
+      ledger.JOURNEY7,
     ].includes(name)
   );
   const resuming = [ledger.RESUME, ledger.RESUME2, ledger.RESUME3].includes(name);
@@ -131,6 +132,7 @@ function headerFor(request, binding, syntheticCaps) {
   const circuit = name === ledger.JOURNEY4;
   const amending = name === ledger.JOURNEY5;
   const attempting = name === ledger.JOURNEY6;
+  const summarizing = name === ledger.JOURNEY7;
   assert.equal(Object.hasOwn(binding, 'upgrade'), upgrading);
   assert.equal(Object.hasOwn(binding, 'phase'), upgrading);
   // The send amendment names this exact host, package and runner, the same
@@ -149,6 +151,20 @@ function headerFor(request, binding, syntheticCaps) {
     // Two chain transactions and the fee caps stay exactly as they were.
     for (const [key, value] of Object.entries(FIXED_CAPS)) assert.equal(amendment.caps?.[key], value);
     assert.equal(Object.hasOwn(amendment.caps, 'sendReservations'), false);
+  }
+  // The summary-only link: this exact host and runner, the same package tar as
+  // journey-6, and journey-6's caps exactly.
+  assert.equal(Object.hasOwn(binding, 'summary'), summarizing);
+  if (summarizing) {
+    const { summary } = binding;
+    assert.deepEqual(summary.to, {
+      freedomCommit: request.hostCommit,
+      packageCommit: request.packageCommit,
+      packageTarSha256: request.packageTarPin.sha256,
+      runnerSha256,
+    });
+    assert.equal(summary.from.packageTarSha256, request.packageTarPin.sha256);
+    for (const [key, value] of Object.entries(FIXED_CAPS)) assert.equal(summary.caps?.[key], value);
   }
   // The bounded-attempts link: the same host and package as journey-5, this
   // exact runner, and journey-5's caps carried with its three reservations.
@@ -217,6 +233,8 @@ function headerFor(request, binding, syntheticCaps) {
     binding,
     caps: amending
       ? { ...binding.amendment.caps, sendReservations: ledger.AMENDMENT_RESERVATIONS }
+      : summarizing
+      ? { ...binding.summary.caps }
       : attempting
       ? {
           ...binding.attempts.caps,
@@ -256,6 +274,27 @@ function assertUnsentEvidence(request) {
   assert.deepEqual(value.unshield, unsent.unshield);
   assert.equal(value.ledgerHeaderSha256, reconcile.headerSha256);
 }
+// Journey-7's bound resolution, read from journey-6's own observe report: the
+// actual unshield matched, included, resolved and finalized.
+function assertSummaryEvidence(request) {
+  const { observe, unshield } = request.ledgerHeader.binding.summary;
+  const report = read(observe.report, observe.reportSha256);
+  assert.equal(report.mode, 'live-observe');
+  assert.equal(report.transport, request.transport);
+  const value = report.scenario;
+  assert.equal(value.schema, 'railgun-installed-live-observe-v1');
+  assert.equal(value.send, 'unshield');
+  assert.equal(value.transactionHash, unshield.transactionHash);
+  assert.equal(value.continuable, true);
+  assert.equal(value.final?.resolved, true);
+  assert.equal(value.final?.observation?.status, 'included');
+  assert.equal(value.resolution?.status, 'resolved');
+  assert.equal(value.resolution?.outcome, 'matched');
+  assert.equal(value.resolution?.transactionHash, unshield.transactionHash);
+  assert.ok(Number.isSafeInteger(value.final.observation.blockNumber));
+  assert.ok(value.resolution.finalizedBlockNumber >= value.final.observation.blockNumber, 'Not finalized');
+  assert.equal(value.ledgerHeaderSha256, observe.headerSha256);
+}
 // Journey-6's bound refused attempt, read from its own recorded report: that
 // exact reservation refused with no hash, no hold and no G1 read.
 function assertAttemptEvidence(request) {
@@ -287,11 +326,15 @@ const UPGRADE_MODES = Object.freeze({
   [ledger.JOURNEY5]: Object.freeze([]),
   // The bounded-attempts link's own custody verification, plus continuation.
   [ledger.JOURNEY6]: Object.freeze(['live-custody-verify']),
+  // The summary-only link: the summary, and no continuation stage.
+  [ledger.JOURNEY7]: Object.freeze([]),
 });
+const SUMMARY_ONLY = Object.freeze(['live-summary']);
 const CONTINUATION_MODES = Object.freeze(['live-poi-status', 'live-unshield', 'live-observe', 'live-summary', 'live-reconcile']);
 function assertModeAdmitted(name, mode) {
   const own = UPGRADE_MODES[name] ?? null;
-  if (own) assert.ok([...own, ...CONTINUATION_MODES].includes(mode), 'Mode not admitted on the upgrade link');
+  if (name === ledger.JOURNEY7) assert.ok(SUMMARY_ONLY.includes(mode), 'Mode not admitted on the summary link');
+  else if (own) assert.ok([...own, ...CONTINUATION_MODES].includes(mode), 'Mode not admitted on the upgrade link');
   for (const [link, modes] of Object.entries(UPGRADE_MODES))
     if (link !== name) assert.ok(!modes.includes(mode), 'Mode admitted on its own upgrade link only');
 }
@@ -391,6 +434,7 @@ function validate(request) {
   const state = ledger.inspect(request.profileDirectory, request.ledgerHeader);
   if (request.ledgerHeader.name === ledger.JOURNEY5) assertUnsentEvidence(request);
   if (request.ledgerHeader.name === ledger.JOURNEY6) assertAttemptEvidence(request);
+  if (request.ledgerHeader.name === ledger.JOURNEY7) assertSummaryEvidence(request);
   // The third link's claim is derived from its predecessor's records by the ledger.
   if ([ledger.RESUME, ledger.RESUME2].includes(request.ledgerHeader.name)) assertResumeClaim(request);
   return state;
@@ -601,6 +645,7 @@ module.exports = {
   assertModeAdmitted,
   assertUnsentEvidence,
   assertAttemptEvidence,
+  assertSummaryEvidence,
   RECIPE,
   LIVE_CAPS,
 };
