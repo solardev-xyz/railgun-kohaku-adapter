@@ -106,6 +106,9 @@ label. Arti 2.6.0 has local configuration/state-lock evidence; this reference
 host has not yet qualified a live Arti version. Do not borrow another host's
 routing claim. [Runtime assembly](../../tools/railgun-runtime-build/README.md)
 and [artifact checks](../../docs/review/MAINTENANCE.md) remain separate steps.
+The [public scan screen](../../tools/conformance/REFERENCE-PUBLIC-SCREEN.md)
+exercises this application's actual Tor transport and the planned scan windows
+without opening an account or funding a wallet.
 
 ## Current commands
 
