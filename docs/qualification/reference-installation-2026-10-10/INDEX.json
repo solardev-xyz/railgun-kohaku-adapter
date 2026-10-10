@@ -100,5 +100,56 @@
     "profileOpened": false,
     "archivePinsMatched": true,
     "circuitFilesMatched": 18
+  },
+  "documentedInstallationFollowup": {
+    "sourceCommit": "28561340909f36bf94cacda8f96649afe77cce7c",
+    "passed": true,
+    "node": "v24.18.1",
+    "npm": "11.16.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "package": {
+      "name": "@freedom/railgun-kohaku-adapter",
+      "version": "0.6.0",
+      "sha256": "c2a4a7e61d96b8232b3aeffd6000799c57b9f0a34fe1786b8ba1a430de626e5c",
+      "integrity": "sha512-h/O12+EKVdPSa0XY8MgOoxCFXqs01U5Nh6eQg2gXl6artbBTVRZ8M56YVaaJYs/MxQYKcW+pAr49a1huQfNSLA==",
+      "files": 285
+    },
+    "dependencies": {
+      "electron": "44.7.0",
+      "ethers": "6.17.0",
+      "better-sqlite3": "13.0.3"
+    },
+    "electronVersion": "v44.7.0",
+    "electronDistribution": {
+      "sha256": "9f00baca916352af000105ced63bdb49f4c242f42cc45ddf5c61198beea40af7",
+      "entries": 273
+    },
+    "electronZip": {
+      "name": "electron-v44.7.0-darwin-arm64.zip",
+      "expectedSha256": "e04e411b58a0a14375dd21b0ab4a378fd38930a702e4e20e322fee4849404c0b",
+      "measuredSha256": "e04e411b58a0a14375dd21b0ab4a378fd38930a702e4e20e322fee4849404c0b"
+    },
+    "electronChecksumManifestSha256": "37f259d3590e58b167834de3027a7afc83ee1763de6842f6743673e8bf89c9ed",
+    "hostSourceSha256": "a45e950210e87bd1ca77f648e5482c1d92ae3511cf29880b9f8c26cefea0ee41",
+    "cacheDigests": {
+      "public": "88699e4418bbfbbe29f3f8bf4003327a8c41b0a943aef25e658ffdaa076c184c",
+      "wallet": "009dc594e98991085478f693603c4e7558b3e2b3a0fcfde61e4c47524cf80a5d",
+      "txid": "d6b11cacc18ea3075582cabb105b932a1d2a20938a0597708480d57d5b88825a"
+    },
+    "scope": "fresh dependency installation and executable version only; no account or network wallet operation",
+    "reportSha256": "06f031b6dd612dbc817bfacbec4a9af53d76c802a126c0afc1c4746121aab168",
+    "documentationCopiesMatchSource": [
+      "ARTI.md",
+      "LICENSE",
+      "REFERENCE-HOST-PROVENANCE.json"
+    ],
+    "review": "Read-only independent review of the documented macOS arm64 setup; identified documentation copy/inventory mismatch corrected before this installation. No external audit.",
+    "validation": {
+      "lint": "passed",
+      "focusedSuites": 2,
+      "focusedTests": 28
+    },
+    "priorAttempt": "The preceding installation at 8891fe9 refused an inventory mismatch after new documentation files were copied. It created no account and made no wallet request. Evidence preserved."
   }
 }

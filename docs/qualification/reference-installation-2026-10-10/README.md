@@ -74,3 +74,19 @@ Arti remains a separately pinned platform prerequisite. This setup does not open
 a profile or execute proofs, and its outputs did not replace the running live
 profiles' byte-identical pinned runtime. No release or distribution approval is
 implied by reproducing the files.
+
+## Documented setup follow-up
+
+A fresh isolated installation at `2856134` passed after independent read-only
+review of the published macOS arm64 setup. The installed application includes
+its Arti acquisition guide, MPL license and host provenance; all three copies
+match their source bytes. The installer initially rejected those added
+non-executable files at `8891fe9`; its exact documentation allowlist was fixed,
+with an extra executable file still refused by regression coverage.
+
+The follow-up uses the same pinned Electron distribution and locked dependency
+versions. Its exact package, host, report and runtime digests are in
+`documentedInstallationFollowup` in INDEX.json. This checks installation and
+executable version, not a new wallet or network run. The funded demonstration
+keeps its earlier frozen installation. The earlier installation and account
+results above retain their original scope and identities.
