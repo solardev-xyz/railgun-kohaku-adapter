@@ -218,6 +218,7 @@ async function actor(name, command, extra = {}) {
     );
     result.elapsedMs = Math.round(performance.now() - started);
     result.networkMethods = server?.methods.slice(firstMethod) ?? [];
+    if (extra.expectedReviews !== undefined) assert.equal(result.reviews, extra.expectedReviews);
     if (extra.expectedOutcome) {
       assert.deepEqual(result.result.outcome, extra.expectedOutcome);
       result.expectedRefusal = true;
@@ -289,6 +290,7 @@ async function main() {
     sourceBytes: fs.readFileSync(inputs.publicSource),
     crypto: worker,
     submitters: Object.values(funding),
+    ...(inputs.variant === "wide-retained" ? {balance: 1000000000000000000n} : {}),
     poiVerifier: createJourneyPoiVerifier({
       engineModules: inputs.engineModules,
       serialProver: inputs.serialProver,
@@ -439,6 +441,10 @@ async function main() {
   await actor("bob", "txid-sync");
   let unshield;
   if (inputs.variant === "wide-retained") {
+    await actor("bob", "unshield-note", {
+      noteId: bobNotes[0].id, recipient: funding.bob, maxOperationAmount: "1",
+      expectedRefusal: "KOHAKU_PRIVATE_ADAPTER_REFUSED",
+    });
     const crashed = await actor("bob", "unshield-note", {
       noteId: bobNotes[0].id, recipient: funding.bob, fixtureCrash: "after-prepared",
     });
@@ -450,7 +456,7 @@ async function main() {
     assert.equal((await actor("bob", "observe", {holdId, maxOperationAmount: "1"})).status, "unjournaled");
     assert.deepEqual((await actor("bob", "notes", {maxOperationAmount: "1"})).notes, bobNotes);
     assert.deepEqual((await actor("bob", "poi-status", {noteId: bobNotes[0].id, maxOperationAmount: "1"})).statuses, ["Valid"]);
-    await actor("bob", "submit-stored", {holdId, maxOperationAmount: "1",
+    await actor("bob", "submit-stored", {holdId, maxOperationAmount: "1", expectedReviews: 0,
       expectedOutcome: {status: "recovery-required", stage: "history"}});
     assert.equal(chain.state().transactions.length, 2);
     assert.deepEqual((await actor("bob", "holds")).records, retained);

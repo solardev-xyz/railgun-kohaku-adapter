@@ -100,12 +100,14 @@ function createJourneyChain({
   autoMine = null,
   poiVerifier = null,
   submitters = [SUBMITTER],
+  balance = BigInt(BALANCE),
 }) {
   // Explicit synthetic actors only. Older recorded lineages retain their fixed
   // default; independent adopter tests bind separate generated public EOAs.
   assert.ok(Array.isArray(submitters) && submitters.length > 0 && submitters.length <= 4);
   assert.ok(submitters.every(address => /^0x[0-9a-f]{40}$/.test(address) && BigInt(address) > 0n));
   assert.equal(new Set(submitters).size, submitters.length);
+  assert.ok(typeof balance === 'bigint' && balance > 0n && balance < (1n << 256n));
   const admittedSubmitters = new Set(submitters);
   const assertSubmitter = address => assert.ok(admittedSubmitters.has(address.toLowerCase()), 'Unknown synthetic actor');
   const senderOf = tx => tx.from ?? SUBMITTER;
@@ -608,7 +610,7 @@ function createJourneyChain({
       case 'eth_getCode':
       case 'eth_getBalance':
         assert.equal(params.length,2);assert.equal(params[1],'pending');assertSubmitter(params[0]);
-        return method === 'eth_getCode' ? '0x' : BALANCE;
+        return method === 'eth_getCode' ? '0x' : q(balance);
       case 'eth_gasPrice':
         assert.deepEqual(params, []);
         return q(GAS_PRICE);

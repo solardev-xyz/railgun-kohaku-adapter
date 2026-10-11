@@ -34,6 +34,7 @@ native(
       sourceBytes: fs.readFileSync(publicSource),
       crypto: worker,
       submitters: [alice.address.toLowerCase(), bob.address.toLowerCase()],
+      balance: 1000000000000000000n,
     });
     const abi = new ethers.Interface(SHIELD_ABI),
       word = (n) => ethers.zeroPadValue(ethers.toBeHex(n), 32);
@@ -66,6 +67,8 @@ native(
       );
     try {
       await chain.init();
+      expect(BigInt(await request(alice, "eth_getBalance", [alice.address, "pending"])))
+        .toBe(1000000000000000000n);
       const hashes = [];
       for (const actor of [alice, bob]) {
         expect(
