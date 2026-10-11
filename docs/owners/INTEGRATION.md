@@ -154,3 +154,30 @@ admission. Concurrent calls do not replace the in-flight call's record. A
 successful preparation leaves no diagnostic. The first observed refusal is retained through cleanup;
 records are not persisted. These diagnostics cover private preparation, not
 public Shield operations or delivery outcomes.
+
+### Public TXID read failure classification
+
+After `synchronizeTxid` rejects and its original promise settles,
+`session.readTxidReadOutcome()` returns either `null` or a frozen process-local
+`TxidReadOutcome`. It contains only a schema, `operation: 'txid-sync'`, and a
+`connection` or `timeout` category. It is null during work, after failed cleanup
+or lifetime loss, and for an unclassified failure. A malformed next
+non-concurrent invocation clears the previous result; a concurrent invocation
+cannot replace it.
+
+The fixed public-service acquisition catch records genuine transport provenance
+before closing its child capability. Sanitizers carry only a WeakMap-registered
+result; arbitrary fields on a later exception, a JSON-RPC error, rejected root,
+malformed reply, non-200 response or a cancellation do not qualify. A trusted
+transport host may supply closed own data properties `code` and
+`failureCategory`; hosts without a recognized category remain unclassified.
+These diagnostics confer no transaction, disclosure or signing authority.
+
+The reference `txid-sync` command allows at most two recovery continuations after
+such failures, ten seconds apart, under its original consent, 80 total owner
+calls (failed calls included), account/vault lifetime and ten-minute deadline.
+Each call already opens and drains a fresh TXID owner; recovery authenticates
+its pending page or checkpoint and never fabricates a cursor. Two consecutive
+segments without returned count progress stop. Scan recovery stays explicit:
+grouped header-read failures have no automatic classification here. No selected
+membership/status read, POI handoff, proof, signing or broadcast uses this loop.

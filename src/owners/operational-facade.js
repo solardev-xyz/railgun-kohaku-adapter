@@ -1,5 +1,6 @@
 /** Private trusted-main lifecycle facade. No package export or renderer bridge. */
 "use strict";
+const { readPublicReadFailure } = require("./public-read-outcome");
 const path = require("path");
 const { types } = require("util");
 const host = require("./host-bindings");
@@ -1339,7 +1340,10 @@ function initializeRailgunMain(options) {
         return result;
       });
     }
+    let txidReadOutcome = null;
     function synchronizeTxid(options) {
+      // A malformed non-concurrent call must not inherit an earlier result.
+      if (!state.busy) txidReadOutcome = null;
       const data = record(options, ["mode", "signal", "reviewDisclosure"]);
       if (
         !["initialize", "advance", "checkpoint"].includes(data.mode) ||
@@ -1510,7 +1514,16 @@ function initializeRailgunMain(options) {
             throw error;
           }
         }
-        if (operationFailed) throw operationError;
+        if (operationFailed) {
+          // Publish only after genuine owner cleanup and final lifetime checks.
+          // Preserve the original refusal even if the account is no longer live.
+          try {
+            current();
+            signal(data.signal);
+            txidReadOutcome = readPublicReadFailure(operationError);
+          } catch { txidReadOutcome = null; }
+          throw operationError;
+        }
         return outcome;
       });
     }
@@ -1539,6 +1552,10 @@ function initializeRailgunMain(options) {
       rebuildPublic: (...extra) => replacePublic("new", extra),
       resumePublic: (...extra) => replacePublic("pending", extra),
       synchronizeTxid,
+      readTxidReadOutcome(...extra) {
+        if (extra.length) throw fail();
+        return state.busy ? null : txidReadOutcome;
+      },
       observeOwnedPoi,
       openRecovery: (options) => recovery(options),
       openPoiRecovery: (options) => recovery(options, "poi"),

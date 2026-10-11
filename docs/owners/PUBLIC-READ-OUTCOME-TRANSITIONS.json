@@ -1,0 +1,60 @@
+{
+  "baseRevision": "be389b3768e112df7f80b3608c8ae8082304f06f",
+  "reason": "Preserve closed genuine public TXID transport failure provenance across sanitized catches; lifetime and validation still refuse.",
+  "changes": [
+    {
+      "file": "src/owners/railgun-public-services.js",
+      "beforeSha256": "ae74e75d9fd0d015c617026d7661cf014765f9a550a519f40b563d5668c6e6a6",
+      "afterSha256": "8b2931ebb2d4486b558a66d4d7fce3a08e17d42582314f405e3ce6e3e8042714",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "const { registerPublicReadFailure, carryPublicReadFailure } = require(\"./public-read-outcome\");\n"
+        },
+        {
+          "start": 7846,
+          "before": "      const response = await transport.request(\n",
+          "after": "      let response;\n      try { response = await transport.request(\n"
+        },
+        {
+          "start": 8188,
+          "before": "      );\n",
+          "after": "      ); } catch (error) {\n        // Lifetime/endpoint loss dominates availability. No normalization or\n        // service error can enter this narrow genuine-transport catch.\n        active();\n        const refused = fail();\n        registerPublicReadFailure(refused, error);\n        throw refused;\n      }\n"
+        },
+        {
+          "start": 8800,
+          "before": "    } catch {\n",
+          "after": "    } catch (error) {\n      const refused = carryPublicReadFailure(error, fail());\n"
+        },
+        {
+          "start": 8898,
+          "before": "      throw fail();\n",
+          "after": "      throw refused;\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-txid-root.js",
+      "beforeSha256": "dd09cd833d1e4392cf9496ba184987bc2b3a056b33e2fc59fbd585596efaf94d",
+      "afterSha256": "c7028059889c02a9ef3468c111902beb867ac698388123068a76c9a8d6f4ab45",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "const { carryPublicReadFailure } = require(\"./public-read-outcome\");\n"
+        },
+        {
+          "start": 2867,
+          "before": "",
+          "after": "      const refused = fail(error?.code === 'RAILGUN_TXID_ROOT_REJECTED' ? error.code : undefined);\n      const now = performance.now();\n      // Child services close on failure; their closure is not a new verdict.\n      // This source's deadline and the facade's final lifetime checks still win.\n      if (now >= started && now - started < MAX_AGE_MS)\n        carryPublicReadFailure(error, refused);\n"
+        },
+        {
+          "start": 3282,
+          "before": "      throw fail(error?.code === 'RAILGUN_TXID_ROOT_REJECTED' ? error.code : undefined);\n",
+          "after": "      throw refused;\n"
+        }
+      ]
+    }
+  ]
+}

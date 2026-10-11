@@ -1,8 +1,13 @@
 "use strict";
 const net = require("node:net");
-function failure(code) {
+const connectionErrors = new Set(["ECONNRESET", "ECONNREFUSED", "ETIMEDOUT", "EHOSTUNREACH", "ENETUNREACH", "EPIPE"]);
+function failure(code, category) {
   return Object.assign(new Error("Reference SOCKS connection refused"), {
     code,
+    failureCategory: category ?? (code === "SOCKS_TIMEOUT" ? "timeout"
+      : code === "SOCKS_CONNECTION_CLOSED" ? "connection"
+        : code === "PRIVACY_REQUEST_ABORTED" ? "cancelled"
+          : code === "SOCKS_CONNECTION_FAILED" ? "unknown" : "protocol"),
   });
 }
 
@@ -47,7 +52,8 @@ function connectSocks(
     const timer = setTimeout(() => finish(failure("SOCKS_TIMEOUT")), timeoutMs);
     timer.unref();
     const abort = () => finish(failure("PRIVACY_REQUEST_ABORTED"));
-    const error = () => finish(failure("SOCKS_CONNECTION_FAILED"));
+    const error = (value) => finish(failure("SOCKS_CONNECTION_FAILED",
+      connectionErrors.has(value?.code) ? "connection" : "unknown"));
     const closed = () => finish(failure("SOCKS_CONNECTION_CLOSED"));
     function finish(reason) {
       if (settled) return;

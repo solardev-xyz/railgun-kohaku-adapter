@@ -312,6 +312,7 @@ test("closed one-shot initializer and exact account options expose no owner auth
       "openPrivate",
       "readPreparationOutcome",
       "synchronizeTxid",
+      "readTxidReadOutcome",
       "observeOwnedPoi",
       "openRecovery",
       "openPoiRecovery",
@@ -2206,4 +2207,46 @@ test("preparation diagnostics refuse a genuine lane from another account session
   const other = await f.api.openAccount({...f.options, accountIndex: 1});
   expect(() => other.readPreparationOutcome(f.lane)).toThrow();
   await other.close(); await f.account.close();
+});
+
+test("TXID transport provenance publishes after drain and clears on a malformed next call", async () => {
+  const f = fixture(), account = await f.api.openAccount(f.options);
+  const error = Object.assign(Error("closed refusal"), {code:"RAILGUN_PUBLIC_SERVICE_REFUSED"});
+  require("../src/owners/public-read-outcome").registerPublicReadFailure(error,
+    Object.assign(Error(), {code:"TOR_REQUEST_FAILED", failureCategory:"connection"}));
+  state.openTxid.mockRejectedValueOnce(error);
+  await expect(account.synchronizeTxid({mode:"initialize", signal:f.options.signal, reviewDisclosure:()=>true})).rejects.toBe(error);
+  expect(account.readTxidReadOutcome()).toEqual({schema:"railgun-public-read-failure-v1",operation:"txid-sync",category:"connection"});
+  expect(Object.isFrozen(account.readTxidReadOutcome())).toBe(true);
+  expect(() => account.synchronizeTxid({})).toThrow();
+  expect(account.readTxidReadOutcome()).toBeNull();
+  await account.close();
+});
+test("copied TXID transport fields have no provenance", async () => {
+  const f = fixture(), account = await f.api.openAccount(f.options);
+  state.openTxid.mockRejectedValueOnce(Object.assign(Error(), {code:"TOR_REQUEST_FAILED",failureCategory:"connection"}));
+  await expect(account.synchronizeTxid({mode:"initialize", signal:f.options.signal, reviewDisclosure:()=>true})).rejects.toThrow();
+  expect(account.readTxidReadOutcome()).toBeNull();
+  await account.close();
+});
+
+test.each(["complete", "cancelled", "failed"])("TXID provenance waits for %s cleanup", async cleanupKind => {
+  const f=fixture(), account=await f.api.openAccount(f.options), drain=deferred();
+  const owner=await state.openTxid(), refused=Error("service refused");
+  require("../src/owners/public-read-outcome").registerPublicReadFailure(refused,
+    Object.assign(Error(),{code:"TOR_REQUEST_TIMEOUT",failureCategory:"timeout"}));
+  owner.advance.mockRejectedValueOnce(refused);
+  owner.close.mockImplementation(() => drain.promise);
+  state.openTxid.mockResolvedValueOnce(owner);
+  const work=account.synchronizeTxid({mode:"initialize",signal:f.options.signal,reviewDisclosure:()=>true});
+  const rejected=expect(work).rejects.toThrow();
+  await tick();
+  expect(account.readTxidReadOutcome()).toBeNull();
+  expect(() => account.synchronizeTxid({})).toThrow();
+  if(cleanupKind==="cancelled") account.close();
+  if(cleanupKind==="failed") drain.reject(Error("drain failed")); else drain.resolve();
+  await rejected;
+  expect(account.readTxidReadOutcome()).toEqual(cleanupKind==="complete"
+    ? {schema:"railgun-public-read-failure-v1",operation:"txid-sync",category:"timeout"} : null);
+  await account.close().catch(() => {});
 });

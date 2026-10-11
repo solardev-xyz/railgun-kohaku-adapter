@@ -162,7 +162,7 @@ function createReviews(terminal) {
   async function txidConsent(signal) {
     if (
       !(await terminal.confirm(
-        "Synchronize at most 80 public TXID pages in this command (up to 10 minutes). This queries the pinned Sepolia POI node and indexer for public index/root/page data, never a selected note, proof handoff or transaction.",
+        "Synchronize using at most 80 public TXID owner calls in this command (up to 10 minutes; failed calls count; up to two transport recoveries, 10 seconds apart). This queries the pinned Sepolia POI node and indexer for public index/root/page data, never a selected note, proof handoff or transaction.",
         "SYNC",
         signal,
       ))

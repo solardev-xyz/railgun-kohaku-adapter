@@ -3,10 +3,12 @@ const https = require("node:https");
 const tls = require("node:tls");
 const { connectSocks } = require("./socks.cjs");
 const MAX_BYTES = 4 * 1024 * 1024;
-function failure(code, stage) {
+const connectionErrors = new Set(["ECONNRESET", "ECONNREFUSED", "ETIMEDOUT", "EHOSTUNREACH", "ENETUNREACH", "EPIPE"]);
+function failure(code, stage, failureCategory) {
   return Object.assign(new Error("Reference private request refused"), {
     code,
     ...(stage ? { stage } : {}),
+    ...(failureCategory ? { failureCategory } : {}),
   });
 }
 /** A deliberately small HTTP/1.1 host: one authenticated SOCKS/TLS connection
@@ -142,6 +144,11 @@ function createTransportHost({ context, getEndpoint, allowedOrigins, ca }) {
       if (combined.aborted) throw failure("PRIVACY_REQUEST_ABORTED");
       const timer = setTimeout(() => timeout.abort(), timeoutMs);
       timer.unref();
+      // Own cancellation always dominates availability, including a timer
+      // callback already queued before clearTimeout takes effect.
+      const cancelTimer = () => clearTimeout(timer);
+      group.signal.addEventListener("abort", cancelTimer, { once: true });
+      signal?.addEventListener("abort", cancelTimer, { once: true });
       let finishWork;
       const original = new Promise((resolve) => {
         finishWork = resolve;
@@ -151,7 +158,19 @@ function createTransportHost({ context, getEndpoint, allowedOrigins, ca }) {
         barriers = [];
       let req,
         connecting,
-        stage = "connect";
+        stage = "connect", failureCategory = null;
+      function recordFailure(category) {
+        // Policy/format/TLS failures dominate availability. Never copy service
+        // text or native error strings into this diagnostic.
+        if (!["connection", "timeout", "protocol", "tls", "response", "unknown"].includes(category)) category = "unknown";
+        if (["protocol", "tls", "response", "unknown"].includes(failureCategory)) return;
+        failureCategory = category;
+      }
+      function nativeFailure(error) {
+        if (error?.message === "Reference private request refused") return;
+        recordFailure(connectionErrors.has(error?.code) ? "connection"
+          : typeof error?.code === "string" && error.code.startsWith("HPE_") ? "response" : "unknown");
+      }
       const agent = new https.Agent({
         keepAlive: false,
         maxSockets: 1,
@@ -171,12 +190,13 @@ function createTransportHost({ context, getEndpoint, allowedOrigins, ca }) {
       }
       function requestFailure() {
         return failure(
-          timeout.signal.aborted
-            ? "TOR_REQUEST_TIMEOUT"
-            : combined.aborted
-              ? "PRIVACY_REQUEST_ABORTED"
-              : "TOR_REQUEST_FAILED",
+          group.signal.aborted || signal?.aborted
+            ? "PRIVACY_REQUEST_ABORTED"
+            : timeout.signal.aborted ? "TOR_REQUEST_TIMEOUT" : "TOR_REQUEST_FAILED",
           stage,
+          group.signal.aborted || signal?.aborted ? "cancelled"
+            : ["protocol", "tls", "response", "unknown"].includes(failureCategory) ? failureCategory
+              : timeout.signal.aborted ? "timeout" : failureCategory ?? "unknown",
         );
       }
       const abort = () => {
@@ -187,7 +207,8 @@ function createTransportHost({ context, getEndpoint, allowedOrigins, ca }) {
       combined.addEventListener("abort", abort, { once: true });
       agent.createConnection = (_options, callback) => {
         connecting = (async () => {
-          const socket = await connectSocks(
+          let socket;
+          try { socket = await connectSocks(
             {
               endpoint: group.endpoint,
               hostname: url.hostname,
@@ -197,7 +218,10 @@ function createTransportHost({ context, getEndpoint, allowedOrigins, ca }) {
               timeoutMs: connectTimeoutMs,
             },
             track,
-          );
+          ); } catch (error) {
+            recordFailure(error?.failureCategory);
+            throw requestFailure();
+          }
           if (combined.aborted) throw requestFailure();
           stage = "tls";
           const secure = tls.connect({
@@ -209,14 +233,14 @@ function createTransportHost({ context, getEndpoint, allowedOrigins, ca }) {
           });
           track(secure);
           await new Promise((resolve, reject) => {
-            const error = () => done(false);
+            const error = () => { if (!combined.aborted) recordFailure("tls"); done(false); };
             const ready = () => done(secure.authorized && !combined.aborted);
             const done = (ok) => {
               secure.removeListener("error", error);
               secure.removeListener("close", error);
               secure.removeListener("secureConnect", ready);
               if (ok) resolve();
-              else reject(requestFailure());
+              else { if (!combined.aborted) recordFailure("tls"); reject(requestFailure()); }
             };
             secure.once("error", error);
             secure.once("close", error);
@@ -256,8 +280,9 @@ function createTransportHost({ context, getEndpoint, allowedOrigins, ca }) {
             },
             (res) => {
               stage = "response";
-              res.on("error", () => finish(requestFailure()));
-              res.on("aborted", () => finish(requestFailure()));
+              if (res.statusCode !== 200) recordFailure("response");
+              res.on("error", (error) => { nativeFailure(error); finish(requestFailure()); });
+              res.on("aborted", () => { recordFailure("connection"); finish(requestFailure()); });
               if (res.statusCode >= 300 && res.statusCode < 400)
                 return finish(failure("PRIVATE_REDIRECT_REFUSED"));
               if (
@@ -300,7 +325,7 @@ function createTransportHost({ context, getEndpoint, allowedOrigins, ca }) {
               });
             },
           );
-          req.on("error", () => finish(requestFailure()));
+          req.on("error", (error) => { nativeFailure(error); finish(requestFailure()); });
           barriers.push(
             new Promise((resolveClose) => req.once("close", resolveClose)),
           );
@@ -314,10 +339,12 @@ function createTransportHost({ context, getEndpoint, allowedOrigins, ca }) {
       } catch (error) {
         // Never pass Node/TLS exceptions, URLs or arbitrary service text out.
         if (error?.message === "Reference private request refused") throw error;
-        if (/^PRIVACY_/.test(error?.code)) throw failure(error.code);
+        if (/^PRIVACY_/.test(error?.code)) throw failure(error.code, stage, "cancelled");
         throw requestFailure();
       } finally {
         clearTimeout(timer);
+        group.signal.removeEventListener("abort", cancelTimer);
+        signal?.removeEventListener("abort", cancelTimer);
         req?.destroy();
         agent.destroy();
         for (const socket of sockets) socket.destroy();

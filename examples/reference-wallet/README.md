@@ -158,6 +158,9 @@ cd /absolute/new-reference-install/app
 npm start -- init --profile /absolute/new-test-profile
 ```
 
+Enter each answer only when prompted; do not paste multiple password answers
+at once. The terminal intentionally does not accept redirected input.
+
 The installer requires a clean committed checkout, records its exact Git identity,
 and packs it using npm's real file whitelist. It copies this
 example, installs its locked dependencies, and adds that tarball as a local file
@@ -218,7 +221,7 @@ runs in a fresh process and opens its own bounded vault session.
 | `shield-history`, `shield-observe --transaction <hash>`, `shield-resolve --transaction <hash>` | Inspect and settle a Shield's existing public journal entry. |
 | `holds`, `observe --hold <id>`, `resolve --hold <id>` | Inspect private custody and settle an existing transaction. |
 | `submit-stored --hold <id>` | Explicitly review the first broadcast of an existing proved operation. The owner refuses an already journaled operation; this is never an automatic retry. |
-| `txid-sync` | Explicitly consent to at most 80 public TXID pages, within 10 minutes. Reports completed page/count progress without roots or cursors; a failed page is never retried automatically. |
+| `txid-sync` | Explicitly consent to at most 80 public TXID owner calls, within 10 minutes. Failed calls count. Up to two classified transport recovery continuations wait 10 seconds each; two consecutive segments without returned progress stop. Roots/cursors stay private; no other command is retried. |
 | `poi-prepare-shield --hold <id>`, `poi-prepare-transact --hold <id>` | Prepare POI for an existing operation using the original input's creation route. No automatic handoff. |
 | `poi-submit --capsule <digest>` | Separately review and hand off that prepared POI capsule once. |
 | `poi-recover --capsule <digest>` | Read attempted-output recovery. Does not resubmit. |
@@ -349,3 +352,66 @@ there is no automatic retry. These records describe a phase and coarse timing,
 not raw payloads or a definitive service-error cause. Keep them local alongside
 other run output. Account custody and recovery commands still determine what
 may happen next.
+
+### Offline installed-account smoke test
+
+This tests the installed host without Arti, a service connection, or funds. First
+complete the installer and pinned runtime setup above. Run the checkout's tool
+with `--app` pointing to the **installed** application's `app` directory; no
+source edits or copied harness are needed. The default without `--app` remains
+the source-host development fixture and is not an installed-host test.
+
+On the qualified macOS arm64 setup, from the adapter checkout:
+
+```sh
+REFERENCE_APP=/absolute/reference-install/app
+REFERENCE_ELECTRON="$(node -e 'process.stdout.write(require(process.argv[1]))' "$REFERENCE_APP/node_modules/electron")"
+REFERENCE_ENGINE=/absolute/pinned-runtime/railgun-engine.asar
+REFERENCE_PROVER=/absolute/pinned-runtime/railgun-prover.asar
+REFERENCE_ARTIFACTS=/absolute/pinned-runtime/artifacts
+
+env -i PATH="$PATH" HOME="$HOME" TMPDIR="${TMPDIR:-/tmp}" LANG="${LANG:-C}" \
+  "$REFERENCE_ELECTRON" tools/conformance/reference-owner.cjs --app "$REFERENCE_APP" \
+  "$REFERENCE_ENGINE" "$REFERENCE_PROVER" "$REFERENCE_ARTIFACTS" account
+```
+
+Use the actual verified runtime paths reported by setup, not the illustrative
+paths above. Resolving Electron's module with Node selects its direct binary;
+this avoids the extra npm or `.bin/electron` forwarding process. The clean
+environment keeps Node/Electron overrides out of the fixture.
+
+The result must have `passed: true`, `mode: account`, `connections: 0`, a host
+digest matching `INSTALLATION.json`, and a new `root`. On macOS that root usually
+lives under `/var/folders/.../T` (the canonical `os.tmpdir()`), not `/private/tmp`.
+For the cold reopen, use that exact returned root in a second process:
+
+```sh
+REFERENCE_FIXTURE=/exact/root/from/the/first/result
+env -i PATH="$PATH" HOME="$HOME" TMPDIR="${TMPDIR:-/tmp}" LANG="${LANG:-C}" \
+  "$REFERENCE_ELECTRON" tools/conformance/reference-owner.cjs --app "$REFERENCE_APP" \
+  "$REFERENCE_ENGINE" "$REFERENCE_PROVER" "$REFERENCE_ARTIFACTS" reopen "$REFERENCE_FIXTURE"
+```
+
+Expect `passed: true`, `mode: reopen`, `connections: 0`, and the same
+`account.instanceIdSha256` and `hostDigest`. The tool accepts only its specially
+marked disposable roots; never supply a real profile. It uses the fixed public
+password `public reference conformance password`, so **never fund these
+accounts**. Keep the temporary evidence for review. Its loopback listener counts
+and refuses connections; zero connections proves offline account opening only,
+not Tor behavior, a public scan, proving, or a live payment. The separately
+recorded runtime acquisition and live journey retain their own qualification.
+
+The reference transport preserves a closed `failureCategory` on rejected
+requests: connection, timeout, protocol, TLS, response, cancellation or unknown
+(the code values are `connection`, `timeout`, `protocol`, `tls`, `response`,
+`cancelled`, `unknown`). This is diagnostic information, not permission to retry.
+In particular, `TOR_REQUEST_FAILED` alone does not establish availability: it
+can represent a TLS or SOCKS refusal. A known non-200 response remains a response
+failure if its socket subsequently breaks. Request bodies, endpoints and native
+error text are not included. The transport still makes one request, with no
+transparent retry or fallback.
+
+An absent category is ineligible for availability recovery. Explicit cancellation
+wins over a racing timeout. SOCKS negative replies and TLS-handshake resets remain
+conservatively classified as protocol/TLS failures, even when their underlying
+cause might be transient.

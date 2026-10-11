@@ -28,7 +28,7 @@ const { createVault, readVaultProfile } = require(
   path.join(example, "host/vault.cjs"),
 );
 let vault, composition, session, appState, chain;
-const preparationDiagnostics = [];
+const preparationDiagnostics = [], commandProgress = [];
 const lifetime = new AbortController();
 require(path.join(example, "fatal.cjs")).installFatalHandlers({
   app,
@@ -135,7 +135,8 @@ async function run() {
     state: appState,
     chain,
     progress: (value) => {
-      if (value.ranges % 10 === 0 || value.checkpoint === value.anchor)
+      if (value.status === "txid-recovering") commandProgress.push(value);
+      if (value.status === "txid-recovering" || value.ranges % 10 === 0 || value.checkpoint === value.anchor)
         process.stderr.write(JSON.stringify({ fixtureProgress: value }) + "\n");
     },
     scanCacheDigest: composition.cacheDigests.public,
@@ -155,6 +156,7 @@ async function run() {
   });
   return {
     result,
+    commandProgress,
     reviews,
     reviewTimings,
     disclosedShieldRequests,
@@ -200,6 +202,7 @@ run().then(
         error: error.message,
         stack: error.stack,
         preparationDiagnostics,
+        commandProgress,
       }) + "\n",
     );
     app.exit(1);

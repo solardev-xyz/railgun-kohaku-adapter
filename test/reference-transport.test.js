@@ -79,6 +79,7 @@ async function setup(
       phases.push(stage);
       if (stage === stall) return;
       if (phase === 0) {
+        if (stall === "no-auth") { socket.write(Buffer.from([5, 0])); return; }
         phase++;
         socket.write(Buffer.from([5, 2]));
       } else if (phase === 1) {
@@ -174,6 +175,7 @@ test.each(["greeting", "authentication", "connect", "tls"])(
       const pending = f.request();
       const refused = expect(pending).rejects.toMatchObject({
         code: "PRIVACY_REQUEST_ABORTED",
+        failureCategory: "cancelled",
       });
       const deadline = Date.now() + 1500;
       while (!f.phases.includes(stage)) {
@@ -224,6 +226,7 @@ test("an untrusted certificate refuses before HTTP application bytes", async () 
     await expect(f.request()).rejects.toMatchObject({
       code: "TOR_REQUEST_FAILED",
       stage: "tls",
+      failureCategory: "tls",
     });
     expect(f.requests).toHaveLength(0);
   } finally {
@@ -281,6 +284,7 @@ test.each(["release", "close", "scope", "request"])(
       const pending = f.request("/", { signal: controller.signal });
       const rejected = expect(pending).rejects.toMatchObject({
         code: "PRIVACY_REQUEST_ABORTED",
+        failureCategory: "cancelled",
       });
       await accepted;
       if (action === "release") f.transport.release(f.handle);
@@ -300,6 +304,7 @@ test("request deadline is terminal for that request; no transparent retry", asyn
   try {
     await expect(f.request("/", { timeoutMs: 100 })).rejects.toMatchObject({
       code: "TOR_REQUEST_TIMEOUT",
+      failureCategory: "timeout",
     });
     expect(f.requests).toHaveLength(1);
   } finally {
@@ -321,4 +326,63 @@ test("endpoint replacement and unapproved URLs fail before another connection", 
   } finally {
     await f.close();
   }
+});
+
+test("a SOCKS authentication-policy refusal is not a connection failure", async () => {
+  const f = await setup(undefined, true, "no-auth");
+  try {
+    await expect(f.request()).rejects.toMatchObject({code:"TOR_REQUEST_FAILED",stage:"connect",failureCategory:"protocol"});
+    expect(f.requests).toHaveLength(0);
+  } finally { await f.close(); }
+});
+test("a post-TLS socket reset is a closed connection category and still never retries", async () => {
+  const f = await setup((_req, res) => res.socket.destroy());
+  try {
+    await expect(f.request()).rejects.toMatchObject({code:"TOR_REQUEST_FAILED",failureCategory:"connection"});
+    expect(f.requests).toHaveLength(1);
+  } finally { await f.close(); }
+});
+test("an invalid HTTP header is a response category, never availability", async () => {
+  const f = await setup((_req, res) => {res.socket.end("HTTP/1.1 200 OK\r\nBroken header\r\n\r\n");});
+  try {
+    await expect(f.request()).rejects.toMatchObject({code:"TOR_REQUEST_FAILED",failureCategory:"response"});
+    expect(f.requests).toHaveLength(1);
+  } finally { await f.close(); }
+});
+
+test.each([400, 500])("an incomplete HTTP %s response is not a connection-only failure", async (status) => {
+  const f = await setup((_req, res) => {
+    res.writeHead(status, { "content-length": "100" });
+    res.write("x");
+    setTimeout(() => res.socket?.destroy(), 10);
+  });
+  try {
+    await expect(f.request()).rejects.toMatchObject({ code: "TOR_REQUEST_FAILED", failureCategory: "response" });
+    expect(f.requests).toHaveLength(1);
+  } finally { await f.close(); }
+});
+
+test("own cancellation wins even if an already queued timeout fires before rejection", async () => {
+  const f = await setup(() => {}), controller = new AbortController();
+  const native = global.setTimeout;
+  let fireTimeout;
+  const timer = jest.spyOn(global, "setTimeout").mockImplementation((callback, ms, ...args) => {
+    if (ms === 1234) fireTimeout = callback;
+    return native(callback, ms, ...args);
+  });
+  try {
+    const pending = f.request("/", {signal:controller.signal, timeoutMs:1234});
+    const rejected = expect(pending).rejects.toMatchObject({code:"PRIVACY_REQUEST_ABORTED",failureCategory:"cancelled"});
+    expect(fireTimeout).toBeDefined();
+    controller.abort();
+    fireTimeout();
+    await rejected;
+  } finally { timer.mockRestore(); await f.close(); }
+});
+test("a non-200 response followed by timeout remains a response failure", async () => {
+  const f = await setup((_req, res) => { res.writeHead(500, {"content-length":"100"}); res.write("x"); });
+  try {
+    await expect(f.request("/", {timeoutMs:100})).rejects.toMatchObject({failureCategory:"response"});
+    expect(f.requests).toHaveLength(1);
+  } finally { await f.close(); }
 });

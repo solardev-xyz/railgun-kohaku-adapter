@@ -254,6 +254,7 @@ async function actor(name, command, extra = {}) {
         expectedRefusal: true,
         code: failure.code,
         preparationDiagnostics: failure.preparationDiagnostics ?? [],
+        commandProgress: failure.commandProgress ?? [],
         networkMethods,
       };
       write(tag + ".expected-refusal.json", refused);
@@ -412,7 +413,27 @@ async function main() {
   );
   await actor("alice", "scan");
   await actor("alice", "wallet-sync");
-  await actor("alice", "txid-sync");
+  if (inputs.variant === "preparation-diagnostics") {
+    for (const fault of ["refuseNextTxid", "malformedNextTxid"]) {
+      server[fault]();
+      const negative = await actor("alice", "txid-sync", {expectedRefusal:"RAILGUN_PUBLIC_SERVICE_REFUSED"});
+      assert.deepEqual(negative.commandProgress, []);
+      assert.equal(negative.networkMethods.filter(method => method === "ppoi_validated_txid").length, 1);
+    }
+    server.disconnectNextTxid();
+  }
+  const synchronized = await actor("alice", "txid-sync");
+  if (inputs.variant === "preparation-diagnostics") {
+    assert.equal(synchronized.status, "complete");
+    assert.ok(synchronized.pages >= 2); // failed public call is charged
+    const recoveryEvents = results.at(-1).result.commandProgress;
+    assert.deepEqual(recoveryEvents, [{status:"txid-recovering",calls:1,recovery:1}]);
+    const control = await actor("alice", "txid-sync");
+    assert.equal(control.status, "complete");
+    assert.equal(control.last.count, synchronized.last.count);
+    assert.equal(control.last.root, synchronized.last.root);
+    write("TXID-RECOVERY.json", {sameCommand:true, failedCallCharged:true, recoveryEvents, synchronized, control});
+  }
   const prepared = await actor("alice", "poi-prepare-shield", {
     holdId: holds[0].holdId,
   });
@@ -459,8 +480,9 @@ async function main() {
       expectedRefusal: "RAILGUN_KOHAKU_PRIVATE_ADAPTER_REFUSED",
     });
     assert.equal(unavailable.preparationDiagnostics.length, 1);
-    assert.equal(unavailable.preparationDiagnostics[0].phase, "proving");
-    assert.equal(unavailable.preparationDiagnostics[0].proofStatus, "refused");
+    assert.equal(unavailable.preparationDiagnostics[0].phase, "staging");
+    assert.equal(unavailable.preparationDiagnostics[0].stage, "txid");
+    assert.equal(unavailable.preparationDiagnostics[0].proofStatus, null);
     assert.equal(unavailable.preparationDiagnostics[0].recoveryRequired, false);
     // A never-created recovery history may refuse; do not turn that into a
     // no-hold assertion. No broadcast is proved here; the final inventory below

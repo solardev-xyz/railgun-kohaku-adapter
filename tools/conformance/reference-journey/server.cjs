@@ -15,7 +15,7 @@ async function createFixtureServer({ chain, submitters, key, cert }) {
   const allowed = new Set(
     [ENDPOINT, POI_URL, INDEXER_URL].map((url) => new URL(url).hostname),
   );
-  let coldSourceDelay = null, refuseTxid = false;
+  let coldSourceDelay = null, refuseTxid = false, disconnectTxid = false, malformedTxid = false;
   let readDelayMs = 0,
     loseSendResponse = false;
   const methods = [];
@@ -108,6 +108,17 @@ async function createFixtureServer({ chain, submitters, key, cert }) {
           typeof wire.method === "string" ? wire.method : "indexer-page",
         );
         assert.ok(methods.length <= 100000);
+        if (malformedTxid && wire.method === 'ppoi_validated_txid') {
+          malformedTxid = false;
+          response.writeHead(200, { 'content-type': 'application/json' });
+          response.end('not-json');
+          return;
+        }
+        if (disconnectTxid && wire.method === 'ppoi_validated_txid') {
+          disconnectTxid = false;
+          response.socket.destroy();
+          return;
+        }
         if (refuseTxid && wire.method === 'ppoi_validated_txid') {
           refuseTxid = false;
           counts.refused++;
@@ -240,6 +251,8 @@ async function createFixtureServer({ chain, submitters, key, cert }) {
     port: proxy.address().port,
     counts,
     methods,
+    malformedNextTxid() { assert.equal(malformedTxid, false); malformedTxid = true; },
+    disconnectNextTxid() { assert.equal(disconnectTxid, false); disconnectTxid = true; },
     refuseNextTxid() { assert.equal(refuseTxid, false); refuseTxid = true; },
     dropNextSendResponse() {
       assert.equal(loseSendResponse, false);

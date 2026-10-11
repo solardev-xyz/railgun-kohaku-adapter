@@ -101,6 +101,7 @@
   "src/owners/operational-shield-lane.js",
   "src/owners/operational-submission-lane.js",
   "src/owners/process-jobs.js",
+  "src/owners/public-read-outcome.js",
   "src/owners/railgun-account-enrollment.js",
   "src/owners/railgun-account-fence.js",
   "src/owners/railgun-account-phase.js",

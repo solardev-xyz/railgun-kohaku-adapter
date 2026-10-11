@@ -114,3 +114,55 @@ test("the consent callback refuses its 81st page", async () => {
   for (let i = 0; i < 80; i++) expect(review(summary(), { signal })).toBe(true);
   expect(review(summary(), { signal })).toBe(false);
 });
+
+const eligible=()=>Object.freeze({schema:"railgun-public-read-failure-v1",operation:"txid-sync",category:"connection"});
+test("qualified public failures resume within the original call budget and consent", async () => {
+  const f=fixture(), wait=jest.fn(async()=>{}), progress=jest.fn();
+  f.session.readTxidReadOutcome=eligible;
+  f.session.synchronizeTxid.mockResolvedValueOnce(row(100)).mockRejectedValueOnce(Error("transport"))
+    .mockResolvedValueOnce(row(200)).mockRejectedValueOnce(Error("transport"))
+    .mockResolvedValueOnce(row(202));
+  expect(await synchronizeTxids({...f,wait,progress})).toMatchObject({status:"complete",pages:5});
+  expect(wait).toHaveBeenCalledTimes(2);
+  expect(f.session.synchronizeTxid).toHaveBeenCalledTimes(5);
+  expect(progress.mock.calls.filter(([v])=>v.status==="txid-recovering")).toHaveLength(2);
+});
+test("two consecutive no-progress failures stop and never renew the deadline", async () => {
+  const f=fixture(), wait=jest.fn(async()=>{});
+  f.session.readTxidReadOutcome=eligible;
+  f.session.synchronizeTxid.mockRejectedValue(Error("transport"));
+  await expect(synchronizeTxids({...f,wait})).rejects.toThrow("transport");
+  expect(wait).toHaveBeenCalledTimes(1);
+  expect(f.session.synchronizeTxid).toHaveBeenCalledTimes(2);
+});
+test("a third failure after progress stops at the two-recovery backstop", async () => {
+  const f=fixture(), wait=jest.fn(async()=>{});
+  f.session.readTxidReadOutcome=eligible;
+  for(const n of [50,100,150]) f.session.synchronizeTxid.mockResolvedValueOnce(row(n)).mockRejectedValueOnce(Error("transport"));
+  await expect(synchronizeTxids({...f,wait})).rejects.toThrow("transport");
+  expect(wait).toHaveBeenCalledTimes(2);
+  expect(f.session.synchronizeTxid).toHaveBeenCalledTimes(6);
+});
+test("an 80th failed call consumes the final call and cannot recover", async () => {
+  const f=fixture(), wait=jest.fn(async()=>{});
+  f.session.readTxidReadOutcome=eligible;
+  for(let n=1;n<80;n++) f.session.synchronizeTxid.mockResolvedValueOnce(row(n));
+  f.session.synchronizeTxid.mockRejectedValueOnce(Error("transport"));
+  await expect(synchronizeTxids({...f,wait})).rejects.toThrow("transport");
+  expect(wait).not.toHaveBeenCalled();
+  expect(f.session.synchronizeTxid).toHaveBeenCalledTimes(80);
+});
+test("cancellation and unknown diagnostics do not recover", async () => {
+  for(const outcome of [null,{...eligible()},Object.freeze({...eligible(),operation:"private"})]) {
+    const f=fixture(), wait=jest.fn(async()=>{});
+    f.session.readTxidReadOutcome=()=>outcome;
+    f.session.synchronizeTxid.mockRejectedValueOnce(Error("refused"));
+    await expect(synchronizeTxids({...f,wait})).rejects.toThrow("refused");
+    expect(wait).not.toHaveBeenCalled();
+  }
+  const f=fixture(), controller=new AbortController(), wait=jest.fn(async()=>{});
+  f.session.readTxidReadOutcome=eligible;
+  f.session.synchronizeTxid.mockImplementation(async()=>{controller.abort();throw Error("refused");});
+  await expect(synchronizeTxids({...f,signal:controller.signal,wait})).rejects.toThrow("refused");
+  expect(wait).not.toHaveBeenCalled();
+});

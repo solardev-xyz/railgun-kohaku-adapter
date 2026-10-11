@@ -1,0 +1,63 @@
+{
+  "schema": "reference-independent-adopter-v1",
+  "result": "passed-with-documented-fix",
+  "reviewer": "separate Claude reviewer; not an external security audit",
+  "installation": {
+    "sourceCommit": "d1040d9462e3cdf17b53fa5d27d9ea0edc815d46",
+    "platform": "darwin",
+    "arch": "arm64",
+    "package": {
+      "name": "@freedom/railgun-kohaku-adapter",
+      "version": "0.6.0",
+      "sha256": "2ca9e9e23dcfa9d73d886eac9f69cf7ab7fc377d76f8d7b361b4d43f63254294",
+      "integrity": "sha512-FNraYwnTYgJ6bQfTmX5NktPti2G8Auuo+2GwFAU97bjvoTnJm7i+4HJWArSa1yWFf84CqhECTmZCmMDiNdT3Zw==",
+      "files": 300
+    },
+    "dependencies": {
+      "electron": "44.7.0",
+      "ethers": "6.17.0",
+      "better-sqlite3": "13.0.3"
+    },
+    "electronDistribution": {
+      "sha256": "9f00baca916352af000105ced63bdb49f4c242f42cc45ddf5c61198beea40af7",
+      "entries": 273
+    },
+    "electronZip": {
+      "name": "electron-v44.7.0-darwin-arm64.zip",
+      "expectedSha256": "e04e411b58a0a14375dd21b0ab4a378fd38930a702e4e20e322fee4849404c0b",
+      "measuredSha256": "e04e411b58a0a14375dd21b0ab4a378fd38930a702e4e20e322fee4849404c0b"
+    },
+    "hostSourceSha256": "e962f4ba4ca40195ec48ca8e551c4b57b2336e6c5c7c6fc47c7b1014442b275e",
+    "cacheDigests": {
+      "public": "e308638ae4d118ca1d3ea491c47a60ba4ffa3ffdcb0b3213b7491bf76c88b2a2",
+      "wallet": "26575395eb3450ce5602df8eae41b5957eeb05d5dbd2ab33de8cd575f31ae187",
+      "txid": "02b2c4544dd5eb6467cf7b23d52efa9a9859d93690152b2cc22f36ae730d7844"
+    },
+    "committedManifestSha256": "d3c6ed077aecabb7714348c4dfe26a805932f299613c7f2e7f4d289ad51c3b61",
+    "committedLockSha256": "0f530d0687d9a5f0ade180d6441656d9339941fa5d26158b80a02bfda3d4f2ad"
+  },
+  "walkthrough": {
+    "freshCheckout": true,
+    "freshLockedInstall": true,
+    "interactiveVaultInitialization": true,
+    "coldFundingAddressStable": true,
+    "profileLockRefusedConcurrentOpen": true,
+    "reopenedAfterFixtureSigkill": true,
+    "offlineAccountAndReopen": true,
+    "zeroNetworkConnections": true
+  },
+  "fix": {
+    "finding": "offline installed-host account test required manual import relocation",
+    "resolution": "documented --app selection; unmodified tool created and reopened disposable account against same installed host",
+    "sameAccount": true,
+    "connections": 0,
+    "toolScope": "fixture only; no funded profile or real key input"
+  },
+  "notRepeated": [
+    "fresh engine/prover/artifact acquisition",
+    "Arti or Tor operation",
+    "live wallet operation",
+    "other platform",
+    "external human adopter"
+  ]
+}

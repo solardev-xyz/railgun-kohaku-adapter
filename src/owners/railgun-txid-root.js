@@ -1,3 +1,4 @@
+const { carryPublicReadFailure } = require("./public-read-outcome");
 /** Main-owned, short-lived POI-node root observations. A receipt attests only
  * that the fixed public service accepted a locally computed TXID root. It is
  * neither independent event coverage nor account POI/spending authority.
@@ -83,8 +84,14 @@ function createRailgunTxidRootSource(handle) {
       });
       return receipt;
     } catch (error) {
+      const refused = fail(error?.code === 'RAILGUN_TXID_ROOT_REJECTED' ? error.code : undefined);
+      const now = performance.now();
+      // Child services close on failure; their closure is not a new verdict.
+      // This source's deadline and the facade's final lifetime checks still win.
+      if (now >= started && now - started < MAX_AGE_MS)
+        carryPublicReadFailure(error, refused);
       close();
-      throw fail(error?.code === 'RAILGUN_TXID_ROOT_REJECTED' ? error.code : undefined);
+      throw refused;
     } finally {
       clearTimeout(deadline);
       busy = false;

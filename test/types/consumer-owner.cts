@@ -38,6 +38,8 @@ async function consume() {
   await privateLane.broadcast(prepared.handle);
   privateLane.close();
   await privateLane.closed;
+  const publicRead: owner.TxidReadOutcome | null = session.readTxidReadOutcome();
+  if (publicRead) { const category: "connection" | "timeout" = publicRead.category; void category; }
   const diagnostic: owner.PrivatePreparationOutcome | null = session.readPreparationOutcome(privateLane);
   if (diagnostic) { const status: boolean = diagnostic.recoveryRequired; void status; }
 

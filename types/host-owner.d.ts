@@ -395,6 +395,13 @@ export interface PublicPreparedHandle {
 /** Process-local diagnostic only, readable after its lane closes. No identifiers,
  * payloads or authority. A null result includes work not yet settled. A staging
  * reusable flag is not an assertion of current account or retry eligibility. */
+/** Informational provenance for the most recent non-concurrent TXID call.
+ * Null means not classified, including incomplete cleanup or lifetime loss. */
+export interface TxidReadOutcome {
+  readonly schema: "railgun-public-read-failure-v1";
+  readonly operation: "txid-sync";
+  readonly category: "connection" | "timeout";
+}
 export interface PrivatePreparationOutcome {
   readonly schema: "railgun-private-preparation-outcome-v1";
   readonly operation: PrivateKind;
@@ -1245,6 +1252,7 @@ export interface AccountSession {
   openPrivate(options: PrivateLaneOptions): Promise<PrivateLane>;
   /** Private preparation only; most recent non-concurrent call, readable after drain. */
   readPreparationOutcome(lane: PrivateLane): PrivatePreparationOutcome | null;
+  readTxidReadOutcome(): TxidReadOutcome | null;
   openPublic(options: PublicLaneOptions): Promise<PublicLane>;
   openRecovery(options: RecoveryOptions): Promise<RecoveryLane>;
   openPoiRecovery(options: {

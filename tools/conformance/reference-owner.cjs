@@ -6,13 +6,8 @@ const fs = require("node:fs"),
   os = require("node:os");
 const { app } = require("electron");
 const net = require("node:net");
-const [
-  archive,
-  proverArchive,
-  artifactDirectory,
-  mode = "initialize",
-  priorRoot,
-] = process.argv.slice(2);
+const { application, archive, proverArchive, artifactDirectory, mode, priorRoot } =
+  require("./reference-owner-inputs.cjs").parseOwnerInputs(process.argv.slice(2));
 const root = priorRoot
   ? fs.realpathSync(priorRoot)
   : fs.realpathSync(
@@ -44,7 +39,7 @@ const locks = path.join(root, "locks");
 if (!priorRoot) fs.mkdirSync(locks, { mode: 0o700 });
 const {
   acquireProfileLock,
-} = require("../../examples/reference-wallet/host/profile-lock.cjs");
+} = require(path.join(application, "host/profile-lock.cjs"));
 app.setPath("appData", locks);
 let locked = false,
   profileLock;
@@ -64,10 +59,10 @@ try {
 if (locked) {
   const {
     createVault,
-  } = require("../../examples/reference-wallet/host/vault.cjs");
+  } = require(path.join(application, "host/vault.cjs"));
   const {
     initializeReferenceOwner,
-  } = require("../../examples/reference-wallet/host/compose.cjs");
+  } = require(path.join(application, "host/compose.cjs"));
   const vault = createVault({ profile, assertCustody: profileLock.verify });
   app.dock?.hide();
   async function main() {
@@ -184,6 +179,8 @@ if (locked) {
           passed: true,
           mode,
           hostDigest: composition.hostDigest,
+          application,
+          hostScope: process.argv.slice(2)[0] === "--app" ? "installed" : "source",
           account: description,
           endpointReads,
           connections,

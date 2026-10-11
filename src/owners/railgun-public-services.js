@@ -1,3 +1,4 @@
+const { registerPublicReadFailure, carryPublicReadFailure } = require("./public-read-outcome");
 const { SEPOLIA } = require('../deployment');
 /** Main-owned, read-only Sepolia service acquisition. Fixed public chain queries
  * only: no wallet commitments, nullifiers, addresses, proofs or submissions.
@@ -210,7 +211,8 @@ function createRailgunPublicServices(handle) {
     check(!busy);
     busy = true;
     try {
-      const response = await transport.request(
+      let response;
+      try { response = await transport.request(
         handles[role],
         role === 'poi' ? POI_URL : INDEXER_URL,
         {
@@ -220,7 +222,14 @@ function createRailgunPublicServices(handle) {
           signal: scope.signal,
           timeoutMs: 45000,
         }
-      );
+      ); } catch (error) {
+        // Lifetime/endpoint loss dominates availability. No normalization or
+        // service error can enter this narrow genuine-transport catch.
+        active();
+        const refused = fail();
+        registerPublicReadFailure(refused, error);
+        throw refused;
+      }
       active();
       check(
         response.status === 200 &&
@@ -231,9 +240,10 @@ function createRailgunPublicServices(handle) {
       const result = normalize(value);
       active();
       return result;
-    } catch {
+    } catch (error) {
+      const refused = carryPublicReadFailure(error, fail());
       close();
-      throw fail();
+      throw refused;
     } finally {
       busy = false;
     }
