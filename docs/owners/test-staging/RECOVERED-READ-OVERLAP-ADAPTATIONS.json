@@ -326,6 +326,18 @@
           "after": "      expect({ outcomes: actual, windows }).toEqual({ outcomes: expected, windows: expectedWindows });\n"
         }
       ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-transact-poi-admission.test.js",
+      "beforeSha256": "a039f2d69271ddb8cc47c843bf4b822bffb19da977a7b61c13877040cbfad857",
+      "afterSha256": "78890e9574a421a1990d5decbcbc21f6c14ddcaedf2534ff95600eb9f2ea60b8",
+      "replacements": [
+        {
+          "start": 19911,
+          "before": "    expect(mock.admitted).not.toContain(methods[3]);\n",
+          "after": "    // Root validation may overlap the signed-event read. Neither successful\n    // root validation nor a malformed event permits membership verification.\n    expect(mock.admitted).toEqual([\n      'ppoi_validated_txid',\n      'ppoi_validate_txid_merkleroot',\n      ...methods.slice(0, fault === 'leaf' ? 2 : 4),\n    ]);\n"
+        }
+      ]
     }
   ]
 }

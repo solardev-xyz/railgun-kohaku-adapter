@@ -585,7 +585,13 @@ test.each(['signature', 'type', 'leaf', 'index'])(
     if (fault === 'index') mock.proof.indices = hex(1).slice(2);
     expect((await run()).status).toBe('refused');
     expect(mock.verify).not.toHaveBeenCalled();
-    expect(mock.admitted).not.toContain(methods[3]);
+    // Root validation may overlap the signed-event read. Neither successful
+    // root validation nor a malformed event permits membership verification.
+    expect(mock.admitted).toEqual([
+      'ppoi_validated_txid',
+      'ppoi_validate_txid_merkleroot',
+      ...methods.slice(0, fault === 'leaf' ? 2 : 4),
+    ]);
   }
 );
 test('real root age becomes historical before verifier and receipt while signed list stays fresh', async () => {
