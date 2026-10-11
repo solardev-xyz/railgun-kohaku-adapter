@@ -1,0 +1,95 @@
+{
+  "schema": "reference-guided-qualification-v1",
+  "scope": "installed guided native synthetic lifecycle, clean macOS arm64 installation and actual terminal entry checks; not a frozen-version live or human walkthrough result",
+  "sourceCommit": "c8f1d8d5111ea280793d4db98c1edf765ec1584a",
+  "package": {
+    "name": "@freedom/railgun-kohaku-adapter",
+    "version": "0.6.0",
+    "sha256": "20c1b037dc2ac8ca6c23f8e791df8030d6c90a2e5f2b34211e0b2371df96e84d",
+    "integrity": "sha512-c9D5ve6HJ03umlT89ZZhHVVDcLSx+73w+qTbCnM3/XcA2uat6OYOjOLskUQDcxkw4g1ZxCL5JeTjobeRrSaf1g==",
+    "files": 301
+  },
+  "installation": {
+    "recordSha256": "f8390eddf7e93852458cd2ff57e42dba36cb3af9c56d12ef3a0e6fa21551db59",
+    "hostSourceSha256": "6256ecbee9111a8656bd74cd45e4dc471951862dd54db3c67290d09c4fc2667a",
+    "electron": "v44.7.0",
+    "electronDistribution": {
+      "sha256": "9f00baca916352af000105ced63bdb49f4c242f42cc45ddf5c61198beea40af7",
+      "entries": 273
+    },
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "native": {
+    "resultSha256": "4a9a8d6b66f3b37bf8e6cb2d7fffe6e593ec184820249fd486f9ccdc5ee6677e",
+    "stepsSha256": "4a214335f7b0308fea439148b3c311a8750481bf1e35aaedc2964cccc460f314",
+    "installation": {
+      "tarSha256": "20c1b037dc2ac8ca6c23f8e791df8030d6c90a2e5f2b34211e0b2371df96e84d",
+      "files": 301,
+      "transform": {
+        "target": "src/data/railgun-poi-records.js",
+        "before": "c4511c0ea185835c67bbbc8b8ba74bec6271e4b3a457a2b6a1576b42593fd1ac",
+        "after": "16a8e5e15621d2da51568319717a43ca51e3517beb59441e44931539d47b45ab"
+      },
+      "scope": "synthetic list only; no production package mutation"
+    },
+    "transactions": 3,
+    "broadcastRequests": 3,
+    "independentActors": 3,
+    "interruptions": {
+      "pausedScan": true,
+      "lostWalletResult": true,
+      "declinedShield": true,
+      "lostShieldResult": true,
+      "retainedPayment": true,
+      "unknownDelivery": true,
+      "lostPoiResult": true,
+      "stagingRefusal": true
+    },
+    "poiVerification": {
+      "key": "b7ca7ba048666fb0e17efd0af1e407a8dcb0906bfaf2f20e362ed40cbec6f4d8",
+      "circuits": [
+        "3x3"
+      ],
+      "verified": 1,
+      "rejected": 0,
+      "failed": 0,
+      "invalidProofs": 0,
+      "verifierFailures": 0
+    }
+  },
+  "unit": {
+    "passedSuites": 320,
+    "passedTests": 13183,
+    "skippedTests": 4,
+    "failedTests": 0,
+    "resultSha256": "a32ce804781b91c8e904d1ce9e5fad0d8b62040ba680f7dbfbf2a0edde9258a4"
+  },
+  "mutationControls": {
+    "baselinePassed": true,
+    "nonceBindingMutationRefused": true,
+    "recipientBindingMutationRefused": true,
+    "ambiguousHoldMutationRefused": true
+  },
+  "review": {
+    "safetyAndActionability": "no remaining blocker; fixes re-reviewed",
+    "reviewSha256": "d8c8b33ab3bb70889278917b9a9187206153f8c4adf1121e1a3d055f0b731667"
+  },
+  "terminal": {
+    "actualEntry": true,
+    "freshInitProfiles": 2,
+    "coldStart": true,
+    "statusWithoutConfig": true,
+    "nextFundingStep": true,
+    "badConsentIgnoredThenCorrectConsentPassed": true,
+    "accountOrNetworkOperations": false
+  },
+  "limits": [
+    "Native chain is synthetic; it does not execute EVM transactions.",
+    "Native services use loopback SOCKS/TLS, not live Tor.",
+    "Fixture consent is explicit test-only automation; the actual CLI retains original terminal reviews.",
+    "Current-circuit POI proofs are genuinely verified; list/finality are synthetic.",
+    "The earlier live D/I installation result remains separate.",
+    "The fresh frozen-version live run and independent human walkthrough are outstanding."
+  ]
+}

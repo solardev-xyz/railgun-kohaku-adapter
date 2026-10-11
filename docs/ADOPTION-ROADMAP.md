@@ -200,3 +200,26 @@ Authentic relay transport, wider native platforms, mainnet, broader operation
 shapes and external security review remain separate goals. They are not implied
 by an experimental direct-Sepolia reference application or a successful Node CI
 run. Outreach, a release and Freedom product integration remain later decisions.
+
+
+## Guided adoption sequence — October 11
+
+The next agreed milestone makes the example operable through saved instructions:
+
+1. **Guided workflow and interruption qualification:** locally complete on
+   `c8f1d8d`. The [qualification record](qualification/reference-guided-qualification-2026-10-11/README.md)
+   binds the final installed native run, clean install, actual terminal-entry
+   checks and 13,183 passing tests. This is separate from the earlier explicit
+   CLI live run.
+2. **Fresh frozen-version live Alice-to-Bob run:** in progress with new profiles
+   and one unchanged installation. Success requires the entire lifecycle and
+   actual receipt/conservation checks without a mid-run code fix or manual
+   substitution for a guide step. A supported explicit continuation is allowed;
+   changing implementation makes it an interrupted development run.
+3. **Independent human walkthrough:** pending. Use the
+   [walkthrough tasks and feedback record](review/REFERENCE-WALKTHROUGH.md).
+   The AI review and agent-operated native/live work do not satisfy this gate.
+4. **External EF/Kohaku feedback, then Freedom product work:** retain the agreed
+   order. No outreach or product activation has happened as part of this work.
+
+Mainnet, relay privacy, other platforms and a security audit remain separate.
