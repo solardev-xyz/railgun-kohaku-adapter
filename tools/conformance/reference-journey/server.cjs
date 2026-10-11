@@ -16,7 +16,7 @@ async function createFixtureServer({ chain, submitters, key, cert }) {
     [ENDPOINT, POI_URL, INDEXER_URL].map((url) => new URL(url).hostname),
   );
   let coldSourceDelay = null, refuseTxid = false, disconnectTxid = false, malformedTxid = false;
-  let readDelayMs = 0,
+  let readDelayMs = 0, poiReadDelayMs = 0,
     loseSendResponse = false;
   const methods = [];
   const sockets = new Set(),
@@ -155,8 +155,10 @@ async function createFixtureServer({ chain, submitters, key, cert }) {
           cold.lastDelayFinishedAt = Date.now();
           if (last) coldSourceDelay = null;
         }
-        if (readDelayMs && wire.method !== "eth_sendRawTransaction")
-          await new Promise((resolve) => setTimeout(resolve, readDelayMs));
+        const delay = wire.method?.startsWith("ppoi_") && poiReadDelayMs
+          ? poiReadDelayMs : readDelayMs;
+        if (delay && wire.method !== "eth_sendRawTransaction")
+          await new Promise((resolve) => setTimeout(resolve, delay));
         const result = await chain.request(subject, url, wire);
         if (loseSendResponse && wire.method === "eth_sendRawTransaction") {
           loseSendResponse = false;
@@ -275,6 +277,10 @@ async function createFixtureServer({ chain, submitters, key, cert }) {
       return record;
     },
     clearColdSourceDelay() { coldSourceDelay = null; },
+    setPoiReadDelay(value) {
+      assert.ok([0, 4000, 5000].includes(value));
+      poiReadDelayMs = value;
+    },
     setReadDelay(value) {
       assert.ok([0, 1250, 2000].includes(value));
       readDelayMs = value;

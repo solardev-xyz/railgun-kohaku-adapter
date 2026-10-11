@@ -201,6 +201,8 @@ async function run() {
           return approved;
         },
         transaction: async (summary) => {
+          if (Number.isSafeInteger(summary.expiresAt))
+            reviewTimings.push({ purpose: "transaction-prompt", remainingMs: summary.expiresAt - Date.now() });
           if (summary.operation === 'railgun-native-shield' && config.shieldReviewDelayMs !== undefined) {
             if (config.shieldReviewDelayMs !== 45000) throw Error('Unsupported fixture review delay');
             const started = Date.now();

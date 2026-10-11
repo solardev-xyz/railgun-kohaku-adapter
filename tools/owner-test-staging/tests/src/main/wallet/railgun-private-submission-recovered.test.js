@@ -220,6 +220,7 @@ jest.mock("../../../../../../src/owners/railgun-private-proof.js", () => ({
 }));
 jest.mock("../../../../../../src/owners/railgun-poi-source.js", () => ({
   MAX_AGE_MS: 60000,
+  ACQUIRE_TIMEOUT_MS: 45000,
   createRailgunPoiSource: ({ handle, notes }) => {
     mock.poiHandle = handle;
     mock.notes = notes;
@@ -255,6 +256,7 @@ jest.mock("../../../../../../src/owners/railgun-private-preflight.js", () => ({
   createRailgunPrivatePreflight: (input) => {
     mock.preflightOptions = input;
     mock.events.push('preflight-open');
+    if (mock.preflightOpenFailure) throw mock.preflightOpenFailure;
     return mock.preflight;
   },
   assertRailgunPrivatePreflight: (_source, _receipt, _enrollment, margin = 0) => {
@@ -581,9 +583,11 @@ function setup(kind = 'railgun-partial-unshield', type = 'Shield') {
       mock.events.push('poi-close');
       if (!mock.holdPoiClose) mock.poiDone.resolve();
     },
-    acquire: async () => {
+    acquire: async ({ timeoutMs }) => {
       mock.poiStarted = performance.now();
       await mock.step('poi-acquire');
+      if (performance.now() - mock.poiStarted >= timeoutMs)
+        throw Object.assign(Error('POI acquisition timeout'), { code: 'RAILGUN_POI_SOURCE_REFUSED' });
       mock.poiObservation = {
         listKey: require("../../../../../../src/data/railgun-poi-records.js").REQUIRED_LIST,
         statuses: mock.notes.map((n) => ({ ...n, status: 'Valid' })),
@@ -639,6 +643,8 @@ function setup(kind = 'railgun-partial-unshield', type = 'Shield') {
     acquire: async () => {
       mock.preflightAt = performance.now();
       await mock.step('preflight');
+      if (mock.preflightOptions.beforeSelectedInput) await mock.preflightOptions.beforeSelectedInput();
+      await mock.step('selected-inputs');
       mock.preflightObservation = {
         input: copy(mock.preflightOptions.input),
         ...(mock.preflightOptions.intentKind
@@ -758,7 +764,8 @@ test.each(
       mock.events.indexOf('creator-collect')
     );
     expect(mock.events.indexOf('creator-verify')).toBeLessThan(mock.events.indexOf('C'));
-    expect(mock.events.indexOf('membership')).toBeLessThan(mock.events.indexOf('root'));
+    expect(mock.events.indexOf('membership')).toBeLessThan(mock.events.indexOf('selected-inputs'));
+    expect(mock.events.indexOf('root')).toBeLessThan(mock.events.indexOf('selected-inputs'));
     expect(mock.rootPoint).toEqual({ index: 1, root: mock.mirrorState.root });
     expect(mock.mirrorOptions).toMatchObject({ create: false, checkpointOnly: true });
   } else expect(mock.events).not.toContain('mirror-open');
@@ -1346,7 +1353,7 @@ test('older C refuses review admission even when newly acquired list remains fre
     mock.clock += 2001;
   };
   expect((await submit(options)).status).toBe('recovery-required');
-  expect(mock.clock - mock.poiStarted).toBe(0);
+  expect(mock.events).not.toContain('poi-acquire');
   expect(mock.events).not.toContain('transaction-review');
   expect(mock.events).not.toContain('sign');
 });
@@ -1487,7 +1494,7 @@ test.each(['digest', 'to'])(
 // that leaves C < 30 s refuses before any EOA request (no calldata disclosure);
 // review setup that leaves < 15 s of the review refuses before the caller's review.
 test.each([
-  ['preflight', 30001, 'eoa', 'eth_getCode'],
+  ['preflight', 20000, 'preflight', 'eth_getCode'],
   ['eth_getBalance', 15001, 'submission', 'transaction-review'],
 ])(
   'slow %s setup refuses the cold review before signature or durable attempt',
@@ -1510,7 +1517,7 @@ test.each([
   }
 );
 test.each([
-  ['preflight', 29997],
+  ['preflight', 19997],
   ['eth_getBalance', 14997],
 ])('%s setup just inside the budget still reaches review and send', async (step, ms) => {
   jest.spyOn(performance, 'now').mockImplementation(() => mock.clock);
@@ -1543,7 +1550,7 @@ test('cold review checks review end plus send reserve on every genuine authority
     expect(request.expiresAt - Date.now()).toBe(29000);
     // Before EOA: the full 30 s review plus the 10 s send reserve. At review
     // admission: what is left of that review (28,999 ms) plus the reserve.
-    expect(mock.proofMargins).toEqual(expect.arrayContaining([35000, 40000, 38999]));
+    expect(mock.proofMargins).toEqual(expect.arrayContaining([30000, 40000, 38999]));
     expect(mock.preflightMargins).toEqual(expect.arrayContaining([40000, 38999]));
     expect(mock.proofMargins.some((v) => v > 40000)).toBe(false);
     await gate.promise;
@@ -1636,7 +1643,8 @@ test.each([false, true])(
 // start, the preflight 60 s from its acquisition start. Each read is one
 // sequential Tor request.
 const TOR_READS = Object.freeze({
-  preflight: 19, // 2 lazy chain-id checks, 12 deployment and 5 private reads
+  preflight: 9, // two lazy chain checks, five deployment rounds, fee and verifier
+  'selected-inputs': 3,
   eth_getCode: 2, // the transaction RPC's lazy chain-id check, then the EOA code
   eth_estimateGas: 1,
   eth_call: 1,
@@ -1654,9 +1662,23 @@ function torTimeline({ type = 'Shield', read, poiMs = D1B_POI_MS, rootMs = 0 }) 
   let wallStep = 0;
   jest.spyOn(performance, 'now').mockImplementation(() => mock.clock);
   jest.spyOn(Date, 'now').mockImplementation(() => 1000000 + mock.clock + wallStep);
-  const advance = (ms) => {
-    mock.clock += ms;
+  // Virtual concurrent clock: pending reads finish by their scheduled time,
+  // so overlapping requests consume max(duration), not a serial sum.
+  const queue = [];
+  let scheduled = false;
+  const pump = () => {
+    scheduled = false;
+    if (!queue.length) return;
+    queue.sort((a, b) => a.at - b.at);
+    mock.clock = Math.max(mock.clock, queue[0].at);
+    const ready = queue.filter(item => item.at <= mock.clock);
+    for (const item of ready) { queue.splice(queue.indexOf(item), 1); item.resolve(); }
+    if (queue.length) { scheduled = true; setImmediate(pump); }
   };
+  const advance = (ms) => new Promise(resolve => {
+    queue.push({ at: mock.clock + ms, resolve });
+    if (!scheduled) { scheduled = true; setImmediate(pump); }
+  });
   for (const [step, count] of Object.entries(TOR_READS))
     mock.hooks[step] = () => advance(count * read);
   // The whole acquisition-plus-membership interval, inside the POI receipt's age.
@@ -1664,7 +1686,7 @@ function torTimeline({ type = 'Shield', read, poiMs = D1B_POI_MS, rootMs = 0 }) 
   mock.hooks.root = () => advance(rootMs);
   const send = mock.send;
   mock.send = async (...args) => {
-    advance(SERVICE_READS * read);
+    await advance(SERVICE_READS * read);
     return send(...args);
   };
   const seen = { stepWallBack: 0 };
@@ -1674,21 +1696,22 @@ function torTimeline({ type = 'Shield', read, poiMs = D1B_POI_MS, rootMs = 0 }) 
     if (seen.stepWallBack) {
       // The last millisecond before H, hidden from Date.now() by a wall clock
       // stepped back: only the monotonic end can refuse it.
-      advance(seen.window - 1 + seen.stepWallBack);
+      await advance(seen.window - 1 + seen.stepWallBack);
       wallStep -= seen.stepWallBack;
-    } else advance(3000);
+    } else await advance(3000);
     return true;
   };
   return seen;
 }
 const SENT = { transactionHash: hex(17), submissionStatus: 'acknowledged' };
 describe('recovered review budget arithmetic over Tor (mocked service)', () => {
-  // [ms per read, review offered]: d1b's 18,587 ms POI phase, then 19 preflight,
-  // 4 EOA, 2 service and 3 review-setup reads: the review is 31,412 - 28 x read ms.
+  // Virtual concurrent work, not an end-to-end Tor performance claim.
+  // POI overlaps nine public rounds, then three selected rounds; EOA and
+  // service work consume the original, unrenewed review window.
   test.each([
-    [150, 27212],
-    [300, 23012],
-    [500, 17412],
+    [150, 29100],
+    [300, 28200],
+    [500, 26912],
   ])('the measured POI phase and %s ms reads offer a %s ms review', async (read, window) => {
     const seen = torTimeline({ read });
     const result = await submit(options);
@@ -1713,21 +1736,28 @@ describe('recovered review budget arithmetic over Tor (mocked service)', () => {
     expect(seen.window).toBeGreaterThanOrEqual(15000);
     expect(mock.events).toContain('root');
   });
-  test('a POI phase that leaves under 35 s refuses at membership, before the preflight', async () => {
+  test('a POI phase beyond its derived acquisition budget refuses before selected reads', async () => {
     torTimeline({ read: 150, poiMs: 25000 });
     const result = await submit(options);
     expect(result).toEqual({ status: 'recovery-required', stage: 'membership' });
     expect(diagnosticOf(result)).toEqual({
       stage: 'membership',
-      code: 'RAILGUN_PRIVATE_REVIEW_BUDGET',
+      code: 'RAILGUN_POI_SOURCE_REFUSED',
     });
-    expect(mock.events).not.toContain('preflight-open');
+    expect(mock.events).toContain('preflight-open');
+    expect(mock.events).not.toContain('selected-inputs');
     expect(mock.events).not.toContain('eth_estimateGas');
-    torTimeline({ read: 150, poiMs: 24998 });
+    torTimeline({ read: 150, poiMs: 22000 });
     expect(await submit(options)).toEqual(SENT);
   });
   test('reads that leave under 20 s of review refuse before any EOA request', async () => {
-    torTimeline({ read: 650 });
+    torTimeline({ read: 500 });
+    let delayed = false;
+    mock.hooks['signed-read'] = () => {
+      if (!delayed && mock.events.includes('selected-inputs')) {
+        delayed = true; mock.clock += 12000;
+      }
+    };
     const result = await submit(options);
     expect(result).toEqual({ status: 'recovery-required', stage: 'eoa' });
     expect(diagnosticOf(result)).toEqual({ stage: 'eoa', substage: 'review-floor', code: 'RAILGUN_PRIVATE_REVIEW_BUDGET' });
@@ -1740,9 +1770,9 @@ describe('recovered review budget arithmetic over Tor (mocked service)', () => {
     expect(mock.events).not.toContain('eth_estimateGas');
   });
   test('setup beyond the EOA allowance still refuses at review admission, not later', async () => {
-    // The allowance is an estimate: 9 reads at 600 ms exceed its 5 s, so the
-    // calldata was simulated, but the caller's review never runs.
-    torTimeline({ read: 600 });
+    // Even with overlapping reads, slow EOA setup can consume the floor.
+    // The calldata is simulated, but the caller's review never runs.
+    torTimeline({ read: 1600, poiMs: 22000 });
     const result = await submit(options);
     expect(result).toEqual({ status: 'recovery-required', stage: 'submission' });
     expect(diagnosticOf(result)).toEqual({stage: 'submission', substage: 'review-floor', code: 'RAILGUN_PRIVATE_REVIEW_BUDGET'});
@@ -1880,4 +1910,95 @@ test('lowered full-input ceiling refuses a retained partial before disclosure, w
   expect(mock.stored).toEqual(before);
   mock.amountCeiling = 1000n;
   expect((await submit(options)).submissionStatus).toBe('acknowledged');
+});
+
+test.each(['Shield', 'Transact'].flatMap(type => [4000, 5000].map(poiReadMs => [type, poiReadMs])))(
+  '%s cold schedule admits 1250ms RPC and %sms POI with original review floor', async (type, poiReadMs) => {
+    const seen = torTimeline({ type, read: 1250, poiMs: 3 * poiReadMs, rootMs: 2 * poiReadMs });
+    expect(await submit(options)).toEqual(SENT);
+    expect(seen.window).toBeGreaterThanOrEqual(15000);
+    expect(seen.window).toBeLessThanOrEqual(30000);
+    expect(mock.events.filter(value => value === 'broadcast')).toHaveLength(1);
+    expect(mock.events.indexOf('membership')).toBeLessThan(mock.events.indexOf('selected-inputs'));
+    if (type === 'Transact')
+      expect(mock.events.indexOf('root')).toBeLessThan(mock.events.indexOf('selected-inputs'));
+  }
+);
+test.each(['Shield', 'Transact'])('%s POI beyond derived budget refuses before selected reads', async type => {
+  torTimeline({ type, read: 1250, poiMs: 24000, rootMs: 10000 });
+  const result = await submit(options);
+  expect(result.status).toBe('recovery-required');
+  expect(diagnosticOf(result)).toMatchObject({ stage: 'membership', code: 'RAILGUN_POI_SOURCE_REFUSED' });
+  expect(mock.events).toContain('preflight-open');
+  expect(mock.events).not.toContain('selected-inputs');
+  expect(mock.events).not.toContain('network');
+  expect(mock.events).not.toContain('broadcast');
+});
+test.each(['poi-acquire', 'root'])('public preflight waits for genuine %s and drains before refusal', async fault => {
+  setup('railgun-token-unshield', 'Transact');
+  const gate = deferred();
+  mock.hooks[fault] = () => gate.promise;
+  const pending = submit(options);
+  await until(() => mock.events.includes('preflight'));
+  expect(mock.events).not.toContain('selected-inputs');
+  mock.failure = fault;
+  gate.resolve();
+  expect((await pending).status).toBe('recovery-required');
+  expect(mock.events).not.toContain('selected-inputs');
+  expect(mock.events).not.toContain('broadcast');
+  expect(mock.preflightClosed).toBe(true);
+  expect(mock.poiClosed).toBe(true);
+  expect(mock.rootClosed).toBe(true);
+});
+
+test('preflight construction failure keeps its first stage and drains already-started POI/root', async () => {
+  setup('railgun-token-unshield', 'Transact');
+  const poi = deferred(), root = deferred();
+  mock.hooks['poi-acquire'] = () => poi.promise;
+  mock.hooks.root = () => root.promise;
+  mock.preflightOpenFailure = Object.assign(Error('constructor fixture'), { code: 'RAILGUN_PRIVATE_PREFLIGHT_REFUSED' });
+  let settled = false;
+  const pending = submit(options).then(value => { settled = true; return value; });
+  await until(() => mock.poiClosed && mock.rootClosed);
+  expect(settled).toBe(false);
+  poi.resolve(); root.resolve();
+  const result = await pending;
+  expect(result).toEqual({ status: 'recovery-required', stage: 'preflight' });
+  expect(diagnosticOf(result)).toMatchObject({ stage: 'preflight', code: 'RAILGUN_PRIVATE_PREFLIGHT_REFUSED' });
+  expect(mock.events).not.toContain('selected-inputs');
+  expect(mock.events).not.toContain('broadcast');
+});
+
+test('public preflight timer closes its acquisition and drains pending eligibility work', async () => {
+  setup('railgun-token-unshield', 'Transact');
+  const poi = deferred(), root = deferred(), publicRead = deferred();
+  mock.hooks['poi-acquire'] = () => poi.promise;
+  mock.hooks.root = () => root.promise;
+  mock.hooks.preflight = async () => {
+    await publicRead.promise;
+    if (mock.preflightClosed)
+      throw Object.assign(Error('closed public acquisition'), { code: 'RAILGUN_PRIVATE_PREFLIGHT_REFUSED' });
+  };
+  const schedule = global.setTimeout;
+  let expirePublic;
+  jest.spyOn(global, 'setTimeout').mockImplementation((callback, ms, ...args) => {
+    if (ms === 20000) expirePublic = callback;
+    return schedule(callback, ms, ...args);
+  });
+  let settled = false;
+  const pending = submit(options).then(value => { settled = true; return value; });
+  await until(() => mock.events.includes('preflight'));
+  expect(typeof expirePublic).toBe('function');
+  expect(mock.preflightClosed).not.toBe(true);
+  expirePublic();
+  expect(mock.preflightClosed).toBe(true);
+  publicRead.resolve();
+  await until(() => mock.poiClosed && mock.rootClosed);
+  expect(settled).toBe(false);
+  poi.resolve(); root.resolve();
+  const result = await pending;
+  expect(result).toEqual({ status: 'recovery-required', stage: 'preflight' });
+  expect(diagnosticOf(result)).toMatchObject({ stage: 'preflight', code: 'RAILGUN_PRIVATE_PREFLIGHT_REFUSED' });
+  expect(mock.events).not.toContain('selected-inputs');
+  expect(mock.events).not.toContain('broadcast');
 });

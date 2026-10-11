@@ -1,3 +1,4 @@
+const { undoRecoveredReadOverlap } = require("./recovered-read-overlap-transitions.cjs");
 const { undoFenceValidation } = require("./fence-validation-transitions.cjs");
 const { undoSubmissionReadGroups } = require("./submission-read-groups-transitions.cjs");
 const { undoDeploymentConcurrency } = require("./deployment-concurrency-transitions.cjs");
@@ -23,6 +24,7 @@ test('POI source copies and exact binder function retain immutable source proven
   const host = require('../host-poi.cjs');
   for (const [file, pin] of Object.entries(provenance.files)) {
     let text = readFileSync(path.join(__dirname, '..', file), 'utf8');
+    text = undoRecoveredReadOverlap(text, file);
     text = undoFenceValidation(text, file);
     text = undoSubmissionReadGroups(text, file);
     text = undoDeploymentConcurrency(text, file);

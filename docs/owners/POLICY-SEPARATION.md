@@ -87,3 +87,27 @@ Response classification and diagnostic-only changes avoid that custody conflict.
 The complete source snapshot is retained internally for attestation and source
 validation; after this split it does not gate cache reuse or mint any execution
 authority. It is not a new public attestation API.
+
+### Recovered submission read scheduling
+
+Independent POI event and root checks run together after the node's proof has
+been normalized, with at most two requests in flight. Both must settle and pass
+before any receipt is issued. The roots were already returned by the same node;
+the membership and event checks retain their authority and disclosure meanings.
+
+Recovered submission overlaps account-independent deployment, artifact, fee and
+verifier reads with POI membership and the public TXID-root checks. This means
+those public reads may occur even if POI eligibility subsequently refuses.
+Selected root-history and nullifier reads wait for genuine POI membership and,
+for a Transact input, its genuine TXID-root receipt. The nullifier's final
+transport-admission deadline is unchanged.
+
+The POI acquisition allocation is bounded by the existing source maximum and
+by the nullifier deadline minus the selected-read allowance. Public preflight
+and selected preflight work each have a 20-second acquisition cap; waiting at
+the gate remains bounded by eligibility work. All 60-second receipt ages start
+at their original acquisition times and never restart at the gate. The review
+floor, review cap, send reserve and handling of uncertain sends are unchanged.
+These are availability allocations, not permission to accept older evidence.
+Warm preparation also overlaps its public TXID-root check; its existing
+conservative subtraction of the root budget from the overall window is kept.

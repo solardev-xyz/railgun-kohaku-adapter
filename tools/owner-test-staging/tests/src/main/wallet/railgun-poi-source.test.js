@@ -867,3 +867,55 @@ test('lazy stale parent after admission refuses post-response and retains transp
     await pending;
   }
 });
+
+test('event and root validation overlap, but a receipt waits for both', async () => {
+  const original = mockRequest.getMockImplementation();
+  let release, started;
+  const waiting = new Promise(resolve => { release = resolve; });
+  const rootStarted = new Promise(resolve => { started = resolve; });
+  let active = 0, peak = 0, finished = false;
+  mockRequest.mockImplementation(async (...args) => {
+    const method = JSON.parse(args[2].body).method;
+    active++; peak = Math.max(peak, active);
+    try {
+      if (method === 'ppoi_poi_events') await waiting;
+      if (method === 'ppoi_validate_poi_merkleroots') started();
+      return await original(...args);
+    } finally { active--; }
+  });
+  const pending = open().acquire().then(value => { finished = true; return value; });
+  await rootStarted;
+  await Promise.resolve();
+  expect(peak).toBe(2);
+  expect(finished).toBe(false);
+  release();
+  expect((await pending).observation.rootsAccepted).toBe(true);
+  expect(active).toBe(0);
+});
+test.each(['event', 'root'])('%s failure waits for the other admitted request to settle', async failure => {
+  const original = mockRequest.getMockImplementation();
+  let release, entered;
+  const waiting = new Promise(resolve => { release = resolve; });
+  const both = new Promise(resolve => { entered = resolve; });
+  let calls = 0, done = false;
+  mockRequest.mockImplementation(async (...args) => {
+    const method = JSON.parse(args[2].body).method;
+    if (['ppoi_poi_events', 'ppoi_validate_poi_merkleroots'].includes(method)) {
+      if (++calls === 2) entered();
+      await both;
+      if ((failure === 'event') === (method === 'ppoi_poi_events'))
+        throw Error('fixture refusal');
+      await waiting; // deliberately ignores cancellation
+    }
+    return original(...args);
+  });
+  const client = open();
+  const pending = client.acquire().then(() => { done = true; }, error => { done = true; return error; });
+  await both;
+  for (let i = 0; i < 8; i++) await Promise.resolve();
+  expect(client.signal.aborted).toBe(true);
+  expect(done).toBe(false);
+  release();
+  expect((await pending).code).toBe('RAILGUN_POI_SOURCE_REFUSED');
+  expect(done).toBe(true);
+});

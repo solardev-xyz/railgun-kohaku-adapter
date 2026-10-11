@@ -299,6 +299,7 @@ async function prove({
             acquiredPoi,
             poiWork,
             preflightWork,
+            rootWork,
             poiValue,
             acquiredPreflight,
             permit,
@@ -432,6 +433,35 @@ async function prove({
                 return false;
               }
             );
+            rootWork = (async () => {
+              try {
+                if (provenance) {
+                  const rootRemaining = Math.min(rootBudget, Math.floor(commitBy - performance.now()));
+                  assert.ok(rootRemaining > 0);
+                  acquiredProvenance = await provenance.acquireRoot({ timeoutMs: rootRemaining });
+                  current(KEY_MARGIN_MS);
+                  provenanceValue = assertRailgunTransactProvenance(
+                    provenance,
+                    acquiredProvenance.receipt,
+                    account,
+                    owners,
+                    window,
+                    KEY_MARGIN_MS
+                  );
+                  assert.equal(provenanceValue.transactionDigest, offer.transactionDigest);
+                  assert.equal(provenanceValue.checkpointHash, baseline.checkpointHash);
+                  assert.ok(Object.isFrozen(provenanceValue));
+                }
+                return true;
+              } catch (error) {
+                if (error?.code === 'RAILGUN_NOTE_PROVENANCE_EXIT_UNOBSERVED')
+                  provenanceExitUnknown = error;
+                if (!failureStage && !operationScope.signal.aborted)
+                  failureStage = stage = 'txid-root';
+                closeScope();
+                return false;
+              }
+            })();
             // Settle failures immediately so the parallel public acquisition
             // never leaves an unhandled rejection or an orphaned POI request.
             poiWork = (async () => {
@@ -470,6 +500,7 @@ async function prove({
                 : {}),
               async beforeSelectedInput() {
                 assert.ok(await poiWork, fail());
+                assert.ok(await rootWork, fail());
                 checkedGate('window', () => current(KEY_MARGIN_MS));
                 if (performance.now() >= preflightEnd) {
                   preflightBudgetExpired = true;
@@ -493,6 +524,7 @@ async function prove({
               // Do not rely on the callback for final authority, even if a
               // substituted source skips it. Both genuine receipts are checked.
               assert.ok(await poiWork, fail());
+              assert.ok(await rootWork, fail());
               assert.ok(performance.now() < preflightEnd, fail());
             } catch (error) {
               failureStage ??= stage;
@@ -512,24 +544,7 @@ async function prove({
             };
             assertPreflightKind(preflightValue);
             assert.deepEqual(preflightValue.input, preflightInput);
-            if (provenance) {
-              stage = 'txid-root';
-              const rootRemaining = Math.min(rootBudget, Math.floor(commitBy - performance.now()));
-              assert.ok(rootRemaining > 0);
-              acquiredProvenance = await provenance.acquireRoot({ timeoutMs: rootRemaining });
-              current(KEY_MARGIN_MS);
-              provenanceValue = assertRailgunTransactProvenance(
-                provenance,
-                acquiredProvenance.receipt,
-                account,
-                owners,
-                window,
-                KEY_MARGIN_MS
-              );
-              assert.equal(provenanceValue.transactionDigest, offer.transactionDigest);
-              assert.equal(provenanceValue.checkpointHash, baseline.checkpointHash);
-              assert.ok(Object.isFrozen(provenanceValue));
-            }
+            if (rootWork) assert.ok(await rootWork, fail());
             const gates = (margin = KEY_MARGIN_MS) => {
               checkedGate('window', () => current(margin));
               checkedGate('poi', () => assert.equal(
@@ -628,6 +643,7 @@ async function prove({
             return { status: 'signed', signature: signature.signature };
           } catch (error) {
             if (stage === 'preflight') preflightError ??= error;
+            if (provenanceExitUnknown) throw provenanceExitUnknown;
             if (error?.code === 'RAILGUN_NOTE_PROVENANCE_EXIT_UNOBSERVED') {
               provenanceExitUnknown = error;
               throw error;
@@ -645,6 +661,7 @@ async function prove({
             const drains = [];
             // Close both sources before awaiting either acquisition. Their
             // settlement is part of returning custody to the wallet.
+            if (rootWork) drains.push(rootWork.then(() => true, () => false));
             if (poiWork) drains.push(poiWork.then(() => true, () => false));
             if (preflightWork) drains.push(Promise.resolve(preflightWork).then(() => true, () => true));
             if (poiDrain) drains.push(poiDrain);

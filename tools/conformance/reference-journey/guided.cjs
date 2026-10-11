@@ -2,7 +2,7 @@
 const assert = require("node:assert/strict");
 /** Real installed guide and encrypted application state; one fresh process per
  * explicit continuation. Fixture-only consent, chain and services. */
-async function runGuided({ actor, chain, server, write, installation, timing = false, timingBaseline = false, baselineReadDelayMs = 1250 }) {
+async function runGuided({ actor, chain, server, write, installation, timing = false, slowPoi = false, timingBaseline = false, baselineReadDelayMs = 1250 }) {
   const traces = { alice: [], bob: [] };
   let bobAddress, transferHash;
   async function next(name, extra = {}, readDelayMs) {
@@ -15,6 +15,7 @@ async function runGuided({ actor, chain, server, write, installation, timing = f
         : 0);
     const delayed = timing && ['shield', 'payment', 'payment-submit'].includes(before.step);
     server.setReadDelay(readDelayMs ?? (delayed ? 1250 : 0));
+    server.setPoiReadDelay(slowPoi && ["payment", "payment-submit"].includes(before.step) ? 5000 : 0);
     let result;
     try {
       result = await actor(name, "journey-next", {
@@ -22,7 +23,7 @@ async function runGuided({ actor, chain, server, write, installation, timing = f
         ...(timing && before.step === 'shield' ? { shieldReviewDelayMs: 45000 } : {}),
         ...extra,
       });
-    } finally { server.setReadDelay(0); }
+    } finally { server.setReadDelay(0); server.setPoiReadDelay(0); }
     traces[name].push({ before: before.step, after: result.step ?? "crashed" });
     if (expectedSends && !extra.fixtureCrash && !extra.expectedRefusal)
       await chain.mine();
@@ -186,8 +187,8 @@ async function runGuided({ actor, chain, server, write, installation, timing = f
   write("GUIDED-STEPS.json", traces);
   return {
     passed: true,
-    variant: timing ? "guided-timing" : "guided",
-    ...(timing ? { timing: { publicReadDelayMs: 1250, shieldHumanReviewDelayMs: 45000,
+    variant: slowPoi ? "guided-slow-poi" : timing ? "guided-timing" : "guided",
+    ...(timing ? { timing: { publicReadDelayMs: 1250, ...(slowPoi ? { coldPoiReadDelayMs: 5000 } : {}), shieldHumanReviewDelayMs: 45000,
       delayedSteps: ['shield', 'payment', 'payment-submit'], signingTail: 'real encrypted custody and signer; unchanged evidence ages' } } : {}),
     installation,
     transactions: 3,

@@ -198,28 +198,45 @@ function createRailgunPoiSource({ handle, notes: input }) {
           }),
           notes
         );
-        events = [];
-        for (let index = 0; index < proofs.length; index++) {
-          const position = Number(BigInt('0x' + proofs[index].indices));
-          events.push(
-            verifyPoiEvent(
-              await request('ppoi_poi_events', {
-                listKey: REQUIRED_LIST,
-                startIndex: position,
-                endIndex: position,
-              }),
-              notes[index],
-              proofs[index]
-            )
-          );
-        }
-        Object.freeze(events);
-        const accepted = await request('ppoi_validate_poi_merkleroots', {
-          listKey: REQUIRED_LIST,
-          poiMerkleroots: proofs.map((p) => p.root),
-        });
-        check(typeof accepted === 'boolean');
-        rootsAccepted = accepted;
+        // Both reads depend on the normalized proof, not on each other. The
+        // roots were supplied by this same node; no new selected input is
+        // disclosed by overlapping their validation with signed-event reads.
+        // Keep at most two requests in flight and settle both before receipt.
+        let groupFailed = false, groupError;
+        const settle = async (work) => {
+          try { return await work(); }
+          catch (error) {
+            if (!groupFailed) { groupFailed = true; groupError = error; close(); }
+            throw error;
+          }
+        };
+        const results = await Promise.allSettled([
+          settle(async () => {
+            const checked = [];
+            for (let index = 0; index < proofs.length; index++) {
+              const position = Number(BigInt('0x' + proofs[index].indices));
+              checked.push(verifyPoiEvent(
+                await request('ppoi_poi_events', {
+                  listKey: REQUIRED_LIST,
+                  startIndex: position,
+                  endIndex: position,
+                }), notes[index], proofs[index]
+              ));
+            }
+            return Object.freeze(checked);
+          }),
+          settle(async () => {
+            const accepted = await request('ppoi_validate_poi_merkleroots', {
+              listKey: REQUIRED_LIST,
+              poiMerkleroots: proofs.map((p) => p.root),
+            });
+            check(typeof accepted === 'boolean');
+            return accepted;
+          }),
+        ]);
+        if (groupFailed) throw groupError;
+        events = results[0].value;
+        rootsAccepted = results[1].value;
       }
       active();
       const observation = Object.freeze({

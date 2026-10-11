@@ -1,0 +1,331 @@
+{
+  "baseRevision": "9008d8136222d732415f854c5b2135ef8733c817",
+  "reason": "Overlap independent POI event/root checks and public preflight with genuine membership and TXID-root checks. Selected-input admission, authority ages, signing and uncertainty rules remain mandatory. Model concurrent timing, acquisition deadlines and failure drainage explicitly.",
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-source.test.js",
+      "beforeSha256": "8eb85a8b6e7da474019bad6c2764f06c715715a086cfb9a68a37b8740f034bc8",
+      "afterSha256": "882448b5de288da24e3ff04ebb9a586e6c86cd33f363eb8a13a0d0163385bc4b",
+      "replacements": [
+        {
+          "start": 29158,
+          "before": "",
+          "after": "\ntest('event and root validation overlap, but a receipt waits for both', async () => {\n  const original = mockRequest.getMockImplementation();\n  let release, started;\n  const waiting = new Promise(resolve => { release = resolve; });\n  const rootStarted = new Promise(resolve => { started = resolve; });\n  let active = 0, peak = 0, finished = false;\n  mockRequest.mockImplementation(async (...args) => {\n    const method = JSON.parse(args[2].body).method;\n    active++; peak = Math.max(peak, active);\n    try {\n      if (method === 'ppoi_poi_events') await waiting;\n      if (method === 'ppoi_validate_poi_merkleroots') started();\n      return await original(...args);\n    } finally { active--; }\n  });\n  const pending = open().acquire().then(value => { finished = true; return value; });\n  await rootStarted;\n  await Promise.resolve();\n  expect(peak).toBe(2);\n  expect(finished).toBe(false);\n  release();\n  expect((await pending).observation.rootsAccepted).toBe(true);\n  expect(active).toBe(0);\n});\ntest.each(['event', 'root'])('%s failure waits for the other admitted request to settle', async failure => {\n  const original = mockRequest.getMockImplementation();\n  let release, entered;\n  const waiting = new Promise(resolve => { release = resolve; });\n  const both = new Promise(resolve => { entered = resolve; });\n  let calls = 0, done = false;\n  mockRequest.mockImplementation(async (...args) => {\n    const method = JSON.parse(args[2].body).method;\n    if (['ppoi_poi_events', 'ppoi_validate_poi_merkleroots'].includes(method)) {\n      if (++calls === 2) entered();\n      await both;\n      if ((failure === 'event') === (method === 'ppoi_poi_events'))\n        throw Error('fixture refusal');\n      await waiting; // deliberately ignores cancellation\n    }\n    return original(...args);\n  });\n  const client = open();\n  const pending = client.acquire().then(() => { done = true; }, error => { done = true; return error; });\n  await both;\n  for (let i = 0; i < 8; i++) await Promise.resolve();\n  expect(client.signal.aborted).toBe(true);\n  expect(done).toBe(false);\n  release();\n  expect((await pending).code).toBe('RAILGUN_POI_SOURCE_REFUSED');\n  expect(done).toBe(true);\n});\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-operation.test.js",
+      "beforeSha256": "5c0ca659e591883ab78260382aac210a190f255fd5099f72af8acee10c01cf51",
+      "afterSha256": "c559dbc2eb6938d34c71d2497b109b67ce2c1e1c9564b4c6143bc626ae13d84d",
+      "replacements": [
+        {
+          "start": 18608,
+          "before": "test('Transact input composes provenance/root after POI/preflight and rechecks it through derivation', async () => {\n",
+          "after": "test('Transact input overlaps root with POI/preflight and rechecks it through derivation', async () => {\n"
+        },
+        {
+          "start": 18903,
+          "before": "",
+          "after": "    'root',\n"
+        },
+        {
+          "start": 18943,
+          "before": "    'root',\n",
+          "after": ""
+        },
+        {
+          "start": 59238,
+          "before": "",
+          "after": "\ntest.each([false, true])('Transact root held during public preflight gates selected reads, refuses=%s', async refuses => {\n  enableTransact();\n  let release, entered;\n  const waiting = new Promise(resolve => { release = resolve; });\n  const started = new Promise(resolve => { entered = resolve; });\n  const original = mock.provenance.acquireRoot;\n  mock.provenance.acquireRoot = async (...args) => {\n    entered(); await waiting;\n    if (refuses) throw Error('root fixture refusal');\n    return original(...args);\n  };\n  const pending = prove(options);\n  await started; await operationTurn();\n  expect(mock.events).toContain('public-preflight');\n  expect(mock.events).not.toContain('preflight');\n  expect(mock.events).not.toContain('reserve');\n  release();\n  const result = await pending;\n  if (refuses) {\n    expect(result).toEqual({ status: 'refused', stage: 'txid-root' });\n    expect(mock.events).not.toContain('preflight');\n    expect(mock.events).not.toContain('key');\n  } else {\n    expect(result.status).toBe('proved');\n    result.completion.close();\n  }\n});\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-preflight.test.js",
+      "beforeSha256": "652fa94350e17ab3c9d3f88f1c3f7195e6e17daf60b0f7ca64a3cfdae6dba41a",
+      "afterSha256": "8c4f713bd18d9ccfbd6857b5bf3817123bdc0767bb7c498a1331ae251008bdff",
+      "replacements": [
+        {
+          "start": 31371,
+          "before": "  const now = performance.now();\n",
+          "after": "  const now = Math.ceil(performance.now());\n"
+        },
+        {
+          "start": 31929,
+          "before": "test('the overlap gate cannot be added to a recovered-submission admission deadline', () => {\n  expect(() => open(input(), { beforeSelectedInput() {}, admissionDeadline: performance.now() + 1000 })).toThrow();\n",
+          "after": "test('recovered overlap preserves the nullifier deadline after its input gate', async () => {\n  source.close();\n  const now = Math.ceil(performance.now());\n  const clock = jest.spyOn(performance, 'now').mockReturnValue(now);\n  source = open(input(), {\n    beforeSelectedInput() { clock.mockReturnValue(now + 1000); },\n    admissionDeadline: now + 1000,\n  });\n  await expect(source.acquire()).rejects.toMatchObject({ step: 'nullifiers', reason: 'stale' });\n  expect(selectedMethods()).not.toContain('nullifiers');\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-submission-recovered.test.js",
+      "beforeSha256": "dfbd3333ce4928620cafc54b4372a8c605101ed6c4ad7872479a8d585846fbab",
+      "afterSha256": "0db1e66183cc256f8e3695c7534a87d981919135b0bee2efe5f9cb0061cca817",
+      "replacements": [
+        {
+          "start": 8280,
+          "before": "",
+          "after": "  ACQUIRE_TIMEOUT_MS: 45000,\n"
+        },
+        {
+          "start": 9567,
+          "before": "",
+          "after": "    if (mock.preflightOpenFailure) throw mock.preflightOpenFailure;\n"
+        },
+        {
+          "start": 19384,
+          "before": "    acquire: async () => {\n",
+          "after": "    acquire: async ({ timeoutMs }) => {\n"
+        },
+        {
+          "start": 19505,
+          "before": "",
+          "after": "      if (performance.now() - mock.poiStarted >= timeoutMs)\n        throw Object.assign(Error('POI acquisition timeout'), { code: 'RAILGUN_POI_SOURCE_REFUSED' });\n"
+        },
+        {
+          "start": 21270,
+          "before": "",
+          "after": "      if (mock.preflightOptions.beforeSelectedInput) await mock.preflightOptions.beforeSelectedInput();\n      await mock.step('selected-inputs');\n"
+        },
+        {
+          "start": 25999,
+          "before": "    expect(mock.events.indexOf('membership')).toBeLessThan(mock.events.indexOf('root'));\n",
+          "after": "    expect(mock.events.indexOf('membership')).toBeLessThan(mock.events.indexOf('selected-inputs'));\n    expect(mock.events.indexOf('root')).toBeLessThan(mock.events.indexOf('selected-inputs'));\n"
+        },
+        {
+          "start": 49861,
+          "before": "  expect(mock.clock - mock.poiStarted).toBe(0);\n",
+          "after": "  expect(mock.events).not.toContain('poi-acquire');\n"
+        },
+        {
+          "start": 55930,
+          "before": "  ['preflight', 30001, 'eoa', 'eth_getCode'],\n",
+          "after": "  ['preflight', 20000, 'preflight', 'eth_getCode'],\n"
+        },
+        {
+          "start": 56965,
+          "before": "  ['preflight', 29997],\n",
+          "after": "  ['preflight', 19997],\n"
+        },
+        {
+          "start": 58346,
+          "before": "    expect(mock.proofMargins).toEqual(expect.arrayContaining([35000, 40000, 38999]));\n",
+          "after": "    expect(mock.proofMargins).toEqual(expect.arrayContaining([30000, 40000, 38999]));\n"
+        },
+        {
+          "start": 62410,
+          "before": "  preflight: 19, // 2 lazy chain-id checks, 12 deployment and 5 private reads\n",
+          "after": "  preflight: 9, // two lazy chain checks, five deployment rounds, fee and verifier\n  'selected-inputs': 3,\n"
+        },
+        {
+          "start": 63323,
+          "before": "  const advance = (ms) => {\n    mock.clock += ms;\n",
+          "after": "  // Virtual concurrent clock: pending reads finish by their scheduled time,\n  // so overlapping requests consume max(duration), not a serial sum.\n  const queue = [];\n  let scheduled = false;\n  const pump = () => {\n    scheduled = false;\n    if (!queue.length) return;\n    queue.sort((a, b) => a.at - b.at);\n    mock.clock = Math.max(mock.clock, queue[0].at);\n    const ready = queue.filter(item => item.at <= mock.clock);\n    for (const item of ready) { queue.splice(queue.indexOf(item), 1); item.resolve(); }\n    if (queue.length) { scheduled = true; setImmediate(pump); }\n"
+        },
+        {
+          "start": 63903,
+          "before": "",
+          "after": "  const advance = (ms) => new Promise(resolve => {\n    queue.push({ at: mock.clock + ms, resolve });\n    if (!scheduled) { scheduled = true; setImmediate(pump); }\n  });\n"
+        },
+        {
+          "start": 64420,
+          "before": "    advance(SERVICE_READS * read);\n",
+          "after": "    await advance(SERVICE_READS * read);\n"
+        },
+        {
+          "start": 64842,
+          "before": "      advance(seen.window - 1 + seen.stepWallBack);\n",
+          "after": "      await advance(seen.window - 1 + seen.stepWallBack);\n"
+        },
+        {
+          "start": 64937,
+          "before": "    } else advance(3000);\n",
+          "after": "    } else await advance(3000);\n"
+        },
+        {
+          "start": 65166,
+          "before": "  // [ms per read, review offered]: d1b's 18,587 ms POI phase, then 19 preflight,\n  // 4 EOA, 2 service and 3 review-setup reads: the review is 31,412 - 28 x read ms.\n",
+          "after": "  // Virtual concurrent work, not an end-to-end Tor performance claim.\n  // POI overlaps nine public rounds, then three selected rounds; EOA and\n  // service work consume the original, unrenewed review window.\n"
+        },
+        {
+          "start": 65390,
+          "before": "    [150, 27212],\n    [300, 23012],\n    [500, 17412],\n",
+          "after": "    [150, 29100],\n    [300, 28200],\n    [500, 26912],\n"
+        },
+        {
+          "start": 66721,
+          "before": "  test('a POI phase that leaves under 35 s refuses at membership, before the preflight', async () => {\n",
+          "after": "  test('a POI phase beyond its derived acquisition budget refuses before selected reads', async () => {\n"
+        },
+        {
+          "start": 67065,
+          "before": "      code: 'RAILGUN_PRIVATE_REVIEW_BUDGET',\n",
+          "after": "      code: 'RAILGUN_POI_SOURCE_REFUSED',\n"
+        },
+        {
+          "start": 67115,
+          "before": "    expect(mock.events).not.toContain('preflight-open');\n",
+          "after": "    expect(mock.events).toContain('preflight-open');\n    expect(mock.events).not.toContain('selected-inputs');\n"
+        },
+        {
+          "start": 67284,
+          "before": "    torTimeline({ read: 150, poiMs: 24998 });\n",
+          "after": "    torTimeline({ read: 150, poiMs: 22000 });\n"
+        },
+        {
+          "start": 67477,
+          "before": "    torTimeline({ read: 650 });\n",
+          "after": "    torTimeline({ read: 500 });\n    let delayed = false;\n    mock.hooks['signed-read'] = () => {\n      if (!delayed && mock.events.includes('selected-inputs')) {\n        delayed = true; mock.clock += 12000;\n      }\n    };\n"
+        },
+        {
+          "start": 68525,
+          "before": "    // The allowance is an estimate: 9 reads at 600 ms exceed its 5 s, so the\n    // calldata was simulated, but the caller's review never runs.\n    torTimeline({ read: 600 });\n",
+          "after": "    // Even with overlapping reads, slow EOA setup can consume the floor.\n    // The calldata is simulated, but the caller's review never runs.\n    torTimeline({ read: 1600, poiMs: 22000 });\n"
+        },
+        {
+          "start": 75527,
+          "before": "",
+          "after": "\ntest.each(['Shield', 'Transact'].flatMap(type => [4000, 5000].map(poiReadMs => [type, poiReadMs])))(\n  '%s cold schedule admits 1250ms RPC and %sms POI with original review floor', async (type, poiReadMs) => {\n    const seen = torTimeline({ type, read: 1250, poiMs: 3 * poiReadMs, rootMs: 2 * poiReadMs });\n    expect(await submit(options)).toEqual(SENT);\n    expect(seen.window).toBeGreaterThanOrEqual(15000);\n    expect(seen.window).toBeLessThanOrEqual(30000);\n    expect(mock.events.filter(value => value === 'broadcast')).toHaveLength(1);\n    expect(mock.events.indexOf('membership')).toBeLessThan(mock.events.indexOf('selected-inputs'));\n    if (type === 'Transact')\n      expect(mock.events.indexOf('root')).toBeLessThan(mock.events.indexOf('selected-inputs'));\n  }\n);\ntest.each(['Shield', 'Transact'])('%s POI beyond derived budget refuses before selected reads', async type => {\n  torTimeline({ type, read: 1250, poiMs: 24000, rootMs: 10000 });\n  const result = await submit(options);\n  expect(result.status).toBe('recovery-required');\n  expect(diagnosticOf(result)).toMatchObject({ stage: 'membership', code: 'RAILGUN_POI_SOURCE_REFUSED' });\n  expect(mock.events).toContain('preflight-open');\n  expect(mock.events).not.toContain('selected-inputs');\n  expect(mock.events).not.toContain('network');\n  expect(mock.events).not.toContain('broadcast');\n});\ntest.each(['poi-acquire', 'root'])('public preflight waits for genuine %s and drains before refusal', async fault => {\n  setup('railgun-token-unshield', 'Transact');\n  const gate = deferred();\n  mock.hooks[fault] = () => gate.promise;\n  const pending = submit(options);\n  await until(() => mock.events.includes('preflight'));\n  expect(mock.events).not.toContain('selected-inputs');\n  mock.failure = fault;\n  gate.resolve();\n  expect((await pending).status).toBe('recovery-required');\n  expect(mock.events).not.toContain('selected-inputs');\n  expect(mock.events).not.toContain('broadcast');\n  expect(mock.preflightClosed).toBe(true);\n  expect(mock.poiClosed).toBe(true);\n  expect(mock.rootClosed).toBe(true);\n});\n\ntest('preflight construction failure keeps its first stage and drains already-started POI/root', async () => {\n  setup('railgun-token-unshield', 'Transact');\n  const poi = deferred(), root = deferred();\n  mock.hooks['poi-acquire'] = () => poi.promise;\n  mock.hooks.root = () => root.promise;\n  mock.preflightOpenFailure = Object.assign(Error('constructor fixture'), { code: 'RAILGUN_PRIVATE_PREFLIGHT_REFUSED' });\n  let settled = false;\n  const pending = submit(options).then(value => { settled = true; return value; });\n  await until(() => mock.poiClosed && mock.rootClosed);\n  expect(settled).toBe(false);\n  poi.resolve(); root.resolve();\n  const result = await pending;\n  expect(result).toEqual({ status: 'recovery-required', stage: 'preflight' });\n  expect(diagnosticOf(result)).toMatchObject({ stage: 'preflight', code: 'RAILGUN_PRIVATE_PREFLIGHT_REFUSED' });\n  expect(mock.events).not.toContain('selected-inputs');\n  expect(mock.events).not.toContain('broadcast');\n});\n\ntest('public preflight timer closes its acquisition and drains pending eligibility work', async () => {\n  setup('railgun-token-unshield', 'Transact');\n  const poi = deferred(), root = deferred(), publicRead = deferred();\n  mock.hooks['poi-acquire'] = () => poi.promise;\n  mock.hooks.root = () => root.promise;\n  mock.hooks.preflight = async () => {\n    await publicRead.promise;\n    if (mock.preflightClosed)\n      throw Object.assign(Error('closed public acquisition'), { code: 'RAILGUN_PRIVATE_PREFLIGHT_REFUSED' });\n  };\n  const schedule = global.setTimeout;\n  let expirePublic;\n  jest.spyOn(global, 'setTimeout').mockImplementation((callback, ms, ...args) => {\n    if (ms === 20000) expirePublic = callback;\n    return schedule(callback, ms, ...args);\n  });\n  let settled = false;\n  const pending = submit(options).then(value => { settled = true; return value; });\n  await until(() => mock.events.includes('preflight'));\n  expect(typeof expirePublic).toBe('function');\n  expect(mock.preflightClosed).not.toBe(true);\n  expirePublic();\n  expect(mock.preflightClosed).toBe(true);\n  publicRead.resolve();\n  await until(() => mock.poiClosed && mock.rootClosed);\n  expect(settled).toBe(false);\n  poi.resolve(); root.resolve();\n  const result = await pending;\n  expect(result).toEqual({ status: 'recovery-required', stage: 'preflight' });\n  expect(diagnosticOf(result)).toMatchObject({ stage: 'preflight', code: 'RAILGUN_PRIVATE_PREFLIGHT_REFUSED' });\n  expect(mock.events).not.toContain('selected-inputs');\n  expect(mock.events).not.toContain('broadcast');\n});\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-submission-boundaries.test.js",
+      "beforeSha256": "3d47643d162e37b5104c4266ee98030d666e5448f4d611dc27f050736d2b25cc",
+      "afterSha256": "0272f08de06d9b1f3d4e7bc1e3afbfc62786981945685a80feef6551706bfebd",
+      "replacements": [
+        {
+          "start": 4884,
+          "before": "",
+          "after": "  ACQUIRE_TIMEOUT_MS: 45000,\n"
+        },
+        {
+          "start": 28442,
+          "before": "        // own checks; after the verifier reply this is the nullifier read.\n",
+          "after": "        // own checks; after the selected root reply this is the nullifier read.\n"
+        },
+        {
+          "start": 28566,
+          "before": "        if (s.cross && !mock.crossing && last?.name === 'getVerificationKey' && last.outcome)\n",
+          "after": "        if (s.cross && !mock.crossing && last?.name === 'rootHistory' && last.outcome)\n"
+        },
+        {
+          "start": 36021,
+          "before": "      'rootHistory',\n",
+          "after": ""
+        },
+        {
+          "start": 36070,
+          "before": "",
+          "after": "      'rootHistory',\n"
+        },
+        {
+          "start": 55566,
+          "before": "  test('a stalled deployment read refuses immediately before the nullifier query', async () => {\n    // probe-1 shape: the seventh deployment read stalls 10 s but completes.\n",
+          "after": "  test('a stalled selected-root read refuses immediately before the nullifier query', async () => {\n    // A selected root read after eligibility stalls 10 s but completes.\n    // Public deployment stalls overlap eligibility now; this targets the tail.\n"
+        },
+        {
+          "start": 55876,
+          "before": "      read: (entry) => (entry.role === 'protocol-rpc' && entry.roleIndex === 6 ? 10000 : 150),\n",
+          "after": "      read: (entry) => (entry.role === 'protocol-rpc' && entry.name === 'rootHistory' ? 10000 : 150),\n"
+        },
+        {
+          "start": 56705,
+          "before": "    entry.role === 'protocol-rpc' && entry.roleIndex === 6 ? 150 + extra : 150;\n",
+          "after": "    entry.role === 'protocol-rpc' && entry.name === 'rootHistory' ? 150 + extra : 150;\n"
+        },
+        {
+          "start": 57997,
+          "before": "    expect(seen.diagnostic).toEqual({ stage: 'eoa', substage: 'review-floor', code: 'RAILGUN_PRIVATE_REVIEW_BUDGET' });\n",
+          "after": "    expect(seen.diagnostic).toEqual({ stage: 'preflight', code: 'RAILGUN_PRIVATE_REVIEW_BUDGET' });\n"
+        },
+        {
+          "start": 63300,
+          "before": "      read: (entry) => (entry.role === 'protocol-rpc' && entry.roleIndex === 6 ? 10000 : 150),\n",
+          "after": "      read: (entry) => (entry.role === 'protocol-rpc' && entry.name === 'rootHistory' ? 10000 : 150),\n"
+        },
+        {
+          "start": 64788,
+          "before": "  // at its exit. H is anchored at the estimate, so a longer verifier shortens\n  // the offered review by exactly its duration, and the genuine proof then\n  // outlives F by the send reserve plus that same duration.\n",
+          "after": "  // at its exit. H never exceeds the estimate; the 30s review cap can end it\n  // earlier. A longer verifier cannot increase the review. Genuine proof\n  // slack is at least the send reserve plus the verifier duration.\n"
+        },
+        {
+          "start": 65424,
+          "before": "      expect(H - at('verifier-start')).toBe(60000 - BUDGET.sendReserveMs - BUDGET.admissionMs - 1);\n      expect(mock.proof.deadline - (H + BUDGET.admissionMs)).toBe(\n",
+          "after": "      expect(H - at('verifier-start')).toBeLessThanOrEqual(60000 - BUDGET.sendReserveMs - BUDGET.admissionMs - 1);\n      expect(mock.proof.deadline - (H + BUDGET.admissionMs)).toBeGreaterThanOrEqual(\n"
+        },
+        {
+          "start": 66151,
+          "before": "      expect(value.window).toBe(seen[0].window - (value.verifier - seen[0].verifier));\n",
+          "after": "      expect(value.window).toBeGreaterThanOrEqual(seen[0].window - (value.verifier - seen[0].verifier));\n    for (const value of seen.slice(1)) expect(value.window).toBeLessThanOrEqual(seen[0].window);\n"
+        },
+        {
+          "start": 69360,
+          "before": "const B1 = 'after-POI:membership';\nconst AT_NULLIFIER = 'after-POI:nullifiers';\n// Owner simulation saves one read round and nonce/balance saves two.\n// The staged historical host remains serial: +450 ms for 150 ms reads\n// (including the single slow read), +1200 ms for uniform 400 ms reads.\n",
+          "after": "// Current overlapping schedule, with the real historical service/network/journal.\n// Authority/freshness and no-resend invariants are checked separately below.\n"
+        },
+        {
+          "start": 69554,
+          "before": "  'd1b POI 18.6 s, 150 ms reads, empty journal': [[B1, 'ack', 'ack', B1, 'ack'], 26654],\n  'd1b POI, 150 ms reads, 4 resolved records': [[B1, 'ack', 'ack', B1, 'ack'], 25698],\n  'd1b POI, 4 resolved, approval 500 ms before shown deadline': [\n    [B1, 'after-nullifier:submission', 'after-nullifier:submission', B1, 'ack'],\n    25698,\n",
+          "after": "  \"d1b POI 18.6 s, 150 ms reads, empty journal\": [\n    [\n      \"after-POI:preflight\",\n      \"ack\",\n      \"ack\",\n      \"after-POI:preflight\",\n      \"ack\"\n    ],\n    29092\n"
+        },
+        {
+          "start": 69729,
+          "before": "  'd1b POI, every 8th read 1.5 s, 4 resolved': [\n    [B1, 'after-nullifier:eoa', 'ack', B1, 'ack'],\n    20298,\n",
+          "after": "  \"d1b POI, 150 ms reads, 4 resolved records\": [\n    [\n      \"after-POI:preflight\",\n      \"ack\",\n      \"ack\",\n      \"after-POI:preflight\",\n      \"ack\"\n    ],\n    28136\n"
+        },
+        {
+          "start": 69902,
+          "before": "  'd1b POI, 400 ms reads, 4 resolved': [[B1, AT_NULLIFIER, 'ack', B1, 'ack'], 17948],\n  'POI 22 s, 150 ms reads, 4 resolved': [[B1, AT_NULLIFIER, 'ack', B1, 'ack'], 22285],\n  'POI 25 s, 150 ms reads, 4 resolved': [[B1, B1, B1, B1, B1], null],\n  'd1b POI, one 10 s deployment read (probe-1 shape)': [\n    [B1, AT_NULLIFIER, AT_NULLIFIER, B1, AT_NULLIFIER],\n    null,\n",
+          "after": "  \"d1b POI, 4 resolved, approval 500 ms before shown deadline\": [\n    [\n      \"after-POI:preflight\",\n      \"after-nullifier:submission\",\n      \"after-nullifier:submission\",\n      \"after-POI:preflight\",\n      \"ack\"\n    ],\n    28136\n"
+        },
+        {
+          "start": 70138,
+          "before": "  'd1b POI, 5 s verifier, 4 resolved': [[B1, AT_NULLIFIER, 'ack', B1, 'ack'], 21498],\n  'd1b POI, approval 1 s before shown deadline, 13 s send': [\n    [B1, 'ack', 'uncertain:accepted', B1, 'uncertain:accepted'],\n    26654,\n",
+          "after": "  \"d1b POI, every 8th read 1.5 s, 4 resolved\": [\n    [\n      \"after-POI:preflight\",\n      \"ack\",\n      \"ack\",\n      \"after-POI:preflight\",\n      \"ack\"\n    ],\n    25436\n"
+        },
+        {
+          "start": 70311,
+          "before": "  'd1b POI, approval 2 s before shown deadline, 2 s begin write': [\n    [B1, 'uncertain:unsent', 'uncertain:unsent', B1, 'ack'],\n    26654,\n",
+          "after": "  \"d1b POI, 400 ms reads, 4 resolved\": [\n    [\n      \"after-POI:preflight\",\n      \"after-nullifier:submission\",\n      \"ack\",\n      \"after-POI:preflight\",\n      \"ack\"\n    ],\n    24548\n"
+        },
+        {
+          "start": 70499,
+          "before": "  'd1b POI, 400 ms reads, 4 resolved, approval 300 ms before shown deadline': [\n    [B1, AT_NULLIFIER, 'after-nullifier:submission', B1, 'ack'],\n    17948,\n",
+          "after": "  \"POI 22 s, 150 ms reads, 4 resolved\": [\n    [\n      \"after-POI:membership\",\n      \"after-nullifier:submission\",\n      \"ack\",\n      \"after-POI:membership\",\n      \"ack\"\n    ],\n    24885\n"
+        },
+        {
+          "start": 70690,
+          "before": "  'same, and the send is delivered after 9.5 s': [\n    [B1, AT_NULLIFIER, 'after-nullifier:submission', B1, 'uncertain:accepted'],\n    17948,\n",
+          "after": "  \"POI 25 s, 150 ms reads, 4 resolved\": [\n    [\n      \"after-POI:membership\",\n      \"after-POI:preflight\",\n      \"ack\",\n      \"after-POI:membership\",\n      \"ack\"\n    ],\n    21885\n"
+        },
+        {
+          "start": 70874,
+          "before": "  'd1b POI, send accepted, response lost': [\n    [B1, 'uncertain:accepted', 'uncertain:accepted', B1, 'uncertain:accepted'],\n    26654,\n",
+          "after": "  \"d1b POI, one 10 s deployment read (probe-1 shape)\": [\n    [\n      \"after-POI:preflight\",\n      \"ack\",\n      \"ack\",\n      \"after-POI:preflight\",\n      \"ack\"\n    ],\n    28136\n"
+        },
+        {
+          "start": 71055,
+          "before": "",
+          "after": "  \"d1b POI, 5 s verifier, 4 resolved\": [\n    [\n      \"after-POI:membership\",\n      \"after-nullifier:submission\",\n      \"ack\",\n      \"after-POI:membership\",\n      \"ack\"\n    ],\n    24098\n  ],\n  \"d1b POI, approval 1 s before shown deadline, 13 s send\": [\n    [\n      \"after-POI:preflight\",\n      \"ack\",\n      \"uncertain:accepted\",\n      \"after-POI:preflight\",\n      \"uncertain:accepted\"\n    ],\n    29092\n  ],\n  \"d1b POI, approval 2 s before shown deadline, 2 s begin write\": [\n    [\n      \"after-POI:preflight\",\n      \"uncertain:unsent\",\n      \"uncertain:unsent\",\n      \"after-POI:preflight\",\n      \"ack\"\n    ],\n    29092\n  ],\n  \"d1b POI, 400 ms reads, 4 resolved, approval 300 ms before shown deadline\": [\n    [\n      \"after-POI:preflight\",\n      \"after-nullifier:submission\",\n      \"after-nullifier:submission\",\n      \"after-POI:preflight\",\n      \"ack\"\n    ],\n    24548\n  ],\n  \"same, and the send is delivered after 9.5 s\": [\n    [\n      \"after-POI:preflight\",\n      \"after-nullifier:submission\",\n      \"after-nullifier:submission\",\n      \"after-POI:preflight\",\n      \"uncertain:accepted\"\n    ],\n    24548\n  ],\n  \"d1b POI, send accepted, response lost\": [\n    [\n      \"after-POI:preflight\",\n      \"uncertain:accepted\",\n      \"uncertain:accepted\",\n      \"after-POI:preflight\",\n      \"uncertain:accepted\"\n    ],\n    29092\n  ]\n"
+        },
+        {
+          "start": 73002,
+          "before": "      const actual = {},\n        expected = {};\n",
+          "after": "      const actual = {}, expected = {}, windows = {}, expectedWindows = {};\n"
+        },
+        {
+          "start": 73390,
+          "before": "        if (name === 'H = F, 10 s') expect(seen.review?.window ?? null).toBe(EXPECTED[scenario][1]);\n",
+          "after": "        if (name === 'H = F, 10 s') {\n          windows[scenario] = seen.review?.window ?? null;\n          expectedWindows[scenario] = EXPECTED[scenario][1];\n        }\n"
+        },
+        {
+          "start": 73825,
+          "before": "      expect(actual).toEqual(expected);\n",
+          "after": "      expect({ outcomes: actual, windows }).toEqual({ outcomes: expected, windows: expectedWindows });\n"
+        }
+      ]
+    }
+  ]
+}

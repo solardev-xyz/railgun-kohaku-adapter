@@ -538,7 +538,7 @@ test('Transact input refuses before local stores, network or key', async () => {
   await expect(prove(options)).resolves.toEqual({ status: 'refused', stage: 'input-provenance' });
   expect(mock.events).toEqual([]);
 });
-test('Transact input composes provenance/root after POI/preflight and rechecks it through derivation', async () => {
+test('Transact input overlaps root with POI/preflight and rechecks it through derivation', async () => {
   enableTransact();
   const result = await prove(options);
   expect(result.status).toBe('proved');
@@ -546,9 +546,9 @@ test('Transact input composes provenance/root after POI/preflight and rechecks i
     'staging-available',
     'open-reservations',
     'provenance-open',
+    'root',
     'POI',
     'preflight',
-    'root',
     'B-validate',
     'reserve',
     'put',
@@ -1587,4 +1587,32 @@ test('the shared acquisition allocation leaves the declared signing tail inside 
   expect(result.status).toBe('proved');
   expect(allocation).toBeLessThanOrEqual(60000 - 20000 - 10000);
   result.completion.close();
+});
+
+test.each([false, true])('Transact root held during public preflight gates selected reads, refuses=%s', async refuses => {
+  enableTransact();
+  let release, entered;
+  const waiting = new Promise(resolve => { release = resolve; });
+  const started = new Promise(resolve => { entered = resolve; });
+  const original = mock.provenance.acquireRoot;
+  mock.provenance.acquireRoot = async (...args) => {
+    entered(); await waiting;
+    if (refuses) throw Error('root fixture refusal');
+    return original(...args);
+  };
+  const pending = prove(options);
+  await started; await operationTurn();
+  expect(mock.events).toContain('public-preflight');
+  expect(mock.events).not.toContain('preflight');
+  expect(mock.events).not.toContain('reserve');
+  release();
+  const result = await pending;
+  if (refuses) {
+    expect(result).toEqual({ status: 'refused', stage: 'txid-root' });
+    expect(mock.events).not.toContain('preflight');
+    expect(mock.events).not.toContain('key');
+  } else {
+    expect(result.status).toBe('proved');
+    result.completion.close();
+  }
 });

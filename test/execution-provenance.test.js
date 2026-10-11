@@ -1,3 +1,4 @@
+const { undoRecoveredReadOverlap } = require("./recovered-read-overlap-transitions.cjs");
 const { undoFenceValidation } = require("./fence-validation-transitions.cjs");
 const { undoSubmissionReadGroups } = require("./submission-read-groups-transitions.cjs");
 const { undoDeploymentConcurrency } = require("./deployment-concurrency-transitions.cjs");
@@ -21,6 +22,7 @@ const provenance = require("../docs/execution/PROVENANCE.json");
 const sha = (value) => createHash("sha256").update(value).digest("hex");
 function originalKernelText(file) {
   let text = fs.readFileSync(path.join(root, file), "utf8");
+  text = undoRecoveredReadOverlap(text, file);
   text = undoFenceValidation(text, file);
   text = undoSubmissionReadGroups(text, file);
   text = undoDeploymentConcurrency(text, file);

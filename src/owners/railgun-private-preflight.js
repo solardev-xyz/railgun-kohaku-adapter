@@ -110,11 +110,12 @@ function createPreflight(options, relay = false) {
   // nullifier was disclosed, nothing is sent. Data, not authority: it can
   // only refuse earlier, and receipt ages are unchanged.
   // Owner-local sequencing gate, not proof or signing authority. It may only
-  // delay/refuse the selected-input reads. Recovery and relay paths cannot use it.
+  // delay/refuse the selected-input reads. Recovery may combine it with a deadline: the gate completes first,
+  // then the existing nullifier transport-admission deadline still applies.
+  // Relay paths cannot use it.
   const beforeSelectedInput = options.beforeSelectedInput;
   check(!Object.hasOwn(descriptors, 'beforeSelectedInput') ||
-    (!relay && !Object.hasOwn(descriptors, 'admissionDeadline') &&
-      typeof beforeSelectedInput === 'function'));
+    (!relay && typeof beforeSelectedInput === 'function'));
   const admissionDeadline = options.admissionDeadline;
   check(
     !Object.hasOwn(descriptors, 'admissionDeadline') ||

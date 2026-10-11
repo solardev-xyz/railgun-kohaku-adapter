@@ -1,0 +1,174 @@
+{
+  "baseRevision": "9008d8136222d732415f854c5b2135ef8733c817",
+  "reason": "Overlap independent POI event/root checks and public preflight with genuine membership and TXID-root checks. Selected-input admission, authority ages, signing and uncertainty rules remain mandatory. Model concurrent timing, acquisition deadlines and failure drainage explicitly.",
+  "changes": [
+    {
+      "file": "src/owners/railgun-poi-source.js",
+      "beforeSha256": "e4128767a6f60c2cd7d3fcbd0cbc83468327fa799f065f5d206fcd62d5e69c19",
+      "afterSha256": "bcbfa3aeb006ee588d704288d9588348c749306a4933a67f86ba4efaab32ecb2",
+      "replacements": [
+        {
+          "start": 6817,
+          "before": "        events = [];\n        for (let index = 0; index < proofs.length; index++) {\n          const position = Number(BigInt('0x' + proofs[index].indices));\n          events.push(\n            verifyPoiEvent(\n              await request('ppoi_poi_events', {\n                listKey: REQUIRED_LIST,\n                startIndex: position,\n                endIndex: position,\n              }),\n              notes[index],\n              proofs[index]\n            )\n          );\n        }\n        Object.freeze(events);\n        const accepted = await request('ppoi_validate_poi_merkleroots', {\n          listKey: REQUIRED_LIST,\n          poiMerkleroots: proofs.map((p) => p.root),\n        });\n        check(typeof accepted === 'boolean');\n        rootsAccepted = accepted;\n",
+          "after": "        // Both reads depend on the normalized proof, not on each other. The\n        // roots were supplied by this same node; no new selected input is\n        // disclosed by overlapping their validation with signed-event reads.\n        // Keep at most two requests in flight and settle both before receipt.\n        let groupFailed = false, groupError;\n        const settle = async (work) => {\n          try { return await work(); }\n          catch (error) {\n            if (!groupFailed) { groupFailed = true; groupError = error; close(); }\n            throw error;\n          }\n        };\n        const results = await Promise.allSettled([\n          settle(async () => {\n            const checked = [];\n            for (let index = 0; index < proofs.length; index++) {\n              const position = Number(BigInt('0x' + proofs[index].indices));\n              checked.push(verifyPoiEvent(\n                await request('ppoi_poi_events', {\n                  listKey: REQUIRED_LIST,\n                  startIndex: position,\n                  endIndex: position,\n                }), notes[index], proofs[index]\n              ));\n            }\n            return Object.freeze(checked);\n          }),\n          settle(async () => {\n            const accepted = await request('ppoi_validate_poi_merkleroots', {\n              listKey: REQUIRED_LIST,\n              poiMerkleroots: proofs.map((p) => p.root),\n            });\n            check(typeof accepted === 'boolean');\n            return accepted;\n          }),\n        ]);\n        if (groupFailed) throw groupError;\n        events = results[0].value;\n        rootsAccepted = results[1].value;\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-private-operation.js",
+      "beforeSha256": "ef726bb4aa7d6353c970c1425cfb6e9d36bf35439c9668c74012696a53a36d4b",
+      "afterSha256": "a4806ada6b902d3f789e7180ca78f66f3baacd710bc1dc8fa63cb8f7a6f1d5e1",
+      "replacements": [
+        {
+          "start": 11129,
+          "before": "",
+          "after": "            rootWork,\n"
+        },
+        {
+          "start": 16906,
+          "before": "",
+          "after": "            rootWork = (async () => {\n              try {\n                if (provenance) {\n                  const rootRemaining = Math.min(rootBudget, Math.floor(commitBy - performance.now()));\n                  assert.ok(rootRemaining > 0);\n                  acquiredProvenance = await provenance.acquireRoot({ timeoutMs: rootRemaining });\n                  current(KEY_MARGIN_MS);\n                  provenanceValue = assertRailgunTransactProvenance(\n                    provenance,\n                    acquiredProvenance.receipt,\n                    account,\n                    owners,\n                    window,\n                    KEY_MARGIN_MS\n                  );\n                  assert.equal(provenanceValue.transactionDigest, offer.transactionDigest);\n                  assert.equal(provenanceValue.checkpointHash, baseline.checkpointHash);\n                  assert.ok(Object.isFrozen(provenanceValue));\n                }\n                return true;\n              } catch (error) {\n                if (error?.code === 'RAILGUN_NOTE_PROVENANCE_EXIT_UNOBSERVED')\n                  provenanceExitUnknown = error;\n                if (!failureStage && !operationScope.signal.aborted)\n                  failureStage = stage = 'txid-root';\n                closeScope();\n                return false;\n              }\n            })();\n"
+        },
+        {
+          "start": 20201,
+          "before": "",
+          "after": "                assert.ok(await rootWork, fail());\n"
+        },
+        {
+          "start": 21334,
+          "before": "",
+          "after": "              assert.ok(await rootWork, fail());\n"
+        },
+        {
+          "start": 22348,
+          "before": "            if (provenance) {\n              stage = 'txid-root';\n              const rootRemaining = Math.min(rootBudget, Math.floor(commitBy - performance.now()));\n              assert.ok(rootRemaining > 0);\n              acquiredProvenance = await provenance.acquireRoot({ timeoutMs: rootRemaining });\n              current(KEY_MARGIN_MS);\n              provenanceValue = assertRailgunTransactProvenance(\n                provenance,\n                acquiredProvenance.receipt,\n                account,\n                owners,\n                window,\n                KEY_MARGIN_MS\n              );\n              assert.equal(provenanceValue.transactionDigest, offer.transactionDigest);\n              assert.equal(provenanceValue.checkpointHash, baseline.checkpointHash);\n              assert.ok(Object.isFrozen(provenanceValue));\n            }\n",
+          "after": "            if (rootWork) assert.ok(await rootWork, fail());\n"
+        },
+        {
+          "start": 27385,
+          "before": "",
+          "after": "            if (provenanceExitUnknown) throw provenanceExitUnknown;\n"
+        },
+        {
+          "start": 28144,
+          "before": "",
+          "after": "            if (rootWork) drains.push(rootWork.then(() => true, () => false));\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-private-preflight.js",
+      "beforeSha256": "2813a925c5f46935c5a636f274689cec3b43b20d0ef6efca4a76bf9249df3463",
+      "afterSha256": "494f7f27645f0616252af7beb3e703d1e61db13809cae0f3c1fbdabc5a379f22",
+      "replacements": [
+        {
+          "start": 5545,
+          "before": "  // delay/refuse the selected-input reads. Recovery and relay paths cannot use it.\n",
+          "after": "  // delay/refuse the selected-input reads. Recovery may combine it with a deadline: the gate completes first,\n  // then the existing nullifier transport-admission deadline still applies.\n  // Relay paths cannot use it.\n"
+        },
+        {
+          "start": 5886,
+          "before": "    (!relay && !Object.hasOwn(descriptors, 'admissionDeadline') &&\n      typeof beforeSelectedInput === 'function'));\n",
+          "after": "    (!relay && typeof beforeSelectedInput === 'function'));\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-private-submission.js",
+      "beforeSha256": "bfba4d1b9de340bb3bdcedc1ed7f3d5f886eb5834f8c3335fc1611e6a982486c",
+      "afterSha256": "833f01d4e2e01d604bb92692bc98d59ceb60d3c79f62b58b2453edd253a0e5e7",
+      "replacements": [
+        {
+          "start": 11225,
+          "before": "",
+          "after": "  preparedPreflight = null,\n"
+        },
+        {
+          "start": 14498,
+          "before": "    preflight = createRailgunPrivatePreflight({\n",
+          "after": "    preflight = preparedPreflight?.source ?? createRailgunPrivatePreflight({\n"
+        },
+        {
+          "start": 15422,
+          "before": "    const stop = () => preflight.close();\n    const signal = AbortSignal.any([claim.signal, context.signal]);\n    signal.addEventListener('abort', stop, { once: true });\n    let acquired, preflightStarted;\n    const timer = setTimeout(stop, 20000);\n    timer.unref?.();\n    try {\n      assert.ok(!signal.aborted);\n      substage = 'acquire';\n      // At or before the preflight's own age origin: a conservative end.\n      preflightStarted = performance.now();\n      acquired = await preflight.acquire();\n    } finally {\n      clearTimeout(timer);\n      signal.removeEventListener('abort', stop);\n",
+          "after": "    let acquired = preparedPreflight?.acquired,\n      preflightStarted = preparedPreflight?.started;\n    if (!preparedPreflight) {\n      const stop = () => preflight.close();\n      const signal = AbortSignal.any([claim.signal, context.signal]);\n      signal.addEventListener('abort', stop, { once: true });\n      const timer = setTimeout(stop, 20000);\n      timer.unref?.();\n      try {\n        assert.ok(!signal.aborted);\n        substage = 'acquire';\n        // At or before the preflight's own age origin: a conservative end.\n        preflightStarted = performance.now();\n        acquired = await preflight.acquire();\n      } finally {\n        clearTimeout(timer);\n        signal.removeEventListener('abort', stop);\n      }\n"
+        },
+        {
+          "start": 47716,
+          "before": "",
+          "after": "        let recoveredPreflight, preflightWork, eligibilityWork, rootWork, publicTimer, selectedTimer;\n"
+        },
+        {
+          "start": 55271,
+          "before": "          const listBudget = phaseBudget(15000, 65000);\n",
+          "after": ""
+        },
+        {
+          "start": 55347,
+          "before": "            handle: poiHandle,\n            notes,\n",
+          "after": "            handle: poiHandle, notes,\n"
+        },
+        {
+          "start": 55473,
+          "before": "",
+          "after": "          // Conservative shared starts precede every acquisition. No receipt\n          // age is renewed when a concurrent task finishes later.\n"
+        },
+        {
+          "start": 55660,
+          "before": "          const acquired = await poi.acquire({ timeoutMs: listBudget });\n          phaseCurrent();\n          sourceReceipt = acquired.receipt;\n          const observation = poi.assertResult(sourceReceipt);\n          assert.equal(observation.listKey, REQUIRED_LIST);\n          assert.equal(observation.rootsAccepted, true);\n          assert.deepEqual(\n            observation.statuses,\n            notes.map((value) => ({ ...value, status: 'Valid' }))\n",
+          "after": "          rootStarted = poiStarted;\n          // Conservative: each start was taken before its acquisition (C before\n          // the verifier ran, so earlier than its genuine expiry by the\n          // verifier's duration). The genuine receipts remain the authority.\n          const lifetimeEnd = () =>\n            Math.min(\n              deadline,\n              context.deadline,\n              sourceReturnedAt + require(\"./railgun-scan-source.js\").MAX_AGE_MS,\n              proofStarted + PROOF_RECEIPT_MS,\n              poiStarted + require(\"./railgun-poi-source.js\").MAX_AGE_MS,\n              rootPoint ? rootStarted + require(\"./railgun-txid-root.js\").MAX_AGE_MS : Infinity\n            );\n\n          const nullifierDeadline = lifetimeEnd() -\n            (BUDGET.reviewMinMs + BUDGET.admissionMs + BUDGET.sendReserveMs +\n              BUDGET.eoaAllowanceMs + BUDGET.disclosureTailMs);\n          const listBudget = Math.min(\n            require(\"./railgun-poi-source.js\").ACQUIRE_TIMEOUT_MS,\n            phaseBudget(45000, 65000),\n            Math.floor(nullifierDeadline - performance.now() - BUDGET.preflightAllowanceMs)\n"
+        },
+        {
+          "start": 56800,
+          "before": "          membership = await require(\"./railgun-poi-membership.js\").verifyRailgunPoiMembership({\n            handle: poiHandle,\n            source: poi,\n            receipt: sourceReceipt,\n            archive,\n            timeoutMs: phaseBudget(15000, 60000),\n          });\n          phaseCurrent();\n",
+          "after": "          if (!(listBudget > 0)) throw budgetFail();\n          let failed = false, first;\n          const stopReads = () => {\n            for (const close of [() => recoveredPreflight?.source.close(),\n              () => roots?.close(), () => poi.close()]) {\n              try { close(); } catch { controller.abort(); }\n            }\n          };\n          const work = async (stage, read) => {\n            try { return await read(); }\n            catch (error) {\n              if (!failed) {\n                failed = true; first = error;\n                if (!state.diagnostic) {\n                  state.stage = stage;\n                  noteRefusal(state, error, stage === 'preflight' ? 'acquire' : undefined);\n                }\n                stopReads();\n              }\n              throw error;\n            }\n          };\n          let observation;\n"
+        },
+        {
+          "start": 58547,
+          "before": "          if (rootPoint) {\n            state.stage = 'root';\n            roots = require(\"./railgun-txid-root.js\").createRailgunTxidRootSource(\n              eligibilityScope.getContext({\n                kind: 'service',\n                principal: 'railgun-public-sync',\n                protocol: 'railgun',\n                deployment: 'sepolia',\n                chainId: pins.chainId,\n                role: 'public-services',\n              })\n",
+          "after": "\n          rootWork = work('root', async () => {\n            if (rootPoint) {\n              roots = require(\"./railgun-txid-root.js\").createRailgunTxidRootSource(\n                eligibilityScope.getContext({\n                  kind: 'service',\n                  principal: 'railgun-public-sync',\n                  protocol: 'railgun',\n                  deployment: 'sepolia',\n                  chainId: pins.chainId,\n                  role: 'public-services',\n                })\n              );\n              const budget = phaseBudget(15000, 50000);\n              const rootTimer = setTimeout(() => eligibilityScope.close(), budget);\n              rootTimer.unref?.();\n              try {\n                rootReceipt = await roots.acquire(rootPoint);\n              } finally {\n                clearTimeout(rootTimer);\n              }\n            }\n          });\n          const poiWork = work('membership', async () => {\n            const acquired = await poi.acquire({ timeoutMs: listBudget });\n            phaseCurrent();\n            sourceReceipt = acquired.receipt;\n            observation = poi.assertResult(sourceReceipt);\n            assert.equal(observation.listKey, REQUIRED_LIST);\n            assert.equal(observation.rootsAccepted, true);\n            assert.deepEqual(\n              observation.statuses,\n              notes.map((value) => ({ ...value, status: 'Valid' }))\n"
+        },
+        {
+          "start": 59948,
+          "before": "            const budget = phaseBudget(15000, 50000);\n            const rootTimer = setTimeout(() => eligibilityScope.close(), budget);\n            rootTimer.unref?.();\n",
+          "after": "            membership = await require(\"./railgun-poi-membership.js\").verifyRailgunPoiMembership({\n              handle: poiHandle,\n              source: poi,\n              receipt: sourceReceipt,\n              archive,\n              timeoutMs: phaseBudget(15000, 60000),\n            });\n            phaseCurrent();\n          });\n          eligibilityWork = work('membership', async () => {\n            await Promise.allSettled([poiWork, rootWork]);\n            if (failed) throw first;\n            live();\n          });\n          // Attach a rejection observer immediately; the input gate and outer\n          // allSettled below still await the original work, including drainage.\n          eligibilityWork.catch(() => {});\n          const input = {\n            tree: capsule.selection.tree,\n            merkleRoot: capsule.preparation.expected.merkleRoot,\n            nullifier: baseline.entry.facts.nullifier,\n            checkpointHash: owned.binding.checkpointHash,\n            minimumBlock: owned.publicThrough.number,\n          };\n          const preflightStarted = performance.now();\n          state.stage = 'preflight';\n          const source = createRailgunPrivatePreflight({\n            enrollment, artifactDirectory, input,\n            ...(capsule.selection.kind === 'railgun-partial-unshield'\n              ? { intentKind: capsule.selection.kind } : {}),\n            ...(destinationConstraints\n              ? { destinationConstraint: destinationConstraints.protocol } : {}),\n            admissionDeadline: nullifierDeadline,\n            async beforeSelectedInput() {\n              // Public reads have finished. Waiting for the independently\n              // bounded eligibility work does not renew the 60s preflight age.\n              clearTimeout(publicTimer);\n              assert.ok(performance.now() < preflightStarted + 20000);\n              await eligibilityWork;\n              live();\n              assert.ok(!failed && performance.now() < nullifierDeadline);\n              selectedTimer = setTimeout(() => source.close(), 20000);\n              selectedTimer.unref?.();\n            },\n          });\n          recoveredPreflight = { source, started: preflightStarted, acquired: null };\n          publicTimer = setTimeout(() => source.close(), 20000);\n          publicTimer.unref?.();\n          const stopPreflight = () => source.close();\n          phaseSignal.addEventListener('abort', stopPreflight, { once: true });\n          preflightWork = work('preflight', async () => {\n"
+        },
+        {
+          "start": 62462,
+          "before": "              rootStarted = performance.now();\n              rootReceipt = await roots.acquire(rootPoint);\n",
+          "after": "              assert.ok(!phaseSignal.aborted);\n              recoveredPreflight.acquired = await source.acquire();\n"
+        },
+        {
+          "start": 62601,
+          "before": "              clearTimeout(rootTimer);\n",
+          "after": "              clearTimeout(publicTimer);\n              clearTimeout(selectedTimer);\n              phaseSignal.removeEventListener('abort', stopPreflight);\n"
+        },
+        {
+          "start": 62770,
+          "before": "          }\n          // Conservative: each start was taken before its acquisition (C before\n          // the verifier ran, so earlier than its genuine expiry by the\n          // verifier's duration). The genuine receipts remain the authority.\n          const lifetimeEnd = () =>\n            Math.min(\n              deadline,\n              context.deadline,\n              sourceReturnedAt + require(\"./railgun-scan-source.js\").MAX_AGE_MS,\n              proofStarted + PROOF_RECEIPT_MS,\n              poiStarted + require(\"./railgun-poi-source.js\").MAX_AGE_MS,\n              rootPoint ? rootStarted + require(\"./railgun-txid-root.js\").MAX_AGE_MS : Infinity\n            );\n          // Before any preflight read: refuse once the review floor, admission,\n          // the send reserve and the expected preflight and EOA reads cannot\n          // all fit. An early hint only: the preflight itself enforces the\n          // nullifier boundary against the same estimate.\n",
+          "after": "          });\n          await Promise.allSettled([eligibilityWork, preflightWork]);\n          if (failed) throw first;\n          live();\n          state.stage = 'preflight';\n          // Final conservative floor before EOA work. The parallel preflight\n          // already enforced the same nullifier admission bound; no completed\n          // receipt is renewed here.\n"
+        },
+        {
+          "start": 63264,
+          "before": "            BUDGET.preflightAllowanceMs +\n",
+          "after": ""
+        },
+        {
+          "start": 64229,
+          "before": "",
+          "after": "            preparedPreflight: recoveredPreflight,\n"
+        },
+        {
+          "start": 65064,
+          "before": "",
+          "after": "            () => recoveredPreflight?.source.close(),\n"
+        },
+        {
+          "start": 65401,
+          "before": "",
+          "after": "          clearTimeout(publicTimer);\n          clearTimeout(selectedTimer);\n          await Promise.allSettled([preflightWork, eligibilityWork, rootWork].filter(Boolean));\n"
+        }
+      ]
+    }
+  ]
+}

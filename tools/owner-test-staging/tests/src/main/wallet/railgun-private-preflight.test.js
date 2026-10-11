@@ -782,7 +782,7 @@ test('overlap acquires only public deployment, fee and verifier before the input
 });
 test.each(['refuse', 'close', 'expiry'])('input gate %s never admits a selected-input request', async fault => {
   source.close();
-  const now = performance.now();
+  const now = Math.ceil(performance.now());
   const clock = jest.spyOn(performance, 'now').mockReturnValue(now);
   source = open(input(), { beforeSelectedInput: async () => {
     if (fault === 'refuse') throw Error('private gate failure');
@@ -792,6 +792,14 @@ test.each(['refuse', 'close', 'expiry'])('input gate %s never admits a selected-
   await expect(source.acquire()).rejects.toMatchObject({ code: 'RAILGUN_PRIVATE_PREFLIGHT_REFUSED', step: 'input-gate' });
   expect(selectedMethods()).toEqual(['unshieldFee', 'getVerificationKey']);
 });
-test('the overlap gate cannot be added to a recovered-submission admission deadline', () => {
-  expect(() => open(input(), { beforeSelectedInput() {}, admissionDeadline: performance.now() + 1000 })).toThrow();
+test('recovered overlap preserves the nullifier deadline after its input gate', async () => {
+  source.close();
+  const now = Math.ceil(performance.now());
+  const clock = jest.spyOn(performance, 'now').mockReturnValue(now);
+  source = open(input(), {
+    beforeSelectedInput() { clock.mockReturnValue(now + 1000); },
+    admissionDeadline: now + 1000,
+  });
+  await expect(source.acquire()).rejects.toMatchObject({ step: 'nullifiers', reason: 'stale' });
+  expect(selectedMethods()).not.toContain('nullifiers');
 });

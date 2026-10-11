@@ -30,7 +30,7 @@ const {
 } = require("../../qualification/installed-journey/synthetic-copy-contract.cjs");
 const { createFixtureServer } = require("./server.cjs");
 assert.ok(
-  [undefined, "acknowledged", "retained-unknown", "retained-upgrade", "wide-retained", "preparation-diagnostics", "guided", "guided-timing", "guided-timing-baseline"].includes(inputs.variant),
+  [undefined, "acknowledged", "retained-unknown", "retained-upgrade", "wide-retained", "preparation-diagnostics", "guided", "guided-timing", "guided-slow-poi", "guided-timing-baseline"].includes(inputs.variant),
 );
 const { TRANSACT_ABI } = require("../../../src/data/railgun-private-policy.js");
 const hash = (bytes) => crypto.createHash("sha256").update(bytes).digest("hex");
@@ -98,16 +98,19 @@ for (const dependency of ["ethers", "better-sqlite3"])
     path.join(root, "node_modules", dependency),
     "dir",
   );
-const exampleSource = previousTar ? inputs.previousHost : path.join(repo, "examples/reference-wallet");
-if (previousTar) {
+const exampleSource = previousTar ? inputs.previousHost :
+  timingBaseline && inputs.baselineHost ? inputs.baselineHost : path.join(repo, "examples/reference-wallet");
+if (!timingBaseline) assert.equal(inputs.baselineHost, undefined);
+if (previousTar || (timingBaseline && inputs.baselineHost)) {
   // Measure the old host as data before executing any of its modules.
   const files = JSON.parse(fs.readFileSync(path.join(exampleSource, "host/sources.json"), "utf8"));
   const rows = files.map((name) => {
     assert.ok(typeof name === "string" && !path.isAbsolute(name) && !name.split("/").includes(".."));
     return [name, hash(fs.readFileSync(path.join(exampleSource, name)))];
   });
-  assert.equal(hash(JSON.stringify(["railgun-reference-host-v1", rows])),
-    "ac34e683eabd8b6c8f5eb3f44999c18edaf6ae69441a8bbc0ec8033d50c2d495");
+  assert.equal(hash(JSON.stringify(["railgun-reference-host-v1", rows])), previousTar
+    ? "ac34e683eabd8b6c8f5eb3f44999c18edaf6ae69441a8bbc0ec8033d50c2d495"
+    : "f1f16706f496d760712755cf79d0f732aa16673aa88472e11cbdc02b2686a8e9");
 }
 fs.cpSync(
   exampleSource,
@@ -124,6 +127,7 @@ fs.writeFileSync(target, after);
 const installation = {
   tarSha256: hash(fs.readFileSync(baselineTar ?? path.join(root, packed.filename))),
   files: packed.files.length,
+  ...(timingBaseline && inputs.baselineHost ? { baselineHostSha256: "f1f16706f496d760712755cf79d0f732aa16673aa88472e11cbdc02b2686a8e9" } : {}),
   ...(previousTar ? { initialTarSha256: hash(fs.readFileSync(previousTar)) } : {}),
   transform: { target: TARGET, before: hash(before), after: hash(after) },
   scope: "synthetic list only; no production package mutation",
@@ -324,9 +328,9 @@ async function main() {
     key: fs.readFileSync(path.join(root, "key.pem")),
     cert: fs.readFileSync(path.join(root, "cert.pem")),
   });
-  if (["guided", "guided-timing", "guided-timing-baseline"].includes(inputs.variant))
+  if (["guided", "guided-timing", "guided-slow-poi", "guided-timing-baseline"].includes(inputs.variant))
     return require("./guided.cjs").runGuided({actor,chain,server,write,installation,
-      timing: inputs.variant !== "guided", timingBaseline, baselineReadDelayMs});
+      timing: inputs.variant !== "guided", slowPoi: inputs.variant === "guided-slow-poi", timingBaseline, baselineReadDelayMs});
   const addresses = {};
   for (const name of actors) {
     await actor(name, "account-create");

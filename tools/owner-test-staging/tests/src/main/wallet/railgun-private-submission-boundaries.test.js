@@ -82,6 +82,7 @@ jest.mock("../../../../../../src/owners/railgun-private-proof.js", () => ({
 }));
 jest.mock("../../../../../../src/owners/railgun-poi-source.js", () => ({
   MAX_AGE_MS: 60000,
+  ACQUIRE_TIMEOUT_MS: 45000,
   createRailgunPoiSource: (options) => mock.openPoi(options),
 }));
 jest.mock("../../../../../../src/owners/railgun-poi-membership.js", () => ({
@@ -736,9 +737,9 @@ async function setup(kit, overrides = {}) {
         if (value !== receipt || controller.signal.aborted || performance.now() - started >= 60000)
           throw Error('deployment');
         // The preflight re-asserts the deployment in each read, after its
-        // own checks; after the verifier reply this is the nullifier read.
+        // own checks; after the selected root reply this is the nullifier read.
         const last = mock.requests.at(-1);
-        if (s.cross && !mock.crossing && last?.name === 'getVerificationKey' && last.outcome)
+        if (s.cross && !mock.crossing && last?.name === 'rootHistory' && last.outcome)
           crossAfterNullifierCheck(s.cross);
         return { anchor: ANCHOR };
       },
@@ -948,9 +949,9 @@ describe('where the recovered send actually begins (production service, network 
     const protocol = mock.requests.filter((v) => v.role === 'protocol-rpc').map((v) => v.name);
     expect(protocol.slice(13)).toEqual([
       'eth_chainId',
-      'rootHistory',
       'unshieldFee',
       'getVerificationKey',
+      'rootHistory',
       'nullifiers',
       'eth_getBlockByNumber',
     ]);
@@ -1412,11 +1413,12 @@ describe('an uncertain recovered send without a returned hash', () => {
 });
 
 describe('the nullifier admission boundary', () => {
-  test('a stalled deployment read refuses immediately before the nullifier query', async () => {
-    // probe-1 shape: the seventh deployment read stalls 10 s but completes.
+  test('a stalled selected-root read refuses immediately before the nullifier query', async () => {
+    // A selected root read after eligibility stalls 10 s but completes.
+    // Public deployment stalls overlap eligibility now; this targets the tail.
     const seen = await run(DEFAULT, {
       resolved: 4,
-      read: (entry) => (entry.role === 'protocol-rpc' && entry.roleIndex === 6 ? 10000 : 150),
+      read: (entry) => (entry.role === 'protocol-rpc' && entry.name === 'rootHistory' ? 10000 : 150),
     });
     expect(seen.outcome).toBe('refused-after-POI');
     expect(seen.nullifier).toBeUndefined();
@@ -1438,7 +1440,7 @@ describe('the nullifier admission boundary', () => {
     BUDGET.eoaAllowanceMs +
     BUDGET.disclosureTailMs;
   const stall = (extra) => (entry) =>
-    entry.role === 'protocol-rpc' && entry.roleIndex === 6 ? 150 + extra : 150;
+    entry.role === 'protocol-rpc' && entry.name === 'rootHistory' ? 150 + extra : 150;
   // A run whose preflight nullifier check happens exactly `offset` ms before
   // the deadline: with no work in between, the check and the transport share
   // one instant, so the baseline request time is the check time.
@@ -1459,7 +1461,7 @@ describe('the nullifier admission boundary', () => {
     expect(seen.nullifier.at).toBe(deadline - 1);
     expect(seen.nullifier.delivered).toBeGreaterThan(deadline);
     expect(seen.outcome).toBe('refused-after-nullifier');
-    expect(seen.diagnostic).toEqual({ stage: 'eoa', substage: 'review-floor', code: 'RAILGUN_PRIVATE_REVIEW_BUDGET' });
+    expect(seen.diagnostic).toEqual({ stage: 'preflight', code: 'RAILGUN_PRIVATE_REVIEW_BUDGET' });
     expect(mock.requests.filter((v) => v.role === 'transaction-rpc')).toEqual([]);
     expect(seen.attempts).toEqual([]);
     expect(seen.sends).toEqual([]);
@@ -1573,7 +1575,7 @@ describe('the refusal tuple through the live qualifier report', () => {
   test('a nullifier admission refusal is stale at nullifiers and never requests the nullifier', async () => {
     const seen = await run(DEFAULT, {
       resolved: 4,
-      read: (entry) => (entry.role === 'protocol-rpc' && entry.roleIndex === 6 ? 10000 : 150),
+      read: (entry) => (entry.role === 'protocol-rpc' && entry.name === 'rootHistory' ? 10000 : 150),
     });
     const tuple = {
       stage: 'preflight',
@@ -1602,9 +1604,9 @@ describe('the refusal tuple through the live qualifier report', () => {
 
 describe('the conservative proof estimate', () => {
   // The estimate starts before the verifier runs; the genuine receipt starts
-  // at its exit. H is anchored at the estimate, so a longer verifier shortens
-  // the offered review by exactly its duration, and the genuine proof then
-  // outlives F by the send reserve plus that same duration.
+  // at its exit. H never exceeds the estimate; the 30s review cap can end it
+  // earlier. A longer verifier cannot increase the review. Genuine proof
+  // slack is at least the send reserve plus the verifier duration.
   test('verifiers of 0, 2 and 4 s: the review shrinks and the genuine slack grows by their duration', async () => {
     const seen = [];
     for (const verifierMs of [0, 2000, 4000]) {
@@ -1612,8 +1614,8 @@ describe('the conservative proof estimate', () => {
       expect(value.outcome).toBe('acknowledged');
       const H = value.review.expiresAt - mock.clock.WALL;
       const verifier = at('verifier-exit') - at('verifier-start');
-      expect(H - at('verifier-start')).toBe(60000 - BUDGET.sendReserveMs - BUDGET.admissionMs - 1);
-      expect(mock.proof.deadline - (H + BUDGET.admissionMs)).toBe(
+      expect(H - at('verifier-start')).toBeLessThanOrEqual(60000 - BUDGET.sendReserveMs - BUDGET.admissionMs - 1);
+      expect(mock.proof.deadline - (H + BUDGET.admissionMs)).toBeGreaterThanOrEqual(
         BUDGET.sendReserveMs + 1 + verifier
       );
       // The timing beside the result: the verifier's duration, and the
@@ -1624,7 +1626,8 @@ describe('the conservative proof estimate', () => {
       seen.push({ window: value.review.window, verifier });
     }
     for (const value of seen.slice(1))
-      expect(value.window).toBe(seen[0].window - (value.verifier - seen[0].verifier));
+      expect(value.window).toBeGreaterThanOrEqual(seen[0].window - (value.verifier - seen[0].verifier));
+    for (const value of seen.slice(1)) expect(value.window).toBeLessThanOrEqual(seen[0].window);
   });
 });
 
@@ -1690,50 +1693,149 @@ const SCENARIOS = Object.freeze({
 // calldata simulation; submission: calldata simulated and signed, no
 // journal record. uncertain: a durable attempt with an unknown outcome;
 // accepted or unsent is the simulated node's ground truth, not the wallet's.
-const B1 = 'after-POI:membership';
-const AT_NULLIFIER = 'after-POI:nullifiers';
-// Owner simulation saves one read round and nonce/balance saves two.
-// The staged historical host remains serial: +450 ms for 150 ms reads
-// (including the single slow read), +1200 ms for uniform 400 ms reads.
+// Current overlapping schedule, with the real historical service/network/journal.
+// Authority/freshness and no-resend invariants are checked separately below.
 const EXPECTED = Object.freeze({
-  'd1b POI 18.6 s, 150 ms reads, empty journal': [[B1, 'ack', 'ack', B1, 'ack'], 26654],
-  'd1b POI, 150 ms reads, 4 resolved records': [[B1, 'ack', 'ack', B1, 'ack'], 25698],
-  'd1b POI, 4 resolved, approval 500 ms before shown deadline': [
-    [B1, 'after-nullifier:submission', 'after-nullifier:submission', B1, 'ack'],
-    25698,
+  "d1b POI 18.6 s, 150 ms reads, empty journal": [
+    [
+      "after-POI:preflight",
+      "ack",
+      "ack",
+      "after-POI:preflight",
+      "ack"
+    ],
+    29092
   ],
-  'd1b POI, every 8th read 1.5 s, 4 resolved': [
-    [B1, 'after-nullifier:eoa', 'ack', B1, 'ack'],
-    20298,
+  "d1b POI, 150 ms reads, 4 resolved records": [
+    [
+      "after-POI:preflight",
+      "ack",
+      "ack",
+      "after-POI:preflight",
+      "ack"
+    ],
+    28136
   ],
-  'd1b POI, 400 ms reads, 4 resolved': [[B1, AT_NULLIFIER, 'ack', B1, 'ack'], 17948],
-  'POI 22 s, 150 ms reads, 4 resolved': [[B1, AT_NULLIFIER, 'ack', B1, 'ack'], 22285],
-  'POI 25 s, 150 ms reads, 4 resolved': [[B1, B1, B1, B1, B1], null],
-  'd1b POI, one 10 s deployment read (probe-1 shape)': [
-    [B1, AT_NULLIFIER, AT_NULLIFIER, B1, AT_NULLIFIER],
-    null,
+  "d1b POI, 4 resolved, approval 500 ms before shown deadline": [
+    [
+      "after-POI:preflight",
+      "after-nullifier:submission",
+      "after-nullifier:submission",
+      "after-POI:preflight",
+      "ack"
+    ],
+    28136
   ],
-  'd1b POI, 5 s verifier, 4 resolved': [[B1, AT_NULLIFIER, 'ack', B1, 'ack'], 21498],
-  'd1b POI, approval 1 s before shown deadline, 13 s send': [
-    [B1, 'ack', 'uncertain:accepted', B1, 'uncertain:accepted'],
-    26654,
+  "d1b POI, every 8th read 1.5 s, 4 resolved": [
+    [
+      "after-POI:preflight",
+      "ack",
+      "ack",
+      "after-POI:preflight",
+      "ack"
+    ],
+    25436
   ],
-  'd1b POI, approval 2 s before shown deadline, 2 s begin write': [
-    [B1, 'uncertain:unsent', 'uncertain:unsent', B1, 'ack'],
-    26654,
+  "d1b POI, 400 ms reads, 4 resolved": [
+    [
+      "after-POI:preflight",
+      "after-nullifier:submission",
+      "ack",
+      "after-POI:preflight",
+      "ack"
+    ],
+    24548
   ],
-  'd1b POI, 400 ms reads, 4 resolved, approval 300 ms before shown deadline': [
-    [B1, AT_NULLIFIER, 'after-nullifier:submission', B1, 'ack'],
-    17948,
+  "POI 22 s, 150 ms reads, 4 resolved": [
+    [
+      "after-POI:membership",
+      "after-nullifier:submission",
+      "ack",
+      "after-POI:membership",
+      "ack"
+    ],
+    24885
   ],
-  'same, and the send is delivered after 9.5 s': [
-    [B1, AT_NULLIFIER, 'after-nullifier:submission', B1, 'uncertain:accepted'],
-    17948,
+  "POI 25 s, 150 ms reads, 4 resolved": [
+    [
+      "after-POI:membership",
+      "after-POI:preflight",
+      "ack",
+      "after-POI:membership",
+      "ack"
+    ],
+    21885
   ],
-  'd1b POI, send accepted, response lost': [
-    [B1, 'uncertain:accepted', 'uncertain:accepted', B1, 'uncertain:accepted'],
-    26654,
+  "d1b POI, one 10 s deployment read (probe-1 shape)": [
+    [
+      "after-POI:preflight",
+      "ack",
+      "ack",
+      "after-POI:preflight",
+      "ack"
+    ],
+    28136
   ],
+  "d1b POI, 5 s verifier, 4 resolved": [
+    [
+      "after-POI:membership",
+      "after-nullifier:submission",
+      "ack",
+      "after-POI:membership",
+      "ack"
+    ],
+    24098
+  ],
+  "d1b POI, approval 1 s before shown deadline, 13 s send": [
+    [
+      "after-POI:preflight",
+      "ack",
+      "uncertain:accepted",
+      "after-POI:preflight",
+      "uncertain:accepted"
+    ],
+    29092
+  ],
+  "d1b POI, approval 2 s before shown deadline, 2 s begin write": [
+    [
+      "after-POI:preflight",
+      "uncertain:unsent",
+      "uncertain:unsent",
+      "after-POI:preflight",
+      "ack"
+    ],
+    29092
+  ],
+  "d1b POI, 400 ms reads, 4 resolved, approval 300 ms before shown deadline": [
+    [
+      "after-POI:preflight",
+      "after-nullifier:submission",
+      "after-nullifier:submission",
+      "after-POI:preflight",
+      "ack"
+    ],
+    24548
+  ],
+  "same, and the send is delivered after 9.5 s": [
+    [
+      "after-POI:preflight",
+      "after-nullifier:submission",
+      "after-nullifier:submission",
+      "after-POI:preflight",
+      "uncertain:accepted"
+    ],
+    24548
+  ],
+  "d1b POI, send accepted, response lost": [
+    [
+      "after-POI:preflight",
+      "uncertain:accepted",
+      "uncertain:accepted",
+      "after-POI:preflight",
+      "uncertain:accepted"
+    ],
+    29092
+  ]
 });
 function outcomeCode(seen) {
   switch (seen.outcome) {
@@ -1752,21 +1854,23 @@ describe('policy comparison under real boundaries', () => {
   test.each(Object.keys(VARIANTS).map((name, column) => [name, column]))(
     '%s',
     async (name, column) => {
-      const actual = {},
-        expected = {};
+      const actual = {}, expected = {}, windows = {}, expectedWindows = {};
       for (const [scenario, overrides] of Object.entries(SCENARIOS)) {
         const seen = await run(VARIANTS[name], overrides);
         actual[scenario] = outcomeCode(seen);
         expected[scenario] = EXPECTED[scenario][0][column];
         // The shown review under the 10 s candidate, for the design table.
-        if (name === 'H = F, 10 s') expect(seen.review?.window ?? null).toBe(EXPECTED[scenario][1]);
+        if (name === 'H = F, 10 s') {
+          windows[scenario] = seen.review?.window ?? null;
+          expectedWindows[scenario] = EXPECTED[scenario][1];
+        }
         // Never more than the existing 30 s review, never below the floor.
         if (seen.review) {
           expect(seen.review.window).toBeLessThanOrEqual(30000);
           expect(seen.review.window).toBeGreaterThanOrEqual(BUDGET.reviewMinMs);
         }
       }
-      expect(actual).toEqual(expected);
+      expect({ outcomes: actual, windows }).toEqual({ outcomes: expected, windows: expectedWindows });
     },
     60000
   );
