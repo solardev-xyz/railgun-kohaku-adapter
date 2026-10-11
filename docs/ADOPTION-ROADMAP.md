@@ -204,7 +204,19 @@ run. Outreach, a release and Freedom product integration remain later decisions.
 
 ## Guided adoption sequence — October 11
 
-The next agreed milestone makes the example operable through saved instructions:
+The next agreed milestone makes the example operable through saved instructions.
+The successful explicit-command live payment remains complete; the stronger
+frozen-guide acceptance case below is still open.
+
+| Acceptance case | Current evidence |
+| --- | --- |
+| Independent installed Alice-to-Bob direct Sepolia payment | Complete on its recorded installations, with receipts and conservation |
+| Guided lifecycle with slow services and interruptions | 179-step synthetic installed run complete; genuine custody and POI proof verification |
+| Upgrade of an old retained, unsent payment | Exact old-install synthetic continuation complete; original hold preserved |
+| Entire guided live lifecycle on one frozen installation | Open; two interrupted attempts preserved, no live claim for the latest candidate |
+| Independent human walkthrough | Open; AI review does not satisfy it |
+| External review / release / Freedom product activation | Later decisions, not performed |
+
 
 1. **Guided workflow and interruption qualification:** locally complete on
    `c8f1d8d`. The [qualification record](qualification/reference-guided-qualification-2026-10-11/README.md)
@@ -237,6 +249,14 @@ The next agreed milestone makes the example operable through saved instructions:
    actual receipt/conservation checks without a mid-run code fix or manual
    substitution for a guide step. A supported explicit continuation is allowed;
    changing implementation makes it an interrupted development run.
+   The [slow-POI successor](qualification/reference-slow-poi-2026-10-11/README.md)
+   now also passes the 179-step guide with five-second POI reads during warm and
+   cold operations, plus an exact-old-version retained-payment upgrade. Both
+   preserve evidence ages and measure the remaining time at the actual prompt.
+   Linux/macOS CI passed on `aa5742f`: 325 suites and 13,290 tests per platform,
+   with the four explicit external-runtime skips unchanged.
+   Subsequent public live screens exceeded the qualified latency range; funded
+   submission is paused rather than treating synthetic timing as live assurance.
 3. **Independent human walkthrough:** pending. Use the
    [walkthrough tasks and feedback record](review/REFERENCE-WALKTHROUGH.md).
    The AI review and agent-operated native/live work do not satisfy this gate.
