@@ -174,7 +174,7 @@ async function collect(
         assert.ok(p.value > 0n && p.value + a.fees[offset] < 1n << 120n);
         assert.equal(
           p.value.toString(),
-          capsule.version === 2 ? capsule.preparation.inputAmount : capsule.preparation.amount
+          capsule.selection.kind === 'railgun-partial-unshield' ? capsule.preparation.inputAmount : capsule.preparation.amount
         );
         creator = {
           type: 'Shield',

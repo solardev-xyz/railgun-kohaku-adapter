@@ -35,11 +35,12 @@ jest.mock("../../../../../../src/execution/railgun-private-capsule.js", () => ({
     return Object.freeze(value);
   },
 }));
-jest.mock("../../../../../../src/data/railgun-private-preparation.js", () => ({
+jest.mock("../../../../../../src/data/railgun-retained-private-data.js", () => ({
+  ...jest.requireActual("../../../../../../src/data/railgun-retained-private-data.js"),
   normalizeRailgunPrivateOffer: (value, selection) =>
     mockActualCapsule
       ? jest
-          .requireActual('../../../../../../src/data/railgun-private-preparation')
+          .requireActual('../../../../../../src/data/railgun-retained-private-data')
           .normalizeRailgunPrivateOffer(value, selection)
       : Object.freeze({ ...value }),
 }));

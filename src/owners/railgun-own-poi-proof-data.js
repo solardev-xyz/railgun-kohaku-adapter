@@ -2,12 +2,12 @@
  * checks establish internal consistency only, never account/source authority.
  */
 const assert = require('assert/strict');
-const { getRailgunOwnPoiShape } = require("../data/railgun-own-poi-shape-data.js");
+const { getRailgunOwnPoiShape } = require("../data/railgun-retained-private-data.js");
 const path = require('path');
 const { matchRailgunOwnTxid } = require("./railgun-own-txid.js");
 const { normalizeRailgunTxidWitness } = require("../data/railgun-txid-note-witness.js");
-const { normalizeRailgunPoiShieldInput } = require("../data/railgun-poi-shield-selector-data.js");
-const { prepareRailgunPoiTransactSelectorInput } = require("../data/railgun-poi-transact-selector-data.js");
+const { normalizeRailgunPoiShieldInput } = require("../data/railgun-retained-private-data.js");
+const { prepareRailgunPoiTransactSelectorInput } = require("../data/railgun-retained-private-data.js");
 const { normalizePoiProofs, REQUIRED_LIST } = require("../data/railgun-poi-records.js");
 const { bindRailgunOwnPoiPayload } = require("../../host-poi.cjs");
 const freeze = (v) => {

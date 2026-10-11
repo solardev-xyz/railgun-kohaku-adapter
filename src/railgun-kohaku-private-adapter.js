@@ -8,8 +8,8 @@ const { getAddress } = require('ethers');
 const { normalizeRailgunKohakuReadFilter } = require('./railgun-kohaku-read-data');
 const instances = new WeakMap(),
   adopted = new WeakSet();
-const MAX = BigInt(pins.maxQualificationAmount),
-  U120 = 1n << 120n;
+const { LEGACY_MAX, NOTE_MAX } = require("./amount-bounds");
+const U120 = 1n << 120n;
 const FIELD = 21888242871839275222246405745257275088548364400416034343698204186575808495617n;
 const refusal = () =>
   Object.assign(new Error('Kohaku private adapter unavailable'), {
@@ -139,11 +139,11 @@ function resultRead(method, value) {
     };
   });
 }
-function input(value, recipient, options, unshield) {
+function input(value, recipient, options, unshield, maximum) {
   shape(value, ['asset', 'amount', 'noteId']);
   const copiedAsset = asset(value.asset);
   assert.equal(copiedAsset.__type, 'erc20');
-  assert.ok(typeof value.amount === 'bigint' && value.amount > 0n && value.amount <= MAX);
+  assert.ok(typeof value.amount === 'bigint' && value.amount > 0n && value.amount <= maximum);
   assert.equal(typeof value.noteId, 'string');
   assert.match(value.noteId, /^(0|[1-9][0-9]{0,2}):(0|[1-9][0-9]{0,4})$/);
   const [tree, position] = value.noteId.split(':').map(Number);
@@ -245,8 +245,12 @@ function createRailgunKohakuPrivateAdapter(options) {
   }
 }
 function create(options) {
-  shape(options, ['host', 'signal']);
+  assert.ok(options && !isProxy(options) && Object.getPrototypeOf(options) === Object.prototype);
+  const hasMaximum = Object.hasOwn(options, 'maxAmount');
+  shape(options, ['host', 'signal', ...(hasMaximum ? ['maxAmount'] : [])]);
   const { host, signal } = options;
+  const maximum = hasMaximum ? options.maxAmount : LEGACY_MAX;
+  assert.ok(typeof maximum === 'bigint' && maximum > 0n && maximum <= NOTE_MAX);
   shape(host, [
     'signal',
     'closed',
@@ -429,7 +433,7 @@ function create(options) {
       current();
       assert.equal(state, 'ready');
       assert.equal(tasks.size, 0);
-      const args = input(value, recipient, opts, method === 'prepareUnshield');
+      const args = input(value, recipient, opts, method === 'prepareUnshield', maximum);
       current();
       state = 'preparing';
       return outward(

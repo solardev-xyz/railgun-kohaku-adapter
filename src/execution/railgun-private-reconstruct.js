@@ -26,7 +26,8 @@ async function reconstructRailgunPrivateWitness({
   active();
   const capsule = normalizeRailgunPrivateCapsule(input);
   const partial = capsule.selection.kind === 'railgun-partial-unshield';
-  assert.equal(capsule.version, partial ? 2 : 1);
+  require("../operation-formats").assertCapsuleFormat(capsule.version, capsule.selection.kind,
+    partial ? capsule.preparation.inputAmount : capsule.preparation.amount);
   const { selection, preparation, noteHash, pathElements } = capsule;
   assert.equal(capsule.walletId, descriptor.walletId);
   assert.equal(wallet.getAddress(), descriptor.instanceId);

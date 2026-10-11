@@ -166,9 +166,12 @@ existing Sepolia facts and rejects unsupported initialization choices. It is
 an assertion of the sole supported deployment, not a parametric network registry.
 The [stored-format foundation](owners/OPERATION-FORMATS.md) now separates
 canonical wider internal capsule formats from the unchanged historical data
-readers, with genuine old-reader downgrade checks. Broader operation-policy
-integration remains open: owners and signing admission still enforce the
-historical amount/shape bounds. Availability recovery is explicit resume,
+readers, with genuine old-reader downgrade checks. Direct operation-policy integration now captures an explicit amount ceiling
+and checks gross Shield/full selected input at preparation and warm/cold signing
+admission. The default remains the historical ceiling; structural reads are
+policy-independent and wider formats retain old-reader refusal. Native
+wider-amount qualification is pending. Operation shapes and relay policy remain
+separately bounded. Availability recovery is explicit resume,
 not a general idempotent-read retry engine. Experimental versioning and a platform
 matrix are documented, private vulnerability reporting is enabled, and a tagged
 release's version/notes still require its concrete release decision. Authentic

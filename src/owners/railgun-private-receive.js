@@ -10,11 +10,10 @@ const {
   quarantineRailgunIdentityCredentials,
 } = require("./railgun-identity.js");
 const { verifyRailgunEngineRuntime } = require("../execution/railgun-engine-runtime.js");
-const { validateRailgunPrivateSigningIntent } = require("../data/railgun-private-intent.js");
+const { validateRailgunPrivateSigningIntent } = require("../data/railgun-retained-private-data.js");
 const { assertRailgunPrivateTransferRecipient } = require("../data/railgun-private-destination.js");
-const { normalizeRailgunPrivateReceiver } = require("../data/railgun-private-results.js");
+const { normalizeRailgunPrivateReceiver } = require("../data/railgun-retained-private-data.js");
 const { startRailgunProcess } = require("./railgun-process.js");
-const pins = require("../railgun-shield-pins.json");
 const busy = new WeakSet();
 const fail = () =>
   Object.assign(new Error('Railgun private receiver unavailable'), {
@@ -51,8 +50,8 @@ async function verify(options) {
     assert.ok(!Object.hasOwn(options, 'unshieldAmount'));
   } else assert.ok(!Object.hasOwn(options, 'inputAmount'));
   const amount = partial ? options.inputAmount : options.amount;
-  assert.match(amount, /^[1-9][0-9]{0,16}$/);
-  assert.ok(BigInt(amount) <= BigInt(pins.maxQualificationAmount));
+  assert.match(amount, /^[1-9][0-9]{0,36}$/);
+  assert.ok(BigInt(amount) <= require("../amount-bounds").NOTE_MAX);
   if (partial)
     assert.ok(
       BigInt(checked.unshieldAmount) > 0n && BigInt(checked.unshieldAmount) < BigInt(amount)

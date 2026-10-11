@@ -1,5 +1,10 @@
 require('../../../../context-host.cjs');
 let mock;
+jest.mock("../../../../../../src/owners/application-policy", () => ({
+  ...jest.requireActual("../../../../../../src/owners/application-policy"),
+  isRailgunOperationAmount: value => typeof value === 'bigint' && value > 0n &&
+    value <= (mock.amountCeiling ?? 10000000000000000n),
+}));
 jest.mock("../../../../../../src/owners/railgun-private-operation.js", () => ({
   claimRailgunPrivateCompletion: (receipt, identity, enrollment) => {
     if (
@@ -101,7 +106,7 @@ beforeEach(() => {
       capsule: {
         version: 1,
         selection: { kind: parsed.expected.kind, tree: 0 },
-        preparation: { transaction: parsed.intent, expected: parsed.expected },
+        preparation: { amount: '1000', transaction: parsed.intent, expected: parsed.expected },
       },
       provedTransaction: tx,
     },
@@ -664,4 +669,12 @@ test('warm completion preserves zero default proof review margin', async () => {
   expect(await submit(options)).toEqual({ hash: '0x' + 'c'.repeat(64) });
   expect(mock.proofMargins.length).toBeGreaterThan(0);
   expect(mock.proofMargins.every((value) => value === 0)).toBe(true);
+});
+
+test('warm completion checks the captured amount ceiling before proof, review or signer', async () => {
+  mock.amountCeiling = 999n;
+  expect(await submit(options)).toEqual({status:'recovery-required', stage:'operation-policy'});
+  expect(mock.events).not.toContain('C');
+  expect(mock.events).not.toContain('broadcast');
+  expect(mock.networkConstructor).not.toHaveBeenCalled();
 });

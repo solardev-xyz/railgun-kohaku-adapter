@@ -3,7 +3,7 @@ const assert = require('assert/strict');
 const {
   normalizeRailgunPrivateCapsule,
   digestRailgunPrivateCapsule,
-} = require('../../host-data.cjs');
+} = require('../data/railgun-retained-private-data');
 function normalizeRailgunNewCapsule(value, { walletId, selection, preparation, noteHash }) {
   const normalized = normalizeRailgunPrivateCapsule(value);
   const partial = selection?.kind === 'railgun-partial-unshield';
@@ -18,7 +18,7 @@ function normalizeRailgunNewCapsule(value, { walletId, selection, preparation, n
     changeAmount,
   } = preparation;
   const expectedCapsule = normalizeRailgunPrivateCapsule({
-    version: partial ? 2 : 1,
+    version: require("../operation-formats").selectCapsuleFormat(selection.kind, partial ? inputAmount : amount).version,
     walletId,
     selection,
     engineSha256: require('./railgun-engine-manifest.json').sha256,

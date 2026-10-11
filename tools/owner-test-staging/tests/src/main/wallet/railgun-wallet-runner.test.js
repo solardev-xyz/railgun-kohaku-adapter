@@ -1,3 +1,4 @@
+jest.mock("../../../../../../src/data/railgun-retained-private-data.js", () => ({ ...jest.requireActual("../../../../../../src/data/railgun-retained-private-data.js") }));
 const { createRailgunWalletRunner } = require("../../../../../../src/owners/railgun-wallet-runner.js");
 const hash = (n) => '0x' + n.toString(16).padStart(64, '0');
 const inventory = '1'.repeat(64),
@@ -177,7 +178,7 @@ test.each(['ok', 'write', 'state', 'unfinished', 'bad-operation'])(
   'operation keeps the read-only receipt contract (%s)',
   async (mode) => {
     const f = setup();
-    const module = require("../../../../../../src/data/railgun-private-preparation.js");
+    const module = require("../../../../../../src/data/railgun-retained-private-data.js");
     const preparation = { transactionDigest: 'checked', spendingEnabled: false };
     const prepare = jest
       .spyOn(module, 'normalizeRailgunPrivatePreparation')

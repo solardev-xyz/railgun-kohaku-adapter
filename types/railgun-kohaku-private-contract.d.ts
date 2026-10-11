@@ -94,6 +94,8 @@ export type PrivateAdapterBroadcaster = {
   broadcast: (operation: PrivateOperation) => Promise<PrivateSubmissionOutcome>;
 };
 export declare function createRailgunKohakuPrivateAdapter(options: {
+  /** Host-relative input ceiling; real owners enforce their own captured policy. */
+  maxAmount?: bigint;
   host: RestrictedPrivateHost;
   signal: AbortSignal;
 }): PrivateAdapter;

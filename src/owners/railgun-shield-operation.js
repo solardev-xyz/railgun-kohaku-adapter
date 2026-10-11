@@ -1,7 +1,7 @@
 /** One-use main-owned Sepolia shield handoff. Receipt-bound authority ends at
  * broadcast; durable reconciliation is a separate journal-owned operation.
  */
-const { isRailgunGasBudget } = require('./application-policy');
+const { isRailgunGasBudget, isRailgunOperationAmount } = require('./application-policy');
 const { createPrivacyScope, getPrivacyContext } = require('./context-bindings');
 const { isProxy } = require('util').types;
 const { createPrivateRpc } = require('./host-bindings').rpc;
@@ -166,6 +166,7 @@ async function openRailgunShieldOperation(options) {
     timer.unref?.();
     const parent = enrollment.getContext('engine', 'shield-prepare');
     const scopeCurrent = () => {
+      check(isRailgunOperationAmount(BigInt(amount)));
       const now = performance.now(),
         wall = Date.now();
       check(

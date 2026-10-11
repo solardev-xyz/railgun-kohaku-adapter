@@ -92,7 +92,7 @@ test('CJS/ESM exports are identical; fixed job location resolution imports no jo
     for (const value of ['__proto__', '/tmp/evil.js', 'relay-sign', {}, null])
       assert.throws(() => cjs.getRailgunExecutionJob(value));
     assert(!Object.keys(require.cache).some(p => p.includes('ethers') || p.endsWith('-job.js')));
-    assert.equal(require('./host-data.cjs').normalizeRailgunPrivateCapsule,
+    assert.equal(require('./src/data/railgun-retained-private-data').normalizeRailgunPrivateCapsule,
       require('./src/execution/railgun-private-capsule').normalizeRailgunPrivateCapsule);
   `,
     ],

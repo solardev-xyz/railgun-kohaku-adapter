@@ -1,0 +1,791 @@
+{
+  "baseRevision": "aa48fc2095c27e9168a2817f2078a454fbd9b4ab",
+  "label": "Captured direct operation amount policy; retained structural formats remain independent of current spending policy; legacy data exports and relay limits unchanged.",
+  "changes": [
+    {
+      "file": "src/execution/railgun-private-capsule.js",
+      "beforeSha256": "3962d8f52223865f216896ee26091dca5aba5956024f995c1b7c3ab6e8912bd5",
+      "afterSha256": "045aa359c48490cae0df54928d892856dad72a9ac2e3b677d02e34d2be154cbb",
+      "replacements": [
+        {
+          "start": 199,
+          "before": "} = require('../../host-data.cjs');\n",
+          "after": "} = require('../data/railgun-retained-private-data');\n"
+        },
+        {
+          "start": 691,
+          "before": "    version: partial ? 2 : 1,\n",
+          "after": "    version: require(\"../operation-formats\").selectCapsuleFormat(selection.kind, partial ? inputAmount : amount).version,\n"
+        }
+      ]
+    },
+    {
+      "file": "src/execution/railgun-private-operate-job.js",
+      "beforeSha256": "0f0b55c7ab71f627539c90b702442caf500efe760156021909b67cdc361d1527",
+      "afterSha256": "e978a7345e6d3af55873e1f2c1637bebd377e6ff087ee61e79d8d135cd0cb887",
+      "replacements": [
+        {
+          "start": 1758,
+          "before": "          version: input.privateIntent.kind === 'railgun-partial-unshield' ? 2 : 1,\n",
+          "after": "          version: require(\"../operation-formats\").selectCapsuleFormat(input.privateIntent.kind,\n            prepared.publicPreparation.inputAmount ?? prepared.publicPreparation.amount).version,\n"
+        }
+      ]
+    },
+    {
+      "file": "src/execution/railgun-private-prover.js",
+      "beforeSha256": "a154a0ad76373824287ae3b6ec88c44d9bd8f1b6e9ebe73c709f28adc2a50539",
+      "afterSha256": "9ca202edd0b8e538a785d1e0a7ebf81fa09c2fa4cd22c2afb83be6b7f2936d2a",
+      "replacements": [
+        {
+          "start": 503,
+          "before": "} = require('../data/railgun-private-intent');\n",
+          "after": "} = require('../data/railgun-retained-private-data');\n"
+        }
+      ]
+    },
+    {
+      "file": "src/execution/railgun-private-receive-job.js",
+      "beforeSha256": "9b1e7f8e2e7d8395a3d857a6cb9e421e5688b7175a6087e784d5fac604639f49",
+      "afterSha256": "1f36146b1fa5e43abcf49e7fe8c874c77677a2ffdb379f4178e81d1dbfae485c",
+      "replacements": [
+        {
+          "start": 430,
+          "before": "const { validateRailgunPrivateSigningIntent } = require('../data/railgun-private-intent');\n",
+          "after": "const { validateRailgunPrivateSigningIntent } = require('../data/railgun-retained-private-data');\n"
+        },
+        {
+          "start": 1884,
+          "before": "  assert.match(amount, /^[1-9][0-9]{0,16}$/);\n  assert.ok(BigInt(amount) <= BigInt(pins.maxQualificationAmount));\n",
+          "after": "  assert.match(amount, /^[1-9][0-9]{0,36}$/);\n  assert.ok(BigInt(amount) <= require(\"../amount-bounds\").NOTE_MAX);\n"
+        }
+      ]
+    },
+    {
+      "file": "src/execution/railgun-private-reconstruct.js",
+      "beforeSha256": "28bdeb785db856668f48d488bf031a867fe09b77ca66f29f52ee79e73cf64509",
+      "afterSha256": "9a4f5d7f46f96ab27614ee476c88c3192a3b4294210d4bdeecd0e15a17e2b4e6",
+      "replacements": [
+        {
+          "start": 1145,
+          "before": "  assert.equal(capsule.version, partial ? 2 : 1);\n",
+          "after": "  require(\"../operation-formats\").assertCapsuleFormat(capsule.version, capsule.selection.kind,\n    partial ? capsule.preparation.inputAmount : capsule.preparation.amount);\n"
+        }
+      ]
+    },
+    {
+      "file": "src/execution/railgun-private-recover-job.js",
+      "beforeSha256": "201d390c672f69e62a1ba08508b42d968bd4c24af06d33040aae92248806a0ab",
+      "afterSha256": "b765065c658f924857cfbe1736e5a981aca70694229d6e5bcb0631da1426d3f6",
+      "replacements": [
+        {
+          "start": 206,
+          "before": "const { normalizeRailgunPrivateRecoveryInput } = require('../data/railgun-private-recovery-data');\n",
+          "after": "const { normalizeRailgunPrivateRecoveryInput } = require('../data/railgun-retained-private-data');\n"
+        }
+      ]
+    },
+    {
+      "file": "src/execution/railgun-private-verify-job.js",
+      "beforeSha256": "42ee0cd1befff1e5134501c13c938d1ad11a03ab25dea7c8b0dbe623b2f1b289",
+      "afterSha256": "c98884c15f7cb2030dbc5c3eb98a1b7aff96f4ad25c883e63ef5f7540875c7f8",
+      "replacements": [
+        {
+          "start": 313,
+          "before": "const { matchRailgunPrivateProvedTransaction } = require('../data/railgun-private-intent');\n",
+          "after": "const { matchRailgunPrivateProvedTransaction } = require('../data/railgun-retained-private-data');\n"
+        }
+      ]
+    },
+    {
+      "file": "src/execution/railgun-private-witness.js",
+      "beforeSha256": "6528f8672534a66dcffaa24f1b4efc79b8ac34b5715042e6b9cbe191059f26c7",
+      "afterSha256": "6821d322684c936e60a9d79be4b74ddd8f5fc7c1ae22d34536ca9faf871ed2b0",
+      "replacements": [
+        {
+          "start": 337,
+          "before": "const { validateRailgunPrivateSigningIntent } = require('../data/railgun-private-intent');\n",
+          "after": "const { validateRailgunPrivateSigningIntent } = require('../data/railgun-retained-private-data');\n"
+        },
+        {
+          "start": 3319,
+          "before": "  assert.ok(note.value > 0n && note.value <= BigInt(pins.maxQualificationAmount));\n",
+          "after": "  assert.ok(note.value > 0n && note.value <= require(\"../amount-bounds\").NOTE_MAX);\n"
+        },
+        {
+          "start": 4496,
+          "before": "    assert.match(selection.unshieldAmount, /^[1-9][0-9]{0,16}$/);\n",
+          "after": "    assert.match(selection.unshieldAmount, /^[1-9][0-9]{0,36}$/);\n"
+        }
+      ]
+    },
+    {
+      "file": "src/execution/railgun-spend-sign-job.js",
+      "beforeSha256": "bc68cba055005a89758ccccf635d09e226861d945651caa78a829af1404b5c22",
+      "afterSha256": "6e09ac5e64918fbd7e8942e14e11797c483d5ccf9e83cef7cce4de6e80b4e93d",
+      "replacements": [
+        {
+          "start": 309,
+          "before": "const { validateRailgunPrivateSigningIntent } = require('../data/railgun-private-intent');\n",
+          "after": "const { validateRailgunPrivateSigningIntent } = require('../data/railgun-retained-private-data');\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/application-policy.js",
+      "beforeSha256": "dd1a2bcde99bd17005fb7f0045ed5dce3abfde295e8018fe5c26930e6195cd83",
+      "afterSha256": "f54068a16a2196e7b54f20736fa155ee6855da028d449e232f57d3c2b86099fe",
+      "replacements": [
+        {
+          "start": 215,
+          "before": "",
+          "after": "const { LEGACY_MAX, NOTE_MAX } = require('../amount-bounds');\n"
+        },
+        {
+          "start": 658,
+          "before": "",
+          "after": "let operationCeiling = LEGACY_MAX;\n"
+        },
+        {
+          "start": 1055,
+          "before": "  const entry = descriptors.maxGasFee;\n  if (Reflect.ownKeys(descriptors).length !== 1 || !entry || !entry.enumerable ||\n      !Object.hasOwn(entry, 'value') || typeof entry.value !== 'bigint' ||\n      entry.value <= 0n || entry.value > MAX_APPLICATION_GAS_FEE) throw fail();\n  ceiling = entry.value;\n",
+          "after": "  const keys = Reflect.ownKeys(descriptors);\n  if (!keys.length || keys.some(key => !['maxGasFee', 'maxOperationAmount'].includes(key))) throw fail();\n  const read = (name, fallback, maximum) => {\n    if (!Object.hasOwn(descriptors, name)) return fallback;\n    const entry = descriptors[name];\n    if (!entry.enumerable || !Object.hasOwn(entry, 'value') ||\n        typeof entry.value !== 'bigint' || entry.value <= 0n || entry.value > maximum) throw fail();\n    return entry.value;\n  };\n  const gas = read('maxGasFee', DEFAULT_MAX_GAS_FEE, MAX_APPLICATION_GAS_FEE);\n  const operation = read('maxOperationAmount', LEGACY_MAX, NOTE_MAX);\n  ceiling = gas;\n  operationCeiling = operation;\n"
+        },
+        {
+          "start": 1851,
+          "before": "module.exports = { captureRailgunApplicationPolicy, isRailgunGasBudget };\n",
+          "after": "function isRailgunOperationAmount(value) {\n  return typeof value === 'bigint' && value > 0n && value <= operationCeiling;\n}\nmodule.exports = { captureRailgunApplicationPolicy, isRailgunGasBudget, isRailgunOperationAmount };\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-account-wallet.js",
+      "beforeSha256": "47b6e1da5239e63342884ae6b4276f66277acaf2d1ffd3bc631210044fe5b61b",
+      "afterSha256": "74c5059211b3010244c20145d624ae186f915a4968bf07e774c36fb01a9e487c",
+      "replacements": [
+        {
+          "start": 10617,
+          "before": "      note.amount <= BigInt(pins.maxQualificationAmount)\n",
+          "after": "      note.amount <= require(\"../amount-bounds\").NOTE_MAX\n"
+        },
+        {
+          "start": 26940,
+          "before": "            : require(\"../data/railgun-private-recovery-data.js\").normalizeRailgunPrivateRecoveryInput(\n",
+          "after": "            : require(\"../data/railgun-retained-private-data.js\").normalizeRailgunPrivateRecoveryInput(\n"
+        },
+        {
+          "start": 28320,
+          "before": "              require(\"../data/railgun-private-recovery-data.js\").normalizeRailgunPrivateRecoveryResult(\n",
+          "after": "              require(\"../data/railgun-retained-private-data.js\").normalizeRailgunPrivateRecoveryResult(\n"
+        },
+        {
+          "start": 29274,
+          "before": "          : require(\"../data/railgun-private-preparation.js\").selectRailgunPrivatePreparation(\n",
+          "after": "          : require(\"./application-private-preparation.js\").selectRailgunPrivatePreparation(\n"
+        },
+        {
+          "start": 30446,
+          "before": "              require(\"../data/railgun-private-preparation.js\").normalizeRailgunPrivatePreparation(raw, {\n",
+          "after": "              require(\"../data/railgun-retained-private-data.js\").normalizeRailgunPrivatePreparation(raw, {\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-identity.js",
+      "beforeSha256": "a0e9435a3ed5ac09514d06baa358e851486848b124a219601bb64c6ff4937cad",
+      "afterSha256": "c7c4ecdf7adc04b82007155f30dd8d9b9a28f907705f9508fcaceab68120c741",
+      "replacements": [
+        {
+          "start": 11888,
+          "before": "  require(\"../data/railgun-private-intent.js\").validateRailgunPrivateSigningIntent(\n",
+          "after": "  require(\"../data/railgun-retained-private-data.js\").validateRailgunPrivateSigningIntent(\n"
+        },
+        {
+          "start": 13121,
+          "before": "    const results = require(\"../data/railgun-private-results.js\");\n",
+          "after": "    const results = require(\"../data/railgun-retained-private-data.js\");\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-kohaku-plugin.js",
+      "beforeSha256": "df0b425dd350b9bcc04fa5eeb2458401471c65da0aec5532e1257557bf0fae5e",
+      "afterSha256": "219eba8dac78f158cc43a15235c9e9772067f8c25df85ddb8fc306f107c9720d",
+      "replacements": [
+        {
+          "start": 1109,
+          "before": "const { selectRailgunPrivatePreparation } = require(\"../data/railgun-private-preparation.js\");\n",
+          "after": "const { selectRailgunPrivatePreparation } = require(\"./application-private-preparation.js\");\n"
+        },
+        {
+          "start": 1542,
+          "before": "const { shieldAmount } = require(\"./railgun-shield-policy.js\");\n",
+          "after": "const { shieldAmount } = require(\"./application-shield-policy.js\");\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-own-operation.js",
+      "beforeSha256": "8e582bf53926d1c765b537ebce7ae903c3fae8f379d0e302f849daaf6cef8e29",
+      "afterSha256": "08a58001b8eabb12de0767c997b9442b07a4edde6a461438fe47519dd4d56f12",
+      "replacements": [
+        {
+          "start": 7091,
+          "before": "          assert.equal(capsule.version, partial ? 2 : 1);\n",
+          "after": "          require(\"../operation-formats\").assertCapsuleFormat(capsule.version, capsule.selection.kind,\n    partial ? capsule.preparation.inputAmount : capsule.preparation.amount);\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-own-poi-membership.js",
+      "beforeSha256": "c7a12f4ddfd9d4aac74ac25957f1c986cebd5c62ef261192909d1f6292d66746",
+      "afterSha256": "0511858b3772bf723a6a4f89c10a1698124fed8758fe5b3c6bafe4543c5b7ec5",
+      "replacements": [
+        {
+          "start": 386,
+          "before": "const { getRailgunOwnPoiShape } = require(\"../data/railgun-own-poi-shape-data.js\");\n",
+          "after": "const { getRailgunOwnPoiShape } = require(\"../data/railgun-retained-private-data.js\");\n"
+        },
+        {
+          "start": 1159,
+          "before": "const { prepareRailgunPoiTransactSelectorInput } = require(\"../data/railgun-poi-transact-selector-data.js\");\n",
+          "after": "const { prepareRailgunPoiTransactSelectorInput } = require(\"../data/railgun-retained-private-data.js\");\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-own-poi-proof-data.js",
+      "beforeSha256": "a9149e3155bea07b519eb5f1ad970b1cd13e4c303194e081db4767a699b3b521",
+      "afterSha256": "7d5f966f895c7a07679347876f71dac0e09f85e13ae94826052d38f4e07f096b",
+      "replacements": [
+        {
+          "start": 201,
+          "before": "const { getRailgunOwnPoiShape } = require(\"../data/railgun-own-poi-shape-data.js\");\n",
+          "after": "const { getRailgunOwnPoiShape } = require(\"../data/railgun-retained-private-data.js\");\n"
+        },
+        {
+          "start": 473,
+          "before": "const { normalizeRailgunPoiShieldInput } = require(\"../data/railgun-poi-shield-selector-data.js\");\nconst { prepareRailgunPoiTransactSelectorInput } = require(\"../data/railgun-poi-transact-selector-data.js\");\n",
+          "after": "const { normalizeRailgunPoiShieldInput } = require(\"../data/railgun-retained-private-data.js\");\nconst { prepareRailgunPoiTransactSelectorInput } = require(\"../data/railgun-retained-private-data.js\");\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-own-poi-proof.js",
+      "beforeSha256": "b8a198b89641581f638648db6f6079dce180a869154b87659708756ec219481e",
+      "afterSha256": "72121d931f41658a631656adfa10ca36c031184c222a3adeca75cedc02452bfc",
+      "replacements": [
+        {
+          "start": 363,
+          "before": "const { getRailgunOwnPoiShape } = require(\"../data/railgun-own-poi-shape-data.js\");\n",
+          "after": "const { getRailgunOwnPoiShape } = require(\"../data/railgun-retained-private-data.js\");\n"
+        },
+        {
+          "start": 1183,
+          "before": "const { prepareRailgunPoiTransactSelectorInput } = require(\"../data/railgun-poi-transact-selector-data.js\");\n",
+          "after": "const { prepareRailgunPoiTransactSelectorInput } = require(\"../data/railgun-retained-private-data.js\");\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-own-witness.js",
+      "beforeSha256": "610512cbe08a7654fec25dfd970a6ed1a99008ebaa119ad834a287d987d2d073",
+      "afterSha256": "1f1bfb715506cf25f98212983191567900809dc451588c8682ba5ab98678e8f7",
+      "replacements": [
+        {
+          "start": 281,
+          "before": "const { getRailgunOwnPoiShape } = require(\"../data/railgun-own-poi-shape-data.js\");\n",
+          "after": "const { getRailgunOwnPoiShape } = require(\"../data/railgun-retained-private-data.js\");\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-poi-cold-validation.js",
+      "beforeSha256": "5665813401fadabd80438c48f665822b8371cb16ee43829b1a705a09a740f77a",
+      "afterSha256": "b444a64f20b715cc42766bc84575ae67a58c59102ce07cf8e772bc48a567258e",
+      "replacements": [
+        {
+          "start": 273,
+          "before": "} = require(\"../data/railgun-own-poi-shape-data.js\");\n",
+          "after": "} = require(\"../data/railgun-retained-private-data.js\");\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-poi-creator.js",
+      "beforeSha256": "de4b37eff3cc8bb336578217b942705ec40c64acd462105739d7ae69ad01c37e",
+      "afterSha256": "8dc1be5cd09b3bd653ebc78f04786c925ba377e224b75f58cfb03c989a622061",
+      "replacements": [
+        {
+          "start": 7125,
+          "before": "          capsule.version === 2 ? capsule.preparation.inputAmount : capsule.preparation.amount\n",
+          "after": "          capsule.selection.kind === 'railgun-partial-unshield' ? capsule.preparation.inputAmount : capsule.preparation.amount\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-poi-disclosure-plan.js",
+      "beforeSha256": "1f169bf6e1642856dfe2f470ccd918d4309e2fb95eb8730773f610770558a071",
+      "afterSha256": "5bc50911a996deaaefc02acb5dc25b916c6114288cd4ec3c49ec6a78c112fc7f",
+      "replacements": [
+        {
+          "start": 555,
+          "before": "} = require(\"../data/railgun-own-poi-shape-data.js\");\n",
+          "after": "} = require(\"../data/railgun-retained-private-data.js\");\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-poi-intent-store.js",
+      "beforeSha256": "0c89b8aa530e61578872065a153606b8dad14b4d8c2830bfbd7e8658ba0b19ef",
+      "afterSha256": "f806c52d16a0aab70c0172a9aa930223be2dbd925c3eccd0e63583adf711d498",
+      "replacements": [
+        {
+          "start": 1419,
+          "before": "const { assertRailgunOwnPoiPayloadShape } = require(\"../data/railgun-own-poi-shape-data.js\");\n",
+          "after": "const { assertRailgunOwnPoiPayloadShape } = require(\"../data/railgun-retained-private-data.js\");\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-poi-output-recover-job.js",
+      "beforeSha256": "1f57d859e13cb13b273761509c7aea978b4687ba3cd4823c5671b8adaca06818",
+      "afterSha256": "2fbed915f126066c1f6327144421854b98d715bbdd7242c87ce1d2e025a2be3a",
+      "replacements": [
+        {
+          "start": 420,
+          "before": "const { getRailgunOwnPoiShape } = require(\"../data/railgun-own-poi-shape-data.js\");\n",
+          "after": "const { getRailgunOwnPoiShape } = require(\"../data/railgun-retained-private-data.js\");\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-poi-output-recovery-data.js",
+      "beforeSha256": "fe9865a2ea52fef3b45063f201d7d0b242b6e2ab8d9606ea2537b486f6fac9d5",
+      "afterSha256": "35ed72efa57dfcef0843b7c1a8a56d3aebb65f54087535ba37eb2988a31492d3",
+      "replacements": [
+        {
+          "start": 227,
+          "before": "const { getRailgunOwnPoiShape } = require(\"../data/railgun-own-poi-shape-data.js\");\n",
+          "after": "const { getRailgunOwnPoiShape } = require(\"../data/railgun-retained-private-data.js\");\n"
+        },
+        {
+          "start": 507,
+          "before": "const { normalizeRailgunPoiShieldInput } = require(\"../data/railgun-poi-shield-selector-data.js\");\nconst { prepareRailgunPoiTransactSelectorInput } = require(\"../data/railgun-poi-transact-selector-data.js\");\n",
+          "after": "const { normalizeRailgunPoiShieldInput } = require(\"../data/railgun-retained-private-data.js\");\nconst { prepareRailgunPoiTransactSelectorInput } = require(\"../data/railgun-retained-private-data.js\");\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-poi-output-recovery.js",
+      "beforeSha256": "44266a6e02b176c41a85e2924ea1758c4890e2d39ec831ace11aa837815a95c7",
+      "afterSha256": "52e7b96af943bc22a16bfbd3dee0aab1c049417acf357ada57d4f17669887def",
+      "replacements": [
+        {
+          "start": 1370,
+          "before": "} = require(\"../data/railgun-own-poi-shape-data.js\");\n",
+          "after": "} = require(\"../data/railgun-retained-private-data.js\");\n"
+        },
+        {
+          "start": 1516,
+          "before": "const { normalizeRailgunPoiShieldInput } = require(\"../data/railgun-poi-shield-selector-data.js\");\nconst { prepareRailgunPoiTransactSelectorInput } = require(\"../data/railgun-poi-transact-selector-data.js\");\n",
+          "after": "const { normalizeRailgunPoiShieldInput } = require(\"../data/railgun-retained-private-data.js\");\nconst { prepareRailgunPoiTransactSelectorInput } = require(\"../data/railgun-retained-private-data.js\");\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-poi-reconstruct.js",
+      "beforeSha256": "5a8f37212b0d9c9c5afe1058212c725eedb3096e70f58eae9e49737a0289342c",
+      "afterSha256": "6385f5a4d884232ac7574cf679941b5fd202cbdf0059ea9d824503e317d5afe3",
+      "replacements": [
+        {
+          "start": 1545,
+          "before": "  assert.equal(capsule.version, partial ? 2 : 1);\n",
+          "after": "  require(\"../operation-formats\").assertCapsuleFormat(capsule.version, capsule.selection.kind,\n    partial ? capsule.preparation.inputAmount : capsule.preparation.amount);\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-poi-shield-selector-job.js",
+      "beforeSha256": "7010396818fb734fd20a0fbf9dd77fc5d756f6c07345831f6dc8b72ddadbf5e8",
+      "afterSha256": "f06996bf3a461e00c72181781d910976d69f0b5f390d7a7f79a0771639dc6e79",
+      "replacements": [
+        {
+          "start": 275,
+          "before": "const { normalizeRailgunPoiShieldFacts } = require(\"../data/railgun-poi-shield-selector-data.js\");\n",
+          "after": "const { normalizeRailgunPoiShieldFacts } = require(\"../data/railgun-retained-private-data.js\");\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-poi-shield-selector.js",
+      "beforeSha256": "24b6f840f92e9f8b54679f9e3c8a950c765e330282a22a641e59be4fdcd32a1b",
+      "afterSha256": "894dc414557ab9e3eef5ed915e41e7fd4b4d8267d2cc6e70c87d9ced913fdfca",
+      "replacements": [
+        {
+          "start": 495,
+          "before": "const { normalizeRailgunPoiShieldInput } = require(\"../data/railgun-poi-shield-selector-data.js\");\n",
+          "after": "const { normalizeRailgunPoiShieldInput } = require(\"../data/railgun-retained-private-data.js\");\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-poi-transact-selector-job.js",
+      "beforeSha256": "d275ab5fd8090c87be10d12caa806c3364477bc5b19d11517033d404c8b9081a",
+      "afterSha256": "c5a36a22f5a64e246b7306981ecd2a39771938d3aabd3d062867856f6d88aef7",
+      "replacements": [
+        {
+          "start": 328,
+          "before": "} = require(\"../data/railgun-poi-transact-selector-data.js\");\n",
+          "after": "} = require(\"../data/railgun-retained-private-data.js\");\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-private-capsule-store.js",
+      "beforeSha256": "7568e7332ea6febf3b60a1ba5903f25ece2bec6b5ded5f8842c1fc7947466761",
+      "afterSha256": "53b30a9517acb469e2c8b064894a91734f27fbf808ba8be82ce28a7bff066d91",
+      "replacements": [
+        {
+          "start": 1014,
+          "before": "} = require(\"../data/railgun-private-intent.js\");\n",
+          "after": "} = require(\"../data/railgun-retained-private-data.js\");\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-private-operation.js",
+      "beforeSha256": "306e465b31a07be1b2380051ec96d49048c31f1ef8fe1784de6be4464d412907",
+      "afterSha256": "6a057f3fe6cddb2ab0732db426c1657b768a3415ac1cc87b4aff256b5d16afa7",
+      "replacements": [
+        {
+          "start": 385,
+          "before": "const { isRailgunGasBudget } = require('./application-policy');\n",
+          "after": "const { isRailgunGasBudget, isRailgunOperationAmount } = require('./application-policy');\n"
+        },
+        {
+          "start": 940,
+          "before": "const { selectRailgunPrivatePreparation } = require(\"../data/railgun-private-preparation.js\");\n",
+          "after": "const { selectRailgunPrivatePreparation } = require(\"./application-private-preparation.js\");\n"
+        },
+        {
+          "start": 5501,
+          "before": "",
+          "after": "  const inputAmount = baseline.read.received.find(note => note.id === request.noteId).amount;\n"
+        },
+        {
+          "start": 7099,
+          "before": "",
+          "after": "    assert.ok(isRailgunOperationAmount(inputAmount));\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-private-proof-recovery.js",
+      "beforeSha256": "884b5be1060857eb45e5adcda2c6510595025c29b05067de1f8d9078f936026c",
+      "afterSha256": "79063a6fc68c71f8e54aa9a819b847089808c9b531ded00cc46e74b461825209",
+      "replacements": [
+        {
+          "start": 803,
+          "before": "const { matchRailgunPrivateProvedTransaction } = require(\"../data/railgun-private-intent.js\");\n",
+          "after": "const { matchRailgunPrivateProvedTransaction } = require(\"../data/railgun-retained-private-data.js\");\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-private-proof.js",
+      "beforeSha256": "78c83eaa8d25761bbe236405af62d47b5754f8f066b52789ca83f30fad8738a4",
+      "afterSha256": "aec48cfc3d80c54eb6353605c6a25503ed11161cdf044fadeb9bd2b813c73afa",
+      "replacements": [
+        {
+          "start": 430,
+          "before": "const { matchRailgunPrivateProvedTransaction } = require(\"../data/railgun-private-intent.js\");\nconst { normalizeRailgunPrivateVerification } = require(\"../data/railgun-private-results.js\");\n",
+          "after": "const { matchRailgunPrivateProvedTransaction } = require(\"../data/railgun-retained-private-data.js\");\nconst { normalizeRailgunPrivateVerification } = require(\"../data/railgun-retained-private-data.js\");\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-private-receive.js",
+      "beforeSha256": "58cdf83fade0863a449b2fb1459cd73d8c165d58fca8112a7c25c02061a1b972",
+      "afterSha256": "f7af1ac0792d9d59a1ec3e295a0b4241aad424f34d1077b24825ac23929237b8",
+      "replacements": [
+        {
+          "start": 600,
+          "before": "const { validateRailgunPrivateSigningIntent } = require(\"../data/railgun-private-intent.js\");\n",
+          "after": "const { validateRailgunPrivateSigningIntent } = require(\"../data/railgun-retained-private-data.js\");\n"
+        },
+        {
+          "start": 802,
+          "before": "const { normalizeRailgunPrivateReceiver } = require(\"../data/railgun-private-results.js\");\n",
+          "after": "const { normalizeRailgunPrivateReceiver } = require(\"../data/railgun-retained-private-data.js\");\n"
+        },
+        {
+          "start": 964,
+          "before": "const pins = require(\"../railgun-shield-pins.json\");\n",
+          "after": ""
+        },
+        {
+          "start": 2752,
+          "before": "  assert.match(amount, /^[1-9][0-9]{0,16}$/);\n  assert.ok(BigInt(amount) <= BigInt(pins.maxQualificationAmount));\n",
+          "after": "  assert.match(amount, /^[1-9][0-9]{0,36}$/);\n  assert.ok(BigInt(amount) <= require(\"../amount-bounds\").NOTE_MAX);\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-private-submission.js",
+      "beforeSha256": "2f7ce41f77cfd5327679a86326a5e40ee62f6f1e5568d0b2b5a49e765f018e67",
+      "afterSha256": "5a458313476c44d973b7a9da8c0206973bec0b11de309c7efcd60258db91fa82",
+      "replacements": [
+        {
+          "start": 171,
+          "before": "const { isRailgunGasBudget } = require('./application-policy');\n",
+          "after": "const { isRailgunGasBudget, isRailgunOperationAmount } = require('./application-policy');\n"
+        },
+        {
+          "start": 4839,
+          "before": "",
+          "after": "    'operation-policy',\n"
+        },
+        {
+          "start": 6186,
+          "before": "",
+          "after": "    'operation-policy',\n"
+        },
+        {
+          "start": 11436,
+          "before": "",
+          "after": "  const inputAmount = BigInt(partial ? snapshot.stored.capsule.preparation.inputAmount : snapshot.stored.capsule.preparation.amount);\n"
+        },
+        {
+          "start": 12070,
+          "before": "",
+          "after": "      assert.ok(isRailgunOperationAmount(inputAmount));\n"
+        },
+        {
+          "start": 15659,
+          "before": "",
+          "after": "      assert.ok(isRailgunOperationAmount(inputAmount));\n"
+        },
+        {
+          "start": 26826,
+          "before": "    assert.equal(snapshot.stored.capsule.version, partial ? 2 : 1);\n",
+          "after": "    require(\"../operation-formats\").assertCapsuleFormat(snapshot.stored.capsule.version, kind,\n      partial ? snapshot.stored.capsule.preparation.inputAmount : snapshot.stored.capsule.preparation.amount);\n    state.stage = 'operation-policy';\n    assert.ok(isRailgunOperationAmount(BigInt(partial ? snapshot.stored.capsule.preparation.inputAmount : snapshot.stored.capsule.preparation.amount)));\n    state.stage = 'completion';\n"
+        },
+        {
+          "start": 36333,
+          "before": "",
+          "after": "          step = 'operation-policy';\n          assert.ok(isRailgunOperationAmount(BigInt(capsule.preparation.inputAmount ?? capsule.preparation.amount)));\n"
+        },
+        {
+          "start": 36527,
+          "before": "          require(\"../data/railgun-private-intent.js\").matchRailgunPrivateProvedTransaction(\n",
+          "after": "          require(\"../data/railgun-retained-private-data.js\").matchRailgunPrivateProvedTransaction(\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-shield-job.js",
+      "beforeSha256": "b2873fb892980ce11bacd99419ed1f56e1a7333edc39eba79961a18e4580a5a3",
+      "afterSha256": "2d333f9c6172716ee951b7e8ae0fa9051be94966ab5dc14a93191cac504898ad",
+      "replacements": [
+        {
+          "start": 1350,
+          "before": "  assert.match(payload.amount, /^[1-9][0-9]{0,16}$/);\n",
+          "after": "  assert.match(payload.amount, /^[1-9][0-9]{0,36}$/);\n"
+        },
+        {
+          "start": 1445,
+          "before": "  assert.ok(amount <= BigInt(pins.maxQualificationAmount));\n",
+          "after": "  assert.ok(amount <= require(\"../amount-bounds\").NOTE_MAX);\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-shield-operation.js",
+      "beforeSha256": "06b6df7c667344a380b635960968fd37bbc71f576584f4d2d769e38c9974e85f",
+      "afterSha256": "637870ba031ea8827005f2a242f34116d6d954acc58690a08fc74569ab696f2d",
+      "replacements": [
+        {
+          "start": 159,
+          "before": "const { isRailgunGasBudget } = require('./application-policy');\n",
+          "after": "const { isRailgunGasBudget, isRailgunOperationAmount } = require('./application-policy');\n"
+        },
+        {
+          "start": 5483,
+          "before": "",
+          "after": "      check(isRailgunOperationAmount(BigInt(amount)));\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-shield-origin-data.js",
+      "beforeSha256": "ec74997f98533674907fbf4f56304cb1b877fee4e742ddd1de47dbe0eee3b31e",
+      "afterSha256": "c187a5a5338d1d5e0008362304554dc3f7740f286cc57a6353452d21833a3cbf",
+      "replacements": [
+        {
+          "start": 7406,
+          "before": "    assert.ok(note.amount > 0n && note.amount <= BigInt(pins.maxQualificationAmount));\n",
+          "after": "    assert.ok(note.amount > 0n && note.amount <= require(\"../amount-bounds\").NOTE_MAX);\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-shield-prepare.js",
+      "beforeSha256": "58578dbaca5ffc7f43a11f97278df5b4dec48591cd548068877b2bcb3838e4b4",
+      "afterSha256": "570c4559128fe9ba8ab3d90c5c510ecea31be59ccbf0de736c4235f35221ddfc",
+      "replacements": [
+        {
+          "start": 688,
+          "before": "const { shieldAmount, validateRailgunNativeShield } = require(\"./railgun-shield-policy.js\");\n",
+          "after": "const { shieldAmount, validateRailgunNativeShield } = require(\"./application-shield-policy.js\");\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-transact-staging.js",
+      "beforeSha256": "23dd5110568c24988ac3220d2a4d19a5908cd8af8778fd826eec3cf3cff4d0ab",
+      "afterSha256": "86455755c9624d7faa4306a8160bf4a5684b1a1e3468699186127518b5f73c4a",
+      "replacements": [
+        {
+          "start": 1036,
+          "before": "const { selectRailgunPrivatePreparation } = require(\"../data/railgun-private-preparation.js\");\n",
+          "after": "const { selectRailgunPrivatePreparation } = require(\"./application-private-preparation.js\");\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-wallet-run.js",
+      "beforeSha256": "4464c92e96b8e3b3dd6a0716bf70a378b58aa7085cdfa6b7f802352e90c1f5c3",
+      "afterSha256": "c6e91e7934e0c0a0db44cc337fcc8e1004306e9c68dc60eada5bd503c1ca28f9",
+      "replacements": [
+        {
+          "start": 3930,
+          "before": "    recoveryInput = require(\"../data/railgun-private-recovery-data.js\").normalizeRailgunPrivateRecoveryInput(\n",
+          "after": "    recoveryInput = require(\"../data/railgun-retained-private-data.js\").normalizeRailgunPrivateRecoveryInput(\n"
+        },
+        {
+          "start": 12709,
+          "before": "            require(\"../data/railgun-private-preparation.js\").normalizeRailgunPrivateOffer(\n",
+          "after": "            require(\"../data/railgun-retained-private-data.js\").normalizeRailgunPrivateOffer(\n"
+        },
+        {
+          "start": 13728,
+          "before": "        const offer = require(\"../data/railgun-private-preparation.js\").normalizeRailgunPrivateOffer(\n",
+          "after": "        const offer = require(\"../data/railgun-retained-private-data.js\").normalizeRailgunPrivateOffer(\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-wallet-runner.js",
+      "beforeSha256": "2972fd3a2593c1f4deee3bbfa3cf58876ffe1600a32d34859d3acaa56133a11b",
+      "afterSha256": "f6b46da2e53dcc8500101b8b9fc64bd8066777bcd392bdb04e36e5ca2e80752a",
+      "replacements": [
+        {
+          "start": 5660,
+          "before": "        require(\"../data/railgun-private-recovery-data.js\").normalizeRailgunPrivateRecoveryInput(\n",
+          "after": "        require(\"../data/railgun-retained-private-data.js\").normalizeRailgunPrivateRecoveryInput(\n"
+        },
+        {
+          "start": 10668,
+          "before": "          : require(\"../data/railgun-private-preparation.js\").normalizeRailgunPrivatePreparation(\n",
+          "after": "          : require(\"../data/railgun-retained-private-data.js\").normalizeRailgunPrivatePreparation(\n"
+        },
+        {
+          "start": 11202,
+          "before": "          : require(\"../data/railgun-private-preparation.js\").normalizeRailgunPrivateOperation(\n",
+          "after": "          : require(\"../data/railgun-retained-private-data.js\").normalizeRailgunPrivateOperation(\n"
+        },
+        {
+          "start": 11516,
+          "before": "        ? require(\"../data/railgun-private-recovery-data.js\").normalizeRailgunPrivateRecoveryResult(\n",
+          "after": "        ? require(\"../data/railgun-retained-private-data.js\").normalizeRailgunPrivateRecoveryResult(\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/source-identity.js",
+      "beforeSha256": "ee365e42ff8044985d452862b067381d2371cfbb8f6c32e048671b64d8784c96",
+      "afterSha256": "2f4ddaa474a1ee4ffb10dea691b73ceb9be8a766c74ca2a8e1d5348694ba5099",
+      "replacements": [
+        {
+          "start": 549,
+          "before": "const LIST_SHA256 = '6f61e1379b9fa1fc66645aba7f699948171cb3a3dc2a650a3f148d040b95bffa';\n",
+          "after": "const LIST_SHA256 = '599885a6ff9737f433df201787b277c9997103c03c27b1861d586ae4d573584c';\n"
+        }
+      ]
+    },
+    {
+      "file": "src/railgun-kohaku-private-adapter.js",
+      "beforeSha256": "55dd17ada728d1213f8f051a3141f5575b89fcf1caa5622b733d52bb5495a3f4",
+      "afterSha256": "0c5d276ae2258e1e97d709b7286dac8c5bfe39884dba51709da0f0080fd23422",
+      "replacements": [
+        {
+          "start": 497,
+          "before": "const MAX = BigInt(pins.maxQualificationAmount),\n  U120 = 1n << 120n;\n",
+          "after": "const { LEGACY_MAX, NOTE_MAX } = require(\"./amount-bounds\");\nconst U120 = 1n << 120n;\n"
+        },
+        {
+          "start": 5054,
+          "before": "function input(value, recipient, options, unshield) {\n",
+          "after": "function input(value, recipient, options, unshield, maximum) {\n"
+        },
+        {
+          "start": 5251,
+          "before": "  assert.ok(typeof value.amount === 'bigint' && value.amount > 0n && value.amount <= MAX);\n",
+          "after": "  assert.ok(typeof value.amount === 'bigint' && value.amount > 0n && value.amount <= maximum);\n"
+        },
+        {
+          "start": 8711,
+          "before": "  shape(options, ['host', 'signal']);\n",
+          "after": "  assert.ok(options && !isProxy(options) && Object.getPrototypeOf(options) === Object.prototype);\n  const hasMaximum = Object.hasOwn(options, 'maxAmount');\n  shape(options, ['host', 'signal', ...(hasMaximum ? ['maxAmount'] : [])]);\n"
+        },
+        {
+          "start": 8979,
+          "before": "",
+          "after": "  const maximum = hasMaximum ? options.maxAmount : LEGACY_MAX;\n  assert.ok(typeof maximum === 'bigint' && maximum > 0n && maximum <= NOTE_MAX);\n"
+        },
+        {
+          "start": 13873,
+          "before": "      const args = input(value, recipient, opts, method === 'prepareUnshield');\n",
+          "after": "      const args = input(value, recipient, opts, method === 'prepareUnshield', maximum);\n"
+        }
+      ]
+    },
+    {
+      "file": "src/railgun-kohaku-public-adapter.js",
+      "beforeSha256": "18e4bc11207307fad8df688389e6fd8fc0b9ee3feb632fadf56d9be9a2eff9af",
+      "afterSha256": "de24d38d88fb57de976b1c9d2bad4b573a816d57a5286f629c97387b3818f522",
+      "replacements": [
+        {
+          "start": 498,
+          "before": "const MAX = BigInt(pins.maxQualificationAmount),\n  U120 = 1n << 120n;\n",
+          "after": "const { LEGACY_MAX, NOTE_MAX } = require(\"./amount-bounds\");\nconst U120 = 1n << 120n;\n"
+        },
+        {
+          "start": 5093,
+          "before": "function input(value, to) {\n",
+          "after": "function input(value, to, maximum) {\n"
+        },
+        {
+          "start": 5247,
+          "before": "  assert.ok(typeof value.amount === 'bigint' && value.amount > 0n && value.amount <= MAX);\n",
+          "after": "  assert.ok(typeof value.amount === 'bigint' && value.amount > 0n && value.amount <= maximum);\n"
+        },
+        {
+          "start": 6370,
+          "before": "  shape(options, ['host', 'signal']);\n",
+          "after": "  assert.ok(options && !isProxy(options) && Object.getPrototypeOf(options) === Object.prototype);\n  const hasMaximum = Object.hasOwn(options, 'maxAmount');\n  shape(options, ['host', 'signal', ...(hasMaximum ? ['maxAmount'] : [])]);\n"
+        },
+        {
+          "start": 6638,
+          "before": "",
+          "after": "  const maximum = hasMaximum ? options.maxAmount : LEGACY_MAX;\n  assert.ok(typeof maximum === 'bigint' && maximum > 0n && maximum <= NOTE_MAX);\n"
+        },
+        {
+          "start": 11008,
+          "before": "      const copied = input(value, to);\n",
+          "after": "      const copied = input(value, to, maximum);\n"
+        }
+      ]
+    }
+  ]
+}

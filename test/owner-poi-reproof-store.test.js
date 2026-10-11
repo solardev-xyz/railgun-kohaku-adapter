@@ -41,7 +41,8 @@ jest.mock('../src/data/railgun-own-poi-binding', () => ({
   assertRailgunOwnPoiCapture: (a, b) => expect(a).toEqual(b),
   assertRailgunOwnPoiStableCapture: (a, b) => expect(a).toEqual(b),
 }));
-jest.mock('../src/data/railgun-own-poi-shape-data', () => ({
+jest.mock('../src/data/railgun-retained-private-data', () => ({
+  ...jest.requireActual("../src/data/railgun-retained-private-data"),
   assertRailgunOwnPoiPayloadShape: () => {},
 }));
 // Only this test's genuine proof object authenticates; it returns its history.

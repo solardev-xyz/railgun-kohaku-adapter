@@ -5,6 +5,7 @@ const { scanAccount } = require("./scan.cjs");
  * trigger a rebuild or retry. Every lane is drained before the session closes. */
 async function accountCommand({
   owner,
+  maxOperationAmount = 10000000000000000n,
   command,
   cache,
   signal,
@@ -64,6 +65,7 @@ async function accountCommand({
   }
   if (["shield", "pay-note", "unshield-note"].includes(command))
     return require("./payment-command.cjs").paymentCommand({
+      maxOperationAmount,
       session,
       command,
       noteId,

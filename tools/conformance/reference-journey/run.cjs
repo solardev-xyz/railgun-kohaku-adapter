@@ -30,7 +30,7 @@ const {
 } = require("../../qualification/installed-journey/synthetic-copy-contract.cjs");
 const { createFixtureServer } = require("./server.cjs");
 assert.ok(
-  [undefined, "acknowledged", "retained-unknown", "retained-upgrade"].includes(inputs.variant),
+  [undefined, "acknowledged", "retained-unknown", "retained-upgrade", "wide-retained"].includes(inputs.variant),
 );
 const { TRANSACT_ABI } = require("../../../src/data/railgun-private-policy.js");
 const hash = (bytes) => crypto.createHash("sha256").update(bytes).digest("hex");
@@ -152,6 +152,7 @@ async function actor(name, command, extra = {}) {
     actor: name,
     command,
     runtime: inputs.runtime,
+    ...(inputs.variant === "wide-retained" ? {maxOperationAmount: "50000000000000000"} : {}),
     rpcUrl: ENDPOINT,
     serviceOrigins: [POI_URL, new URL(INDEXER_URL).origin],
     port: server?.port ?? 0,
@@ -309,7 +310,7 @@ async function main() {
     assert.equal((await actor(name, "notes")).notes.length, 0);
   }
   assert.equal(new Set(Object.values(addresses)).size, actors.length);
-  const shield = await actor("alice", "shield", { amount: "1000000000000000" });
+  const shield = await actor("alice", "shield", { amount: inputs.variant === "wide-retained" ? "30000000000000000" : "1000000000000000" });
   const shieldHash = shield.outcome.hash ?? shield.outcome.transactionHash;
   assert.match(shieldHash, /^0x[0-9a-f]{64}$/);
   await chain.mine();
@@ -437,7 +438,28 @@ async function main() {
   assert.deepEqual(status.statuses, ["Valid"]);
   await actor("bob", "txid-sync");
   let unshield;
-  if (inputs.variant === "retained-upgrade") {
+  if (inputs.variant === "wide-retained") {
+    const crashed = await actor("bob", "unshield-note", {
+      noteId: bobNotes[0].id, recipient: funding.bob, fixtureCrash: "after-prepared",
+    });
+    assert.equal(crashed.expectedCrash, true);
+    const retained = (await actor("bob", "holds", {maxOperationAmount: "1"})).records;
+    assert.equal(retained.length, 1);
+    assert.equal(retained[0].localState, "proof-present");
+    const holdId = retained[0].holdId;
+    assert.equal((await actor("bob", "observe", {holdId, maxOperationAmount: "1"})).status, "unjournaled");
+    assert.deepEqual((await actor("bob", "notes", {maxOperationAmount: "1"})).notes, bobNotes);
+    assert.deepEqual((await actor("bob", "poi-status", {noteId: bobNotes[0].id, maxOperationAmount: "1"})).statuses, ["Valid"]);
+    await actor("bob", "submit-stored", {holdId, maxOperationAmount: "1",
+      expectedOutcome: {status: "recovery-required", stage: "history"}});
+    assert.equal(chain.state().transactions.length, 2);
+    assert.deepEqual((await actor("bob", "holds")).records, retained);
+    unshield = await actor("bob", "submit-stored", {holdId});
+    write("WIDE-POLICY.json", {gross: "30000000000000000", ceiling: "50000000000000000",
+      loweredCeiling: "1", retainedRead: true, observation: true, poiStatus: true,
+      loweredSubmissionRefused: true, noRebuildForPolicyChange: true, sameHold: true,
+      restoredSubmission: true, chainTransactions: chain.state().transactions.length});
+  } else if (inputs.variant === "retained-upgrade") {
     const crashed = await actor("bob", "unshield-note", {
       noteId: bobNotes[0].id, recipient: funding.bob, fixtureCrash: "after-prepared",
     });

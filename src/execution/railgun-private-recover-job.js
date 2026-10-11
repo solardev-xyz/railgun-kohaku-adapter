@@ -1,7 +1,7 @@
 /** Fixed viewing-only recovery utility: reconstruct the saved intent and reuse
  * its original signature. No preparation, random output, signer or POI exchange. */
 const assert = require('assert/strict');
-const { normalizeRailgunPrivateRecoveryInput } = require('../data/railgun-private-recovery-data');
+const { normalizeRailgunPrivateRecoveryInput } = require('../data/railgun-retained-private-data');
 exports.run = async (inputText, context) => {
   const input = JSON.parse(inputText);
   assert.equal(input.restore, true);

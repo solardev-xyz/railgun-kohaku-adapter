@@ -15,7 +15,8 @@ not a live or production qualification.
 | Persisted `freedom:` and credential derivation domains | Persisted format/identity | Enrollment, wallet policy, credential contract | Preserve existing bytes. Renaming is a migration, not cosmetic cleanup. | Implemented; retained invariant |
 | 512 distinct log blocks, 4 MiB/4096 logs, 100k block span | Bounded acquisition implementation | `railgun-scan-source.js` | Describe as implementation resource bounds. Plan smaller windows when necessary without accepting partial data. | Implemented; retained invariant |
 | 8,000 TXID rows and 32,768 observed store records | Storage implementation capacity | TXID journal/projection and whole-store observation | Expose capacity clearly. Raising it needs measured memory/storage behavior and matching validators. | Documented; capacity change not started |
-| Native-only Shield; one ERC-20 input; ≤10¹⁶ wei per Shield/private input; fixed proof shapes | Historical qualification and persisted-operation bounds | Root adapters, capsules and preparation validators | Document independently of protocol limits. Broader assets/amounts require a versioned contract, migration and qualification. | Documented; generalization not started |
+| Native-only Shield; one ERC-20 input; fixed proof shapes | Supported operation shapes | Root adapters, capsules and preparation validators | Additional assets and shapes need their own contract and qualification. | Retained; shape generalization not started |
+| Direct operation amount (default ≤10¹⁶; configurable through uint120) | Application policy within a versioned representation | Trusted-main capture, root adapters, preparation and submission | Gross Shield and full selected input are checked against the captured ceiling, including cold submission. Structural reads retain larger owned notes. | Implemented; native wider-amount qualification pending |
 | Maximum gas fee (default 0.002 ETH) | Application policy | Trusted-main captured ceiling and per-lane budget | Explicit bootstrap `applicationPolicy`; actual signed-transaction fee, destination and custody checks stay invariant. See [spending policy](APPLICATION-POLICY.md). | Implemented |
 | 650 ranges, 16 scan recoveries, 80 TXID pages per command | Example application budget | `examples/reference-wallet/{scan,txid-command}.cjs` | Keep in the example, report exhausted budgets clearly, and preserve authenticated progress. | Implemented in example |
 | Vault unlock, explicit `PREPARE`/`SEND`/`RESOLVE` reviews | Host/user policy and custody lifecycle | Example vault and terminal | Stay host-owned; the adapter retains cancellation and genuine review binding. | Implemented; retained invariant |
@@ -39,9 +40,12 @@ The amount-bound foundation distinguishes the immutable historical operation
 limit, the uint120 note representation, and the separately fixed relay fee/input
 limits in `src/amount-bounds.js`. The relay consumers retain their old accepted
 range. The canonical decimal parser is format-only: it grants no policy or
-spending authority. This prerequisite does not enable wider amounts; that still
-requires versioned capsules/intents, legacy reader compatibility, main-owned
-admission and a fresh-signature check on retained submission.
+spending authority. Versioned capsules and public intents retain legacy-reader refusal for wider
+operations. Direct owners now admit amounts under the captured application
+ceiling, and recheck it before warm or retained submission. Lowering the
+ceiling does not hide an owned note, retained hold or POI status; it refuses
+fresh spending authority. Relay input and fee policy remain independently
+bounded. Native wider-amount qualification is still pending.
 
 ## First compatibility boundary
 

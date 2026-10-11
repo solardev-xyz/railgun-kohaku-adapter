@@ -278,7 +278,7 @@
       "sourceSha256": "044fdedff6792475537ec02214f09c7270ef17f53c70bfec5ae5362555d20f10",
       "status": "active-package-successor",
       "destination": "test/earlier-spend-sign-job.test.js",
-      "destinationSha256": "cb5f73feed52361f14c6e56fc1a0072be82b295d0d0cc68357f66716e8bbffee",
+      "destinationSha256": "06111f03669e40845759778bafd2b996ed6b5d7f4df445f8a6d96e318716e82a",
       "provenance": "docs/owners/test-staging/EARLIER-SECOND-MIGRATIONS.json",
       "scope": "All original assertions retained; only recorded literal imports and fixed context composition moved."
     },

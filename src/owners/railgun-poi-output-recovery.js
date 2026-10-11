@@ -24,10 +24,10 @@ const { normalizeRailgunPoiPayload } = require("../data/railgun-poi-payload.js")
 const {
   getRailgunOwnPoiShape,
   assertRailgunOwnPoiPayloadShape,
-} = require("../data/railgun-own-poi-shape-data.js");
+} = require("../data/railgun-retained-private-data.js");
 const { normalizeRailgunPoiSubmission } = require("../data/railgun-poi-submit-data.js");
-const { normalizeRailgunPoiShieldInput } = require("../data/railgun-poi-shield-selector-data.js");
-const { prepareRailgunPoiTransactSelectorInput } = require("../data/railgun-poi-transact-selector-data.js");
+const { normalizeRailgunPoiShieldInput } = require("../data/railgun-retained-private-data.js");
+const { prepareRailgunPoiTransactSelectorInput } = require("../data/railgun-retained-private-data.js");
 const { matchRailgunOwnTxid } = require("./railgun-own-txid.js");
 const { normalizeRailgunTxidWitness } = require("../data/railgun-txid-note-witness.js");
 const { assertRailgunPoiCreatorVerification } = require("../data/railgun-poi-creator-data.js");

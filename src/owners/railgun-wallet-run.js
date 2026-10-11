@@ -98,7 +98,7 @@ async function runRailgunWalletSnapshot({
     assert.equal(restore, true);
     assert.equal(privateIntent, undefined);
     assert.equal(privateOperation, undefined);
-    recoveryInput = require("../data/railgun-private-recovery-data.js").normalizeRailgunPrivateRecoveryInput(
+    recoveryInput = require("../data/railgun-retained-private-data.js").normalizeRailgunPrivateRecoveryInput(
       privateRecovery,
       { walletId }
     );
@@ -328,7 +328,7 @@ async function runRailgunWalletSnapshot({
         } else assert.equal(message.value?.privateRecovery, undefined);
         if (operationInput) {
           assert.deepEqual(
-            require("../data/railgun-private-preparation.js").normalizeRailgunPrivateOffer(
+            require("../data/railgun-retained-private-data.js").normalizeRailgunPrivateOffer(
               message.value.privatePreparation,
               privateIntent
             ),
@@ -352,7 +352,7 @@ async function runRailgunWalletSnapshot({
         intentSeen = true;
         // A trusted main operation handles this typed request. The callback
         // is not a key capability; it must establish its own real authority.
-        const offer = require("../data/railgun-private-preparation.js").normalizeRailgunPrivateOffer(
+        const offer = require("../data/railgun-retained-private-data.js").normalizeRailgunPrivateOffer(
           message.value.preparation,
           privateIntent
         );

@@ -12,6 +12,7 @@ const sharedBrand: PrivatePreparedHandle = cjs;
 const api = initializeRailgunMain({
   host,
   deployment: "sepolia",
+  applicationPolicy: {maxGasFee: 2000000000000000n, maxOperationAmount: 50000000000000000n},
   runtime: {
     archive: "/engine",
     proverArchive: "/prover",

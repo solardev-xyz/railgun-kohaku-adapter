@@ -70,6 +70,8 @@ export type PublicAdapterSubmitter = {
   submit(operation: PublicShieldOperation): Promise<PublicShieldAcknowledgement>;
 };
 export declare function createRailgunKohakuPublicAdapter(options: {
+  /** Host-relative input ceiling; real owners enforce their own captured policy. */
+  maxAmount?: bigint;
   host: RestrictedPublicHost;
   signal: AbortSignal;
 }): PublicAdapter;

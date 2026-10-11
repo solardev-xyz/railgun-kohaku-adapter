@@ -19,7 +19,7 @@ const { randomBytes, createHash } = require('crypto');
 const { createPrivacyScope, getPrivacyContext } = require('./context-bindings');
 const { createPrivacyStorage, getPrivacyStoragePath } = require('./host-bindings').storage;
 const { normalizeRailgunPoiPayload } = require("../data/railgun-poi-payload.js");
-const { assertRailgunOwnPoiPayloadShape } = require("../data/railgun-own-poi-shape-data.js");
+const { assertRailgunOwnPoiPayloadShape } = require("../data/railgun-retained-private-data.js");
 const {
   prepareRailgunPoiSubmission,
   normalizeRailgunPoiSubmission,

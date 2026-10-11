@@ -36,6 +36,7 @@ function initializeReferenceOwner({
   rpcUrl,
   serviceOrigins,
   runtime,
+  maxOperationAmount = "10000000000000000",
 }) {
   if (initialized) throw new Error("Reference owner already initialized");
   initialized = true;
@@ -120,7 +121,7 @@ function initializeReferenceOwner({
     ]),
     journalRetention: fixed(require("./retention.cjs"), ["validArchive"]),
   });
-  const applicationPolicy = Object.freeze({ maxGasFee: 2000000000000000n });
+  const applicationPolicy = Object.freeze({ maxGasFee: 2000000000000000n, maxOperationAmount: BigInt(maxOperationAmount) });
   const owner =
     require("@freedom/railgun-kohaku-adapter/host/owner").initializeRailgunMain(
       { host, runtime, applicationPolicy },

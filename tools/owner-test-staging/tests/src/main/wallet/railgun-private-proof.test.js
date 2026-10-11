@@ -5,12 +5,12 @@ jest.mock("../../../../../../src/owners/railgun-account-enrollment.js", () => ({
 }));
 jest.mock("../../../../../../src/execution/railgun-prover-runtime.js", () => ({ verifyRailgunProverRuntime: (v) => v }));
 // Mock the shared intent implementation, leaving both host and result checks on one seam.
-jest.mock(
-  "../../../../../../src/data/railgun-private-intent.js",
-  () => ({
+jest.mock("../../../../../../src/data/railgun-private-intent-core.js", () => {
+  const value = {
     matchRailgunPrivateProvedTransaction: () => ({ digest: '0x' + '1'.repeat(64) }),
-  })
-);
+  };
+  return { createPrivateIntent: () => value };
+});
 jest.mock("../../../../../../src/owners/railgun-process.js", () => ({
   startRailgunProcess: jest.fn((options) => {
     let finish, reject;

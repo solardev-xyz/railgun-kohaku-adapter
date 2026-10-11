@@ -1,6 +1,7 @@
 /** Earlier suites were outside the151 adjacent staging manifest. */
 const fs = require('fs'), path = require('path'), { createHash } = require('crypto');
 const root = path.join(__dirname, '..');
+const operationAmountAdaptations = require('../docs/owners/test-staging/OPERATION-AMOUNT-POLICY-ADAPTATIONS.json');
 const manifests = [
   [require('../docs/owners/test-staging/OUTSIDE-ADJACENT-MIGRATIONS.json'), 5],
   [require('../docs/owners/test-staging/EARLIER-SECOND-MIGRATIONS.json'), 8],
@@ -12,6 +13,15 @@ test.each(manifests)('earlier runtime suites reconstruct exact original source a
   expect(manifest.changes).toHaveLength(count);
   for (const row of manifest.changes) {
     let text = fs.readFileSync(path.join(root, row.destination), 'utf8');
+    const adaptation = operationAmountAdaptations.changes.find(entry => entry.file === row.destination);
+    if (adaptation) {
+      expect(sha(text)).toBe(adaptation.afterSha256);
+      for (const edit of [...adaptation.replacements].reverse()) {
+        expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(edit.after);
+        text = text.slice(0, edit.start) + edit.before + text.slice(edit.start + edit.after.length);
+      }
+      expect(sha(text)).toBe(adaptation.beforeSha256);
+    }
     expect(sha(text)).toBe(row.afterSha256);
     for (const edit of [...row.replacements].reverse()) {
       expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(edit.after);

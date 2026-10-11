@@ -10,9 +10,12 @@ const mockVerify = jest.fn();
 jest.mock('../src/execution/railgun-prover-runtime', () => ({
   loadRailgunProverRuntime: () => ({ verify: (...args) => mockVerify(...args) }),
 }));
-jest.mock('../src/data/railgun-private-intent', () => ({
+jest.mock("../src/data/railgun-private-intent-core", () => {
+  const value = {
   matchRailgunPrivateProvedTransaction: jest.fn(),
-}));
+};
+  return { createPrivateIntent: () => value };
+});
 jest.mock('../src/execution/railgun-artifacts', () => ({ loadRailgunArtifacts: jest.fn() }));
 const { Interface } = require('ethers');
 const { TRANSACT_ABI } = require('../src/data/railgun-private-policy');
@@ -155,7 +158,7 @@ function partial() {
   };
   input.transaction = { ...input.intent, data: fixture.encode() };
   matchRailgunPrivateProvedTransaction.mockImplementationOnce(
-    jest.requireActual('../src/data/railgun-private-intent').matchRailgunPrivateProvedTransaction
+    jest.requireActual('../src/data/railgun-private-intent-core').createPrivateIntent(jest.requireActual('../src/data/railgun-private-policy')).matchRailgunPrivateProvedTransaction
   );
   artifacts.vkey.nPublic = 5;
   return fixture;

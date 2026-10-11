@@ -140,7 +140,8 @@ function parseArguments(args) {
     refuse();
   if (
     command === "shield"
-      ? !/^[1-9][0-9]{0,23}$/.test(options["--amount"] ?? "")
+      ? !/^[1-9][0-9]{0,36}$/.test(options["--amount"] ?? "") ||
+        BigInt(options["--amount"]) > (1n << 120n) - 1n
       : options["--amount"] !== undefined
   )
     refuse();
@@ -168,6 +169,7 @@ function loadConfiguration(filename) {
     "rpcUrl",
     "serviceOrigins",
     "unlockMinutes",
+    ...(Object.hasOwn(value, "maxOperationAmount") ? ["maxOperationAmount"] : []),
   ]);
   if (
     value.version !== 1 ||
@@ -176,6 +178,10 @@ function loadConfiguration(filename) {
     value.unlockMinutes > 60
   )
     refuse();
+  if (Object.hasOwn(value, "maxOperationAmount") &&
+      (typeof value.maxOperationAmount !== "string" ||
+       !/^[1-9][0-9]{0,36}$/.test(value.maxOperationAmount) ||
+       BigInt(value.maxOperationAmount) > (1n << 120n) - 1n)) refuse();
   exact(value.runtime, ["archive", "proverArchive", "artifactDirectory"]);
   for (const file of Object.values(value.runtime)) absolute(file);
   assertRoot(value.runtime.artifactDirectory);

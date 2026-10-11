@@ -3,11 +3,11 @@
  */
 const assert = require('assert/strict');
 const path = require('path');
-const { getRailgunOwnPoiShape } = require("../data/railgun-own-poi-shape-data.js");
+const { getRailgunOwnPoiShape } = require("../data/railgun-retained-private-data.js");
 const { digestRailgunPrivateCapsule } = require("../execution/railgun-private-capsule.js");
 const { assertRailgunPrivateTransferRecipient } = require("../data/railgun-private-destination.js");
-const { normalizeRailgunPoiShieldInput } = require("../data/railgun-poi-shield-selector-data.js");
-const { prepareRailgunPoiTransactSelectorInput } = require("../data/railgun-poi-transact-selector-data.js");
+const { normalizeRailgunPoiShieldInput } = require("../data/railgun-retained-private-data.js");
+const { prepareRailgunPoiTransactSelectorInput } = require("../data/railgun-retained-private-data.js");
 const { matchRailgunOwnTxid } = require("./railgun-own-txid.js");
 const { normalizeRailgunTxidWitness } = require("../data/railgun-txid-note-witness.js");
 const FIELD = 21888242871839275222246405745257275088548364400416034343698204186575808495617n;

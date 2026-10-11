@@ -5,8 +5,8 @@
 const assert = require('assert/strict');
 const { createPrivacyScope, getPrivacyContext } = require('./context-bindings');
 const { isRailgunAccountEnrollment } = require("./railgun-account-enrollment.js");
-const { matchRailgunPrivateProvedTransaction } = require("../data/railgun-private-intent.js");
-const { normalizeRailgunPrivateVerification } = require("../data/railgun-private-results.js");
+const { matchRailgunPrivateProvedTransaction } = require("../data/railgun-retained-private-data.js");
+const { normalizeRailgunPrivateVerification } = require("../data/railgun-retained-private-data.js");
 const { verifyRailgunProverRuntime } = require("../execution/railgun-prover-runtime.js");
 const { startRailgunProcess } = require("./railgun-process.js");
 const receipts = new WeakMap(),

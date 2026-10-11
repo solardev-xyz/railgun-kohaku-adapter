@@ -15,16 +15,16 @@ jest.mock("../../../../../../src/owners/railgun-account-enrollment.js", () => ({
   isRailgunAccountEnrollment: (v) => v === mockEnrollment,
 }));
 // Mock the shared intent implementation, leaving both host and result checks on one seam.
-jest.mock(
-  "../../../../../../src/data/railgun-private-intent.js",
-  () => ({
+jest.mock("../../../../../../src/data/railgun-private-intent-core.js", () => {
+  const value = {
     validateRailgunPrivateSigningIntent: (tx, expected) => {
       if (!['railgun-private-transfer', 'railgun-partial-unshield'].includes(expected.kind))
         throw Error('kind');
       return { ...expected, digest: tx.data };
     },
-  })
-);
+  };
+  return { createPrivateIntent: () => value };
+});
 jest.mock("../../../../../../src/owners/railgun-identity.js", () => ({
   quarantineRailgunIdentityCredentials: (...args) => mockQuarantine(...args),
   assertRailgunIdentity: (v) => {
@@ -267,7 +267,7 @@ test.each(['amount', 'changeAmount', 'unshieldAmount', 'zero', 'all', 'over-cap'
     if (['amount', 'changeAmount', 'unshieldAmount'].includes(mode)) args[mode] = '400';
     if (mode === 'zero') args.expected.unshieldAmount = '0';
     if (mode === 'all') args.expected.unshieldAmount = '1000';
-    if (mode === 'over-cap') args.inputAmount = '10000000000000001';
+    if (mode === 'over-cap') args.inputAmount = (1n << 120n).toString();
     if (mode === 'noncanonical') args.inputAmount = '01000';
     await expect(verifyRailgunPrivateReceiver(args)).rejects.toMatchObject(refused);
     expect(mockStart).not.toHaveBeenCalled();

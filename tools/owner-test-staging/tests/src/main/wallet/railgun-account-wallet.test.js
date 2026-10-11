@@ -1,3 +1,4 @@
+jest.mock("../../../../../../src/data/railgun-retained-private-data.js", () => ({ ...jest.requireActual("../../../../../../src/data/railgun-retained-private-data.js") }));
 require('../../../../context-host.cjs');
 const mockConsumeIssuance = jest.fn(),
   mockConsumeProof = jest.fn(),
@@ -372,7 +373,7 @@ function operationFixture() {
       return { capsule: true };
     });
   jest
-    .spyOn(require("../../../../../../src/data/railgun-private-preparation.js"), 'normalizeRailgunPrivatePreparation')
+    .spyOn(require("../../../../../../src/data/railgun-retained-private-data.js"), 'normalizeRailgunPrivatePreparation')
     .mockImplementation((raw, captured) => {
       expect(raw).toEqual({ intent: 'public' });
       expect(captured.read).toBe(value.owned.read);
@@ -817,7 +818,7 @@ test('real account normalizers refuse a capsule with a different owned note hash
   owned.ownedPoi[0].hash = capsule.noteHash;
   owned.ownedPoi[0].nullifier = capsule.preparation.expected.nullifier;
   owned.trees[0].root = capsule.preparation.expected.merkleRoot;
-  const offer = require("../../../../../../src/data/railgun-private-preparation.js").normalizeRailgunPrivateOffer(
+  const offer = require("../../../../../../src/data/railgun-retained-private-data.js").normalizeRailgunPrivateOffer(
     capsule.preparation,
     capsule.selection
   );
@@ -1063,7 +1064,7 @@ test.each(['prepare', 'operate'])(
     owned.ownedPoi[0].hash = f.capsule.noteHash;
     mockRunner.readOwned.mockReturnValue(owned);
     mockRead.mockImplementation(() => ({}));
-    const offer = require("../../../../../../src/data/railgun-private-preparation.js").normalizeRailgunPrivateOffer(
+    const offer = require("../../../../../../src/data/railgun-retained-private-data.js").normalizeRailgunPrivateOffer(
       f.capsule.preparation,
       f.capsule.selection
     );

@@ -91,6 +91,8 @@
   "src/execution/railgun-wallet-scan.js",
   "src/operation-formats.js",
   "src/owners/application-policy.js",
+  "src/owners/application-private-preparation.js",
+  "src/owners/application-shield-policy.js",
   "src/owners/context-bindings.js",
   "src/owners/credential-loan.js",
   "src/owners/host-bindings.js",

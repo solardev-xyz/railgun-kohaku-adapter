@@ -10,6 +10,7 @@ const {
 const GAS = Object.freeze({ gasLimit: 1500000n, maxGasFee: 2000000000000000n });
 async function paymentCommand({
   session,
+  maxOperationAmount = 10000000000000000n,
   command,
   noteId,
   recipient,
@@ -73,7 +74,7 @@ async function paymentCommand({
     if (command === "shield") {
       const lane = await session.openPublic(options);
       try {
-        adapter = createRailgunKohakuPublicAdapter({ host: lane, signal });
+        adapter = createRailgunKohakuPublicAdapter({ host: lane, signal, maxAmount: maxOperationAmount });
       } catch (error) {
         await lane.close();
         await lane.closed;
@@ -98,7 +99,7 @@ async function paymentCommand({
     }
     const lane = await session.openPrivate(options);
     try {
-      adapter = createRailgunKohakuPrivateAdapter({ host: lane, signal });
+      adapter = createRailgunKohakuPrivateAdapter({ host: lane, signal, maxAmount: maxOperationAmount });
     } catch (error) {
       await lane.close();
       await lane.closed;

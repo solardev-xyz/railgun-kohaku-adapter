@@ -3,7 +3,7 @@
  * No writer exclusion, source/root acceptance or ongoing authority is returned.
  */
 const assert = require('assert/strict');
-const { getRailgunOwnPoiShape } = require("../data/railgun-own-poi-shape-data.js");
+const { getRailgunOwnPoiShape } = require("../data/railgun-retained-private-data.js");
 const { createPrivacyScope, getPrivacyContext } = require('./context-bindings');
 const {
   isRailgunAccountEnrollment,

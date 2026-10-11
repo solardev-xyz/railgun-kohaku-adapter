@@ -4,7 +4,7 @@
  * neither viewing-key release nor subsequent POI payload disclosure or spending.
  */
 const assert = require('assert/strict');
-const { getRailgunOwnPoiShape } = require("../data/railgun-own-poi-shape-data.js");
+const { getRailgunOwnPoiShape } = require("../data/railgun-retained-private-data.js");
 const { createHash, randomUUID } = require('crypto');
 const { createPrivacyScope, getPrivacyContext } = require('./context-bindings');
 const { isRailgunAccountEnrollment } = require("./railgun-account-enrollment.js");
@@ -16,7 +16,7 @@ const {
   captureRailgunOwnTransactPoiMembershipInput,
 } = require("./railgun-own-witness.js");
 const { assertRailgunIdentity, withRailgunViewingCredential } = require("./railgun-identity.js");
-const { prepareRailgunPoiTransactSelectorInput } = require("../data/railgun-poi-transact-selector-data.js");
+const { prepareRailgunPoiTransactSelectorInput } = require("../data/railgun-retained-private-data.js");
 const { startRailgunProcess } = require("./railgun-process.js");
 const { createRailgunTxidRootSource } = require("./railgun-txid-root.js");
 const {

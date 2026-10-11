@@ -104,7 +104,9 @@ journal result.
 
 ## Application limits
 
-The trusted initializer may capture `applicationPolicy: { maxGasFee }` once.
+The trusted initializer may capture `applicationPolicy: { maxGasFee?, maxOperationAmount? }` once
+(at least one field if supplied). The direct amount default is 10^16 smallest
+units and applies to gross Shield or the full selected private input.
 Omission preserves 0.002 ETH; each lane retains its own equal or lower budget.
 See [application spending policy](APPLICATION-POLICY.md) for units, bounds,
 retained-operation behavior and the unchanged signing/uncertainty checks. This

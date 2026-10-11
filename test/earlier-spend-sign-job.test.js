@@ -6,7 +6,10 @@ const mockPublic = jest.fn(),
 jest.mock('../src/execution/railgun-engine-runtime.js', () => ({
   verifyRailgunEngineRuntime: jest.fn(() => '/engine.asar'),
 }));
-jest.mock('../src/data/railgun-private-intent.js', () => ({ validateRailgunPrivateSigningIntent: jest.fn() }));
+jest.mock("../src/data/railgun-private-intent-core.js", () => {
+  const value = { validateRailgunPrivateSigningIntent: jest.fn() };
+  return { createPrivateIntent: () => value };
+});
 jest.mock(
   '/engine.asar/node_modules/@railgun-community/engine/dist/utils/poseidon',
   () => ({
@@ -203,7 +206,7 @@ function realPartial(change) {
   input.expected = preparation.expected;
   input.expectedHash = preparation.expectedHash;
   validateRailgunPrivateSigningIntent.mockImplementationOnce(
-    jest.requireActual('../src/data/railgun-private-intent.js').validateRailgunPrivateSigningIntent
+    jest.requireActual('../src/data/railgun-private-intent-core').createPrivateIntent(jest.requireActual('../src/data/railgun-private-policy')).validateRailgunPrivateSigningIntent
   );
   return preparation;
 }

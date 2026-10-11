@@ -32,3 +32,8 @@ initializeRailgunMain({ host, runtime: { archive: "/engine", proverArchive: "/pr
 initializeRailgunMain({ host, runtime, deployment: "mainnet" });
 // @ts-expect-error a caller cannot supply custom deployment facts
 initializeRailgunMain({ host, runtime, deployment: { chainId: 11155111 } });
+
+// @ts-expect-error amount ceiling is a bigint, never a decimal or number
+owner.initializeRailgunMain({host, runtime, applicationPolicy: {maxOperationAmount: "1"}});
+// @ts-expect-error supplied policy cannot be empty
+owner.initializeRailgunMain({host, runtime, applicationPolicy: {}});

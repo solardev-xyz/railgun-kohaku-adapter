@@ -8,7 +8,7 @@ const {
   normalizeRailgunPoiOutputRecoveryInput,
   normalizeRailgunRecoveredPoiOutput,
 } = require("./railgun-poi-output-recovery-data.js");
-const { getRailgunOwnPoiShape } = require("../data/railgun-own-poi-shape-data.js");
+const { getRailgunOwnPoiShape } = require("../data/railgun-retained-private-data.js");
 const { verifyRailgunEngineRuntime } = require("../execution/railgun-engine-runtime.js");
 let attempted = false;
 exports.run = async function run(text, { request, requestKey, signal, guardReport }) {

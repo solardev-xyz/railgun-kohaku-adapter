@@ -157,9 +157,27 @@ test("configuration rejects missing pinned service origins before network startu
   expect(loadConfiguration(filename).serviceOrigins).toEqual(
     configuration.serviceOrigins,
   );
+  configuration.maxOperationAmount = "50000000000000000";
+  fs.writeFileSync(filename, JSON.stringify(configuration));
+  expect(loadConfiguration(filename).maxOperationAmount).toBe("50000000000000000");
+  for (const invalid of ["0", "01", "-1", 1, null, (1n << 120n).toString()]) {
+    configuration.maxOperationAmount = invalid;
+    fs.writeFileSync(filename, JSON.stringify(configuration));
+    expect(() => loadConfiguration(filename)).toThrow();
+  }
+  delete configuration.maxOperationAmount;
   configuration.serviceOrigins = ["https://another.invalid"];
   fs.writeFileSync(filename, JSON.stringify(configuration));
   expect(() => loadConfiguration(filename)).toThrow(
     expect.objectContaining({ code: "REFERENCE_TXID_CONFIGURATION_REFUSED" }),
   );
+});
+
+
+test("shield CLI admits the full structural amount domain and refuses overflow", () => {
+  const args = ["shield", "--profile", "/profile", "--config", "/config", "--amount"];
+  const max = ((1n << 120n) - 1n).toString();
+  expect(parseArguments([...args, max]).amount).toBe(max);
+  for (const amount of [(1n << 120n).toString(), "01", "0", "1e18", "-1"])
+    expect(() => parseArguments([...args, amount])).toThrow();
 });

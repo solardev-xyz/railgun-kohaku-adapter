@@ -79,6 +79,7 @@ async function run() {
     rpcUrl: config.rpcUrl,
     serviceOrigins: config.serviceOrigins,
     runtime: config.runtime,
+    ...(config.maxOperationAmount ? {maxOperationAmount: config.maxOperationAmount} : {}),
   });
   if (config.command === "receipt")
     return {
@@ -128,6 +129,7 @@ async function run() {
   ).accountCommand({
     ...config,
     owner: composition.owner,
+    maxOperationAmount: composition.applicationPolicy.maxOperationAmount ?? 10000000000000000n,
     signal,
     state: appState,
     chain,
@@ -157,6 +159,7 @@ async function run() {
     hostDigest: composition.hostDigest,
     applicationPolicy: {
       maxGasFee: composition.applicationPolicy.maxGasFee.toString(),
+      maxOperationAmount: (composition.applicationPolicy.maxOperationAmount ?? 10000000000000000n).toString(),
     },
   };
 }

@@ -6,7 +6,7 @@ const assert = require('assert/strict'),
   path = require('path');
 const { Interface } = require('ethers');
 const { TRANSACT_ABI } = require('../data/railgun-private-policy');
-const { validateRailgunPrivateSigningIntent } = require('../data/railgun-private-intent');
+const { validateRailgunPrivateSigningIntent } = require('../data/railgun-retained-private-data');
 const {
   assertRailgunPrivateTransferRecipient,
   decodeRailgunForeignDestination,
@@ -44,8 +44,8 @@ exports.run = async function run(text, { request, requestKey, signal, guardRepor
     );
   else assert.equal(input.recipient, input.descriptor.instanceId);
   const amount = partial ? input.inputAmount : input.amount;
-  assert.match(amount, /^[1-9][0-9]{0,16}$/);
-  assert.ok(BigInt(amount) <= BigInt(pins.maxQualificationAmount));
+  assert.match(amount, /^[1-9][0-9]{0,36}$/);
+  assert.ok(BigInt(amount) <= require("../amount-bounds").NOTE_MAX);
   const u = partial ? BigInt(checked.unshieldAmount) : 0n;
   if (partial) assert.ok(u > 0n && u < BigInt(amount));
   const change = BigInt(amount) - u;

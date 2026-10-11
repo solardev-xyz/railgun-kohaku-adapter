@@ -199,7 +199,7 @@ function setup({ checkpointHash = 'b'.repeat(64), intentDigest } = {}) {
       capsule: {
         version: 1,
         selection: { kind: parsed.expected.kind, tree: 0 },
-        preparation: { transaction: parsed.intent, expected: parsed.expected },
+        preparation: { amount: '1000', transaction: parsed.intent, expected: parsed.expected },
       },
       provedTransaction: tx,
     },

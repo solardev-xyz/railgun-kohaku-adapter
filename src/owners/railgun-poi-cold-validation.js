@@ -5,7 +5,7 @@ const assert = require('assert/strict');
 const {
   getRailgunOwnPoiShape,
   assertRailgunOwnPoiPayloadShape,
-} = require("../data/railgun-own-poi-shape-data.js");
+} = require("../data/railgun-retained-private-data.js");
 const { createHash } = require('crypto');
 const path = require('path');
 const { isRailgunAccountEnrollment } = require("./railgun-account-enrollment.js");

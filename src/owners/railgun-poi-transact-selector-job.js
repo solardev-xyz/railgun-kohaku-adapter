@@ -5,7 +5,7 @@ const path = require('path');
 const { createHash } = require('crypto');
 const {
   normalizeRailgunPoiTransactSelectorInput,
-} = require("../data/railgun-poi-transact-selector-data.js");
+} = require("../data/railgun-retained-private-data.js");
 let attempted = false;
 exports.run = async function run(text, { request, requestKey, signal, guardReport }) {
   let key;

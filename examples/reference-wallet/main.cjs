@@ -155,6 +155,7 @@ async function run() {
     }
     return await require("./account-command.cjs").accountCommand({
       owner: composition.owner,
+      maxOperationAmount: composition.applicationPolicy.maxOperationAmount,
       ...options,
       signal,
       state,

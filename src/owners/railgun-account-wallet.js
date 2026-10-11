@@ -282,7 +282,7 @@ function bindRecoveryInput(capsule, owned, descriptor) {
     note.spentTxid === false &&
       typeof note.amount === 'bigint' &&
       note.amount > 0n &&
-      note.amount <= BigInt(pins.maxQualificationAmount)
+      note.amount <= require("../amount-bounds").NOTE_MAX
   );
   check(note.asset.__type === 'erc20' && note.asset.contract === pins.wrappedNative);
   check(record.nullifier === preparation.expected.nullifier);
@@ -740,7 +740,7 @@ async function openAccount(
         const privateRecovery =
           recovery === undefined
             ? undefined
-            : require("../data/railgun-private-recovery-data.js").normalizeRailgunPrivateRecoveryInput(
+            : require("../data/railgun-retained-private-data.js").normalizeRailgunPrivateRecoveryInput(
                 recovery,
                 { walletId }
               );
@@ -773,7 +773,7 @@ async function openAccount(
             );
             check(renewed.value.recovery?.status === 'proved');
             candidate =
-              require("../data/railgun-private-recovery-data.js").normalizeRailgunPrivateRecoveryResult(
+              require("../data/railgun-retained-private-data.js").normalizeRailgunPrivateRecoveryResult(
                 renewed.value.recovery,
                 {
                   capsule: privateRecovery.capsule,
@@ -805,7 +805,7 @@ async function openAccount(
       const privateIntent =
         request === undefined
           ? undefined
-          : require("../data/railgun-private-preparation.js").selectRailgunPrivatePreparation(
+          : require("./application-private-preparation.js").selectRailgunPrivatePreparation(
               before,
               request
             );
@@ -835,7 +835,7 @@ async function openAccount(
           async onIntent(offer, signal, capsule) {
             const { transactionDigest, ...raw } = offer;
             const normalized =
-              require("../data/railgun-private-preparation.js").normalizeRailgunPrivatePreparation(raw, {
+              require("../data/railgun-retained-private-data.js").normalizeRailgunPrivatePreparation(raw, {
                 selection: privateIntent,
                 ...before,
               });

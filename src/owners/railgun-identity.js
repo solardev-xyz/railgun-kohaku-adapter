@@ -288,7 +288,7 @@ async function signPrivateIntent({
       payload.expected.kind
     )
   );
-  require("../data/railgun-private-intent.js").validateRailgunPrivateSigningIntent(
+  require("../data/railgun-retained-private-data.js").validateRailgunPrivateSigningIntent(
     payload.transaction,
     payload.expected
   );
@@ -330,7 +330,7 @@ async function signPrivateIntent({
     assert.ok(Buffer.byteLength(wire) <= 16384);
     const message = JSON.parse(wire);
     assert.equal(message.id, ++sequence);
-    const results = require("../data/railgun-private-results.js");
+    const results = require("../data/railgun-retained-private-data.js");
     if (sequence === 1) {
       const request = results.normalizeRailgunSpendKeyRequest(message, payload);
       const permit = await onKeyRequest(request, token);

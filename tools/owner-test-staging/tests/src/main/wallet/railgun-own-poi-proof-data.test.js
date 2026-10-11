@@ -2,7 +2,8 @@ jest.mock("../../../../../../src/owners/railgun-own-txid.js", () => ({ matchRail
 jest.mock("../../../../../../src/data/railgun-txid-note-witness.js", () => ({
   normalizeRailgunTxidWitness: jest.fn((v) => v),
 }));
-jest.mock("../../../../../../src/data/railgun-poi-shield-selector-data.js", () => ({
+jest.mock("../../../../../../src/data/railgun-retained-private-data.js", () => ({
+  ...jest.requireActual("../../../../../../src/data/railgun-retained-private-data.js"),
   normalizeRailgunPoiShieldInput: jest.fn((capsule, creator) => {
     if (creator.type !== 'Shield' || capsule.selection.position !== creator.position)
       throw Error('creator mismatch');
@@ -151,8 +152,8 @@ describe('combined partial proof binding', () => {
     require("../../../../../../src/data/railgun-txid-note-witness.js").normalizeRailgunTxidWitness.mockImplementation(
       jest.requireActual("../../../../../../src/data/railgun-txid-note-witness.js").normalizeRailgunTxidWitness
     );
-    require("../../../../../../src/data/railgun-poi-shield-selector-data.js").normalizeRailgunPoiShieldInput.mockImplementation(
-      jest.requireActual("../../../../../../src/data/railgun-poi-shield-selector-data.js").normalizeRailgunPoiShieldInput
+    require("../../../../../../src/data/railgun-retained-private-data.js").normalizeRailgunPoiShieldInput.mockImplementation(
+      jest.requireActual("../../../../../../src/data/railgun-retained-private-data.js").normalizeRailgunPoiShieldInput
     );
   });
   function partial(type = 'Shield') {

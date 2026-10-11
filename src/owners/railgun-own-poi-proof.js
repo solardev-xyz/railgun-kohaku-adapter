@@ -4,7 +4,7 @@
  * observed exit. No query, submission, renderer or production caller is added.
  */
 const assert = require('assert/strict');
-const { getRailgunOwnPoiShape } = require("../data/railgun-own-poi-shape-data.js");
+const { getRailgunOwnPoiShape } = require("../data/railgun-retained-private-data.js");
 const { createHash } = require('crypto');
 const { isRailgunAccountEnrollment } = require("./railgun-account-enrollment.js");
 const { assertRailgunIdentity, withRailgunViewingCredential } = require("./railgun-identity.js");
@@ -14,7 +14,7 @@ const { verifyRailgunEngineRuntime } = require("../execution/railgun-engine-runt
 const { verifyRailgunProverRuntime } = require("../execution/railgun-prover-runtime.js");
 const { assertRailgunOwnPoiMembership } = require("./railgun-own-poi-membership.js");
 const { assertRailgunOwnPoiCapture } = require("../data/railgun-own-poi-binding.js");
-const { prepareRailgunPoiTransactSelectorInput } = require("../data/railgun-poi-transact-selector-data.js");
+const { prepareRailgunPoiTransactSelectorInput } = require("../data/railgun-retained-private-data.js");
 const { assertRailgunPoiCreatorVerification } = require("../data/railgun-poi-creator-data.js");
 const { withRailgunOwnOperationRecovery } = require("./railgun-own-operation.js");
 const { claimRailgunAccountPhase } = require("./railgun-account-phase.js");

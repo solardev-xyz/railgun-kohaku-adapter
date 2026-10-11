@@ -1,3 +1,4 @@
+const { undoOperationAmountPolicy } = require("./operation-amount-policy-transitions.cjs");
 const { undoRetainedHelpers } = require("./retained-helper-transitions.cjs");
 const deploymentTransitions = require("../docs/owners/DEPLOYMENT-TRANSITIONS.json");
 const { createHash } = require('crypto');
@@ -15,6 +16,7 @@ test('POI source copies and exact binder function retain immutable source proven
   const host = require('../host-poi.cjs');
   for (const [file, pin] of Object.entries(provenance.files)) {
     let text = readFileSync(path.join(__dirname, '..', file), 'utf8');
+    text = undoOperationAmountPolicy(text, file);
     text = undoRetainedHelpers(text, file);
     text = undoDeployment(text, file);
     // The replacement proof and the explicit POI retry are later reviewed

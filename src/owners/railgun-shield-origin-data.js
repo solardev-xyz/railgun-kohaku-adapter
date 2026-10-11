@@ -157,7 +157,7 @@ function matchRailgunShieldOrigin(input) {
     assert.equal(note.tag, 'unverified');
     assert.equal(typeof note.amount, 'bigint');
     assert.equal(note.amount.toString(), shield.noteValue);
-    assert.ok(note.amount > 0n && note.amount <= BigInt(pins.maxQualificationAmount));
+    assert.ok(note.amount > 0n && note.amount <= require("../amount-bounds").NOTE_MAX);
     assert.deepEqual(note.asset, { __type: 'erc20', contract: pins.wrappedNative });
     assert.equal(note.tokenHash, toBeHex(BigInt(pins.wrappedNative), 32));
     return result('matched');

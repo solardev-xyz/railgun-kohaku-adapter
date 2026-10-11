@@ -1,7 +1,7 @@
 /** Exact completed private operation -> one EOA attempt under account exclusion.
  * No caller-supplied proof, completion snapshot or generic review grants authority.
  */
-const { isRailgunGasBudget } = require('./application-policy');
+const { isRailgunGasBudget, isRailgunOperationAmount } = require('./application-policy');
 const assert = require('assert/strict');
 const { createPrivacyScope, getPrivacyContext } = require('./context-bindings');
 const { claimRailgunPrivateCompletion } = require("./railgun-private-operation.js");
@@ -93,6 +93,7 @@ const diagnostics = new WeakMap();
 const DIAGNOSTIC = Object.freeze({
   stage: Object.freeze([
     'completion',
+    'operation-policy',
     'recovery',
     'proof',
     'preflight',
@@ -129,6 +130,7 @@ const DIAGNOSTIC = Object.freeze({
     'select',
     'receipt',
     'capsule',
+    'operation-policy',
     'proved-transaction',
     'intent',
     'recipient',
@@ -274,6 +276,7 @@ async function submitFinal({
 }) {
   const kind = snapshot.stored.capsule.selection.kind;
   const partial = kind === 'railgun-partial-unshield';
+  const inputAmount = BigInt(partial ? snapshot.stored.capsule.preparation.inputAmount : snapshot.stored.capsule.preparation.amount);
   let proof, preflight, scope, substage;
   let handle, network, intent;
   const callbacks = new Set();
@@ -292,6 +295,7 @@ async function submitFinal({
     const recovered = records.find((v) => v.entry.id === snapshot.entry.id);
     assert.ok(recovered);
     const attest = async () => {
+      assert.ok(isRailgunOperationAmount(inputAmount));
       context.assertCurrent();
       claim.assertCurrent();
       extraCurrent();
@@ -381,6 +385,7 @@ async function submitFinal({
     assert.equal(Object.hasOwn(observed, 'intentKind'), partial);
     if (partial) assert.equal(observed.intentKind, kind);
     const assertCurrent = (minimumRemainingMs = 0) => {
+      assert.ok(isRailgunOperationAmount(inputAmount));
       context.assertCurrent();
       claim.assertCurrent();
       extraCurrent(minimumRemainingMs);
@@ -647,7 +652,11 @@ async function submitRailgunPrivateTransaction({
     const snapshot = claim.assertCurrent();
     const kind = snapshot.stored.capsule.selection.kind;
     const partial = kind === 'railgun-partial-unshield';
-    assert.equal(snapshot.stored.capsule.version, partial ? 2 : 1);
+    require("../operation-formats").assertCapsuleFormat(snapshot.stored.capsule.version, kind,
+      partial ? snapshot.stored.capsule.preparation.inputAmount : snapshot.stored.capsule.preparation.amount);
+    state.stage = 'operation-policy';
+    assert.ok(isRailgunOperationAmount(BigInt(partial ? snapshot.stored.capsule.preparation.inputAmount : snapshot.stored.capsule.preparation.amount)));
+    state.stage = 'completion';
     assert.ok(
       ['railgun-private-transfer', 'railgun-token-unshield', 'railgun-partial-unshield'].includes(
         kind
@@ -905,8 +914,10 @@ async function submitRailgunRecoveredPrivateTransaction(options) {
           const capsule = require("../execution/railgun-private-capsule.js").normalizeRailgunPrivateCapsule(
             stored.capsule
           );
+          step = 'operation-policy';
+          assert.ok(isRailgunOperationAmount(BigInt(capsule.preparation.inputAmount ?? capsule.preparation.amount)));
           step = 'proved-transaction';
-          require("../data/railgun-private-intent.js").matchRailgunPrivateProvedTransaction(
+          require("../data/railgun-retained-private-data.js").matchRailgunPrivateProvedTransaction(
             capsule.preparation.transaction,
             stored.provedTransaction,
             capsule.preparation.expected

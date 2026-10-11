@@ -13,7 +13,7 @@ const {
   recoverRailgunAccountPrivateProof,
 } = require("./railgun-account-wallet.js");
 const { verifyRailgunPrivateProof, assertRailgunPrivateProof } = require("./railgun-private-proof.js");
-const { matchRailgunPrivateProvedTransaction } = require("../data/railgun-private-intent.js");
+const { matchRailgunPrivateProvedTransaction } = require("../data/railgun-retained-private-data.js");
 const busy = new WeakSet();
 const fail = () =>
   Object.assign(new Error('Railgun signed proof requires recovery'), {

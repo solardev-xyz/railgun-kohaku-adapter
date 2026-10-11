@@ -20,12 +20,12 @@ const {
   getRailgunAccountPublicDestination,
   assertRailgunAccountPublicDestination,
 } = require("./railgun-account-public.js");
-const { selectRailgunPrivatePreparation } = require("../data/railgun-private-preparation.js");
+const { selectRailgunPrivatePreparation } = require("./application-private-preparation.js");
 const { stageRailgunTransactInput } = require("./railgun-transact-staging.js");
 const { proveRailgunAccountPrivateOperation } = require("./railgun-private-operation.js");
 const { submitRailgunPrivateTransaction } = require("./railgun-private-submission.js");
 const { openRailgunShieldOperation } = require("./railgun-shield-operation.js");
-const { shieldAmount } = require("./railgun-shield-policy.js");
+const { shieldAmount } = require("./application-shield-policy.js");
 const { createPrivacyScope, getPrivacyContext } = require('./context-bindings');
 const {
   createPrivateRpc,

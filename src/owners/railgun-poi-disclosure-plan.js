@@ -9,7 +9,7 @@ const assert = require('assert/strict');
 const {
   getRailgunOwnPoiShape,
   assertRailgunOwnPoiPayloadShape,
-} = require("../data/railgun-own-poi-shape-data.js");
+} = require("../data/railgun-retained-private-data.js");
 const { createHash, randomUUID } = require('crypto');
 const { createPrivacyScope, getPrivacyContext } = require('./context-bindings');
 const { isRailgunAccountEnrollment } = require("./railgun-account-enrollment.js");

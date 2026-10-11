@@ -6,7 +6,7 @@ const { createHash } = require('crypto');
 const { createPrivacyScope, getPrivacyContext } = require('./context-bindings');
 const { verifyRailgunEngineRuntime } = require("../execution/railgun-engine-runtime.js");
 const { startRailgunProcess } = require("./railgun-process.js");
-const { normalizeRailgunPoiShieldInput } = require("../data/railgun-poi-shield-selector-data.js");
+const { normalizeRailgunPoiShieldInput } = require("../data/railgun-retained-private-data.js");
 const FIELD = 21888242871839275222246405745257275088548364400416034343698204186575808495617n;
 const fail = () =>
   Object.assign(new Error('Railgun Shield POI selector unavailable'), {

@@ -5,7 +5,7 @@ const assert = require('assert/strict'),
   path = require('path');
 const { Interface } = require('ethers');
 const { TRANSACT_ABI } = require('../data/railgun-private-policy');
-const { validateRailgunPrivateSigningIntent } = require('../data/railgun-private-intent');
+const { validateRailgunPrivateSigningIntent } = require('../data/railgun-retained-private-data');
 const {
   isRailgunForeignTransfer,
   assertRailgunPrivateTransferRecipient,
@@ -79,7 +79,7 @@ async function prepareRailgunPrivateWitness({
   assert.equal(read.spentTxid, false);
   assert.equal(hex(note.hash).slice(2), read.hash);
   assert.equal(note.value.toString(), read.value);
-  assert.ok(note.value > 0n && note.value <= BigInt(pins.maxQualificationAmount));
+  assert.ok(note.value > 0n && note.value <= require("../amount-bounds").NOTE_MAX);
   assert.equal(note.tokenData.tokenType, 0);
   assert.equal(note.tokenData.tokenAddress.toLowerCase(), pins.wrappedNative);
   assert.equal(BigInt(note.tokenData.tokenSubID), 0n);
@@ -99,7 +99,7 @@ async function prepareRailgunPrivateWitness({
     changeAmount;
   if (partial) {
     assert.equal(typeof selection.unshieldAmount, 'string');
-    assert.match(selection.unshieldAmount, /^[1-9][0-9]{0,16}$/);
+    assert.match(selection.unshieldAmount, /^[1-9][0-9]{0,36}$/);
     unshieldAmount = BigInt(selection.unshieldAmount);
     assert.ok(unshieldAmount > 0n && unshieldAmount < note.value);
     changeAmount = note.value - unshieldAmount;

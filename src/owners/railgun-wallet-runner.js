@@ -118,7 +118,7 @@ function createRailgunWalletRunner({ runJob, inventory, policy, identity, enroll
       assert.equal(options.privateIntent, undefined);
       assert.equal(options.privateOperation, undefined);
       options.privateRecovery =
-        require("../data/railgun-private-recovery-data.js").normalizeRailgunPrivateRecoveryInput(
+        require("../data/railgun-retained-private-data.js").normalizeRailgunPrivateRecoveryInput(
           options.privateRecovery,
           { walletId }
         );
@@ -236,7 +236,7 @@ function createRailgunWalletRunner({ runJob, inventory, policy, identity, enroll
       const preparation =
         options.privateIntent === undefined
           ? undefined
-          : require("../data/railgun-private-preparation.js").normalizeRailgunPrivatePreparation(
+          : require("../data/railgun-retained-private-data.js").normalizeRailgunPrivatePreparation(
               result.privatePreparation,
               {
                 selection: options.privateIntent,
@@ -249,13 +249,13 @@ function createRailgunWalletRunner({ runJob, inventory, policy, identity, enroll
       const operation =
         options.privateOperation === undefined
           ? undefined
-          : require("../data/railgun-private-preparation.js").normalizeRailgunPrivateOperation(
+          : require("../data/railgun-retained-private-data.js").normalizeRailgunPrivateOperation(
               result.privateOperation,
               preparation
             );
       if (options.privateOperation === undefined) assert.equal(result.privateOperation, undefined);
       const recovery = recoveryMode
-        ? require("../data/railgun-private-recovery-data.js").normalizeRailgunPrivateRecoveryResult(
+        ? require("../data/railgun-retained-private-data.js").normalizeRailgunPrivateRecoveryResult(
             result.privateRecovery,
             {
               capsule: options.privateRecovery.capsule,

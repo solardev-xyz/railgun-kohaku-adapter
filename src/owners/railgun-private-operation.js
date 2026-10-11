@@ -4,7 +4,7 @@
  * C must verify before saving; saved proof data is not submission authority.
  * EOA submission/recovery must obtain its own fresh C and chain evidence.
  */
-const { isRailgunGasBudget } = require('./application-policy');
+const { isRailgunGasBudget, isRailgunOperationAmount } = require('./application-policy');
 const assert = require('assert/strict');
 const { createHash, randomBytes } = require('crypto');
 const { createPrivacyScope, getPrivacyContext } = require('./context-bindings');
@@ -18,7 +18,7 @@ const {
   signRailgunPrivateIntent,
   assertRailgunPrivateSigner,
 } = require("./railgun-identity.js");
-const { selectRailgunPrivatePreparation } = require("../data/railgun-private-preparation.js");
+const { selectRailgunPrivatePreparation } = require("./application-private-preparation.js");
 const {
   normalizeRailgunNewCapsule,
   digestRailgunPrivateCapsule,
@@ -150,6 +150,7 @@ async function prove({
   assert.ok(!busy.has(enrollment));
   const baseline = readRailgunAccountOwnedNotes(account, owners);
   const selection = selectRailgunPrivatePreparation(baseline, request);
+  const inputAmount = baseline.read.received.find(note => note.id === request.noteId).amount;
   const selected = baseline.ownedPoi.find((v) => v.id === request.noteId);
   let staging;
   if (selected?.type === 'Transact') {
@@ -194,6 +195,7 @@ async function prove({
     signingAttempted = false,
     stage = 'local';
   const active = () => {
+    assert.ok(isRailgunOperationAmount(inputAmount));
     assert.ok(!scope.signal.aborted);
     assertRailgunIdentity(identity, parent);
     getPrivacyContext(parent);

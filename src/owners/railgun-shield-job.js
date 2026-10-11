@@ -22,9 +22,9 @@ exports.run = async function run(text, { request, signal, guardReport }) {
   assert.deepEqual(Object.keys(payload).sort(), ['amount', 'recipient']);
   assert.equal(typeof payload.recipient, 'string');
   assert.ok(payload.recipient.length <= 256);
-  assert.match(payload.amount, /^[1-9][0-9]{0,16}$/);
+  assert.match(payload.amount, /^[1-9][0-9]{0,36}$/);
   const amount = BigInt(payload.amount);
-  assert.ok(amount <= BigInt(pins.maxQualificationAmount));
+  assert.ok(amount <= require("../amount-bounds").NOTE_MAX);
   const { decodeAddress, encodeAddress } = require(path.join(root, 'key-derivation/bech32'));
   const decoded = decodeAddress(payload.recipient);
   assert.equal(encodeAddress(decoded), payload.recipient);

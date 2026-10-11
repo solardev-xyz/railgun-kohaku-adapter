@@ -9,7 +9,7 @@ const mockShared = jest.fn(),
 jest.mock("../../../../../../src/execution/railgun-engine-runtime.js", () => ({
   verifyRailgunEngineRuntime: jest.fn(() => mockArchive),
 }));
-jest.mock("../../../../../../src/data/railgun-private-capsule.js", () => ({
+jest.mock("../../../../../../src/data/railgun-retained-private-data.js", () => ({
   normalizeRailgunPrivateCapsule: jest.fn((v) => v),
 }));
 jest.mock(
@@ -88,7 +88,7 @@ function args() {
     archive: mockArchive,
     descriptor: { spendingPublicKey: ['0'.repeat(64), '0'.repeat(64)] },
     viewingKey: Buffer.alloc(32, 7),
-    capsule: { version: 1, selection: { kind: 'railgun-private-transfer' } },
+    capsule: { version: 1, selection: { kind: 'railgun-private-transfer' }, preparation: { amount: '1000' } },
     creator: {},
     signal: mockController.signal,
   };
@@ -202,14 +202,14 @@ describe('original partial change reconstruction with real capsule/ABI normaliza
     createRailgunPartialCapsuleData,
     createRailgunLegacyCapsuleData,
   } = require("../../../../fixtures/scripts/fixtures/railgun-partial-capsule-data.js");
-  const capsuleModule = require("../../../../../../src/data/railgun-private-capsule.js");
+  const capsuleModule = require("../../../../../../src/data/railgun-retained-private-data.js");
   const hex = (n) => '0x' + BigInt(n).toString(16).padStart(64, '0');
   let borrowed;
   beforeEach(() => {
     mockPoseidon = Promise.resolve();
     borrowed = [];
     capsuleModule.normalizeRailgunPrivateCapsule.mockImplementation(
-      jest.requireActual("../../../../../../src/data/railgun-private-capsule.js").normalizeRailgunPrivateCapsule
+      jest.requireActual("../../../../../../src/data/railgun-retained-private-data.js").normalizeRailgunPrivateCapsule
     );
     keys.getPublicViewingKey.mockImplementation(async (key) => {
       mockSeenKey = key;

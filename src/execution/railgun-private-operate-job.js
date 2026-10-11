@@ -37,7 +37,8 @@ exports.run = async (inputText, context) => {
         );
         assert.equal(selected.length, 1);
         const capsule = require('./railgun-private-capsule').normalizeRailgunPrivateCapsule({
-          version: input.privateIntent.kind === 'railgun-partial-unshield' ? 2 : 1,
+          version: require("../operation-formats").selectCapsuleFormat(input.privateIntent.kind,
+            prepared.publicPreparation.inputAmount ?? prepared.publicPreparation.amount).version,
           walletId: restored.descriptor.walletId,
           engineSha256: require('./railgun-engine-manifest.json').sha256,
           selection: input.privateIntent,

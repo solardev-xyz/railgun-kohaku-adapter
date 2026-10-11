@@ -1,6 +1,6 @@
 require('../../../../context-host.cjs');
-jest.mock("../../../../../../src/data/railgun-poi-shield-selector-data.js", () => {
-  const actual = jest.requireActual("../../../../../../src/data/railgun-poi-shield-selector-data.js");
+jest.mock("../../../../../../src/data/railgun-retained-private-data.js", () => {
+  const actual = jest.requireActual("../../../../../../src/data/railgun-retained-private-data.js");
   return {
     ...actual,
     normalizeRailgunPoiShieldInput: jest.fn(actual.normalizeRailgunPoiShieldInput),
@@ -2622,7 +2622,7 @@ test.each(['ordinary', 'completed', 'attempted'])(
     mock.fresh.poiPreparation.ownEvidence.capsule = capsule;
     if (route === 'attempted') attemptRecord();
     const before = copy(mock.entry);
-    const shield = require("../../../../../../src/data/railgun-poi-shield-selector-data.js").normalizeRailgunPoiShieldInput;
+    const shield = require("../../../../../../src/data/railgun-retained-private-data.js").normalizeRailgunPoiShieldInput;
     shield.mockClear();
     const result = await (route === 'ordinary'
       ? run()

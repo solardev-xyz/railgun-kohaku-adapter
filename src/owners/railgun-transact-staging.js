@@ -17,7 +17,7 @@ const {
   assertRailgunAccountPrivateWindow,
 } = require("./railgun-account-wallet.js");
 const { openRailgunAccountTxid } = require("./railgun-account-txid.js");
-const { selectRailgunPrivatePreparation } = require("../data/railgun-private-preparation.js");
+const { selectRailgunPrivatePreparation } = require("./application-private-preparation.js");
 const { normalizeRailgunNoteTxidWitness } = require("../data/railgun-txid-note-witness.js");
 const receipts = new WeakMap();
 const fail = () =>

@@ -5,6 +5,11 @@ require('../../../../context-host.cjs');
  * owners; controlled store, worker and service receipts. No service acceptance
  * or cryptographic proof validity is established by these fixtures. */
 let mock;
+jest.mock("../../../../../../src/owners/application-policy", () => ({
+  ...jest.requireActual("../../../../../../src/owners/application-policy"),
+  isRailgunOperationAmount: value => typeof value === 'bigint' && value > 0n &&
+    value <= (mock.amountCeiling ?? 10000000000000000n),
+}));
 jest.mock("../../../../../../src/owners/railgun-private-operation.js", () => ({
   claimRailgunPrivateCompletion: () => {
     throw Error('cold must not mint completion');
@@ -1859,4 +1864,19 @@ test('TXID work that would consume the reserved recovery phase stops before sour
   expect(mock.events).not.toContain('source');
   expect(mock.events).not.toContain('transaction-review');
   expect(mock.events).not.toContain('sign');
+});
+
+test('lowered full-input ceiling refuses a retained partial before disclosure, without consuming it', async () => {
+  setup('railgun-partial-unshield', 'Transact');
+  const before = copy(mock.stored);
+  mock.amountCeiling = 999n;
+  const result = await submit(options);
+  expect(result.status).toBe('recovery-required');
+  expect(diagnosticOf(result)).toMatchObject({stage:'history', substage:'operation-policy'});
+  expect(mock.events).not.toContain('disclosure-review');
+  expect(mock.events).not.toContain('transaction-review');
+  expect(mock.events).not.toContain('broadcast');
+  expect(mock.stored).toEqual(before);
+  mock.amountCeiling = 1000n;
+  expect((await submit(options)).submissionStatus).toBe('acknowledged');
 });

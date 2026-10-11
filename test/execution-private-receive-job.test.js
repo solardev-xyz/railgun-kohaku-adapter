@@ -269,7 +269,7 @@ test.each([
   if (['amount', 'changeAmount', 'unshieldAmount', 'extra'].includes(mode)) i[mode] = '400';
   if (mode === 'zero') i.inputAmount = '0';
   if (mode === 'all') i.inputAmount = '400';
-  if (mode === 'over-cap') i.inputAmount = '10000000000000001';
+  if (mode === 'over-cap') i.inputAmount = (1n << 120n).toString();
   if (mode === 'recipient') i.recipient = i.expected.recipient;
   if (mode === 'expected') i.expected.unshieldAmount = '401';
   if (mode === 'order') {

@@ -9,7 +9,7 @@ const { TRANSACT_ABI } = require('../data/railgun-private-policy');
 const {
   validateRailgunPrivateSigningIntent,
   matchRailgunPrivateProvedTransaction,
-} = require('../data/railgun-private-intent');
+} = require('../data/railgun-retained-private-data');
 const FIELD = 21888242871839275222246405745257275088548364400416034343698204186575808495617n;
 const SUBGROUP = 2736030358979909402780800718157159386076813972158567259200215660948447373041n;
 const field = (value, limit = FIELD) =>

@@ -17,7 +17,7 @@ const { normalizeRailgunSignature } = require("../data/railgun-private-signature
 const {
   validateRailgunPrivateSigningIntent,
   matchRailgunPrivateProvedTransaction,
-} = require("../data/railgun-private-intent.js");
+} = require("../data/railgun-retained-private-data.js");
 const RECORD = 'railgun-private-capsules-v1',
   MAX_RECORDS = 32,
   MAX_SEQUENCE = 96;

@@ -1,0 +1,235 @@
+{
+  "baseRevision": "aa48fc2095c27e9168a2817f2078a454fbd9b4ab",
+  "reason": "Retarget mock seams to retained composition/core factories without suppressing format validation; complete warm fixture amounts; move structural negatives to uint120; add direct amount admission tests. All earlier expectations and source bytes remain reconstructible.",
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-account-wallet.test.js",
+      "beforeSha256": "f8414a09d3e6fdf3dce2d08e8372f2e730d403732465d49048270ce91d84fd5d",
+      "afterSha256": "7e703f9b2446c5a6f24bb58f25bd2ffad63dea484a94ec882297b0ba17a4ba6b",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "jest.mock(\"../../../../../../src/data/railgun-retained-private-data.js\", () => ({ ...jest.requireActual(\"../../../../../../src/data/railgun-retained-private-data.js\") }));\n"
+        },
+        {
+          "start": 15055,
+          "before": "    .spyOn(require(\"../../../../../../src/data/railgun-private-preparation.js\"), 'normalizeRailgunPrivatePreparation')\n",
+          "after": "    .spyOn(require(\"../../../../../../src/data/railgun-retained-private-data.js\"), 'normalizeRailgunPrivatePreparation')\n"
+        },
+        {
+          "start": 34492,
+          "before": "  const offer = require(\"../../../../../../src/data/railgun-private-preparation.js\").normalizeRailgunPrivateOffer(\n",
+          "after": "  const offer = require(\"../../../../../../src/data/railgun-retained-private-data.js\").normalizeRailgunPrivateOffer(\n"
+        },
+        {
+          "start": 44569,
+          "before": "    const offer = require(\"../../../../../../src/data/railgun-private-preparation.js\").normalizeRailgunPrivateOffer(\n",
+          "after": "    const offer = require(\"../../../../../../src/data/railgun-retained-private-data.js\").normalizeRailgunPrivateOffer(\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-own-poi-proof-data.test.js",
+      "beforeSha256": "be8e8ebc1605b6d89e630431d0a8b3294737cca80f6f0a0587ea36e0342f38c2",
+      "afterSha256": "8396ccd7f0ce28e8eb2c68770dc22c33c43568f94ed9947c7767588f25c536ee",
+      "replacements": [
+        {
+          "start": 263,
+          "before": "jest.mock(\"../../../../../../src/data/railgun-poi-shield-selector-data.js\", () => ({\n",
+          "after": "jest.mock(\"../../../../../../src/data/railgun-retained-private-data.js\", () => ({\n  ...jest.requireActual(\"../../../../../../src/data/railgun-retained-private-data.js\"),\n"
+        },
+        {
+          "start": 6333,
+          "before": "    require(\"../../../../../../src/data/railgun-poi-shield-selector-data.js\").normalizeRailgunPoiShieldInput.mockImplementation(\n      jest.requireActual(\"../../../../../../src/data/railgun-poi-shield-selector-data.js\").normalizeRailgunPoiShieldInput\n",
+          "after": "    require(\"../../../../../../src/data/railgun-retained-private-data.js\").normalizeRailgunPoiShieldInput.mockImplementation(\n      jest.requireActual(\"../../../../../../src/data/railgun-retained-private-data.js\").normalizeRailgunPoiShieldInput\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-output-recovery.test.js",
+      "beforeSha256": "ec60e3a1967774ce90983704417015b40e94a6a7408ce9dc471af0e744395de4",
+      "afterSha256": "46e7cfbd8dde872944ba5a2e73cbf6671d22c4ff77769ff63682c5470030c6b8",
+      "replacements": [
+        {
+          "start": 41,
+          "before": "jest.mock(\"../../../../../../src/data/railgun-poi-shield-selector-data.js\", () => {\n  const actual = jest.requireActual(\"../../../../../../src/data/railgun-poi-shield-selector-data.js\");\n",
+          "after": "jest.mock(\"../../../../../../src/data/railgun-retained-private-data.js\", () => {\n  const actual = jest.requireActual(\"../../../../../../src/data/railgun-retained-private-data.js\");\n"
+        },
+        {
+          "start": 100613,
+          "before": "    const shield = require(\"../../../../../../src/data/railgun-poi-shield-selector-data.js\").normalizeRailgunPoiShieldInput;\n",
+          "after": "    const shield = require(\"../../../../../../src/data/railgun-retained-private-data.js\").normalizeRailgunPoiShieldInput;\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-poi-reconstruct.test.js",
+      "beforeSha256": "c28011d30402d44bbde22d5a41308f54c01938885d43e95c7abf37b8b7f7d6e3",
+      "afterSha256": "f877f6401b95d7f3b02ee123e5815045193c21fff51fa0eb807cc2b2fddc6efd",
+      "replacements": [
+        {
+          "start": 460,
+          "before": "jest.mock(\"../../../../../../src/data/railgun-private-capsule.js\", () => ({\n",
+          "after": "jest.mock(\"../../../../../../src/data/railgun-retained-private-data.js\", () => ({\n"
+        },
+        {
+          "start": 2765,
+          "before": "    capsule: { version: 1, selection: { kind: 'railgun-private-transfer' } },\n",
+          "after": "    capsule: { version: 1, selection: { kind: 'railgun-private-transfer' }, preparation: { amount: '1000' } },\n"
+        },
+        {
+          "start": 7508,
+          "before": "  const capsuleModule = require(\"../../../../../../src/data/railgun-private-capsule.js\");\n",
+          "after": "  const capsuleModule = require(\"../../../../../../src/data/railgun-retained-private-data.js\");\n"
+        },
+        {
+          "start": 7837,
+          "before": "      jest.requireActual(\"../../../../../../src/data/railgun-private-capsule.js\").normalizeRailgunPrivateCapsule\n",
+          "after": "      jest.requireActual(\"../../../../../../src/data/railgun-retained-private-data.js\").normalizeRailgunPrivateCapsule\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-proof.test.js",
+      "beforeSha256": "f0869ea4c97501ed905dfbf1cee4a8fccc44258027a839457a739f6774c44ae3",
+      "afterSha256": "f3e73f9c4e49419ff66278c9bb2e01916d5ad2bce6ca6a18d34e6df693264bc5",
+      "replacements": [
+        {
+          "start": 464,
+          "before": "jest.mock(\n  \"../../../../../../src/data/railgun-private-intent.js\",\n  () => ({\n",
+          "after": "jest.mock(\"../../../../../../src/data/railgun-private-intent-core.js\", () => {\n  const value = {\n"
+        },
+        {
+          "start": 646,
+          "before": "  })\n);\n",
+          "after": "  };\n  return { createPrivateIntent: () => value };\n});\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-receive.test.js",
+      "beforeSha256": "be0cf411e37d88362add4e537b6f7642febbf4f3eac31138bc16e6d1553f90b8",
+      "afterSha256": "bbbc446d5e08ccb10b23a09d8fbe9884305dd392777ebbadb14844d124c56559",
+      "replacements": [
+        {
+          "start": 707,
+          "before": "jest.mock(\n  \"../../../../../../src/data/railgun-private-intent.js\",\n  () => ({\n",
+          "after": "jest.mock(\"../../../../../../src/data/railgun-private-intent-core.js\", () => {\n  const value = {\n"
+        },
+        {
+          "start": 1041,
+          "before": "  })\n);\n",
+          "after": "  };\n  return { createPrivateIntent: () => value };\n});\n"
+        },
+        {
+          "start": 10059,
+          "before": "    if (mode === 'over-cap') args.inputAmount = '10000000000000001';\n",
+          "after": "    if (mode === 'over-cap') args.inputAmount = (1n << 120n).toString();\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-submission-diagnostic.test.js",
+      "beforeSha256": "9810b1a86e5399adca6b56c1dab5de9247a49d77c114d1c44a04365937467787",
+      "afterSha256": "5383c8e972c174ecfad26e56919510bd09838c64f972561a89df8112bb8dfa65",
+      "replacements": [
+        {
+          "start": 7705,
+          "before": "        preparation: { transaction: parsed.intent, expected: parsed.expected },\n",
+          "after": "        preparation: { amount: '1000', transaction: parsed.intent, expected: parsed.expected },\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-submission-recovered.test.js",
+      "beforeSha256": "cc9587561333c0f2348ee46b7a49e44131cfa620eb887463dacd3bc5f64193da",
+      "afterSha256": "eeaee866720807f2ce8442873ea0f4c2f9741887f13aca3718ee94d46481ad80",
+      "replacements": [
+        {
+          "start": 479,
+          "before": "",
+          "after": "jest.mock(\"../../../../../../src/owners/application-policy\", () => ({\n  ...jest.requireActual(\"../../../../../../src/owners/application-policy\"),\n  isRailgunOperationAmount: value => typeof value === 'bigint' && value > 0n &&\n    value <= (mock.amountCeiling ?? 10000000000000000n),\n}));\n"
+        },
+        {
+          "start": 73042,
+          "before": "",
+          "after": "\ntest('lowered full-input ceiling refuses a retained partial before disclosure, without consuming it', async () => {\n  setup('railgun-partial-unshield', 'Transact');\n  const before = copy(mock.stored);\n  mock.amountCeiling = 999n;\n  const result = await submit(options);\n  expect(result.status).toBe('recovery-required');\n  expect(diagnosticOf(result)).toMatchObject({stage:'history', substage:'operation-policy'});\n  expect(mock.events).not.toContain('disclosure-review');\n  expect(mock.events).not.toContain('transaction-review');\n  expect(mock.events).not.toContain('broadcast');\n  expect(mock.stored).toEqual(before);\n  mock.amountCeiling = 1000n;\n  expect((await submit(options)).submissionStatus).toBe('acknowledged');\n});\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-submission.test.js",
+      "beforeSha256": "39e0c94de6ee9dd5c52bdec1a982a110df8ae64591f261c1acf05ecbea17b190",
+      "afterSha256": "5b3f0bf0dcc560960d0a0e531e0422f8d0af9f753afa6f7f6916bc6481619af9",
+      "replacements": [
+        {
+          "start": 51,
+          "before": "",
+          "after": "jest.mock(\"../../../../../../src/owners/application-policy\", () => ({\n  ...jest.requireActual(\"../../../../../../src/owners/application-policy\"),\n  isRailgunOperationAmount: value => typeof value === 'bigint' && value > 0n &&\n    value <= (mock.amountCeiling ?? 10000000000000000n),\n}));\n"
+        },
+        {
+          "start": 3661,
+          "before": "        preparation: { transaction: parsed.intent, expected: parsed.expected },\n",
+          "after": "        preparation: { amount: '1000', transaction: parsed.intent, expected: parsed.expected },\n"
+        },
+        {
+          "start": 25641,
+          "before": "",
+          "after": "\ntest('warm completion checks the captured amount ceiling before proof, review or signer', async () => {\n  mock.amountCeiling = 999n;\n  expect(await submit(options)).toEqual({status:'recovery-required', stage:'operation-policy'});\n  expect(mock.events).not.toContain('C');\n  expect(mock.events).not.toContain('broadcast');\n  expect(mock.networkConstructor).not.toHaveBeenCalled();\n});\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-wallet-run.test.js",
+      "beforeSha256": "585c1eea9a642b7e5ec4c2c4f8c8393161471e93137937e02f8d8fa128345e30",
+      "afterSha256": "4915fcbf97f2a7cb33e3fd11043a948d47c5db9f6fff3036b6042573404a72a9",
+      "replacements": [
+        {
+          "start": 1251,
+          "before": "jest.mock(\"../../../../../../src/data/railgun-private-preparation.js\", () => ({\n",
+          "after": "jest.mock(\"../../../../../../src/data/railgun-retained-private-data.js\", () => ({\n  ...jest.requireActual(\"../../../../../../src/data/railgun-retained-private-data.js\"),\n"
+        },
+        {
+          "start": 1510,
+          "before": "          .requireActual('../../../../../../src/data/railgun-private-preparation')\n",
+          "after": "          .requireActual('../../../../../../src/data/railgun-retained-private-data')\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-wallet-runner.test.js",
+      "beforeSha256": "c92de2c617e00735f75db0f394f009639d6e7a6d064da8f7c01d20006eb9bce8",
+      "afterSha256": "60870c0416ac75699efad9232ae08fcc8448f59519344ce1b3869f6f331a0235",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "jest.mock(\"../../../../../../src/data/railgun-retained-private-data.js\", () => ({ ...jest.requireActual(\"../../../../../../src/data/railgun-retained-private-data.js\") }));\n"
+        },
+        {
+          "start": 6273,
+          "before": "    const module = require(\"../../../../../../src/data/railgun-private-preparation.js\");\n",
+          "after": "    const module = require(\"../../../../../../src/data/railgun-retained-private-data.js\");\n"
+        }
+      ]
+    },
+    {
+      "file": "test/earlier-spend-sign-job.test.js",
+      "beforeSha256": "cb5f73feed52361f14c6e56fc1a0072be82b295d0d0cc68357f66716e8bbffee",
+      "afterSha256": "06111f03669e40845759778bafd2b996ed6b5d7f4df445f8a6d96e318716e82a",
+      "replacements": [
+        {
+          "start": 267,
+          "before": "jest.mock('../src/data/railgun-private-intent.js', () => ({ validateRailgunPrivateSigningIntent: jest.fn() }));\n",
+          "after": "jest.mock(\"../src/data/railgun-private-intent-core.js\", () => {\n  const value = { validateRailgunPrivateSigningIntent: jest.fn() };\n  return { createPrivateIntent: () => value };\n});\n"
+        },
+        {
+          "start": 6631,
+          "before": "    jest.requireActual('../src/data/railgun-private-intent.js').validateRailgunPrivateSigningIntent\n",
+          "after": "    jest.requireActual('../src/data/railgun-private-intent-core').createPrivateIntent(jest.requireActual('../src/data/railgun-private-policy')).validateRailgunPrivateSigningIntent\n"
+        }
+      ]
+    }
+  ]
+}

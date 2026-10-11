@@ -3,7 +3,7 @@
 const assert = require('assert/strict');
 const path = require('path');
 const { createHash } = require('crypto');
-const { normalizeRailgunPoiShieldFacts } = require("../data/railgun-poi-shield-selector-data.js");
+const { normalizeRailgunPoiShieldFacts } = require("../data/railgun-retained-private-data.js");
 exports.run = async function run(text, { request, signal, guardReport }) {
   try {
     assert.ok(typeof text === 'string' && Buffer.byteLength(text) <= 8192);

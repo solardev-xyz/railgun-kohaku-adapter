@@ -4,7 +4,7 @@
  */
 const assert = require('assert/strict'),
   path = require('path');
-const { validateRailgunPrivateSigningIntent } = require('../data/railgun-private-intent');
+const { validateRailgunPrivateSigningIntent } = require('../data/railgun-retained-private-data');
 const pins = require('../railgun-shield-pins.json');
 const FIELD = 21888242871839275222246405745257275088548364400416034343698204186575808495617n;
 const field = (value) =>

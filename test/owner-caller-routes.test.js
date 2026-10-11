@@ -1,3 +1,4 @@
+const { undoOperationAmountPolicy } = require("./operation-amount-policy-transitions.cjs");
 "use strict";
 const deploymentTransitions = require("../docs/owners/DEPLOYMENT-TRANSITIONS.json");
 const fs = require("fs");
@@ -48,6 +49,7 @@ test("all caller transitions reconstruct exact base bytes without changing any o
   );
   for (const row of transitions.changes) {
     let text = fs.readFileSync(path.join(root, row.file), "utf8");
+    text = undoOperationAmountPolicy(text, row.file);
     text = undoDeployment(text, row.file);
     // Later reviewed phases (the replacement proof, then the explicit POI
     // retry) are undone first, newest first.

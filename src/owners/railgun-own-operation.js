@@ -168,7 +168,8 @@ async function captureRailgunOwnOperation(
           active();
           const { capsule, provedTransaction } = stored;
           const partial = capsule.selection.kind === 'railgun-partial-unshield';
-          assert.equal(capsule.version, partial ? 2 : 1);
+          require("../operation-formats").assertCapsuleFormat(capsule.version, capsule.selection.kind,
+    partial ? capsule.preparation.inputAmount : capsule.preparation.amount);
           assert.ok(
             [
               'railgun-private-transfer',

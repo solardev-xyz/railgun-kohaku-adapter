@@ -4,7 +4,7 @@
 const assert = require('assert/strict');
 const { Interface } = require('ethers');
 const { TRANSACT_ABI } = require('../data/railgun-private-policy');
-const { matchRailgunPrivateProvedTransaction } = require('../data/railgun-private-intent');
+const { matchRailgunPrivateProvedTransaction } = require('../data/railgun-retained-private-data');
 const BASE_FIELD = 21888242871839275222246405745257275088696311157297823662689037894645226208583n;
 exports.run = async function run(text, { request, signal, guardReport }) {
   const input = JSON.parse(text);

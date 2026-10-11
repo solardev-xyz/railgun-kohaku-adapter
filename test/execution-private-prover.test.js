@@ -43,10 +43,13 @@ jest.mock('../src/execution/railgun-prover-runtime', () => ({
 jest.mock('../src/execution/railgun-artifacts', () => ({
   loadRailgunArtifacts: (...args) => mockLoad(...args),
 }));
-jest.mock('../src/data/railgun-private-intent', () => ({
+jest.mock("../src/data/railgun-private-intent-core", () => {
+  const value = {
   validateRailgunPrivateSigningIntent: jest.fn(),
   matchRailgunPrivateProvedTransaction: jest.fn(),
-}));
+};
+  return { createPrivateIntent: () => value };
+});
 jest.mock('ethers', () => ({
   ...jest.requireActual('ethers'),
   Interface: class {

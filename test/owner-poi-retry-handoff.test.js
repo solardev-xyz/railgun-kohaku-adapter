@@ -2,8 +2,8 @@
  * recovery's fixed submission branch. The harness is the staged output-recovery
  * test's setup, copied with only its import paths changed. */
 require('../tools/owner-test-staging/context-host.cjs');
-jest.mock("../src/data/railgun-poi-shield-selector-data.js", () => {
-  const actual = jest.requireActual("../src/data/railgun-poi-shield-selector-data.js");
+jest.mock("../src/data/railgun-retained-private-data.js", () => {
+  const actual = jest.requireActual("../src/data/railgun-retained-private-data.js");
   return {
     ...actual,
     normalizeRailgunPoiShieldInput: jest.fn(actual.normalizeRailgunPoiShieldInput),
