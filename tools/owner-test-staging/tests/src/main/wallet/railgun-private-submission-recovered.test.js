@@ -1499,7 +1499,7 @@ test.each([
     const result = await submit(options);
     expect(result).toEqual({ status: 'recovery-required', stage });
     if (stage === 'eoa')
-      expect(diagnosticOf(result)).toEqual({ stage, code: 'RAILGUN_PRIVATE_REVIEW_BUDGET' });
+      expect(diagnosticOf(result)).toEqual({ stage, substage: 'review-floor', code: 'RAILGUN_PRIVATE_REVIEW_BUDGET' });
     expect(mock.events).toContain(step);
     expect(mock.events).not.toContain(absent);
     expect(mock.proofClosed).toBe(true); // Cleaned up, not a renewed C.
@@ -1730,7 +1730,7 @@ describe('recovered review budget arithmetic over Tor (mocked service)', () => {
     torTimeline({ read: 650 });
     const result = await submit(options);
     expect(result).toEqual({ status: 'recovery-required', stage: 'eoa' });
-    expect(diagnosticOf(result)).toEqual({ stage: 'eoa', code: 'RAILGUN_PRIVATE_REVIEW_BUDGET' });
+    expect(diagnosticOf(result)).toEqual({ stage: 'eoa', substage: 'review-floor', code: 'RAILGUN_PRIVATE_REVIEW_BUDGET' });
     // The verifier ran; the budget refused before a window was offered.
     expect(timingOf(result)).toEqual({ reviewWindowMs: null, verifierMs: expect.any(Number) });
     // This mocked preflight ignores its admission deadline, so the proved
@@ -1745,6 +1745,7 @@ describe('recovered review budget arithmetic over Tor (mocked service)', () => {
     torTimeline({ read: 600 });
     const result = await submit(options);
     expect(result).toEqual({ status: 'recovery-required', stage: 'submission' });
+    expect(diagnosticOf(result)).toEqual({stage: 'submission', substage: 'review-floor', code: 'RAILGUN_PRIVATE_REVIEW_BUDGET'});
     expect(mock.events).toContain('eth_estimateGas');
     expect(mock.events).not.toContain('transaction-review');
     expect(mock.events).not.toContain('sign');

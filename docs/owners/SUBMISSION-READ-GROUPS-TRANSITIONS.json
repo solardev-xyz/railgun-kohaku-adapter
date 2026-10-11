@@ -1,0 +1,58 @@
+{
+  "baseRevision": "e7285802d896bc9bf6bcc4e4d454faf3f8143ac7",
+  "reason": "Overlap only independent admitted EOA and nonce/balance reads, drain all originals before continuing, and preserve the existing review floor as a closed diagnostic. Signing, nonce equality, all deadlines and send admission remain sequential.",
+  "changes": [
+    {
+      "file": "src/owners/railgun-private-submission.js",
+      "beforeSha256": "5a458313476c44d973b7a9da8c0206973bec0b11de309c7efcd60258db91fa82",
+      "afterSha256": "bfba4d1b9de340bb3bdcedc1ed7f3d5f886eb5834f8c3335fc1611e6a982486c",
+      "replacements": [
+        {
+          "start": 7689,
+          "before": "",
+          "after": "  eoa: ['review-floor'],\n  submission: ['review-floor'],\n"
+        },
+        {
+          "start": 11730,
+          "before": "",
+          "after": "  // All reads in each group are already covered by the same disclosure and\n  // destination admission. Drain every original request before proceeding or\n  // reporting the first refusal. No read result grants signing authority.\n  const readGroup = async (reads) => {\n    let failed = false, first;\n    const results = await Promise.allSettled(reads.map(async (read) => {\n      try { return await read(); }\n      catch (error) {\n        if (!failed) { failed = true; first = error; }\n        throw error;\n      }\n    }));\n    if (failed) throw first;\n    return results.map(result => result.value);\n  };\n"
+        },
+        {
+          "start": 18399,
+          "before": "      if (!(reviewMs >= BUDGET.reviewMinMs + BUDGET.eoaAllowanceMs)) throw budgetFail();\n",
+          "after": "      if (!(reviewMs >= BUDGET.reviewMinMs + BUDGET.eoaAllowanceMs)) {\n        const error = budgetFail();\n        noteRefusal(state, error, 'review-floor');\n        throw error;\n      }\n"
+        },
+        {
+          "start": 20140,
+          "before": "",
+          "after": "    // Preserve the EOA-code gate before disclosing proved calldata.\n"
+        },
+        {
+          "start": 20407,
+          "before": "    const estimate = await network.request(pins.chainId, 'eth_estimateGas', [rpcTx]);\n    assert.ok(BigInt(estimate.result) > 0n && BigInt(estimate.result) <= gasLimit);\n    await network.request(pins.chainId, 'eth_call', [rpcTx, 'latest']);\n",
+          "after": "    await readGroup([\n      async () => {\n        const estimate = await network.request(pins.chainId, 'eth_estimateGas', [rpcTx]);\n        assert.ok(BigInt(estimate.result) > 0n && BigInt(estimate.result) <= gasLimit);\n      },\n      () => network.request(pins.chainId, 'eth_call', [rpcTx, 'latest']),\n    ]);\n"
+        },
+        {
+          "start": 23047,
+          "before": "          const latest = await network.request(pins.chainId, 'eth_getTransactionCount', [\n            owner,\n            'latest',\n",
+          "after": "          const [latest, pending, balance] = await readGroup([\n            () => network.request(pins.chainId, 'eth_getTransactionCount', [owner, 'latest']),\n            () => network.request(pins.chainId, 'eth_getTransactionCount', [owner, 'pending']),\n            () => network.request(pins.chainId, 'eth_getBalance', [owner, 'pending']),\n"
+        },
+        {
+          "start": 23402,
+          "before": "          const pending = await network.request(pins.chainId, 'eth_getTransactionCount', [\n            owner,\n            'pending',\n          ]);\n",
+          "after": "          assertCurrent();\n"
+        },
+        {
+          "start": 23589,
+          "before": "          const balance = await network.request(pins.chainId, 'eth_getBalance', [owner, 'pending']);\n",
+          "after": ""
+        },
+        {
+          "start": 24138,
+          "before": "                if (!(left >= BUDGET.reviewMinMs)) throw budgetFail();\n",
+          "after": "                if (!(left >= BUDGET.reviewMinMs)) {\n                  const error = budgetFail();\n                  noteRefusal(state, error, 'review-floor');\n                  throw error;\n                }\n"
+        }
+      ]
+    }
+  ]
+}

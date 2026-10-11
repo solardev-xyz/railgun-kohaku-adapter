@@ -260,3 +260,55 @@ test.each(['before-journal', 'after-journal', 'current'])(
     authority.assertRailgunShieldSubmission.mockReset();
   }
 );
+
+test("fee and pending nonce overlap but nonce selection, review and signing wait for both", async () => {
+  const f = setup();
+  delete f.params.gasPrice;
+  let quote, nonce;
+  f.network.getFeeQuote.mockImplementation(() => new Promise(resolve => { quote = resolve; }));
+  f.network.request.mockImplementation(() => new Promise(resolve => { nonce = resolve; }));
+  const work = f.host.signAndSendTransaction(f.params, f.signer, f.options);
+  await new Promise(resolve => setImmediate(resolve));
+  expect(typeof quote).toBe("function"); expect(typeof nonce).toBe("function");
+  nonce({ result: "0x3" }); await new Promise(resolve => setImmediate(resolve));
+  expect(f.network.selectNonce).not.toHaveBeenCalled(); expect(f.options.review).not.toHaveBeenCalled();
+  quote({ gasPrice: "1000000" }); await work;
+  expect(f.network.selectNonce).toHaveBeenCalledTimes(1);
+  expect(f.signer.signTransaction).toHaveBeenCalledTimes(1);
+});
+test("fee failure drains pending nonce before releasing lease and never selects or signs", async () => {
+  const f = setup(); delete f.params.gasPrice;
+  let nonce, settled = false;
+  f.network.getFeeQuote.mockRejectedValue(Error("fee unavailable"));
+  f.network.request.mockImplementation(() => new Promise(resolve => { nonce = resolve; }));
+  const work = f.host.signAndSendTransaction(f.params, f.signer, f.options);
+  work.catch(() => { settled = true; });
+  const checked = expect(work).rejects.toThrow();
+  await new Promise(resolve => setImmediate(resolve));
+  expect(settled).toBe(false); expect(f.lease.release).not.toHaveBeenCalled();
+  nonce({ result: "0x3" }); await checked;
+  expect(f.lease.release).toHaveBeenCalledTimes(1);
+  expect(f.network.selectNonce).not.toHaveBeenCalled(); expect(f.signer.signTransaction).not.toHaveBeenCalled();
+  expect(f.network.broadcastRawTransaction).not.toHaveBeenCalled();
+});
+test("nonce failure drains the quote and cannot select, sign or send", async () => {
+  const f = setup(); delete f.params.gasPrice;
+  let quote;
+  f.network.getFeeQuote.mockImplementation(() => new Promise(resolve => { quote = resolve; }));
+  f.network.request.mockRejectedValue(Error("nonce unavailable"));
+  const work = f.host.signAndSendTransaction(f.params, f.signer, f.options);
+  const checked = expect(work).rejects.toThrow();
+  await new Promise(resolve => setImmediate(resolve));
+  expect(f.lease.release).not.toHaveBeenCalled();
+  quote({ gasPrice: "1000000" }); await checked;
+  expect(f.network.selectNonce).not.toHaveBeenCalled();
+  expect(f.signer.signTransaction).not.toHaveBeenCalled();
+  expect(f.network.broadcastRawTransaction).not.toHaveBeenCalled();
+});
+test.each(["0", "-1"])("supplied gas price %s refuses before fee/nonce reads", async gasPrice => {
+  const f = setup(); f.params.gasPrice = gasPrice;
+  await expect(f.host.signAndSendTransaction(f.params, f.signer, f.options)).rejects.toThrow();
+  expect(f.network.request).not.toHaveBeenCalled();
+  expect(f.network.getFeeQuote).not.toHaveBeenCalled();
+  expect(f.network.selectNonce).not.toHaveBeenCalled();
+});

@@ -250,6 +250,7 @@ async function run() {
   } else result = await command(config);
   return {
     result,
+    preparationDiagnostics,
     commandProgress,
     reviews,
     reviewTimings,

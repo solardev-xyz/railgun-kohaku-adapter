@@ -76,7 +76,8 @@ jest.mock("../../../../../../src/owners/host-bindings.js", () => ({
   },
 },
   transactions: {
-  signAndSendTransaction: async () => {
+  signAndSendTransaction: async (...args) => {
+    if (mock.submit) return mock.submit(...args);
     mock.eoa.push('send');
     return { hash: '0x' + 'c'.repeat(64) };
   },
@@ -934,4 +935,94 @@ describe('L-A 3b timeline against the original-path clocks', () => {
     expect(mock.requests.includes('private-preflight:nullifiers')).toBe(false);
     expect(mock.eoa).toEqual([]);
   });
+});
+
+// These control the real owner's original asynchronous requests, not a
+// per-request counter clock. No timer or evidence expiry is replaced.
+test('EOA simulation reads overlap and the original group drains before submission', async () => {
+  setup();
+  const pendingReads = [];
+  mock.network.request = async (_chain, method) => {
+    await new Promise(resolve => pendingReads.push({method, resolve}));
+    return {result: method === 'eth_estimateGas' ? '0x100' : '0x'};
+  };
+  let settled = false;
+  const pending = submit(options).then(value => { settled = true; return value; });
+  await new Promise(resolve => setImmediate(resolve));
+  expect(pendingReads.map(row => row.method)).toEqual(['eth_getCode']);
+  pendingReads[0].resolve();
+  await new Promise(resolve => setImmediate(resolve));
+  expect(pendingReads.map(row => row.method)).toEqual(['eth_getCode', 'eth_estimateGas', 'eth_call']);
+  pendingReads[1].resolve();
+  await new Promise(resolve => setImmediate(resolve));
+  expect(settled).toBe(false);
+  expect(mock.eoa).not.toContain('send');
+  pendingReads[2].resolve();
+  expect(await pending).toEqual({hash: '0x' + 'c'.repeat(64)});
+});
+
+test('an EOA group retains the first failure and drains a slower sibling before refusal', async () => {
+  setup();
+  const pendingReads = [];
+  mock.network.request = async (_chain, method) => {
+    await new Promise((resolve, reject) => pendingReads.push({method, resolve, reject}));
+    return {result: '0x'};
+  };
+  let settled = false;
+  const pending = submit(options).then(value => { settled = true; return value; });
+  await new Promise(resolve => setImmediate(resolve));
+  expect(pendingReads.map(row => row.method)).toEqual(['eth_getCode']);
+  pendingReads[0].resolve();
+  await new Promise(resolve => setImmediate(resolve));
+  pendingReads[1].reject(Object.assign(Error('do not expose'), {code: 'TOR_REQUEST_TIMEOUT'}));
+  await new Promise(resolve => setImmediate(resolve));
+  expect(settled).toBe(false);
+  pendingReads[2].resolve();
+  const result = await pending;
+  expect(result).toEqual({status: 'recovery-required', stage: 'eoa'});
+  expect(diagnosticOf(result)).toEqual({stage: 'eoa', code: 'TOR_REQUEST_TIMEOUT'});
+  expect(mock.eoa).not.toContain('send');
+});
+
+test.each([false, true])('nonce and balance checks drain together and mismatch=%s preserves the review gate', async mismatch => {
+  setup();
+  const request = mock.network.request, pendingReads = [];
+  mock.network.request = async (chain, method, params) => {
+    if (!['eth_getTransactionCount', 'eth_getBalance'].includes(method)) return request(chain, method, params);
+    await new Promise(resolve => pendingReads.push({method, params, resolve}));
+    return {result: method === 'eth_getBalance' ? '0xffffff' : mismatch && params[1] === 'latest' ? '0x1' : '0x0'};
+  };
+  const review = jest.fn(async () => true);
+  options.review = review;
+  mock.submit = async (params, _signer, {review}) => {
+    expect(await review({from: mock.owner, transaction: {...params, nonce: 0, gasPrice: '1'}})).toBe(true);
+    return {hash: '0x' + 'c'.repeat(64)};
+  };
+  const pending = submit(options);
+  await new Promise(resolve => setImmediate(resolve));
+  expect(pendingReads.map(row => [row.method, row.params[1]])).toEqual([
+    ['eth_getTransactionCount', 'latest'], ['eth_getTransactionCount', 'pending'], ['eth_getBalance', 'pending'],
+  ]);
+  pendingReads[0].resolve(); pendingReads[1].resolve();
+  await new Promise(resolve => setImmediate(resolve));
+  expect(review).not.toHaveBeenCalled();
+  pendingReads[2].resolve();
+  const result = await pending;
+  if (mismatch) {
+    expect(result).toEqual({status: 'recovery-required', stage: 'submission'});
+    expect(review).not.toHaveBeenCalled();
+  } else {
+    expect(result).toEqual({hash: '0x' + 'c'.repeat(64)});
+    expect(review).toHaveBeenCalledTimes(1);
+  }
+});
+
+
+test('a submitter with code discloses no proved calldata to simulation', async () => {
+  setup();
+  const calls = [];
+  mock.network.request = async (_chain, method) => { calls.push(method); return {result: '0x6001'}; };
+  expect(await submit(options)).toEqual({status: 'recovery-required', stage: 'eoa'});
+  expect(calls).toEqual(['eth_getCode']);
+  expect(mock.eoa).not.toContain('send');
 });

@@ -247,7 +247,7 @@ without a send remains held. Inspect it before choosing `submit-stored`; the
 owner checks its eligibility and reviews the original operation again. This
 example does not automatically release or submit a hold.
 
-The implemented commands have the scoped synthetic evidence above. Live two-account execution remains a separate acceptance gate. Fresh dependency
+The implemented commands have the scoped synthetic evidence above. The [recorded explicit-command two-account live journey](../../docs/qualification/reference-alice-bob-live-2026-10-11/README.md) passed on its identified installations; the frozen-version guided live lifecycle remains a separate acceptance gate. Fresh dependency
 installation and offline vault creation/reopening have now been exercised on
 macOS arm64. Fresh engine/prover assembly and all 18 circuit artifacts were also
 verified; Arti acquisition is separate. This is not cross-platform acceptance.
@@ -358,7 +358,9 @@ may happen next.
 
 Warm broadcasts and `submit-stored` also print `submission-diagnostic` after
 drainage. It includes the owner's closed refusal fields and available aggregate
-timing, never raw service bodies. The guide stops after three returned or thrown
+timing, never raw service bodies. A `review-floor` substage means the
+remaining lifetime could not offer the full minimum transaction-review window;
+no review deadline is extended. The guide stops after three returned or thrown
 pre-send recovery failures and preserves the original operation for diagnosis.
 Declining disclosure or transaction review does not consume that allowance.
 This is separate from the three reviewed stored-submission attempts; neither

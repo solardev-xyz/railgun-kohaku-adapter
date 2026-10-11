@@ -1459,7 +1459,7 @@ describe('the nullifier admission boundary', () => {
     expect(seen.nullifier.at).toBe(deadline - 1);
     expect(seen.nullifier.delivered).toBeGreaterThan(deadline);
     expect(seen.outcome).toBe('refused-after-nullifier');
-    expect(seen.diagnostic).toEqual({ stage: 'eoa', code: 'RAILGUN_PRIVATE_REVIEW_BUDGET' });
+    expect(seen.diagnostic).toEqual({ stage: 'eoa', substage: 'review-floor', code: 'RAILGUN_PRIVATE_REVIEW_BUDGET' });
     expect(mock.requests.filter((v) => v.role === 'transaction-rpc')).toEqual([]);
     expect(seen.attempts).toEqual([]);
     expect(seen.sends).toEqual([]);
@@ -1692,44 +1692,47 @@ const SCENARIOS = Object.freeze({
 // accepted or unsent is the simulated node's ground truth, not the wallet's.
 const B1 = 'after-POI:membership';
 const AT_NULLIFIER = 'after-POI:nullifiers';
+// Owner simulation saves one read round and nonce/balance saves two.
+// The staged historical host remains serial: +450 ms for 150 ms reads
+// (including the single slow read), +1200 ms for uniform 400 ms reads.
 const EXPECTED = Object.freeze({
-  'd1b POI 18.6 s, 150 ms reads, empty journal': [[B1, 'ack', 'ack', B1, 'ack'], 26204],
-  'd1b POI, 150 ms reads, 4 resolved records': [[B1, 'ack', 'ack', B1, 'ack'], 25248],
+  'd1b POI 18.6 s, 150 ms reads, empty journal': [[B1, 'ack', 'ack', B1, 'ack'], 26654],
+  'd1b POI, 150 ms reads, 4 resolved records': [[B1, 'ack', 'ack', B1, 'ack'], 25698],
   'd1b POI, 4 resolved, approval 500 ms before shown deadline': [
     [B1, 'after-nullifier:submission', 'after-nullifier:submission', B1, 'ack'],
-    25248,
+    25698,
   ],
   'd1b POI, every 8th read 1.5 s, 4 resolved': [
     [B1, 'after-nullifier:eoa', 'ack', B1, 'ack'],
-    19848,
+    20298,
   ],
-  'd1b POI, 400 ms reads, 4 resolved': [[B1, AT_NULLIFIER, 'ack', B1, 'ack'], 16748],
-  'POI 22 s, 150 ms reads, 4 resolved': [[B1, AT_NULLIFIER, 'ack', B1, 'ack'], 21835],
+  'd1b POI, 400 ms reads, 4 resolved': [[B1, AT_NULLIFIER, 'ack', B1, 'ack'], 17948],
+  'POI 22 s, 150 ms reads, 4 resolved': [[B1, AT_NULLIFIER, 'ack', B1, 'ack'], 22285],
   'POI 25 s, 150 ms reads, 4 resolved': [[B1, B1, B1, B1, B1], null],
   'd1b POI, one 10 s deployment read (probe-1 shape)': [
     [B1, AT_NULLIFIER, AT_NULLIFIER, B1, AT_NULLIFIER],
     null,
   ],
-  'd1b POI, 5 s verifier, 4 resolved': [[B1, AT_NULLIFIER, 'ack', B1, 'ack'], 21048],
+  'd1b POI, 5 s verifier, 4 resolved': [[B1, AT_NULLIFIER, 'ack', B1, 'ack'], 21498],
   'd1b POI, approval 1 s before shown deadline, 13 s send': [
     [B1, 'ack', 'uncertain:accepted', B1, 'uncertain:accepted'],
-    26204,
+    26654,
   ],
   'd1b POI, approval 2 s before shown deadline, 2 s begin write': [
     [B1, 'uncertain:unsent', 'uncertain:unsent', B1, 'ack'],
-    26204,
+    26654,
   ],
   'd1b POI, 400 ms reads, 4 resolved, approval 300 ms before shown deadline': [
     [B1, AT_NULLIFIER, 'after-nullifier:submission', B1, 'ack'],
-    16748,
+    17948,
   ],
   'same, and the send is delivered after 9.5 s': [
     [B1, AT_NULLIFIER, 'after-nullifier:submission', B1, 'uncertain:accepted'],
-    16748,
+    17948,
   ],
   'd1b POI, send accepted, response lost': [
     [B1, 'uncertain:accepted', 'uncertain:accepted', B1, 'uncertain:accepted'],
-    26204,
+    26654,
   ],
 });
 function outcomeCode(seen) {

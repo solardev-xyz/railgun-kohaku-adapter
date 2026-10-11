@@ -184,6 +184,8 @@ const diagnosticCode = (value) =>
 const SUBSTAGES = Object.freeze({
   preflight: DIAGNOSTIC.substage,
   history: DIAGNOSTIC.historySubstage,
+  eoa: ['review-floor'],
+  submission: ['review-floor'],
 });
 function diagnose(stage, substage, error) {
   const stageValue = DIAGNOSTIC.stage.includes(stage) ? stage : 'unknown';
@@ -280,6 +282,21 @@ async function submitFinal({
   let proof, preflight, scope, substage;
   let handle, network, intent;
   const callbacks = new Set();
+  // All reads in each group are already covered by the same disclosure and
+  // destination admission. Drain every original request before proceeding or
+  // reporting the first refusal. No read result grants signing authority.
+  const readGroup = async (reads) => {
+    let failed = false, first;
+    const results = await Promise.allSettled(reads.map(async (read) => {
+      try { return await read(); }
+      catch (error) {
+        if (!failed) { failed = true; first = error; }
+        throw error;
+      }
+    }));
+    if (failed) throw first;
+    return results.map(result => result.value);
+  };
   const track =
     (use) =>
     (...args) => {
@@ -439,7 +456,11 @@ async function submitFinal({
         BUDGET.reviewWindowMs,
         leftUntil(end) - admissionMs - BUDGET.sendReserveMs
       );
-      if (!(reviewMs >= BUDGET.reviewMinMs + BUDGET.eoaAllowanceMs)) throw budgetFail();
+      if (!(reviewMs >= BUDGET.reviewMinMs + BUDGET.eoaAllowanceMs)) {
+        const error = budgetFail();
+        noteRefusal(state, error, 'review-floor');
+        throw error;
+      }
       state.reviewWindowMs = reviewMs;
       assertCurrent(reviewMs + admissionMs + BUDGET.sendReserveMs);
     }
@@ -468,14 +489,19 @@ async function submitFinal({
       admission: lifetimeEnd ? Object.freeze({ admissionDeadline: admissionEnd }) : undefined,
     });
     await network.assertCanSubmit(scope.signal);
+    // Preserve the EOA-code gate before disclosing proved calldata.
     assert.equal(
       (await network.request(pins.chainId, 'eth_getCode', [owner, 'pending'])).result,
       '0x'
     );
     const rpcTx = { from: owner, to: tx.to, value: '0x0', data: tx.data };
-    const estimate = await network.request(pins.chainId, 'eth_estimateGas', [rpcTx]);
-    assert.ok(BigInt(estimate.result) > 0n && BigInt(estimate.result) <= gasLimit);
-    await network.request(pins.chainId, 'eth_call', [rpcTx, 'latest']);
+    await readGroup([
+      async () => {
+        const estimate = await network.request(pins.chainId, 'eth_estimateGas', [rpcTx]);
+        assert.ok(BigInt(estimate.result) > 0n && BigInt(estimate.result) <= gasLimit);
+      },
+      () => network.request(pins.chainId, 'eth_call', [rpcTx, 'latest']),
+    ]);
     await attest();
     assertCurrent();
     state.stage = 'submission';
@@ -533,19 +559,16 @@ async function submitFinal({
           assert.ok(
             BigInt(actual.gasLimit) === gasLimit && fee > 0n && gasLimit * fee <= maxGasFee
           );
-          const latest = await network.request(pins.chainId, 'eth_getTransactionCount', [
-            owner,
-            'latest',
+          const [latest, pending, balance] = await readGroup([
+            () => network.request(pins.chainId, 'eth_getTransactionCount', [owner, 'latest']),
+            () => network.request(pins.chainId, 'eth_getTransactionCount', [owner, 'pending']),
+            () => network.request(pins.chainId, 'eth_getBalance', [owner, 'pending']),
           ]);
-          const pending = await network.request(pins.chainId, 'eth_getTransactionCount', [
-            owner,
-            'pending',
-          ]);
+          assertCurrent();
           assert.ok(
             BigInt(latest.result) === BigInt(pending.result) &&
               BigInt(pending.result) === BigInt(actual.nonce)
           );
-          const balance = await network.request(pins.chainId, 'eth_getBalance', [owner, 'pending']);
           assert.ok(BigInt(balance.result) >= gasLimit * fee);
           assertCurrent();
           const approved = await Promise.resolve()
@@ -556,7 +579,11 @@ async function submitFinal({
               // authority must outlive F by the send reserve.
               if (lifetimeEnd) {
                 const left = leftUntil(reviewEnd);
-                if (!(left >= BUDGET.reviewMinMs)) throw budgetFail();
+                if (!(left >= BUDGET.reviewMinMs)) {
+                  const error = budgetFail();
+                  noteRefusal(state, error, 'review-floor');
+                  throw error;
+                }
                 assertCurrent(left + admissionMs + BUDGET.sendReserveMs);
               } else assertCurrent();
               return review(

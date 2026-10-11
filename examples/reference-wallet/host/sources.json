@@ -19,6 +19,7 @@
   "host/platform.cjs",
   "host/profile-lock-core.cjs",
   "host/profile-lock.cjs",
+  "host/read-group.cjs",
   "host/receipts.cjs",
   "host/reconciler.cjs",
   "host/registry.cjs",

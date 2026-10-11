@@ -1,0 +1,112 @@
+{
+  "baseRevision": "e7285802d896bc9bf6bcc4e4d454faf3f8143ac7",
+  "reason": "Extend the existing host mock to exercise the actual review callback and add controlled-promise tests of EOA and nonce/balance read groups, draining and refusal. Existing assertions are retained.",
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-submission-diagnostic.test.js",
+      "beforeSha256": "0f993834290a15993e265bb8944c0c0d362ecbffc9c4fb93d242c7d15ac886b4",
+      "afterSha256": "0f7255e565be7b77d5c151600526a25a7e027e71d29a47c5c2a87954ce47b71e",
+      "replacements": [
+        {
+          "start": 3128,
+          "before": "  signAndSendTransaction: async () => {\n",
+          "after": "  signAndSendTransaction: async (...args) => {\n    if (mock.submit) return mock.submit(...args);\n"
+        },
+        {
+          "start": 34636,
+          "before": "",
+          "after": "\n// These control the real owner's original asynchronous requests, not a\n// per-request counter clock. No timer or evidence expiry is replaced.\ntest('EOA simulation reads overlap and the original group drains before submission', async () => {\n  setup();\n  const pendingReads = [];\n  mock.network.request = async (_chain, method) => {\n    await new Promise(resolve => pendingReads.push({method, resolve}));\n    return {result: method === 'eth_estimateGas' ? '0x100' : '0x'};\n  };\n  let settled = false;\n  const pending = submit(options).then(value => { settled = true; return value; });\n  await new Promise(resolve => setImmediate(resolve));\n  expect(pendingReads.map(row => row.method)).toEqual(['eth_getCode']);\n  pendingReads[0].resolve();\n  await new Promise(resolve => setImmediate(resolve));\n  expect(pendingReads.map(row => row.method)).toEqual(['eth_getCode', 'eth_estimateGas', 'eth_call']);\n  pendingReads[1].resolve();\n  await new Promise(resolve => setImmediate(resolve));\n  expect(settled).toBe(false);\n  expect(mock.eoa).not.toContain('send');\n  pendingReads[2].resolve();\n  expect(await pending).toEqual({hash: '0x' + 'c'.repeat(64)});\n});\n\ntest('an EOA group retains the first failure and drains a slower sibling before refusal', async () => {\n  setup();\n  const pendingReads = [];\n  mock.network.request = async (_chain, method) => {\n    await new Promise((resolve, reject) => pendingReads.push({method, resolve, reject}));\n    return {result: '0x'};\n  };\n  let settled = false;\n  const pending = submit(options).then(value => { settled = true; return value; });\n  await new Promise(resolve => setImmediate(resolve));\n  expect(pendingReads.map(row => row.method)).toEqual(['eth_getCode']);\n  pendingReads[0].resolve();\n  await new Promise(resolve => setImmediate(resolve));\n  pendingReads[1].reject(Object.assign(Error('do not expose'), {code: 'TOR_REQUEST_TIMEOUT'}));\n  await new Promise(resolve => setImmediate(resolve));\n  expect(settled).toBe(false);\n  pendingReads[2].resolve();\n  const result = await pending;\n  expect(result).toEqual({status: 'recovery-required', stage: 'eoa'});\n  expect(diagnosticOf(result)).toEqual({stage: 'eoa', code: 'TOR_REQUEST_TIMEOUT'});\n  expect(mock.eoa).not.toContain('send');\n});\n\ntest.each([false, true])('nonce and balance checks drain together and mismatch=%s preserves the review gate', async mismatch => {\n  setup();\n  const request = mock.network.request, pendingReads = [];\n  mock.network.request = async (chain, method, params) => {\n    if (!['eth_getTransactionCount', 'eth_getBalance'].includes(method)) return request(chain, method, params);\n    await new Promise(resolve => pendingReads.push({method, params, resolve}));\n    return {result: method === 'eth_getBalance' ? '0xffffff' : mismatch && params[1] === 'latest' ? '0x1' : '0x0'};\n  };\n  const review = jest.fn(async () => true);\n  options.review = review;\n  mock.submit = async (params, _signer, {review}) => {\n    expect(await review({from: mock.owner, transaction: {...params, nonce: 0, gasPrice: '1'}})).toBe(true);\n    return {hash: '0x' + 'c'.repeat(64)};\n  };\n  const pending = submit(options);\n  await new Promise(resolve => setImmediate(resolve));\n  expect(pendingReads.map(row => [row.method, row.params[1]])).toEqual([\n    ['eth_getTransactionCount', 'latest'], ['eth_getTransactionCount', 'pending'], ['eth_getBalance', 'pending'],\n  ]);\n  pendingReads[0].resolve(); pendingReads[1].resolve();\n  await new Promise(resolve => setImmediate(resolve));\n  expect(review).not.toHaveBeenCalled();\n  pendingReads[2].resolve();\n  const result = await pending;\n  if (mismatch) {\n    expect(result).toEqual({status: 'recovery-required', stage: 'submission'});\n    expect(review).not.toHaveBeenCalled();\n  } else {\n    expect(result).toEqual({hash: '0x' + 'c'.repeat(64)});\n    expect(review).toHaveBeenCalledTimes(1);\n  }\n});\n\n\ntest('a submitter with code discloses no proved calldata to simulation', async () => {\n  setup();\n  const calls = [];\n  mock.network.request = async (_chain, method) => { calls.push(method); return {result: '0x6001'}; };\n  expect(await submit(options)).toEqual({status: 'recovery-required', stage: 'eoa'});\n  expect(calls).toEqual(['eth_getCode']);\n  expect(mock.eoa).not.toContain('send');\n});\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-submission-boundaries.test.js",
+      "beforeSha256": "336d68f6e08945bd6bf1012c48e878229e19019d4f9d7f403723994f0aca84eb",
+      "afterSha256": "3d47643d162e37b5104c4266ee98030d666e5448f4d611dc27f050736d2b25cc",
+      "replacements": [
+        {
+          "start": 57877,
+          "before": "    expect(seen.diagnostic).toEqual({ stage: 'eoa', code: 'RAILGUN_PRIVATE_REVIEW_BUDGET' });\n",
+          "after": "    expect(seen.diagnostic).toEqual({ stage: 'eoa', substage: 'review-floor', code: 'RAILGUN_PRIVATE_REVIEW_BUDGET' });\n"
+        },
+        {
+          "start": 69181,
+          "before": "",
+          "after": "// Owner simulation saves one read round and nonce/balance saves two.\n// The staged historical host remains serial: +450 ms for 150 ms reads\n// (including the single slow read), +1200 ms for uniform 400 ms reads.\n"
+        },
+        {
+          "start": 69427,
+          "before": "  'd1b POI 18.6 s, 150 ms reads, empty journal': [[B1, 'ack', 'ack', B1, 'ack'], 26204],\n  'd1b POI, 150 ms reads, 4 resolved records': [[B1, 'ack', 'ack', B1, 'ack'], 25248],\n",
+          "after": "  'd1b POI 18.6 s, 150 ms reads, empty journal': [[B1, 'ack', 'ack', B1, 'ack'], 26654],\n  'd1b POI, 150 ms reads, 4 resolved records': [[B1, 'ack', 'ack', B1, 'ack'], 25698],\n"
+        },
+        {
+          "start": 69750,
+          "before": "    25248,\n",
+          "after": "    25698,\n"
+        },
+        {
+          "start": 69866,
+          "before": "    19848,\n",
+          "after": "    20298,\n"
+        },
+        {
+          "start": 69882,
+          "before": "  'd1b POI, 400 ms reads, 4 resolved': [[B1, AT_NULLIFIER, 'ack', B1, 'ack'], 16748],\n  'POI 22 s, 150 ms reads, 4 resolved': [[B1, AT_NULLIFIER, 'ack', B1, 'ack'], 21835],\n",
+          "after": "  'd1b POI, 400 ms reads, 4 resolved': [[B1, AT_NULLIFIER, 'ack', B1, 'ack'], 17948],\n  'POI 22 s, 150 ms reads, 4 resolved': [[B1, AT_NULLIFIER, 'ack', B1, 'ack'], 22285],\n"
+        },
+        {
+          "start": 70253,
+          "before": "  'd1b POI, 5 s verifier, 4 resolved': [[B1, AT_NULLIFIER, 'ack', B1, 'ack'], 21048],\n",
+          "after": "  'd1b POI, 5 s verifier, 4 resolved': [[B1, AT_NULLIFIER, 'ack', B1, 'ack'], 21498],\n"
+        },
+        {
+          "start": 70466,
+          "before": "    26204,\n",
+          "after": "    26654,\n"
+        },
+        {
+          "start": 70611,
+          "before": "    26204,\n",
+          "after": "    26654,\n"
+        },
+        {
+          "start": 70772,
+          "before": "    16748,\n",
+          "after": "    17948,\n"
+        },
+        {
+          "start": 70919,
+          "before": "    16748,\n",
+          "after": "    17948,\n"
+        },
+        {
+          "start": 71060,
+          "before": "    26204,\n",
+          "after": "    26654,\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-submission-recovered.test.js",
+      "beforeSha256": "eeaee866720807f2ce8442873ea0f4c2f9741887f13aca3718ee94d46481ad80",
+      "afterSha256": "dfbd3333ce4928620cafc54b4372a8c605101ed6c4ad7872479a8d585846fbab",
+      "replacements": [
+        {
+          "start": 55905,
+          "before": "      expect(diagnosticOf(result)).toEqual({ stage, code: 'RAILGUN_PRIVATE_REVIEW_BUDGET' });\n",
+          "after": "      expect(diagnosticOf(result)).toEqual({ stage, substage: 'review-floor', code: 'RAILGUN_PRIVATE_REVIEW_BUDGET' });\n"
+        },
+        {
+          "start": 66256,
+          "before": "    expect(diagnosticOf(result)).toEqual({ stage: 'eoa', code: 'RAILGUN_PRIVATE_REVIEW_BUDGET' });\n",
+          "after": "    expect(diagnosticOf(result)).toEqual({ stage: 'eoa', substage: 'review-floor', code: 'RAILGUN_PRIVATE_REVIEW_BUDGET' });\n"
+        },
+        {
+          "start": 67266,
+          "before": "",
+          "after": "    expect(diagnosticOf(result)).toEqual({stage: 'submission', substage: 'review-floor', code: 'RAILGUN_PRIVATE_REVIEW_BUDGET'});\n"
+        }
+      ]
+    }
+  ]
+}

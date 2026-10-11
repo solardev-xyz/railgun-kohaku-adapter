@@ -2,6 +2,7 @@
 const { Transaction } = require("ethers");
 const { validIntent } = require("./intent.cjs");
 const { privacyError } = require("./errors.cjs");
+const { readGroup } = require("./read-group.cjs");
 // The original callback remains observed after cancellation. A later result
 // cannot resume signing/broadcast or replace the cancelled caller's outcome.
 function step(callback, network, signal = network.signal) {
@@ -86,7 +87,7 @@ function createTransactionHost({ transactionNetwork, leases }) {
         privacyContext,
       });
       await network.assertCanSubmit();
-      let fees;
+      let fees, pending;
       if (params.maxFeePerGas != null || params.maxPriorityFeePerGas != null) {
         if (
           params.maxFeePerGas == null ||
@@ -103,15 +104,22 @@ function createTransactionHost({ transactionNetwork, leases }) {
           maxPriorityFeePerGas: params.maxPriorityFeePerGas,
         };
       } else {
-        const gasPrice =
-          params.gasPrice ??
-          (await network.getFeeQuote(params.chainId)).gasPrice;
+        if (params.gasPrice != null && BigInt(params.gasPrice) <= 0n)
+          throw privacyError("PRIVATE_FEE_INVALID", "Invalid fee selection");
+        const [quote, nonceRead] = await readGroup([
+          () => params.gasPrice == null
+            ? network.getFeeQuote(params.chainId)
+            : { gasPrice: params.gasPrice },
+          () => network.request(params.chainId, "eth_getTransactionCount", [from, "pending"]),
+        ]);
+        const gasPrice = quote.gasPrice;
         if (BigInt(gasPrice) <= 0n)
           throw privacyError("PRIVATE_FEE_INVALID", "Invalid fee selection");
         fees = { type: 0, gasPrice };
+        pending = nonceRead;
       }
       lease.assertActive();
-      const pending = await network.request(
+      pending ??= await network.request(
         params.chainId,
         "eth_getTransactionCount",
         [from, "pending"],

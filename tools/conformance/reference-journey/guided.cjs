@@ -93,7 +93,7 @@ async function runGuided({ actor, chain, server, write, installation, timing = f
       const sends = baselineReadDelayMs === 0 ? 1 : 0;
       const result = await next("alice", { expectedSends: sends }, baselineReadDelayMs);
       assert.equal(result.step, "payment-observe");
-      if (sends) assert.equal(result.result.outcome.status, "acknowledged");
+      if (sends) assert.match(result.result.outcome.hash, /^0x[0-9a-f]{64}$/);
       else assert.deepEqual(result.result.outcome, {status: "recovery-required", stage: "preflight"});
       assert.equal(chain.state().transactions.length, 1 + sends);
       write("GUIDED-STEPS.json", traces);

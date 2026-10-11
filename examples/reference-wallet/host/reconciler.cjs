@@ -3,6 +3,7 @@
  * Reconciliation never signs, broadcasts, or automatically permits another send.
  */
 const { privacyError } = require("./errors.cjs");
+const { readGroup } = require("./read-group.cjs");
 const isQuantity = (value) =>
   typeof value === "string" && /^0x[0-9a-f]{1,64}$/i.test(value);
 const hash = (value) =>
@@ -218,47 +219,55 @@ function createSubmissionReconciler({
       (record) => record.resolution,
     );
     if (!records.length) return;
-    const { result: head } = await rpc.request("eth_blockNumber", [], quantity);
-    for (let offset = 0; offset < records.length; offset += 2) {
-      if (signal?.aborted) throw unavailable();
-      const results = await Promise.allSettled(
-        records.slice(offset, offset + 2).map(async (record) => {
-          const prior = record.observation;
-          const { result: canonical } = await rpc.request(
-            "eth_getBlockByNumber",
-            [`0x${prior.blockNumber.toString(16)}`, false],
-            (value) =>
-              value === null ||
-              (value && hash(value.hash) && quantity(value.number)),
-          );
-          if (
-            !canonical ||
-            Number(BigInt(canonical.number)) !== prior.blockNumber ||
-            BigInt(head) < BigInt(prior.blockNumber)
-          )
-            throw unavailable();
-          const matches = canonical.hash.toLowerCase() === prior.blockHash;
-          const confirmations = Number(
-            BigInt(head) - BigInt(prior.blockNumber) + 1n,
-          );
-          if (!Number.isSafeInteger(confirmations)) throw unavailable();
-          const observation = matches
-            ? { ...prior, confirmations, observedAt: Date.now() }
-            : {
-                status: "reorged",
-                blockNumber: null,
-                blockHash: null,
-                confirmations: 0,
-                observedAt: Date.now(),
-                trust: "unverified",
-              };
-          assertActive();
-          if (signal?.aborted) throw unavailable();
-          await journal.observe(record.hash, observation, record.revision || 0);
-        }),
-      );
-      const failed = results.find((result) => result.status === "rejected");
-      if (failed) throw failed.reason;
+    const headRequest = rpc.request("eth_blockNumber", [], quantity);
+    // Observe immediately, including cancellation before the first batch.
+    headRequest.catch(() => {});
+    try {
+      for (let offset = 0; offset < records.length; offset += 2) {
+        if (signal?.aborted) throw unavailable();
+        const results = await Promise.allSettled(
+          records.slice(offset, offset + 2).map(async (record) => {
+            const prior = record.observation;
+            const [{ result: head }, { result: canonical }] = await readGroup([
+              () => headRequest,
+              () => rpc.request(
+                "eth_getBlockByNumber",
+                [`0x${prior.blockNumber.toString(16)}`, false],
+                (value) => value === null ||
+                  (value && hash(value.hash) && quantity(value.number)),
+              ),
+            ]);
+            if (
+              !canonical ||
+              Number(BigInt(canonical.number)) !== prior.blockNumber ||
+              BigInt(head) < BigInt(prior.blockNumber)
+            )
+              throw unavailable();
+            const matches = canonical.hash.toLowerCase() === prior.blockHash;
+            const confirmations = Number(
+              BigInt(head) - BigInt(prior.blockNumber) + 1n,
+            );
+            if (!Number.isSafeInteger(confirmations)) throw unavailable();
+            const observation = matches
+              ? { ...prior, confirmations, observedAt: Date.now() }
+              : {
+                  status: "reorged",
+                  blockNumber: null,
+                  blockHash: null,
+                  confirmations: 0,
+                  observedAt: Date.now(),
+                  trust: "unverified",
+                };
+            assertActive();
+            if (signal?.aborted) throw unavailable();
+            await journal.observe(record.hash, observation, record.revision || 0);
+          }),
+        );
+        const failed = results.find((result) => result.status === "rejected");
+        if (failed) throw failed.reason;
+      }
+    } finally {
+      await Promise.allSettled([headRequest]);
     }
   }
 

@@ -216,8 +216,15 @@ The next agreed milestone makes the example operable through saved instructions:
    private payment sent. Its state is preserved. The
    [timing/diagnostic successor](qualification/reference-review-lifetimes-2026-10-11/README.md)
    passed a delayed installed lifecycle, same-held-operation recovery, clean
-   installation, cold reopen and Linux/macOS CI. A fresh guided live run is
-   the next gate. Success requires an entire lifecycle and
+   installation, cold reopen and Linux/macOS CI. The second frozen guided run
+   is also interrupted: it produced a proved retained payment, but warm and
+   cold submission refused before broadcasting. Its funded custody and original
+   installation are preserved. The earlier timing fixture delayed preparation
+   but not cold submission; that coverage gap is now explicit. The successor
+   groups independent deployment and transaction-admission reads, preserving
+   the EOA-code gate before calldata disclosure, and exposes closed warm/cold
+   submission diagnostics. Its stronger native timing checks and exact-head CI must finish
+   before further live qualification. Success requires an entire lifecycle and
    actual receipt/conservation checks without a mid-run code fix or manual
    substitution for a guide step. A supported explicit continuation is allowed;
    changing implementation makes it an interrupted development run.
