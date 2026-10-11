@@ -8,7 +8,7 @@ export interface PrivateSubmissionAdmission {
   readonly admissionDeadline?: number;
 }
 export function assertRailgunPrivateSubmission(handle: unknown, intent: unknown): PrivateSubmissionAdmission | undefined;
-export function assertRailgunShieldSubmission(handle: unknown, intent: unknown): void;
+export function assertRailgunShieldSubmission(handle: unknown, intent: unknown, phase?: "prepare" | "send"): Readonly<{ admissionDeadline: number }> | undefined;
 export function assertRailgunTransactResolution(permit: unknown, record: unknown): unknown;
 export function assertRailgunShieldResolution(permit: unknown, record: unknown): unknown;
 export function authorizeRailgunTransactResolution(handle: unknown, record: unknown, completed?: boolean): unknown;

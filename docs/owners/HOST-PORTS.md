@@ -130,6 +130,31 @@ delivered. Preserve the transaction hash and unresolved state, never treat a
 timeout as permission to create or send another transaction. Retain actual
 original callback/transport settlement barriers.
 
+### Shield review protocol
+
+Shield options carry `shieldReviewProtocol: 'fresh-after-consent-v1'`. The host
+must require that marker and include the same own data property on its review
+request. Before nonce/fee selection it calls the genuine
+`assertRailgunShieldSubmission(handle, intent, 'prepare')`. This checks the
+initial phase only and grants no signing or sending authority. The host invokes
+the review once with the exact fully populated transaction; the owner callback
+does the human review and fresh post-consent checks before resolving approval.
+
+Immediately before signing, call `assertRailgunShieldSubmission(handle, intent)`
+with the default send phase. The genuine return contains `admissionDeadline`.
+Repeat that authority/currentness check before journal begin and transport
+admission, and pass the deadline into the underlying RPC request so readiness
+cannot consume it unnoticed. A fabricated return value is not authority.
+Keep the original transaction bytes, signer, destination and journal binding.
+
+The owner reserves ten seconds for signing and another ten seconds between the
+latest send admission and terminal closure. Once transport is admitted, a later
+admission deadline must not relabel an acknowledged send as expired. Continue
+to retain original work and report uncertain delivery through the journal.
+The host's signing timer ends after signing; it must not cancel an admitted send.
+An old host using the default assertion at entry, or omitting the marker, refuses
+before human approval. This is a deliberate fail-closed host-contract change.
+
 Call-site anchors: `railgun-private-submission.js`, `railgun-private-operation.js`,
 `railgun-shield-operation.js`, `railgun-transact-recovery.js`,
 `railgun-shield-recovery.js`, `operational-submission-lane.js`,

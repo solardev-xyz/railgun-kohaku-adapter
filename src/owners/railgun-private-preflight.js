@@ -93,7 +93,7 @@ function createPreflight(options, relay = false) {
   check(options && !isProxy(options) && Object.getPrototypeOf(options) === Object.prototype);
   const descriptors = Object.getOwnPropertyDescriptors(options);
   const required = ['enrollment', 'input', 'artifactDirectory'];
-  const allowed = [...required, 'destinationConstraint', 'intentKind', 'admissionDeadline'];
+  const allowed = [...required, 'destinationConstraint', 'intentKind', 'admissionDeadline', 'beforeSelectedInput'];
   check(required.every((key) => Object.hasOwn(descriptors, key)));
   check(Reflect.ownKeys(descriptors).every((key) => allowed.includes(key)));
   for (const descriptor of Object.values(descriptors))
@@ -109,6 +109,12 @@ function createPreflight(options, relay = false) {
   // tail then refuses at its budget check before any EOA request: the
   // nullifier was disclosed, nothing is sent. Data, not authority: it can
   // only refuse earlier, and receipt ages are unchanged.
+  // Owner-local sequencing gate, not proof or signing authority. It may only
+  // delay/refuse the selected-input reads. Recovery and relay paths cannot use it.
+  const beforeSelectedInput = options.beforeSelectedInput;
+  check(!Object.hasOwn(descriptors, 'beforeSelectedInput') ||
+    (!relay && !Object.hasOwn(descriptors, 'admissionDeadline') &&
+      typeof beforeSelectedInput === 'function'));
   const admissionDeadline = options.admissionDeadline;
   check(
     !Object.hasOwn(descriptors, 'admissionDeadline') ||
@@ -259,7 +265,8 @@ function createPreflight(options, relay = false) {
         check(abi.encodeFunctionResult(name, value).toLowerCase() === encoded, 'mismatch');
         check(value[0] === expected, 'mismatch');
       };
-      await getter('rootHistory', [selected.tree, selected.merkleRoot], true);
+      if (!beforeSelectedInput)
+        await getter('rootHistory', [selected.tree, selected.merkleRoot], true);
       await getter('unshieldFee', [], BigInt(UNSHIELD_FEE_BPS));
       step = 'verifier';
       const encoded = await read(
@@ -278,6 +285,14 @@ function createPreflight(options, relay = false) {
       } catch {
         active();
         throw fail('mismatch');
+      }
+      if (beforeSelectedInput) {
+        step = 'input-gate';
+        await beforeSelectedInput();
+        active();
+        fresh();
+        assertRailgunShieldPreflight(deployment, base.receipt, enrollment);
+        await getter('rootHistory', [selected.tree, selected.merkleRoot], true);
       }
       // Expose the selected nullifier only after deployment, fee, root and
       // verifier checks succeed; it can link this query to a later spend.

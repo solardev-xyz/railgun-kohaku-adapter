@@ -66,11 +66,13 @@ function createTransactionHost({ transactionNetwork, leases }) {
         "A local signer and classified owner review are required",
       );
     const authority = require("@freedom/railgun-kohaku-adapter/host/owner-authority");
-    const assertAdmitted = () =>
+    const assertAdmitted = (phase) =>
       (intent.kind === "railgun-transact"
         ? authority.assertRailgunPrivateSubmission
-        : authority.assertRailgunShieldSubmission)(privacyContext, intent);
-    assertAdmitted();
+        : authority.assertRailgunShieldSubmission)(privacyContext, intent, ...(intent.kind === "railgun-native-shield" ? [phase ?? "send"] : []));
+    if (intent.kind === "railgun-native-shield" && options.shieldReviewProtocol !== "fresh-after-consent-v1")
+      throw privacyError("PRIVATE_REVIEW_INVALID", "Unsupported Shield review protocol");
+    assertAdmitted("prepare");
     const network =
       transactionNetwork.getPrivateTransactionNetwork(privacyContext);
     let lease;
@@ -155,6 +157,7 @@ function createTransactionHost({ transactionNetwork, leases }) {
                   from,
                   expiresAt,
                   unsignedSerialized,
+                  ...(intent.kind === "railgun-native-shield" ? { shieldReviewProtocol: "fresh-after-consent-v1" } : {}),
                 }),
               ),
             network,

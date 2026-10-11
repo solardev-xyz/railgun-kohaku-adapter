@@ -49,8 +49,29 @@ superseded by this final run. The operator's terminal script also had a child-ex
 race fixed before live initialization. None of these failures is erased or
 reported as a final-candidate pass.
 
-Next: complete the fresh live journey on this frozen installation, then ask an
-independent person to follow the [walkthrough](../../review/REFERENCE-WALKTHROUGH.md).
+The subsequent fresh live run on this frozen installation is **interrupted**.
+Funding arrived and the Shield completed with a successful receipt and matched
+finalized resolution. Alice discovered the exact unspent Shield note and its
+owned POI status was Valid. Three private preparations then refused at the
+preflight stage. Each was followed by authenticated hold-absence and exact-input
+checks; no private payment or Bob unshield was sent. The guide stopped at its
+diagnosis limit. Its profiles, journals and evidence remain intact.
+
+The run also exposed impractically short effective Shield transaction-review
+windows: two transaction reviews expired without an accepted send approval.
+The later Shield succeeded under its original checks. The private refusals did
+not retain a more specific cause. A later public-only deployment probe succeeded;
+it does not establish what caused those earlier refusals. Timing is an engineering
+hypothesis, not a historical finding.
+
+A successor is being qualified with fresh post-consent Shield checks, useful
+human review time, overlapped account-independent private preflight reads and
+closed diagnostics. It is a new candidate; this run cannot be converted into a
+frozen-version success by changing its implementation or resetting its guide.
+The earlier explicit CLI live milestone remains separate and complete.
+
+Next: qualify that successor and a fresh live guide run, then ask an independent
+person to follow the [walkthrough](../../review/REFERENCE-WALKTHROUGH.md).
 Keep addresses, recovery material, transaction linkage, notes and raw terminal
 records private. No outreach, release or Freedom activation is part of this
 qualification record.

@@ -226,10 +226,8 @@ function getPrivateTransactionNetwork(handle, options = {}) {
     const assertAdmitted = () =>
       admitted.kind === 'railgun-transact'
         ? require('./railgun-private-submission').assertRailgunPrivateSubmission(handle, admitted)
-        : undefined;
+        : require('./railgun-shield-operation').assertRailgunShieldSubmission(handle, admitted);
     assertAdmitted();
-    if (intent.kind === 'railgun-native-shield')
-      require('./railgun-shield-operation').assertRailgunShieldSubmission(handle, intent);
     // Derive all reservation metadata from signed bytes, never caller fields.
     intent = transactionIntent(intent.kind, transaction);
     const txHash = transaction.hash.toLowerCase();

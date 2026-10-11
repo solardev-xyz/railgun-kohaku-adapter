@@ -30,7 +30,7 @@ const {
 } = require("../../qualification/installed-journey/synthetic-copy-contract.cjs");
 const { createFixtureServer } = require("./server.cjs");
 assert.ok(
-  [undefined, "acknowledged", "retained-unknown", "retained-upgrade", "wide-retained", "preparation-diagnostics", "guided"].includes(inputs.variant),
+  [undefined, "acknowledged", "retained-unknown", "retained-upgrade", "wide-retained", "preparation-diagnostics", "guided", "guided-timing"].includes(inputs.variant),
 );
 const { TRANSACT_ABI } = require("../../../src/data/railgun-private-policy.js");
 const hash = (bytes) => crypto.createHash("sha256").update(bytes).digest("hex");
@@ -304,7 +304,7 @@ async function main() {
     key: fs.readFileSync(path.join(root, "key.pem")),
     cert: fs.readFileSync(path.join(root, "cert.pem")),
   });
-  if (inputs.variant === "guided") return require("./guided.cjs").runGuided({actor,chain,server,write,installation});
+  if (["guided", "guided-timing"].includes(inputs.variant)) return require("./guided.cjs").runGuided({actor,chain,server,write,installation,timing: inputs.variant === "guided-timing"});
   const addresses = {};
   for (const name of actors) {
     await actor(name, "account-create");

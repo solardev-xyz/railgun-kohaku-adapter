@@ -198,3 +198,12 @@ if (preparationOutcome) {
   // @ts-expect-error no raw request, transaction or account payload is exposed
   preparationOutcome.payload;
 }
+if (preparationOutcome?.preflight) {
+  // @ts-expect-error the diagnostic never exposes the raw error message
+  preparationOutcome.preflight.message;
+  // @ts-expect-error closed diagnostics are immutable
+  preparationOutcome.preflight.budgetExpired = false;
+  // @ts-expect-error a transport code is not an inferred connection cause
+  const guessedCause: "connection" = preparationOutcome.preflight.transport;
+  void guessedCause;
+}

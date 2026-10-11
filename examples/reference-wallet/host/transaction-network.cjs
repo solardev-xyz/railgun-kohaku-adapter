@@ -285,19 +285,13 @@ function createTransactionNetworkHost({
       // wall-clock step cannot extend. Never part of assertActive(): after the
       // send, a passed F must not turn an acknowledgement into uncertainty.
       const admitted = intent;
-      const assertAdmitted = () =>
-        admitted.kind === "railgun-transact"
-          ? require("@freedom/railgun-kohaku-adapter/host/owner-authority").assertRailgunPrivateSubmission(
-              handle,
-              admitted,
-            )
-          : undefined;
+      const assertAdmitted = () => {
+        const authority = require("@freedom/railgun-kohaku-adapter/host/owner-authority");
+        return admitted.kind === "railgun-transact"
+          ? authority.assertRailgunPrivateSubmission(handle, admitted)
+          : authority.assertRailgunShieldSubmission(handle, admitted);
+      };
       assertAdmitted();
-      if (intent.kind === "railgun-native-shield")
-        require("@freedom/railgun-kohaku-adapter/host/owner-authority").assertRailgunShieldSubmission(
-          handle,
-          intent,
-        );
       // Derive all reservation metadata from signed bytes, never caller fields.
       intent = transactionIntent(intent.kind, transaction);
       const txHash = transaction.hash.toLowerCase();

@@ -91,5 +91,17 @@
     "Current-circuit POI proofs are genuinely verified; list/finality are synthetic.",
     "The earlier live D/I installation result remains separate.",
     "The fresh frozen-version live run and independent human walkthrough are outstanding."
-  ]
+  ],
+  "subsequentGuidedLive": {
+    "result": "interrupted",
+    "frozenInstallationUnchanged": true,
+    "shield": "receipt-success, matched and finalized",
+    "privatePreparationRefusals": 3,
+    "privatePayments": 0,
+    "bobUnshields": 0,
+    "finalGuidePhase": "diagnosis",
+    "cause": "unknown; preflight refusal without specific historical diagnostic",
+    "localEvidenceSha256": "169f83c0dd84c9ae50e5cdec12774f6b76e202103371c57650e4cf68a6367780",
+    "preserved": true
+  }
 }

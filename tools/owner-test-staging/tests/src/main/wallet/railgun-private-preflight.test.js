@@ -763,3 +763,35 @@ test('relay receipt revokes when its fence is lost after successful acquisition'
   mockFenced = false;
   expect(() => assertRailgunRelayPreflight(source, receipt, mockEnrollment)).toThrow();
 });
+
+const selectedMethods = () => mockRequest.mock.calls.map(([method, params]) =>
+  method === 'eth_call' ? abi.parseTransaction(params[0]).name : method);
+test('overlap acquires only public deployment, fee and verifier before the input gate', async () => {
+  source.close();
+  let enter, release;
+  const entered = new Promise(resolve => { enter = resolve; });
+  const waiting = new Promise(resolve => { release = resolve; });
+  source = open(input(), { beforeSelectedInput: async () => { enter(); await waiting; } });
+  const pending = source.acquire();
+  await entered;
+  expect(selectedMethods()).toEqual(['unshieldFee', 'getVerificationKey']);
+  release();
+  const acquired = await pending;
+  expect(selectedMethods()).toEqual(['unshieldFee', 'getVerificationKey', 'rootHistory', 'nullifiers', 'eth_getBlockByNumber']);
+  expect(assertRailgunPrivatePreflight(source, acquired.receipt, mockEnrollment).inputUnspent).toBe(true);
+});
+test.each(['refuse', 'close', 'expiry'])('input gate %s never admits a selected-input request', async fault => {
+  source.close();
+  const now = performance.now();
+  const clock = jest.spyOn(performance, 'now').mockReturnValue(now);
+  source = open(input(), { beforeSelectedInput: async () => {
+    if (fault === 'refuse') throw Error('private gate failure');
+    if (fault === 'close') source.close();
+    if (fault === 'expiry') clock.mockReturnValue(now + 60000);
+  } });
+  await expect(source.acquire()).rejects.toMatchObject({ code: 'RAILGUN_PRIVATE_PREFLIGHT_REFUSED', step: 'input-gate' });
+  expect(selectedMethods()).toEqual(['unshieldFee', 'getVerificationKey']);
+});
+test('the overlap gate cannot be added to a recovered-submission admission deadline', () => {
+  expect(() => open(input(), { beforeSelectedInput() {}, admissionDeadline: performance.now() + 1000 })).toThrow();
+});

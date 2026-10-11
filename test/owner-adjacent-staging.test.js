@@ -1,3 +1,5 @@
+const { undoShieldReviewLifetime } = require("./shield-review-test-adaptations.cjs");
+const { undoPrivatePreflightBudget } = require("./private-preflight-test-adaptations.cjs");
 const preparationAdaptations = require("../docs/owners/test-staging/PREPARATION-OUTCOME-ADAPTATIONS.json");
 const operationAmountAdaptations = require("../docs/owners/test-staging/OPERATION-AMOUNT-POLICY-ADAPTATIONS.json");
 'use strict';
@@ -45,6 +47,8 @@ test('all staged tests and fixtures preserve exact c6 bytes through reversible i
   expect(new Set(manifest.files.map((row) => row.destination)).size).toBe(168);
   for (const row of manifest.files) {
     let text = fs.readFileSync(path.join(root, row.destination), 'utf8');
+    text = undoShieldReviewLifetime(text, row.destination);
+    text = undoPrivatePreflightBudget(text, row.destination);
     const preparationAdaptation = preparationAdaptations.changes.find(entry => entry.file === row.destination);
     if (preparationAdaptation) {
       expect(sha(text)).toBe(preparationAdaptation.afterSha256);
@@ -502,7 +506,7 @@ test('generic journal/network fixtures retain exact source and fixed private own
   expect(fixture.files).toHaveLength(9);
   for (const row of fixture.files) {
     expect(row.sourceCommit).toBe(manifest.sourceRevision);
-    const bytes = fs.readFileSync(path.join(root, row.destination));
+    const bytes = Buffer.from(undoShieldReviewLifetime(fs.readFileSync(path.join(root, row.destination), "utf8"), row.destination));
     expect({ bytes: bytes.length, sha256: sha(bytes) }).toEqual({ bytes: row.bytes, sha256: row.sha256 });
   }
   for (const row of fixture.fixedTestBindings) {

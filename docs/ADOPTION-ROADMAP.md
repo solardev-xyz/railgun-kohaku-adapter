@@ -211,8 +211,10 @@ The next agreed milestone makes the example operable through saved instructions:
    binds the final installed native run, clean install, actual terminal-entry
    checks and 13,183 passing tests. This is separate from the earlier explicit
    CLI live run.
-2. **Fresh frozen-version live Alice-to-Bob run:** in progress with new profiles
-   and one unchanged installation. Success requires the entire lifecycle and
+2. **Fresh frozen-version live Alice-to-Bob run:** the first guided attempt is
+   interrupted after a finalized Shield and three preflight refusals, with no
+   private payment sent. Its state is preserved; a timing/diagnostic successor
+   is in qualification. Success requires a fresh entire lifecycle and
    actual receipt/conservation checks without a mid-run code fix or manual
    substitution for a guide step. A supported explicit continuation is allowed;
    changing implementation makes it an interrupted development run.

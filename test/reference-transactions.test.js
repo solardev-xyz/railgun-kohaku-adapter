@@ -212,3 +212,51 @@ test("a signature arriving after review expiry is observed and never broadcast",
   expect(f.network.broadcastRawTransaction).not.toHaveBeenCalled();
   expect(f.lease.release).toHaveBeenCalledTimes(1);
 });
+
+async function shieldNetworkFixture() {
+  const wallet = new Wallet(`0x${'2'.repeat(64)}`);
+  const prepared = require('./fixtures/railgun-journal-shield-prepared.json');
+  const tx = { chainId: 11155111, from: wallet.address, to: prepared.to, value: prepared.value,
+    data: prepared.data, gasLimit: '1500000', gasPrice: '1000000', nonce: 0, type: 0 };
+  const signed = await wallet.signTransaction(tx);
+  const controller = new AbortController();
+  const journal = { initialize: jest.fn(async () => {}), assertCanSubmit: jest.fn(async () => {}),
+    list: jest.fn(async () => []), has: jest.fn(async () => false), begin: jest.fn(async () => {}),
+    markSubmitted: jest.fn(async () => {}) };
+  const rpc = { signal: controller.signal, assertActive() {}, ready: jest.fn(async () => {}),
+    request: jest.fn(async (_method, _params, _validate, _signal, admission) => {
+      expect(admission).toEqual({ admissionDeadline: 50000 });
+      return { result: Transaction.from(signed).hash };
+    }) };
+  const handle = {};
+  const host = createTransactionNetworkHost({
+    context: { getPrivacyContext: () => ({ subject: { principal: wallet.address.toLowerCase(), chainId: 11155111 } }) },
+    rpc: { createPrivateRpc: () => rpc }, submissionJournal: { getPrivateSubmissionJournal: () => journal },
+  });
+  const network = host.getPrivateTransactionNetwork(handle);
+  return { network, rpc, journal, signed, intent: transactionIntent('railgun-native-shield', tx) };
+}
+test.each(['before-journal', 'after-journal', 'current'])(
+  'Shield authority is rechecked at each send boundary: %s', async phase => {
+    let now = 0;
+    authority.assertRailgunShieldSubmission.mockImplementation(() => {
+      if (now >= 50000) throw Error('expired owner authority');
+      return { admissionDeadline: 50000 };
+    });
+    const f = await shieldNetworkFixture();
+    if (phase === 'before-journal') f.rpc.ready.mockImplementation(async () => { now = 50000; });
+    if (phase === 'after-journal') f.journal.begin.mockImplementation(async () => { now = 50000; });
+    const work = f.network.broadcastRawTransaction(11155111, f.signed, { intent: f.intent });
+    if (phase === 'current') {
+      await expect(work).resolves.toHaveProperty('result');
+      expect(f.rpc.request).toHaveBeenCalledTimes(1);
+      expect(authority.assertRailgunShieldSubmission).toHaveBeenCalledTimes(3);
+    } else {
+      if (phase === 'after-journal') await expect(work).rejects.toMatchObject({ code: 'PRIVATE_BROADCAST_UNCERTAIN' });
+      else await expect(work).rejects.toThrow('expired owner authority');
+      expect(f.journal.begin).toHaveBeenCalledTimes(phase === 'after-journal' ? 1 : 0);
+      expect(f.rpc.request).not.toHaveBeenCalled();
+    }
+    authority.assertRailgunShieldSubmission.mockReset();
+  }
+);

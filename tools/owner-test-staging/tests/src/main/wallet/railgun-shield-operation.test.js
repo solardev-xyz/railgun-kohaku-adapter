@@ -21,7 +21,7 @@ const mockAcquire = jest.fn(),
 const mockSources = [];
 const mockJournals = new WeakMap();
 jest.mock("../../../../../../src/owners/railgun-shield-prepare.js", () => ({
-  MAX_AGE_MS: 120000,
+  MAX_AGE_MS: 240000,
   prepareRailgunNativeShield: (options) => mockPrepare(options),
   assertRailgunShieldPreparation: (receipt, identity, enrollment) => {
     if (
@@ -367,12 +367,12 @@ test('generic private context cannot bypass enrolled operation receipts at signi
   ).rejects.toMatchObject({ code: 'RAILGUN_SHIELD_HANDOFF_REFUSED' });
   expect(handles).toHaveLength(0);
 });
-test('review uses the shorter preflight deadline with a ten-second safety margin', async () => {
+test('review gives a bounded human window and refuses a late approval before revalidation', async () => {
   const start = Date.now();
   await open();
   await expect(
     submit(async (request) => {
-      expect(request.expiresAt).toBeLessThanOrEqual(start + 50500);
+      expect(request.expiresAt).toBeLessThanOrEqual(start + 60500);
       jest.spyOn(Date, 'now').mockReturnValue(request.expiresAt + 1);
       return true;
     })
@@ -746,8 +746,8 @@ test.each(['acknowledged', 'uncertain'])(
   async (mode) => {
     if (mode === 'uncertain') mockMode = 'lost';
     await open();
-    mockSources[0].close.mockImplementationOnce(() => {
-      throw Error('sensitive cleanup failure');
+    mockAcquire.mockImplementationOnce(async () => {
+      mockSources.at(-1).close.mockImplementationOnce(() => { throw Error('sensitive cleanup failure'); });
     });
     const result = await submit().catch((error) => error);
     if (mode === 'acknowledged') expect(result.hash).toBe(rawHash);
@@ -801,11 +801,11 @@ test('a changed selection between preflight attempts refuses rather than retryin
   expect(mockRequest).not.toHaveBeenCalled();
 });
 
-test('transaction-service reuse keeps the originally constrained destination after registry changes', async () => {
+test('post-consent fresh deployment refuses a changed registry without changing destination', async () => {
   await open({ destinationConstraints: destinationPair() });
   mockUrl = 'https://other.example';
-  await submit();
-  expect(broadcastCount).toBe(1);
+  await expect(submit()).rejects.toMatchObject({ code: 'RAILGUN_SHIELD_HANDOFF_REFUSED' });
+  expect(broadcastCount).toBe(0);
   expect(mockRequest.mock.calls.every(([, url]) => url === 'https://rpc.example')).toBe(true);
 });
 
@@ -824,7 +824,7 @@ test('review deadline cancellation retains the held original callback through cl
     drained = true;
   });
   try {
-    await jest.advanceTimersByTimeAsync(50001);
+    await jest.advanceTimersByTimeAsync(60001);
     expect(await outcome).toMatchObject({ code: 'RAILGUN_SHIELD_HANDOFF_REFUSED' });
     expect(drained).toBe(false);
     expect(signer.signTransaction).not.toHaveBeenCalled();
@@ -849,4 +849,104 @@ test('rejected asynchronous cleanup cannot release an allSettled handoff gate', 
   held.reject(Error('private cleanup failure'));
   await tick();
   expect(released).toBe(false);
+});
+
+test('a useful human review can outlive old chain evidence; a fresh post-consent acquisition precedes signing', async () => {
+  jest.useFakeTimers();
+  mockAcquire.mockImplementationOnce(async () => { await jest.advanceTimersByTimeAsync(25000); });
+  await open();
+  const result = await submit(async request => {
+    expect(request.expiresAt - Date.now()).toBeGreaterThanOrEqual(45000);
+    await jest.advanceTimersByTimeAsync(45000);
+    expect(signer.signTransaction).not.toHaveBeenCalled();
+    return true;
+  });
+  expect(result.hash).toBe(rawHash);
+  expect(mockAcquire).toHaveBeenCalledTimes(2);
+  expect(broadcastCount).toBe(1);
+});
+test.each(['delegated', 'estimate', 'pending', 'balance'])(
+  'post-consent %s change refuses without signing or a journal entry', async mode => {
+    await open();
+    await expect(submit(async () => { mockMode = mode; return true; })).rejects.toMatchObject({ code: 'RAILGUN_SHIELD_HANDOFF_REFUSED' });
+    expect(mockAcquire).toHaveBeenCalledTimes(2);
+    expect(signer.signTransaction).not.toHaveBeenCalled();
+    expect(broadcastCount).toBe(0);
+  }
+);
+test('post-consent acquisition past its35s allocation never admits signing', async () => {
+  jest.useFakeTimers();
+  await open();
+  mockAcquire.mockImplementationOnce(async () => { await jest.advanceTimersByTimeAsync(35001); });
+  await expect(submit()).rejects.toMatchObject({ code: 'RAILGUN_SHIELD_HANDOFF_REFUSED' });
+  expect(signer.signTransaction).not.toHaveBeenCalled();
+  expect(broadcastCount).toBe(0);
+});
+test('an older host without the explicit protocol refuses before asking the person', async () => {
+  const host = require('../../../../fixtures/host/src/main/wallet/transaction-service.js');
+  const original = host.signAndSendTransaction;
+  jest.spyOn(host, 'signAndSendTransaction').mockImplementation((tx, signer, options) => original(tx, signer, {
+    ...options, review: request => { const { shieldReviewProtocol: _marker, ...old } = request; return options.review(old); },
+  }));
+  await open();
+  const review = jest.fn(async () => true);
+  await expect(submit(review)).rejects.toMatchObject({ code: 'RAILGUN_SHIELD_HANDOFF_REFUSED' });
+  expect(review).not.toHaveBeenCalled();
+  expect(signer.signTransaction).not.toHaveBeenCalled();
+});
+test('a host cannot invoke the signer before the approval/revalidation phase', async () => {
+  const host = require('../../../../fixtures/host/src/main/wallet/transaction-service.js');
+  jest.spyOn(host, 'signAndSendTransaction').mockImplementation((tx, guardedSigner) => guardedSigner.signTransaction(tx));
+  await open();
+  await expect(submit()).rejects.toMatchObject({ code: 'RAILGUN_SHIELD_HANDOFF_REFUSED' });
+  expect(signer.signTransaction).not.toHaveBeenCalled();
+  expect(broadcastCount).toBe(0);
+});
+test('the outer plugin lifetime bounds the human window without consuming a below-floor review', async () => {
+  await open({ operationDeadline: performance.now() + 89999, operationWallDeadline: Date.now() + 89999 });
+  const review = jest.fn(async () => true);
+  await expect(submit(review)).rejects.toMatchObject({ code: 'RAILGUN_SHIELD_HANDOFF_REFUSED' });
+  expect(review).not.toHaveBeenCalled();
+  expect(signer.signTransaction).not.toHaveBeenCalled();
+});
+
+test.each(['evidence', 'operation'])('a send admitted just before the %s boundary retains a prompt acknowledgement', async boundary => {
+  jest.useFakeTimers();
+  const beginning = performance.now();
+  const options = boundary === 'operation' ? { operationDeadline: beginning + 100000, operationWallDeadline: Date.now() + 100000 } : {};
+  await open(options);
+  const sign = signer.signTransaction.getMockImplementation();
+  signer.signTransaction.mockImplementation(async tx => {
+    const signed = await sign(tx);
+    const target = beginning + (boundary === 'operation' ? 89999 : 49999);
+    await jest.advanceTimersByTimeAsync(target - performance.now());
+    return signed;
+  });
+  const request = mockRequest.getMockImplementation();
+  mockRequest.mockImplementation(async (...args) => {
+    const result = await request(...args);
+    if (JSON.parse(args[2].body).method === 'eth_sendRawTransaction')
+      await jest.advanceTimersByTimeAsync(2000);
+    return result;
+  });
+  const result = await submit(async () => {
+    if (boundary === 'operation') await jest.advanceTimersByTimeAsync(44999);
+    return true;
+  });
+  expect(result.hash).toBe(rawHash);
+  expect(broadcastCount).toBe(1);
+});
+test('the historical host entry assertion without a phase refuses before review or signer access', async () => {
+  const host = require('../../../../fixtures/host/src/main/wallet/transaction-service.js');
+  jest.spyOn(host, 'signAndSendTransaction').mockImplementation((_tx, _signer, options) => {
+    // Exact historical entry call, retained as a negative alongside the adapted host.
+    require('../../../../../../src/owners/railgun-shield-operation').assertRailgunShieldSubmission(options.privacyContext, options.intent);
+    throw Error('historical admission must refuse');
+  });
+  await open();
+  const review = jest.fn(async () => true);
+  await expect(submit(review)).rejects.toMatchObject({ code: 'RAILGUN_SHIELD_HANDOFF_REFUSED' });
+  expect(review).not.toHaveBeenCalled();
+  expect(signer.signTransaction).not.toHaveBeenCalled();
+  expect(broadcastCount).toBe(0);
 });

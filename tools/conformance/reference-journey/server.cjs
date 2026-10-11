@@ -266,7 +266,7 @@ async function createFixtureServer({ chain, submitters, key, cert }) {
     },
     clearColdSourceDelay() { coldSourceDelay = null; },
     setReadDelay(value) {
-      assert.ok([0, 2000].includes(value));
+      assert.ok([0, 1250, 2000].includes(value));
       readDelayMs = value;
     },
     async close() {

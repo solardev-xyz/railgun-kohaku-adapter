@@ -280,7 +280,7 @@ beforeEach(() => {
   }));
   mock.walletRecord = { index: 0, type: 'mnemonic', address: '0x' + '1'.repeat(40) };
   mock.shieldSubmit = jest.fn(async ({ review }) => {
-    const approved = await review({ operation: 'railgun-native-shield' });
+    const approved = await review({ operation: 'railgun-native-shield', expiresAt: Date.now() + 60000 });
     if (!approved) throw Error('Shield review refused');
     return Object.freeze({ hash: '0x' + '8'.repeat(64) });
   });
@@ -1615,15 +1615,15 @@ test.each(['prepared', 'broadcasting'])(
     });
     const plugin = publicPlugin(),
       op = await plugin.prepareShield(nativeAmount());
-    expect(mock.constraints.map(({ deadline }) => deadline)).toEqual([120100, 120100]);
+    expect(mock.constraints.map(({ deadline }) => deadline)).toEqual([240100, 240100]);
     if (when === 'prepared') {
-      now = 120100;
+      now = 240100;
       await expect(submitRailgunKohakuPublicOperation(plugin, op)).rejects.toMatchObject(refusal);
       expect(mock.getSigner).not.toHaveBeenCalled();
       expect(mock.shield.submit).not.toHaveBeenCalled();
     } else {
       mock.shieldSubmit.mockImplementation(async ({ review }) => {
-        now = 120100;
+        now = 240100;
         await review({});
       });
       await expect(submitRailgunKohakuPublicOperation(plugin, op)).rejects.toMatchObject(refusal);
@@ -1637,7 +1637,7 @@ test('public prepared expiry has no private capsule recovery claim and closes id
   try {
     const plugin = publicPlugin();
     await plugin.prepareShield(nativeAmount());
-    jest.advanceTimersByTime(120000);
+    jest.advanceTimersByTime(240000);
     await plugin.closed;
     expect(mock.shield.close).toHaveBeenCalled();
     expect(plugin.status()).toMatchObject({ state: 'closed', recoveryRequired: false });
@@ -1880,7 +1880,7 @@ test('held public transaction review may settle outward while original controlle
   options.reviewTransaction.mockReturnValue(reviewGate.promise);
   let originalReview;
   mock.shieldSubmit.mockImplementation(async ({ review }) => {
-    originalReview = review({ operation: 'railgun-native-shield' });
+    originalReview = review({ operation: 'railgun-native-shield', expiresAt: Date.now() + 60000 });
     originalReview.catch(() => {});
     await new Promise((resolve) =>
       caller.signal.addEventListener('abort', resolve, { once: true })
@@ -1920,7 +1920,7 @@ test.each(['review-expiry', 'token-expiry', 'wall-regression'])(
       expect(mock.openShield).not.toHaveBeenCalled();
     } else {
       const token = await plugin.prepareShield(nativeAmount());
-      wall = mode === 'token-expiry' ? 1120000 : 999999;
+      wall = mode === 'token-expiry' ? 1240000 : 999999;
       await expect(submitRailgunKohakuPublicOperation(plugin, token)).rejects.toMatchObject(
         refusal
       );
@@ -2661,6 +2661,24 @@ test.each(['private', 'public'])(
 
 // Package-owned diagnostic assertions; inverse staging adaptation preserves the original suite.
 const readPreparationOutcome = (plugin) => require('../../../../../../src/owners/railgun-kohaku-plugin.js').readRailgunKohakuPreparationOutcome(plugin);
+test('private preflight diagnostic reaches the closed lane without raw error details', async () => {
+  const result = Object.freeze({ status: 'refused', stage: 'preflight' });
+  require('../../../../../../src/owners/private-preflight-outcome').rememberPrivatePreflightOutcome(
+    result,
+    { code: 'RAILGUN_PRIVATE_PREFLIGHT_REFUSED', reason: 'rpc', step: 'deployment',
+      deploymentStep: 'getter-shieldFee', causeCode: 'TOR_REQUEST_TIMEOUT', message: 'private raw payload' },
+    true
+  );
+  mock.prove.mockResolvedValue(result);
+  const plugin = create();
+  await expect(plugin.prepareTransfer(amount(), '0zk-self')).rejects.toMatchObject(refusal);
+  await plugin.closed;
+  expect(readPreparationOutcome(plugin).preflight).toEqual({
+    reason: 'rpc', step: 'deployment', deploymentStep: 'getter-shieldFee', transport: 'TOR_REQUEST_TIMEOUT', transportStage: null, budgetExpired: true,
+  });
+  expect(JSON.stringify(readPreparationOutcome(plugin))).not.toMatch(/payload|message/);
+  expect(mock.submit).not.toHaveBeenCalled();
+});
 test.each(['local', 'closing-wallet', 'txid', 'reopening-wallet', 'private text / path'])('preparation diagnostic projects staging %s after closure', async (stage) => {
   mock.owned.ownedPoi[0].type = 'Transact';
   mock.stage.mockResolvedValue({ status: 'refused', stage, originalAccountReusable: false, secret: 'private' });

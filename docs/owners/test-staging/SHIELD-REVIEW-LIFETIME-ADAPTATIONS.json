@@ -1,0 +1,157 @@
+{
+  "baseRevision": "39ecf8cd9db79ae91ddde8e24217c3b1b038de15",
+  "afterPhase": "PRIVATE-PREFLIGHT-BUDGET",
+  "reason": "Separate human consent from 60s chain evidence and require post-consent exact-transaction validation and phase-aware host admission. Historical host fixtures are adapted for tests, not claimed as production updates.",
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/fixtures/host/src/main/wallet/private-transaction-network.js",
+      "beforeSha256": "7b7763cd54c57a6e3c47af8834d9a0b9c76c451ba9c62d52ac35f07c230e7bcf",
+      "afterSha256": "fbf60219bc6d56c12ceffe537df6019019c12c0d928695f56448ad3f18771716",
+      "replacements": [
+        {
+          "start": 9754,
+          "before": "        : undefined;\n",
+          "after": "        : require('./railgun-shield-operation').assertRailgunShieldSubmission(handle, admitted);\n"
+        },
+        {
+          "start": 9873,
+          "before": "    if (intent.kind === 'railgun-native-shield')\n      require('./railgun-shield-operation').assertRailgunShieldSubmission(handle, intent);\n",
+          "after": ""
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/fixtures/host/src/main/wallet/transaction-service.js",
+      "beforeSha256": "0ba460b353da3ded26227bee34ce6b72ba110c01112182ace25c5ea4934d1c13",
+      "afterSha256": "4544ea5c2f53b71b6b56a46bef3974c7f6dd16387fc17a361cc9b56ce5ccb2fd",
+      "replacements": [
+        {
+          "start": 11058,
+          "before": "        options.intent\n",
+          "after": "        options.intent,\n        'prepare'\n"
+        },
+        {
+          "start": 11109,
+          "before": "",
+          "after": "    if (options.intent?.kind === 'railgun-native-shield' && options.shieldReviewProtocol !== 'fresh-after-consent-v1')\n      throw privacyError('PRIVATE_REVIEW_INVALID', 'Unsupported Shield review protocol');\n"
+        },
+        {
+          "start": 15766,
+          "before": "",
+          "after": "          ...(options.intent?.kind === 'railgun-native-shield' ? { shieldReviewProtocol: 'fresh-after-consent-v1' } : {}),\n"
+        },
+        {
+          "start": 16098,
+          "before": "",
+          "after": "        if (options.intent?.kind === 'railgun-native-shield')\n          require('./railgun-shield-operation').assertRailgunShieldSubmission(options.privacyContext, options.intent);\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-kohaku-plugin.test.js",
+      "beforeSha256": "bd66917631a4a8b0dfbf3c5a98c4931d963a3ddf0e28d3e59eae253e0f51c0e8",
+      "afterSha256": "731497e58b14fe8655d0be4bdde78c4b4f84df31f7ba77b22c551dd93f99f26e",
+      "replacements": [
+        {
+          "start": 9640,
+          "before": "    const approved = await review({ operation: 'railgun-native-shield' });\n",
+          "after": "    const approved = await review({ operation: 'railgun-native-shield', expiresAt: Date.now() + 60000 });\n"
+        },
+        {
+          "start": 61636,
+          "before": "    expect(mock.constraints.map(({ deadline }) => deadline)).toEqual([120100, 120100]);\n",
+          "after": "    expect(mock.constraints.map(({ deadline }) => deadline)).toEqual([240100, 240100]);\n"
+        },
+        {
+          "start": 61755,
+          "before": "      now = 120100;\n",
+          "after": "      now = 240100;\n"
+        },
+        {
+          "start": 62064,
+          "before": "        now = 120100;\n",
+          "after": "        now = 240100;\n"
+        },
+        {
+          "start": 62579,
+          "before": "    jest.advanceTimersByTime(120000);\n",
+          "after": "    jest.advanceTimersByTime(240000);\n"
+        },
+        {
+          "start": 72136,
+          "before": "    originalReview = review({ operation: 'railgun-native-shield' });\n",
+          "after": "    originalReview = review({ operation: 'railgun-native-shield', expiresAt: Date.now() + 60000 });\n"
+        },
+        {
+          "start": 73725,
+          "before": "      wall = mode === 'token-expiry' ? 1120000 : 999999;\n",
+          "after": "      wall = mode === 'token-expiry' ? 1240000 : 999999;\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-shield-operation.test.js",
+      "beforeSha256": "e5ee8ac6b6389219fb4cafa07a4c5d63f349734711af7dd90946f7beb48b3fb4",
+      "afterSha256": "ca23991b240df637b80dc8dc387658722e177dd312c9bd2a6b06e8f750114473",
+      "replacements": [
+        {
+          "start": 729,
+          "before": "  MAX_AGE_MS: 120000,\n",
+          "after": "  MAX_AGE_MS: 240000,\n"
+        },
+        {
+          "start": 13384,
+          "before": "test('review uses the shorter preflight deadline with a ten-second safety margin', async () => {\n",
+          "after": "test('review gives a bounded human window and refuses a late approval before revalidation', async () => {\n"
+        },
+        {
+          "start": 13582,
+          "before": "      expect(request.expiresAt).toBeLessThanOrEqual(start + 50500);\n",
+          "after": "      expect(request.expiresAt).toBeLessThanOrEqual(start + 60500);\n"
+        },
+        {
+          "start": 26997,
+          "before": "    mockSources[0].close.mockImplementationOnce(() => {\n      throw Error('sensitive cleanup failure');\n",
+          "after": "    mockAcquire.mockImplementationOnce(async () => {\n      mockSources.at(-1).close.mockImplementationOnce(() => { throw Error('sensitive cleanup failure'); });\n"
+        },
+        {
+          "start": 28973,
+          "before": "test('transaction-service reuse keeps the originally constrained destination after registry changes', async () => {\n",
+          "after": "test('post-consent fresh deployment refuses a changed registry without changing destination', async () => {\n"
+        },
+        {
+          "start": 29179,
+          "before": "  await submit();\n  expect(broadcastCount).toBe(1);\n",
+          "after": "  await expect(submit()).rejects.toMatchObject({ code: 'RAILGUN_SHIELD_HANDOFF_REFUSED' });\n  expect(broadcastCount).toBe(0);\n"
+        },
+        {
+          "start": 29824,
+          "before": "    await jest.advanceTimersByTimeAsync(50001);\n",
+          "after": "    await jest.advanceTimersByTimeAsync(60001);\n"
+        },
+        {
+          "start": 30696,
+          "before": "",
+          "after": "\ntest('a useful human review can outlive old chain evidence; a fresh post-consent acquisition precedes signing', async () => {\n  jest.useFakeTimers();\n  mockAcquire.mockImplementationOnce(async () => { await jest.advanceTimersByTimeAsync(25000); });\n  await open();\n  const result = await submit(async request => {\n    expect(request.expiresAt - Date.now()).toBeGreaterThanOrEqual(45000);\n    await jest.advanceTimersByTimeAsync(45000);\n    expect(signer.signTransaction).not.toHaveBeenCalled();\n    return true;\n  });\n  expect(result.hash).toBe(rawHash);\n  expect(mockAcquire).toHaveBeenCalledTimes(2);\n  expect(broadcastCount).toBe(1);\n});\ntest.each(['delegated', 'estimate', 'pending', 'balance'])(\n  'post-consent %s change refuses without signing or a journal entry', async mode => {\n    await open();\n    await expect(submit(async () => { mockMode = mode; return true; })).rejects.toMatchObject({ code: 'RAILGUN_SHIELD_HANDOFF_REFUSED' });\n    expect(mockAcquire).toHaveBeenCalledTimes(2);\n    expect(signer.signTransaction).not.toHaveBeenCalled();\n    expect(broadcastCount).toBe(0);\n  }\n);\ntest('post-consent acquisition past its35s allocation never admits signing', async () => {\n  jest.useFakeTimers();\n  await open();\n  mockAcquire.mockImplementationOnce(async () => { await jest.advanceTimersByTimeAsync(35001); });\n  await expect(submit()).rejects.toMatchObject({ code: 'RAILGUN_SHIELD_HANDOFF_REFUSED' });\n  expect(signer.signTransaction).not.toHaveBeenCalled();\n  expect(broadcastCount).toBe(0);\n});\ntest('an older host without the explicit protocol refuses before asking the person', async () => {\n  const host = require('../../../../fixtures/host/src/main/wallet/transaction-service.js');\n  const original = host.signAndSendTransaction;\n  jest.spyOn(host, 'signAndSendTransaction').mockImplementation((tx, signer, options) => original(tx, signer, {\n    ...options, review: request => { const { shieldReviewProtocol: _marker, ...old } = request; return options.review(old); },\n  }));\n  await open();\n  const review = jest.fn(async () => true);\n  await expect(submit(review)).rejects.toMatchObject({ code: 'RAILGUN_SHIELD_HANDOFF_REFUSED' });\n  expect(review).not.toHaveBeenCalled();\n  expect(signer.signTransaction).not.toHaveBeenCalled();\n});\ntest('a host cannot invoke the signer before the approval/revalidation phase', async () => {\n  const host = require('../../../../fixtures/host/src/main/wallet/transaction-service.js');\n  jest.spyOn(host, 'signAndSendTransaction').mockImplementation((tx, guardedSigner) => guardedSigner.signTransaction(tx));\n  await open();\n  await expect(submit()).rejects.toMatchObject({ code: 'RAILGUN_SHIELD_HANDOFF_REFUSED' });\n  expect(signer.signTransaction).not.toHaveBeenCalled();\n  expect(broadcastCount).toBe(0);\n});\ntest('the outer plugin lifetime bounds the human window without consuming a below-floor review', async () => {\n  await open({ operationDeadline: performance.now() + 89999, operationWallDeadline: Date.now() + 89999 });\n  const review = jest.fn(async () => true);\n  await expect(submit(review)).rejects.toMatchObject({ code: 'RAILGUN_SHIELD_HANDOFF_REFUSED' });\n  expect(review).not.toHaveBeenCalled();\n  expect(signer.signTransaction).not.toHaveBeenCalled();\n});\n\ntest.each(['evidence', 'operation'])('a send admitted just before the %s boundary retains a prompt acknowledgement', async boundary => {\n  jest.useFakeTimers();\n  const beginning = performance.now();\n  const options = boundary === 'operation' ? { operationDeadline: beginning + 100000, operationWallDeadline: Date.now() + 100000 } : {};\n  await open(options);\n  const sign = signer.signTransaction.getMockImplementation();\n  signer.signTransaction.mockImplementation(async tx => {\n    const signed = await sign(tx);\n    const target = beginning + (boundary === 'operation' ? 89999 : 49999);\n    await jest.advanceTimersByTimeAsync(target - performance.now());\n    return signed;\n  });\n  const request = mockRequest.getMockImplementation();\n  mockRequest.mockImplementation(async (...args) => {\n    const result = await request(...args);\n    if (JSON.parse(args[2].body).method === 'eth_sendRawTransaction')\n      await jest.advanceTimersByTimeAsync(2000);\n    return result;\n  });\n  const result = await submit(async () => {\n    if (boundary === 'operation') await jest.advanceTimersByTimeAsync(44999);\n    return true;\n  });\n  expect(result.hash).toBe(rawHash);\n  expect(broadcastCount).toBe(1);\n});\ntest('the historical host entry assertion without a phase refuses before review or signer access', async () => {\n  const host = require('../../../../fixtures/host/src/main/wallet/transaction-service.js');\n  jest.spyOn(host, 'signAndSendTransaction').mockImplementation((_tx, _signer, options) => {\n    // Exact historical entry call, retained as a negative alongside the adapted host.\n    require('../../../../../../src/owners/railgun-shield-operation').assertRailgunShieldSubmission(options.privacyContext, options.intent);\n    throw Error('historical admission must refuse');\n  });\n  await open();\n  const review = jest.fn(async () => true);\n  await expect(submit(review)).rejects.toMatchObject({ code: 'RAILGUN_SHIELD_HANDOFF_REFUSED' });\n  expect(review).not.toHaveBeenCalled();\n  expect(signer.signTransaction).not.toHaveBeenCalled();\n  expect(broadcastCount).toBe(0);\n});\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-submission-boundaries.test.js",
+      "beforeSha256": "d6fb16f3f5ac7e0a0ed9dc2ed93832745bddb1a899e3cb9322fcd52a768562bd",
+      "afterSha256": "336d68f6e08945bd6bf1012c48e878229e19019d4f9d7f403723994f0aca84eb",
+      "replacements": [
+        {
+          "start": 73269,
+          "before": "        \"assertAdmitted();\\n    if (intent.kind === 'railgun-native-shield')\",\n        \"if (intent.kind === 'railgun-native-shield')\",\n",
+          "after": "        \"assertAdmitted();\\n    // Derive all reservation metadata\",\n        \"// Derive all reservation metadata\",\n"
+        },
+        {
+          "start": 73698,
+          "before": "        \"assertAdmitted();\\n    if (intent.kind === 'railgun-native-shield')\",\n        \"if (intent.kind === 'railgun-native-shield')\",\n",
+          "after": "        \"assertAdmitted();\\n    // Derive all reservation metadata\",\n        \"// Derive all reservation metadata\",\n"
+        }
+      ]
+    }
+  ]
+}

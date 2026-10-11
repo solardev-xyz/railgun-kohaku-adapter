@@ -301,3 +301,8 @@ owner.initializeRailgunMain({ host, runtime: { archive: "/engine", proverArchive
 const admissionStage: owner.PrivatePreparationOutcome["stage"] = "input";
 const unavailableStage: owner.PrivatePreparationOutcome["stage"] = "unavailable";
 void admissionStage; void unavailableStage;
+const evidenceGateStage: owner.PrivatePreparationOutcome["stage"] = "evidence-gate";
+const closedGate: owner.PrivatePreparationOutcome["evidenceGate"] = "poi";
+const diagnosticTransport: NonNullable<owner.PrivatePreparationOutcome["preflight"]>["transport"] = "TOR_REQUEST_FAILED";
+const diagnosticTransportStage: NonNullable<owner.PrivatePreparationOutcome["preflight"]>["transportStage"] = "tls";
+void [evidenceGateStage, closedGate, diagnosticTransport, diagnosticTransportStage];

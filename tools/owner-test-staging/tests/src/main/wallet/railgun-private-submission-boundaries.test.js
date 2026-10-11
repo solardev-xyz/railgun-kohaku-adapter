@@ -1803,8 +1803,8 @@ const MUTATIONS = [
     "the network's entry check",
     {
       [NETWORK]: [
-        "assertAdmitted();\n    if (intent.kind === 'railgun-native-shield')",
-        "if (intent.kind === 'railgun-native-shield')",
+        "assertAdmitted();\n    // Derive all reservation metadata",
+        "// Derive all reservation metadata",
       ],
     },
     'signing-crosses-F',
@@ -1818,8 +1818,8 @@ const MUTATIONS = [
         'return signed;',
       ],
       [NETWORK]: [
-        "assertAdmitted();\n    if (intent.kind === 'railgun-native-shield')",
-        "if (intent.kind === 'railgun-native-shield')",
+        "assertAdmitted();\n    // Derive all reservation metadata",
+        "// Derive all reservation metadata",
       ],
     },
     'signing-crosses-F',

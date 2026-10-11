@@ -1,3 +1,5 @@
+const { undoShieldReviewLifetime } = require("./shield-review-lifetime-transitions.cjs");
+const { undoPrivatePreflightBudget } = require("./private-preflight-budget-transitions.cjs");
 const { undoPublicReadOutcome } = require("./public-read-outcome-transitions.cjs");
 const { undoPreparationOutcome } = require("./preparation-outcome-transitions.cjs");
 const { undoOperationAmountPolicy } = require("./operation-amount-policy-transitions.cjs");
@@ -18,6 +20,8 @@ test('POI source copies and exact binder function retain immutable source proven
   const host = require('../host-poi.cjs');
   for (const [file, pin] of Object.entries(provenance.files)) {
     let text = readFileSync(path.join(__dirname, '..', file), 'utf8');
+    text = undoShieldReviewLifetime(text, file);
+    text = undoPrivatePreflightBudget(text, file);
     text = undoPublicReadOutcome(text, file);
     text = undoPreparationOutcome(text, file);
     text = undoOperationAmountPolicy(text, file);

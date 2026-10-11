@@ -1,3 +1,5 @@
+const { undoShieldReviewLifetime } = require("./shield-review-lifetime-transitions.cjs");
+const { undoPrivatePreflightBudget } = require("./private-preflight-budget-transitions.cjs");
 const { undoPublicReadOutcome } = require("./public-read-outcome-transitions.cjs");
 const { undoPreparationOutcome } = require("./preparation-outcome-transitions.cjs");
 const { undoOperationAmountPolicy } = require("./operation-amount-policy-transitions.cjs");
@@ -16,6 +18,8 @@ const provenance = require("../docs/execution/PROVENANCE.json");
 const sha = (value) => createHash("sha256").update(value).digest("hex");
 function originalKernelText(file) {
   let text = fs.readFileSync(path.join(root, file), "utf8");
+  text = undoShieldReviewLifetime(text, file);
+  text = undoPrivatePreflightBudget(text, file);
   text = undoPublicReadOutcome(text, file);
   text = undoPreparationOutcome(text, file);
   text = undoOperationAmountPolicy(text, file);

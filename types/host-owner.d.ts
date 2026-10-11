@@ -409,11 +409,21 @@ export interface PrivatePreparationOutcome {
   readonly stage: "unknown" | "input" | "unavailable" | "selection" | "currentness" |
     "declined" | "interrupted" | "local" | "closing-wallet" | "txid" |
     "reopening-wallet" | "submitter" | "window" | "input-provenance" |
-    "receiver" | "poi" | "preflight" | "txid-root" | "signer" | "reserve" |
+    "receiver" | "poi" | "preflight" | "evidence-gate" | "txid-root" | "signer" | "reserve" |
     "signing" | "signature-storage" | "proof" | "proof-storage" | "close-failed";
   readonly proofStatus: "refused" | "signed-unfinished" | null;
   readonly originalAccountReusable: boolean | null;
   readonly recoveryRequired: boolean;
+  readonly evidenceGate?: "window" | "poi" | "preflight" | "provenance" | "binding";
+  /** Closed preflight evidence only; never retry or signing authority. */
+  readonly preflight?: Readonly<{
+    reason: "unknown" | "rpc" | "stale" | "inactive" | "mismatch" | "refused";
+    step: "deployment" | "artifacts" | "input-gate" | "rootHistory" | "unshieldFee" | "verifier" | "nullifiers" | "anchor-recheck" | null;
+    deploymentStep: "anchor" | "code-proxy" | "code-relayAdapt" | "code-wrappedNative" | "code-implementation" | "slot-implementation" | "slot-paused" | "getter-railgun" | "getter-wBase" | "getter-shieldFee" | "getter-tokenBlocklist" | "anchor-recheck" | null;
+    transport: "TOR_REQUEST_FAILED" | "TOR_REQUEST_TIMEOUT" | "PRIVACY_REQUEST_ABORTED" | "other" | null;
+    transportStage: "connect" | "tls" | "socket-new" | "socket-reused" | "response" | "unclassified" | null;
+    budgetExpired: boolean;
+  }>;
   readonly elapsedBucket: "unknown" | "lt30s" | "lt120s" | "lt240s" | "ge240s";
 }
 export interface PrivateLane extends ReadLane {

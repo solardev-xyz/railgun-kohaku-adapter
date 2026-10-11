@@ -130,6 +130,16 @@ preserves the held operation; it is not permission to re-prepare or resend.
 
 ### Local private preparation diagnostics
 
+Direct private preparation overlaps the account-independent deployment,
+artifact and verifier reads with POI acquisition. These public reads may occur
+even when POI acquisition later refuses. Selected-input root and nullifier reads
+remain behind the genuine POI receipt and binding checks. The shared acquisition
+budget is at most 30 seconds; it neither retries requests nor extends the
+60-second evidence validity. The first key request must arrive before evidence
+age 30 seconds, with the same check before marking signing. The reserved tail
+is admission slack, not a guarantee that storage or a signer will settle on time.
+Long Tor latency can still refuse safely before a signing reservation.
+
 After a private preparation refuses, `session.readPreparationOutcome(privateLane)`
 returns a frozen, process-local diagnostic, or `null` when none is available.
 Use the exact lane issued by that session; another session or a copied lane is
@@ -142,6 +152,13 @@ success. It adds no method to the exact Kohaku host shape.
 The closed fields are operation kind, phase, stage, proof status, whether the
 staging owner reported its original account reusable, recovery-required flag,
 and a coarse elapsed-time bucket. Unknown internal stages become `unknown`.
+An optional `preflight` record names closed reason/step/deployment-step,
+observed transport code/stage, and whether the allocated budget elapsed. An
+optional `evidenceGate` names the failed window, POI, preflight, provenance or
+binding check. These fields come from the original issued outcome; arbitrary
+exception properties, getters and server text are not forwarded. A recorded
+transport code is an observation, not an inferred network cause. Budget expiry
+does not establish that time was the only failing condition.
 No account identifier, amount, request, response body, transaction hash, proof,
 or free-form error is exposed. A diagnostic identifies the last observed phase;
 it does not establish a transport root cause or authorize retry, release or send.
@@ -154,6 +171,27 @@ admission. Concurrent calls do not replace the in-flight call's record. A
 successful preparation leaves no diagnostic. The first observed refusal is retained through cleanup;
 records are not persisted. These diagnostics cover private preparation, not
 public Shield operations or delivery outcomes.
+
+### Shield consent and fresh send checks
+
+Shield preparation and transaction review each allow up to 60 seconds. The
+transaction prompt opens only when at least 45 seconds remain for a person,
+with separate time reserved for revalidation, signing and send admission.
+Local prepared work and the overall Shield operation can last up to 240 seconds;
+chain evidence still lasts at most 60 seconds. Construction shares a separate
+120-second budget across its workers.
+
+The reviewed transaction is immutable. After approval, the owner obtains fresh
+deployment evidence and rechecks submission readiness, code, latest and pending
+nonce, balance, gas estimate and simulation. A changed nonce, fee requirement,
+balance or transaction binding refuses; no revised transaction is silently
+signed under the earlier approval. The owner then admits only the exact reviewed
+unsigned bytes and one signer invocation.
+
+This requires the updated [host submission protocol](HOST-PORTS.md#shield-review-protocol).
+An older host fails closed before the transaction prompt. The reference host
+implements the protocol; Freedom must adopt and qualify it separately before
+using a successor package. Existing Freedom qualification remains historical.
 
 ### Public TXID read failure classification
 

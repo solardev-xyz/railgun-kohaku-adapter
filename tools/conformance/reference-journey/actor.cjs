@@ -201,6 +201,13 @@ async function run() {
           return approved;
         },
         transaction: async (summary) => {
+          if (summary.operation === 'railgun-native-shield' && config.shieldReviewDelayMs !== undefined) {
+            if (config.shieldReviewDelayMs !== 45000) throw Error('Unsupported fixture review delay');
+            const started = Date.now();
+            if (summary.expiresAt - started < 45000) throw Error('Human review window too short');
+            await new Promise(resolve => setTimeout(resolve, config.shieldReviewDelayMs));
+            reviewTimings.push({ purpose: 'shield-human-delay', elapsedMs: Date.now() - started });
+          }
           const approved = consent(summary);
           await hooks.onTransactionDecision?.(approved, summary);
           return approved;

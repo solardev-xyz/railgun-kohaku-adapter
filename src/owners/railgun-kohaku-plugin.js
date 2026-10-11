@@ -23,6 +23,7 @@ const {
 const { selectRailgunPrivatePreparation } = require("./application-private-preparation.js");
 const { stageRailgunTransactInput } = require("./railgun-transact-staging.js");
 const { proveRailgunAccountPrivateOperation } = require("./railgun-private-operation.js");
+const { readPrivatePreflightOutcome, readPrivateEvidenceGate } = require('./private-preflight-outcome');
 const { submitRailgunPrivateTransaction } = require("./railgun-private-submission.js");
 const { openRailgunShieldOperation } = require("./railgun-shield-operation.js");
 const { shieldAmount } = require("./application-shield-policy.js");
@@ -39,7 +40,9 @@ const instances = new WeakMap(),
   ownersByDirectory = new Map();
 const REVIEW_MS = 30000,
   PREPARE_MS = 540000,
-  PUBLIC_MS = 120000;
+  PUBLIC_MS = 240000,
+  SHIELD_PREPARE_REVIEW_MS = 60000,
+  SHIELD_SEND_REVIEW_MS = 60000;
 const fail = () =>
   Object.assign(new Error('Railgun Kohaku operation unavailable'), {
     code: 'RAILGUN_KOHAKU_REFUSED',
@@ -50,7 +53,7 @@ const PREPARATION_STAGES = Object.freeze({
   review: ['declined', 'interrupted'],
   staging: ['local', 'closing-wallet', 'txid', 'reopening-wallet'],
   proving: ['local', 'submitter', 'window', 'input-provenance', 'receiver', 'poi',
-    'preflight', 'txid-root', 'signer', 'reserve', 'signing', 'signature-storage',
+    'preflight', 'evidence-gate', 'txid-root', 'signer', 'reserve', 'signing', 'signature-storage',
     'proof', 'proof-storage'],
   completion: ['currentness'],
   cleanup: ['close-failed'],
@@ -337,11 +340,13 @@ function create(options) {
     outward.catch(() => {});
     return outward;
   }
-  async function runReview(use, summary) {
+  async function runReview(use, summary, budget = REVIEW_MS) {
     current();
+    assert.ok(Number.isFinite(budget) && budget > 0 && budget <= 60000);
+    const wallStarted = Date.now();
     const started = performance.now(),
-      deadline = started + REVIEW_MS;
-    const reviewTimer = setTimeout(close, REVIEW_MS);
+      deadline = started + budget;
+    const reviewTimer = setTimeout(close, budget);
     reviewTimer.unref?.();
     callbackActive = true;
     let result;
@@ -353,7 +358,7 @@ function create(options) {
     }
     current();
     const now = performance.now();
-    if (now < started || now >= deadline) {
+    if (now < started || now >= deadline || Date.now() < wallStarted || Date.now() >= wallStarted + budget) {
       close();
       throw fail();
     }
@@ -434,6 +439,10 @@ function create(options) {
       originalAccountReusable: phase === 'staging' && typeof diagnostic.originalAccountReusable === 'boolean'
         ? diagnostic.originalAccountReusable : null,
       recoveryRequired,
+      ...(phase === 'proving' && diagnostic.stage === 'evidence-gate' && diagnostic.evidenceGate
+        ? { evidenceGate: diagnostic.evidenceGate } : {}),
+      ...(phase === 'proving' && diagnostic.stage === 'preflight' && diagnostic.preflight
+        ? { preflight: diagnostic.preflight } : {}),
       elapsedBucket: !Number.isFinite(elapsed) || elapsed < 0 ? 'unknown'
         : elapsed < 30000 ? 'lt30s' : elapsed < 120000 ? 'lt120s'
           : elapsed < 240000 ? 'lt240s' : 'ge240s',
@@ -718,6 +727,8 @@ function create(options) {
           });
           if (proved.status !== 'proved') {
             diagnostic.stage = proved.stage; diagnostic.proofStatus = proved.status;
+            diagnostic.preflight = readPrivatePreflightOutcome(proved);
+            diagnostic.evidenceGate = readPrivateEvidenceGate(proved);
             recoveryRequired ||= proved.status === 'signed-unfinished';
             throw fail();
           }
@@ -902,7 +913,7 @@ function create(options) {
         state = 'reviewing-preparation';
         guard();
         reviewHandoff = reserveRailgunAccountWalletHandoff(account, owners);
-        const approved = await runReview(resources.reviewPreparation, summary);
+        const approved = await runReview(resources.reviewPreparation, summary, SHIELD_PREPARE_REVIEW_MS);
         guard();
         assert.equal(approved, true);
         state = 'preparing';
@@ -919,6 +930,8 @@ function create(options) {
           archive: resources.archive,
           amount: value.toString(),
           owner: funding.address,
+          operationDeadline: publicBudget.deadline,
+          operationWallDeadline: publicBudget.wallDeadline,
           signal: controller.signal,
           destinationConstraints,
         });
@@ -980,7 +993,7 @@ function create(options) {
               maxGasFee: resources.maxGasFee,
               review: async (summary) => {
                 reviewedCurrent();
-                const approved = await runReview(resources.reviewTransaction, summary);
+                const approved = await runReview(resources.reviewTransaction, summary, Math.min(SHIELD_SEND_REVIEW_MS, summary.expiresAt - Date.now()));
                 reviewedCurrent();
                 return approved === true;
               },

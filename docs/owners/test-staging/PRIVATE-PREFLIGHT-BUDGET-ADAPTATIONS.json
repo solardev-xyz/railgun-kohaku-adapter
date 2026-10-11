@@ -1,0 +1,82 @@
+{
+  "baseRevision": "39ecf8cd9db79ae91ddde8e24217c3b1b038de15",
+  "reason": "Keep staged tests reconstructible; exercise delayed public/POI overlap, input gating, cancellation, freshness and closed diagnostics.",
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-operation.test.js",
+      "beforeSha256": "a97d96406e03fcbb9e3ed59bdd5565047a65ad18f09ad7ae23c6db6204d94d69",
+      "afterSha256": "5c0ca659e591883ab78260382aac210a190f255fd5099f72af8acee10c01cf51",
+      "replacements": [
+        {
+          "start": 2421,
+          "before": "      margin !== 20000\n",
+          "after": "      ![20000, 30000].includes(margin)\n"
+        },
+        {
+          "start": 5083,
+          "before": "  assertRailgunPrivateWindowPoi: () => {\n",
+          "after": "  assertRailgunPrivateWindowPoi: (_poi, _receipt, _account, _owners, _window, margin) => {\n"
+        },
+        {
+          "start": 5201,
+          "before": "    if (mock.poiClosed) throw Error('POI');\n",
+          "after": "    if (mock.poiClosed || (mock.enforcePoiAge && performance.now() - mock.poiStarted + margin >= 60000)) throw Error('POI');\n"
+        },
+        {
+          "start": 11441,
+          "before": "",
+          "after": "      mockStep('public-preflight');\n      await mock.preflightOptions.beforeSelectedInput();\n"
+        },
+        {
+          "start": 25212,
+          "before": "  expect((await prove(options)).stage).toBe(which);\n",
+          "after": "  expect((await prove(options)).stage).toBe(which === 'poi' ? 'evidence-gate' : which);\n"
+        },
+        {
+          "start": 27330,
+          "before": "  await jest.advanceTimersByTimeAsync(20001);\n",
+          "after": "  await jest.advanceTimersByTimeAsync(30001);\n"
+        },
+        {
+          "start": 27463,
+          "before": "  expect((await pending).stage).toBe('preflight');\n",
+          "after": "  const result = await pending;\n  expect(result.stage).toBe('preflight');\n  expect(require('../../../../../../src/owners/private-preflight-outcome').readPrivatePreflightOutcome(result))\n    .toMatchObject({ budgetExpired: true });\n"
+        },
+        {
+          "start": 27766,
+          "before": "",
+          "after": "});\n\ntest('a 29s warm preflight can complete while the original window and key margin remain enforced', async () => {\n  jest.useFakeTimers();\n  mock.data.deadline = performance.now() + 175000;\n  const original = mock.preflight.acquire;\n  mock.preflight.acquire = async () => {\n    await new Promise(resolve => setTimeout(resolve, 29000));\n    return original();\n  };\n  try {\n    const pending = prove(options);\n    await jest.advanceTimersByTimeAsync(29000);\n    expect((await pending).status).toBe('proved');\n    expect(mock.events.filter(event => event === 'key')).toHaveLength(1);\n  } finally { jest.useRealTimers(); }\n});\n\ntest('a late preflight result cannot outrun a delayed allocation timer', async () => {\n  const now = performance.now();\n  const clock = jest.spyOn(performance, 'now').mockReturnValue(now);\n  mock.data.deadline = now + 175000;\n  const original = mock.preflight.acquire;\n  mock.preflight.acquire = async () => {\n    const value = await original();\n    clock.mockReturnValue(now + 30001);\n    return value;\n  };\n  try {\n    const result = await prove(options);\n    expect(result).toEqual({ status: 'refused', stage: 'preflight' });\n    expect(require('../../../../../../src/owners/private-preflight-outcome').readPrivatePreflightOutcome(result))\n      .toMatchObject({ budgetExpired: true });\n    expect(mock.events).not.toContain('reserve');\n    expect(mock.events).not.toContain('key');\n  } finally { clock.mockRestore(); }\n});\n\ntest('a genuine preflight mismatch survives as a closed diagnostic without reservation', async () => {\n  mock.preflight.acquire = async () => {\n    throw Object.assign(Error('private raw data'), {\n      code: 'RAILGUN_PRIVATE_PREFLIGHT_REFUSED', reason: 'mismatch', step: 'verifier',\n    });\n  };\n  const result = await prove(options);\n  expect(result).toEqual({ status: 'refused', stage: 'preflight' });\n  expect(require('../../../../../../src/owners/private-preflight-outcome').readPrivatePreflightOutcome(result))\n    .toEqual({ reason: 'mismatch', step: 'verifier', deploymentStep: null, transport: null, transportStage: null, budgetExpired: false });\n  expect(mock.events).not.toContain('reserve');\n"
+        },
+        {
+          "start": 55043,
+          "before": "",
+          "after": "\ntest('18s POI overlaps 17s public preflight, then selected reads and signing fit the unchanged evidence age', async () => {\n  jest.useFakeTimers();\n  mock.data.deadline = performance.now() + 175000;\n  const started = performance.now();\n  const originalPoi = mock.poi.acquire;\n  mock.poi.acquire = async (...args) => {\n    await new Promise(resolve => setTimeout(resolve, 18000));\n    return originalPoi(...args);\n  };\n  mock.preflight.acquire = async () => {\n    mock.events.push('public-start');\n    await new Promise(resolve => setTimeout(resolve, 17000));\n    await mock.preflightOptions.beforeSelectedInput();\n    mock.events.push('selected-start');\n    await new Promise(resolve => setTimeout(resolve, 4000));\n    return { receipt: {} };\n  };\n  const sign = mockSign;\n  mockSign = async args => {\n    await new Promise(resolve => setTimeout(resolve, 7000));\n    // Sequential scheduling would reach here at 46s and fail this real age bound.\n    expect(performance.now() - started + 20000).toBeLessThan(60000);\n    return sign(args);\n  };\n  try {\n    const pending = prove(options);\n    await jest.advanceTimersByTimeAsync(17000);\n    expect(mock.events).toContain('public-start');\n    expect(mock.events).not.toContain('selected-start');\n    await jest.advanceTimersByTimeAsync(12000);\n    expect((await pending).status).toBe('proved');\n    expect(mock.events.filter(event => event === 'key')).toHaveLength(1);\n  } finally { jest.useRealTimers(); }\n});\ntest('POI evidence gate failure after acquisition is distinguished from preflight RPC failure', async () => {\n  const sign = mockSign;\n  mockSign = async args => { mock.poiClosed = true; return sign(args); };\n  const result = await prove(options);\n  expect(result).toEqual({ status: 'refused', stage: 'evidence-gate' });\n  expect(require('../../../../../../src/owners/private-preflight-outcome').readPrivateEvidenceGate(result)).toBe('poi');\n  expect(mock.events).not.toContain('reserve');\n  expect(mock.events).not.toContain('key');\n});\n\ntest('preflight mismatch remains the primary refusal when cancellation settles a pending POI later', async () => {\n  let rejectPoi;\n  mock.poi.acquire = () => new Promise((_resolve, reject) => { rejectPoi = reject; });\n  const close = mock.poi.close;\n  mock.poi.close = () => { close(); rejectPoi(Error('late cancellation')); };\n  mock.preflight.acquire = async () => {\n    throw Object.assign(Error('not exported'), { code: 'RAILGUN_PRIVATE_PREFLIGHT_REFUSED', reason: 'mismatch', step: 'verifier' });\n  };\n  const result = await prove(options);\n  expect(result).toEqual({ status: 'refused', stage: 'preflight' });\n  expect(require('../../../../../../src/owners/private-preflight-outcome').readPrivatePreflightOutcome(result)).toMatchObject({ reason: 'mismatch', step: 'verifier', budgetExpired: false });\n  expect(mock.poiClosed).toBe(true);\n  expect(mock.events).not.toContain('reserve');\n});\ntest('insufficient evidence slack at key request refuses before any durable reservation', async () => {\n  const now = performance.now();\n  const clock = jest.spyOn(performance, 'now').mockReturnValue(now);\n  mock.data.deadline = now + 175000;\n  mock.enforcePoiAge = true;\n  mock.poiStarted = now;\n  const originalSign = mockSign;\n  mockSign = async options => {\n    clock.mockReturnValue(now + 39000);\n    return originalSign(options);\n  };\n  try {\n    const result = await prove(options);\n    expect(result).toEqual({ status: 'refused', stage: 'evidence-gate' });\n    expect(require('../../../../../../src/owners/private-preflight-outcome').readPrivateEvidenceGate(result)).toBe('poi');\n    expect(mock.events).not.toContain('reserve');\n    expect(mock.events).not.toContain('mark');\n    expect(mock.events).not.toContain('key');\n  } finally { clock.mockRestore(); }\n});\ntest('the shared acquisition allocation leaves the declared signing tail inside the evidence window', async () => {\n  let allocation;\n  const acquire = mock.poi.acquire;\n  mock.poi.acquire = options => { allocation = options.timeoutMs; return acquire(options); };\n  const result = await prove(options);\n  expect(result.status).toBe('proved');\n  expect(allocation).toBeLessThanOrEqual(60000 - 20000 - 10000);\n  result.completion.close();\n});\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-preflight.test.js",
+      "beforeSha256": "45fe04589d437d4a3c6f0e1bf9db2dbeb39d12d20f5e968d4c1f806db5af1fa8",
+      "afterSha256": "652fa94350e17ab3c9d3f88f1c3f7195e6e17daf60b0f7ca64a3cfdae6dba41a",
+      "replacements": [
+        {
+          "start": 30306,
+          "before": "",
+          "after": "\nconst selectedMethods = () => mockRequest.mock.calls.map(([method, params]) =>\n  method === 'eth_call' ? abi.parseTransaction(params[0]).name : method);\ntest('overlap acquires only public deployment, fee and verifier before the input gate', async () => {\n  source.close();\n  let enter, release;\n  const entered = new Promise(resolve => { enter = resolve; });\n  const waiting = new Promise(resolve => { release = resolve; });\n  source = open(input(), { beforeSelectedInput: async () => { enter(); await waiting; } });\n  const pending = source.acquire();\n  await entered;\n  expect(selectedMethods()).toEqual(['unshieldFee', 'getVerificationKey']);\n  release();\n  const acquired = await pending;\n  expect(selectedMethods()).toEqual(['unshieldFee', 'getVerificationKey', 'rootHistory', 'nullifiers', 'eth_getBlockByNumber']);\n  expect(assertRailgunPrivatePreflight(source, acquired.receipt, mockEnrollment).inputUnspent).toBe(true);\n});\ntest.each(['refuse', 'close', 'expiry'])('input gate %s never admits a selected-input request', async fault => {\n  source.close();\n  const now = performance.now();\n  const clock = jest.spyOn(performance, 'now').mockReturnValue(now);\n  source = open(input(), { beforeSelectedInput: async () => {\n    if (fault === 'refuse') throw Error('private gate failure');\n    if (fault === 'close') source.close();\n    if (fault === 'expiry') clock.mockReturnValue(now + 60000);\n  } });\n  await expect(source.acquire()).rejects.toMatchObject({ code: 'RAILGUN_PRIVATE_PREFLIGHT_REFUSED', step: 'input-gate' });\n  expect(selectedMethods()).toEqual(['unshieldFee', 'getVerificationKey']);\n});\ntest('the overlap gate cannot be added to a recovered-submission admission deadline', () => {\n  expect(() => open(input(), { beforeSelectedInput() {}, admissionDeadline: performance.now() + 1000 })).toThrow();\n});\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-kohaku-plugin.test.js",
+      "beforeSha256": "9b53f74afbbaabd8dcbc7c3aeb9ff86336aab06761060eb6085cb34b3a393c0f",
+      "afterSha256": "bd66917631a4a8b0dfbf3c5a98c4931d963a3ddf0e28d3e59eae253e0f51c0e8",
+      "replacements": [
+        {
+          "start": 104019,
+          "before": "",
+          "after": "test('private preflight diagnostic reaches the closed lane without raw error details', async () => {\n  const result = Object.freeze({ status: 'refused', stage: 'preflight' });\n  require('../../../../../../src/owners/private-preflight-outcome').rememberPrivatePreflightOutcome(\n    result,\n    { code: 'RAILGUN_PRIVATE_PREFLIGHT_REFUSED', reason: 'rpc', step: 'deployment',\n      deploymentStep: 'getter-shieldFee', causeCode: 'TOR_REQUEST_TIMEOUT', message: 'private raw payload' },\n    true\n  );\n  mock.prove.mockResolvedValue(result);\n  const plugin = create();\n  await expect(plugin.prepareTransfer(amount(), '0zk-self')).rejects.toMatchObject(refusal);\n  await plugin.closed;\n  expect(readPreparationOutcome(plugin).preflight).toEqual({\n    reason: 'rpc', step: 'deployment', deploymentStep: 'getter-shieldFee', transport: 'TOR_REQUEST_TIMEOUT', transportStage: null, budgetExpired: true,\n  });\n  expect(JSON.stringify(readPreparationOutcome(plugin))).not.toMatch(/payload|message/);\n  expect(mock.submit).not.toHaveBeenCalled();\n});\n"
+        }
+      ]
+    }
+  ]
+}

@@ -1,3 +1,5 @@
+const { Transaction } = require('ethers');
+const reviewLifetime = require('./shield-review-lifetime');
 /** One-use main-owned Sepolia shield handoff. Receipt-bound authority ends at
  * broadcast; durable reconciliation is a separate journal-owned operation.
  */
@@ -30,8 +32,8 @@ const check = (v) => {
 };
 async function openRailgunShieldOperation(options) {
   const started = performance.now(),
-    wallStarted = Date.now(),
-    deadline = started + MAX_AGE_MS,
+    wallStarted = Date.now();
+  let deadline = started + MAX_AGE_MS,
     wallDeadline = wallStarted + MAX_AGE_MS;
   let scope,
     preflight,
@@ -40,13 +42,19 @@ async function openRailgunShieldOperation(options) {
     lifetime,
     timer,
     freshnessTimer,
+    constructionTimer,
     cleanupFailed = false,
     opening = true,
     settled = false,
     lastNow = started,
     resolveClosed,
     closed = false,
-    consumed = false;
+    consumed = false,
+    phase = 'initial',
+    approvedBytes,
+    reviewInvoked = false,
+    reviewSchedule,
+    sendSchedule;
   const controller = new AbortController(),
     work = new Set(),
     sources = new Set(),
@@ -93,6 +101,7 @@ async function openRailgunShieldOperation(options) {
     closed = true;
     clearTimeout(timer);
     clearTimeout(freshnessTimer);
+    clearTimeout(constructionTimer);
     try {
       lifetime?.removeEventListener('abort', close);
       preflight?.signal.removeEventListener('abort', close);
@@ -127,10 +136,16 @@ async function openRailgunShieldOperation(options) {
           'owner',
           'signal',
           'destinationConstraints',
+          'operationDeadline',
+          'operationWallDeadline',
         ].includes(key)
       );
       check(Object.hasOwn(Object.getOwnPropertyDescriptor(options, key), 'value'));
     }
+    for (const name of ['operationDeadline', 'operationWallDeadline'])
+      check(options[name] === undefined || Number.isFinite(options[name]));
+    deadline = Math.min(deadline, options.operationDeadline ?? deadline);
+    wallDeadline = Math.min(wallDeadline, options.operationWallDeadline ?? wallDeadline);
     const { identity, enrollment, archive, amount, owner, signal, destinationConstraints } =
       options;
     check(typeof owner === 'string' && /^0x[0-9a-f]{40}$/.test(owner) && BigInt(owner) > 0n);
@@ -228,6 +243,14 @@ async function openRailgunShieldOperation(options) {
       return ms;
     };
     active();
+    const constructionEnd = performance.now() + Math.min(120000, remaining());
+    constructionTimer = setTimeout(close, Math.max(1, constructionEnd - performance.now()));
+    constructionTimer.unref?.();
+    const constructionRemaining = () => {
+      const ms = Math.floor(Math.min(remaining(), constructionEnd - performance.now()));
+      check(ms > 0);
+      return ms;
+    };
     const preparation = await track(
       prepareRailgunNativeShield({
         identity,
@@ -235,7 +258,7 @@ async function openRailgunShieldOperation(options) {
         archive,
         amount,
         signal: lifetime,
-        timeoutMs: remaining(),
+        timeoutMs: constructionRemaining(),
       })
     );
     active();
@@ -246,10 +269,11 @@ async function openRailgunShieldOperation(options) {
         preparation: preparation.receipt,
         archive,
         signal: lifetime,
-        timeoutMs: remaining(),
+        timeoutMs: constructionRemaining(),
       })
     );
     active();
+    clearTimeout(constructionTimer);
     let acquired, preflightStarted, preflightWall;
     // Only transport failures may retry, before any signing or journal entry.
     // Each attempt owns a new transport/source and all attempts share the
@@ -278,26 +302,19 @@ async function openRailgunShieldOperation(options) {
       }
     }
     const prepared = preparation.prepared;
-    const reviewDeadline =
-      Math.min(
-        wallDeadline,
-        preflightWall + 60000,
-        Date.now() + Math.floor(deadline - performance.now())
-      ) - 10000;
     const assertCurrent = () => {
       active();
-      const now = performance.now();
-      check(
-        now >= preflightStarted &&
-          now - preflightStarted < 60000 &&
-          Date.now() < preflightWall + 60000
-      );
+      if (['initial', 'approved', 'signing'].includes(phase)) {
+        const now = performance.now();
+        check(now >= preflightStarted && now - preflightStarted < 60000 && Date.now() < preflightWall + 60000);
+        assertRailgunShieldPreflight(preflight, acquired.receipt, enrollment);
+      }
+      if (sendSchedule) reviewLifetime.assertWindow(sendSchedule, performance.now(), Date.now());
       check(assertRailgunShieldPreparation(preparation.receipt, identity, enrollment) === prepared);
       check(
         assertRailgunShieldReceiver(receiver, identity, enrollment, preparation.receipt) ===
           prepared
       );
-      assertRailgunShieldPreflight(preflight, acquired.receipt, enrollment);
     };
     preflight.signal.addEventListener('abort', close, { once: true });
     assertCurrent();
@@ -315,6 +332,12 @@ async function openRailgunShieldOperation(options) {
       digest: intent.digest,
       assertCurrent,
       isSubmitting: () => consumed && !closed,
+      admission(phaseRequested) {
+        if (phaseRequested === 'prepare') { check(phase === 'initial'); return; }
+        check(['approved', 'signing'].includes(phase) && sendSchedule);
+        reviewLifetime.assertWindow(sendSchedule, performance.now(), Date.now());
+        return Object.freeze({ admissionDeadline: sendSchedule.end });
+      },
     });
     const rpcTx = Object.freeze({
       from: owner,
@@ -325,7 +348,6 @@ async function openRailgunShieldOperation(options) {
     async function submit({ signer, review, gasLimit, maxGasFee } = {}) {
       try {
         assertCurrent();
-        check(Date.now() < reviewDeadline);
         check(!consumed && typeof review === 'function');
         check(typeof gasLimit === 'bigint' && gasLimit > 0n && gasLimit <= 3000000n);
         check(isRailgunGasBudget(maxGasFee));
@@ -350,6 +372,7 @@ async function openRailgunShieldOperation(options) {
               assertCurrent();
               return result;
             } catch {
+              close();
               throw fail();
             }
           })
@@ -380,16 +403,26 @@ async function openRailgunShieldOperation(options) {
           },
           {
             getAddress: () => callback(() => signer.getAddress()),
-            signTransaction: (transaction) => callback(() => signer.signTransaction(transaction)),
+            signTransaction: (transaction) => callback(() => {
+              check(phase === 'approved' && Transaction.from(transaction).unsignedSerialized === approvedBytes);
+              phase = 'signing';
+              return signer.signTransaction(transaction);
+            }),
           },
           {
             privacyContext: handle,
             intent,
-            reviewExpiresAt: reviewDeadline,
+            reviewExpiresAt: wallDeadline,
+            shieldReviewProtocol: 'fresh-after-consent-v1',
             review: (request) =>
               callback(async () => {
                 assertCurrent();
+                check(phase === 'initial' && !reviewInvoked);
+                reviewInvoked = true;
+                check(request && !isProxy(request) &&
+                  Object.getOwnPropertyDescriptor(request, 'shieldReviewProtocol')?.value === 'fresh-after-consent-v1');
                 const actual = request.transaction;
+                check(request.unsignedSerialized === Transaction.from(actual).unsignedSerialized);
                 check(
                   request.from.toLowerCase() === owner &&
                     transactionIntent(intent.kind, { ...actual, from: owner }).digest ===
@@ -417,9 +450,18 @@ async function openRailgunShieldOperation(options) {
                 ]);
                 check(BigInt(balance.result) >= tx.value + gasLimit * fee);
                 assertCurrent();
+                reviewSchedule = reviewLifetime.reviewWindow({
+                  now: performance.now(), wall: Date.now(), operationEnd: deadline,
+                  operationWallEnd: wallDeadline, hostExpiresAt: request.expiresAt,
+                });
+                phase = 'reviewing';
+                clearTimeout(freshnessTimer);
+                freshnessTimer = setTimeout(close, Math.max(1, reviewSchedule.humanEnd - performance.now()));
+                freshnessTimer.unref?.();
                 const approved = await review(
                   Object.freeze({
                     ...request,
+                    expiresAt: reviewSchedule.humanExpiresAt,
                     operation: intent.kind,
                     intent,
                     amount: tx.value,
@@ -433,8 +475,51 @@ async function openRailgunShieldOperation(options) {
                   })
                 );
                 assertCurrent();
-                check(Date.now() < reviewDeadline);
-                return approved === true;
+                reviewLifetime.assertApproval(reviewSchedule, performance.now(), Date.now());
+                if (approved !== true) return false;
+                clearTimeout(freshnessTimer);
+                phase = 'revalidating';
+                const revalidation = reviewLifetime.revalidationWindow(reviewSchedule, performance.now(), Date.now());
+                freshnessTimer = setTimeout(close, Math.max(1, revalidation.end - performance.now()));
+                freshnessTimer.unref?.();
+                preflight.signal.removeEventListener('abort', close);
+                stop(preflight);
+                preflight = createRailgunShieldPreflight(enrollment,
+                  constraints ? { destinationConstraint: constraints.protocol } : undefined);
+                sources.add(preflight);
+                preflight.signal.addEventListener('abort', close, { once: true });
+                preflightStarted = performance.now(); preflightWall = Date.now();
+                const recheck = () => {
+                  assertCurrent();
+                  reviewLifetime.assertWindow(revalidation, performance.now(), Date.now());
+                };
+                acquired = await track(preflight.acquire());
+                recheck();
+                await network.assertCanSubmit();
+                recheck();
+                assertRailgunShieldPreflight(preflight, acquired.receipt, enrollment);
+                const freshRead = async (method, params) => {
+                  recheck();
+                  const response = await network.request(pins.chainId, method, params);
+                  recheck();
+                  return response.result;
+                };
+                check(await freshRead('eth_getCode', [owner, 'pending']) === '0x');
+                check(BigInt(await freshRead('eth_getTransactionCount', [owner, 'latest'])) === BigInt(actual.nonce));
+                check(BigInt(await freshRead('eth_getTransactionCount', [owner, 'pending'])) === BigInt(actual.nonce));
+                check(BigInt(await freshRead('eth_getBalance', [owner, 'pending'])) >= tx.value + gasLimit * fee);
+                const freshEstimate = BigInt(await freshRead('eth_estimateGas', [rpcTx]));
+                check(freshEstimate > 0n && freshEstimate <= gasLimit);
+                await freshRead('eth_call', [rpcTx, 'latest']);
+                check(Transaction.from(actual).unsignedSerialized === request.unsignedSerialized);
+                approvedBytes = request.unsignedSerialized;
+                sendSchedule = reviewLifetime.sendWindow(reviewSchedule, preflightStarted, preflightWall);
+                phase = 'approved';
+                clearTimeout(freshnessTimer);
+                freshnessTimer = setTimeout(close, Math.max(1, sendSchedule.closeAt - performance.now()));
+                freshnessTimer.unref?.();
+                assertCurrent();
+                return true;
               }),
           }
         );
@@ -471,7 +556,8 @@ async function openRailgunShieldOperation(options) {
     throw fail();
   }
 }
-function assertRailgunShieldSubmission(handle, intent) {
+function assertRailgunShieldSubmission(handle, intent, phase = 'send') {
+  check(['prepare', 'send'].includes(phase));
   const entry = submissions.get(handle);
   check(
     entry &&
@@ -480,5 +566,6 @@ function assertRailgunShieldSubmission(handle, intent) {
       intent.digest === entry.digest
   );
   entry.assertCurrent();
+  return entry.admission(phase);
 }
 module.exports = { openRailgunShieldOperation, assertRailgunShieldSubmission };

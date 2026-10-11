@@ -2,7 +2,7 @@
 const assert = require("node:assert/strict");
 /** Real installed guide and encrypted application state; one fresh process per
  * explicit continuation. Fixture-only consent, chain and services. */
-async function runGuided({ actor, chain, server, write, installation }) {
+async function runGuided({ actor, chain, server, write, installation, timing = false }) {
   const traces = { alice: [], bob: [] };
   let bobAddress, transferHash;
   async function next(name, extra = {}) {
@@ -13,12 +13,16 @@ async function runGuided({ actor, chain, server, write, installation }) {
       !extra.fixtureCrash
         ? 1
         : 0;
-    const result = await actor(name, "journey-next", {
-      bobAddress,
-      transferHash,
-      expectedSends,
-      ...extra,
-    });
+    const delayed = timing && ['shield', 'payment'].includes(before.step);
+    server.setReadDelay(delayed ? 1250 : 0);
+    let result;
+    try {
+      result = await actor(name, "journey-next", {
+        bobAddress, transferHash, expectedSends,
+        ...(timing && before.step === 'shield' ? { shieldReviewDelayMs: 45000 } : {}),
+        ...extra,
+      });
+    } finally { server.setReadDelay(0); }
     traces[name].push({ before: before.step, after: result.step ?? "crashed" });
     if (expectedSends && !extra.fixtureCrash && !extra.expectedRefusal)
       await chain.mine();
@@ -154,7 +158,9 @@ async function runGuided({ actor, chain, server, write, installation }) {
   write("GUIDED-STEPS.json", traces);
   return {
     passed: true,
-    variant: "guided",
+    variant: timing ? "guided-timing" : "guided",
+    ...(timing ? { timing: { publicReadDelayMs: 1250, shieldHumanReviewDelayMs: 45000,
+      delayedSteps: ['shield', 'payment'], signingTail: 'real encrypted custody and signer; unchanged evidence ages' } } : {}),
     installation,
     transactions: 3,
     broadcastRequests: 3,

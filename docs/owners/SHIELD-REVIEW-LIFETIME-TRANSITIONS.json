@@ -1,0 +1,203 @@
+{
+  "baseRevision": "39ecf8cd9db79ae91ddde8e24217c3b1b038de15",
+  "afterPhase": "PRIVATE-PREFLIGHT-BUDGET",
+  "reason": "Separate human consent from 60s chain evidence and require post-consent exact-transaction validation and phase-aware host admission. Historical host fixtures are adapted for tests, not claimed as production updates.",
+  "changes": [
+    {
+      "file": "src/owners/railgun-kohaku-plugin.js",
+      "beforeSha256": "3372f3f24a48cc1018c2cc95b6991ec00dda5ab4dcd9364071c06b9cdf304b1e",
+      "afterSha256": "7afd6a9835c2daa874c3ff0017c9951daf19fb08b745081607538a9d8dbf6eb5",
+      "replacements": [
+        {
+          "start": 2185,
+          "before": "  PUBLIC_MS = 120000;\n",
+          "after": "  PUBLIC_MS = 240000,\n  SHIELD_PREPARE_REVIEW_MS = 60000,\n  SHIELD_SEND_REVIEW_MS = 60000;\n"
+        },
+        {
+          "start": 12214,
+          "before": "  async function runReview(use, summary) {\n",
+          "after": "  async function runReview(use, summary, budget = REVIEW_MS) {\n"
+        },
+        {
+          "start": 12292,
+          "before": "",
+          "after": "    assert.ok(Number.isFinite(budget) && budget > 0 && budget <= 60000);\n    const wallStarted = Date.now();\n"
+        },
+        {
+          "start": 12440,
+          "before": "      deadline = started + REVIEW_MS;\n    const reviewTimer = setTimeout(close, REVIEW_MS);\n",
+          "after": "      deadline = started + budget;\n    const reviewTimer = setTimeout(close, budget);\n"
+        },
+        {
+          "start": 12822,
+          "before": "    if (now < started || now >= deadline) {\n",
+          "after": "    if (now < started || now >= deadline || Date.now() < wallStarted || Date.now() >= wallStarted + budget) {\n"
+        },
+        {
+          "start": 36754,
+          "before": "        const approved = await runReview(resources.reviewPreparation, summary);\n",
+          "after": "        const approved = await runReview(resources.reviewPreparation, summary, SHIELD_PREPARE_REVIEW_MS);\n"
+        },
+        {
+          "start": 37453,
+          "before": "",
+          "after": "          operationDeadline: publicBudget.deadline,\n          operationWallDeadline: publicBudget.wallDeadline,\n"
+        },
+        {
+          "start": 39483,
+          "before": "                const approved = await runReview(resources.reviewTransaction, summary);\n",
+          "after": "                const approved = await runReview(resources.reviewTransaction, summary, Math.min(SHIELD_SEND_REVIEW_MS, summary.expiresAt - Date.now()));\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-shield-operation.js",
+      "beforeSha256": "637870ba031ea8827005f2a242f34116d6d954acc58690a08fc74569ab696f2d",
+      "afterSha256": "4cee5770f6e17cc68ffc07689a57aa5b2740330a90d12633294813ae097b6668",
+      "replacements": [
+        {
+          "start": 0,
+          "before": "",
+          "after": "const { Transaction } = require('ethers');\nconst reviewLifetime = require('./shield-review-lifetime');\n"
+        },
+        {
+          "start": 1335,
+          "before": "    wallStarted = Date.now(),\n    deadline = started + MAX_AGE_MS,\n",
+          "after": "    wallStarted = Date.now();\n  let deadline = started + MAX_AGE_MS,\n"
+        },
+        {
+          "start": 1549,
+          "before": "",
+          "after": "    constructionTimer,\n"
+        },
+        {
+          "start": 1702,
+          "before": "    consumed = false;\n",
+          "after": "    consumed = false,\n    phase = 'initial',\n    approvedBytes,\n    reviewInvoked = false,\n    reviewSchedule,\n    sendSchedule;\n"
+        },
+        {
+          "start": 3236,
+          "before": "",
+          "after": "    clearTimeout(constructionTimer);\n"
+        },
+        {
+          "start": 4156,
+          "before": "",
+          "after": "          'operationDeadline',\n          'operationWallDeadline',\n"
+        },
+        {
+          "start": 4345,
+          "before": "",
+          "after": "    for (const name of ['operationDeadline', 'operationWallDeadline'])\n      check(options[name] === undefined || Number.isFinite(options[name]));\n    deadline = Math.min(deadline, options.operationDeadline ?? deadline);\n    wallDeadline = Math.min(wallDeadline, options.operationWallDeadline ?? wallDeadline);\n"
+        },
+        {
+          "start": 8120,
+          "before": "",
+          "after": "    const constructionEnd = performance.now() + Math.min(120000, remaining());\n    constructionTimer = setTimeout(close, Math.max(1, constructionEnd - performance.now()));\n    constructionTimer.unref?.();\n    const constructionRemaining = () => {\n      const ms = Math.floor(Math.min(remaining(), constructionEnd - performance.now()));\n      check(ms > 0);\n      return ms;\n    };\n"
+        },
+        {
+          "start": 8670,
+          "before": "        timeoutMs: remaining(),\n",
+          "after": "        timeoutMs: constructionRemaining(),\n"
+        },
+        {
+          "start": 8937,
+          "before": "        timeoutMs: remaining(),\n",
+          "after": "        timeoutMs: constructionRemaining(),\n"
+        },
+        {
+          "start": 9011,
+          "before": "",
+          "after": "    clearTimeout(constructionTimer);\n"
+        },
+        {
+          "start": 10162,
+          "before": "    const reviewDeadline =\n      Math.min(\n        wallDeadline,\n        preflightWall + 60000,\n        Date.now() + Math.floor(deadline - performance.now())\n      ) - 10000;\n",
+          "after": ""
+        },
+        {
+          "start": 10212,
+          "before": "      const now = performance.now();\n      check(\n        now >= preflightStarted &&\n          now - preflightStarted < 60000 &&\n          Date.now() < preflightWall + 60000\n      );\n",
+          "after": "      if (['initial', 'approved', 'signing'].includes(phase)) {\n        const now = performance.now();\n        check(now >= preflightStarted && now - preflightStarted < 60000 && Date.now() < preflightWall + 60000);\n        assertRailgunShieldPreflight(preflight, acquired.receipt, enrollment);\n      }\n      if (sendSchedule) reviewLifetime.assertWindow(sendSchedule, performance.now(), Date.now());\n"
+        },
+        {
+          "start": 10847,
+          "before": "      assertRailgunShieldPreflight(preflight, acquired.receipt, enrollment);\n",
+          "after": ""
+        },
+        {
+          "start": 11483,
+          "before": "",
+          "after": "      admission(phaseRequested) {\n        if (phaseRequested === 'prepare') { check(phase === 'initial'); return; }\n        check(['approved', 'signing'].includes(phase) && sendSchedule);\n        reviewLifetime.assertWindow(sendSchedule, performance.now(), Date.now());\n        return Object.freeze({ admissionDeadline: sendSchedule.end });\n      },\n"
+        },
+        {
+          "start": 12094,
+          "before": "        check(Date.now() < reviewDeadline);\n",
+          "after": ""
+        },
+        {
+          "start": 12895,
+          "before": "",
+          "after": "              close();\n"
+        },
+        {
+          "start": 14045,
+          "before": "            signTransaction: (transaction) => callback(() => signer.signTransaction(transaction)),\n",
+          "after": "            signTransaction: (transaction) => callback(() => {\n              check(phase === 'approved' && Transaction.from(transaction).unsignedSerialized === approvedBytes);\n              phase = 'signing';\n              return signer.signTransaction(transaction);\n            }),\n"
+        },
+        {
+          "start": 14409,
+          "before": "            reviewExpiresAt: reviewDeadline,\n",
+          "after": "            reviewExpiresAt: wallDeadline,\n            shieldReviewProtocol: 'fresh-after-consent-v1',\n"
+        },
+        {
+          "start": 14615,
+          "before": "",
+          "after": "                check(phase === 'initial' && !reviewInvoked);\n                reviewInvoked = true;\n                check(request && !isProxy(request) &&\n                  Object.getOwnPropertyDescriptor(request, 'shieldReviewProtocol')?.value === 'fresh-after-consent-v1');\n"
+        },
+        {
+          "start": 14942,
+          "before": "",
+          "after": "                check(request.unsignedSerialized === Transaction.from(actual).unsignedSerialized);\n"
+        },
+        {
+          "start": 16274,
+          "before": "",
+          "after": "                reviewSchedule = reviewLifetime.reviewWindow({\n                  now: performance.now(), wall: Date.now(), operationEnd: deadline,\n                  operationWallEnd: wallDeadline, hostExpiresAt: request.expiresAt,\n                });\n                phase = 'reviewing';\n                clearTimeout(freshnessTimer);\n                freshnessTimer = setTimeout(close, Math.max(1, reviewSchedule.humanEnd - performance.now()));\n                freshnessTimer.unref?.();\n"
+        },
+        {
+          "start": 16873,
+          "before": "",
+          "after": "                    expiresAt: reviewSchedule.humanExpiresAt,\n"
+        },
+        {
+          "start": 17483,
+          "before": "                check(Date.now() < reviewDeadline);\n                return approved === true;\n",
+          "after": "                reviewLifetime.assertApproval(reviewSchedule, performance.now(), Date.now());\n                if (approved !== true) return false;\n                clearTimeout(freshnessTimer);\n                phase = 'revalidating';\n                const revalidation = reviewLifetime.revalidationWindow(reviewSchedule, performance.now(), Date.now());\n                freshnessTimer = setTimeout(close, Math.max(1, revalidation.end - performance.now()));\n                freshnessTimer.unref?.();\n                preflight.signal.removeEventListener('abort', close);\n                stop(preflight);\n                preflight = createRailgunShieldPreflight(enrollment,\n                  constraints ? { destinationConstraint: constraints.protocol } : undefined);\n                sources.add(preflight);\n                preflight.signal.addEventListener('abort', close, { once: true });\n                preflightStarted = performance.now(); preflightWall = Date.now();\n                const recheck = () => {\n                  assertCurrent();\n                  reviewLifetime.assertWindow(revalidation, performance.now(), Date.now());\n                };\n                acquired = await track(preflight.acquire());\n                recheck();\n                await network.assertCanSubmit();\n                recheck();\n                assertRailgunShieldPreflight(preflight, acquired.receipt, enrollment);\n                const freshRead = async (method, params) => {\n                  recheck();\n                  const response = await network.request(pins.chainId, method, params);\n                  recheck();\n                  return response.result;\n                };\n                check(await freshRead('eth_getCode', [owner, 'pending']) === '0x');\n                check(BigInt(await freshRead('eth_getTransactionCount', [owner, 'latest'])) === BigInt(actual.nonce));\n                check(BigInt(await freshRead('eth_getTransactionCount', [owner, 'pending'])) === BigInt(actual.nonce));\n                check(BigInt(await freshRead('eth_getBalance', [owner, 'pending'])) >= tx.value + gasLimit * fee);\n                const freshEstimate = BigInt(await freshRead('eth_estimateGas', [rpcTx]));\n                check(freshEstimate > 0n && freshEstimate <= gasLimit);\n                await freshRead('eth_call', [rpcTx, 'latest']);\n                check(Transaction.from(actual).unsignedSerialized === request.unsignedSerialized);\n                approvedBytes = request.unsignedSerialized;\n                sendSchedule = reviewLifetime.sendWindow(reviewSchedule, preflightStarted, preflightWall);\n                phase = 'approved';\n                clearTimeout(freshnessTimer);\n                freshnessTimer = setTimeout(close, Math.max(1, sendSchedule.closeAt - performance.now()));\n                freshnessTimer.unref?.();\n                assertCurrent();\n                return true;\n"
+        },
+        {
+          "start": 21367,
+          "before": "function assertRailgunShieldSubmission(handle, intent) {\n",
+          "after": "function assertRailgunShieldSubmission(handle, intent, phase = 'send') {\n  check(['prepare', 'send'].includes(phase));\n"
+        },
+        {
+          "start": 21696,
+          "before": "",
+          "after": "  return entry.admission(phase);\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-shield-prepare.js",
+      "beforeSha256": "570c4559128fe9ba8ab3d90c5c510ecea31be59ccbf0de736c4235f35221ddfc",
+      "afterSha256": "892d92285da90ed7e39d3915e287b3ebbd2f7fcc2f93f3687a6e71623291ec60",
+      "replacements": [
+        {
+          "start": 1055,
+          "before": "const MAX_AGE_MS = 120000;\n",
+          "after": "// Local preparation retention only; chain evidence keeps its independent60s age.\nconst MAX_AGE_MS = 240000;\n"
+        }
+      ]
+    }
+  ]
+}

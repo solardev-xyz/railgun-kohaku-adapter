@@ -335,8 +335,11 @@ async function signAndSendTransaction(params, signer, options = {}) {
     if (options.intent?.kind === 'railgun-native-shield')
       require('./railgun-shield-operation').assertRailgunShieldSubmission(
         options.privacyContext,
-        options.intent
+        options.intent,
+        'prepare'
       );
+    if (options.intent?.kind === 'railgun-native-shield' && options.shieldReviewProtocol !== 'fresh-after-consent-v1')
+      throw privacyError('PRIVATE_REVIEW_INVALID', 'Unsupported Shield review protocol');
     if (!require('./private-transaction-intent').validIntent(options.intent)) {
       throw privacyError(
         'PRIVATE_INTENT_INVALID',
@@ -462,10 +465,13 @@ async function signAndSendTransaction(params, signer, options = {}) {
           from,
           expiresAt,
           unsignedSerialized: Transaction.from(tx).unsignedSerialized,
+          ...(options.intent?.kind === 'railgun-native-shield' ? { shieldReviewProtocol: 'fresh-after-consent-v1' } : {}),
         });
         if ((await privateStep(() => options.review(review), network, signal)) !== true) {
           throw privacyError('PRIVATE_REVIEW_REJECTED', 'Transaction review was not approved');
         }
+        if (options.intent?.kind === 'railgun-native-shield')
+          require('./railgun-shield-operation').assertRailgunShieldSubmission(options.privacyContext, options.intent);
         signedTransaction = await privateStep(() => signer.signTransaction(tx), network, signal);
         if (Date.now() >= expiresAt || signal.aborted) {
           throw privacyError('PRIVATE_REVIEW_EXPIRED', 'Transaction review expired');

@@ -5,6 +5,7 @@
  * EOA submission/recovery must obtain its own fresh C and chain evidence.
  */
 const { isRailgunGasBudget, isRailgunOperationAmount } = require('./application-policy');
+const { rememberPrivatePreflightOutcome, rememberPrivateEvidenceGate } = require('./private-preflight-outcome');
 const assert = require('assert/strict');
 const { createHash, randomBytes } = require('crypto');
 const { createPrivacyScope, getPrivacyContext } = require('./context-bindings');
@@ -53,6 +54,14 @@ const fail = () =>
     code: 'RAILGUN_PRIVATE_OPERATION_REFUSED',
   });
 const KEY_MARGIN_MS = 20000;
+// Acquisition may use 35s; the independent 60s evidence age and 20s key
+// margin remain mandatory at every gate. The original A deadline still wins.
+const PREFLIGHT_BUDGET_MS = 35000;
+// Reserve10s for durable custody writes and key use, in addition to the
+// unchanged20s evidence margin. This is an admission budget, not a guarantee
+// that storage or a signer cannot stall after a durable transition.
+const SIGNING_TAIL_MS = 10000;
+const EVIDENCE_AGE_MS = 60000;
 // Only this controller can mint provenance. This is deliberately separate from
 // the wallet/A lifetime: submission first closes the wallet and enters recovery.
 // It attests past gates, never fresh POI, chain state or permission to broadcast.
@@ -192,8 +201,22 @@ async function prove({
     proof,
     signedCapsule,
     signedSignature,
+    preflightError,
+    failedGate,
+    failureStage,
+    preflightBudgetExpired = false,
     signingAttempted = false,
     stage = 'local';
+  const refusedResult = () => {
+    const result = Object.freeze({
+      status: signingAttempted ? 'signed-unfinished' : 'refused',
+      stage: failureStage ?? stage,
+      ...(holdId ? { holdId } : {}),
+    });
+    return result.stage === 'preflight'
+      ? rememberPrivatePreflightOutcome(result, preflightError, preflightBudgetExpired)
+      : result.stage === 'evidence-gate' ? rememberPrivateEvidenceGate(result, failedGate) : result;
+  };
   const active = () => {
     assert.ok(isRailgunOperationAmount(inputAmount));
     assert.ok(!scope.signal.aborted);
@@ -274,6 +297,9 @@ async function prove({
             poiDrain,
             preflight,
             acquiredPoi,
+            poiWork,
+            preflightWork,
+            poiValue,
             acquiredPreflight,
             permit,
             deadlineTimer,
@@ -315,6 +341,10 @@ async function prove({
             active();
             assert.ok(!cleanupFailed && !operationScope.signal.aborted && !signal.aborted);
             assert.equal(assertRailgunAccountPrivateWindow(window, account, owners, margin), data);
+          };
+          const checkedGate = (name, check) => {
+            try { return check(); }
+            catch (error) { if (!failureStage) { failureStage = stage = 'evidence-gate'; failedGate = name; } throw error; }
           };
           try {
             current();
@@ -374,16 +404,23 @@ async function prove({
               }
             }
             current(KEY_MARGIN_MS);
-            stage = 'poi';
-            const preflightBudget = 20000,
-              signerBudget = 30000,
-              rootBudget = staging ? 20000 : 0;
+            stage = 'preflight';
+            const rootBudget = staging ? 20000 : 0, signerBudget = 30000;
             const commitBy = data.deadline - KEY_MARGIN_MS - signerBudget;
-            const poiBudget = Math.min(
-              45000,
-              Math.floor(commitBy - performance.now() - preflightBudget - rootBudget)
+            const remaining = Math.min(
+              PREFLIGHT_BUDGET_MS,
+              EVIDENCE_AGE_MS - KEY_MARGIN_MS - SIGNING_TAIL_MS,
+              Math.floor(commitBy - performance.now() - rootBudget)
             );
-            assert.ok(poiBudget > 0);
+            assert.ok(remaining > 0);
+            const preflightEnd = performance.now() + remaining;
+            const preflightInput = Object.freeze({
+              tree: selection.tree,
+              merkleRoot: offer.expected.merkleRoot,
+              nullifier: selected.nullifier,
+              checkpointHash: baseline.checkpointHash,
+              minimumBlock: baseline.read.readiness.to.number,
+            });
             poi = openRailgunPrivateWindowPoi({ wallet: account, ...owners, archive, window });
             const poiClosed = poi.closed;
             assert.ok(poiClosed && typeof poiClosed.then === 'function');
@@ -395,36 +432,34 @@ async function prove({
                 return false;
               }
             );
-            acquiredPoi = await poi.acquire({ timeoutMs: poiBudget });
-            current(KEY_MARGIN_MS);
-            if (acquiredPoi.status !== 'verified') return { status: 'refused' };
-            const poiValue = assertRailgunPrivateWindowPoi(
-              poi,
-              acquiredPoi.receipt,
-              account,
-              owners,
-              window,
-              KEY_MARGIN_MS
-            );
-            assert.equal(poiValue.input.id, selected.id);
-            assert.equal(poiValue.input.nullifier, selected.nullifier);
-            assert.equal(poiValue.input.noteHash, selected.hash);
-            assert.equal(poiValue.input.checkpointHash, baseline.checkpointHash);
-            assert.equal(poiValue.input.type, selected.type);
-            assert.equal(offer.expected.nullifier, selected.nullifier);
-            stage = 'preflight';
-            const preflightInput = Object.freeze({
-              tree: selection.tree,
-              merkleRoot: offer.expected.merkleRoot,
-              nullifier: selected.nullifier,
-              checkpointHash: baseline.checkpointHash,
-              minimumBlock: baseline.read.readiness.to.number,
-            });
-            const remaining = Math.min(
-              preflightBudget,
-              Math.floor(commitBy - performance.now() - rootBudget)
-            );
-            assert.ok(remaining > 0);
+            // Settle failures immediately so the parallel public acquisition
+            // never leaves an unhandled rejection or an orphaned POI request.
+            poiWork = (async () => {
+              try {
+                acquiredPoi = await poi.acquire({ timeoutMs: remaining });
+                checkedGate('window', () => current(KEY_MARGIN_MS));
+                assert.equal(acquiredPoi.status, 'verified');
+                poiValue = checkedGate('poi', () => assertRailgunPrivateWindowPoi(
+                  poi, acquiredPoi.receipt, account, owners, window, KEY_MARGIN_MS
+                ));
+                checkedGate('binding', () => {
+                  assert.equal(poiValue.input.id, selected.id);
+                  assert.equal(poiValue.input.nullifier, selected.nullifier);
+                  assert.equal(poiValue.input.noteHash, selected.hash);
+                  assert.equal(poiValue.input.checkpointHash, baseline.checkpointHash);
+                  assert.equal(poiValue.input.type, selected.type);
+                  assert.equal(offer.expected.nullifier, selected.nullifier);
+                });
+                return true;
+              } catch {
+                if (!failureStage && !operationScope.signal.aborted) {
+                  preflightBudgetExpired ||= performance.now() >= preflightEnd;
+                  failureStage = stage = preflightBudgetExpired ? 'preflight' : 'poi';
+                }
+                closeScope();
+                return false;
+              }
+            })();
             preflight = createRailgunPrivatePreflight({
               enrollment,
               artifactDirectory,
@@ -433,21 +468,44 @@ async function prove({
               ...(destinationConstraints
                 ? { destinationConstraint: destinationConstraints.protocol }
                 : {}),
+              async beforeSelectedInput() {
+                assert.ok(await poiWork, fail());
+                checkedGate('window', () => current(KEY_MARGIN_MS));
+                if (performance.now() >= preflightEnd) {
+                  preflightBudgetExpired = true;
+                  failureStage ??= 'preflight';
+                  throw fail();
+                }
+                checkedGate('poi', () => assertRailgunPrivateWindowPoi(
+                  poi, acquiredPoi.receipt, account, owners, window, KEY_MARGIN_MS
+                ));
+              },
             });
-            const preflightTimer = setTimeout(() => preflight.close(), remaining);
+            const preflightTimer = setTimeout(() => {
+              preflightBudgetExpired = true;
+              failureStage ??= 'preflight';
+              closeScope();
+            }, Math.max(1, preflightEnd - performance.now()));
             preflightTimer.unref?.();
             try {
-              acquiredPreflight = await preflight.acquire();
+              preflightWork = preflight.acquire();
+              acquiredPreflight = await preflightWork;
+              // Do not rely on the callback for final authority, even if a
+              // substituted source skips it. Both genuine receipts are checked.
+              assert.ok(await poiWork, fail());
+              assert.ok(performance.now() < preflightEnd, fail());
+            } catch (error) {
+              failureStage ??= stage;
+              preflightError = error;
+              preflightBudgetExpired ||= performance.now() >= preflightEnd;
+              throw error;
             } finally {
               clearTimeout(preflightTimer);
             }
-            current(KEY_MARGIN_MS);
-            const preflightValue = assertRailgunPrivatePreflight(
-              preflight,
-              acquiredPreflight.receipt,
-              enrollment,
-              KEY_MARGIN_MS
-            );
+            checkedGate('window', () => current(KEY_MARGIN_MS));
+            const preflightValue = checkedGate('preflight', () => assertRailgunPrivatePreflight(
+              preflight, acquiredPreflight.receipt, enrollment, KEY_MARGIN_MS
+            ));
             const assertPreflightKind = (observation) => {
               assert.equal(Object.hasOwn(observation, 'intentKind'), partial);
               if (partial) assert.equal(observation.intentKind, selection.kind);
@@ -473,40 +531,17 @@ async function prove({
               assert.ok(Object.isFrozen(provenanceValue));
             }
             const gates = (margin = KEY_MARGIN_MS) => {
-              current(margin);
-              assert.equal(
-                assertRailgunPrivateWindowPoi(
-                  poi,
-                  acquiredPoi.receipt,
-                  account,
-                  owners,
-                  window,
-                  margin
-                ),
-                poiValue
-              );
-              assert.equal(
-                assertRailgunPrivatePreflight(
-                  preflight,
-                  acquiredPreflight.receipt,
-                  enrollment,
-                  margin
-                ),
-                preflightValue
-              );
-              assertPreflightKind(preflightValue);
-              if (provenance)
-                assert.equal(
-                  assertRailgunTransactProvenance(
-                    provenance,
-                    acquiredProvenance.receipt,
-                    account,
-                    owners,
-                    window,
-                    margin
-                  ),
-                  provenanceValue
-                );
+              checkedGate('window', () => current(margin));
+              checkedGate('poi', () => assert.equal(
+                assertRailgunPrivateWindowPoi(poi, acquiredPoi.receipt, account, owners, window, margin), poiValue
+              ));
+              checkedGate('preflight', () => assert.equal(
+                assertRailgunPrivatePreflight(preflight, acquiredPreflight.receipt, enrollment, margin), preflightValue
+              ));
+              checkedGate('binding', () => assertPreflightKind(preflightValue));
+              if (provenance) checkedGate('provenance', () => assert.equal(
+                assertRailgunTransactProvenance(provenance, acquiredProvenance.receipt, account, owners, window, margin), provenanceValue
+              ));
             };
             gates();
             stage = 'signer';
@@ -522,7 +557,7 @@ async function prove({
                 Math.floor(data.deadline - performance.now() - KEY_MARGIN_MS)
               ),
               async onKeyRequest(validated, signerToken) {
-                gates();
+                gates(KEY_MARGIN_MS + SIGNING_TAIL_MS);
                 assertRailgunPrivateSigner(signerToken, identity, offer);
                 assert.deepEqual(validated, {
                   transactionDigest: offer.transactionDigest,
@@ -553,6 +588,7 @@ async function prove({
                 await capsules.put(held, normalized, authorizationDigest);
                 gates();
                 assertRailgunPrivateSigner(signerToken, identity, offer);
+                gates(KEY_MARGIN_MS + SIGNING_TAIL_MS);
                 stage = 'signing';
                 // A failed durable transition may already have committed. Never
                 // abandon this input after attempting the transition.
@@ -591,6 +627,7 @@ async function prove({
             current();
             return { status: 'signed', signature: signature.signature };
           } catch (error) {
+            if (stage === 'preflight') preflightError ??= error;
             if (error?.code === 'RAILGUN_NOTE_PROVENANCE_EXIT_UNOBSERVED') {
               provenanceExitUnknown = error;
               throw error;
@@ -606,6 +643,10 @@ async function prove({
             }
             closeScope();
             const drains = [];
+            // Close both sources before awaiting either acquisition. Their
+            // settlement is part of returning custody to the wallet.
+            if (poiWork) drains.push(poiWork.then(() => true, () => false));
+            if (preflightWork) drains.push(Promise.resolve(preflightWork).then(() => true, () => true));
             if (poiDrain) drains.push(poiDrain);
             else if (poi) cleanupFailed = true;
             try {
@@ -639,11 +680,7 @@ async function prove({
     );
     active();
     if (result.operation.status !== 'proved')
-      return Object.freeze({
-        status: signingAttempted ? 'signed-unfinished' : 'refused',
-        stage,
-        ...(holdId ? { holdId } : {}),
-      });
+      return refusedResult();
     assert.ok(signed && holdId);
     stage = 'proof';
     const evidence = {
@@ -685,11 +722,7 @@ async function prove({
     });
     return Object.freeze({ status: 'proved', holdId, completion, submissionEnabled: false });
   } catch {
-    return Object.freeze({
-      status: signingAttempted ? 'signed-unfinished' : 'refused',
-      stage,
-      ...(holdId ? { holdId } : {}),
-    });
+    return refusedResult();
   } finally {
     // Only a known never-signing receipt may be released automatically.
     if (held && !signingAttempted) {

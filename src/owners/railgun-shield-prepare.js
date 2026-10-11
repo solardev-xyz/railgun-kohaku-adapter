@@ -14,7 +14,8 @@ const receipts = new WeakMap(),
   generations = new WeakMap(),
   busy = new WeakSet();
 const FIELD = 21888242871839275222246405745257275088548364400416034343698204186575808495617n;
-const MAX_AGE_MS = 120000;
+// Local preparation retention only; chain evidence keeps its independent60s age.
+const MAX_AGE_MS = 240000;
 const fail = () =>
   Object.assign(new Error('Railgun shield preparation unavailable'), {
     code: 'RAILGUN_SHIELD_PREPARATION_REFUSED',

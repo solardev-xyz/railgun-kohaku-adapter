@@ -65,7 +65,7 @@ jest.mock("../../../../../../src/owners/railgun-transact-provenance.js", () => (
       window !== mock.window ||
       mock.provenance.signal.aborted ||
       mock.provenanceExpired ||
-      margin !== 20000
+      ![20000, 30000].includes(margin)
     )
       throw Error('provenance');
     return mock.provenanceValue;
@@ -142,9 +142,9 @@ jest.mock("../../../../../../src/owners/railgun-account-poi.js", () => ({
     mockStep('POI-open');
     return mock.poi;
   },
-  assertRailgunPrivateWindowPoi: () => {
+  assertRailgunPrivateWindowPoi: (_poi, _receipt, _account, _owners, _window, margin) => {
     mockStep('POI-check');
-    if (mock.poiClosed) throw Error('POI');
+    if (mock.poiClosed || (mock.enforcePoiAge && performance.now() - mock.poiStarted + margin >= 60000)) throw Error('POI');
     return mock.poiValue;
   },
 }));
@@ -345,6 +345,8 @@ beforeEach(() => {
   };
   mock.preflight = {
     acquire: async () => {
+      mockStep('public-preflight');
+      await mock.preflightOptions.beforeSelectedInput();
       mockStep('preflight');
       return { receipt: {} };
     },
@@ -716,7 +718,7 @@ test('B dying during markSigning preserves the hold and cannot obtain a key', as
 test.each(['poi', 'preflight'])('mismatched %s input refuses before reserving', async (which) => {
   if (which === 'poi') mock.poiValue.input.nullifier = 'different';
   else mock.preflightValue.input.minimumBlock = 9;
-  expect((await prove(options)).stage).toBe(which);
+  expect((await prove(options)).stage).toBe(which === 'poi' ? 'evidence-gate' : which);
   expect(mock.events).not.toContain('reserve');
 });
 test('B validated digest must match the registered intent', async () => {
@@ -785,13 +787,65 @@ test('preflight timeout closes it but the operation waits until acquisition drai
     return v;
   });
   await started;
-  await jest.advanceTimersByTimeAsync(20001);
+  await jest.advanceTimersByTimeAsync(30001);
   expect(mock.preflightClosed).toBe(true);
   expect(settled).toBe(false);
   release();
-  expect((await pending).stage).toBe('preflight');
+  const result = await pending;
+  expect(result.stage).toBe('preflight');
+  expect(require('../../../../../../src/owners/private-preflight-outcome').readPrivatePreflightOutcome(result))
+    .toMatchObject({ budgetExpired: true });
   expect(mock.events).not.toContain('reserve');
   jest.useRealTimers();
+});
+
+test('a 29s warm preflight can complete while the original window and key margin remain enforced', async () => {
+  jest.useFakeTimers();
+  mock.data.deadline = performance.now() + 175000;
+  const original = mock.preflight.acquire;
+  mock.preflight.acquire = async () => {
+    await new Promise(resolve => setTimeout(resolve, 29000));
+    return original();
+  };
+  try {
+    const pending = prove(options);
+    await jest.advanceTimersByTimeAsync(29000);
+    expect((await pending).status).toBe('proved');
+    expect(mock.events.filter(event => event === 'key')).toHaveLength(1);
+  } finally { jest.useRealTimers(); }
+});
+
+test('a late preflight result cannot outrun a delayed allocation timer', async () => {
+  const now = performance.now();
+  const clock = jest.spyOn(performance, 'now').mockReturnValue(now);
+  mock.data.deadline = now + 175000;
+  const original = mock.preflight.acquire;
+  mock.preflight.acquire = async () => {
+    const value = await original();
+    clock.mockReturnValue(now + 30001);
+    return value;
+  };
+  try {
+    const result = await prove(options);
+    expect(result).toEqual({ status: 'refused', stage: 'preflight' });
+    expect(require('../../../../../../src/owners/private-preflight-outcome').readPrivatePreflightOutcome(result))
+      .toMatchObject({ budgetExpired: true });
+    expect(mock.events).not.toContain('reserve');
+    expect(mock.events).not.toContain('key');
+  } finally { clock.mockRestore(); }
+});
+
+test('a genuine preflight mismatch survives as a closed diagnostic without reservation', async () => {
+  mock.preflight.acquire = async () => {
+    throw Object.assign(Error('private raw data'), {
+      code: 'RAILGUN_PRIVATE_PREFLIGHT_REFUSED', reason: 'mismatch', step: 'verifier',
+    });
+  };
+  const result = await prove(options);
+  expect(result).toEqual({ status: 'refused', stage: 'preflight' });
+  expect(require('../../../../../../src/owners/private-preflight-outcome').readPrivatePreflightOutcome(result))
+    .toEqual({ reason: 'mismatch', step: 'verifier', deploymentStep: null, transport: null, transportStage: null, budgetExpired: false });
+  expect(mock.events).not.toContain('reserve');
 });
 
 const operationGate = () => {
@@ -1445,4 +1499,92 @@ test('one wei below the selected gas budget refuses before the proving window', 
   expect(await prove(options)).toEqual({ status: 'refused', stage: 'submitter' });
   expect(mock.events).not.toContain('A-enter');
   expect(mock.events).not.toContain('derive');
+});
+
+test('18s POI overlaps 17s public preflight, then selected reads and signing fit the unchanged evidence age', async () => {
+  jest.useFakeTimers();
+  mock.data.deadline = performance.now() + 175000;
+  const started = performance.now();
+  const originalPoi = mock.poi.acquire;
+  mock.poi.acquire = async (...args) => {
+    await new Promise(resolve => setTimeout(resolve, 18000));
+    return originalPoi(...args);
+  };
+  mock.preflight.acquire = async () => {
+    mock.events.push('public-start');
+    await new Promise(resolve => setTimeout(resolve, 17000));
+    await mock.preflightOptions.beforeSelectedInput();
+    mock.events.push('selected-start');
+    await new Promise(resolve => setTimeout(resolve, 4000));
+    return { receipt: {} };
+  };
+  const sign = mockSign;
+  mockSign = async args => {
+    await new Promise(resolve => setTimeout(resolve, 7000));
+    // Sequential scheduling would reach here at 46s and fail this real age bound.
+    expect(performance.now() - started + 20000).toBeLessThan(60000);
+    return sign(args);
+  };
+  try {
+    const pending = prove(options);
+    await jest.advanceTimersByTimeAsync(17000);
+    expect(mock.events).toContain('public-start');
+    expect(mock.events).not.toContain('selected-start');
+    await jest.advanceTimersByTimeAsync(12000);
+    expect((await pending).status).toBe('proved');
+    expect(mock.events.filter(event => event === 'key')).toHaveLength(1);
+  } finally { jest.useRealTimers(); }
+});
+test('POI evidence gate failure after acquisition is distinguished from preflight RPC failure', async () => {
+  const sign = mockSign;
+  mockSign = async args => { mock.poiClosed = true; return sign(args); };
+  const result = await prove(options);
+  expect(result).toEqual({ status: 'refused', stage: 'evidence-gate' });
+  expect(require('../../../../../../src/owners/private-preflight-outcome').readPrivateEvidenceGate(result)).toBe('poi');
+  expect(mock.events).not.toContain('reserve');
+  expect(mock.events).not.toContain('key');
+});
+
+test('preflight mismatch remains the primary refusal when cancellation settles a pending POI later', async () => {
+  let rejectPoi;
+  mock.poi.acquire = () => new Promise((_resolve, reject) => { rejectPoi = reject; });
+  const close = mock.poi.close;
+  mock.poi.close = () => { close(); rejectPoi(Error('late cancellation')); };
+  mock.preflight.acquire = async () => {
+    throw Object.assign(Error('not exported'), { code: 'RAILGUN_PRIVATE_PREFLIGHT_REFUSED', reason: 'mismatch', step: 'verifier' });
+  };
+  const result = await prove(options);
+  expect(result).toEqual({ status: 'refused', stage: 'preflight' });
+  expect(require('../../../../../../src/owners/private-preflight-outcome').readPrivatePreflightOutcome(result)).toMatchObject({ reason: 'mismatch', step: 'verifier', budgetExpired: false });
+  expect(mock.poiClosed).toBe(true);
+  expect(mock.events).not.toContain('reserve');
+});
+test('insufficient evidence slack at key request refuses before any durable reservation', async () => {
+  const now = performance.now();
+  const clock = jest.spyOn(performance, 'now').mockReturnValue(now);
+  mock.data.deadline = now + 175000;
+  mock.enforcePoiAge = true;
+  mock.poiStarted = now;
+  const originalSign = mockSign;
+  mockSign = async options => {
+    clock.mockReturnValue(now + 39000);
+    return originalSign(options);
+  };
+  try {
+    const result = await prove(options);
+    expect(result).toEqual({ status: 'refused', stage: 'evidence-gate' });
+    expect(require('../../../../../../src/owners/private-preflight-outcome').readPrivateEvidenceGate(result)).toBe('poi');
+    expect(mock.events).not.toContain('reserve');
+    expect(mock.events).not.toContain('mark');
+    expect(mock.events).not.toContain('key');
+  } finally { clock.mockRestore(); }
+});
+test('the shared acquisition allocation leaves the declared signing tail inside the evidence window', async () => {
+  let allocation;
+  const acquire = mock.poi.acquire;
+  mock.poi.acquire = options => { allocation = options.timeoutMs; return acquire(options); };
+  const result = await prove(options);
+  expect(result.status).toBe('proved');
+  expect(allocation).toBeLessThanOrEqual(60000 - 20000 - 10000);
+  result.completion.close();
 });
