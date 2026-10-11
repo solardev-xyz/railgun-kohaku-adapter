@@ -1,5 +1,5 @@
 "use strict";
-const { createHash } = require("node:crypto");
+const { profileId: hashProfile } = require("./inventory.cjs");
 
 function createSessionHost({ context, profiles, credentials, lifetime }) {
   let active = null;
@@ -10,9 +10,7 @@ function createSessionHost({ context, profiles, credentials, lifetime }) {
       throw Object.assign(Error("Reference profile unavailable"), {
         code: "PRIVACY_PROFILE_UNAVAILABLE",
       });
-    return createHash("sha256")
-      .update(JSON.stringify([profile.id, profile.userDataDir]))
-      .digest("hex");
+    return hashProfile(profile);
   }
   function openPrivacySession() {
     const vaultSession = credentials.currentSession();

@@ -119,7 +119,7 @@ beforeEach(() => {
     records: new Map(),
     requests: [],
     catalog: { close: jest.fn() },
-    fence: { assertCurrent: jest.fn(), retainUntilExit: jest.fn() },
+    fence: { assertCurrent: jest.fn(), assertValidationCurrent: jest.fn(), retainUntilExit: jest.fn() },
   };
 });
 afterEach(async () => {

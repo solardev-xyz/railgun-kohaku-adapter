@@ -1,3 +1,4 @@
+const { undoFenceValidation } = require("./fence-validation-transitions.cjs");
 const { undoSubmissionReadGroups } = require("./submission-read-groups-transitions.cjs");
 const { undoDeploymentConcurrency } = require("./deployment-concurrency-transitions.cjs");
 const { undoShieldReviewLifetime } = require("./shield-review-lifetime-transitions.cjs");
@@ -20,6 +21,7 @@ const provenance = require("../docs/execution/PROVENANCE.json");
 const sha = (value) => createHash("sha256").update(value).digest("hex");
 function originalKernelText(file) {
   let text = fs.readFileSync(path.join(root, file), "utf8");
+  text = undoFenceValidation(text, file);
   text = undoSubmissionReadGroups(text, file);
   text = undoDeploymentConcurrency(text, file);
   text = undoShieldReviewLifetime(text, file);

@@ -43,6 +43,7 @@ jest.mock("../../../../../../src/owners/railgun-account-fence.js", () => ({
         throw Error('enrollment must not release fence');
       }),
     };
+    fence.assertValidationCurrent = fence.assertCurrent;
     mockFenceOwners.set(directory, fence);
     mockFenceHistory.push({ directory, create, fence });
     mockFenceOpenHook?.({ directory, create, fence });

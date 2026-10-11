@@ -1,0 +1,40 @@
+{
+  "baseRevision": "2216ec384a6a32d4b26fb29a20e93a4d6a993b8d",
+  "reason": "Coalesce physical fence identity checks only in synchronous enrollment context predicates, with full first and exit checks. Direct assertions, writer admission and settlement stay unchanged; every predicate checks logical revocation and database liveness.",
+  "changes": [
+    {
+      "file": "src/owners/railgun-account-fence.js",
+      "beforeSha256": "f324978506f6e88696a8f723e6a88ef996191283202422e728bfc8ce1ac46310",
+      "afterSha256": "6f23e9aa7989257bc89e9496054112974918bfa9ce67e3ce66d3621160f2e769",
+      "replacements": [
+        {
+          "start": 1052,
+          "before": "",
+          "after": "const { assertFenceValidation } = require('./fence-validation');\n"
+        },
+        {
+          "start": 6159,
+          "before": "",
+          "after": "  // Only enrollment's synchronous context predicate uses this path. Direct\n  // assertions, run admission, close and settlement retain full disk checks.\n  const assertValidationCurrent = () => {\n    check(!stopped && !unknown);\n    if (db.open !== true) {\n      retainUntilExit();\n      throw fail();\n    }\n    assertFenceValidation(owner, assertCurrent);\n  };\n"
+        },
+        {
+          "start": 9763,
+          "before": "",
+          "after": "    assertValidationCurrent,\n"
+        }
+      ]
+    },
+    {
+      "file": "src/owners/railgun-account-enrollment.js",
+      "beforeSha256": "66583723fc9e3de3d5c155bfe3134f329c513c55a803ad96fb5cadfbb798944c",
+      "afterSha256": "10273f690ed2d1071f2043571dadbe8aece1204bc032901b25ac14751e3282db",
+      "replacements": [
+        {
+          "start": 3710,
+          "before": "      fence?.assertCurrent();\n",
+          "after": "      fence?.assertValidationCurrent();\n"
+        }
+      ]
+    }
+  ]
+}

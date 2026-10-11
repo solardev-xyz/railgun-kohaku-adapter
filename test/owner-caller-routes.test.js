@@ -1,3 +1,4 @@
+const { undoFenceValidation } = require("./fence-validation-transitions.cjs");
 const { undoSubmissionReadGroups } = require("./submission-read-groups-transitions.cjs");
 const { undoDeploymentConcurrency } = require("./deployment-concurrency-transitions.cjs");
 const { undoShieldReviewLifetime } = require("./shield-review-lifetime-transitions.cjs");
@@ -55,6 +56,7 @@ test("all caller transitions reconstruct exact base bytes without changing any o
   );
   for (const row of transitions.changes) {
     let text = fs.readFileSync(path.join(root, row.file), "utf8");
+    text = undoFenceValidation(text, row.file);
     text = undoSubmissionReadGroups(text, row.file);
     text = undoDeploymentConcurrency(text, row.file);
     text = undoShieldReviewLifetime(text, row.file);

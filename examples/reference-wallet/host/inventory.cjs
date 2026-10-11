@@ -3,6 +3,8 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { createHash, createHmac, timingSafeEqual } = require("node:crypto");
 const files = require("./files.cjs");
+const { isProxy } = require("node:util").types;
+const profileHashes = new WeakMap();
 const ACCOUNT = "wallet-railgun-accounts";
 const SUBMISSIONS = "wallet-private-submissions";
 const NAME = "reference-inventory.json";
@@ -15,9 +17,25 @@ function refuse(code = "PRIVATE_PROFILE_INVENTORY_INVALID") {
   });
 }
 function profileId(profile) {
-  return createHash("sha256")
+  // Memoize only immutable data, never a currentness decision. Frozen getters
+  // and proxies can still vary and must continue through the uncached path.
+  let immutable = false;
+  if (profile && typeof profile === "object" && !isProxy(profile)) {
+    const cached = profileHashes.get(profile);
+    if (cached !== undefined) return cached;
+    if (Object.isFrozen(profile)) {
+      const descriptors = Object.getOwnPropertyDescriptors(profile);
+      immutable = ["id", "userDataDir"].every((key) =>
+        Object.hasOwn(descriptors[key] || {}, "value") &&
+        typeof descriptors[key].value === "string",
+      );
+    }
+  }
+  const hash = createHash("sha256")
     .update(JSON.stringify([profile.id, profile.userDataDir]))
     .digest("hex");
+  if (immutable) profileHashes.set(profile, hash);
+  return hash;
 }
 function inventoryKey(seed, profile) {
   if (!(seed instanceof Uint8Array) || seed.byteLength !== 64) refuse();

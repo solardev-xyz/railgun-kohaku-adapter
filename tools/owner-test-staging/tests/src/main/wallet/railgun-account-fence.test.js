@@ -112,6 +112,7 @@ test('fixed main connection, bounded schema and initialization commit precede us
     db = mockConnections[0];
   expect(Object.keys(fence).sort()).toEqual([
     'assertCurrent',
+    'assertValidationCurrent',
     'close',
     'closed',
     'retainUntilExit',

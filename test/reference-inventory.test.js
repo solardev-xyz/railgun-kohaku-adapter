@@ -187,3 +187,25 @@ test("an authenticated inventory at a different root is MOVED; a forged root is 
     moved.close();
   }
 });
+
+test("profile identity cache is limited to frozen own data strings", () => {
+  const { profileId } = require("../examples/reference-wallet/host/inventory.cjs");
+  const crypto = require("node:crypto");
+  const digest = (id) => crypto.createHash("sha256")
+    .update(JSON.stringify([id, "/fixed"])).digest("hex");
+  const immutable = Object.freeze({ id: "a", userDataDir: "/fixed" });
+  expect(profileId(immutable)).toBe(digest("a"));
+  expect(profileId(immutable)).toBe(digest("a"));
+  const mutable = { id: "a", userDataDir: "/fixed" };
+  profileId(mutable); mutable.id = "b";
+  expect(profileId(mutable)).toBe(digest("b"));
+  let id = "a";
+  const getter = Object.freeze({ get id() { return id; }, userDataDir: "/fixed" });
+  profileId(getter); id = "b";
+  expect(profileId(getter)).toBe(digest("b"));
+  const proxy = new Proxy({ userDataDir: "/fixed" }, {
+    get(target, key) { return key === "id" ? id : target[key]; },
+  });
+  profileId(proxy); id = "c";
+  expect(profileId(proxy)).toBe(digest("c"));
+});

@@ -62,6 +62,7 @@ function realm({ type, main = true } = {}) {
     process: { type },
     require(name) {
       imports.push(name);
+      if (name === "./fence-validation") return require("../src/owners/fence-validation");
       if (name === "./source-identity")
         return { captureRailgunPolicySourceIdentity: captureSource };
       if (name === "worker_threads") return { isMainThread: main };
@@ -471,4 +472,19 @@ test("optional cache port rejects getters, proxies, nonfunctions and extra selec
     );
   }
   expect(trap).not.toHaveBeenCalled();
+});
+
+test("only owner context reads coalesce fence predicates and preserve the receiver", () => {
+  const { assertFenceValidation } = require("../src/owners/fence-validation");
+  const port = realm().copy(), input = bindings(), key = {}, check = jest.fn(), value = {};
+  input.context.getPrivacyContext.mockImplementation(function () {
+    expect(this).toBe(input.context);
+    assertFenceValidation(key, check); assertFenceValidation(key, check);
+    return value;
+  });
+  port.initializeRailgunOwnerHost(input);
+  expect(port.context.getPrivacyContext({})).toBe(value);
+  expect(check).toHaveBeenCalledTimes(2);
+  assertFenceValidation(key, check);
+  expect(check).toHaveBeenCalledTimes(3);
 });

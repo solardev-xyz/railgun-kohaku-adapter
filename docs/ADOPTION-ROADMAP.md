@@ -223,8 +223,15 @@ The next agreed milestone makes the example operable through saved instructions:
    but not cold submission; that coverage gap is now explicit. The successor
    groups independent deployment and transaction-admission reads, preserving
    the EOA-code gate before calldata disclosure, and exposes closed warm/cold
-   submission diagnostics. Its stronger native timing checks and exact-head CI must finish
-   before further live qualification. Success requires an entire lifecycle and
+   submission diagnostics. The first two successors passed the full unit suite
+   but still refused at the review floor in the stronger cold-submission test.
+   A CPU profile identified repeated nested physical fence validation and profile
+   hashing as the remaining local cost. A third successor brackets physical
+   fence checks within each synchronous context read, preserves full checks at
+   writer admission, and memoizes only immutable profile data. Its stronger
+   installed native run passed all 179 steps, including both delayed cold
+   submissions, and the full suite passed 13,275 tests. A clean installation
+   and exact-head CI must finish before further live qualification. Success requires an entire lifecycle and
    actual receipt/conservation checks without a mid-run code fix or manual
    substitution for a guide step. A supported explicit continuation is allowed;
    changing implementation makes it an interrupted development run.

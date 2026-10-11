@@ -90,7 +90,7 @@ async function openAccountEnrollment({ identity, create = false }, cooperative) 
     signal: AbortSignal.any([parent.signal, identity.signal, vaultSignal]),
     isCurrent: () => {
       assertRailgunIdentity(identity, parentHandle);
-      fence?.assertCurrent();
+      fence?.assertValidationCurrent();
       return vaultSignal === credentials.currentSession();
     },
   });

@@ -16,6 +16,7 @@ const fs = require('fs');
 const path = require('path');
 const { types } = require('util');
 const threads = require('worker_threads');
+const { assertFenceValidation } = require('./fence-validation');
 const then = Promise.prototype.then;
 const REGISTRY = Symbol.for('freedom.railgun.account-writer-fence.v1');
 const NAME = 'writer-fence.sqlite';
@@ -163,6 +164,16 @@ function openFence(options) {
       throw fail();
     }
   };
+  // Only enrollment's synchronous context predicate uses this path. Direct
+  // assertions, run admission, close and settlement retain full disk checks.
+  const assertValidationCurrent = () => {
+    check(!stopped && !unknown);
+    if (db.open !== true) {
+      retainUntilExit();
+      throw fail();
+    }
+    assertFenceValidation(owner, assertCurrent);
+  };
   try {
     if (create) {
       check(fs.readdirSync(directory).length === 0);
@@ -267,6 +278,7 @@ function openFence(options) {
     closed,
     run,
     assertCurrent,
+    assertValidationCurrent,
     close,
     retainUntilExit,
   });

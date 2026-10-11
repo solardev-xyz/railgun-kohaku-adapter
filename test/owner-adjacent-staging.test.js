@@ -1,3 +1,4 @@
+const { undoFenceValidation } = require("./fence-validation-test-adaptations.cjs");
 const { undoSubmissionReadGroups } = require("./submission-read-groups-test-adaptations.cjs");
 const { undoDeploymentConcurrency } = require("./deployment-concurrency-test-adaptations.cjs");
 const { undoShieldReviewLifetime } = require("./shield-review-test-adaptations.cjs");
@@ -49,6 +50,7 @@ test('all staged tests and fixtures preserve exact c6 bytes through reversible i
   expect(new Set(manifest.files.map((row) => row.destination)).size).toBe(168);
   for (const row of manifest.files) {
     let text = fs.readFileSync(path.join(root, row.destination), 'utf8');
+    text = undoFenceValidation(text, row.destination);
     text = undoSubmissionReadGroups(text, row.destination);
     text = undoDeploymentConcurrency(text, row.destination);
     text = undoShieldReviewLifetime(text, row.destination);

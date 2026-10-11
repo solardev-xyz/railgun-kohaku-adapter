@@ -1,0 +1,30 @@
+{
+  "baseRevision": "2216ec384a6a32d4b26fb29a20e93a4d6a993b8d",
+  "reason": "Keep the exact method-set assertion and add the separate validation-only predicate. Existing direct assertion and writer-admission tests stay unchanged. The enrollment fixture aliases the new predicate to its existing full fence check.",
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-account-fence.test.js",
+      "beforeSha256": "8b74c4b72ca2a41ac4644ae481d27774ce2acd86ffcc5d3cc289576cf257c017",
+      "afterSha256": "4ad5666d658f9e17ad2d6a6f80ecaa6ab3ab0f5a7578d18b622bfdef7bc1f40a",
+      "replacements": [
+        {
+          "start": 3831,
+          "before": "",
+          "after": "    'assertValidationCurrent',\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-account-enrollment.test.js",
+      "beforeSha256": "2eff9595767c86a65d85370b6247065abdd7bfa8cc2da3bbe00f4ab7899bab64",
+      "afterSha256": "5bfc6f8139232ceaa1d0a12095e114a7734f94b337cf418a72b2feac370da9d0",
+      "replacements": [
+        {
+          "start": 2172,
+          "before": "",
+          "after": "    fence.assertValidationCurrent = fence.assertCurrent;\n"
+        }
+      ]
+    }
+  ]
+}

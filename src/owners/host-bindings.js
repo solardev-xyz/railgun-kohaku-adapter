@@ -158,6 +158,10 @@ for (const [family, names] of Object.entries(SCHEMA)) {
   for (const name of names)
     methods[name] = (...args) => {
       if (!captured) throw fail();
+      if (family === "context" && name === "getPrivacyContext")
+        return require("./fence-validation").withFenceValidation(() =>
+          captured[family][name](...args),
+        );
       return captured[family][name](...args);
     };
   exportsByFamily[family] = Object.freeze(methods);

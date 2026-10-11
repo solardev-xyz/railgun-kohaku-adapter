@@ -95,6 +95,7 @@
   "src/owners/application-shield-policy.js",
   "src/owners/context-bindings.js",
   "src/owners/credential-loan.js",
+  "src/owners/fence-validation.js",
   "src/owners/host-bindings.js",
   "src/owners/operational-facade.js",
   "src/owners/operational-poi-lane.js",
