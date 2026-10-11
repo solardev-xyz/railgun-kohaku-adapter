@@ -874,7 +874,8 @@ function clocked({ gapMs, verifyMs, rpcMs }) {
     };
     return { receipt: {}, signal: lifetime.signal, close() {} };
   };
-  // Each sequential preflight read waits rpcMs for its reply.
+  // Conservative request-count clock: each dispatched read advances time even
+  // when public deployment reads overlap. Real overlap uses timed-promise tests.
   mock.latency = () => advance(rpcMs);
   // Wallet close, capsule read, one eth_estimateGas over Tor and the fee plan.
   advance(gapMs);
@@ -884,7 +885,7 @@ function clocked({ gapMs, verifyMs, rpcMs }) {
 }
 describe('L-A 3b timeline against the original-path clocks', () => {
   afterEach(() => jest.useRealTimers());
-  // [case, verifier ms, ms per read]: 17 sequential reads (12 deployment, 5 private).
+  // [case, verifier ms, ms per dispatched read]: 17 reads (12 deployment, 5 private).
   test.each([
     ['the recorded 2.41 s submission', 1400, 50],
     ['typical Tor reads', 1400, 700],
@@ -921,13 +922,14 @@ describe('L-A 3b timeline against the original-path clocks', () => {
     clocked({ gapMs: 115000, verifyMs: 1400, rpcMs: 700 });
     const result = await submit(options);
     expect(result).toEqual({ status: 'recovery-required', stage: 'preflight' });
-    // 115 + 1.4 + 5 x 0.7 s: the completion closes during the sixth read.
+    // The request-count clock crosses expiry in the two-slot group. The paused
+    // slot sees inactivity first, before the implementation response resumes.
     expect(diagnosticOf(result)).toEqual({
       ...PREFLIGHT,
       substage: 'acquire',
       reason: 'inactive',
       step: 'deployment',
-      deploymentStep: 'slot-implementation',
+      deploymentStep: 'slot-paused',
     });
     expect(mock.requests.includes('private-preflight:nullifiers')).toBe(false);
     expect(mock.eoa).toEqual([]);

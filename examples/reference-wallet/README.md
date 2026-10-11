@@ -346,7 +346,7 @@ compatibility identity. Inspect the generation state before explicitly choosing
 the RPC's finalized anchor trails retained progress and does not authorize a
 reset. Terminal presentation edits alone preserve compatible scan budgets.
 
-### Optional local preparation diagnostics
+### Optional local operation diagnostics
 
 Set `"diagnostics": true` in the private configuration to print a closed
 `preparation-diagnostic` JSON record to stderr after a failed private preparation
@@ -355,6 +355,14 @@ there is no automatic retry. These records describe a phase and coarse timing,
 not raw payloads or a definitive service-error cause. Keep them local alongside
 other run output. Account custody and recovery commands still determine what
 may happen next.
+
+Warm broadcasts and `submit-stored` also print `submission-diagnostic` after
+drainage. It includes the owner's closed refusal fields and available aggregate
+timing, never raw service bodies. The guide stops after three returned or thrown
+pre-send recovery failures and preserves the original operation for diagnosis.
+Declining disclosure or transaction review does not consume that allowance.
+This is separate from the three reviewed stored-submission attempts; neither
+counter authorizes repeating a payment or bypassing custody checks.
 
 ### Offline installed-account smoke test
 

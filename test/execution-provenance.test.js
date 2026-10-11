@@ -1,3 +1,4 @@
+const { undoDeploymentConcurrency } = require("./deployment-concurrency-transitions.cjs");
 const { undoShieldReviewLifetime } = require("./shield-review-lifetime-transitions.cjs");
 const { undoPrivatePreflightBudget } = require("./private-preflight-budget-transitions.cjs");
 const { undoPublicReadOutcome } = require("./public-read-outcome-transitions.cjs");
@@ -18,6 +19,7 @@ const provenance = require("../docs/execution/PROVENANCE.json");
 const sha = (value) => createHash("sha256").update(value).digest("hex");
 function originalKernelText(file) {
   let text = fs.readFileSync(path.join(root, file), "utf8");
+  text = undoDeploymentConcurrency(text, file);
   text = undoShieldReviewLifetime(text, file);
   text = undoPrivatePreflightBudget(text, file);
   text = undoPublicReadOutcome(text, file);

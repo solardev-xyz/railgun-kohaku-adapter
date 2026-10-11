@@ -1,6 +1,10 @@
 /** Controlled original owner promises; no crypto, native workers or runtime archives. */
 "use strict";
 let state;
+jest.mock("../src/owners/railgun-private-submission.js", () => ({
+  getRailgunPrivateSubmissionDiagnostic: value => state.submissionDiagnostics?.get(value) ?? null,
+  getRailgunPrivateSubmissionTiming: value => state.submissionTimings?.get(value) ?? null,
+}));
 jest.mock("../src/owners/host-bindings", () => ({
   initializeRailgunOwnerHost: (value) => {
     state.host = value;
@@ -311,6 +315,7 @@ test("closed one-shot initializer and exact account options expose no owner auth
       "describe",
       "openPrivate",
       "readPreparationOutcome",
+      "readSubmissionOutcome",
       "synchronizeTxid",
       "readTxidReadOutcome",
       "observeOwnedPoi",
@@ -851,6 +856,7 @@ test("recovery history opens without any wallet and uses only genuine internal d
       "resumeProof",
       "signal",
       "submitStored",
+      "readSubmissionOutcome",
     ].sort(),
   );
   const original = Promise.resolve({ records: [] });
@@ -2249,4 +2255,44 @@ test.each(["complete", "cancelled", "failed"])("TXID provenance waits for %s cle
   expect(account.readTxidReadOutcome()).toEqual(cleanupKind==="complete"
     ? {schema:"railgun-public-read-failure-v1",operation:"txid-sync",category:"timeout"} : null);
   await account.close().catch(() => {});
+});
+
+test('submission diagnostics belong to the lane result and remain readable after drain', async () => {
+  const f = fixture(), account = await f.api.openAccount(f.options);
+  const lane = await account.openRecovery(recoveryOptions(f.options.signal));
+  const actual = state.createRecovery.mock.results[0].value;
+  const result = Object.freeze({ status: 'recovery-required', stage: 'preflight' });
+  const diagnostic = Object.freeze({ stage: 'preflight', code: 'RAILGUN_PRIVATE_PREFLIGHT_REFUSED', reason: 'inactive' });
+  state.submissionDiagnostics = new WeakMap([[result, diagnostic]]);
+  state.submissionTimings = new WeakMap([[result, Object.freeze({reviewWindowMs: null, verifierMs: 17})]]);
+  expect(lane.readSubmissionOutcome()).toBe(null);
+  const pending = Promise.resolve(result);
+  actual.submitStored.mockReturnValue(pending);
+  expect(lane.submitStored('b'.repeat(64))).toBe(pending);
+  await pending;
+  lane.close();
+  await lane.closed;
+  expect(lane.readSubmissionOutcome()).toEqual({diagnostic, timing: {reviewWindowMs: null, verifierMs: 17}});
+  expect(Object.isFrozen(lane.readSubmissionOutcome())).toBe(true);
+  const second = await account.openRecovery(recoveryOptions(f.options.signal));
+  expect(second.readSubmissionOutcome()).toBe(null);
+  await account.close();
+});
+
+test('warm submission diagnostics use only the genuine private lane and original result', async () => {
+  const f = await wrapperSuccessor('private');
+  const result = Object.freeze({status: 'recovery-required', stage: 'preflight'});
+  const diagnostic = Object.freeze({stage: 'preflight', code: 'RAILGUN_PRIVATE_PREFLIGHT_REFUSED'});
+  state.submissionDiagnostics = new WeakMap([[result, diagnostic]]);
+  expect(f.account.readSubmissionOutcome(f.lane)).toBe(null);
+  expect(() => f.account.readSubmissionOutcome({...f.lane})).toThrow();
+  const operation = await f.lane.prepareTransfer({}, 'recipient');
+  const pending = Promise.resolve(result);
+  state.submit.mockReturnValue(pending);
+  expect(f.lane.broadcast(operation.handle)).toBe(pending);
+  await pending;
+  f.lane.close(); await f.lane.closed;
+  expect(f.account.readSubmissionOutcome(f.lane)).toEqual({diagnostic, timing: null});
+  expect(f.lane).not.toHaveProperty('readSubmissionOutcome');
+  await f.account.close();
 });

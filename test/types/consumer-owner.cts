@@ -42,6 +42,8 @@ async function consume() {
   if (publicRead) { const category: "connection" | "timeout" = publicRead.category; void category; }
   const diagnostic: owner.PrivatePreparationOutcome | null = session.readPreparationOutcome(privateLane);
   if (diagnostic) { const status: boolean = diagnostic.recoveryRequired; void status; }
+  const submitted = session.readSubmissionOutcome(privateLane);
+  if (submitted?.timing) { const elapsed: number | null = submitted.timing.verifierMs; void elapsed; }
 
   const publicLane = await session.openPublic({
     wallet: "active",

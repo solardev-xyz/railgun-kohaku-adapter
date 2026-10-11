@@ -714,3 +714,60 @@ test("Bob refuses a transfer descriptor for an unshield hold", async () => {
   await expect(nextJourney(f)).rejects.toThrow();
   expect(await journeyStatus(f.state)).toMatchObject({ step: "diagnosis" });
 });
+
+test('three pre-send recovery refusals stop dispatches without authorizing another payment', async () => {
+  const f = fixture();
+  await at(f, 'payment-submit');
+  for (let i = 0; i < 3; i++) {
+    f.execute.mockResolvedValueOnce({status: 'submission-outcome', outcome: {status: 'recovery-required', stage: 'preflight'}});
+    expect(await nextJourney(f)).toMatchObject({step: 'payment-observe'});
+    f.execute.mockResolvedValueOnce({status: 'unjournaled', holdId: hold});
+    expect(await nextJourney(f)).toMatchObject({step: 'payment-submit'});
+  }
+  expect(await nextJourney(f)).toMatchObject({step: 'diagnosis', next: null});
+  expect(f.execute.mock.calls.filter(([o]) => o.command === 'submit-stored')).toHaveLength(3);
+  const saved = await f.state.get('guided-journey');
+  expect(saved.data.preSendRefusals).toBe(3);
+  expect(saved.data.storedAttempts ?? 0).toBe(0);
+});
+
+test('disclosure declines do not consume the pre-send failure allowance', async () => {
+  const f = fixture();
+  await at(f, 'payment-submit');
+  for (let i = 0; i < 4; i++) {
+    f.execute.mockResolvedValueOnce({status: 'submission-outcome', outcome: {status: 'recovery-required', stage: 'disclosure-review'}});
+    expect(await nextJourney(f)).toMatchObject({step: 'payment-observe'});
+    f.execute.mockResolvedValueOnce({status: 'unjournaled', holdId: hold});
+    expect(await nextJourney(f)).toMatchObject({step: 'payment-submit'});
+  }
+  expect((await f.state.get('guided-journey')).data.preSendRefusals).toBeUndefined();
+});
+
+test('a thrown post-dispatch pre-send failure is counted but still returns to observation', async () => {
+  const f = fixture();
+  await at(f, 'payment-submit', 'alice', {preSendRefusals: 2});
+  f.execute.mockRejectedValueOnce(Object.assign(Error('unavailable'), {code: 'RAILGUN_ACCOUNT_FACADE_REFUSED'}));
+  await expect(nextJourney(f)).rejects.toThrow('unavailable');
+  expect((await journeyStatus(f.state)).step).toBe('payment-observe');
+  f.execute.mockResolvedValueOnce({status: 'unjournaled', holdId: hold});
+  await nextJourney(f);
+  expect(await nextJourney(f)).toMatchObject({step: 'diagnosis'});
+  expect(f.execute.mock.calls.filter(([o]) => o.command === 'submit-stored')).toHaveLength(1);
+});
+
+test('explicit SEND declines do not consume the pre-send failure allowance', async () => {
+  const f = fixture();
+  await at(f, 'payment-submit');
+  for (let i = 0; i < 4; i++) {
+    expect(await nextJourney({...f, execute: async (_selected, hooks) => {
+      await hooks.onDispatch();
+      await hooks.onTransactionDecision(false, {from: funding, transaction: {chainId: 11155111, nonce: 0}});
+      return {status: 'submission-outcome', outcome: {status: 'recovery-required', stage: 'eoa'}};
+    }})).toMatchObject({step: 'payment-observe'});
+    f.execute.mockResolvedValueOnce({status: 'unjournaled', holdId: hold});
+    expect(await nextJourney(f)).toMatchObject({step: 'payment-submit'});
+  }
+  const saved = await f.state.get('guided-journey');
+  expect(saved.data.preSendRefusals).toBeUndefined();
+  expect(saved.data.storedAttempts ?? 0).toBe(0);
+});

@@ -206,6 +206,7 @@ function validate(value) {
       "paymentHash",
       "hold",
       "storedAttempts",
+      "preSendRefusals",
       "output",
       "paymentGas",
       "capsule",
@@ -229,6 +230,7 @@ function validate(value) {
     "accountAttempts",
     "walletAttempts",
     "storedAttempts",
+    "preSendRefusals",
     "poiAttempts",
     "shieldAttempts",
     "paymentAttempts",
@@ -825,7 +827,8 @@ async function nextJourney({
     "payment-submit": "storedAttempts",
     "poi-submit": "poiAttempts",
   }[s.step];
-  if (s.calls >= MAX_CALLS || (attemptKey && (s.data[attemptKey] ?? 0) >= 3)) {
+  if (s.calls >= MAX_CALLS || (attemptKey && (s.data[attemptKey] ?? 0) >= 3) ||
+      (s.step === "payment-submit" && (s.data.preSendRefusals ?? 0) >= 3)) {
     s.step = "diagnosis";
     s.inflight = null;
     await state.update(KEY, () => s);
@@ -982,6 +985,10 @@ async function nextJourney({
         typeof v === "bigint" ? v.toString() : v,
       ),
     );
+    if (step === "payment-submit" && s.inflight.sendApproved === null &&
+        result.status === "submission-outcome" && result.outcome?.status === "recovery-required" &&
+        result.outcome.stage !== "disclosure-review")
+      s.data.preSendRefusals = (s.data.preSendRefusals ?? 0) + 1;
     advance(s, result);
     s.inflight = null;
     s.history.push({
@@ -1007,6 +1014,9 @@ async function nextJourney({
         )
           ? error.code
           : "REFERENCE_JOURNEY_STEP_REFUSED";
+      if (step === "payment-submit" && s.inflight.sendApproved === null &&
+          !signal.aborted && code !== "REFERENCE_CANCELLED")
+        s.data.preSendRefusals = (s.data.preSendRefusals ?? 0) + 1;
       if (
         [
           "REFERENCE_JOURNEY_REFUSED",

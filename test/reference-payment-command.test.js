@@ -148,3 +148,15 @@ test("default failure handling does not query or publish preparation diagnostics
   await expect(paymentCommand(f.options)).rejects.toThrow("Exact unspent note required");
   expect(f.options.session.readPreparationOutcome).not.toHaveBeenCalled();
 });
+
+test('warm submission diagnostics are emitted only after the adapter drain', async () => {
+  const f = fixture('pay-note');
+  const diagnostic = Object.freeze({diagnostic: {stage: 'preflight'}, timing: null});
+  f.options.session.readSubmissionOutcome = jest.fn(() => {
+    expect(f.host.calls.some(row => (typeof row === 'string' ? row : row.method) === 'close')).toBe(true);
+    return diagnostic;
+  });
+  f.options.onDiagnostic = jest.fn();
+  await paymentCommand(f.options);
+  expect(f.options.onDiagnostic).toHaveBeenCalledWith(diagnostic, 'submission');
+});

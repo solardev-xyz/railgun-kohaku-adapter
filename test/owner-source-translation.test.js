@@ -1,3 +1,4 @@
+const { undoDeploymentConcurrency } = require("./deployment-concurrency-transitions.cjs");
 const { undoShieldReviewLifetime } = require("./shield-review-lifetime-transitions.cjs");
 const { undoPrivatePreflightBudget } = require("./private-preflight-budget-transitions.cjs");
 const { undoPublicReadOutcome } = require("./public-read-outcome-transitions.cjs");
@@ -86,6 +87,7 @@ test("every translated algorithm reconstructs its exact immutable original bytes
     reused = 0;
   for (const row of translation.files) {
     let text = fs.readFileSync(sourceFile(row.destination), "utf8");
+    text = undoDeploymentConcurrency(text, row.destination);
     text = undoShieldReviewLifetime(text, row.destination);
     text = undoPrivatePreflightBudget(text, row.destination);
     text = undoPublicReadOutcome(text, row.destination);
@@ -391,6 +393,7 @@ test("all reused static named export surfaces were checked, including the full c
     expect(found.sourceSha256).toBe(row.sourceSha256);
     // The audited bytes are the pre-retry basis; the retry phase is undone.
     let text = fs.readFileSync(path.join(root, row.destination), "utf8");
+    text = undoDeploymentConcurrency(text, row.destination);
     text = undoShieldReviewLifetime(text, row.destination);
     text = undoPrivatePreflightBudget(text, row.destination);
     text = undoPublicReadOutcome(text, row.destination);
@@ -473,6 +476,7 @@ test("high-authority host family imports have an exact reviewed source allowlist
     ).toEqual(files);
   for (const [file, digest] of Object.entries(audit.files)) {
     let text = fs.readFileSync(path.join(root, file), "utf8");
+    text = undoDeploymentConcurrency(text, file);
     text = undoShieldReviewLifetime(text, file);
     text = undoPrivatePreflightBudget(text, file);
     text = undoPublicReadOutcome(text, file);

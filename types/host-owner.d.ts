@@ -517,6 +517,21 @@ export interface RecoveryLane extends LaneLifetime {
   history(after?: string | null): Promise<RecoveryHistory>;
   resumeProof(holdId: string): Promise<PrivateProofRecoveryOutcome>;
   submitStored(holdId: string): Promise<RecoverySubmissionOutcome>;
+  /** Local diagnostics for this lane's last completed submission; readable after
+   * closure. Never evidence of delivery, ownership, or permission to retry. */
+  readSubmissionOutcome(): Readonly<{
+    diagnostic: Readonly<{
+      stage: string;
+      code: string;
+      substage?: string;
+      reason?: string;
+      step?: string;
+      deploymentStep?: string;
+      causeCode?: string;
+      causeStage?: string;
+    }> | null;
+    timing: Readonly<{ reviewWindowMs: number | null; verifierMs: number | null }> | null;
+  }> | null;
 }
 /** Read-only disclosure inventories. Neither summary is an authorization receipt. */
 export interface PoiPreparationDisclosure {
@@ -1262,6 +1277,9 @@ export interface AccountSession {
   openPrivate(options: PrivateLaneOptions): Promise<PrivateLane>;
   /** Private preparation only; most recent non-concurrent call, readable after drain. */
   readPreparationOutcome(lane: PrivateLane): PrivatePreparationOutcome | null;
+  /** Closed diagnostics only; the original private lane must belong to this
+   * session. Available after drain; never submission or retry authority. */
+  readSubmissionOutcome(lane: PrivateLane): ReturnType<RecoveryLane["readSubmissionOutcome"]>;
   readTxidReadOutcome(): TxidReadOutcome | null;
   openPublic(options: PublicLaneOptions): Promise<PublicLane>;
   openRecovery(options: RecoveryOptions): Promise<RecoveryLane>;

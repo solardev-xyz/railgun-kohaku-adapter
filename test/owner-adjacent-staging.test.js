@@ -1,3 +1,4 @@
+const { undoDeploymentConcurrency } = require("./deployment-concurrency-test-adaptations.cjs");
 const { undoShieldReviewLifetime } = require("./shield-review-test-adaptations.cjs");
 const { undoPrivatePreflightBudget } = require("./private-preflight-test-adaptations.cjs");
 const preparationAdaptations = require("../docs/owners/test-staging/PREPARATION-OUTCOME-ADAPTATIONS.json");
@@ -47,6 +48,7 @@ test('all staged tests and fixtures preserve exact c6 bytes through reversible i
   expect(new Set(manifest.files.map((row) => row.destination)).size).toBe(168);
   for (const row of manifest.files) {
     let text = fs.readFileSync(path.join(root, row.destination), 'utf8');
+    text = undoDeploymentConcurrency(text, row.destination);
     text = undoShieldReviewLifetime(text, row.destination);
     text = undoPrivatePreflightBudget(text, row.destination);
     const preparationAdaptation = preparationAdaptations.changes.find(entry => entry.file === row.destination);

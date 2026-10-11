@@ -207,3 +207,13 @@ if (preparationOutcome?.preflight) {
   const guessedCause: "connection" = preparationOutcome.preflight.transport;
   void guessedCause;
 }
+
+// @ts-expect-error a read lane has no submission outcome
+diagnosticSession.readSubmissionOutcome(diagnosticReadLane);
+const submissionOutcome = diagnosticSession.readSubmissionOutcome(diagnosticPrivateLane);
+if (submissionOutcome?.diagnostic) {
+  // @ts-expect-error submission diagnostics are immutable
+  submissionOutcome.diagnostic.stage = "send";
+  // @ts-expect-error no raw transport response is exposed
+  submissionOutcome.diagnostic.body;
+}

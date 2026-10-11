@@ -140,6 +140,33 @@ function createRailgunShieldPreflight(enrollment, options = {}) {
       check(validate(response.result));
       return response.result;
     };
+    // Only account-independent reads of this fixed deployment are grouped.
+    // Every request remains anchored to the same block. Stop siblings on the
+    // first refusal and drain the entire group before returning or advancing;
+    // an abort caused by that refusal cannot replace its diagnostic stage.
+    const group = async (tasks) => {
+      step = tasks[0][0];
+      let first;
+      await Promise.allSettled(tasks.map(async ([name, run]) => {
+        try {
+          active();
+          fresh();
+          await run();
+        } catch (error) {
+          if (!first) {
+            first = { error, name };
+            try { close(); } catch { /* Preserve the initiating refusal. */ }
+          }
+          throw error;
+        }
+      }));
+      if (first) {
+        step = first.name;
+        throw first.error;
+      }
+      active();
+      fresh();
+    };
     try {
       const header = await read(
         'eth_getBlockByNumber',
@@ -159,33 +186,31 @@ function createRailgunShieldPreflight(enrollment, options = {}) {
         timestamp: header.timestamp,
       });
       const block = { blockHash: anchor.hash, requireCanonical: true };
-      for (const name of ['proxy', 'relayAdapt', 'wrappedNative', 'implementation']) {
-        step = 'code-' + name;
+      await group(['proxy', 'relayAdapt', 'wrappedNative', 'implementation'].map((name) => [
+        'code-' + name, async () => {
         const code = await read(
           'eth_getCode',
           [pins[name], block],
           (v) => typeof v === 'string' && /^0x(?:[0-9a-f]{2})+$/.test(v) && v.length <= 131074
         );
         check(keccak256(code) === pins.codeHashes[name], 'mismatch');
-      }
-      for (const [name, expected] of [
+      }]));
+      await group([
         ['implementation', '0x' + pins.implementation.slice(2).padStart(64, '0')],
         ['paused', '0x' + '0'.repeat(64)],
-      ]) {
-        step = 'slot-' + name;
+      ].map(([name, expected]) => ['slot-' + name, async () => {
         const slot = toBeHex(BigInt(id('eip1967.proxy.' + name)) - 1n, 32);
         check(
           (await read('eth_getStorageAt', [pins.proxy, slot, block], hash)) === expected,
           'mismatch'
         );
-      }
-      for (const [to, method, args, expected] of [
+      }]));
+      await group([
         [pins.relayAdapt, 'railgun', [], pins.proxy],
         [pins.relayAdapt, 'wBase', [], pins.wrappedNative],
         [pins.proxy, 'shieldFee', [], BigInt(pins.shieldFeeBps)],
         [pins.proxy, 'tokenBlocklist', [pins.wrappedNative], false],
-      ]) {
-        step = 'getter-' + method;
+      ].map(([to, method, args, expected]) => ['getter-' + method, async () => {
         const encoded = await read(
           'eth_call',
           [{ to, data: abi.encodeFunctionData(method, args) }, block],
@@ -197,7 +222,7 @@ function createRailgunShieldPreflight(enrollment, options = {}) {
           (typeof decoded[0] === 'string' ? decoded[0].toLowerCase() : decoded[0]) === expected,
           'mismatch'
         );
-      }
+      }]));
       step = 'anchor-recheck';
       const reread = await read(
         'eth_getBlockByNumber',

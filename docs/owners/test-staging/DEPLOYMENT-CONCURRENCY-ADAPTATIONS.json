@@ -1,0 +1,168 @@
+{
+  "baseRevision": "d752a5c58bca2a5ce13d3ff95d1d37a4d78c262b",
+  "reason": "Deployment reads now overlap. Preserve the conservative per-dispatched-request clock and its fail-closed expiry assertions; update only the first failing member of the concurrent slot group and identify that this is not a wall-clock latency model. Timed-promise concurrency tests and the native cold-submission control cover real overlap.",
+  "changes": [
+    {
+      "file": "tools/owner-test-staging/tests/src/main/wallet/railgun-private-submission-diagnostic.test.js",
+      "beforeSha256": "5383c8e972c174ecfad26e56919510bd09838c64f972561a89df8112bb8dfa65",
+      "afterSha256": "0f993834290a15993e265bb8944c0c0d362ecbffc9c4fb93d242c7d15ac886b4",
+      "replacements": [
+        {
+          "start": 31567,
+          "before": "E",
+          "after": "Conservative request-count clock: e"
+        },
+        {
+          "start": 31606,
+          "before": "",
+          "after": "di"
+        },
+        {
+          "start": 31609,
+          "before": "",
+          "after": "patch"
+        },
+        {
+          "start": 31615,
+          "before": "qu",
+          "after": "d read advances time ev"
+        },
+        {
+          "start": 31640,
+          "before": "tial",
+          "after": "\n  // when"
+        },
+        {
+          "start": 31652,
+          "before": "ref",
+          "after": "ub"
+        },
+        {
+          "start": 31656,
+          "before": "gh",
+          "after": "c deploymen"
+        },
+        {
+          "start": 31673,
+          "before": "",
+          "after": "s"
+        },
+        {
+          "start": 31675,
+          "before": "w",
+          "after": "overl"
+        },
+        {
+          "start": 31681,
+          "before": "",
+          "after": "p. Real overlap uses t"
+        },
+        {
+          "start": 31704,
+          "before": "",
+          "after": "med-promise tes"
+        },
+        {
+          "start": 31721,
+          "before": " rpcMs for its reply",
+          "after": ""
+        },
+        {
+          "start": 32197,
+          "before": "",
+          "after": "dispatched "
+        },
+        {
+          "start": 32217,
+          "before": " sequential",
+          "after": ""
+        },
+        {
+          "start": 34116,
+          "before": "115",
+          "after": "The"
+        },
+        {
+          "start": 34120,
+          "before": "+",
+          "after": "request-count"
+        },
+        {
+          "start": 34134,
+          "before": "1.4",
+          "after": "clock"
+        },
+        {
+          "start": 34140,
+          "before": "+",
+          "after": "crosses"
+        },
+        {
+          "start": 34148,
+          "before": "5",
+          "after": "expiry"
+        },
+        {
+          "start": 34155,
+          "before": "x 0.7 s:",
+          "after": "in"
+        },
+        {
+          "start": 34162,
+          "before": "",
+          "after": "two-slot group. The paused\n    // slot sees ina"
+        },
+        {
+          "start": 34210,
+          "before": "",
+          "after": "tivity first, bef"
+        },
+        {
+          "start": 34228,
+          "before": "",
+          "after": "re the i"
+        },
+        {
+          "start": 34240,
+          "before": "",
+          "after": "menta"
+        },
+        {
+          "start": 34250,
+          "before": "cl",
+          "after": "resp"
+        },
+        {
+          "start": 34255,
+          "before": "",
+          "after": "n"
+        },
+        {
+          "start": 34258,
+          "before": "s during the sixth",
+          "after": ""
+        },
+        {
+          "start": 34261,
+          "before": "ad",
+          "after": "sumes"
+        },
+        {
+          "start": 34438,
+          "before": "im",
+          "after": ""
+        },
+        {
+          "start": 34439,
+          "before": "l",
+          "after": "aus"
+        },
+        {
+          "start": 34443,
+          "before": "mentation",
+          "after": "d"
+        }
+      ]
+    }
+  ]
+}

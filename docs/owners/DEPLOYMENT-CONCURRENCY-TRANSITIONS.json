@@ -1,0 +1,143 @@
+{
+  "baseRevision": "d752a5c58bca2a5ce13d3ff95d1d37a4d78c262b",
+  "reason": "Bound independent anchored deployment reads to four concurrent requests, preserve first refusal and drain siblings without renewing evidence ages.",
+  "changes": [
+    {
+      "file": "src/owners/railgun-shield-preflight.js",
+      "beforeSha256": "2a3ecd080d8c8470d7d0daf7a52b8c7a45ff6ac8eadf763d204f9c221e75d891",
+      "afterSha256": "0bc17f26175df31e49c958ff26a499e1256a896b1777b4dbd2c06a3828b5228d",
+      "replacements": [
+        {
+          "start": 4890,
+          "before": "",
+          "after": "// Only account-independent reads of this fixed deployment are grouped.\n    // Every request remains anchored to the same block. Stop siblings on the\n    // first refusal and drain the entire group before returning or advancing;\n    // an abort caused by that refusal cannot replace its diagnostic stage.\n    const group = async (tasks) => {\n      step = tasks[0][0];\n      let first;\n      await Promise.allSettled(tasks.map(async ([name, run]) => {\n        try {\n          active();\n          fresh();\n          await run();\n        } catch (error) {\n          if (!first) {\n            first = { error, name };\n            try { close(); } catch { /* Preserve the initiating refusal. */ }\n          }\n          throw error;\n        }\n      }));\n      if (first) {\n        step = first.name;\n        throw first.error;\n      }\n      active();\n      fresh();\n    };\n    "
+        },
+        {
+          "start": 6479,
+          "before": "for (cons",
+          "after": "awai"
+        },
+        {
+          "start": 6485,
+          "before": "name ",
+          "after": "gr"
+        },
+        {
+          "start": 6488,
+          "before": "f ",
+          "after": "up("
+        },
+        {
+          "start": 6549,
+          "before": "",
+          "after": ".map((name"
+        },
+        {
+          "start": 6561,
+          "before": "{",
+          "after": "=> ["
+        },
+        {
+          "start": 6573,
+          "before": " step =",
+          "after": ""
+        },
+        {
+          "start": 6588,
+          "before": ";",
+          "after": ", async () => {"
+        },
+        {
+          "start": 6876,
+          "before": "",
+          "after": "]));"
+        },
+        {
+          "start": 6887,
+          "before": "for (cons",
+          "after": "awai"
+        },
+        {
+          "start": 6893,
+          "before": "[name, ex",
+          "after": "grou"
+        },
+        {
+          "start": 6898,
+          "before": "ected] of ",
+          "after": "("
+        },
+        {
+          "start": 7034,
+          "before": "",
+          "after": ".map(([name, expected]"
+        },
+        {
+          "start": 7058,
+          "before": "{\n",
+          "after": "=>"
+        },
+        {
+          "start": 7061,
+          "before": "       step = ",
+          "after": "["
+        },
+        {
+          "start": 7076,
+          "before": ";",
+          "after": ", async () => {"
+        },
+        {
+          "start": 7312,
+          "before": "",
+          "after": "]));"
+        },
+        {
+          "start": 7323,
+          "before": "for (cons",
+          "after": "awai"
+        },
+        {
+          "start": 7329,
+          "before": "[t",
+          "after": "gr"
+        },
+        {
+          "start": 7332,
+          "before": ", method, args, ex",
+          "after": "u"
+        },
+        {
+          "start": 7334,
+          "before": "ected] of ",
+          "after": "("
+        },
+        {
+          "start": 7593,
+          "before": "",
+          "after": ".map(([to, method, args, expected]"
+        },
+        {
+          "start": 7629,
+          "before": "{\n",
+          "after": "=>"
+        },
+        {
+          "start": 7632,
+          "before": "       step = ",
+          "after": "["
+        },
+        {
+          "start": 7651,
+          "before": ";",
+          "after": ", async () => {"
+        },
+        {
+          "start": 8136,
+          "before": "",
+          "after": "]));"
+        }
+      ]
+    }
+  ]
+}

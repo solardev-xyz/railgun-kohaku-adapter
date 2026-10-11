@@ -4,6 +4,14 @@ const { readPublicReadFailure } = require("./public-read-outcome");
 const path = require("path");
 const { types } = require("util");
 const host = require("./host-bindings");
+function submissionOutcome(value) {
+  if (!value) return null;
+  const api = require("./railgun-private-submission.js");
+  return Object.freeze({
+    diagnostic: api.getRailgunPrivateSubmissionDiagnostic(value),
+    timing: api.getRailgunPrivateSubmissionTiming(value),
+  });
+}
 const { selectRailgunDeployment } = require("../deployment");
 const { captureRailgunApplicationPolicy, isRailgunGasBudget } = require("./application-policy");
 const fail = () =>
@@ -198,6 +206,7 @@ function initializeRailgunMain(options) {
     const key = JSON.stringify([profile.userDataDir, accountIndex]);
     if (occupied.has(key)) throw fail();
     const preparationLanes = new WeakMap();
+    const submissionLanes = new WeakMap();
     const state = {
       identity: null,
       enrollment: null,
@@ -449,6 +458,7 @@ function initializeRailgunMain(options) {
           if (state.closing) stop(plugin, "lane");
           current();
           const operations = new WeakMap();
+          const submitted = { value: null };
           let laneClosing = false;
           const laneCurrent = () => {
             current();
@@ -471,7 +481,7 @@ function initializeRailgunMain(options) {
             if (!operations.has(handle)) throw fail();
             const operation = operations.get(handle);
             operations.delete(handle);
-            return retain(
+            const pending = retain(
               mode === "private"
                 ? pluginApi.broadcastRailgunKohakuOperation(plugin, operation)
                 : pluginApi.submitRailgunKohakuPublicOperation(
@@ -479,6 +489,9 @@ function initializeRailgunMain(options) {
                     operation,
                   ),
             );
+            if (mode === "private")
+              pending.then((value) => { submitted.value = value; }, () => {});
+            return pending;
           }
           const failedClosure = (error) => {
             remember(error);
@@ -519,7 +532,10 @@ function initializeRailgunMain(options) {
               stop(plugin, "lane");
             },
           });
-          if (mode === "private") preparationLanes.set(result, plugin);
+          if (mode === "private") {
+            preparationLanes.set(result, plugin);
+            submissionLanes.set(result, submitted);
+          }
           return result;
         } catch (error) {
           if (plugin) stop(plugin, "lane");
@@ -630,7 +646,7 @@ function initializeRailgunMain(options) {
           state.lane = companion;
           if (state.closing) stop(companion, "lane");
           current();
-          let closing = false;
+          let closing = false, lastSubmission = null;
           const active = () => {
             current();
             if (closing || state.lane !== companion || companion.signal.aborted)
@@ -743,7 +759,15 @@ function initializeRailgunMain(options) {
                   },
                   submitStored(holdId) {
                     active();
-                    return retain(companion.submitStored(holdId));
+                    lastSubmission = null;
+                    const pending = retain(companion.submitStored(holdId));
+                    // Observe only this lane's genuine result. Keep the original
+                    // promise and lifetime barrier; diagnostics authorize nothing.
+                    pending.then((value) => { lastSubmission = value; }, () => {});
+                    return pending;
+                  },
+                  readSubmissionOutcome() {
+                    return submissionOutcome(lastSubmission);
                   },
                 }),
             signal: companion.signal,
@@ -1571,6 +1595,11 @@ function initializeRailgunMain(options) {
         // No current() here: refusals close the lane. This snapshot contains no
         // authority and belongs only to the session that issued this exact lane.
         return pluginApi.readRailgunKohakuPreparationOutcome(plugin);
+      },
+      readSubmissionOutcome(value) {
+        const submitted = submissionLanes.get(value);
+        if (!submitted) throw fail();
+        return submissionOutcome(submitted.value);
       },
       openPublic: (options) => lane("public", options),
       signal: lifetime,

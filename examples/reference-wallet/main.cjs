@@ -240,10 +240,10 @@ async function run() {
         maxOperationAmount: composition.applicationPolicy.maxOperationAmount,
         onDiagnostic:
           config.diagnostics === true
-            ? (outcome) =>
+            ? (outcome, kind = "preparation") =>
                 process.stderr.write(
                   JSON.stringify({
-                    status: "preparation-diagnostic",
+                    status: kind === "submission" ? "submission-diagnostic" : "preparation-diagnostic",
                     outcome,
                   }) + "\n",
                 )

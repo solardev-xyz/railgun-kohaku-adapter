@@ -26,6 +26,8 @@ async function createFixtureServer({ chain, submitters, key, cert }) {
       requests: 0,
       refused: 0,
       lostSendResponses: 0,
+      activeRequests: 0,
+      peakRequests: 0,
     };
   function track(socket) {
     sockets.add(socket);
@@ -36,6 +38,14 @@ async function createFixtureServer({ chain, submitters, key, cert }) {
     { key, cert },
     async (request, response) => {
       counts.requests++;
+      counts.activeRequests++;
+      counts.peakRequests = Math.max(counts.peakRequests, counts.activeRequests);
+      let ended = false;
+      const end = () => {
+        if (!ended) { ended = true; counts.activeRequests--; }
+      };
+      response.once("finish", end);
+      response.once("close", end);
       try {
         assert.equal(request.method, "POST");
         const chunks = [];

@@ -97,6 +97,7 @@ async function accountCommand({
     ].includes(command)
   )
     return require("./recovery-command.cjs").recoveryCommand({
+      onDiagnostic,
       session,
       command,
       holdId,

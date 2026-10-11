@@ -129,6 +129,42 @@ retry. Keep errors, budgets, disclosure decisions and uncertainty distinct from
 successful completion; do not reset stores or manufacture a new profile to
 bypass a refusal.
 
+## Retained operation across a reviewed upgrade
+
+Use this path only for an identified old/new package and host pair whose custody
+and derived-state compatibility has been checked. A native retained-upgrade case
+and the earlier explicit-command live journey exercise this mechanism; they do
+not establish compatibility for arbitrary versions. Preserve the old install,
+configuration and private run evidence, and never run both installations against
+the profile simultaneously.
+
+A changed guide identity refuses `journey-next`. There is no guided migration or
+reset command. The old guide remains a record of the interrupted run; an explicit
+continuation below is not a frozen-version guided pass.
+
+1. Install the reviewed successor separately. Keep the same canonical profile
+   path and vault; do not copy custody into a new profile or edit its records.
+2. If cache compatibility changed, explicitly run `scan-new` (review `REBUILD`),
+   then `wallet-rebuild` and `txid-sync`. Resume an interrupted scan or wallet
+   build using the normal commands. These rebuild derived state, not the held
+   operation. Stop on an integrity refusal rather than creating another generation.
+3. Run `holds` and require the exact previously recorded hold, its operation and
+   `proof-present` state. A missing or different hold needs diagnosis. Then run
+   `observe --hold "$HOLD"`. A journaled, included or uncertain operation goes to
+   observation/resolution only.
+4. Only a proved, unjournaled hold can proceed to an explicit
+   `submit-stored --hold "$HOLD"` review. Check the original recipient, asset,
+   amount and fee bound again. Do not call `pay-note` or `unshield-note` to replace
+   it. Every attempted continuation repeats disclosures; set a finite attempt
+   allowance before starting and stop when a repeated refusal needs diagnosis.
+5. Observe and resolve that same hold, then account for its actual receipt.
+   Continue the original POI/output lifecycle above using its existing handoff
+   state. An attempted POI submission does not become prepared through an upgrade.
+
+The application's `operations` list and saved guide can lag this explicit
+continuation. Custody and journals remain authoritative. Keep upgrade identities,
+refusals and results in private evidence; do not publish the account-linking values.
+
 ## Actual gas accounting
 
 After resolving each transaction, run `receipt --transaction <hash>` in its

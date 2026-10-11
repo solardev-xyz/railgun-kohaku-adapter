@@ -11,6 +11,7 @@ async function recoveryCommand({
   expectedPayment,
   signal,
   reviews,
+  onDiagnostic,
 }) {
   if (
     ["shield-history", "shield-observe", "shield-resolve"].includes(command)
@@ -68,6 +69,12 @@ async function recoveryCommand({
     } finally {
       lane.close();
       await lane.closed;
+      if (command === "submit-stored" && typeof onDiagnostic === "function") {
+        try {
+          const outcome = lane.readSubmissionOutcome();
+          if (outcome) onDiagnostic(outcome, "submission");
+        } catch { /* A diagnostic cannot change the operation's result. */ }
+      }
     }
   }
   if (command === "poi-status")

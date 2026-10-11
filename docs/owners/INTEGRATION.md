@@ -172,6 +172,22 @@ successful preparation leaves no diagnostic. The first observed refusal is retai
 records are not persisted. These diagnostics cover private preparation, not
 public Shield operations or delivery outcomes.
 
+Submission diagnostics are available separately: after draining a private lane,
+use `session.readSubmissionOutcome(privateLane)`; after draining a recovery lane,
+use `recoveryLane.readSubmissionOutcome()`. They describe only that lane's last
+completed submission and preserve the original result and promise. The frozen
+record contains the existing closed refusal stage/code, optional preflight
+reason and step, and recovered-review/verifier timing when available. A missing
+diagnostic is not evidence of success. No diagnostic grants a retry or send.
+
+Deployment preflight groups only independent public checks at one EIP-1898
+anchor: four code reads, two storage reads, then four getters. Concurrency is at
+most four; the anchor recheck follows successful drainage of all groups. The
+first refusal closes and drains siblings without replacing its stage. Selected
+root/nullifier ordering, the submission's 20-second acquisition cutoff, and all
+evidence ages remain unchanged. This reduces serial latency; it does not promise
+availability over a particular transport.
+
 ### Shield consent and fresh send checks
 
 Shield preparation and transaction review each allow up to 60 seconds. The

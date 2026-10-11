@@ -1,3 +1,4 @@
+const { undoDeploymentConcurrency } = require("./deployment-concurrency-transitions.cjs");
 const { undoShieldReviewLifetime } = require("./shield-review-lifetime-transitions.cjs");
 const { undoPrivatePreflightBudget } = require("./private-preflight-budget-transitions.cjs");
 const { undoPublicReadOutcome } = require("./public-read-outcome-transitions.cjs");
@@ -53,6 +54,7 @@ test("all caller transitions reconstruct exact base bytes without changing any o
   );
   for (const row of transitions.changes) {
     let text = fs.readFileSync(path.join(root, row.file), "utf8");
+    text = undoDeploymentConcurrency(text, row.file);
     text = undoShieldReviewLifetime(text, row.file);
     text = undoPrivatePreflightBudget(text, row.file);
     text = undoPublicReadOutcome(text, row.file);

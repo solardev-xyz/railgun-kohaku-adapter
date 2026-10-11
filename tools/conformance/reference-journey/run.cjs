@@ -30,7 +30,7 @@ const {
 } = require("../../qualification/installed-journey/synthetic-copy-contract.cjs");
 const { createFixtureServer } = require("./server.cjs");
 assert.ok(
-  [undefined, "acknowledged", "retained-unknown", "retained-upgrade", "wide-retained", "preparation-diagnostics", "guided", "guided-timing"].includes(inputs.variant),
+  [undefined, "acknowledged", "retained-unknown", "retained-upgrade", "wide-retained", "preparation-diagnostics", "guided", "guided-timing", "guided-timing-baseline"].includes(inputs.variant),
 );
 const { TRANSACT_ABI } = require("../../../src/data/railgun-private-policy.js");
 const hash = (bytes) => crypto.createHash("sha256").update(bytes).digest("hex");
@@ -70,13 +70,24 @@ const installed = path.join(
 );
 fs.mkdirSync(installed, { recursive: true });
 const previousTar = inputs.variant === "retained-upgrade" ? inputs.previousTar : null;
+const timingBaseline = inputs.variant === "guided-timing-baseline";
+const baselineTar = timingBaseline ? inputs.baselineTar : null;
+const baselineReadDelayMs = inputs.baselineReadDelayMs ?? 1250;
+if (timingBaseline) {
+  assert.ok([0, 1250].includes(baselineReadDelayMs));
+  assert.equal(hash(fs.readFileSync(baselineTar)),
+    "88850501f77e36ca4773167a23a5cff38fc3d2c224d457e70d0e5623fc821b68");
+} else {
+  assert.equal(inputs.baselineTar, undefined);
+  assert.equal(inputs.baselineReadDelayMs, undefined);
+}
 if (previousTar) {
   assert.equal(hash(fs.readFileSync(previousTar)),
     "5cb040aa6c28343d31a1db14db679cf45ef132e48e62f98df1cb1a9e184a5821");
 } else assert.notEqual(inputs.variant, "retained-upgrade");
 execFileSync("tar", [
   "-xzf",
-  previousTar ?? path.join(root, packed.filename),
+  baselineTar ?? previousTar ?? path.join(root, packed.filename),
   "-C",
   installed,
   "--strip-components=1",
@@ -111,7 +122,7 @@ const target = path.join(installed, TARGET),
   after = transformTestList(before);
 fs.writeFileSync(target, after);
 const installation = {
-  tarSha256: hash(fs.readFileSync(path.join(root, packed.filename))),
+  tarSha256: hash(fs.readFileSync(baselineTar ?? path.join(root, packed.filename))),
   files: packed.files.length,
   ...(previousTar ? { initialTarSha256: hash(fs.readFileSync(previousTar)) } : {}),
   transform: { target: TARGET, before: hash(before), after: hash(after) },
@@ -313,7 +324,9 @@ async function main() {
     key: fs.readFileSync(path.join(root, "key.pem")),
     cert: fs.readFileSync(path.join(root, "cert.pem")),
   });
-  if (["guided", "guided-timing"].includes(inputs.variant)) return require("./guided.cjs").runGuided({actor,chain,server,write,installation,timing: inputs.variant === "guided-timing"});
+  if (["guided", "guided-timing", "guided-timing-baseline"].includes(inputs.variant))
+    return require("./guided.cjs").runGuided({actor,chain,server,write,installation,
+      timing: inputs.variant !== "guided", timingBaseline, baselineReadDelayMs});
   const addresses = {};
   for (const name of actors) {
     await actor(name, "account-create");

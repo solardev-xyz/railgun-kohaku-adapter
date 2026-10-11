@@ -153,6 +153,12 @@ async function paymentCommand({
         await adapter.closed;
       }
     } finally {
+      if (privateLane && typeof onDiagnostic === "function") {
+        try {
+          const outcome = session.readSubmissionOutcome(privateLane);
+          if (outcome) onDiagnostic(outcome, "submission");
+        } catch { /* Diagnostics never replace an operation or cleanup error. */ }
+      }
       if (failed && privateLane && typeof onDiagnostic === "function") {
         // Read only after the original adapter drain. A diagnostic sink cannot
         // replace the original refusal, authorize recovery or change cleanup.

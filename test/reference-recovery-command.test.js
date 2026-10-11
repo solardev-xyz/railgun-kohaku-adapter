@@ -217,3 +217,18 @@ test("guided proof recovery never invokes submission", async () => {
   });
   expect(f.lane.submitStored).not.toHaveBeenCalled();
 });
+
+test('submission diagnostic waits for drainage and cannot replace the original result', async () => {
+  const f = fixture('submit-stored');
+  let drain;
+  f.lane.closed = new Promise(resolve => { drain = resolve; });
+  const value = Object.freeze({diagnostic: {stage: 'preflight'}, timing: null});
+  f.lane.readSubmissionOutcome = jest.fn(() => value);
+  f.options.onDiagnostic = jest.fn(() => { throw Error('sink failure'); });
+  const pending = recoveryCommand(f.options);
+  await new Promise(resolve => setImmediate(resolve));
+  expect(f.lane.readSubmissionOutcome).not.toHaveBeenCalled();
+  drain();
+  expect((await pending).outcome.submissionStatus).toBe('unknown');
+  expect(f.options.onDiagnostic).toHaveBeenCalledWith(value, 'submission');
+});
