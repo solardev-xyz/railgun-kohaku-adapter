@@ -1,9 +1,11 @@
 # Technical review guide
 
 This guide describes the adoption work through October 11, 2026. The
-package is experimental and not published to npm. External outreach is planned
-after the [adoption milestones](../ADOPTION-ROADMAP.md); this document is a draft
-review brief, not a claim that those milestones have passed.
+package is experimental and not published to npm. The [adoption milestones](../ADOPTION-ROADMAP.md) now have scoped evidence for the
+experimental direct-Sepolia reference application, including the final native
+candidate and an independent installation walkthrough. This is a review brief,
+not a production-readiness or external-security-audit claim. Check exact-head CI
+before sharing a newer revision; outreach remains the maintainer’s decision.
 
 ## What problem this solves
 
@@ -30,7 +32,9 @@ native platform coverage remains open.
 4. [Independent live Alice-to-Bob evidence](../qualification/reference-alice-bob-live-2026-10-11/README.md),
    [fresh installation and cold account](../qualification/reference-installation-2026-10-11/README.md),
    and the earlier [Freedom Sepolia evidence](../qualification/installed-live-sepolia-journey-0.6.0-2026-10-10/README.md).
-5. [Installation and maintenance](MAINTENANCE.md), then the [adoption roadmap](../ADOPTION-ROADMAP.md) and [provenance](../../NOTICE.md).
+5. [Independent installation walkthrough](../qualification/reference-independent-adopter-2026-10-11/README.md) (d1040d9 install; offline account only).
+6. [Final adoption candidate](../qualification/reference-adoption-readiness-2026-10-11/README.md): installed-host checks, bounded TXID recovery and native diagnostic controls.
+7. [Installation and maintenance](MAINTENANCE.md), then the [adoption roadmap](../ADOPTION-ROADMAP.md) and [provenance](../../NOTICE.md).
 
 ## What the evidence establishes
 
@@ -43,6 +47,7 @@ native platform coverage remains open.
 | Independent reference-host live journey | Separate custody and fresh processes; foreign payment through the root private adapter; Bob’s independent discovery, owned Valid status, same-hold cold recovery and finalized unshield; three receipt/conservation checks | Mainnet, relay privacy, live Charlie control, latest-source qualification or independent security audit |
 | Wider-amount native policy lifecycle | Configured direct ceiling, policy-independent reads, cold refusal under a lower ceiling, same-hold submission after restoration and three-receipt conservation | Wider live amounts, broader proof shapes or relay policy changes |
 | Fresh newer-candidate installation | Isolated locked dependencies, exact packed bytes, verified Electron distribution and actual cold account reopen with zero connections | A second live payment, other platforms or new runtime/artifact acquisition |
+| Final reference adoption candidate | Same tar in fresh locked installation and 75-step native lifecycle; offline cold reopen; closed preparation diagnostics; bounded public TXID recovery and refusal controls | New live qualification, generic read retries, EVM execution, Tor, mainnet or external audit |
 | E8 unsigned macOS packaged initialization | Exact package resolution, paired initialization, loading and zero network attempts during that probe | Packaged wallet operations, ordinary app startup, a signed build, a distributable application or other platforms |
 
 The historical Freedom live journey used earlier package candidates before E8. Historical tar-D and

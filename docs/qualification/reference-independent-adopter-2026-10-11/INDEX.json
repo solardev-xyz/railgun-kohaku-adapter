@@ -44,7 +44,7 @@
     "profileLockRefusedConcurrentOpen": true,
     "reopenedAfterFixtureSigkill": true,
     "offlineAccountAndReopen": true,
-    "zeroNetworkConnections": true
+    "offlineAccountZeroConnections": true
   },
   "fix": {
     "finding": "offline installed-host account test required manual import relocation",

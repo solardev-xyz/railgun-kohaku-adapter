@@ -89,8 +89,10 @@ backward/forward tests and crash evidence.
 
 The reference application preserves scan progress and offers explicit resume
 commands. It does not retry transaction or POI delivery automatically. A public
-read failure closes the affected session; resume with the authenticated cursor,
-within application budgets, after the original work has drained. A failed or
+read failure closes the affected owner. `txid-sync` may continue twice after a
+classified transport failure, ten seconds apart, within the original consent,
+80-call budget and deadline; every call authenticates the stored cursor anew.
+Scan recovery remains an explicit command after the original work has drained. A failed or
 unobservable close remains a stop. Never create another operation just because a
 client response was lost.
 

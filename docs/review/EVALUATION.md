@@ -148,3 +148,14 @@ not run it. [Fresh standalone installation](../qualification/reference-installat
 and the [live two-account journey](../qualification/reference-alice-bob-live-2026-10-11/README.md)
 now have separate scoped records. Reproducing the Node suite does not reproduce
 those native or network results.
+
+## Current adoption candidate
+
+The [October 11 adoption record](../qualification/reference-adoption-readiness-2026-10-11/README.md)
+pins `c2bb5e7`: 318 suites / 13,131 tests passed locally, one suite / four external
+runtime cases explicitly skipped, plus separate installed Electron and native
+journey evidence. The [independent walkthrough](../qualification/reference-independent-adopter-2026-10-11/README.md)
+records the earlier d1040d9 install and the offline installed-host invocation gap
+fixed since then. These are scoped checks, not an external audit. Consult the
+[workflow](https://github.com/solardev-xyz/railgun-kohaku-adapter/actions/workflows/package-checks.yml?query=branch%3Amain)
+for CI on the exact revision being evaluated.

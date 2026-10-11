@@ -1,0 +1,176 @@
+{
+  "schema": "reference-adoption-readiness-v1",
+  "candidate": "c2bb5e7339ddafd78f406518feca1f410c6a846f",
+  "installation": {
+    "package": {
+      "name": "@freedom/railgun-kohaku-adapter",
+      "version": "0.6.0",
+      "sha256": "20c1b037dc2ac8ca6c23f8e791df8030d6c90a2e5f2b34211e0b2371df96e84d",
+      "integrity": "sha512-c9D5ve6HJ03umlT89ZZhHVVDcLSx+73w+qTbCnM3/XcA2uat6OYOjOLskUQDcxkw4g1ZxCL5JeTjobeRrSaf1g==",
+      "files": 301
+    },
+    "hostSourceSha256": "a8f39b20d5036bfe3c11f731fffe261fdf94e3a3852510ac7ac31345568a0d31",
+    "cacheDigests": {
+      "public": "8dccbfe892f4d3251aab79233187007a00cdff32ca347be6b7f0742191f985b1",
+      "wallet": "c70d9abd30040ec5f3e9c0c779549c1527087a3112f01fab1a6ffbcab6fb2ec1",
+      "txid": "ce2a0458a4d8aa019681423101c82e7765fbc8f077ed08ec7efa20e379299d88"
+    },
+    "dependencies": {
+      "electron": "44.7.0",
+      "ethers": "6.17.0",
+      "better-sqlite3": "13.0.3"
+    },
+    "electronDistribution": {
+      "sha256": "9f00baca916352af000105ced63bdb49f4c242f42cc45ddf5c61198beea40af7",
+      "entries": 273
+    },
+    "electronZip": {
+      "name": "electron-v44.7.0-darwin-arm64.zip",
+      "expectedSha256": "e04e411b58a0a14375dd21b0ab4a378fd38930a702e4e20e322fee4849404c0b",
+      "measuredSha256": "e04e411b58a0a14375dd21b0ab4a378fd38930a702e4e20e322fee4849404c0b"
+    },
+    "committedManifestSha256": "d3c6ed077aecabb7714348c4dfe26a805932f299613c7f2e7f4d289ad51c3b61",
+    "committedLockSha256": "0f530d0687d9a5f0ade180d6441656d9339941fa5d26158b80a02bfda3d4f2ad"
+  },
+  "offlineInstalledAccount": {
+    "passed": true,
+    "coldReopen": true,
+    "sameIdentity": true,
+    "connections": 0,
+    "hostScope": "installed"
+  },
+  "native": {
+    "result": "passed",
+    "variant": "preparation-diagnostics",
+    "installation": {
+      "tarSha256": "20c1b037dc2ac8ca6c23f8e791df8030d6c90a2e5f2b34211e0b2371df96e84d",
+      "files": 301,
+      "transform": {
+        "target": "src/data/railgun-poi-records.js",
+        "before": "c4511c0ea185835c67bbbc8b8ba74bec6271e4b3a457a2b6a1576b42593fd1ac",
+        "after": "16a8e5e15621d2da51568319717a43ca51e3517beb59441e44931539d47b45ab"
+      },
+      "scope": "synthetic list only; no production package mutation"
+    },
+    "independentActors": 3,
+    "chainTransactions": 3,
+    "broadcastRequests": 3,
+    "conservation": true,
+    "poiVerification": {
+      "key": "b7ca7ba048666fb0e17efd0af1e407a8dcb0906bfaf2f20e362ed40cbec6f4d8",
+      "circuits": [
+        "3x3"
+      ],
+      "verified": 1,
+      "rejected": 0,
+      "failed": 0,
+      "invalidProofs": 0,
+      "verifierFailures": 0
+    },
+    "limits": [
+      "synthetic chain and list; no EVM execution",
+      "real current-circuit POI verification",
+      "loopback SOCKS/TLS, not Tor",
+      "fresh processes and random independent vaults",
+      "installed package with recorded test-list transform"
+    ],
+    "resultSha256": "aa571f80b23815bbe5bb219e5c4d53b8b201cfd61d8c618df5cd4357600fcd4d",
+    "recipe": [
+      {
+        "file": "tools/conformance/reference-journey/run.cjs",
+        "sha256": "9e4b16279ff0ab1fb10adf51ae8286da88d2c6030c446eaf815998d642d03eb8"
+      },
+      {
+        "file": "tools/conformance/reference-journey/actor.cjs",
+        "sha256": "ca51847c556b6a2d6c9c89318e195d478ca1c7637d86605a374e328d6a0db23c"
+      },
+      {
+        "file": "tools/conformance/reference-journey/server.cjs",
+        "sha256": "48791700db6799ff4ae6315b4cce47943cbc9d254aabf9989d035739ed81e432"
+      }
+    ],
+    "runtime": {
+      "archiveSha256": "019f10880abf1c448aee02ec77c5c2d68c3561c7b4eef02095d66bb5fecd6a7a",
+      "proverArchiveSha256": "dd50a29f297867b3bf91cb425066e1d257ea02230a94b02e4cf34c5c70a0c7ab"
+    },
+    "txidRecovery": {
+      "wireMethod": "ppoi_validated_txid",
+      "sameCommand": true,
+      "failedCallCharged": true,
+      "events": [
+        {
+          "status": "txid-recovering",
+          "calls": 1,
+          "recovery": 1
+        }
+      ],
+      "callsIncludingFailure": 2,
+      "controlCalls": 1,
+      "authenticatedStateEqualsControl": true,
+      "negativeControls": [
+        {
+          "fixture": "32-alice-txid-sync",
+          "code": "RAILGUN_PUBLIC_SERVICE_REFUSED",
+          "publicStatusCalls": 1,
+          "recoveryEvents": 0
+        },
+        {
+          "fixture": "33-alice-txid-sync",
+          "code": "RAILGUN_PUBLIC_SERVICE_REFUSED",
+          "publicStatusCalls": 1,
+          "recoveryEvents": 0
+        }
+      ]
+    },
+    "preparationDiagnostics": {
+      "declined": {
+        "schema": "railgun-private-preparation-outcome-v1",
+        "operation": "railgun-token-unshield",
+        "phase": "review",
+        "stage": "declined",
+        "proofStatus": null,
+        "originalAccountReusable": null,
+        "recoveryRequired": false,
+        "elapsedBucket": "lt30s"
+      },
+      "unavailable": {
+        "schema": "railgun-private-preparation-outcome-v1",
+        "operation": "railgun-token-unshield",
+        "phase": "staging",
+        "stage": "txid",
+        "proofStatus": null,
+        "originalAccountReusable": false,
+        "recoveryRequired": false,
+        "elapsedBucket": "lt30s"
+      },
+      "broadcastsBeforeSuccessfulUnshield": 2
+    }
+  },
+  "verification": {
+    "fullLocalSuite": {
+      "passedSuites": 318,
+      "passedTests": 13131,
+      "skippedSuites": 1,
+      "skippedExternalRuntimeTests": 4
+    },
+    "lint": true,
+    "rootTypes": true,
+    "ownerTypes": true,
+    "ownerNegativeTypeControls": 68,
+    "sourceInventoryFiles": 268,
+    "mutationControls": [
+      "root-carry",
+      "recovery-backstop",
+      "eligibility"
+    ]
+  },
+  "notClaimed": [
+    "latest-source live journey",
+    "Tor or circuit isolation from loopback fixture",
+    "EVM execution from synthetic receipts",
+    "mainnet",
+    "other native platforms",
+    "external security audit",
+    "release or npm publication"
+  ]
+}

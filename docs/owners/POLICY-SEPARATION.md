@@ -33,8 +33,10 @@ avoid a rebuild would weaken the existing guarantee.
 Availability is separate from delivery authority. A bounded retry of an
 idempotent public read may be appropriate, with a fresh destination/lifetime
 check and an aggregate deadline. A proof submission, signing operation or
-transaction broadcast cannot inherit that retry rule. The CLI currently makes
-no automatic retry after either a read failure or an uncertain send.
+transaction broadcast cannot inherit that retry rule. The CLI permits at most two classified public TXID read recovery continuations
+under its original consent, deadline and 80-call budget, after each failed owner
+has drained. Scan, POI, proof, signing and broadcast remain explicit; an uncertain
+send never inherits this rule.
 
 The amount-bound foundation distinguishes the immutable historical operation
 limit, the uint120 note representation, and the separately fixed relay fee/input

@@ -4,7 +4,8 @@ A separate reviewer followed the published installer and vault commands from a
 fresh checkout at `d1040d9`, with isolated caches and physical locked dependencies.
 The installer, interactive vault initialization, cold funding-address stability,
 concurrent profile-lock refusal and reopening after a fixture process was killed
-passed. This is an independent implementation review, not an external audit or
+passed. The reviewer agent answered the interactive prompts through a
+pseudo-terminal, one answer per prompt. This is an independent implementation review, not an external audit or
 another organization adopting the package.
 
 The review found one operational gap: the offline account fixture imported the

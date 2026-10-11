@@ -150,7 +150,7 @@ maintenance/release guidance and clean-checkout CI configuration are present.
 The standalone dependency manifest is approved and implemented. Its installer
 checks a clean source commit, exact packed bytes, physical locked dependencies
 and an isolated Electron acquisition. The [clean-commit installation](qualification/reference-installation-2026-10-10/README.md) passed on macOS arm64, including full Electron distribution identity and cold account reopens. Fresh engine/prover dependencies, build tools and all 18 circuit artifacts reproduce their existing pins. The [independent live Alice-to-Bob journey](qualification/reference-alice-bob-live-2026-10-11/README.md) is complete: separate custody, root-adapter private payment, owned Valid status and finalized cold Bob unshield, with three receipts and conservation checks. The run used the recorded D/I installations, not the latest source candidate. The [newer installation](qualification/reference-installation-2026-10-11/README.md) separately passed fresh locked setup and an offline cold-account reopen.
-Still required before outreach: final independent review of the current evidence and documented installation, plus exact pushed-head CI for the current candidate. Clean
+The [independent installation walkthrough](qualification/reference-independent-adopter-2026-10-11/README.md) is complete on its pinned d1040d9 installation; its offline installed-host invocation gap is fixed. The [final native adoption candidate](qualification/reference-adoption-readiness-2026-10-11/README.md) passed all 75 steps on the same tar as its clean installation. Check [pushed-head CI](https://github.com/solardev-xyz/railgun-kohaku-adapter/actions/workflows/package-checks.yml?query=branch%3Amain) for the exact revision being shared; an older green run does not qualify a successor. Clean
 Linux/macOS Node CI, including the approved lint and root typecheck gates, passed
 at `b27a25b` ([run 38079408586](https://github.com/solardev-xyz/railgun-kohaku-adapter/actions/runs/38079408586)).
 The deployment foundation and separate owner typecheck gate also passed on
@@ -169,27 +169,32 @@ readers, with genuine old-reader downgrade checks. Direct operation-policy integ
 and checks gross Shield/full selected input at preparation and warm/cold signing
 admission. The default remains the historical ceiling; structural reads are
 policy-independent and wider formats retain old-reader refusal. The [native wider-amount lifecycle](qualification/reference-wide-policy-2026-10-11/README.md) passed with three independent fixture accounts, policy lowering and restored same-hold submission; no wide-amount live claim follows. Operation shapes and relay policy remain
-separately bounded. Availability recovery is explicit resume,
-not a general idempotent-read retry engine. Experimental versioning and a platform
+separately bounded. Availability recovery remains explicit for scans; the public TXID command now
+permits two classified transport recovery continuations under its original
+consent, deadline and 80-call budget. It is not a general retry engine. Experimental versioning and a platform
 matrix are documented, private vulnerability reporting is enabled, and a tagged
 release's version/notes still require its concrete release decision. Authentic
 relay handoff/privacy and additional platforms remain open qualification targets;
 the planned direct-submission demonstration cannot close them. No mainnet or
 production-activation claim follows from any of these checks.
 
-## Next bounded adoption work
+## Adoption closeout checks
 
 The direct live reference milestone is complete on its recorded installations.
-The remaining pre-outreach engineering focus is operational usability:
+Closed private preparation diagnostics have landed. Public TXID-only recovery
+is implemented and reviewed; scans remain explicit, and private operations do
+not use that recovery loop. The independent reviewer completed the installation
+and cold-account walkthrough, and its documented invocation gap is fixed.
 
-1. Expose closed preparation-stage diagnostics to the owning application without
-   changing exact root-adapter host keys, sanitized errors or authority. Keep
-   messages, wallet identifiers and service payloads out of those records.
-2. Qualify bounded recovery of non-disclosing public scan/TXID reads within
-   existing lifetimes and budgets. POI membership/status, handoffs, signing and
-   broadcasts retain explicit authority and are excluded from automatic retries.
-3. Have a reviewer follow the documented installation and cold-account path on
-   the identified candidate, then close any adoption friction and record final CI.
+The [c2bb5e7 candidate record](qualification/reference-adoption-readiness-2026-10-11/README.md) closes the native regression, fresh locked installation and documented
+installed-host cold-account checks. The full local suite passed 318 suites and
+13,131 tests; four external-runtime cases remain explicitly skipped. Its tar is
+`20c1b037…`, and these checks do not confer new live qualification.
+
+The local engineering and separate reviewer checks for experimental direct-Sepolia
+outreach are complete. Before sharing, require green CI on the exact pushed
+revision using the workflow linked above. External feedback, release/publication
+and renewed Freedom product work remain separate decisions.
 
 Authentic relay transport, wider native platforms, mainnet, broader operation
 shapes and external security review remain separate goals. They are not implied
