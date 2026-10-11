@@ -36,7 +36,9 @@ operation, without another preparation. It never infers permission from a
 transport timeout. The final run passed through Bob’s cold same-hold unshield, owned-note spending checks and receipt accounting: exactly three synthetic transactions and three broadcast requests. Charlie discovered no owned note. The [index](INDEX.json) binds the results and identities.
 
 The complete unit inventory was run in bounded batches: 322 suites passed,
-one external-runtime suite skipped, 13,229 tests passed and four tests skipped.
+13,229 tests passed and four tests skipped. Jest reports one mixed suite as
+skipped; its executed assertions passed and its external-runtime assertions
+remain pending.
 Three loopback suites initially failed because the sandbox denied listeners;
 all passed with that permission. Two mutation-test source anchors were updated
 to remove the same check from its new location; both controls and provenance
@@ -46,9 +48,10 @@ report. Its cause is unestablished; it is not counted as a pass. The repository'
 Jest worker-recycling setting is unchanged; in-band invocations do not use it.
 
 Lint, root and owner typechecks and packed-source accounting passed. The
-independent AI review found no code blocker, while noting that private acquisition
+separate AI reviewer (Claude) found no code blocker, while noting that private acquisition
 plus signer startup must still fit the evidence-age gate. This is an availability
-limit, not a claim that arbitrary Tor delays now fit.
+limit, not a claim that arbitrary Tor delays now fit. This review is not an
+external security audit.
 
 A clean installation from the committed source used isolated npm/Electron caches
 and locked dependencies. The documented installed-host account/create and cold
