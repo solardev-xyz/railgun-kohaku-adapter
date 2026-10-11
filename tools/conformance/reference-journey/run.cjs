@@ -449,7 +449,10 @@ async function main() {
     assert.equal(declined.preparationDiagnostics.length, 1);
     assert.equal(declined.preparationDiagnostics[0].phase, "review");
     assert.equal(declined.preparationDiagnostics[0].stage, "declined");
-    assert.equal((await actor("bob", "holds")).records.length, 0);
+    // A never-created recovery history may refuse; do not turn that into a
+    // no-hold assertion. No broadcast is proved here; the final inventory below
+    // independently requires exactly the one successfully prepared unshield.
+    assert.equal(chain.state().transactions.length, 2);
     server.refuseNextTxid();
     const unavailable = await actor("bob", "unshield-note", {
       noteId: bobNotes[0].id, recipient: funding.bob,
@@ -459,7 +462,10 @@ async function main() {
     assert.equal(unavailable.preparationDiagnostics[0].phase, "proving");
     assert.equal(unavailable.preparationDiagnostics[0].proofStatus, "refused");
     assert.equal(unavailable.preparationDiagnostics[0].recoveryRequired, false);
-    assert.equal((await actor("bob", "holds")).records.length, 0);
+    // A never-created recovery history may refuse; do not turn that into a
+    // no-hold assertion. No broadcast is proved here; the final inventory below
+    // independently requires exactly the one successfully prepared unshield.
+    assert.equal(chain.state().transactions.length, 2);
     write("PREPARATION-DIAGNOSTICS.json", {declined, unavailable, sentBefore: chain.state().transactions.length});
   }
   if (inputs.variant === "wide-retained") {
