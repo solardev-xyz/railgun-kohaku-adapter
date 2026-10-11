@@ -1,0 +1,194 @@
+{
+  "schema": "reference-cold-submission-qualification-v1",
+  "sourceCommit": "b3af30475573b66518a88cd8c680b6653184e643",
+  "package": {
+    "name": "@freedom/railgun-kohaku-adapter",
+    "version": "0.6.0",
+    "sha256": "d78caeeacbb885de9231ec8209fd92ece10536e40a48bdb5ce7f40504350d4f5",
+    "integrity": "sha512-eLSaeRGfTX17NAAD0sioP2ENKzW12xGEXBNe1CbR4OYw1FVriQ+AmxN3mttoUNz3zbjVEuKKff5OnCs06hYzRg==",
+    "files": 304
+  },
+  "runtime": {
+    "recordSha256": "e06195662c2a9405092c2fbffbe6bc6fb92cb6670495abec36af3e786afe771d",
+    "archives": {
+      "engine": {
+        "name": "railgun-engine.asar",
+        "size": 81790332,
+        "sha256": "019f10880abf1c448aee02ec77c5c2d68c3561c7b4eef02095d66bb5fecd6a7a"
+      },
+      "prover": {
+        "name": "railgun-prover.asar",
+        "size": 1613882,
+        "sha256": "dd50a29f297867b3bf91cb425066e1d257ea02230a94b02e4cf34c5c70a0c7ab"
+      }
+    },
+    "scope": "previously reproduced pinned public runtime inputs"
+  },
+  "installation": {
+    "recordSha256": "281686bdf961524d8640136c8420358683e076d8d88df9c4eb21fb30eee0b247",
+    "hostSourceSha256": "07d8f6a5df124421f0a3f66789eba250a8e78be653ca503aa74c19eecf9a75a2",
+    "electron": "v44.7.0",
+    "electronDistribution": {
+      "sha256": "9f00baca916352af000105ced63bdb49f4c242f42cc45ddf5c61198beea40af7",
+      "entries": 273
+    },
+    "platform": "darwin",
+    "arch": "arm64",
+    "accountCreateSha256": "e5e2e6f45c1c7293e8af7f02d81f9c98960f5939b2ce8d202dcf4cb170575831",
+    "coldReopenSha256": "bd37961fb93685763d4fee9be87c40b989a08e36cd2a4a103e774dbf71b5f118",
+    "sameAccount": true,
+    "connections": 0,
+    "nativeHostDifference": {
+      "files": [
+        "package-lock.json",
+        "package.json"
+      ],
+      "reason": "npm-generated installed dependency manifests; all other inventoried host bytes equal the native fixture"
+    }
+  },
+  "native": {
+    "resultSha256": "1abd921f2e11eafd8b8db472650ac0f127b20a8d6de94106d7c18398a25827f8",
+    "stepsSha256": "bc4bf1b1ece92982f323f2a8f1eb89f51ad60c1fea6940c0456cca02cc3f5799",
+    "hostSourceSha256": "ae53ea4c834bb80f57c38b27cf0bb0b9f7b45474bf4c10dbfd039a3a31ef952e",
+    "steps": 179,
+    "passed": true,
+    "variant": "guided-timing",
+    "timing": {
+      "publicReadDelayMs": 1250,
+      "shieldHumanReviewDelayMs": 45000,
+      "delayedSteps": [
+        "shield",
+        "payment",
+        "payment-submit"
+      ],
+      "signingTail": "real encrypted custody and signer; unchanged evidence ages"
+    },
+    "installation": {
+      "tarSha256": "d78caeeacbb885de9231ec8209fd92ece10536e40a48bdb5ce7f40504350d4f5",
+      "files": 304,
+      "transform": {
+        "target": "src/data/railgun-poi-records.js",
+        "before": "c4511c0ea185835c67bbbc8b8ba74bec6271e4b3a457a2b6a1576b42593fd1ac",
+        "after": "16a8e5e15621d2da51568319717a43ca51e3517beb59441e44931539d47b45ab"
+      },
+      "scope": "synthetic list only; no production package mutation"
+    },
+    "transactions": 3,
+    "broadcastRequests": 3,
+    "independentActors": 3,
+    "peakConcurrentRequests": 5,
+    "poiVerification": {
+      "key": "b7ca7ba048666fb0e17efd0af1e407a8dcb0906bfaf2f20e362ed40cbec6f4d8",
+      "circuits": [
+        "3x3"
+      ],
+      "verified": 1,
+      "rejected": 0,
+      "failed": 0,
+      "invalidProofs": 0,
+      "verifierFailures": 0
+    },
+    "interruptions": {
+      "pausedScan": true,
+      "lostWalletResult": true,
+      "declinedShield": true,
+      "lostShieldResult": true,
+      "retainedPayment": true,
+      "unknownDelivery": true,
+      "lostPoiResult": true,
+      "stagingRefusal": true,
+      "retainedBobPayment": true
+    },
+    "scope": "synthetic chain/list over loopback SOCKS/TLS; genuine installed guide, owners, encrypted custody and current-circuit proof verification; no live claim",
+    "coldSubmissions": [
+      {
+        "actor": "alice",
+        "reportSha256": "959f97d5809f885af667abe0e59d6b83415959d5398801448fae62bb3c47079a",
+        "broadcasts": 1,
+        "elapsedMs": 57711,
+        "capturedTiming": {
+          "reviewWindowMs": 27505,
+          "verifierMs": 158
+        },
+        "closedRefusalDiagnostic": null
+      },
+      {
+        "actor": "bob",
+        "reportSha256": "427f6d94c255411c1d17c77e7348b631e25cc54519b2e45646df04ad1b398039",
+        "broadcasts": 1,
+        "elapsedMs": 62486,
+        "capturedTiming": {
+          "reviewWindowMs": 24715,
+          "verifierMs": 150
+        },
+        "closedRefusalDiagnostic": null
+      }
+    ]
+  },
+  "unit": {
+    "reportSha256": "15ae9aab7099e47920af14c0a601fe45a7de4807d8ee5f8d7e4fac337983ef64",
+    "passedSuites": 325,
+    "partiallySkippedSuites": 1,
+    "passedTests": 13275,
+    "skippedTests": 4,
+    "failedTests": 0
+  },
+  "checks": {
+    "lint": true,
+    "rootTypecheck": true,
+    "ownerTypecheck": true,
+    "packedSourceFiles": 271,
+    "mutations": [
+      {
+        "mutation": "exit-check",
+        "testRefused": true
+      },
+      {
+        "mutation": "logical-revocation",
+        "testRefused": true
+      },
+      {
+        "mutation": "writer-admission",
+        "testRefused": true
+      },
+      {
+        "mutation": "accessor-cache",
+        "testRefused": true
+      }
+    ]
+  },
+  "controls": {
+    "previousTarSha256": "88850501f77e36ca4773167a23a5cff38fc3d2c224d457e70d0e5623fc821b68",
+    "delayedCold": {
+      "readDelayMs": 1250,
+      "resultSha256": "47543541ec6775abba21629b4b787f9c2d1b44bd1e336a38edfeca77593bb26f",
+      "broadcasts": 0,
+      "refusal": "preflight"
+    },
+    "zeroDelayCold": {
+      "commandResultSha256": "4aa3e0c35b9b7267b0c7c3e9cd279888e1fce89b673b650d649404a57ce09e5f",
+      "harnessFailureSha256": "dbf10c7eb940f4205ffb81650d386f0126eee24c8dbc87a696add860a7646ce7",
+      "broadcasts": 1,
+      "wholeHarnessPassed": false,
+      "reason": "obsolete assertion expected a status field instead of hash; corrected in successor harness"
+    }
+  },
+  "failedSuccessors": [
+    {
+      "stage": "after deployment grouping",
+      "failureSha256": "a1fe4ea2a04ef1750412f3baf244abbe90b2e5bc41e065808e3d376013f0e342",
+      "coldResultSha256": "a3cacd68bbeabc24e37a7da2a85a8675a77dbf93bddda1563fc5843364f1442b"
+    },
+    {
+      "stage": "after submission read grouping",
+      "failureSha256": "06970c915e50d72737761c587c95f7ccb20df6bf2f0d1d49135cc4132d4e6842",
+      "coldResultSha256": "3892131be6a634d44141d11206ff3e70572c6a72222084d2add74a65d2c382ec",
+      "refusal": "review-floor"
+    }
+  ],
+  "review": {
+    "kind": "separate AI review, not external security audit",
+    "blockers": 0
+  },
+  "liveQualification": false
+}

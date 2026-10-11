@@ -230,8 +230,10 @@ The next agreed milestone makes the example operable through saved instructions:
    fence checks within each synchronous context read, preserves full checks at
    writer admission, and memoizes only immutable profile data. Its stronger
    installed native run passed all 179 steps, including both delayed cold
-   submissions, and the full suite passed 13,275 tests. A clean installation
-   and exact-head CI must finish before further live qualification. Success requires an entire lifecycle and
+   submissions, and the full suite passed 13,275 tests. The
+   [cold-submission qualification](qualification/reference-cold-submission-2026-10-11/README.md)
+   binds the identical clean-install tar and zero-network cold reopen. Exact-head
+   CI must finish before further live qualification. Success requires an entire lifecycle and
    actual receipt/conservation checks without a mid-run code fix or manual
    substitution for a guide step. A supported explicit continuation is allowed;
    changing implementation makes it an interrupted development run.
