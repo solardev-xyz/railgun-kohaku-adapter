@@ -213,8 +213,11 @@ The next agreed milestone makes the example operable through saved instructions:
    CLI live run.
 2. **Fresh frozen-version live Alice-to-Bob run:** the first guided attempt is
    interrupted after a finalized Shield and three preflight refusals, with no
-   private payment sent. Its state is preserved; a timing/diagnostic successor
-   is in qualification. Success requires a fresh entire lifecycle and
+   private payment sent. Its state is preserved. The
+   [timing/diagnostic successor](qualification/reference-review-lifetimes-2026-10-11/README.md)
+   passed a delayed installed lifecycle, same-held-operation recovery, clean
+   installation, cold reopen and Linux/macOS CI. A fresh guided live run is
+   the next gate. Success requires an entire lifecycle and
    actual receipt/conservation checks without a mid-run code fix or manual
    substitution for a guide step. A supported explicit continuation is allowed;
    changing implementation makes it an interrupted development run.

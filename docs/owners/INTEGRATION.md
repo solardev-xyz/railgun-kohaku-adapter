@@ -183,9 +183,11 @@ chain evidence still lasts at most 60 seconds. Construction shares a separate
 
 The reviewed transaction is immutable. After approval, the owner obtains fresh
 deployment evidence and rechecks submission readiness, code, latest and pending
-nonce, balance, gas estimate and simulation. A changed nonce, fee requirement,
-balance or transaction binding refuses; no revised transaction is silently
-signed under the earlier approval. The owner then admits only the exact reviewed
+nonce, balance, gas estimate and simulation. A changed nonce, insufficient
+balance, estimate above the reviewed gas limit, failed simulation or changed
+transaction binding refuses. The reviewed fee is retained; it is not replaced
+by a new market quote. No revised transaction is silently signed under the
+earlier approval. The owner then admits only the exact reviewed
 unsigned bytes and one signer invocation.
 
 This requires the updated [host submission protocol](HOST-PORTS.md#shield-review-protocol).

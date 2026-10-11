@@ -1,0 +1,119 @@
+{
+  "schema": "reference-review-lifetimes-qualification-v1",
+  "sourceCommit": "ec9029956e91d4d9267142dd7aa3c4197755013d",
+  "qualificationCommit": "8b60ea453ab1c2a377b4b3ff90a9abd021c65f22",
+  "package": {
+    "name": "@freedom/railgun-kohaku-adapter",
+    "version": "0.6.0",
+    "sha256": "88850501f77e36ca4773167a23a5cff38fc3d2c224d457e70d0e5623fc821b68",
+    "integrity": "sha512-UhYnW55JAFnsWr9OpiTkItCkJZUFg+j7SDIEk7sbeTm+gFECKEeAWHG876M/hct/uIzalqn1SkCiGUSew7r28A==",
+    "files": 303
+  },
+  "runtime": {
+    "recordSha256": "e06195662c2a9405092c2fbffbe6bc6fb92cb6670495abec36af3e786afe771d",
+    "archives": {
+      "engine": {
+        "name": "railgun-engine.asar",
+        "size": 81790332,
+        "sha256": "019f10880abf1c448aee02ec77c5c2d68c3561c7b4eef02095d66bb5fecd6a7a"
+      },
+      "prover": {
+        "name": "railgun-prover.asar",
+        "size": 1613882,
+        "sha256": "dd50a29f297867b3bf91cb425066e1d257ea02230a94b02e4cf34c5c70a0c7ab"
+      }
+    },
+    "scope": "previously reproduced pinned public runtime inputs"
+  },
+  "installation": {
+    "recordSha256": "5c88711762a5a4e40a5c9bbe2fc2e22d039e8c993dadf3bdc5971d4ccd0959d5",
+    "hostSourceSha256": "f1f16706f496d760712755cf79d0f732aa16673aa88472e11cbdc02b2686a8e9",
+    "electron": "v44.7.0",
+    "electronDistribution": {
+      "sha256": "9f00baca916352af000105ced63bdb49f4c242f42cc45ddf5c61198beea40af7",
+      "entries": 273
+    },
+    "platform": "darwin",
+    "arch": "arm64",
+    "accountCreateSha256": "b2e57bf8ea2cf8bafa6040d1919919309b0cf65d20f05c4e85ce411b2135c8ea",
+    "coldReopenSha256": "40d5b26aacb2fcba64e10494f92c8f148f0b5512a754987f65c5f60d193c245e",
+    "sameAccount": true,
+    "connections": 0
+  },
+  "native": {
+    "resultSha256": "1af9869a2f4d22efaf0ebd81ab48af65edf17acde4098ad7a068f9b727d6de08",
+    "stepsSha256": "95c89fb9fc2ee765b638c9d14ec6b1f0597f403aef0cd23e446ab2392ca1a864",
+    "variant": "guided-timing",
+    "installation": {
+      "tarSha256": "88850501f77e36ca4773167a23a5cff38fc3d2c224d457e70d0e5623fc821b68",
+      "files": 303,
+      "transform": {
+        "target": "src/data/railgun-poi-records.js",
+        "before": "c4511c0ea185835c67bbbc8b8ba74bec6271e4b3a457a2b6a1576b42593fd1ac",
+        "after": "16a8e5e15621d2da51568319717a43ca51e3517beb59441e44931539d47b45ab"
+      },
+      "scope": "synthetic list only; no production package mutation"
+    },
+    "transactions": 3,
+    "broadcastRequests": 3,
+    "independentActors": 3,
+    "timing": {
+      "publicReadDelayMs": 1250,
+      "shieldHumanReviewDelayMs": 45000,
+      "delayedSteps": [
+        "shield",
+        "payment"
+      ],
+      "signingTail": "real encrypted custody and signer; unchanged evidence ages"
+    },
+    "interruptions": {
+      "pausedScan": true,
+      "lostWalletResult": true,
+      "declinedShield": true,
+      "lostShieldResult": true,
+      "retainedPayment": true,
+      "unknownDelivery": true,
+      "lostPoiResult": true,
+      "stagingRefusal": true,
+      "warmPreflightRecovery": true
+    },
+    "poiVerification": {
+      "key": "b7ca7ba048666fb0e17efd0af1e407a8dcb0906bfaf2f20e362ed40cbec6f4d8",
+      "circuits": [
+        "3x3"
+      ],
+      "verified": 1,
+      "rejected": 0,
+      "failed": 0,
+      "invalidProofs": 0,
+      "verifierFailures": 0
+    }
+  },
+  "unit": {
+    "inventorySuites": 323,
+    "passedSuites": 322,
+    "skippedSuites": 1,
+    "passedTests": 13229,
+    "skippedTests": 4,
+    "failedTests": 0,
+    "reconciledResultSha256": "aecc6929e1dc483f0c754354fc953ea6ba9eb69c981a090fd43660c2d84352e1",
+    "method": "complete inventory in batches plus affected-suite reruns; no duplicate counting"
+  },
+  "review": {
+    "sha256": "5b5ac5da9e85cf3015a5ad3cee66c96c878ef7d18cb2716a5415086d77ba55ce",
+    "result": "no code blocker; private acquisition plus signer startup remains bounded by evidence age"
+  },
+  "ci": {
+    "head": "8b60ea453ab1c2a377b4b3ff90a9abd021c65f22",
+    "result": "success",
+    "url": "https://github.com/solardev-xyz/railgun-kohaku-adapter/actions/runs/38139560335"
+  },
+  "limits": [
+    "Synthetic chain, list and finality; no EVM or Tor reliability evidence.",
+    "Real current-circuit POI verification; installed host with recorded test-list transform.",
+    "Explicit fixture consent is automation only; no independent human walkthrough.",
+    "No funded profile opened by these checks.",
+    "The earlier frozen guided live attempt is interrupted and preserved.",
+    "A fresh frozen guided live journey and human walkthrough remain outstanding."
+  ]
+}
