@@ -223,6 +223,15 @@ async function actor(name, command, extra = {}) {
       assert.deepEqual(result.result.outcome, extra.expectedOutcome);
       result.expectedRefusal = true;
     }
+    if (extra.expectedWarmPreflightRecovery) {
+      assert.equal(command, "journey-next");
+      assert.equal(result.result.step, "hold-find");
+      assert.equal(result.result.result.status, "submission-outcome");
+      assert.deepEqual(result.result.result.outcome, {
+        status: "recovery-required", stage: "preflight",
+      });
+      assert.equal(extra.expectedSends, 0);
+    }
     const expectedSends = extra.expectedSends ?? (
       !extra.expectedOutcome &&
       ["shield", "pay-note", "unshield-note", "submit-stored"].includes(command)

@@ -7,12 +7,12 @@ async function runGuided({ actor, chain, server, write, installation, timing = f
   let bobAddress, transferHash;
   async function next(name, extra = {}) {
     const before = await actor(name, "journey-status");
-    const expectedSends =
+    const expectedSends = extra.expectedSends ?? (
       ["shield", "payment", "payment-submit"].includes(before.step) &&
       !before.interrupted &&
       !extra.fixtureCrash
         ? 1
-        : 0;
+        : 0);
     const delayed = timing && ['shield', 'payment'].includes(before.step);
     server.setReadDelay(delayed ? 1250 : 0);
     let result;
@@ -105,7 +105,7 @@ async function runGuided({ actor, chain, server, write, installation, timing = f
   assert.equal(chain.state().transactions.length, 2);
   // Bob discovers the transaction with his own scan and credentials in subsequent
   // cold processes. Nothing is copied from Alice's store.
-  let stagingRefused = false;
+  let stagingRefused = false, warmPreflightRecovered = false;
   for (let i = 0; i < 40; i++) {
     const status = await actor("bob", "journey-status");
     if (status.step === "complete") break;
@@ -132,11 +132,23 @@ async function runGuided({ actor, chain, server, write, installation, timing = f
       traces.bob.push({ historyUnavailable: true });
       continue;
     }
+    if (timing && status.step === "payment" && stagingRefused) {
+      // The delayed warm submission exhausts its own preflight budget after
+      // preparation. Demand the exact recovery result and zero broadcasts;
+      // the real guide must find and later submit that same retained hold.
+      await next("bob", { expectedSends: 0, expectedWarmPreflightRecovery: true });
+      warmPreflightRecovered = true;
+      continue;
+    }
     await next("bob");
   }
   assert.equal((await actor("bob", "journey-status")).step, "complete");
   assert.ok(traces.bob.some(t => t.historyUnavailable));
   assert.equal(traces.bob.filter(t => t.before === "payment").length, 2);
+  if (timing) {
+    assert.ok(warmPreflightRecovered);
+    assert.equal(traces.bob.filter(t => t.before === "payment-submit").length, 1);
+  }
   for (const name of ["alice", "bob"])
     assert.equal(
       (await actor(name, "notes")).notes.filter((n) => n.spentTxid === false)
@@ -175,6 +187,7 @@ async function runGuided({ actor, chain, server, write, installation, timing = f
       unknownDelivery: true,
       lostPoiResult: true,
       stagingRefusal: stagingRefused,
+      ...(timing ? { warmPreflightRecovery: warmPreflightRecovered } : {}),
     },
     scope:
       "synthetic chain/list over loopback SOCKS/TLS; genuine installed guide, owners, encrypted custody and current-circuit proof verification; no live claim",
