@@ -105,7 +105,8 @@ node tools/conformance/reference-journey/run.cjs /absolute/path/to/public-fixtur
 The second command requires authenticated `electron`, `runtime` (`archive`,
 `proverArchive`, `artifactDirectory`), `engineModules`, `serialProver` and
 `publicSource` paths in its input JSON. Set `variant` to `retained-unknown` for
-the prepared-operation crash/uncertain-send case. The runtime/prover builders
+the prepared-operation crash/uncertain-send case, or `wide-retained` for the
+[larger-amount policy and cold-custody case](../qualification/reference-wide-policy-2026-10-11/README.md). The runtime/prover builders
 and [qualification record](../qualification/reference-alice-bob-synthetic-2026-10-10/README.md)
 identify those inputs and their limits. The runner creates new marked temporary
 profiles and uses only loopback synthetic services; it does not accept an existing

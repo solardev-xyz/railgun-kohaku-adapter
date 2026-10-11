@@ -1,0 +1,118 @@
+{
+  "schema": "reference-wide-operation-native-v1",
+  "scope": "fresh installed synthetic Alice/Bob/Charlie; real current-circuit proof verification; loopback SOCKS/TLS; macOS arm64",
+  "result": "passed",
+  "productionSourceCommit": "e71336f",
+  "workingTreeBase": "bb9ebcac7819d40c50735913a3a4d85c8ca84997",
+  "recipe": [
+    {
+      "file": "tools/conformance/reference-journey/run.cjs",
+      "sha256": "353b030c1e6e95b90943b2432188501776d244fe3f27efe1ea764f08f2f44686"
+    },
+    {
+      "file": "tools/conformance/reference-journey/actor.cjs",
+      "sha256": "1fc65a7121454a0d7e66f5dc95c933a70003f160a0adcf62a9c0e43766cf8960"
+    },
+    {
+      "file": "tools/conformance/reference-journey/server.cjs",
+      "sha256": "434b4a5ec3f3ff2ff3b0b450f380cdc4231c633a39be6422ecd28884cd911baa"
+    }
+  ],
+  "installation": {
+    "tarSha256": "a1f54e20ce7522e6827032bf423c224da7988eae1242282a78362763d281bcc2",
+    "files": 300,
+    "transform": {
+      "target": "src/data/railgun-poi-records.js",
+      "before": "c4511c0ea185835c67bbbc8b8ba74bec6271e4b3a457a2b6a1576b42593fd1ac",
+      "after": "16a8e5e15621d2da51568319717a43ca51e3517beb59441e44931539d47b45ab"
+    },
+    "scope": "synthetic list only; no production package mutation"
+  },
+  "cleanInstallationSource": "bb9ebcac7819d40c50735913a3a4d85c8ca84997",
+  "cleanInstallationTarSha256": "d3d88eaeebb5d69a7c6e0a68087c68a9e3ab5e6f84a99953a181d2372eb343c7",
+  "packedDifferencesFromCleanInstallation": [
+    "package/README.md"
+  ],
+  "chainTransactions": 3,
+  "broadcastRequests": 3,
+  "independentActors": 3,
+  "conservation": true,
+  "policyChecks": {
+    "gross": "30000000000000000",
+    "ceiling": "50000000000000000",
+    "loweredCeiling": "1",
+    "retainedRead": true,
+    "observation": true,
+    "poiStatus": true,
+    "loweredSubmissionRefused": true,
+    "noRebuildForPolicyChange": true,
+    "sameHold": true,
+    "restoredSubmission": true,
+    "chainTransactions": 3
+  },
+  "loweredColdSubmission": {
+    "status": "recovery-required",
+    "stage": "history",
+    "reviews": 0,
+    "broadcasts": 0
+  },
+  "poiVerification": {
+    "key": "b7ca7ba048666fb0e17efd0af1e407a8dcb0906bfaf2f20e362ed40cbec6f4d8",
+    "circuits": [
+      "3x3"
+    ],
+    "verified": 1,
+    "rejected": 0,
+    "failed": 0,
+    "invalidProofs": 0,
+    "verifierFailures": 0
+  },
+  "evidence": [
+    {
+      "file": "INSTALL.json",
+      "sha256": "e1066ef4d1117b8d300fc526e4d3ae2fe4a2f8bc90df7012b77e54417ab30ddb"
+    },
+    {
+      "file": "WIDE-POLICY.json",
+      "sha256": "d2c03c3e39d7e48d3e0cee192212b793393b536e393790115d8ad9550e1484f2"
+    },
+    {
+      "file": "CACHE-COMPATIBILITY.json",
+      "sha256": "99c8cb00de103a28a31a685f35035073077439fc427fc2694be25deb3e625d70"
+    },
+    {
+      "file": "RESULT.json",
+      "sha256": "e79091bb327623cbb583a87f6665732502ee281f94162fdfd2613d3304ca74f6"
+    },
+    {
+      "file": "SERVICE.json",
+      "sha256": "b5850219e3a3899a27dd41e700566e41db3eee6422ec4b1aa20d320d3d0f8d49"
+    },
+    {
+      "file": "44-bob-unshield-note.expected-refusal.json",
+      "sha256": "5c829d576084bdb13337c3df0aeec182437881485f890e324dde9379a1af542a"
+    },
+    {
+      "file": "45-bob-unshield-note.expected-crash.json",
+      "sha256": "3197ff4aa7e1ddc431b27bdfee8ebac5b906a2dc1dfda178c57dce64aacf7896"
+    },
+    {
+      "file": "46-bob-holds.result.json",
+      "sha256": "4a238546d1552bb5ca77bbdd7fc5008c3f65b30dd1fdca3ba878e0a6581c19ea"
+    },
+    {
+      "file": "50-bob-submit-stored.result.json",
+      "sha256": "cdd08e85a2c19e839243550fbc77246c0a526cae7e4e67d28b7346f136125488"
+    },
+    {
+      "file": "52-bob-submit-stored.result.json",
+      "sha256": "fde69786b389e523ef1f547ec64b344c45fb6e6788ba43fae166e05184705518"
+    }
+  ],
+  "limits": [
+    "synthetic chain; no EVM execution",
+    "loopback transport; no Tor",
+    "native cold policy refusal has history stage only; operation-policy substage established by unit/mutation controls",
+    "no live wide-amount or additional-platform qualification"
+  ]
+}

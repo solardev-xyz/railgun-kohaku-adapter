@@ -47,8 +47,11 @@ addresses creates public links. This workflow does not demonstrate relay privacy
 Prepare the exact funding and fee budget before a live run. The command's gas
 ceiling is 0.002 ETH per transaction; that ceiling is not an estimate of the fee.
 The current root adapter permits native Shield and one ERC-20 private input,
-with 0 < amount ≤ 10¹⁶ wei (0.01 ETH) for Shield and private inputs. These are
-qualification/format bounds, not Railgun protocol maxima. Use the exact
+with a default 0 < amount ≤ 10¹⁶ wei (0.01 ETH) for gross Shield and full
+private inputs. Optional `maxOperationAmount` configures that application ceiling
+within the versioned uint120 representation; it is not a Railgun protocol maximum.
+The historical live evidence uses the default. A wider setting does not itself
+qualify a deployment, asset or operation shape. Use the exact
 [configuration schema](README.md#configuration), not an inferred config.
 
 ```sh
@@ -134,3 +137,13 @@ authenticated journal before asking permission and never changes it. Keep these
 linking reports private. Add the three `gasFee` values separately from the
 Railgun protocol fees; require the live plan's per-transaction and total caps.
 A failed receipt check leaves accounting incomplete and never permits a resend.
+
+## Recorded standalone completion
+
+The [independent live record](../../docs/qualification/reference-alice-bob-live-2026-10-11/README.md)
+completed this direct-submission lifecycle with separate Alice and Bob custody.
+Bob cold-submitted the original retained unshield after a supported derived-state
+upgrade; no replacement payment or repeated POI handoff was used. All three
+receipts and the final available-note accounting passed. The record binds its
+own installations and does not qualify arbitrary newer bytes, wider amounts,
+mainnet or relayer privacy.

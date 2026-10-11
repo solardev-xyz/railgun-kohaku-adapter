@@ -128,10 +128,11 @@ is created by the reference-host work.
 | Target | Current evidence |
 | --- | --- |
 | Node 24.18.1, macOS arm64 | Full package suite and focused later additions; existing locked dependencies. |
-| Electron 44.7.0, macOS arm64 | Independent native synthetic lifecycle; fresh example/runtime setup and live public Tor reads; live private two-account completion pending. |
+| Electron 44.7.0, macOS arm64 | Independent native synthetic lifecycle; fresh example/runtime setup and cold account reopen; completed live private two-account lifecycle on its D/I installation identities. |
 | Node 24.18.1, Ubuntu 24.04 / macOS 14 CI | Workflow configured; result must be recorded on the pushed head. |
 | Electron Linux/Windows, browser, mobile | Not qualified. |
 
-This matrix describes evidence, not broad platform support. The remaining
-fresh-install/live evidence and an actual release candidate's version/notes
-must be completed before describing that candidate as installable for adopters.
+This matrix describes evidence, not broad platform support. The completed
+installation and live records identify different source snapshots explicitly;
+subsequent candidates need their own applicable installation/recovery checks.
+A published release still needs its concrete version, notes and release decision.

@@ -130,8 +130,9 @@ baseline suppressions. CI runs lint and typecheck as well as the Node suite.
 
 Engine/prover assembly is documented in
 [runtime build tooling](../../tools/railgun-runtime-build/README.md). It requires
-separately prepared pinned inputs and build tools. There is not yet a supported
-one-command fresh-host setup for full account execution. Supplying arbitrary
+separately prepared pinned inputs and build tools. The [single-command runtime setup](../../examples/reference-wallet/README.md#current-commands)
+assembles these authenticated inputs separately from application installation.
+Arti is still an explicitly pinned platform prerequisite. Supplying arbitrary
 archives or replacing hashes to make initialization pass is not that setup.
 
 ## Independent application evidence
@@ -143,5 +144,7 @@ includes independent credentials, encrypted stores, fresh-process recovery,
 Alice-to-Bob receipt and Bob's cold unshield. The fixture verifies actual POI
 SNARKs, but chain execution and routing remain synthetic. The native command
 runner is opt-in and requires separately pinned runtime inputs; `npm test` does
-not run it. Fresh standalone installation and live two-account execution remain
-separate gates.
+not run it. [Fresh standalone installation](../qualification/reference-installation-2026-10-11/README.md)
+and the [live two-account journey](../qualification/reference-alice-bob-live-2026-10-11/README.md)
+now have separate scoped records. Reproducing the Node suite does not reproduce
+those native or network results.

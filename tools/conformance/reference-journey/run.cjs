@@ -443,7 +443,7 @@ async function main() {
   if (inputs.variant === "wide-retained") {
     await actor("bob", "unshield-note", {
       noteId: bobNotes[0].id, recipient: funding.bob, maxOperationAmount: "1",
-      expectedRefusal: "KOHAKU_PRIVATE_ADAPTER_REFUSED",
+      expectedRefusal: "RAILGUN_KOHAKU_PRIVATE_ADAPTER_REFUSED",
     });
     const crashed = await actor("bob", "unshield-note", {
       noteId: bobNotes[0].id, recipient: funding.bob, fixtureCrash: "after-prepared",

@@ -1,0 +1,67 @@
+{
+  "schema": "reference-installed-owner-v1",
+  "installation": {
+    "version": 1,
+    "passed": true,
+    "sourceCommit": "bb9ebcac7819d40c50735913a3a4d85c8ca84997",
+    "npm": "11.16.0",
+    "caches": "isolated, initially empty",
+    "committedManifestSha256": "d3c6ed077aecabb7714348c4dfe26a805932f299613c7f2e7f4d289ad51c3b61",
+    "committedLockSha256": "0f530d0687d9a5f0ade180d6441656d9339941fa5d26158b80a02bfda3d4f2ad",
+    "electronLauncherSha256": "6c7bfa625e72ad31e564b262c916aa6a9d5b88f570dea195dec52255e9c6305d",
+    "electronDistribution": {
+      "sha256": "9f00baca916352af000105ced63bdb49f4c242f42cc45ddf5c61198beea40af7",
+      "entries": 273
+    },
+    "electronZip": {
+      "name": "electron-v44.7.0-darwin-arm64.zip",
+      "expectedSha256": "e04e411b58a0a14375dd21b0ab4a378fd38930a702e4e20e322fee4849404c0b",
+      "measuredSha256": "e04e411b58a0a14375dd21b0ab4a378fd38930a702e4e20e322fee4849404c0b"
+    },
+    "electronChecksumManifestSha256": "37f259d3590e58b167834de3027a7afc83ee1763de6842f6743673e8bf89c9ed",
+    "node": "v24.18.1",
+    "platform": "darwin",
+    "arch": "arm64",
+    "package": {
+      "name": "@freedom/railgun-kohaku-adapter",
+      "version": "0.6.0",
+      "sha256": "d3d88eaeebb5d69a7c6e0a68087c68a9e3ab5e6f84a99953a181d2372eb343c7",
+      "integrity": "sha512-MXrcliTWZLaYMoTaBXrdvgKonUfY4gangI08MEBt/iMWl16jM36ZyLXMSoIHWdK11KdDfgGaxwKCVbE+6tQ1yA==",
+      "files": 300
+    },
+    "dependencies": {
+      "electron": "44.7.0",
+      "ethers": "6.17.0",
+      "better-sqlite3": "13.0.3"
+    },
+    "electronVersion": "v44.7.0",
+    "installedManifestSha256": "d06efbd06397f3fcdbefe74e2f7c35a3550128629ad26508abf0e7c6bfeaac7e",
+    "installedLockSha256": "4ea823c713c8630d7216175388f69fd25c3b8bf0e70bb5aac17064f4d76ef0e3",
+    "hostSourceSha256": "198dfedbac0752bdd7928bc38b9bc22b99b5e46b62db8a6dfd60bcd6f1057da6",
+    "cacheDigests": {
+      "public": "f2b23a5a62aeaae0cf1dfa95870c6f97786156a2a6566a4f2bb243320bc233d0",
+      "wallet": "45cdf3f08e2a2d7a3697fb956fed0ec6be1e675ea484ead205700c2a2ab5e804",
+      "txid": "e00e3b7090ffcd4c0af4328d88375a1ca8355e10f36c673e2c8eb0b292e6ad91"
+    },
+    "scope": "fresh dependency installation and executable version only; no account or network wallet operation"
+  },
+  "installationReportSha256": "8037d7d42547d962c1ebcc2e81c46d1461b87678be3a7f4d43be596ad18892af",
+  "offlineAccount": {
+    "created": true,
+    "coldReopened": true,
+    "sameIdentity": true,
+    "connections": 0,
+    "scope": "marked disposable fixture; no funded state"
+  },
+  "harnessSha256": "69fa70a8173c32d146573b832f2b701977da8cb2b9c20afa2064adbbbf80b2a7",
+  "evidence": [
+    {
+      "role": "create",
+      "sha256": "165aa55634ecb1f303602058f79de2186ed61bdd9e5e3f5c142a49d61492d368"
+    },
+    {
+      "role": "cold-reopen",
+      "sha256": "f7d2d0e5f84e1a78be9288839cfda9ffa7e0459890d39d75281c6a90466bd2ae"
+    }
+  ]
+}

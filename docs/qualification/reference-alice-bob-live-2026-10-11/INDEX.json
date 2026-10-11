@@ -1,0 +1,127 @@
+{
+  "schema": "reference-alice-bob-live-v1",
+  "completed": "2026-10-11",
+  "result": "complete",
+  "scope": "independent installed reference host; direct Sepolia submission over dedicated Arti; macOS arm64",
+  "trust": "unverified-rpc",
+  "installations": {
+    "initial": {
+      "sourceCommit": "71cdb64984d8cca5c0348f3b94e4943c2ebef838",
+      "package": {
+        "name": "@freedom/railgun-kohaku-adapter",
+        "version": "0.6.0",
+        "sha256": "5cb040aa6c28343d31a1db14db679cf45ef132e48e62f98df1cb1a9e184a5821",
+        "integrity": "sha512-6ioiwCoLsX2wWLKRiOb/Oeo3UFYKDvizX40ovV3bTvsFZY03aOPXTHOtrFDgmjiiUbAbD4aoLEbC4f+xcLktiA==",
+        "files": 283
+      },
+      "hostSourceSha256": "ac34e683eabd8b6c8f5eb3f44999c18edaf6ae69441a8bbc0ec8033d50c2d495",
+      "dependencies": {
+        "electron": "44.7.0",
+        "ethers": "6.17.0",
+        "better-sqlite3": "13.0.3"
+      },
+      "platform": "darwin",
+      "arch": "arm64",
+      "electronLauncherSha256": "6c7bfa625e72ad31e564b262c916aa6a9d5b88f570dea195dec52255e9c6305d",
+      "electronMeasurement": {
+        "scope": "supplemental measured runtime identity for the unchanged source-pinned installation",
+        "zip": {
+          "name": "electron-v44.7.0-darwin-arm64.zip",
+          "expectedSha256": "e04e411b58a0a14375dd21b0ab4a378fd38930a702e4e20e322fee4849404c0b",
+          "measuredSha256": "e04e411b58a0a14375dd21b0ab4a378fd38930a702e4e20e322fee4849404c0b"
+        },
+        "distribution": {
+          "sha256": "9f00baca916352af000105ced63bdb49f4c242f42cc45ddf5c61198beea40af7",
+          "entries": 273
+        }
+      },
+      "electronMeasurementReportSha256": "6cc8a002521908b1ea94e07c22833d2a60448d40b9266a9e7df61396fe8e2357",
+      "localReportSha256": "c6773cff91e7902f221306418b590f1f4b755d92ae39ea9e38a2dae323291ba7"
+    },
+    "retainedRecovery": {
+      "sourceCommit": "1e749f35a039b6a0561a2b13af18b3a34a793cf5",
+      "package": {
+        "name": "@freedom/railgun-kohaku-adapter",
+        "version": "0.6.0",
+        "sha256": "0f3c1c6d1e943ae3fe7bda5bed16cfaf001cc1d7b8b41f4e45ebd6c1dfde0113",
+        "integrity": "sha512-4fE7YaMb4yHJ0cUGpGk+j72X8Bncqx0nOkX5UI8zU/BSo3TjM3T1mpHN/sYDkzI+xUGzx7CiX1UwbT36ylepow==",
+        "files": 285
+      },
+      "hostSourceSha256": "5274d15058df1c559df39189a2daa96df6f38b52b901cfd8749828edb895ce44",
+      "dependencies": {
+        "electron": "44.7.0",
+        "ethers": "6.17.0",
+        "better-sqlite3": "13.0.3"
+      },
+      "platform": "darwin",
+      "arch": "arm64",
+      "electronLauncherSha256": "6c7bfa625e72ad31e564b262c916aa6a9d5b88f570dea195dec52255e9c6305d",
+      "electronDistribution": {
+        "sha256": "9f00baca916352af000105ced63bdb49f4c242f42cc45ddf5c61198beea40af7",
+        "entries": 273
+      },
+      "localReportSha256": "04ff14e21d472656f06ee6c1e478e4f314bff95333566d102d08f744dc72a74a"
+    }
+  },
+  "runtime": {
+    "archiveSha256": "019f10880abf1c448aee02ec77c5c2d68c3561c7b4eef02095d66bb5fecd6a7a",
+    "proverArchiveSha256": "dd50a29f297867b3bf91cb425066e1d257ea02230a94b02e4cf34c5c70a0c7ab"
+  },
+  "independentActors": 2,
+  "chainTransactions": 3,
+  "poiHandoffs": 1,
+  "conservation": {
+    "shieldNet": true,
+    "transferFullValue": true,
+    "unshieldFullOutput": true,
+    "receivedPlusFee": true,
+    "availablePrivateNoteResidual": true
+  },
+  "receiptStatuses": [
+    "0x1",
+    "0x1",
+    "0x1"
+  ],
+  "actualGasWithinPerTransactionAndAggregateCaps": true,
+  "poiResponse": {
+    "classification": "malformed",
+    "httpStatus": 200,
+    "responseBytes": 36,
+    "matchingEnvelope": false,
+    "transportAuthenticated": false,
+    "acceptanceVerified": false,
+    "disclosureEnabled": false,
+    "spendingEnabled": false,
+    "diagnostic": {
+      "envelope": "invalid",
+      "rpcCode": null,
+      "messageCategory": null,
+      "dataCategory": null
+    }
+  },
+  "finalOwnedPoiStatus": [
+    "Valid"
+  ],
+  "retainedRecovery": {
+    "sameAuthenticatedHold": true,
+    "originalPrivateSpendingSignatureReused": true,
+    "freshEoaReview": true,
+    "resubmission": false,
+    "supportedDerivedStateRebuild": true
+  },
+  "limits": [
+    "unverified RPC state and finality",
+    "direct EOAs and funding create public links; no relay privacy",
+    "no live Charlie ownership control (synthetic only)",
+    "no independent raw retained-proof byte comparison; owner validates the retained capsule",
+    "available private-note residual only; no full EOA ETH balance reconciliation",
+    "not latest-source live qualification; installation identities remain explicit",
+    "not mainnet, other native platforms, circuit isolation or independent security audit"
+  ],
+  "privateEvidenceCommitment": {
+    "scheme": "sha256-domain-separated-salted-bundle",
+    "domain": "reference-private-evidence-v1",
+    "saltBytes": 32,
+    "value": "8e7418f0f64d79c5aeef0629a0adfd984b4e6f338d2153f5d7a4c07bfab6514f"
+  }
+}

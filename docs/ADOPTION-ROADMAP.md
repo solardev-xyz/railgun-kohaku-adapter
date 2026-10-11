@@ -149,9 +149,8 @@ maintenance/release guidance and clean-checkout CI configuration are present.
 
 The standalone dependency manifest is approved and implemented. Its installer
 checks a clean source commit, exact packed bytes, physical locked dependencies
-and an isolated Electron acquisition. The [clean-commit installation](qualification/reference-installation-2026-10-10/README.md) passed on macOS arm64, including full Electron distribution identity and cold account reopens. Fresh engine/prover dependencies, build tools and all 18 circuit artifacts reproduce their existing pins. Independent live public scans are running; no live Alice-to-Bob payment is claimed.
-Still required before outreach: the separately funded live Alice-to-Bob demonstration,
-and a final independent review of the exact documented installation. Clean
+and an isolated Electron acquisition. The [clean-commit installation](qualification/reference-installation-2026-10-10/README.md) passed on macOS arm64, including full Electron distribution identity and cold account reopens. Fresh engine/prover dependencies, build tools and all 18 circuit artifacts reproduce their existing pins. The [independent live Alice-to-Bob journey](qualification/reference-alice-bob-live-2026-10-11/README.md) is complete: separate custody, root-adapter private payment, owned Valid status and finalized cold Bob unshield, with three receipts and conservation checks. The run used the recorded D/I installations, not the latest source candidate. The [newer installation](qualification/reference-installation-2026-10-11/README.md) separately passed fresh locked setup and an offline cold-account reopen.
+Still required before outreach: final independent review of the current evidence and documented installation, plus exact pushed-head CI for the current candidate. Clean
 Linux/macOS Node CI, including the approved lint and root typecheck gates, passed
 at `b27a25b` ([run 38079408586](https://github.com/solardev-xyz/railgun-kohaku-adapter/actions/runs/38079408586)).
 The deployment foundation and separate owner typecheck gate also passed on
@@ -169,8 +168,7 @@ canonical wider internal capsule formats from the unchanged historical data
 readers, with genuine old-reader downgrade checks. Direct operation-policy integration now captures an explicit amount ceiling
 and checks gross Shield/full selected input at preparation and warm/cold signing
 admission. The default remains the historical ceiling; structural reads are
-policy-independent and wider formats retain old-reader refusal. Native
-wider-amount qualification is pending. Operation shapes and relay policy remain
+policy-independent and wider formats retain old-reader refusal. The [native wider-amount lifecycle](qualification/reference-wide-policy-2026-10-11/README.md) passed with three independent fixture accounts, policy lowering and restored same-hold submission; no wide-amount live claim follows. Operation shapes and relay policy remain
 separately bounded. Availability recovery is explicit resume,
 not a general idempotent-read retry engine. Experimental versioning and a platform
 matrix are documented, private vulnerability reporting is enabled, and a tagged
@@ -178,3 +176,22 @@ release's version/notes still require its concrete release decision. Authentic
 relay handoff/privacy and additional platforms remain open qualification targets;
 the planned direct-submission demonstration cannot close them. No mainnet or
 production-activation claim follows from any of these checks.
+
+## Next bounded adoption work
+
+The direct live reference milestone is complete on its recorded installations.
+The remaining pre-outreach engineering focus is operational usability:
+
+1. Expose closed preparation-stage diagnostics to the owning application without
+   changing exact root-adapter host keys, sanitized errors or authority. Keep
+   messages, wallet identifiers and service payloads out of those records.
+2. Qualify bounded recovery of non-disclosing public scan/TXID reads within
+   existing lifetimes and budgets. POI membership/status, handoffs, signing and
+   broadcasts retain explicit authority and are excluded from automatic retries.
+3. Have a reviewer follow the documented installation and cold-account path on
+   the identified candidate, then close any adoption friction and record final CI.
+
+Authentic relay transport, wider native platforms, mainnet, broader operation
+shapes and external security review remain separate goals. They are not implied
+by an experimental direct-Sepolia reference application or a successful Node CI
+run. Outreach, a release and Freedom product integration remain later decisions.

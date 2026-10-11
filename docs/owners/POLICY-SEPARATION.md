@@ -16,7 +16,7 @@ not a live or production qualification.
 | 512 distinct log blocks, 4 MiB/4096 logs, 100k block span | Bounded acquisition implementation | `railgun-scan-source.js` | Describe as implementation resource bounds. Plan smaller windows when necessary without accepting partial data. | Implemented; retained invariant |
 | 8,000 TXID rows and 32,768 observed store records | Storage implementation capacity | TXID journal/projection and whole-store observation | Expose capacity clearly. Raising it needs measured memory/storage behavior and matching validators. | Documented; capacity change not started |
 | Native-only Shield; one ERC-20 input; fixed proof shapes | Supported operation shapes | Root adapters, capsules and preparation validators | Additional assets and shapes need their own contract and qualification. | Retained; shape generalization not started |
-| Direct operation amount (default ≤10¹⁶; configurable through uint120) | Application policy within a versioned representation | Trusted-main capture, root adapters, preparation and submission | Gross Shield and full selected input are checked against the captured ceiling, including cold submission. Structural reads retain larger owned notes. | Implemented; native wider-amount qualification pending |
+| Direct operation amount (default ≤10¹⁶; configurable through uint120) | Application policy within a versioned representation | Trusted-main capture, root adapters, preparation and submission | Gross Shield and full selected input are checked against the captured ceiling, including cold submission. Structural reads retain larger owned notes. | Implemented; [native wider-amount lifecycle passed](../qualification/reference-wide-policy-2026-10-11/README.md) |
 | Maximum gas fee (default 0.002 ETH) | Application policy | Trusted-main captured ceiling and per-lane budget | Explicit bootstrap `applicationPolicy`; actual signed-transaction fee, destination and custody checks stay invariant. See [spending policy](APPLICATION-POLICY.md). | Implemented |
 | 650 ranges, 16 scan recoveries, 80 TXID pages per command | Example application budget | `examples/reference-wallet/{scan,txid-command}.cjs` | Keep in the example, report exhausted budgets clearly, and preserve authenticated progress. | Implemented in example |
 | Vault unlock, explicit `PREPARE`/`SEND`/`RESOLVE` reviews | Host/user policy and custody lifecycle | Example vault and terminal | Stay host-owned; the adapter retains cancellation and genuine review binding. | Implemented; retained invariant |
@@ -45,7 +45,7 @@ operations. Direct owners now admit amounts under the captured application
 ceiling, and recheck it before warm or retained submission. Lowering the
 ceiling does not hide an owned note, retained hold or POI status; it refuses
 fresh spending authority. Relay input and fee policy remain independently
-bounded. Native wider-amount qualification is still pending.
+bounded. The [native wider-amount lifecycle](../qualification/reference-wide-policy-2026-10-11/README.md) passed, including lowered-policy refusal and restored same-hold submission. Wider live amounts remain unqualified.
 
 ## First compatibility boundary
 
