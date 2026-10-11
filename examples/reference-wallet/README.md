@@ -79,7 +79,8 @@ admit only their own marked disposable roots, never an existing wallet profile.
 Keep a configuration JSON file outside the application source, profile and
 adapter checkout. The installation and runtime setup tools require a clean
 checkout, including no untracked files. It
-must contain exactly these fields and be at most 16 KiB; replace every placeholder:
+must contain these fields, plus only the optional field described below, and be
+at most 16 KiB; replace every placeholder:
 
 ```json
 {
@@ -107,7 +108,14 @@ its contents must match the adapter's pins. The two service origins above are
 required; at most eight distinct HTTPS origins are allowed. The RPC is an
 explicit, unkeyed HTTPS destination with no URL credentials, query or fragment.
 There is no redirect, source discovery or direct fallback. `unlockMinutes` is
-an integer from 1 to 60. The app verifies the exact Arti binary hash, not a version
+an integer from 1 to 60. Optional `maxOperationAmount` is a canonical positive
+decimal string in wei, at most the uint120 maximum. It defaults to
+`"10000000000000000"` and limits gross native Shield value and the full selected
+private input. The host captures it once when the process starts. Changing the
+configuration for a later process needs no cache rebuild; lowering it preserves
+note, hold and POI visibility but refuses new spending above the ceiling.
+It does not alter relay limits or gas policy. Wider amounts need an explicitly
+configured ceiling; the historical live run uses the unchanged default. The app verifies the exact Arti binary hash, not a version
 label. Arti 2.6.0 has local configuration/state-lock evidence; this reference
 host now has a [bounded public scan observation](../../docs/qualification/reference-public-scan-2026-10-10/README.md)
 with Arti 2.6.0. It does not qualify private-service availability or circuit

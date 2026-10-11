@@ -53,13 +53,13 @@ Journal format selection is deliberately separate from capsule selection:
 - Shield retains the original journal shape for a legacy gross amount and uses
   version 2 for a wider gross amount.
 
-These descriptors are implemented and tested; the journal owners have not yet
-been switched to them. The next integration must derive metadata from calldata,
-retain all legacy digests, validate settlement according to its authenticated
-intent's version, and check current application policy at fresh signature and
-send admission. It must also test lowered-policy recovery, both input origins,
-partial change, and a genuine installed wider-amount lifecycle before claiming
-support. Relay selection and fee limits remain separately bounded and unchanged.
+The journal owners derive these versions from calldata, preserve legacy
+digests, and validate settlement against the authenticated intent version.
+Direct preparation and warm/cold submission check the captured application
+amount policy independently of these structural readers. Tests cover both
+input origins, partial change and lowered-policy admission. A genuine installed
+wider-amount lifecycle remains a qualification gate; structural tests alone
+cannot close it. Relay selection and fee limits remain independently bounded.
 
 ## Recovery and POI data helpers
 
@@ -78,9 +78,9 @@ transfer's private input amount or capsule version.
 
 Structural tests cover both origin types, exact note value and original signed
 root, partial change and wide POI selector bindings. They do not establish real
-ownership or prove that a wider operation can execute. Owner and utility callers
-still use their legacy compositions until the amount-admission integration is
-complete and qualified.
+ownership or prove that a wider operation can execute. Owner and utility callers now use the retained composition; fresh direct
+selection and signing have separate amount-admission checks. Native coverage
+is recorded separately from these structural checks.
 
 ## Public transaction journals and outcomes
 
