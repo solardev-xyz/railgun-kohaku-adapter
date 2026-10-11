@@ -15,7 +15,7 @@ async function createFixtureServer({ chain, submitters, key, cert }) {
   const allowed = new Set(
     [ENDPOINT, POI_URL, INDEXER_URL].map((url) => new URL(url).hostname),
   );
-  let coldSourceDelay = null;
+  let coldSourceDelay = null, refuseTxid = false;
   let readDelayMs = 0,
     loseSendResponse = false;
   const methods = [];
@@ -108,6 +108,13 @@ async function createFixtureServer({ chain, submitters, key, cert }) {
           typeof wire.method === "string" ? wire.method : "indexer-page",
         );
         assert.ok(methods.length <= 100000);
+        if (refuseTxid && wire.method === 'ppoi_validated_txid') {
+          refuseTxid = false;
+          counts.refused++;
+          response.writeHead(503, { 'content-type': 'application/json' });
+          response.end('{}');
+          return;
+        }
         // Fixture-only bounded latency: four canonical passes plus the source
         // log/header reads. Each request stays below the real ten-second limit.
         // No decoded response or validation is changed.
@@ -233,6 +240,7 @@ async function createFixtureServer({ chain, submitters, key, cert }) {
     port: proxy.address().port,
     counts,
     methods,
+    refuseNextTxid() { assert.equal(refuseTxid, false); refuseTxid = true; },
     dropNextSendResponse() {
       assert.equal(loseSendResponse, false);
       loseSendResponse = true;

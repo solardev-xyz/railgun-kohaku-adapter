@@ -30,7 +30,7 @@ const {
 } = require("../../qualification/installed-journey/synthetic-copy-contract.cjs");
 const { createFixtureServer } = require("./server.cjs");
 assert.ok(
-  [undefined, "acknowledged", "retained-unknown", "retained-upgrade", "wide-retained"].includes(inputs.variant),
+  [undefined, "acknowledged", "retained-unknown", "retained-upgrade", "wide-retained", "preparation-diagnostics"].includes(inputs.variant),
 );
 const { TRANSACT_ABI } = require("../../../src/data/railgun-private-policy.js");
 const hash = (bytes) => crypto.createHash("sha256").update(bytes).digest("hex");
@@ -253,6 +253,7 @@ async function actor(name, command, extra = {}) {
       const refused = {
         expectedRefusal: true,
         code: failure.code,
+        preparationDiagnostics: failure.preparationDiagnostics ?? [],
         networkMethods,
       };
       write(tag + ".expected-refusal.json", refused);
@@ -440,6 +441,27 @@ async function main() {
   assert.deepEqual(status.statuses, ["Valid"]);
   await actor("bob", "txid-sync");
   let unshield;
+  if (inputs.variant === "preparation-diagnostics") {
+    const declined = await actor("bob", "unshield-note", {
+      noteId: bobNotes[0].id, recipient: funding.bob, refusePreparation: true,
+      expectedRefusal: "RAILGUN_KOHAKU_PRIVATE_ADAPTER_REFUSED",
+    });
+    assert.equal(declined.preparationDiagnostics.length, 1);
+    assert.equal(declined.preparationDiagnostics[0].phase, "review");
+    assert.equal(declined.preparationDiagnostics[0].stage, "declined");
+    assert.equal((await actor("bob", "holds")).records.length, 0);
+    server.refuseNextTxid();
+    const unavailable = await actor("bob", "unshield-note", {
+      noteId: bobNotes[0].id, recipient: funding.bob,
+      expectedRefusal: "RAILGUN_KOHAKU_PRIVATE_ADAPTER_REFUSED",
+    });
+    assert.equal(unavailable.preparationDiagnostics.length, 1);
+    assert.equal(unavailable.preparationDiagnostics[0].phase, "proving");
+    assert.equal(unavailable.preparationDiagnostics[0].proofStatus, "refused");
+    assert.equal(unavailable.preparationDiagnostics[0].recoveryRequired, false);
+    assert.equal((await actor("bob", "holds")).records.length, 0);
+    write("PREPARATION-DIAGNOSTICS.json", {declined, unavailable, sentBefore: chain.state().transactions.length});
+  }
   if (inputs.variant === "wide-retained") {
     await actor("bob", "unshield-note", {
       noteId: bobNotes[0].id, recipient: funding.bob, maxOperationAmount: "1",

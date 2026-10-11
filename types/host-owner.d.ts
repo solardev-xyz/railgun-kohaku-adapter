@@ -392,6 +392,23 @@ export interface PrivatePreparedHandle {
 export interface PublicPreparedHandle {
   readonly __publicPreparedHandle: unique symbol;
 }
+/** Process-local diagnostic only, readable after its lane closes. No identifiers,
+ * payloads or authority. A null result includes work not yet settled. A staging
+ * reusable flag is not an assertion of current account or retry eligibility. */
+export interface PrivatePreparationOutcome {
+  readonly schema: "railgun-private-preparation-outcome-v1";
+  readonly operation: PrivateKind;
+  readonly phase: "admission" | "review" | "staging" | "proving" | "completion" | "cleanup";
+  readonly stage: "unknown" | "input" | "unavailable" | "selection" | "currentness" |
+    "declined" | "interrupted" | "local" | "closing-wallet" | "txid" |
+    "reopening-wallet" | "submitter" | "window" | "input-provenance" |
+    "receiver" | "poi" | "preflight" | "txid-root" | "signer" | "reserve" |
+    "signing" | "signature-storage" | "proof" | "proof-storage" | "close-failed";
+  readonly proofStatus: "refused" | "signed-unfinished" | null;
+  readonly originalAccountReusable: boolean | null;
+  readonly recoveryRequired: boolean;
+  readonly elapsedBucket: "unknown" | "lt30s" | "lt120s" | "lt240s" | "ge240s";
+}
 export interface PrivateLane extends ReadLane {
   prepareTransfer(
     value: PrivateInput,
@@ -1226,6 +1243,8 @@ export interface AccountSession {
   }): Promise<OwnedPoiObservation>;
   openRead(options: ReadLaneOptions): Promise<ReadLane>;
   openPrivate(options: PrivateLaneOptions): Promise<PrivateLane>;
+  /** Private preparation only; most recent non-concurrent call, readable after drain. */
+  readPreparationOutcome(lane: PrivateLane): PrivatePreparationOutcome | null;
   openPublic(options: PublicLaneOptions): Promise<PublicLane>;
   openRecovery(options: RecoveryOptions): Promise<RecoveryLane>;
   openPoiRecovery(options: {

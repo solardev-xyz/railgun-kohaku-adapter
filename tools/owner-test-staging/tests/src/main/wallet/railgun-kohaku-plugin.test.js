@@ -2658,3 +2658,103 @@ test.each(['private', 'public'])(
     expect(plugin.status().operationPending).toBe(false);
   }
 );
+
+// Package-owned diagnostic assertions; inverse staging adaptation preserves the original suite.
+const readPreparationOutcome = (plugin) => require('../../../../../../src/owners/railgun-kohaku-plugin.js').readRailgunKohakuPreparationOutcome(plugin);
+test.each(['local', 'closing-wallet', 'txid', 'reopening-wallet', 'private text / path'])('preparation diagnostic projects staging %s after closure', async (stage) => {
+  mock.owned.ownedPoi[0].type = 'Transact';
+  mock.stage.mockResolvedValue({ status: 'refused', stage, originalAccountReusable: false, secret: 'private' });
+  const plugin = create();
+  expect(readPreparationOutcome(plugin)).toBeNull();
+  await expect(plugin.prepareTransfer(amount(), '0zk-self')).rejects.toMatchObject(refusal);
+  await plugin.closed;
+  expect(readPreparationOutcome(plugin)).toEqual({
+    schema: 'railgun-private-preparation-outcome-v1', operation: 'railgun-private-transfer',
+    phase: 'staging', stage: stage.startsWith('private') ? 'unknown' : stage,
+    proofStatus: null, originalAccountReusable: false, recoveryRequired: false, elapsedBucket: 'lt30s',
+  });
+  expect(Object.isFrozen(readPreparationOutcome(plugin))).toBe(true);
+  expect(mock.prove).not.toHaveBeenCalled();
+});
+test.each(['local', 'submitter', 'window', 'input-provenance', 'receiver', 'poi', 'preflight', 'txid-root', 'signer', 'reserve', 'signing', 'signature-storage', 'proof', 'proof-storage', 'secret-path'])('preparation diagnostic projects proving %s without authority', async (stage) => {
+  mock.prove.mockResolvedValue({ status: 'signed-unfinished', stage, holdId: 'private-hold', message: 'private' });
+  const plugin = create();
+  await expect(plugin.prepareTransfer(amount(), '0zk-self')).rejects.toMatchObject(refusal);
+  await plugin.closed;
+  const value = readPreparationOutcome(plugin);
+  expect(value).toEqual({ schema: 'railgun-private-preparation-outcome-v1', operation: 'railgun-private-transfer',
+    phase: 'proving', stage: stage === 'secret-path' ? 'unknown' : stage, proofStatus: 'signed-unfinished',
+    originalAccountReusable: null, recoveryRequired: true, elapsedBucket: 'lt30s' });
+  expect(JSON.stringify(value)).not.toMatch(/private-hold|secret-path|message/);
+  expect(mock.submit).not.toHaveBeenCalled();
+});
+test('preparation diagnostic clears on a new admitted attempt and stays null on success', async () => {
+  options.reviewPreparation.mockResolvedValue(false);
+  const plugin = create();
+  await expect(plugin.prepareTransfer(amount(), '0zk-self')).rejects.toMatchObject(refusal);
+  expect(readPreparationOutcome(plugin)).toMatchObject({phase: 'review', stage: 'declined'});
+  const gate = deferred();options.reviewPreparation.mockReturnValue(gate.promise);
+  const work = plugin.prepareTransfer(amount(), '0zk-self');
+  expect(readPreparationOutcome(plugin)).toBeNull();
+  await expect(plugin.prepareTransfer(amount(), '0zk-self')).rejects.toMatchObject(refusal);
+  expect(readPreparationOutcome(plugin)).toBeNull();
+  gate.resolve(true);await work;
+  expect(readPreparationOutcome(plugin)).toBeNull();
+  expect(Object.keys(plugin)).not.toContain('readPreparationOutcome');
+});
+test('preparation diagnostic rejects foreign and public plugins', async () => {
+  expect(()=>readPreparationOutcome(Object.freeze({}))).toThrow(refusal.message);
+  const plugin = publicPlugin();expect(()=>readPreparationOutcome(plugin)).toThrow(refusal.message);
+});
+
+test('a later malformed or closed-lane call replaces the previous diagnostic without borrowing its cause', async () => {
+  options.reviewPreparation.mockResolvedValue(false);
+  const plugin = create();
+  await expect(plugin.prepareTransfer(amount(), '0zk-self')).rejects.toMatchObject(refusal);
+  expect(readPreparationOutcome(plugin)).toMatchObject({phase:'review',stage:'declined'});
+  await expect(plugin.prepareUnshield({}, '0x'+'1'.repeat(40))).rejects.toMatchObject(refusal);
+  expect(readPreparationOutcome(plugin)).toMatchObject({operation:'railgun-token-unshield',phase:'admission',stage:'input'});
+  plugin.close(); await plugin.closed;
+  await expect(plugin.prepareTransfer(amount(), '0zk-self')).rejects.toMatchObject(refusal);
+  expect(readPreparationOutcome(plugin)).toMatchObject({phase:'admission',stage:'unavailable'});
+});
+test('a concurrent refusal cannot replace the pending review eventual refusal', async () => {
+  const gate = deferred(); options.reviewPreparation.mockReturnValue(gate.promise);
+  const plugin = create(), work = plugin.prepareTransfer(amount(), '0zk-self');
+  await tick();
+  await expect(plugin.prepareTransfer({}, '0zk-self')).rejects.toMatchObject(refusal);
+  expect(readPreparationOutcome(plugin)).toBeNull();
+  gate.resolve(false); await expect(work).rejects.toMatchObject(refusal);
+  expect(readPreparationOutcome(plugin)).toMatchObject({phase:'review',stage:'declined'});
+});
+test('review cancellation publishes interruption after its original callback drains', async () => {
+  const gate = deferred(); options.reviewPreparation.mockReturnValue(gate.promise);
+  const plugin = create(), work = plugin.prepareTransfer(amount(), '0zk-self');
+  work.catch(()=>{}); await tick(); caller.abort(); await tick();
+  expect(readPreparationOutcome(plugin)).toBeNull();
+  gate.resolve(true); await expect(work).rejects.toMatchObject(refusal); await plugin.closed;
+  expect(readPreparationOutcome(plugin)).toMatchObject({phase:'review',stage:'interrupted'});
+  expect(mock.prove).not.toHaveBeenCalled();
+});
+test.each([true,false])('cleanup diagnostic preserves an earlier proving refusal: %s', async (earlierRefusal) => {
+  mock.owned.ownedPoi[0].type = 'Transact';
+  mock.stage.mockImplementation(async () => ({status:'staged',account:makeAccount(),receipt:{},close(){throw Error('private cleanup');}}));
+  if(earlierRefusal) mock.prove.mockResolvedValue({status:'refused',stage:'poi'});
+  const plugin = create();
+  await expect(plugin.prepareTransfer(amount(),'0zk-self')).rejects.toMatchObject(refusal);
+  expect(readPreparationOutcome(plugin)).toMatchObject(earlierRefusal ? {phase:'proving',stage:'poi'} : {phase:'cleanup',stage:'close-failed'});
+  expect(mock.submit).not.toHaveBeenCalled();
+});
+test('a new lane has no prior-lane diagnostic and successful broadcast leaves none', async () => {
+  options.reviewPreparation.mockResolvedValue(false);
+  const first=create(); await expect(first.prepareTransfer(amount(),'0zk-self')).rejects.toMatchObject(refusal);
+  first.close(); await first.closed;
+  options.reviewPreparation.mockResolvedValue(true);
+  const next=create({account:makeAccount()});
+  expect(readPreparationOutcome(next)).toBeNull();
+  const prepared=await next.prepareTransfer(amount(),'0zk-self');
+  expect(readPreparationOutcome(next)).toBeNull();
+  await createRailgunKohakuBroadcaster(next).broadcast(prepared);
+  expect(readPreparationOutcome(next)).toBeNull();
+  expect(readPreparationOutcome(first)).toMatchObject({phase:'review',stage:'declined'});
+});

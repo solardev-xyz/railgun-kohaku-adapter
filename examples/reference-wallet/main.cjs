@@ -156,6 +156,9 @@ async function run() {
     return await require("./account-command.cjs").accountCommand({
       owner: composition.owner,
       maxOperationAmount: composition.applicationPolicy.maxOperationAmount,
+      onDiagnostic: config.diagnostics === true
+        ? (outcome) => process.stderr.write(JSON.stringify({ status: "preparation-diagnostic", outcome }) + "\n")
+        : undefined,
       ...options,
       signal,
       state,

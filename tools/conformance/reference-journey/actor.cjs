@@ -28,6 +28,7 @@ const { createVault, readVaultProfile } = require(
   path.join(example, "host/vault.cjs"),
 );
 let vault, composition, session, appState, chain;
+const preparationDiagnostics = [];
 const lifetime = new AbortController();
 require(path.join(example, "fatal.cjs")).installFatalHandlers({
   app,
@@ -139,12 +140,13 @@ async function run() {
     },
     scanCacheDigest: composition.cacheDigests.public,
     deadline: Date.now() + 55 * 60000,
+    onDiagnostic: (value) => preparationDiagnostics.push(value),
     onSession: (value) => {
       session = value;
     },
     confirm: consent,
     reviews: {
-      preparation: consent,
+      preparation: (summary) => config.refusePreparation === true ? false : consent(summary),
       transaction: consent,
       disclosure: consent,
       resolution: consent,
@@ -197,6 +199,7 @@ run().then(
         code: error.code ?? null,
         error: error.message,
         stack: error.stack,
+        preparationDiagnostics,
       }) + "\n",
     );
     app.exit(1);

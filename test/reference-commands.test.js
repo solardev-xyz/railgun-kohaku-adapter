@@ -157,6 +157,17 @@ test("configuration rejects missing pinned service origins before network startu
   expect(loadConfiguration(filename).serviceOrigins).toEqual(
     configuration.serviceOrigins,
   );
+  for (const diagnostics of [true, false]) {
+    configuration.diagnostics = diagnostics;
+    fs.writeFileSync(filename, JSON.stringify(configuration));
+    expect(loadConfiguration(filename).diagnostics).toBe(diagnostics);
+  }
+  for (const diagnostics of [null, 1, "true", {}]) {
+    configuration.diagnostics = diagnostics;
+    fs.writeFileSync(filename, JSON.stringify(configuration));
+    expect(() => loadConfiguration(filename)).toThrow();
+  }
+  delete configuration.diagnostics;
   configuration.maxOperationAmount = "50000000000000000";
   fs.writeFileSync(filename, JSON.stringify(configuration));
   expect(loadConfiguration(filename).maxOperationAmount).toBe("50000000000000000");

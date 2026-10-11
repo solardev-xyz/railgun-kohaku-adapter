@@ -44,6 +44,17 @@ const fail = () =>
   Object.assign(new Error('Railgun Kohaku operation unavailable'), {
     code: 'RAILGUN_KOHAKU_REFUSED',
   });
+// Local diagnostics only. These categories never authorize a retry or operation.
+const PREPARATION_STAGES = Object.freeze({
+  admission: ['input', 'unavailable', 'selection', 'currentness'],
+  review: ['declined', 'interrupted'],
+  staging: ['local', 'closing-wallet', 'txid', 'reopening-wallet'],
+  proving: ['local', 'submitter', 'window', 'input-provenance', 'receiver', 'poi',
+    'preflight', 'txid-root', 'signer', 'reserve', 'signing', 'signature-storage',
+    'proof', 'proof-storage'],
+  completion: ['currentness'],
+  cleanup: ['close-failed'],
+});
 function shape(value, required, optional = []) {
   assert.ok(value && !isProxy(value) && Object.getPrototypeOf(value) === Object.prototype);
   const keys = Reflect.ownKeys(value);
@@ -171,6 +182,7 @@ function create(options) {
     cleanupFailed = false,
     state = 'ready',
     recoveryRequired = false,
+    preparationOutcome = null,
     operation,
     completion,
     shield,
@@ -363,7 +375,7 @@ function create(options) {
       // Closed paths release in finish(), after callback and account drainage.
     }
   }
-  function start(use) {
+  function start(use, onRefused) {
     available();
     busy = true;
     // Admission precedes every asynchronous operation and user callback.
@@ -374,6 +386,7 @@ function create(options) {
         return result;
       })
       .catch(() => {
+        onRefused?.();
         if (completion || mode === 'public') close();
         throw fail();
       })
@@ -406,7 +419,34 @@ function create(options) {
   function read(method, args) {
     return dispatchRailgunKohakuRead(readPorts, method, args);
   }
+  function notePreparationRefusal(diagnostic) {
+    if (!diagnostic || preparationOutcome !== null) return;
+    const phase = Object.hasOwn(PREPARATION_STAGES, diagnostic.phase)
+      ? diagnostic.phase : 'admission';
+    const elapsed = performance.now() - diagnostic.started;
+    preparationOutcome = Object.freeze({
+      schema: 'railgun-private-preparation-outcome-v1',
+      operation: diagnostic.operation,
+      phase,
+      stage: PREPARATION_STAGES[phase].includes(diagnostic.stage) ? diagnostic.stage : 'unknown',
+      proofStatus: phase === 'proving' && ['refused', 'signed-unfinished'].includes(diagnostic.proofStatus)
+        ? diagnostic.proofStatus : null,
+      originalAccountReusable: phase === 'staging' && typeof diagnostic.originalAccountReusable === 'boolean'
+        ? diagnostic.originalAccountReusable : null,
+      recoveryRequired,
+      elapsedBucket: !Number.isFinite(elapsed) || elapsed < 0 ? 'unknown'
+        : elapsed < 30000 ? 'lt30s' : elapsed < 120000 ? 'lt120s'
+          : elapsed < 240000 ? 'lt240s' : 'ge240s',
+    });
+  }
   function prepare(kind, amount, recipient, unshieldOptions) {
+    let diagnostic;
+    // Most recent non-concurrent call. Early input/availability refusals must
+    // not be mistaken for a previous preparation's diagnostic.
+    if (mode === 'private' && !busy) {
+      preparationOutcome = null;
+      diagnostic = { operation: kind, phase: 'admission', stage: 'input', started: performance.now() };
+    }
     try {
       assert.equal(mode, 'private');
       shape(amount, ['asset', 'amount', 'noteId']);
@@ -425,7 +465,9 @@ function create(options) {
       const requestedAmount = amount.amount,
         noteId = amount.noteId,
         unshield = kind === 'railgun-token-unshield';
+      if (diagnostic) diagnostic.stage = 'unavailable';
       available();
+      diagnostic.stage = 'selection';
       let inputAmount = requestedAmount;
       if (unshield) {
         const notes = readRailgunAccountOwnedNotes(account, owners).read.received.filter(
@@ -436,6 +478,7 @@ function create(options) {
         assert.ok(typeof inputAmount === 'bigint' && requestedAmount <= inputAmount);
         if (requestedAmount < inputAmount) kind = 'railgun-partial-unshield';
       }
+      diagnostic.operation = kind;
       const partial = kind === 'railgun-partial-unshield';
       const request = Object.freeze({
         kind,
@@ -462,6 +505,7 @@ function create(options) {
         timer.unref?.();
         let preparationStarted = false;
         try {
+          diagnostic.phase = 'admission'; diagnostic.stage = 'currentness';
           current();
           const signer = require('./host-bindings').signers.getSigner(0);
           const submitter = (await signer.getAddress()).toLowerCase();
@@ -619,8 +663,11 @@ function create(options) {
           });
           state = 'reviewing-preparation';
           guard();
+          diagnostic.phase = 'review'; diagnostic.stage = 'interrupted';
           const approved = await runPreparationReview(summary);
           guard();
+          diagnostic.phase = 'admission'; diagnostic.stage = 'currentness';
+          if (approved !== true) { diagnostic.phase = 'review'; diagnostic.stage = 'declined'; }
           assert.equal(approved, true);
           reviewedCurrent = guard;
           for (const constraint of constraints)
@@ -629,6 +676,7 @@ function create(options) {
           state = 'preparing';
           preparationStarted = true;
           if (baseline.record.type === 'Transact') {
+            diagnostic.phase = 'staging'; diagnostic.stage = 'unknown';
             const result = await stageRailgunTransactInput({
               account,
               owners,
@@ -638,6 +686,8 @@ function create(options) {
               timeoutMs: Math.min(240000, Math.floor(deadline - performance.now())),
             });
             if (result.status !== 'staged') {
+              diagnostic.stage = result.stage;
+              diagnostic.originalAccountReusable = result.originalAccountReusable;
               if (!result.originalAccountReusable) close();
               throw fail();
             }
@@ -649,10 +699,12 @@ function create(options) {
               staging.close();
               closeAccount(account);
             }
+            diagnostic.phase = 'admission'; diagnostic.stage = 'currentness';
             guard();
             assert.deepEqual(selected(account, owners, request), baseline);
           }
           guard();
+          diagnostic.phase = 'proving'; diagnostic.stage = 'unknown';
           const proved = await proveRailgunAccountPrivateOperation({
             account,
             owners,
@@ -665,9 +717,11 @@ function create(options) {
             ...(staging ? { stagingReceipt: staging.receipt } : {}),
           });
           if (proved.status !== 'proved') {
+            diagnostic.stage = proved.stage; diagnostic.proofStatus = proved.status;
             recoveryRequired ||= proved.status === 'signed-unfinished';
             throw fail();
           }
+          diagnostic.phase = 'completion'; diagnostic.stage = 'currentness';
           completion = proved.completion;
           recoveryRequired = true;
           if (closed) completion.close();
@@ -678,6 +732,7 @@ function create(options) {
           state = 'prepared';
           return operation;
         } catch {
+          notePreparationRefusal(diagnostic);
           if (preparationStarted) close();
           throw fail();
         } finally {
@@ -702,12 +757,14 @@ function create(options) {
           }
           staging = null;
           if (cleanupError) {
+            notePreparationRefusal({ ...diagnostic, phase: 'cleanup', stage: 'close-failed' });
             cleanupFailed = true;
             close();
           }
         }
-      });
+      }, () => notePreparationRefusal(diagnostic));
     } catch {
+      notePreparationRefusal(diagnostic);
       return Promise.reject(fail());
     }
   }
@@ -1045,10 +1102,17 @@ function create(options) {
     close,
   });
   ownersByDirectory.set(directory, owner);
-  instances.set(plugin, { mode, current, submit, submitPublic });
+  instances.set(plugin, { mode, current, submit, submitPublic, readPreparationOutcome: () => preparationOutcome });
   lifetime.addEventListener('abort', close, { once: true });
   if (lifetime.aborted) close();
   return plugin;
+}
+// Deliberately works after closure: it reads only a frozen process-local record,
+// never current account state or a handle. Plugin and root-host keys stay exact.
+function readRailgunKohakuPreparationOutcome(plugin) {
+  const entry = instances.get(plugin);
+  if (!entry || entry.mode !== 'private') throw fail();
+  return entry.readPreparationOutcome();
 }
 function assertRailgunKohakuPrivatePlugin(plugin) {
   try {
@@ -1086,6 +1150,7 @@ function submitRailgunKohakuPublicOperation(plugin, operation) {
 }
 module.exports = {
   createRailgunKohakuPlugin,
+  readRailgunKohakuPreparationOutcome,
   assertRailgunKohakuPrivatePlugin,
   broadcastRailgunKohakuOperation,
   assertRailgunKohakuPublicPlugin,

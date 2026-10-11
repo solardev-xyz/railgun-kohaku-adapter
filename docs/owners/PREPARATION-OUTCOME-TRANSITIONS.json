@@ -1,0 +1,138 @@
+{
+  "baseRevision": "8271a157c9b1bc17a254e7bfc20c3c4767cfd74d",
+  "reason": "Process-local closed private preparation diagnostics; exact plugin host keys, refusal codes and authority unchanged.",
+  "changes": [
+    {
+      "file": "src/owners/railgun-kohaku-plugin.js",
+      "beforeSha256": "219eba8dac78f158cc43a15235c9e9772067f8c25df85ddb8fc306f107c9720d",
+      "afterSha256": "da0f32127da8166abf280156e0c5139a34553064e701f321ed6fb279e5f40148",
+      "replacements": [
+        {
+          "start": 2232,
+          "before": "",
+          "after": "// Local diagnostics only. These categories never authorize a retry or operation.\nconst PREPARATION_STAGES = Object.freeze({\n  admission: ['input', 'unavailable', 'selection', 'currentness'],\n  review: ['declined', 'interrupted'],\n  staging: ['local', 'closing-wallet', 'txid', 'reopening-wallet'],\n  proving: ['local', 'submitter', 'window', 'input-provenance', 'receiver', 'poi',\n    'preflight', 'txid-root', 'signer', 'reserve', 'signing', 'signature-storage',\n    'proof', 'proof-storage'],\n  completion: ['currentness'],\n  cleanup: ['close-failed'],\n});\n"
+        },
+        {
+          "start": 7681,
+          "before": "",
+          "after": "    preparationOutcome = null,\n"
+        },
+        {
+          "start": 13296,
+          "before": "  function start(use) {\n",
+          "after": "  function start(use, onRefused) {\n"
+        },
+        {
+          "start": 13592,
+          "before": "",
+          "after": "        onRefused?.();\n"
+        },
+        {
+          "start": 14573,
+          "before": "",
+          "after": "  function notePreparationRefusal(diagnostic) {\n    if (!diagnostic || preparationOutcome !== null) return;\n    const phase = Object.hasOwn(PREPARATION_STAGES, diagnostic.phase)\n      ? diagnostic.phase : 'admission';\n    const elapsed = performance.now() - diagnostic.started;\n    preparationOutcome = Object.freeze({\n      schema: 'railgun-private-preparation-outcome-v1',\n      operation: diagnostic.operation,\n      phase,\n      stage: PREPARATION_STAGES[phase].includes(diagnostic.stage) ? diagnostic.stage : 'unknown',\n      proofStatus: phase === 'proving' && ['refused', 'signed-unfinished'].includes(diagnostic.proofStatus)\n        ? diagnostic.proofStatus : null,\n      originalAccountReusable: phase === 'staging' && typeof diagnostic.originalAccountReusable === 'boolean'\n        ? diagnostic.originalAccountReusable : null,\n      recoveryRequired,\n      elapsedBucket: !Number.isFinite(elapsed) || elapsed < 0 ? 'unknown'\n        : elapsed < 30000 ? 'lt30s' : elapsed < 120000 ? 'lt120s'\n          : elapsed < 240000 ? 'lt240s' : 'ge240s',\n    });\n  }\n"
+        },
+        {
+          "start": 15701,
+          "before": "",
+          "after": "    let diagnostic;\n    // Most recent non-concurrent call. Early input/availability refusals must\n    // not be mistaken for a previous preparation's diagnostic.\n    if (mode === 'private' && !busy) {\n      preparationOutcome = null;\n      diagnostic = { operation: kind, phase: 'admission', stage: 'input', started: performance.now() };\n    }\n"
+        },
+        {
+          "start": 16896,
+          "before": "",
+          "after": "      if (diagnostic) diagnostic.stage = 'unavailable';\n"
+        },
+        {
+          "start": 16971,
+          "before": "",
+          "after": "      diagnostic.stage = 'selection';\n"
+        },
+        {
+          "start": 17462,
+          "before": "",
+          "after": "      diagnostic.operation = kind;\n"
+        },
+        {
+          "start": 18659,
+          "before": "",
+          "after": "          diagnostic.phase = 'admission'; diagnostic.stage = 'currentness';\n"
+        },
+        {
+          "start": 26208,
+          "before": "",
+          "after": "          diagnostic.phase = 'review'; diagnostic.stage = 'interrupted';\n"
+        },
+        {
+          "start": 26364,
+          "before": "",
+          "after": "          diagnostic.phase = 'admission'; diagnostic.stage = 'currentness';\n          if (approved !== true) { diagnostic.phase = 'review'; diagnostic.stage = 'declined'; }\n"
+        },
+        {
+          "start": 26935,
+          "before": "",
+          "after": "            diagnostic.phase = 'staging'; diagnostic.stage = 'unknown';\n"
+        },
+        {
+          "start": 27366,
+          "before": "",
+          "after": "              diagnostic.stage = result.stage;\n              diagnostic.originalAccountReusable = result.originalAccountReusable;\n"
+        },
+        {
+          "start": 27931,
+          "before": "",
+          "after": "            diagnostic.phase = 'admission'; diagnostic.stage = 'currentness';\n"
+        },
+        {
+          "start": 28137,
+          "before": "",
+          "after": "          diagnostic.phase = 'proving'; diagnostic.stage = 'unknown';\n"
+        },
+        {
+          "start": 28697,
+          "before": "",
+          "after": "            diagnostic.stage = proved.stage; diagnostic.proofStatus = proved.status;\n"
+        },
+        {
+          "start": 28892,
+          "before": "",
+          "after": "          diagnostic.phase = 'completion'; diagnostic.stage = 'currentness';\n"
+        },
+        {
+          "start": 29395,
+          "before": "",
+          "after": "          notePreparationRefusal(diagnostic);\n"
+        },
+        {
+          "start": 30213,
+          "before": "",
+          "after": "            notePreparationRefusal({ ...diagnostic, phase: 'cleanup', stage: 'close-failed' });\n"
+        },
+        {
+          "start": 30386,
+          "before": "      });\n",
+          "after": "      }, () => notePreparationRefusal(diagnostic));\n"
+        },
+        {
+          "start": 30452,
+          "before": "",
+          "after": "      notePreparationRefusal(diagnostic);\n"
+        },
+        {
+          "start": 42536,
+          "before": "  instances.set(plugin, { mode, current, submit, submitPublic });\n",
+          "after": "  instances.set(plugin, { mode, current, submit, submitPublic, readPreparationOutcome: () => preparationOutcome });\n"
+        },
+        {
+          "start": 42763,
+          "before": "",
+          "after": "}\n// Deliberately works after closure: it reads only a frozen process-local record,\n// never current account state or a handle. Plugin and root-host keys stay exact.\nfunction readRailgunKohakuPreparationOutcome(plugin) {\n  const entry = instances.get(plugin);\n  if (!entry || entry.mode !== 'private') throw fail();\n  return entry.readPreparationOutcome();\n"
+        },
+        {
+          "start": 44018,
+          "before": "",
+          "after": "  readRailgunKohakuPreparationOutcome,\n"
+        }
+      ]
+    }
+  ]
+}

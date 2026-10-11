@@ -185,3 +185,16 @@ owner.initializeRailgunMain({ host, runtime, deployment: { chainId: 11155111 } }
 owner.initializeRailgunMain({host, runtime, applicationPolicy: {maxOperationAmount: "1"}});
 // @ts-expect-error supplied policy cannot be empty
 owner.initializeRailgunMain({host, runtime, applicationPolicy: {}});
+
+declare const diagnosticSession: owner.AccountSession;
+declare const diagnosticPrivateLane: owner.PrivateLane;
+declare const diagnosticReadLane: owner.ReadLane;
+// @ts-expect-error a read lane cannot produce a private preparation diagnostic
+diagnosticSession.readPreparationOutcome(diagnosticReadLane);
+const preparationOutcome = diagnosticSession.readPreparationOutcome(diagnosticPrivateLane);
+if (preparationOutcome) {
+  // @ts-expect-error diagnostic records are immutable
+  preparationOutcome.recoveryRequired = false;
+  // @ts-expect-error no raw request, transaction or account payload is exposed
+  preparationOutcome.payload;
+}

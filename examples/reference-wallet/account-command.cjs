@@ -6,6 +6,7 @@ const { scanAccount } = require("./scan.cjs");
 async function accountCommand({
   owner,
   maxOperationAmount = 10000000000000000n,
+  onDiagnostic,
   command,
   cache,
   signal,
@@ -66,6 +67,7 @@ async function accountCommand({
   if (["shield", "pay-note", "unshield-note"].includes(command))
     return require("./payment-command.cjs").paymentCommand({
       maxOperationAmount,
+      onDiagnostic,
       session,
       command,
       noteId,

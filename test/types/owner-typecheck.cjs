@@ -139,7 +139,11 @@ for (const name of files.filter((name) => name.includes("negative"))) {
   const refused = ts.getPreEmitDiagnostics(
     ts.createProgram([negative], options),
   );
-  assert.equal(refused.length, count);
+  assert.equal(refused.length, count, ts.formatDiagnosticsWithColorAndContext(refused, {
+    getCurrentDirectory: () => temporary,
+    getCanonicalFileName: (value) => value,
+    getNewLine: () => "\n",
+  }));
   expectations += count;
 }
 console.log(

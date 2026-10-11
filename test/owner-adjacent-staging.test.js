@@ -1,3 +1,4 @@
+const preparationAdaptations = require("../docs/owners/test-staging/PREPARATION-OUTCOME-ADAPTATIONS.json");
 const operationAmountAdaptations = require("../docs/owners/test-staging/OPERATION-AMOUNT-POLICY-ADAPTATIONS.json");
 'use strict';
 const fs = require('fs');
@@ -44,6 +45,15 @@ test('all staged tests and fixtures preserve exact c6 bytes through reversible i
   expect(new Set(manifest.files.map((row) => row.destination)).size).toBe(168);
   for (const row of manifest.files) {
     let text = fs.readFileSync(path.join(root, row.destination), 'utf8');
+    const preparationAdaptation = preparationAdaptations.changes.find(entry => entry.file === row.destination);
+    if (preparationAdaptation) {
+      expect(sha(text)).toBe(preparationAdaptation.afterSha256);
+      for (const edit of [...preparationAdaptation.replacements].reverse()) {
+        expect(text.slice(edit.start, edit.start + edit.after.length)).toBe(edit.after);
+        text = text.slice(0, edit.start) + edit.before + text.slice(edit.start + edit.after.length);
+      }
+      expect(sha(text)).toBe(preparationAdaptation.beforeSha256);
+    }
     const amountAdaptation = operationAmountAdaptations.changes.find(entry => entry.file === row.destination);
     if (amountAdaptation) {
       expect(sha(text)).toBe(amountAdaptation.afterSha256);

@@ -11,6 +11,7 @@ const GAS = Object.freeze({ gasLimit: 1500000n, maxGasFee: 2000000000000000n });
 async function paymentCommand({
   session,
   maxOperationAmount = 10000000000000000n,
+  onDiagnostic,
   command,
   noteId,
   recipient,
@@ -62,7 +63,7 @@ async function paymentCommand({
     });
   }
   await record("preparing");
-  let adapter;
+  let adapter, privateLane, failed = false;
   try {
     const options = {
       wallet: "active",
@@ -98,6 +99,7 @@ async function paymentCommand({
       });
     }
     const lane = await session.openPrivate(options);
+    privateLane = lane;
     try {
       adapter = createRailgunKohakuPrivateAdapter({ host: lane, signal, maxAmount: maxOperationAmount });
     } catch (error) {
@@ -129,10 +131,24 @@ async function paymentCommand({
       outcome,
       next,
     });
+  } catch (error) {
+    failed = true;
+    throw error;
   } finally {
-    if (adapter) {
-      adapter.close();
-      await adapter.closed;
+    try {
+      if (adapter) {
+        adapter.close();
+        await adapter.closed;
+      }
+    } finally {
+      if (failed && privateLane && typeof onDiagnostic === "function") {
+        // Read only after the original adapter drain. A diagnostic sink cannot
+        // replace the original refusal, authorize recovery or change cleanup.
+        try {
+          const outcome = session.readPreparationOutcome(privateLane);
+          if (outcome) onDiagnostic(outcome);
+        } catch { /* Non-authorizing local diagnostics are best effort. */ }
+      }
     }
   }
 }

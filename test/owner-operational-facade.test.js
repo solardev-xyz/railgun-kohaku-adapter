@@ -40,6 +40,7 @@ jest.mock("../src/owners/railgun-account-wallet.js", () => ({
 }));
 jest.mock("../src/owners/railgun-kohaku-plugin.js", () => ({
   createRailgunKohakuPlugin: (input) => state.createPlugin(input),
+  readRailgunKohakuPreparationOutcome: (plugin) => state.readPreparationOutcome(plugin),
   broadcastRailgunKohakuOperation: (plugin, operation) =>
     state.submit(plugin, operation, "private"),
   submitRailgunKohakuPublicOperation: (plugin, operation) =>
@@ -309,6 +310,7 @@ test("closed one-shot initializer and exact account options expose no owner auth
       "closed",
       "describe",
       "openPrivate",
+      "readPreparationOutcome",
       "synchronizeTxid",
       "observeOwnedPoi",
       "openRecovery",
@@ -2184,4 +2186,24 @@ test.each([undefined, "mainnet", 11155111, { id: "sepolia" }])("unsupported depl
   expect(() => fixture({ deployment })).toThrow();
   expect(state.host).toBeUndefined();
   expect(state.openIdentity).not.toHaveBeenCalled();
+});
+
+test("preparation outcome is session-bound and survives private lane closure without adding host keys", async () => {
+  const f = await wrapperSuccessor("private");
+  const outcome = Object.freeze({schema:"railgun-private-preparation-outcome-v1",phase:"proving",stage:"poi"});
+  state.readPreparationOutcome = jest.fn(() => outcome);
+  expect(f.account.readPreparationOutcome(f.lane)).toBe(outcome);
+  expect(state.readPreparationOutcome).toHaveBeenCalledWith(f.actual);
+  expect(() => f.account.readPreparationOutcome({})).toThrow();
+  expect(() => f.account.readPreparationOutcome(Object.freeze({...f.lane}))).toThrow();
+  await f.account.close();
+  expect(f.account.readPreparationOutcome(f.lane)).toBe(outcome);
+  expect(Object.keys(f.lane)).not.toContain("readPreparationOutcome");
+});
+
+test("preparation diagnostics refuse a genuine lane from another account session", async () => {
+  const f = await wrapperSuccessor("private");
+  const other = await f.api.openAccount({...f.options, accountIndex: 1});
+  expect(() => other.readPreparationOutcome(f.lane)).toThrow();
+  await other.close(); await f.account.close();
 });

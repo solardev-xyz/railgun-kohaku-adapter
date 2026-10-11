@@ -170,6 +170,7 @@ function loadConfiguration(filename) {
     "serviceOrigins",
     "unlockMinutes",
     ...(Object.hasOwn(value, "maxOperationAmount") ? ["maxOperationAmount"] : []),
+    ...(Object.hasOwn(value, "diagnostics") ? ["diagnostics"] : []),
   ]);
   if (
     value.version !== 1 ||
@@ -182,6 +183,7 @@ function loadConfiguration(filename) {
       (typeof value.maxOperationAmount !== "string" ||
        !/^[1-9][0-9]{0,36}$/.test(value.maxOperationAmount) ||
        BigInt(value.maxOperationAmount) > (1n << 120n) - 1n)) refuse();
+  if (Object.hasOwn(value, "diagnostics") && typeof value.diagnostics !== "boolean") refuse();
   exact(value.runtime, ["archive", "proverArchive", "artifactDirectory"]);
   for (const file of Object.values(value.runtime)) absolute(file);
   assertRoot(value.runtime.artifactDirectory);

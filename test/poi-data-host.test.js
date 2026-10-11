@@ -1,3 +1,4 @@
+const { undoPreparationOutcome } = require("./preparation-outcome-transitions.cjs");
 const { undoOperationAmountPolicy } = require("./operation-amount-policy-transitions.cjs");
 const { undoRetainedHelpers } = require("./retained-helper-transitions.cjs");
 const deploymentTransitions = require("../docs/owners/DEPLOYMENT-TRANSITIONS.json");
@@ -16,6 +17,7 @@ test('POI source copies and exact binder function retain immutable source proven
   const host = require('../host-poi.cjs');
   for (const [file, pin] of Object.entries(provenance.files)) {
     let text = readFileSync(path.join(__dirname, '..', file), 'utf8');
+    text = undoPreparationOutcome(text, file);
     text = undoOperationAmountPolicy(text, file);
     text = undoRetainedHelpers(text, file);
     text = undoDeployment(text, file);

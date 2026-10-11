@@ -38,6 +38,9 @@ async function consume() {
   await privateLane.broadcast(prepared.handle);
   privateLane.close();
   await privateLane.closed;
+  const diagnostic: owner.PrivatePreparationOutcome | null = session.readPreparationOutcome(privateLane);
+  if (diagnostic) { const status: boolean = diagnostic.recoveryRequired; void status; }
+
   const publicLane = await session.openPublic({
     wallet: "active",
     signal,
@@ -292,3 +295,7 @@ const compatibleHost: owner.RailgunMainHost = { ...host, sourceIdentity: {
 void compatibleHost;
 
 owner.initializeRailgunMain({ host, runtime: { archive: "/engine", proverArchive: "/prover", artifactDirectory: "/artifacts" }, applicationPolicy: { maxGasFee: 1000000n } });
+
+const admissionStage: owner.PrivatePreparationOutcome["stage"] = "input";
+const unavailableStage: owner.PrivatePreparationOutcome["stage"] = "unavailable";
+void admissionStage; void unavailableStage;

@@ -196,6 +196,7 @@ function initializeRailgunMain(options) {
       throw fail();
     const key = JSON.stringify([profile.userDataDir, accountIndex]);
     if (occupied.has(key)) throw fail();
+    const preparationLanes = new WeakMap();
     const state = {
       identity: null,
       enrollment: null,
@@ -490,7 +491,7 @@ function initializeRailgunMain(options) {
             laneClosing = true;
             if (state.lane === plugin) state.lane = null;
           }).catch(() => {});
-          return Object.freeze({
+          const result = Object.freeze({
             instanceId: () => invoke("instanceId", []),
             balance: (assets) => invoke("balance", [assets]),
             notes: (assets, includeSpent) =>
@@ -517,6 +518,8 @@ function initializeRailgunMain(options) {
               stop(plugin, "lane");
             },
           });
+          if (mode === "private") preparationLanes.set(result, plugin);
+          return result;
         } catch (error) {
           if (plugin) stop(plugin, "lane");
           else if (account) stop(account, "account");
@@ -1545,6 +1548,13 @@ function initializeRailgunMain(options) {
       openRelayRecovery: (options) => relay(options, true),
       openRead: (options) => lane("read", options),
       openPrivate: (options) => lane("private", options),
+      readPreparationOutcome(value) {
+        const plugin = preparationLanes.get(value);
+        if (!plugin) throw fail();
+        // No current() here: refusals close the lane. This snapshot contains no
+        // authority and belongs only to the session that issued this exact lane.
+        return pluginApi.readRailgunKohakuPreparationOutcome(plugin);
+      },
       openPublic: (options) => lane("public", options),
       signal: lifetime,
       closed,

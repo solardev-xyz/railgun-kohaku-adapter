@@ -127,3 +127,30 @@ later proof, POI, root and signing work. The early signing gate needs at least
 35 seconds remaining. Long acquisition can therefore finish successfully and
 still refuse before signing if subsequent checks are too slow. Such a refusal
 preserves the held operation; it is not permission to re-prepare or resend.
+
+### Local private preparation diagnostics
+
+After a private preparation refuses, `session.readPreparationOutcome(privateLane)`
+returns a frozen, process-local diagnostic, or `null` when none is available.
+Use the exact lane issued by that session; another session or a copied lane is
+refused. The reader remains available after lane/session closure, so callers can
+drain first. After a failure, close the lane and await its original `closed`
+promise before reading. Cancellation can reject the outward preparation promise
+before its inner work publishes a diagnostic; an earlier `null` does not mean
+success. It adds no method to the exact Kohaku host shape.
+
+The closed fields are operation kind, phase, stage, proof status, whether the
+staging owner reported its original account reusable, recovery-required flag,
+and a coarse elapsed-time bucket. Unknown internal stages become `unknown`.
+No account identifier, amount, request, response body, transaction hash, proof,
+or free-form error is exposed. A diagnostic identifies the last observed phase;
+it does not establish a transport root cause or authorize retry, release or send.
+Existing refusal codes and custody/recovery requirements still apply.
+
+The record describes the most recent non-concurrent preparation call on that
+lane. Read it immediately after that call settles. A new non-concurrent call
+clears the previous record, including one refused at input or availability
+admission. Concurrent calls do not replace the in-flight call's record. A
+successful preparation leaves no diagnostic. The first observed refusal is retained through cleanup;
+records are not persisted. These diagnostics cover private preparation, not
+public Shield operations or delivery outcomes.

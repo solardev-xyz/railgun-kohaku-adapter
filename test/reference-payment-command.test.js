@@ -122,3 +122,29 @@ test("post-send record failure does not repeat the network call or fabricate an 
   );
   expect(f.rows()[0].status).toBe("prepared");
 });
+
+test("opt-in preparation diagnostic is emitted after drain and cannot replace refusal", async () => {
+  const f = fixture("pay-note");
+  const outcome = Object.freeze({schema:"railgun-private-preparation-outcome-v1",phase:"proving",stage:"poi"});
+  f.options.noteId = "absent";
+  f.options.session.readPreparationOutcome = jest.fn((lane) => {
+    expect(lane).toBe(f.host.host);
+    expect(f.host.calls.at(-1).method).toBe("close");
+    return outcome;
+  });
+  const sink = jest.fn(() => {throw Error("sink must not replace refusal");});f.options.onDiagnostic=sink;
+  await expect(paymentCommand(f.options)).rejects.toThrow("Exact unspent note required");
+  expect(sink).toHaveBeenCalledWith(outcome);
+});
+test("diagnostics are opt-in and do not query the session on success", async () => {
+  const f=fixture("pay-note");f.options.session.readPreparationOutcome=jest.fn();f.options.onDiagnostic=jest.fn();
+  await paymentCommand(f.options);
+  expect(f.options.session.readPreparationOutcome).not.toHaveBeenCalled();expect(f.options.onDiagnostic).not.toHaveBeenCalled();
+});
+
+test("default failure handling does not query or publish preparation diagnostics", async () => {
+  const f = fixture("pay-note"); f.options.noteId = "absent";
+  f.options.session.readPreparationOutcome = jest.fn();
+  await expect(paymentCommand(f.options)).rejects.toThrow("Exact unspent note required");
+  expect(f.options.session.readPreparationOutcome).not.toHaveBeenCalled();
+});
