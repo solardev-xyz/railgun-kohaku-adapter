@@ -101,6 +101,7 @@ function createJourneyChain({
   poiVerifier = null,
   submitters = [SUBMITTER],
   balance = BigInt(BALANCE),
+  maxShieldAmount = 10000000000000000n,
 }) {
   // Explicit synthetic actors only. Older recorded lineages retain their fixed
   // default; independent adopter tests bind separate generated public EOAs.
@@ -108,6 +109,7 @@ function createJourneyChain({
   assert.ok(submitters.every(address => /^0x[0-9a-f]{40}$/.test(address) && BigInt(address) > 0n));
   assert.equal(new Set(submitters).size, submitters.length);
   assert.ok(typeof balance === 'bigint' && balance > 0n && balance < (1n << 256n));
+  assert.ok(typeof maxShieldAmount === 'bigint' && maxShieldAmount > 0n && maxShieldAmount < (1n << 120n));
   const admittedSubmitters = new Set(submitters);
   const assertSubmitter = address => assert.ok(admittedSubmitters.has(address.toLowerCase()), 'Unknown synthetic actor');
   const senderOf = tx => tx.from ?? SUBMITTER;
@@ -219,7 +221,7 @@ function createJourneyChain({
     assert.equal(required, true); assert.equal(calls.length, 2);
     for (const call of calls) {assert.equal(call.to.toLowerCase(), RELAY_ADAPT);assert.equal(call.value, 0n);}
     const [amount] = abi.decodeFunctionData('wrapBase', calls[0].data);
-    assert.equal(amount, BigInt(value)); assert.ok(amount > 0n && amount <= 10000000000000000n);
+    assert.equal(amount, BigInt(value)); assert.ok(amount > 0n && amount <= maxShieldAmount);
     const [requests] = abi.decodeFunctionData('shield', calls[1].data);
     assert.equal(requests.length, 1);
     const request = requests[0];

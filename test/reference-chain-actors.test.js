@@ -35,10 +35,11 @@ native(
       crypto: worker,
       submitters: [alice.address.toLowerCase(), bob.address.toLowerCase()],
       balance: 1000000000000000000n,
+      maxShieldAmount: 50000000000000000n,
     });
     const abi = new ethers.Interface(SHIELD_ABI),
       word = (n) => ethers.zeroPadValue(ethers.toBeHex(n), 32);
-    const value = 1000000n,
+    const value = 30000000000000000n,
       shield = abi.encodeFunctionData("shield", [
         [
           [
@@ -128,6 +129,7 @@ native(
         sourceBytes: fs.readFileSync(publicSource),
         crypto: worker,
         state: chain.state(),
+        maxShieldAmount: 50000000000000000n,
         submitters: [alice.address.toLowerCase(), bob.address.toLowerCase()],
       });
       await cold.init();

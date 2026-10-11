@@ -290,7 +290,7 @@ async function main() {
     sourceBytes: fs.readFileSync(inputs.publicSource),
     crypto: worker,
     submitters: Object.values(funding),
-    ...(inputs.variant === "wide-retained" ? {balance: 1000000000000000000n} : {}),
+    ...(inputs.variant === "wide-retained" ? {balance: 1000000000000000000n, maxShieldAmount: 50000000000000000n} : {}),
     poiVerifier: createJourneyPoiVerifier({
       engineModules: inputs.engineModules,
       serialProver: inputs.serialProver,
