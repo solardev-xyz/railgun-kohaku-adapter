@@ -38,6 +38,7 @@
   "host/transport.cjs",
   "host/utility-entry.cjs",
   "host/vault.cjs",
+  "journey.cjs",
   "main.cjs",
   "package-lock.json",
   "package.json",

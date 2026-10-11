@@ -100,91 +100,181 @@ async function run() {
       state.close();
     }
   }
-  if (options.command === "unshield-note") {
-    const { submitter } = require("./host/signers.cjs").createSignerHost({
-      vault,
-      profiles: { getActiveProfile: () => profile },
-    });
-    if (
-      options.recipient.toLowerCase() !==
-      submitter.readMetadata().address.toLowerCase()
-    )
-      throw Object.assign(
-        Error("Unshield recipient must be the enrolled funding address"),
-        { code: "REFERENCE_UNSHIELD_RECIPIENT" },
-      );
-  }
-  const torDirectory = directory(path.join(lock.directory, "tor"), true);
-  tor = require("./host/tor.cjs").createTorManager({
-    ...config.tor,
-    directory: torDirectory,
-    signal,
-  });
-  process.stderr.write("Starting the pinned Tor proxy…\n");
-  await tor.start();
-  composition = require("./host/compose.cjs").initializeReferenceOwner({
-    ...config,
-    profile,
-    vault,
-    tor,
-  });
-  if (options.command === "receipt")
-    return composition.readReceipt(
-      options.transactionHash,
-      require("./review.cjs").createReviews(terminal).disclosure,
-    );
-  let chain, state;
-  try {
-    if (
-      ["scan", "scan-new", "shield", "pay-note", "unshield-note"].includes(
-        options.command,
-      )
-    ) {
-      state = require("./host/application-state.cjs").createApplicationState({
+  if (options.command.startsWith("journey-")) {
+    const state =
+      require("./host/application-state.cjs").createApplicationState({
         profile,
         vault,
         assertCustody: lock.verify,
       });
-    }
-    if (["scan", "scan-new"].includes(options.command)) {
-      chain = require("./chain.cjs").createChainReader({
-        tor,
-        rpcUrl: config.rpcUrl,
+    try {
+      const guide = require("./journey.cjs");
+      if (options.command === "journey-status")
+        return await guide.journeyStatus(state);
+      const identity = guide.journeyIdentity(
+        config,
+        require("./host/source-identity.cjs")
+          .createSourceIdentityHost()
+          .readDigest(),
+      );
+      if (options.command === "journey-start")
+        return await guide.startJourney({
+          state,
+          identity,
+          role: options.role,
+        });
+      return await guide.nextJourney({
+        state,
+        identity,
         signal,
+        maxOperationAmount: BigInt(
+          config.maxOperationAmount ?? "10000000000000000",
+        ),
+        execute: (selected, hooks) => executeCommand(selected, state, hooks),
+        confirm: (message) => terminal.confirm(message, "CONTINUE", signal),
+        ask: async (message) => {
+          const value = await terminal.read(message, { signal, maxBytes: 256 });
+          try {
+            return value.toString("utf8");
+          } finally {
+            value.fill(0);
+          }
+        },
       });
+    } finally {
+      state.close();
     }
-    return await require("./account-command.cjs").accountCommand({
-      owner: composition.owner,
-      maxOperationAmount: composition.applicationPolicy.maxOperationAmount,
-      onDiagnostic: config.diagnostics === true
-        ? (outcome) => process.stderr.write(JSON.stringify({ status: "preparation-diagnostic", outcome }) + "\n")
-        : undefined,
-      ...options,
+  }
+  return executeCommand(options);
+  async function executeCommand(options, suppliedState, hooks = {}) {
+    if (options.command === "funding-address") {
+      await hooks.onDispatch?.();
+      const { submitter } = require("./host/signers.cjs").createSignerHost({
+        vault,
+        profiles: { getActiveProfile: () => profile },
+      });
+      return {
+        status: "funding-address",
+        chainId: 11155111,
+        address: submitter.readMetadata().address,
+      };
+    }
+    if (options.command === "unshield-note") {
+      const { submitter } = require("./host/signers.cjs").createSignerHost({
+        vault,
+        profiles: { getActiveProfile: () => profile },
+      });
+      if (
+        options.recipient.toLowerCase() !==
+        submitter.readMetadata().address.toLowerCase()
+      )
+        throw Object.assign(
+          Error("Unshield recipient must be the enrolled funding address"),
+          { code: "REFERENCE_UNSHIELD_RECIPIENT" },
+        );
+    }
+    const torDirectory = directory(path.join(lock.directory, "tor"), true);
+    tor = require("./host/tor.cjs").createTorManager({
+      ...config.tor,
+      directory: torDirectory,
       signal,
-      state,
-      chain,
-      onSession: (value) => {
-        session = value;
-      },
-      scanCacheDigest: composition.cacheDigests.public,
-      deadline: unlockStarted + config.unlockMinutes * 60000,
-      reviews: require("./review.cjs").createReviews(terminal),
-      confirm: () =>
-        terminal.confirm(
-          options.command === "scan-new"
-            ? "Begin a new public scan generation and application scan phase? This is a full rescan. Existing custody remains retained."
-            : "Begin a new derived wallet generation? Existing custody remains retained.",
-          "REBUILD",
-          signal,
-        ),
-      progress: (value) =>
-        process.stderr.write(
-          JSON.stringify({ status: "scanning", ...value }) + "\n",
-        ),
     });
-  } finally {
-    state?.close();
-    if (chain) await chain.close();
+    process.stderr.write("Starting the pinned Tor proxy…\n");
+    await tor.start();
+    composition = require("./host/compose.cjs").initializeReferenceOwner({
+      ...config,
+      profile,
+      vault,
+      tor,
+    });
+    if (options.command === "receipt") {
+      await hooks.onDispatch?.();
+      return composition.readReceipt(
+        options.transactionHash,
+        require("./review.cjs").createReviews(terminal).disclosure,
+      );
+    }
+    let chain,
+      state = suppliedState;
+    try {
+      if (
+        ["scan", "scan-new", "shield", "pay-note", "unshield-note"].includes(
+          options.command,
+        )
+      ) {
+        state ??=
+          require("./host/application-state.cjs").createApplicationState({
+            profile,
+            vault,
+            assertCustody: lock.verify,
+          });
+      }
+      if (["scan", "scan-new"].includes(options.command)) {
+        chain = require("./chain.cjs").createChainReader({
+          tor,
+          rpcUrl: config.rpcUrl,
+          signal,
+        });
+      }
+      const reviews = require("./review.cjs").createReviews(terminal);
+      const originalPreparation = reviews.preparation;
+      const originalTransaction = reviews.transaction;
+      const guidedReviews = hooks.onPreparationDecision
+        ? {
+            ...reviews,
+            preparation: async (...args) => {
+              const approved = await originalPreparation(...args);
+              await hooks.onPreparationDecision(approved === true);
+              return approved;
+            },
+            transaction: async (...args) => {
+              const approved = await originalTransaction(...args);
+              await hooks.onTransactionDecision?.(approved === true, args[0]);
+              return approved;
+            },
+          }
+        : reviews;
+      await hooks.onDispatch?.();
+      return await require("./account-command.cjs").accountCommand({
+        owner: composition.owner,
+        maxOperationAmount: composition.applicationPolicy.maxOperationAmount,
+        onDiagnostic:
+          config.diagnostics === true
+            ? (outcome) =>
+                process.stderr.write(
+                  JSON.stringify({
+                    status: "preparation-diagnostic",
+                    outcome,
+                  }) + "\n",
+                )
+            : undefined,
+        ...options,
+        signal,
+        state,
+        chain,
+        onSession: (value) => {
+          session = value;
+        },
+        scanCacheDigest: composition.cacheDigests.public,
+        deadline: unlockStarted + config.unlockMinutes * 60000,
+        reviews: guidedReviews,
+        confirm: () =>
+          terminal.confirm(
+            options.command === "scan-new"
+              ? "Begin a new public scan generation and application scan phase? This is a full rescan. Existing custody remains retained."
+              : "Begin a new derived wallet generation? Existing custody remains retained.",
+            "REBUILD",
+            signal,
+          ),
+        progress: (value) =>
+          process.stderr.write(
+            JSON.stringify({ status: "scanning", ...value }) + "\n",
+          ),
+      });
+    } finally {
+      if (!suppliedState) state?.close();
+      if (chain) await chain.close();
+    }
   }
 }
 operation = run();

@@ -7,6 +7,8 @@ async function recoveryCommand({
   holdId,
   transactionHash,
   noteId,
+  kind,
+  expectedPayment,
   signal,
   reviews,
 }) {
@@ -32,17 +34,30 @@ async function recoveryCommand({
       await lane.closed;
     }
   }
-  if (command === "submit-stored") {
+  if (["submit-stored", "resume-proof"].includes(command)) {
     const lane = await session.openRecovery({
       signal,
       gasLimit: 1500000n,
       maxGasFee: 2000000000000000n,
-      reviewDisclosures: (summary, operationSignal) =>
-        reviews.disclosure(summary, { signal: operationSignal }),
+      reviewDisclosures: (summary, operationSignal) => {
+        if (
+          expectedPayment &&
+          (summary.purpose !== "railgun-recovered-private-submission" ||
+            summary.selection?.noteId !== expectedPayment.noteId ||
+            summary.operation !== expectedPayment.kind ||
+            (expectedPayment.kind === "railgun-token-unshield"
+              ? summary.recipient?.toLowerCase() !==
+                expectedPayment.recipient.toLowerCase()
+              : summary.recipient !== expectedPayment.recipient))
+        )
+          return false;
+        return reviews.disclosure(summary, { signal: operationSignal });
+      },
       reviewTransaction: (summary) =>
         reviews.transaction(summary, { signal: lane.signal }),
     });
     try {
+      if (command === "resume-proof") return await lane.resumeProof(holdId);
       const outcome = await lane.submitStored(holdId);
       return Object.freeze({
         status: "submission-outcome",
@@ -61,6 +76,54 @@ async function recoveryCommand({
       signal,
       reviewDisclosure: reviews.disclosure,
     });
+  if (command === "hold-find") {
+    if (
+      !["railgun-private-transfer", "railgun-token-unshield"].includes(kind) ||
+      typeof noteId !== "string"
+    )
+      throw Error("Invalid guided hold selection");
+    const history = await recoveryCommand({
+      session,
+      command: "holds",
+      signal,
+      reviews,
+    });
+    const lane = await session.openSubmissionRecovery({
+      signal,
+      reviewDisclosures: () => false,
+    });
+    try {
+      const matches = [];
+      for (const record of history.records) {
+        if (record.kind !== kind) continue;
+        const description = await lane.describe(record.holdId);
+        if (
+          description.status !== "held" ||
+          description.holdId !== record.holdId
+        )
+          throw Error("Invalid held descriptor");
+        if (description.input.noteId === noteId)
+          matches.push({ record, description });
+      }
+      if (matches.length !== 1)
+        return Object.freeze({
+          status: matches.length === 0 ? "hold-absent" : "hold-ambiguous",
+          inputNoteId: noteId,
+          kind,
+        });
+      return Object.freeze({
+        status: "hold-found",
+        holdId: matches[0].record.holdId,
+        inputNoteId: noteId,
+        kind,
+        localState: matches[0].record.localState,
+        transfer: matches[0].description.transfer,
+      });
+    } finally {
+      lane.close();
+      await lane.closed;
+    }
+  }
   if (command === "holds") {
     const lane = await session.openRecovery({
       signal,

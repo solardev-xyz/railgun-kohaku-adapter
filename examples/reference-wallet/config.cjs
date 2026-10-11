@@ -3,6 +3,9 @@ const path = require("node:path"),
   fs = require("node:fs");
 const { readFile, assertRoot } = require("./host/files.cjs");
 const COMMANDS = new Set([
+  "journey-start",
+  "journey-next",
+  "journey-status",
   "init",
   "restore",
   "backup",
@@ -62,6 +65,7 @@ function parseArguments(args) {
     const name = rest[i];
     if (
       ![
+        "--role",
         "--profile",
         "--config",
         "--cache",
@@ -81,10 +85,21 @@ function parseArguments(args) {
   }
   if (
     !options["--profile"] ||
-    (!["init", "restore", "backup", "funding-address", "operations"].includes(
-      command,
-    ) &&
+    (![
+      "init",
+      "restore",
+      "backup",
+      "funding-address",
+      "operations",
+      "journey-status",
+    ].includes(command) &&
       !options["--config"])
+  )
+    refuse();
+  if (
+    command === "journey-start"
+      ? !["alice", "bob"].includes(options["--role"])
+      : options["--role"] !== undefined
   )
     refuse();
   if (
@@ -147,6 +162,7 @@ function parseArguments(args) {
     refuse();
   return Object.freeze({
     command,
+    role: options["--role"],
     noteId: options["--note"],
     holdId: options["--hold"],
     transactionHash: options["--transaction"],
@@ -169,7 +185,9 @@ function loadConfiguration(filename) {
     "rpcUrl",
     "serviceOrigins",
     "unlockMinutes",
-    ...(Object.hasOwn(value, "maxOperationAmount") ? ["maxOperationAmount"] : []),
+    ...(Object.hasOwn(value, "maxOperationAmount")
+      ? ["maxOperationAmount"]
+      : []),
     ...(Object.hasOwn(value, "diagnostics") ? ["diagnostics"] : []),
   ]);
   if (
@@ -179,11 +197,18 @@ function loadConfiguration(filename) {
     value.unlockMinutes > 60
   )
     refuse();
-  if (Object.hasOwn(value, "maxOperationAmount") &&
-      (typeof value.maxOperationAmount !== "string" ||
-       !/^[1-9][0-9]{0,36}$/.test(value.maxOperationAmount) ||
-       BigInt(value.maxOperationAmount) > (1n << 120n) - 1n)) refuse();
-  if (Object.hasOwn(value, "diagnostics") && typeof value.diagnostics !== "boolean") refuse();
+  if (
+    Object.hasOwn(value, "maxOperationAmount") &&
+    (typeof value.maxOperationAmount !== "string" ||
+      !/^[1-9][0-9]{0,36}$/.test(value.maxOperationAmount) ||
+      BigInt(value.maxOperationAmount) > (1n << 120n) - 1n)
+  )
+    refuse();
+  if (
+    Object.hasOwn(value, "diagnostics") &&
+    typeof value.diagnostics !== "boolean"
+  )
+    refuse();
   exact(value.runtime, ["archive", "proverArchive", "artifactDirectory"]);
   for (const file of Object.values(value.runtime)) absolute(file);
   assertRoot(value.runtime.artifactDirectory);

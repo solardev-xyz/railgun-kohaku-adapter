@@ -30,7 +30,7 @@ const {
 } = require("../../qualification/installed-journey/synthetic-copy-contract.cjs");
 const { createFixtureServer } = require("./server.cjs");
 assert.ok(
-  [undefined, "acknowledged", "retained-unknown", "retained-upgrade", "wide-retained", "preparation-diagnostics"].includes(inputs.variant),
+  [undefined, "acknowledged", "retained-unknown", "retained-upgrade", "wide-retained", "preparation-diagnostics", "guided"].includes(inputs.variant),
 );
 const { TRANSACT_ABI } = require("../../../src/data/railgun-private-policy.js");
 const hash = (bytes) => crypto.createHash("sha256").update(bytes).digest("hex");
@@ -223,11 +223,11 @@ async function actor(name, command, extra = {}) {
       assert.deepEqual(result.result.outcome, extra.expectedOutcome);
       result.expectedRefusal = true;
     }
-    const expectedSends =
+    const expectedSends = extra.expectedSends ?? (
       !extra.expectedOutcome &&
       ["shield", "pay-note", "unshield-note", "submit-stored"].includes(command)
         ? 1
-        : 0;
+        : 0);
     assert.equal(
       result.networkMethods.filter(
         (method) => method === "eth_sendRawTransaction",
@@ -264,11 +264,10 @@ async function actor(name, command, extra = {}) {
       );
       return refused;
     }
-    if (extra.fixtureCrash === "after-prepared" && error.signal === "SIGKILL") {
-      assert.ok(
-        !server.methods.slice(firstMethod).includes("eth_sendRawTransaction"),
-      );
-      const crashed = { expectedCrash: true, signal: "SIGKILL", sent: false };
+    if (["after-prepared", "before-guide-result"].includes(extra.fixtureCrash) && error.signal === "SIGKILL") {
+      const sends = server.methods.slice(firstMethod).filter(method => method === "eth_sendRawTransaction").length;
+      assert.equal(sends, extra.crashExpectedSends ?? 0);
+      const crashed = { expectedCrash: true, signal: "SIGKILL", sent: sends > 0 };
       write(tag + ".expected-crash.json", crashed);
       results.push({ tag, result: crashed });
       process.stdout.write(
@@ -305,6 +304,7 @@ async function main() {
     key: fs.readFileSync(path.join(root, "key.pem")),
     cert: fs.readFileSync(path.join(root, "cert.pem")),
   });
+  if (inputs.variant === "guided") return require("./guided.cjs").runGuided({actor,chain,server,write,installation});
   const addresses = {};
   for (const name of actors) {
     await actor(name, "account-create");

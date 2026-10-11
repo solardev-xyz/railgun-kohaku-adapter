@@ -7,6 +7,7 @@ async function accountCommand({
   owner,
   maxOperationAmount = 10000000000000000n,
   onDiagnostic,
+  guideAttempt,
   command,
   cache,
   signal,
@@ -18,6 +19,8 @@ async function accountCommand({
   confirm,
   reviews,
   noteId,
+  kind,
+  expectedPayment,
   holdId,
   transactionHash,
   capsuleDigest,
@@ -68,6 +71,7 @@ async function accountCommand({
     return require("./payment-command.cjs").paymentCommand({
       maxOperationAmount,
       onDiagnostic,
+      guideAttempt,
       session,
       command,
       noteId,
@@ -81,7 +85,9 @@ async function accountCommand({
   if (
     [
       "holds",
+      "hold-find",
       "submit-stored",
+      "resume-proof",
       "observe",
       "resolve",
       "poi-status",
@@ -96,6 +102,8 @@ async function accountCommand({
       holdId,
       transactionHash,
       noteId,
+      kind,
+      expectedPayment,
       signal,
       reviews,
     });

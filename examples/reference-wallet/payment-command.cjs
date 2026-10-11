@@ -12,6 +12,7 @@ async function paymentCommand({
   session,
   maxOperationAmount = 10000000000000000n,
   onDiagnostic,
+  guideAttempt,
   command,
   noteId,
   recipient,
@@ -47,6 +48,7 @@ async function paymentCommand({
       const index = rows.findIndex((row) => row.id === id);
       const row = {
         id,
+        ...(guideAttempt ? { guideAttempt } : {}),
         command,
         noteId: noteId ?? null,
         recipient: recipient ?? null,
@@ -63,7 +65,9 @@ async function paymentCommand({
     });
   }
   await record("preparing");
-  let adapter, privateLane, failed = false;
+  let adapter,
+    privateLane,
+    failed = false;
   try {
     const options = {
       wallet: "active",
@@ -75,7 +79,11 @@ async function paymentCommand({
     if (command === "shield") {
       const lane = await session.openPublic(options);
       try {
-        adapter = createRailgunKohakuPublicAdapter({ host: lane, signal, maxAmount: maxOperationAmount });
+        adapter = createRailgunKohakuPublicAdapter({
+          host: lane,
+          signal,
+          maxAmount: maxOperationAmount,
+        });
       } catch (error) {
         await lane.close();
         await lane.closed;
@@ -101,7 +109,11 @@ async function paymentCommand({
     const lane = await session.openPrivate(options);
     privateLane = lane;
     try {
-      adapter = createRailgunKohakuPrivateAdapter({ host: lane, signal, maxAmount: maxOperationAmount });
+      adapter = createRailgunKohakuPrivateAdapter({
+        host: lane,
+        signal,
+        maxAmount: maxOperationAmount,
+      });
     } catch (error) {
       await lane.close();
       await lane.closed;
@@ -147,7 +159,9 @@ async function paymentCommand({
         try {
           const outcome = session.readPreparationOutcome(privateLane);
           if (outcome) onDiagnostic(outcome);
-        } catch { /* Non-authorizing local diagnostics are best effort. */ }
+        } catch {
+          /* Non-authorizing local diagnostics are best effort. */
+        }
       }
     }
   }

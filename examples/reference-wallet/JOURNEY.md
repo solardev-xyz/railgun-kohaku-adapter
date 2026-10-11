@@ -147,3 +147,81 @@ upgrade; no replacement payment or repeated POI handoff was used. All three
 receipts and the final available-note accounting passed. The record binds its
 own installations and does not qualify arbitrary newer bytes, wider amounts,
 mainnet or relayer privacy.
+
+## Guided workflow (candidate under qualification)
+
+The `journey-*` commands keep the navigation in encrypted application storage.
+They call the same commands and original owner reviews described above. Each
+`journey-next` runs one step in a fresh process; there is no unattended transaction
+or POI submission loop. These commands are a new candidate and do not inherit
+the earlier live run's qualification.
+
+After installing, configuring and initializing two separate fresh profiles:
+
+```sh
+npm start -- journey-start --role bob --profile "$BOB_PROFILE" --config "$BOB_CONFIG"
+npm start -- journey-next --profile "$BOB_PROFILE" --config "$BOB_CONFIG"
+```
+
+Repeat `journey-next` to follow the printed instruction. Bob first gets his
+funding EOA and Railgun address. Fund his EOA for unshield gas, then share his
+Railgun address with Alice. The guide asks before each step; the original
+`ALLOW`, `PREPARE`, `SEND`, `RESOLVE` and `REBUILD` reviews remain separate.
+
+```sh
+npm start -- journey-start --role alice --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
+npm start -- journey-next --profile "$ALICE_PROFILE" --config "$ALICE_CONFIG"
+```
+
+Alice funds her printed EOA, enters the gross Shield amount in wei, and later
+enters Bob's Railgun address. The guide binds her received input to her Shield
+transaction, retains the original payment's hold and hash, waits for settlement,
+checks receipts and attempts its POI handoff once. Alice shares the finalized
+private-payment transaction hash with Bob. Bob enters it in his own guide; his
+wallet independently discovers its unspent note. There is no storage or key
+exchange. The transaction hash is linking information: keep this exchange and
+the command output private.
+
+Bob continues through owned POI status, TXID synchronization, reviewed unshield,
+finality, receipt accounting and refreshed note state. Missing POI and pending
+finality are wait states. Run `journey-next` later to perform the next explicit
+observation. Alice's final state means her side has reached the attempted-POI
+boundary; it cannot certify acceptance on behalf of Bob.
+
+```sh
+npm start -- journey-status --profile "$BOB_PROFILE"
+```
+
+`journey-status` needs the vault password, but no configuration, proxy or network.
+It reports the saved phase, last closed error code and next command. Guide state
+is bookkeeping, never authority to sign, send or release a hold. It is bound to
+its configuration and host-source identity; a changed candidate refuses to
+continue instead of silently adopting different software. Starting again does
+not overwrite a journey. The original explicit CLI commands remain available
+for diagnosis, but do not edit the guide state or perform additional payments
+outside it during qualification.
+
+An interruption during payment routes to authenticated custody, not a repeated
+payment. A unique hold must name the exact original input. An unfinished proof
+has its own explicit proof-resume step; a proved unjournaled hold can be offered
+for its first submission, with the original recipient checked again. The owner
+still decides eligibility. Unknown delivery is observed, never resent. A lost
+POI result is recovered without another handoff. A complete empty custody read,
+or the fixed first-use history refusal, permits only an exact original-input
+recheck and a bounded preparation re-offer. It does not prove that no reservation
+exists: the owner authenticates store creation and blocks an existing reservation
+of that same input before signing. Ambiguous custody never permits a re-offer.
+
+There are at most three approved private preparation offers, three approved
+Shield SEND offers, and three approved stored-operation SEND offers. Declining a
+review consumes no approved offer. Every dispatched command still counts toward
+the overall 512-call bound. POI submit-command offers are limited to three and
+retain the owner's prepared-only guard; an attempted capsule cannot be handed
+off again. Exhaustion, mismatched results or unsupported recovery stops with a
+diagnosis. A stopped journey does not report completion. No LLM is involved in
+these rules.
+
+If Bob's scan has not found a note yet, the next scan prompt lets him keep the
+expected transaction hash or correct it. Once a note is selected, its identity
+is fixed. A prolonged Missing POI status can require diagnosis on Alice's side;
+this guide does not replace proofs or reset attempted handoffs.

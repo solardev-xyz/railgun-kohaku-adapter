@@ -28,7 +28,8 @@ const { createVault, readVaultProfile } = require(
   path.join(example, "host/vault.cjs"),
 );
 let vault, composition, session, appState, chain;
-const preparationDiagnostics = [], commandProgress = [];
+const preparationDiagnostics = [],
+  commandProgress = [];
 const lifetime = new AbortController();
 require(path.join(example, "fatal.cjs")).installFatalHandlers({
   app,
@@ -80,7 +81,9 @@ async function run() {
     rpcUrl: config.rpcUrl,
     serviceOrigins: config.serviceOrigins,
     runtime: config.runtime,
-    ...(config.maxOperationAmount ? {maxOperationAmount: config.maxOperationAmount} : {}),
+    ...(config.maxOperationAmount
+      ? { maxOperationAmount: config.maxOperationAmount }
+      : {}),
   });
   if (config.command === "receipt")
     return {
@@ -91,7 +94,8 @@ async function run() {
     path.join(example, "host/application-state.cjs"),
   ).createApplicationState({ profile, vault, assertCustody: lock.verify });
   if (config.fixtureCrash === "after-prepared") {
-    if (!["pay-note", "unshield-note"].includes(config.command)) throw Error("Invalid crash fixture");
+    if (!["pay-note", "unshield-note", "journey-next"].includes(config.command))
+      throw Error("Invalid crash fixture");
     const actual = appState;
     appState = Object.freeze({
       get: actual.get,
@@ -107,6 +111,24 @@ async function run() {
         return result;
       },
     });
+  }
+  if (config.fixtureCrash === "before-guide-result") {
+    const actual = appState;
+    appState = {
+      ...actual,
+      async update(name, change) {
+        return actual.update(name, (value) => {
+          const next = change(value);
+          if (
+            name === "guided-journey" &&
+            value?.inflight &&
+            next.inflight === null
+          )
+            process.kill(process.pid, "SIGKILL");
+          return next;
+        });
+      },
+    };
   }
   chain = require(path.join(example, "chain.cjs")).createChainReader({
     tor,
@@ -125,35 +147,100 @@ async function run() {
     reviewTimings.push({ purpose: summary?.purpose ?? null, at: Date.now() });
     return true;
   };
-  const result = await require(
-    path.join(example, "account-command.cjs"),
-  ).accountCommand({
-    ...config,
-    owner: composition.owner,
-    maxOperationAmount: composition.applicationPolicy.maxOperationAmount ?? 10000000000000000n,
-    signal,
-    state: appState,
-    chain,
-    progress: (value) => {
-      if (value.status === "txid-recovering") commandProgress.push(value);
-      if (value.status === "txid-recovering" || value.ranges % 10 === 0 || value.checkpoint === value.anchor)
-        process.stderr.write(JSON.stringify({ fixtureProgress: value }) + "\n");
-    },
-    scanCacheDigest: composition.cacheDigests.public,
-    deadline: Date.now() + 55 * 60000,
-    onDiagnostic: (value) => preparationDiagnostics.push(value),
-    onSession: (value) => {
-      session = value;
-    },
-    confirm: consent,
-    reviews: {
-      preparation: (summary) => config.refusePreparation === true ? false : consent(summary),
-      transaction: consent,
-      disclosure: consent,
-      resolution: consent,
-      txidConsent: async () => consent,
-    },
-  });
+  async function command(selected, hooks = {}) {
+    await hooks.onDispatch?.();
+    if (selected.command === "funding-address") {
+      const { submitter } = require(
+        path.join(example, "host/signers.cjs"),
+      ).createSignerHost({
+        vault,
+        profiles: { getActiveProfile: () => profile },
+      });
+      return {
+        status: "funding-address",
+        chainId: 11155111,
+        address: submitter.readMetadata().address,
+      };
+    }
+    if (selected.command === "receipt")
+      return composition.readReceipt(selected.transactionHash, consent);
+    return await require(
+      path.join(example, "account-command.cjs"),
+    ).accountCommand({
+      ...config,
+      ...selected,
+      owner: composition.owner,
+      maxOperationAmount:
+        composition.applicationPolicy.maxOperationAmount ?? 10000000000000000n,
+      signal,
+      state: appState,
+      chain,
+      progress: (value) => {
+        if (value.status === "txid-recovering") commandProgress.push(value);
+        if (
+          value.status === "txid-recovering" ||
+          value.ranges % 10 === 0 ||
+          value.checkpoint === value.anchor
+        )
+          process.stderr.write(
+            JSON.stringify({ fixtureProgress: value }) + "\n",
+          );
+      },
+      scanCacheDigest: composition.cacheDigests.public,
+      deadline: Date.now() + (config.pauseScan === true ? 4 : 55) * 60000,
+      onDiagnostic: (value) => preparationDiagnostics.push(value),
+      onSession: (value) => {
+        session = value;
+      },
+      confirm: consent,
+      reviews: {
+        preparation: async (summary) => {
+          const approved =
+            config.refusePreparation === true ? false : consent(summary);
+          await hooks.onPreparationDecision?.(approved);
+          return approved;
+        },
+        transaction: async (summary) => {
+          const approved = consent(summary);
+          await hooks.onTransactionDecision?.(approved, summary);
+          return approved;
+        },
+        disclosure: consent,
+        resolution: consent,
+        txidConsent: async () => consent,
+      },
+    });
+  }
+  let result;
+  if (config.command.startsWith("journey-")) {
+    const guide = require(path.join(example, "journey.cjs"));
+    const identity = guide.journeyIdentity(
+      { rpcUrl: config.rpcUrl, runtime: config.runtime },
+      composition.hostDigest,
+    );
+    if (config.command === "journey-start")
+      result = await guide.startJourney({
+        state: appState,
+        identity,
+        role: config.actor,
+      });
+    else if (config.command === "journey-status")
+      result = await guide.journeyStatus(appState);
+    else
+      result = await guide.nextJourney({
+        state: appState,
+        identity,
+        signal,
+        execute: command,
+        confirm: async () => true,
+        ask: async (prompt) => {
+          if (prompt.includes("wei")) return "1000000000000000";
+          if (prompt.includes("Bob's Railgun")) return config.bobAddress;
+          if (prompt.includes("transaction hash")) return config.transferHash;
+          throw Error("Unexpected guided fixture input");
+        },
+      });
+  } else result = await command(config);
   return {
     result,
     commandProgress,
@@ -163,7 +250,9 @@ async function run() {
     hostDigest: composition.hostDigest,
     applicationPolicy: {
       maxGasFee: composition.applicationPolicy.maxGasFee.toString(),
-      maxOperationAmount: (composition.applicationPolicy.maxOperationAmount ?? 10000000000000000n).toString(),
+      maxOperationAmount: (
+        composition.applicationPolicy.maxOperationAmount ?? 10000000000000000n
+      ).toString(),
     },
   };
 }

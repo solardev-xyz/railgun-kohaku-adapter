@@ -139,3 +139,81 @@ test("retained submission failure calls once and waits for the original lane clo
   drain();
   await expected;
 });
+
+test("guided retained submission checks original recipient, input and operation before disclosure", async () => {
+  const f = fixture("submit-stored");
+  f.options.expectedPayment = {
+    noteId: "0:1",
+    recipient: "Bob",
+    kind: "railgun-private-transfer",
+  };
+  await recoveryCommand(f.options);
+  const review =
+    f.options.session.openRecovery.mock.calls[0][0].reviewDisclosures;
+  const summary = {
+    purpose: "railgun-recovered-private-submission",
+    selection: { noteId: "0:1" },
+    recipient: "Bob",
+    operation: "railgun-private-transfer",
+  };
+  expect(review({ ...summary, recipient: "Charlie" }, f.options.signal)).toBe(
+    false,
+  );
+  expect(
+    review({ ...summary, selection: { noteId: "0:2" } }, f.options.signal),
+  ).toBe(false);
+  expect(
+    review(
+      { ...summary, operation: "railgun-token-unshield" },
+      f.options.signal,
+    ),
+  ).toBe(false);
+  expect(f.options.reviews.disclosure).not.toHaveBeenCalled();
+  expect(review(summary, f.options.signal)).toBe(true);
+});
+test("guided hold discovery requires a unique authenticated matching input, not the latest row", async () => {
+  const f = fixture("hold-find");
+  Object.assign(f.options, { noteId: "0:1", kind: "railgun-private-transfer" });
+  f.lane.history.mockResolvedValue({
+    records: [
+      {
+        holdId: "first",
+        kind: f.options.kind,
+        localState: "signed-unfinished",
+      },
+      { holdId: "last", kind: f.options.kind, localState: "proof-present" },
+    ],
+    nextAfter: null,
+  });
+  f.lane.describe = jest.fn(async (id) => ({
+    status: "held",
+    holdId: id,
+    input: { noteId: id === "first" ? "0:1" : "0:2" },
+    transfer: { recipient: "other", amount: "10" },
+  }));
+  expect(await recoveryCommand(f.options)).toMatchObject({
+    holdId: "first",
+    localState: "signed-unfinished",
+  });
+  f.lane.describe.mockImplementation(async (id) => ({
+    status: "held",
+    holdId: id,
+    input: { noteId: "0:1" },
+    transfer: null,
+  }));
+  expect(await recoveryCommand(f.options)).toMatchObject({
+    status: "hold-ambiguous",
+  });
+  expect(f.lane.submitStored).not.toHaveBeenCalled();
+});
+test("guided proof recovery never invokes submission", async () => {
+  const f = fixture("resume-proof");
+  f.lane.resumeProof = jest.fn(async () => ({
+    status: "proof-stored",
+    holdId: f.options.holdId,
+  }));
+  expect(await recoveryCommand(f.options)).toMatchObject({
+    status: "proof-stored",
+  });
+  expect(f.lane.submitStored).not.toHaveBeenCalled();
+});

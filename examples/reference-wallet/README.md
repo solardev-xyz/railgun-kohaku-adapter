@@ -201,13 +201,16 @@ and preserves the seed, not an old profile's derived caches. `backup` always
 reauthenticates the password and requires an explicit reveal confirmation.
 Paths must be absolute and canonical, with an existing parent directory.
 
-`init`, `restore`, `backup`, `funding-address` and `operations` run without
-`--config`. Every other command requires it and starts the pinned proxy. The configuration must allow the package's pinned Sepolia POI and
+`init`, `restore`, `backup`, `funding-address`, `operations` and `journey-status` run without
+`--config`. Every other command requires it. `journey-start` only records a local plan; `journey-next` starts the pinned proxy when its selected step needs the owner or network. Other account commands start that proxy. The configuration must allow the package's pinned Sepolia POI and
 indexer origins; a missing origin is a startup configuration error. Each command
 runs in a fresh process and opens its own bounded vault session.
 
 | Command | Purpose |
 | --- | --- |
+| `journey-start --role alice` (or `bob`) | Start one encrypted guided workflow; never overwrite an existing one. |
+| `journey-status` | Read saved progress and the next instruction offline. |
+| `journey-next` | Run one guided step with the original reviews; inspect retained work after interruption. Candidate qualification is separate from the earlier live record. |
 | `funding-address` | Show the fixed public funding EOA without opening a network connection. |
 | `account-create`, `account-info --cache active|pending` | Enroll or inspect this profile's account. |
 | `scan` | Authenticate/recover the public checkpoint, then scan to finalized within the application allowance. Repeat after a clean pause. |
