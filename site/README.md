@@ -10,10 +10,11 @@ Preview from the repository root:
 python3 -m http.server 8765 --bind 127.0.0.1 --directory site
 ```
 
-Open `http://127.0.0.1:8765`. JavaScript adds the journey explorer, evaluation
-paths, evidence filters and command copying. All narrative content and source
-links remain available without JavaScript. Assets use relative paths so the
-site works under the GitHub Pages repository prefix.
+Open `http://127.0.0.1:8765`. The site is a technical review dossier for
+EF/Kohaku, Railgun and adopting-wallet engineers. JavaScript adds command
+copying and a current-section indicator; the dossier, native expandable
+contracts, tables and source links remain available without it. Assets use
+relative paths so the site works under the GitHub Pages repository prefix.
 
 Check public assets and repository-document links:
 
@@ -33,3 +34,5 @@ artifact identities explicit; later revisions do not inherit a live result.
 Do not publish account-linked transaction identifiers, addresses, values,
 operational timings, raw reports, custody or proof inputs. The frozen guided
 live run was agent-operated; an independent human walkthrough remains open.
+The site checker allows exactly three public software SHA-256 pins from that
+run's committed index (adapter tar, engine and prover), not wallet-report hashes.

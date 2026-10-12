@@ -3,192 +3,351 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="An experimental Railgun integration for Kohaku-compatible wallets. Explore the architecture, standalone Alice-to-Bob example, direct Sepolia evidence and adoption roadmap.">
-  <meta name="theme-color" content="#f6f3ed">
+  <meta name="description" content="Technical review dossier for EF, Kohaku and Railgun engineers: adapter contracts, wallet-host authority, retained custody, POI, compatibility and versioned qualification evidence.">
+  <meta name="theme-color" content="#f4f3ee">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
-  <title>Railgun Kohaku Adapter — private payments, reusable wallet infrastructure</title>
+  <title>Railgun Kohaku Adapter — technical review dossier</title>
   <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
   <link rel="stylesheet" href="assets/style.css">
   <script src="assets/site.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
-  <header class="site-header">
-    <div class="wrap header-inner">
-      <a class="brand" href="#" aria-label="Railgun Kohaku, home"><img src="assets/mark.svg" width="32" height="32" alt=""><span>railgun-kohaku-adapter</span></a>
-      <nav aria-label="Main navigation"><a href="#journey">The journey</a><a href="#architecture">Architecture</a><a href="#start">Get started</a><a href="#evidence">Evidence</a></nav>
-      <a class="repo-link" href="https://github.com/solardev-xyz/railgun-kohaku-adapter">Source <span aria-hidden="true">↗</span></a>
+<a class="skip-link" href="#main">Skip to dossier</a>
+<header class="masthead"><div class="masthead-inner">
+  <a class="wordmark" href="#overview"><img src="assets/mark.svg" width="25" height="25" alt=""><span>railgun-kohaku-adapter</span></a>
+  <span class="masthead-label">Engineering review / 12 October 2026</span>
+  <a class="source-link" href="https://github.com/solardev-xyz/railgun-kohaku-adapter">Repository ↗</a>
+</div></header>
+<div class="document-layout">
+<aside class="sidebar">
+  <nav aria-label="Dossier contents">
+    <p class="sidebar-label">Review contents</p>
+    <a href="#overview"><span>00</span> Scope & review request</a>
+    <a href="#motivation"><span>01</span> Problem & implementation</a>
+    <a href="#interfaces"><span>02</span> Kohaku interface boundary</a>
+    <a href="#host"><span>03</span> Owner & host architecture</a>
+    <a href="#custody"><span>04</span> Operation custody & recovery</a>
+    <a href="#poi"><span>05</span> POI / TXID integration</a>
+    <a href="#compatibility"><span>06</span> Policy & persisted state</a>
+    <a href="#reference"><span>07</span> Reference application</a>
+    <a href="#qualification"><span>08</span> Qualification matrix</a>
+    <a href="#evaluate"><span>09</span> Reproduce & inspect</a>
+    <a href="#open"><span>10</span> Open engineering work</a>
+    <a href="#questions"><span>11</span> Questions for reviewers</a>
+  </nav>
+  <div class="sidebar-status"><span class="status-mark"></span><strong>Experimental source</strong><p>Unpublished 0.6.0<br>MPL-2.0 package code<br>Direct Sepolia qualification</p></div>
+  <a class="sidebar-security" href="https://github.com/solardev-xyz/railgun-kohaku-adapter/security/policy">Private security reporting ↗</a>
+</aside>
+<main id="main">
+<section class="abstract" id="overview">
+  <p class="kicker">00 / Review scope</p>
+  <h1>A Railgun execution and custody layer <br>for Kohaku-compatible wallets.</h1>
+  <p class="abstract-lead">Technical review dossier for Ethereum Foundation / Kohaku and Railgun engineers. This repository packages a restricted Kohaku-facing API, an authoritative Railgun account owner, a host capability contract and an independently installed reference wallet.</p>
+  <p>The implementation originated in Freedom’s wallet integration. Railgun’s engine, prover and circuits remain upstream cryptographic implementations. Our contribution is the composition around them: account enrollment, authenticated scan and wallet state, private preparation, supervised execution, retained signing custody, EOA submission journals, POI/TXID coordination and explicit recovery across process boundaries.</p>
+  <dl class="scope-grid">
+    <div><dt>Package</dt><dd><code>@freedom/railgun-kohaku-adapter</code><br>Experimental <code>0.6.0</code>; <code>private: true</code>, not on npm</dd></div>
+    <div><dt>Interface target</dt><dd>Restricted specializations checked against<br><code>@kohaku-eth/plugins@0.0.1-alpha.16</code></dd></div>
+    <div><dt>Complete owner runtime</dt><dd>Electron main + utility processes + storage workers<br>Separately authenticated engine/prover ASARs</dd></div>
+    <div><dt>Recorded live scope</dt><dd>Independent Alice → Bob, direct Sepolia, macOS arm64<br>Frozen source <code>3120bfc</code>; <code>unverified-rpc</code></dd></div>
+  </dl>
+  <div class="review-request"><span class="note-label">What we want reviewed</span><p>Whether the restricted plugin tier is useful within Kohaku; whether the owner/host split preserves the right authority boundaries; whether the Railgun state, POI and retained-operation composition is correct; and which contracts should be simplified or generalized before another team adopts it.</p></div>
+  <p class="small-print">Independent adapter developed for Freedom. This is not an official EF, Kohaku or Railgun project site, and no endorsement is claimed. No integration audit or production-readiness claim. <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/review/README.md">Repository review brief ↗</a></p>
+</section>
+
+<section class="chapter" id="motivation">
+  <p class="kicker">01 / Problem & implementation</p><h2>Why a separate adapter, rather than a thin SDK wrapper?</h2>
+  <p>Freedom needed an integration in which the wallet retains control of keys, storage, process lifetimes and egress. A prepare/send wrapper alone would leave the application to reconstruct Railgun account state, authenticate selected inputs, bind recipients, handle output POI and decide what a timed-out submission means. Those decisions are part of the spending authority boundary.</p>
+  <p>The work began in Freedom and was extracted with source provenance, then exercised by a standalone host that imports no Freedom source or profiles. It is more than an update to an existing plugin: this repository supplies the narrow plugin interfaces and the operational machinery underneath them. We do not claim a new protocol, a replacement Railgun engine or generic compatibility with every Kohaku host.</p>
+  <div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable technical table"><table><caption>Concrete deliverables and their boundaries</caption><thead><tr><th>Implemented</th><th>Purpose</th><th>Boundary</th></tr></thead><tbody>
+    <tr><td>Restricted root factories</td><td>Read, private prepare/broadcast and public prepare/submit; one-use opaque operation identity.</td><td>Wrap authoritative operations; do not create authority from a structurally valid host object.</td></tr>
+    <tr><td>Trusted-main account owners</td><td>Enrollment, scan/wallet/TXID coordination, operational lanes, retained custody and recovery.</td><td>Require genuine host capabilities and fixed runtime; not a renderer/browser SDK.</td></tr>
+    <tr><td>Host contracts + conformance</td><td>Call-site contracts for 20 capability families; credential vectors; context/storage checks.</td><td>Primitive checks are distinct from qualifying an assembled wallet host.</td></tr>
+    <tr><td>Standalone reference application</td><td>Encrypted custody, fresh processes, actual packed adapter and guided Alice/Bob lifecycle.</td><td>Headless Electron CLI, direct Sepolia; not a polished end-user wallet.</td></tr>
+    <tr><td>Maintenance tooling</td><td>Pinned runtime assembly/acquisition, circuit checks, cache compatibility and downgrade controls.</td><td>No automatic artifact update, npm release or production distribution approval.</td></tr>
+  </tbody></table></div>
+  <p class="references">Sources: <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/NOTICE.md">extraction provenance</a> · <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/ADOPTION-ROADMAP.md">adoption roadmap</a> · <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/owners/ADOPTING.md">replacement-host guide</a></p>
+</section>
+
+<section class="chapter" id="interfaces">
+  <p class="kicker">02 / Kohaku interface boundary</p><h2>Two integration tiers, with different callers.</h2>
+  <h3>Tier A: five restricted factories at the package root</h3>
+  <p>CJS is canonical; the ESM wrapper re-exports the same function objects and operation registries. One physical package copy must own an operation and the broadcaster/submitter that consumes it. The root module is frozen and has exactly these five runtime exports.</p>
+  <div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable technical table"><table class="api-table"><thead><tr><th>Factory</th><th>Result / operation</th></tr></thead><tbody>
+    <tr><td><code>createRailgunKohakuSnapshotPlugin</code></td><td><code>instanceId</code>, <code>balance</code>, <code>notes</code> and lifecycle; read-only host snapshot.</td></tr>
+    <tr><td><code>createRailgunKohakuPrivateAdapter</code></td><td>Reads + <code>prepareTransfer</code>/<code>prepareUnshield</code>; opaque private operations.</td></tr>
+    <tr><td><code>createRailgunKohakuPrivateAdapterBroadcaster</code></td><td><code>broadcast(operation)</code> from the same genuine adapter.</td></tr>
+    <tr><td><code>createRailgunKohakuPublicAdapter</code></td><td>Reads + <code>prepareShield</code>; opaque public operation.</td></tr>
+    <tr><td><code>createRailgunKohakuPublicAdapterSubmitter</code></td><td><code>submit(operation)</code> for that adapter’s public operation.</td></tr>
+  </tbody></table></div>
+  <p>The reference wallet composes these factories over genuine owner lanes. The root private input is one ERC-20 note with <code>asset</code>, <code>amount: bigint</code> and <code>noteId</code>; transfer binds a Railgun recipient, unshield a public recipient. Public Shield is native-only. Supported proof shapes and deployment remain narrow.</p>
+  <p>Private preflight selects <code>01x01</code> for a full transfer/full unshield and <code>01x02</code> for partial unshield with change or the local relay path. The input count is one; multi-input transfer/consolidation is not supported by this interface. Local relay preparation is not authentic relay transport qualification.</p>
+  <p>Private submission outcomes distinguish an acknowledged direct transaction, <code>{ transactionHash, submissionStatus: "unknown" }</code>, and <code>{ status: "recovery-required", stage }</code>. A failure-shaped result is not permission to prepare or broadcast a second payment. Read projections retain unverified provenance; frozen DTOs and TypeScript brands cannot replace runtime ownership checks.</p>
+  <div class="codebox"><div class="codebar"><span>Illustrative composition — capabilities already authenticated</span><button data-copy="root-code" type="button" hidden>Copy</button></div><pre id="root-code"><code>const {
+  createRailgunKohakuPrivateAdapter,
+  createRailgunKohakuPrivateAdapterBroadcaster,
+} = require("@freedom/railgun-kohaku-adapter");
+
+const adapter = createRailgunKohakuPrivateAdapter({
+  host: genuinePrivateLane, // issued by this account's owner session
+  signal,
+  maxAmount: capturedAmountCeiling,
+});
+const operation = await adapter.prepareTransfer(ownedInput, bobRailgunAddress);
+const outcome = await
+  createRailgunKohakuPrivateAdapterBroadcaster(adapter).broadcast(operation);</code></pre></div>
+  <p class="annotation">Enrollment, wallet opening and original owner/EOA reviews are omitted. This illustrates composition, not turnkey signing. A root <code>maxAmount</code> cannot override the owner’s captured policy.</p>
+  <h3>Tier B: the complete owner at <code>/host/owner</code></h3>
+  <p><code>initializeRailgunMain({ host, runtime, applicationPolicy?, deployment? })</code> returns <code>createAccount</code> and <code>openAccount</code>. Session lane constructors are <code>openRead</code>, <code>openPrivate</code>, <code>openPublic</code>, <code>openRecovery</code>, <code>openPoiRecovery</code>, <code>openSubmissionRecovery</code>, <code>openShieldRecovery</code>, <code>openRelayLocal</code> and <code>openRelayRecovery</code>. Main initialization is one-shot, including a failed/preempted attempt; separately initializing <code>/host/execution</code> in that realm is unsupported.</p>
+  <p>The safe <code>/data</code> capsule reader and <code>/read</code> projections grant no account/spending authority. Trusted <code>/host/*</code> entries expose documented composition helpers; arbitrary <code>src/**</code> imports are not a supported integration surface.</p>
+  <div class="constraint"><strong>Kohaku compatibility claim</strong><p>The recorded bridge checks restricted plugin specializations and the broadcaster shape. Generic Kohaku <code>Host</code>/<code>CreatePluginFn</code> integration is not claimed. Published types are self-contained; the pinned upstream package is a development-only bridge dependency, not a runtime dependency.</p></div>
+  <div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable technical table"><table><caption>Mapping checked by the pinned upstream bridge</caption><thead><tr><th>Returned adapter</th><th>Kohaku target</th><th>Restriction</th></tr></thead><tbody>
+    <tr><td>Snapshot</td><td><code>PluginInstance&lt;string, { features: {}; note: ReadNote; assetAmounts: { input: ReadAmount; internal: ReadAmount; output: ReadAmount; read: ReadAmount }; extras: SnapshotExtras }&gt;</code></td><td>Empty preparation features; <code>ReadNote</code>/<code>ReadAmount</code>; <code>SnapshotExtras</code>.</td></tr>
+    <tr><td>Private</td><td><code>PluginInstance&lt;string, PrivateCapabilities&gt;</code></td><td>Only <code>prepareTransfer</code>/<code>prepareUnshield</code>; no Multi variants or cross-kind preparation.</td></tr>
+    <tr><td>Public</td><td><code>PluginInstance&lt;string, PublicCapabilities&gt;</code></td><td>Only <code>prepareShield</code>.</td></tr>
+    <tr><td>Private broadcaster</td><td><code>Broadcaster&lt;PrivateOperation, PrivateSubmissionOutcome&gt;</code></td><td>Type equality checked; opaque one-use operation and explicit direct/unknown/recovery outcomes.</td></tr>
+    <tr><td>Public submitter</td><td>Package-defined <code>submit(operation)</code></td><td>The current bridge does not assert a separate upstream submitter-type equality.</td></tr>
+  </tbody></table></div>
+  <p class="references">Inspect: <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/types/index.d.ts">root declarations</a> · <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/types/railgun-kohaku-private-contract.d.ts">private contract</a> · <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/tree/main/test/types/upstream">upstream bridge</a> · <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/examples/reference-wallet/payment-command.cjs">reference composition</a></p>
+</section>
+
+<section class="chapter" id="host">
+  <span id="architecture"></span><p class="kicker">03 / Owner & host architecture</p><h2>The package owns algorithms; the host supplies capabilities.</h2>
+  <figure class="system-map">
+    <div class="map-row">
+      <div><span class="map-label">Trusted application main</span><strong>UI / CLI + vault</strong><p>Reviews · profile lock · contexts<br>credential loans · EOA journal</p></div>
+      <span class="map-arrow" aria-hidden="true">↔</span>
+      <div class="map-owner"><span class="map-label">Package / host/owner</span><strong>Account session + lanes</strong><p>Enrollment · scan/wallet/TXID<br>custody · POI · recovery</p></div>
     </div>
-  </header>
-  <main id="main">
-    <section class="hero wrap" aria-labelledby="hero-title">
-      <div class="hero-copy">
-        <p class="eyebrow"><span class="dot"></span> Open source · experimental 0.6.0</p>
-        <h1 id="hero-title">Private payments.<br><em>Reusable</em><br>wallet infrastructure.</h1>
-        <p class="hero-description">Railgun’s privacy protocol, connected to Kohaku-compatible interfaces and a wallet-controlled host. Built for Freedom. Demonstrated in a standalone Alice → Bob application.</p>
-        <div class="hero-actions"><a class="button primary" href="#start">Explore the reference app <span aria-hidden="true">↗</span></a><a class="text-link" href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/review/README.md">Read the review brief <span aria-hidden="true">→</span></a></div>
-        <p class="hero-note">Independent adapter developed for Freedom. Not an official Railgun or Kohaku project site; no endorsement is claimed. Experimental, not a production release or security audit.</p>
-      </div>
-      <div class="hero-art" aria-label="Illustration: independent Alice and Bob wallets connected through Railgun">
-        <div class="art-top"><span>01 / THE CONNECTION</span><span>SEPARATE CUSTODY</span></div>
-        <svg viewBox="0 0 540 440" role="img" aria-labelledby="diagram-title diagram-desc">
-          <title id="diagram-title">Two wallets. One private payment.</title>
-          <desc id="diagram-desc">Alice and Bob keep separate vaults and stores. The adapter connects their wallets to the Railgun protocol; keys are not shared.</desc>
-          <defs><pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M30 0H0V30" fill="none" stroke="#dfdad2" stroke-width=".6"/></pattern></defs>
-          <rect width="540" height="440" fill="url(#grid)"/>
-          <circle cx="270" cy="212" r="156" fill="none" stroke="#d8d3ca" stroke-dasharray="3 6"/>
-          <circle cx="270" cy="212" r="113" fill="#f0e8dc" stroke="#d8d3ca"/>
-          <path d="M92 212H183M357 212H447" stroke="#f06b3e" stroke-width="2"/>
-          <path d="m175 206 8 6-8 6m264-6 8 6-8 6" fill="none" stroke="#f06b3e" stroke-width="2"/>
-          <path d="m270 128 84 84-84 84-84-84Z" fill="#f06b3e"/>
-          <path d="m270 159 53 53-53 53-53-53Z" fill="none" stroke="#fff3df" stroke-width="1.4"/>
-          <path d="m270 188 24 24-24 24-24-24Z" fill="#fff3df"/>
-          <rect x="35" y="174" width="97" height="76" rx="8" fill="#f6f3ed" stroke="#171d26"/>
-          <rect x="408" y="174" width="97" height="76" rx="8" fill="#f6f3ed" stroke="#171d26"/>
-          <text x="83" y="208" text-anchor="middle" class="svg-name">Alice</text><text x="83" y="230" text-anchor="middle" class="svg-small">OWN VAULT</text>
-          <text x="456" y="208" text-anchor="middle" class="svg-name">Bob</text><text x="456" y="230" text-anchor="middle" class="svg-small">OWN VAULT</text>
-          <text x="270" y="343" text-anchor="middle" class="svg-label">RAILGUN PROTOCOL</text>
-          <text x="270" y="366" text-anchor="middle" class="svg-small">NO SHARED KEYS. NO FREEDOM DEPENDENCY.</text>
-        </svg>
-        <div class="art-bottom"><span class="status-dot"></span><span>Independent wallets, genuine owner lanes</span><span aria-hidden="true">↗</span></div>
-      </div>
-    </section>
-
-    <div class="milestone wrap">
-      <div><span class="pill">Live milestone complete</span><p>Shield → private payment → POI → Bob’s unshield</p></div>
-      <p>One frozen installation · three finalized transactions · receipt and conservation checks<br><span>Direct Sepolia, macOS arm64. Agent-operated; independent human walkthrough still open.</span></p>
-      <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/qualification/reference-guided-live-2026-10-12/README.md" aria-label="Read the frozen guided live milestone evidence">Evidence <span aria-hidden="true">↗</span></a>
+    <div class="map-row map-workers">
+      <div><span class="map-label">Fixed utility process</span><strong>Private execution jobs</strong><p>Engine + prover ASARs<br>circuit bytes · proofs/verification</p></div>
+      <div><span class="map-label">Fixed storage worker</span><strong>Encrypted account state</strong><p>Owned key transfer · floors<br>original worker exit and drain</p></div>
+      <div><span class="map-label">Host-controlled network</span><strong>RPC / TXID / POI / submission</strong><p>Destination identity · envelopes<br>Tor · no direct fallback</p></div>
     </div>
+    <figcaption>Responsibility/process diagram, not a complete call graph. In-process callbacks are trusted; module boundaries do not sandbox a malicious host.</figcaption>
+  </figure>
+  <div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable technical table"><table><caption>The 20 captured host families, grouped by obligation</caption><thead><tr><th>Families</th><th>Required behavior</th><th>Reference components</th></tr></thead><tbody>
+    <tr><td><code>context</code>, <code>profiles</code>, <code>sessions</code></td><td>Opaque realm-local handles; current vault/profile; permanent revocation; scope/task ownership. Synchronous currentness predicates have no effects.</td><td><code>host/context.cjs</code>, sessions, profile lock</td></tr>
+    <tr><td><code>credentials</code>, <code>storage</code>, <code>sourceIdentity</code></td><td>Purpose-specific loans, encrypted persistence/floors, canonical roots and immutable snapshots. No fabricated guard or version label.</td><td>credentials, storage, source identity</td></tr>
+    <tr><td><code>platform</code>, <code>artifacts</code></td><td>Fixed utility/worker entries; real ports/keys; bounded resources; authenticated local artifacts; original exit observation.</td><td>platform + fixed bootstraps</td></tr>
+    <tr><td><code>settings</code>, <code>tor</code>, <code>transport</code>, <code>registry</code>, <code>rpc</code></td><td>Approved destinations, same-client observations/constraints, read envelopes, remote DNS/TLS/cancellation; no hidden fallback/redirect.</td><td>Tor, transport, RPC</td></tr>
+    <tr><td><code>submitter</code>, <code>signers</code>, <code>transactionIntent</code>, <code>transactionNetwork</code></td><td>Enrolled EOA; sign-only capability; exact intent recomputed from signed bytes; nonce/fee selection; pinned network identity.</td><td>signers, transactions</td></tr>
+    <tr><td><code>submissionJournal</code>, <code>journalRetention</code>, <code>transactions</code></td><td>Journal before send; authenticated current/archive records; exact reviews; no second send from uncertainty.</td><td>journal + submission owner</td></tr>
+  </tbody></table></div>
+  <details><summary>Credential schedule and loan lifetime</summary><div>
+    <p>The master BIP-39 seed stays inside the host vault. Owners receive scoped, owned 32-byte material for <code>spending-public</code>, <code>spending-sign</code>, <code>viewing</code> or <code>storage-root</code>. No generic derivation callback or caller-selected path crosses the boundary.</p>
+    <p>The hardened Baby Jubjub schedule uses spending <code>m/44'/1984'/0'/0'/index'</code> and viewing <code>m/420'/1984'/0'/0'/index'</code>. Storage-root derivation binds profile identity, account index, chain and deployment. Historical <code>Freedom</code> domain strings are compatibility contracts, not cosmetic names.</p>
+    <p>Loans validate genuine context, purpose, vault session and currentness; retain original native callback promises; wipe borrowed bytes on revocation/settlement. Unknown signing-child exits keep the stable account excluded. The revoked storage-root drain is teardown-only, not credential admission.</p>
+    <p><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/owners/CREDENTIAL-HOST-CONTRACT.md">Exact derivation/admission contract ↗</a></p>
+  </div></details>
+  <details><summary>Cancellation, original settlement and process exclusion</summary><div>
+    <p>Revocation stops new authority before work necessarily settles. <code>closed</code> covers original requests, children, storage work and key loans. A timer-raced replacement Promise or kill request is not observed closure.</p>
+    <p>Failed/unobservable drain keeps the account excluded. Reviews must settle on their supplied signal and return the exact result or an original native same-realm Promise. Custom thenables are not assimilated; unknown settlement conservatively quarantines the account.</p>
+    <p>Electron <code>MessageChannelMain</code>, utility parent ports and ASAR loading are actual runtime requirements. Node child-process IPC is not a substitute. Node API evaluation does not qualify a Node-only owner host.</p>
+  </div></details>
+  <p class="references">Contracts: <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/owners/HOST-PORTS.md">call-site inventory</a> · <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/owners/HOST-CONTEXT-STORAGE.md">context/storage</a> · <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/types/host-owner.d.ts">owner declarations</a> · <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/examples/reference-wallet/host/compose.cjs">host assembly</a></p>
+  <details><summary>Threat model and remaining trust assumptions</summary><div>
+    <p><strong>Trusted:</strong> application main, vault, captured callbacks, local context/guard issuance, source baseline and verified runtime immutability. This does not defend against a malicious host or compromised main process.</p>
+    <p><strong>Handled with bounded validation/custody rules:</strong> malformed/inconsistent service data, stale evidence, cancellation, process death, uncertain delivery and authenticated-store tamper/downgrade cases. Source measurement and encrypted floors are not a blanket defense against an adversary controlling the host filesystem and key authority.</p>
+    <p><strong>Residual:</strong> coherent dishonest RPC views are not independently chain-verified; POI/TXID assertions retain documented service trust. Network observers, direct EOAs, funding and aggregator disclosures can link activity. Circuit isolation and relay privacy need separate evidence.</p>
+  </div></details>
+</section>
 
-    <section class="section wrap why" id="why" aria-labelledby="why-title">
-      <div class="section-heading"><p class="eyebrow">01 / Why we built it</p><h2 id="why-title">A protocol is only part<br>of a working wallet.</h2></div>
-      <div class="why-copy"><p class="lead">A privacy integration has to survive everything around the proof: account state, user reviews, process exits, uncertain delivery and changing circuits.</p><p>We built this while integrating Railgun into Freedom. The work became a separate package so another wallet can adopt the same account and operation machinery without inheriting Freedom’s source tree.</p><p>Railgun supplies the protocol and cryptography. Kohaku supplies the interface vocabulary. This adapter connects them to the capabilities a wallet actually owns.</p></div>
-      <div class="principles">
-        <article><span class="number">01</span><h3>Keep custody with the wallet</h3><p>The host owns the vault, signing, storage and network policy. The adapter works through limited credential loans and explicit reviews.</p></article>
-        <article><span class="number">02</span><h3>Make interruption a normal state</h3><p>Preserve proved operations and durable attempts. Authenticate the original hold on reopen. Unknown delivery leads to observation, never an automatic resend.</p></article>
-        <article><span class="number">03</span><h3>Give adopters a real example</h3><p>An installed headless Electron application with separate wallets, encrypted stores, reproducible setup and a guided end-to-end flow.</p></article>
-      </div>
-    </section>
+<section class="chapter" id="custody">
+  <p class="kicker">04 / Operation custody & recovery</p><h2>Preparation, an attempt and an observation are different states.</h2>
+  <p>Preparation binds the owned input, nullifier, destination, value and capsule. Authenticated source/POI/TXID checks and supervised proving produce a retained operation. EOA review/submission are separate. The saved guide and readable notes never substitute for genuine owner authority.</p>
+  <figure class="state-diagram"><pre>owned input
+  → preparation review + authenticated provenance
+  → proof / private spending signature → durable held operation
+  → fresh EOA transaction review
+  → durable journal attempt → broadcast
+  → observe inclusion + match → reviewed resolution at finality</pre><figcaption>Schematic private-operation lifecycle. Refusal can occur at every admission boundary; persisted state determines the supported continuation.</figcaption></figure>
+  <div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable technical table"><table><thead><tr><th>Observed condition</th><th>Supported next action</th><th>Does not permit</th></tr></thead><tbody>
+    <tr><td>Interrupted retained preparation</td><td>Inspect custody; original owner’s explicit proof-resume path if eligible.</td><td>Replace an input/payment because its response is missing.</td></tr>
+    <tr><td>Proof-present, unjournaled hold</td><td>Reviewed <code>submitStored</code> authenticates the original capsule/signature and repeats current ownership, destination and spending checks.</td><td>Observation alone grants no submission authority. Absent journal binding is not proof that nothing was submitted.</td></tr>
+    <tr><td>Journaled / acknowledged / unknown send</td><td>Observe the exact hold-bound submission/inclusion/match; resolve through the original reconciler.</td><td>No automatic broadcast retry or replacement operation after uncertain delivery.</td></tr>
+    <tr><td>Matched resolution</td><td>Reviewed resolution permits the next transaction under current checks.</td><td>No hold release or replay of the original operation.</td></tr>
+  </tbody></table></div>
+  <p>Submission recovery exposes <code>describe(holdId)</code>, <code>observe(holdId)</code> and <code>resolve(holdId, { minimumConfirmations })</code>. Description reads local authenticated custody. Observation reviews disclose public submitter, transaction identifier, nonce reconciliation and timing. The join uses exact signing intent/nullifier/tree/operation against current <em>and archived</em> journal state, not the last transaction row.</p>
+  <div class="constraint"><strong>Live recovery case</strong><p>Bob’s warm EOA review expired after a genuine proof was retained. An initial cold disclosure review also expired. Later observations found the same proof-present, unjournaled hold; the owner’s <code>openRecovery().submitStored</code> reused the original private spending signature with a fresh EOA review. Root adapters carried his initial warm preparation, not that cold broadcast; <code>openSubmissionRecovery</code> provides local description, observation and resolution. One unshield transaction resulted, without a new private proof or mid-run installed-code change.</p></div>
+  <p>Shield reviews additionally check fresh nonce, balance, estimate and simulation after the human reply. A changed transaction is refused rather than silently re-signed under the old approval. The updated submission protocol is a separate adoption obligation for Freedom.</p>
+  <p class="references">Inspect: <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/types/host-owner.d.ts">recovery contracts</a> · <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/owners/INTEGRATION.md#shield-consent-and-fresh-send-checks">Shield admission</a> · <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/qualification/reference-guided-live-2026-10-12/README.md">live custody evidence</a></p>
+</section>
 
-    <section class="section journey-section" id="journey" aria-labelledby="journey-title">
-      <div class="wrap">
-        <div class="section-heading split-heading"><div><p class="eyebrow">02 / End to end</p><h2 id="journey-title">Alice pays Bob.<br>Bob owns the next move.</h2></div><p>Two independent seeds, stores, funding EOAs and Railgun identities. Bob discovers the payment through his own scan; Alice’s database never becomes his wallet.</p></div>
-        <div class="journey-layout">
-          <div class="journey-steps" aria-label="Explore the payment steps">
-            <a class="journey-step" href="#step-shield" data-step="step-shield"><span class="step-index">01</span><span><small>ALICE</small><strong>Shield</strong><span>Bring an asset into Railgun.</span></span><span class="step-arrow" aria-hidden="true">↗</span></a>
-            <a class="journey-step" href="#step-payment" data-step="step-payment"><span class="step-index">02</span><span><small>ALICE → BOB</small><strong>Private payment</strong><span>Prepare, prove, review and submit.</span></span><span class="step-arrow" aria-hidden="true">↗</span></a>
-            <a class="journey-step" href="#step-poi" data-step="step-poi"><span class="step-index">03</span><span><small>ALICE + POI SERVICE</small><strong>Proof of Innocence</strong><span>Make the output’s reviewed POI handoff.</span></span><span class="step-arrow" aria-hidden="true">↗</span></a>
-            <a class="journey-step" href="#step-discovery" data-step="step-discovery"><span class="step-index">04</span><span><small>BOB</small><strong>Independent discovery</strong><span>Find the note and observe Valid.</span></span><span class="step-arrow" aria-hidden="true">↗</span></a>
-            <a class="journey-step" href="#step-unshield" data-step="step-unshield"><span class="step-index">05</span><span><small>BOB</small><strong>Unshield</strong><span>Spend the owned note to his enrolled EOA.</span></span><span class="step-arrow" aria-hidden="true">↗</span></a>
-            <a class="journey-step" href="#step-accounting" data-step="step-accounting"><span class="step-index">06</span><span><small>BOTH WALLETS</small><strong>Verify the outcome</strong><span>Finality, receipts, fees and conservation.</span></span><span class="step-arrow" aria-hidden="true">↗</span></a>
-          </div>
-          <div class="journey-detail">
-            <article class="step-panel" id="step-shield"><p class="eyebrow">Step 01 · public → private</p><div class="flow-symbol" aria-hidden="true">◇ → ◆</div><h3>Start with Alice’s own custody.</h3><p>A fresh profile holds Alice’s vault and enrolled public funding account. The public Kohaku adapter prepares the Shield; its submitter handles the reviewed operation over genuine owner capabilities.</p><p>After settlement, Alice scans and refreshes her wallet to find her received private note.</p><div class="detail-note"><strong>Boundary</strong><span>Shielding and gas funding are public-chain activity. Direct submission does not demonstrate relay privacy.</span></div></article>
-            <article class="step-panel" id="step-payment"><p class="eyebrow">Step 02 · foreign private transfer</p><div class="flow-symbol" aria-hidden="true">A → ◆ → B</div><h3>A real recipient, an authenticated operation.</h3><p>Alice supplies Bob’s Railgun address. The private adapter wraps a genuine owner lane, which checks the selected note, binds the destination, proves the operation and retains it before submission.</p><p>Reviews remain distinct from guide navigation. A timeout or expired review does not authorize a new payment.</p><div class="detail-note"><strong>Recovery</strong><span>A proved, unjournaled hold can use supported cold submission. Unknown delivery is observed rather than resent.</span></div></article>
-            <article class="step-panel" id="step-poi"><p class="eyebrow">Step 03 · proof of innocence</p><div class="flow-symbol" aria-hidden="true">◆ + ✓</div><h3>Prove the output’s list eligibility.</h3><p>Alice synchronizes TXID state and prepares the transaction’s output POI using authenticated membership, roots and pinned circuit artifacts. A separate review covers the disclosure to the configured service.</p><p>The handoff is durably recorded. A response category is diagnostic; it does not establish that Bob’s output is accepted.</p><div class="detail-note"><strong>Live evidence</strong><span>One handoff occurred in the frozen run. Its response was classified malformed; Bob’s later owned Valid status establishes acceptance for his output.</span></div></article>
-            <article class="step-panel" id="step-discovery"><p class="eyebrow">Step 04 · recipient ownership</p><div class="flow-symbol" aria-hidden="true">B ↻ ◆</div><h3>Bob discovers it himself.</h3><p>Bob’s fresh process scans using his own vault and store. His wallet finds the exact payment note, synchronizes its TXID state and observes POI Valid for that owned Transact note.</p><p>The guide exchanges payment-identifying information, not seeds or databases. Keep that exchange private: transaction identifiers can link activity.</p><div class="detail-note"><strong>Scope</strong><span>The live run used independent Alice/Bob custody. An unrelated third-account ownership control has synthetic coverage only.</span></div></article>
-            <article class="step-panel" id="step-unshield"><p class="eyebrow">Step 05 · private → public</p><div class="flow-symbol" aria-hidden="true">◆ → ◇</div><h3>Bob signs with Bob’s authority.</h3><p>Bob selects his owned, unspent, POI-Valid note. Preparation and signing repeat the owner checks before unshielding to his enrolled public account under the configured amount and gas limits.</p><p>In the frozen live run, an expired review left a genuine proved hold. Supported cold recovery submitted that same hold with a fresh review and the original private spending signature.</p><div class="detail-note"><strong>One transaction</strong><span>No replacement unshield proof, duplicated payment or mid-run package change was needed for that recovery.</span></div></article>
-            <article class="step-panel" id="step-accounting"><p class="eyebrow">Step 06 · observed completion</p><div class="flow-symbol" aria-hidden="true">▤ = ✓</div><h3>Check what actually happened.</h3><p>The run checked all three successful receipts against recorded inclusion identities and finality, plus configured gas ceilings, Shield net value, transfer value and unshield received value plus Railgun fee.</p><p>Both available-note lists were empty after their respective final refreshes. Separate actor nonce checks provided an additional RPC cross-check.</p><div class="detail-note"><strong>Trust</strong><span>Observations retain <code>unverified-rpc</code>. Available-note residual checks are not a full EOA balance reconciliation or an independent light-client proof.</span></div></article>
-          </div>
-        </div>
-        <div class="guide-note"><span class="mini-label">About automation</span><p>The saved guide chooses steps with ordinary code and calls the original reviews. No LLM is part of those rules. An AI agent operated the completed live run; a separate human usability walkthrough remains to be done.</p><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/examples/reference-wallet/JOURNEY.md">Full workflow <span aria-hidden="true">↗</span></a></div>
-      </div>
-    </section>
+<section class="chapter" id="poi">
+  <span id="step-poi"></span><p class="kicker">05 / POI / TXID integration</p><h2>Proof validity, service response and owned-output eligibility are separate.</h2>
+  <p>Owners synchronize public TXID state into a journaled local mirror, validate roots through the configured services, reconstruct own-input membership and prove output POI with pinned artifacts. Submission serializes the retained payload, independently validates it in a keyless process and writes an attempt before transport. Raw proofs and internal receipt constructors do not cross the operational lane.</p>
+  <details><summary>POI_3x3 public inputs and the independent verification job</summary><div>
+    <p>The keyless offline job derives eight public signals from the normalized submitted payload, in the pinned circuit order: <code>[bc0, 0, 0, txidRoot, unshieldMarker, poiRoot0, Z, Z]</code>. Blinded-output padding is zero; <code>Z</code> is the pinned engine Merkle zero used for POI-root padding. The key must have <code>nPublic: 8</code>.</p>
+    <p>The pinned serial verifier must accept the payload and reject a changed TXID-root signal. Transition mode instead requires completed retired-positive, retired-negative-control and current-negative verdicts; thrown verification or exit failure refuses. The job imports no engine, account, store or key.</p>
+    <p>List/checkpoint metadata is bound in the payload digest, not authenticated by the circuit. Its result explicitly leaves source/membership/root acceptance, disclosure and spending authority false. Later controllers establish those separately.</p>
+    <p><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/src/owners/railgun-poi-verify-job.js">Verifier job and result flags ↗</a></p>
+  </div></details>
+  <div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable technical table"><table><thead><tr><th>State / API</th><th>Authority and invariant</th></tr></thead><tbody>
+    <tr><td>Prepare / original handoff</td><td>Authenticated source/capsule/list/output binding, proof verification, explicit disclosure review; <code>prepared → attempted</code> before send.</td></tr>
+    <tr><td><code>retryAttempted(holdId)</code></td><td>One explicit identical-body retry, not transport recovery. Original payload/body/id retained; durable reservation; fresh session-owned Missing evidence for exact list, Transact output and commitment.</td></tr>
+    <tr><td><code>reproveRetiredShield</code> / <code>reproveRetiredTransact</code></td><td>Pinned retired→current key transition only: retired verifies, changed-signal control fails, current rejects; all verdicts completed. Fresh membership follows the original input-origin route.</td></tr>
+    <tr><td><code>submitReproof</code></td><td>Further disclosure of a replacement proof; old history preserved. Same list, output commitment and unshield marker; proof/roots/checkpoint can change under the fixed transition. One durable attempt.</td></tr>
+    <tr><td><code>observeOwnedPoi</code></td><td>Reviewed diagnostic for one owned note. Snapshot ownership/status does not establish TXID provenance, reservation clearance or spending authority. Preparation/signing repeat their checks.</td></tr>
+  </tbody></table></div>
+  <p>Retry/replacement Missing evidence comes from the facade’s completed owned observation, not a supplied status object. Age starts before acquisition and remains below five minutes at reservation/send admission. Publication waits for cleanup and final currentness/signal/deadline checks. A verifier failure or unobserved exit is not a negative proof verdict.</p>
+  <p>V4 adds a consumed retry reservation; V5 appends replacement payload/proof history without rewriting original entry/attempt/retry. Replacement selection requires exactly one attempted intent for the hold, a consumed retry, one output commitment and no replacement attempt. Old readers refuse these documents; rollback cannot strip a reservation to regain authority. These are narrow reviewed transitions, not a generic reset or unlimited POI retry API. The normal saved guide does not automatically invoke them.</p>
+  <div class="engineering-note"><span class="note-label">Historical circuit incident</span><p>Earlier handoffs used a pinned retired <code>POI_3x3</code> circuit. A live transition check established that the original proof verified under the retired key and failed under the current key; a current-circuit replacement was later observed Valid. The deployed verifier revision and first rejected response body were not observed. This does not qualify future rotations.</p></div>
+  <p>In the frozen Alice/Bob guide, one HTTP 200 handoff response was classified <code>malformed</code>; the body was not retained or reconstructed from its size. Bob independently observed Valid with accepted roots and verified membership. That service-reported owned Valid status, with accepted roots and locally verified membership under unverified service trust, is the acceptance evidence. HTTP success and local recovery match do not suffice.</p>
+  <h3>Availability recovery is public-TXID-only</h3>
+  <p>The reference <code>txid-sync</code> permits two classified transport recovery continuations, ten seconds apart, under original consent, a ten-minute deadline and an 80-call budget. Genuine process-local provenance must classify connection/timeout; RPC errors, rejected roots, malformed/non-200 replies, cancellation and failed cleanup do not qualify. Two consecutive segments without returned count progress stop. Each reopened owner authenticates its pending page/checkpoint; no fabricated cursor.</p>
+  <p>Scan recovery stays explicit. Selected POI membership/status, proving, signing, POI handoff and broadcast do not inherit this loop.</p>
+  <h3>Disclosure inventory and ordering</h3>
+  <p>This role/category inventory follows the owners’ direct-lifecycle review payloads. Actual destinations and exact selected values are bound by the original review, not this website. Local artifact verification makes no service request.</p>
+  <div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable technical table"><table><thead><tr><th>Work / destination role</th><th>Information exposed</th><th>Ordering / boundary</th></tr></thead><tbody>
+    <tr><td>Scan / source RPC</td><td>Public proxy logs, canonical blocks, block ranges and timing.</td><td>Recovery re-authenticates checkpoint/windows; observations remain unverified RPC.</td></tr>
+    <tr><td>Account-independent preflight / RPC</td><td>Deployment/code, circuit verifier and public fee/chain queries.</td><td>May overlap POI/TXID work and occur even if eligibility later refuses.</td></tr>
+    <tr><td>POI membership / POI service</td><td>Blinded commitment, commitment type, list and membership root.</td><td>Source/creator route authenticated. Preparation can disclose before a creator-type mismatch is established; replacement preparation precedes its later Missing gate.</td></tr>
+    <tr><td>TXID / POI node + indexer</td><td><code>ppoi_validated_txid</code>, root/tree/index validation; <code>RailgunPublicTxids</code> pages and cursor. Transact provenance binds the creating transaction.</td><td>Public synchronization grants no selected-membership/nullifier-query or signing authority.</td></tr>
+    <tr><td>Selected private preflight / RPC</td><td>Selected nullifier, input tree, Merkle root and unspent check.</td><td>Root-history/nullifier reads wait for genuine POI eligibility and, for Transact, TXID-root receipt. Ages/deadlines unchanged.</td></tr>
+    <tr><td>EOA admission/simulation / transaction RPC</td><td>Public submitter/code/balance/nonce/fees; proved calldata, nullifier, commitments, encrypted output and public recipient where applicable.</td><td><code>eth_estimateGas</code>/<code>eth_call</code> can disclose calldata before final transaction review. Signing/send still require fresh exact consent and journal admission.</td></tr>
+    <tr><td>Output POI / aggregator</td><td>Proof, list, roots/index, blinded output commitments and optional unshield marker.</td><td>Foreign-output handoff links the recipient’s blinded output commitment to the spend at the aggregator. Separately reviewed; not part of transfer preparation.</td></tr>
+    <tr><td>Observation/accounting / RPC</td><td>Transaction identifiers, receipts/inclusion, public submitter/nonce reconciliation and timing.</td><td>Observation/status is not send/retry authority. Receipt checks retain RPC trust.</td></tr>
+  </tbody></table></div>
+  <p class="references">Disclosure sources: <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/src/owners/railgun-kohaku-plugin.js">preparation review/exposures</a> · <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/types/host-owner.d.ts">POI/TXID/observation types</a> · <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/owners/POLICY-SEPARATION.md#recovered-submission-read-scheduling">scheduling</a></p>
+  <p class="references">Inspect: <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/src/owners/operational-poi-lane.js">POI lane</a> · <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/owners/INTEGRATION.md#public-txid-read-failure-classification">TXID recovery</a> · <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/review/MAINTENANCE.md">artifact/update discipline</a></p>
+</section>
 
-    <section class="section architecture-section" id="architecture" aria-labelledby="architecture-title">
-      <div class="wrap">
-        <div class="section-heading split-heading"><div><p class="eyebrow">03 / Architecture</p><h2 id="architecture-title">A clear division<br>of responsibility.</h2></div><p>No new privacy protocol. No application master seed exported. The package authenticates supplied runtime archives and artifacts; host callbacks remain trusted capabilities.</p></div>
-        <div class="architecture-grid">
-          <article class="architecture-layer"><p class="layer-label">01 / YOUR APPLICATION</p><h3>The host</h3><ul><li>UI or command-line reviews</li><li>Vault and credential loans</li><li>Context, profile and storage</li><li>Processes and observed closure</li><li>RPC / Tor transport policy</li><li>EOA signer and transaction journal</li></ul><span class="layer-footer">Authority stays in the adopting wallet</span></article>
-          <article class="architecture-layer adapter-layer"><p class="layer-label">02 / THIS PACKAGE</p><h3>The adapter + owners</h3><ul><li>Restricted Kohaku interfaces</li><li>Account enrollment and scan state</li><li>Owned notes and operation lanes</li><li>Preparation and proving jobs</li><li>Retained custody and recovery</li><li>POI / TXID coordination</li></ul><span class="layer-footer">Fixed purposes, explicit lifetimes</span></article>
-          <article class="architecture-layer"><p class="layer-label">03 / UPSTREAM</p><h3>Railgun + services</h3><ul><li>Railgun engine algorithms</li><li>Prover and circuit artifacts</li><li>Deployed contracts</li><li>Public chain RPC</li><li>TXID indexer and POI service</li><li>Configured broadcaster transport</li></ul><span class="layer-footer">Pinned inputs, observed deployment</span></article>
-        </div>
-        <div class="integration-tiers"><article><span class="mini-label">Tier A · restricted interfaces</span><h3>Already have an authoritative host?</h3><p>Use the five root factories for read snapshots, private preparation/broadcast and public preparation/submission. The example composes them over genuine owner lanes.</p><code>createRailgunKohakuPrivateAdapter</code><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter#exports">Root API <span aria-hidden="true">↗</span></a></article><article><span class="mini-label">Tier B · complete wallet composition</span><h3>Need account ownership and execution?</h3><p>Compose <code>/host/owner</code> with your application’s capabilities. Start with the reference host and its call-site contracts and conformance checks.</p><code>initializeRailgunMain({ host, runtime })</code><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/owners/INTEGRATION.md">Owner integration contract <span aria-hidden="true">↗</span></a></article></div>
-        <p class="architecture-boundary">In-process callbacks are not a sandbox. Matching an interface shape does not establish custody or signing authority. A plain Node import does not qualify a complete Node-only owner host.</p>
-      </div>
-    </section>
+<section class="chapter" id="compatibility">
+  <p class="kicker">06 / Policy & persisted state</p><h2>Protocol invariants are not qualification budgets.</h2>
+  <div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable technical table"><table><thead><tr><th>Class</th><th>Implemented treatment</th><th>Remaining constraint</th></tr></thead><tbody>
+    <tr><td>Custody/security invariants</td><td>Ownership, nullifier/input binding, recipient/conservation, exact signatures, durable attempts and uncertainty have no caller override.</td><td>Trusted host correctness remains an assumption.</td></tr>
+    <tr><td>Deployment compatibility</td><td><code>deployment: "sepolia"</code> asserts the sole closed descriptor: chain, addresses/code, fees, services and coverage.</td><td>Not a parametric registry; other owners/jobs/validators remain fixed. Adding a descriptor is not chain support.</td></tr>
+    <tr><td>Application spending policy</td><td>Initialization captures <code>maxGasFee</code>/<code>maxOperationAmount</code>; lanes narrow fees; root <code>maxAmount</code> cannot override owners.</td><td>Historical defaults; wider-amount evidence is native synthetic, not wider live.</td></tr>
+    <tr><td>Implementation resource bounds</td><td>Scan: ≤100k blocks, 4096 logs, 4 MiB, 512 distinct event blocks. TXID: 8000 rows; whole-store observation: 32,768 records.</td><td>Not protocol limits; raising capacity needs validators and measured resource behavior.</td></tr>
+    <tr><td>Example/campaign policy</td><td>Command budgets and vault/review policy stay in the app; historical campaign ledgers stay in qualification tooling.</td><td>Named campaign continuations are not application architecture for adopters.</td></tr>
+  </tbody></table></div>
+  <h3>Complete attestation versus derived-cache compatibility</h3>
+  <p>The complete immutable snapshot measures every enrolled package file and the host inventory before owner algorithms load. Public, wallet and TXID caches use separate compatibility domains with new sources included by default. The sole current package exclusion is the POI serializer/response classifier, which does not interpret those caches. Reference host exclusions cover terminal presentation/manifest bytes; startup, commands, transport, storage and runtime selection stay bound.</p>
+  <p><code>readCacheDigests()</code> must describe the same snapshot as <code>readDigest()</code>; omission retains full-host invalidation. The split invalidated earlier derived generations once, with no silent conversion. A serializer edit changing attempted body bytes still fails retained-body normalization even when cache compatibility is unchanged.</p>
+  <h3>Format interpretation is independent of the current ceiling</h3>
+  <p>Legacy transfer/full-unshield capsules remain v1, partial-with-change v2; canonical wider internal capsules use v3/v4. Historical safe readers keep their contracts. Public journal versions depend on public calldata amounts, never a transfer’s hidden input value. A lower policy does not hide older notes/custody; it refuses new spending. Rebuilding caches cannot reset attempts, floors or original signatures.</p>
+  <p>Read scheduling overlaps independent deployment/artifact/fee/verifier work with POI/TXID checks. Selected root-history/nullifier reads wait for genuine eligibility receipts. Existing receipt ages, review floors, send reserve and destination checks are not renewed by this overlap.</p>
+  <p class="references">Normative detail: <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/owners/POLICY-SEPARATION.md">policy + read ordering</a> · <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/owners/APPLICATION-POLICY.md">spending policy</a> · <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/owners/OPERATION-FORMATS.md">formats</a> · <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/owners/DEPLOYMENT.md">deployment</a></p>
+</section>
 
-    <section class="section wrap" id="start" aria-labelledby="start-title">
-      <div class="section-heading split-heading"><div><p class="eyebrow">04 / Get started</p><h2 id="start-title">Start small.<br>Follow the real path.</h2></div><p>Public source, not an npm release. Pin a repository commit when evaluating it. Package version <code>0.6.0</code> alone does not identify the qualified bytes.</p></div>
-      <div class="start-options" aria-label="Choose an evaluation path">
-        <a href="#start-evaluate" data-start="start-evaluate">01 · Evaluate the interfaces</a><a href="#start-wallet" data-start="start-wallet">02 · Run the reference wallet</a><a href="#start-integrate" data-start="start-integrate">03 · Integrate your own host</a>
-      </div>
-      <div class="start-panel" id="start-evaluate">
-        <div><h3>A local check before any wallet.</h3><p>Requires Node 24+, npm and Git. These checks use public fixture hosts, no account keys and no Railgun service requests. Dependency installation uses the network.</p><p>Full Node CI additionally covers native storage, owner fixtures, workers, lint and both typecheck gates on Linux and macOS.</p><a class="text-link" href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/review/EVALUATION.md">Evaluation details and full-suite commands <span aria-hidden="true">↗</span></a></div>
-        <div class="code-block"><div class="code-heading"><span>TERMINAL / CLEAN CHECKOUT</span><button type="button" data-copy="evaluate-code" hidden>Copy</button></div><pre id="evaluate-code"><code>git clone https://github.com/solardev-xyz/railgun-kohaku-adapter.git
+<section class="chapter" id="reference">
+  <span id="journey"></span><p class="kicker">07 / Independent reference application</p><h2>The host is a separate application, not a callback mock.</h2>
+  <p><code>examples/reference-wallet/</code> is a headless Electron CLI with its own vault, stores, profile locks, contexts, supervised processes, Tor transport, signer and journal. It installs the real packed tar/whitelist; no Freedom source/profile is imported. Alice and Bob use independent random seeds, funding EOAs, Railgun identities, stores and fresh processes.</p>
+  <ol class="execution-flow">
+    <li><strong>Alice: Shield</strong><p>Root public adapter/submitter over genuine owners. Settlement + scan/wallet refresh select the private input bound to that Shield.</p></li>
+    <li><strong>Alice: foreign private transfer</strong><p>Root private adapter/broadcaster; Bob’s address bound before proof/signing. Settlement matched against the original hold/journal.</p></li>
+    <li><strong>Alice: output POI</strong><p>TXID mirror/source membership feed retained POI. Reviewed handoff covers Bob’s output; Alice cannot certify Bob’s status.</p></li>
+    <li><strong>Bob: independent discovery/eligibility</strong><p>His scan/wallet find the exact note; his TXID store and owned Valid observation support subsequent owner checks. No key/database exchange.</p></li>
+    <li><strong>Bob: unshield/accounting</strong><p>Prepare or recover the original operation; fresh review, sign/send, finality. Three receipts, gas bounds, value conservation and available-note residuals.</p></li>
+  </ol>
+  <p>The encrypted guide chooses steps deterministically and invokes original owner reviews. Each <code>journey-next</code> is one explicit step, not an unattended transaction/POI loop; no LLM is in the state machine. An AI agent operated the live callbacks. Operator wrappers changed outside the frozen install and their per-invocation source versions were not captured; original reviews/results and the accounting verifier are sealed in private evidence.</p>
+  <div class="constraint"><strong>Privacy/trust boundary</strong><p>Direct EOA funding/submission create public links. The guide exchanges a payment transaction identifier with Bob; that information is linkable. Dedicated Arti routing does not establish circuit isolation. Observations/finality retain <code>unverified-rpc</code>; no light-client path is claimed.</p></div>
+  <p class="references">Application: <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/tree/main/examples/reference-wallet">source</a> · <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/examples/reference-wallet/JOURNEY.md">state/command workflow</a> · <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/qualification/reference-guided-live-2026-10-12/README.md">live operational limits</a></p>
+</section>
+
+<section class="chapter" id="qualification">
+  <span id="evidence"></span><p class="kicker">08 / Qualification matrix</p><h2>Which claims have which evidence?</h2>
+  <p>Results belong to recorded source, host and artifact identities. Current source does not inherit every older result. Unit, installed native synthetic, deployed services and packaged initialization remain distinct.</p>
+  <div class="table-scroll evidence-table" tabindex="0" role="region" aria-label="Qualification evidence table"><table><thead><tr><th>Evidence / identity</th><th>Exercised</th><th>Not established</th><th>Record</th></tr></thead><tbody>
+    <tr><td><strong>Frozen guided live</strong><br><code>3120bfc</code>, 304-file tar<br>macOS arm64</td><td>Independent custody; root adapters for Shield, Alice’s transfer and Bob’s warm preparation; owner-lane cold unshield; POI; same-hold cold recovery; three finalized successful receipts; gas bounds, conservation and per-actor nonces.</td><td>Human walkthrough, live Charlie control, full EOA balance reconciliation, raw retained-proof byte comparison, relay privacy or newer revisions.</td><td><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/qualification/reference-guided-live-2026-10-12/README.md">Live ↗</a></td></tr>
+    <tr><td><strong>Slow-service guide</strong><br>Same production source/tar<br>179 native steps</td><td>Real custody/processes/proving, current POI verification; 1.25 s RPC / 5 s POI delays; Charlie ownership control; warm/cold recovery; exact-old-install retained upgrade.</td><td>EVM, authentic fixture list signatures/roots/finality, Tor or arbitrary latency. Synthetic-list transform recorded.</td><td><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/qualification/reference-slow-poi-2026-10-11/README.md">Native ↗</a></td></tr>
+    <tr><td><strong>Node CI / type bridge</strong><br>Linux + macOS<br>Recorded <code>aa5742f</code></td><td>325 suites / 13,290 tests per platform at that head; lint, root/owner types, CJS/ESM consumer, inventory. Lifecycle/refusal, version/downgrade and mutation controls.</td><td>Funded Electron journey/Tor/platform qualification. Four external-runtime cases skipped without pinned inputs. Counts are version-specific.</td><td><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/actions/workflows/package-checks.yml?query=branch%3Amain">Head CI ↗</a></td></tr>
+    <tr><td><strong>Fresh install / cold reopen</strong><br>macOS arm64</td><td>Physical locked dependencies, isolated acquisition, tar bytes, Electron distribution, real zero-connection reopen. Frozen-candidate check is in the slow-service index.</td><td>Native Linux/Windows install, live behavior from installation alone or signed distribution.</td><td><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/qualification/reference-installation-2026-10-11/README.md">Install ↗</a></td></tr>
+    <tr><td><strong>Host primitive contracts</strong><br>Reference + Freedom</td><td>Context/storage checks: revocation, cancellation, persistence, serialization, reopen, tamper refusal. Freedom used disposable state and a fixture inventory guard.</td><td>Fixture guard authority, production vault, rollback-resistant profile or full account operation.</td><td><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/qualification/reference-host-contracts-2026-10-10/README.md">Contracts ↗</a></td></tr>
+    <tr><td><strong>Independent install review</strong><br><code>d1040d9</code></td><td>Separate AI reviewer installed/reopened, checked profile locks, found an installed-host invocation gap subsequently fixed.</td><td>Independent human walkthrough, audit, another organization adopting it or new live result.</td><td><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/qualification/reference-independent-adopter-2026-10-11/README.md">Review ↗</a></td></tr>
+    <tr><td><strong>Runtime/artifact acquisition</strong></td><td>Engine/prover archives reproduced; fresh setup fetched 18 circuit files and matched pins. Drift checker compares authenticated manifests/local bytes.</td><td>Deployed verifier freshness, automatic compatibility, distribution rights; acquisition does not derive keys or verify CIDs locally.</td><td><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/qualification/reference-installation-2026-10-10/README.md">Acquire ↗</a><br><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/qualification/reference-runtime-rebuild-2026-10-10/README.md">Build ↗</a></td></tr>
+    <tr><td><strong>Wider direct amount policy</strong></td><td>Native synthetic lifecycle; lowered-ceiling refusal, restored-policy same-hold submission; conservation/legacy-reader refusal.</td><td>Wider live amounts, generalized proof shapes or expanded relay policy.</td><td><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/qualification/reference-wide-policy-2026-10-11/README.md">Policy ↗</a></td></tr>
+    <tr><td><strong>Historical Freedom campaign</strong><br>E4/E5b → E8</td><td>Self-transfer, retired-circuit handoff failures, explicit current replacement, Valid, final unshield, receipts/conservation; fixed reviewed links.</td><td>All-E8 replay, independent host, two-account spend, ordinary startup or latest-source result.</td><td><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/qualification/installed-live-sepolia-journey-0.6.0-2026-10-10/README.md">Historical ↗</a></td></tr>
+    <tr><td><strong>E8 packaged initialization</strong><br>Unsigned macOS arm64</td><td>Package/ASAR resolution, paired one-shot initialization, exact loading; zero network during probe.</td><td>Packaged wallet operation, distributable payloads, signed build or current reference packaging.</td><td><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/qualification/installed-owner-packaged-e8-0.6.0-2026-10-10/README.md">Packaged ↗</a></td></tr>
+  </tbody></table></div>
+  <details class="manifest"><summary>Frozen live installation: public software identities</summary><div>
+    <dl class="pin-list">
+      <div><dt>Source commit</dt><dd><code>3120bfcebd82b052bca94b95b6b6ac1a4bd08c6b</code></dd></div>
+      <div><dt>Adapter tar SHA-256</dt><dd><code>32846549919e10ea781989d81a64fba1d6342f2d2d7f440e228e5f4f8620af33</code></dd></div>
+      <div><dt>Engine ASAR SHA-256</dt><dd><code>019f10880abf1c448aee02ec77c5c2d68c3561c7b4eef02095d66bb5fecd6a7a</code></dd></div>
+      <div><dt>Prover ASAR SHA-256</dt><dd><code>dd50a29f297867b3bf91cb425066e1d257ea02230a94b02e4cf34c5c70a0c7ab</code></dd></div>
+      <div><dt>Host dependencies</dt><dd>Electron 44.7.0 · ethers 6.17.0 · better-sqlite3 13.0.3</dd></div>
+    </dl>
+    <p>All 304 installed package files matched the frozen tar at closeout. These are public software pins, not wallet-report hashes. <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/qualification/reference-guided-live-2026-10-12/INDEX.json">Full identity/scope index ↗</a></p>
+  </div></details>
+  <p class="small-print">Public reports omit linked transaction identifiers, addresses, values, exact timelines, note/hold IDs and proof inputs. A domain-separated salted commitment binds private accounting; the opening remains local. Unsalted predictable funded-report hashes are not redaction.</p>
+</section>
+
+<section class="chapter" id="evaluate">
+  <span id="start"></span><p class="kicker">09 / Reproduce & inspect</p><h2>Three evaluation depths.</h2>
+  <h3>A. Portable API / source checks</h3>
+  <p>Node 24+, npm and Git. Record the clean checkout’s commit. Consumer checks use public fixture hosts, no account keys/service calls; dependency installation uses the network. Select <code>3120bfc</code> to inspect frozen-live source, and use that revision’s instructions.</p>
+  <div class="codebox"><div class="codebar"><span>Repository checkout</span><button data-copy="evaluation-code" type="button" hidden>Copy</button></div><pre id="evaluation-code"><code>git clone https://github.com/solardev-xyz/railgun-kohaku-adapter.git
 cd railgun-kohaku-adapter
-
-# Record / select the commit you are evaluating.
 git rev-parse HEAD
 npm ci --ignore-scripts
 npm test -- --runInBand test/package-consumer.test.js
 node test/consumer/smoke.mjs</code></pre></div>
-      </div>
-      <div class="start-panel" id="start-wallet">
-        <div><h3>A standalone wallet, not a Freedom fixture.</h3><p>The reference CLI uses headless Electron, its own encrypted custody and the installed package tar. It imports no Freedom code and opens no Freedom profile.</p><p>Recorded installation: macOS arm64. Requires Git, Node 24, npm, Python 3, several GiB of free space and a separately acquired, pinned Arti binary. Configure authenticated runtime paths and transport before starting the guide.</p><p>The frozen live source is <code>3120bfc</code>; the example below selects it. Its result does not qualify newer checkouts. Reproduction also requires the recorded runtime and host configuration.</p><a class="text-link" href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/examples/reference-wallet/README.md#current-commands">Complete setup, configuration and Arti guide <span aria-hidden="true">↗</span></a></div>
-        <div class="code-block"><div class="code-heading"><span>TERMINAL / FROM A CLEAN COMMITTED CHECKOUT</span><button type="button" data-copy="wallet-code" hidden>Copy</button></div><pre id="wallet-code"><code># Select the frozen live source before installing.
-git checkout 3120bfcebd82b052bca94b95b6b6ac1a4bd08c6b
-
-# Use NEW absolute directories outside the checkout.
-node tools/conformance/install-reference.cjs /absolute/new-reference-install
+  <p>Full CI additionally runs <code>npm run lint</code>, <code>npm run typecheck</code>, <code>npm run typecheck:owner</code>, <code>npm test -- --runInBand</code> and the source-inventory check after the documented locked native setup. <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/review/EVALUATION.md">Environment, native-build requirements and external-runtime opt-ins ↗</a></p>
+  <h3>B. Installed owner + native synthetic lifecycle</h3>
+  <p>Requires pinned Electron, engine/prover inputs and circuits. The installer uses the real whitelist and a new absolute directory outside the checkout. Runtime setup is separate; Arti acquisition is an explicit platform prerequisite.</p>
+  <div class="codebox"><div class="codebar"><span>Clean committed source / new output directories</span><button data-copy="install-code" type="button" hidden>Copy</button></div><pre id="install-code"><code>node tools/conformance/install-reference.cjs /absolute/new-reference-install
 node tools/conformance/setup-reference-runtime.cjs /absolute/new-reference-runtime
 
-# Complete configuration + Arti setup in the linked guide.
-cd /absolute/new-reference-install/app
-npm start -- init --profile /absolute/new-bob-profile
+# JSON must name authenticated runtime inputs.
+node tools/conformance/reference-journey/run.cjs /absolute/public-fixture-inputs.json</code></pre></div>
+  <p>The runner uses marked disposable state and loopback services, not an existing funded profile. Inputs/variants: <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/owners/ADOPTING.md#runnable-local-checks">native adoption checks</a>. Installed zero-network account test: <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/examples/reference-wallet/README.md#offline-installed-account-smoke-test">example README</a>.</p>
+  <h3>C. Explicit direct-Sepolia guide</h3>
+  <p>Complete pinned runtime/Tor configuration, then create separate fresh Alice/Bob profiles. Review destinations, disclosed data, amounts, gas bounds and stop/recovery rules before live execution. Both enrolled EOAs need Sepolia gas. Never fund public conformance fixture credentials.</p>
+  <div class="codebox"><div class="codebar"><span>Installed app directory / Bob shown</span><button data-copy="guide-code" type="button" hidden>Copy</button></div><pre id="guide-code"><code>npm start -- init --profile "$BOB_PROFILE"
 npm start -- journey-start --role bob \
-  --profile /absolute/new-bob-profile \
-  --config /absolute/bob-config.json
+  --profile "$BOB_PROFILE" --config "$BOB_CONFIG"
 npm start -- journey-next \
-  --profile /absolute/new-bob-profile \
-  --config /absolute/bob-config.json</code></pre></div>
-        <p class="start-footnote">Create Alice in a separate new profile and configuration with <code>--role alice</code>. Repeat <code>journey-next</code> only as instructed; each step has its own review. Direct live execution needs gas funding for both EOAs and a concrete disclosure, transaction and fee plan. These snippets are an entry point, not a replacement for the setup guide.</p>
-      </div>
-      <div class="start-panel" id="start-integrate">
-        <div><h3>Replace capabilities, preserve the boundary.</h3><p>Start with the example’s actual host implementation. Map your vault, context, storage, process launcher, transport, signer and review UI to the owner contracts.</p><p>Use exported entry points, one physical package copy and authentic host authority. Do not deep-import private sources or treat serializable records as permission to spend.</p><a class="text-link" href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/review/ARCHITECTURE.md">Architecture review <span aria-hidden="true">↗</span></a></div>
-        <div class="host-reading"><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/owners/INTEGRATION.md"><span>01</span><div><strong>Owner integration</strong><small>Capabilities, identity and lifecycle</small></div><span>↗</span></a><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/owners/CREDENTIAL-HOST-CONTRACT.md"><span>02</span><div><strong>Credential contract</strong><small>Loans, derivation and vault ownership</small></div><span>↗</span></a><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/owners/CREDENTIAL-CONFORMANCE.md"><span>03</span><div><strong>Executable conformance</strong><small>Real custody and cancellation checks</small></div><span>↗</span></a><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/owners/POLICY-SEPARATION.md"><span>04</span><div><strong>Policy and compatibility</strong><small>Protocol, deployment, app and test limits</small></div><span>↗</span></a></div>
-      </div>
-      <p class="copy-status visually-hidden" role="status" aria-live="polite"></p>
-    </section>
+  --profile "$BOB_PROFILE" --config "$BOB_CONFIG"
+npm start -- journey-status --profile "$BOB_PROFILE"</code></pre></div>
+  <p>Alice uses a different profile/config and <code>--role alice</code>. Original reviews remain separate; status/finality can be wait states. Changed guide/host identity refuses instead of upgrading silently. <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/examples/reference-wallet/README.md#current-commands">Setup</a> · <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/examples/reference-wallet/JOURNEY.md">lifecycle/recovery</a>.</p>
+  <h3>Artifact drift, independently of a wallet</h3>
+  <div class="codebox"><div class="codebar"><span>Authenticated upstream manifest + local artifacts</span><button data-copy="artifact-code" type="button" hidden>Copy</button></div><pre id="artifact-code"><code>node tools/artifact-compatibility.cjs \
+  /absolute/artifact-v2-hashes.json /absolute/local-artifacts</code></pre></div>
+  <p>No network request or pin update. Manifest provenance/freshness is separate; a match does not identify the deployed verifier. Runtime inputs retain licenses including <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/freedom-qualification/railgun-prover-build-2026-10-03.json">recorded GPL-3.0 dependencies</a>; reproducibility is not redistribution clearance. <code>productionDistributionApproved: false</code> remains explicit.</p>
+  <p class="references"><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/tools/railgun-runtime-build/README.md">Builders/acquisition</a> · <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/review/MAINTENANCE.md">maintenance contract</a> · <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/NOTICE.md">license/provenance</a></p>
+  <p class="copy-status visually-hidden" role="status" aria-live="polite"></p>
+</section>
 
-    <section class="section evidence-section" id="evidence" aria-labelledby="evidence-title">
-      <div class="wrap">
-        <div class="section-heading split-heading"><div><p class="eyebrow">05 / Evidence, with boundaries</p><h2 id="evidence-title">Tested in layers.<br>Recorded at exact versions.</h2></div><p>A green unit suite, a synthetic journey and a live payment answer different questions. Each qualification record pins its own source, artifacts and scope.</p></div>
-        <div class="evidence-stats"><div><strong>3</strong><span>Finalized transactions<br>in the frozen live lifecycle</span></div><div><strong>179</strong><span>Steps in the installed<br>slow-service synthetic guide</span></div><div><strong>2</strong><span>Node CI platforms<br>Linux + macOS</span></div><div><strong>18</strong><span>Pinned circuit files<br>fetched and hash-matched</span></div></div>
-        <div class="evidence-filter" aria-label="Filter evidence" hidden><span>Explore</span><button type="button" data-filter="all" aria-pressed="true">All</button><button type="button" data-filter="live" aria-pressed="false">Live</button><button type="button" data-filter="synthetic" aria-pressed="false">Synthetic</button><button type="button" data-filter="installation" aria-pressed="false">Installation & CI</button></div>
-        <div class="evidence-list">
-          <article class="evidence-row" data-evidence="live"><div class="evidence-kind">LIVE / OCT 12</div><div><h3>Guided Alice → Bob, one frozen installation</h3><p>Separate custody, root adapters over genuine owners, one POI handoff, Bob’s independent Valid status, same-hold cold unshield, three finalized receipts and conservation.</p><p class="evidence-limit">Agent-operated, direct Sepolia / macOS arm64 / <code>unverified-rpc</code>. Not a human walkthrough, live third-account control or later-source qualification.</p></div><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/qualification/reference-guided-live-2026-10-12/README.md" aria-label="Read frozen guided live evidence">Record ↗</a></article>
-          <article class="evidence-row" data-evidence="synthetic"><div class="evidence-kind">SYNTHETIC / OCT 11</div><div><h3>Slow services, interruption and retained recovery</h3><p>179 installed native steps with genuine custody, delayed RPC/POI responses, current-circuit SNARK verification and cold submission. A separate exact-old-install continuation preserves the original held payment.</p><p class="evidence-limit">Fixture chain and list, with a recorded synthetic-list transform. Not EVM execution, live provider behavior or Tor qualification.</p></div><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/qualification/reference-slow-poi-2026-10-11/README.md" aria-label="Read slow-service synthetic evidence">Record ↗</a></article>
-          <article class="evidence-row" data-evidence="installation"><div class="evidence-kind">INSTALLATION / OCT 11</div><div><h3>Fresh locked install and cold account reopen</h3><p>Isolated dependencies, exact packed bytes, verified Electron distribution and a real offline account reopen with zero connections. The slow-service record identifies the frozen candidate’s separate installation check.</p><p class="evidence-limit">macOS arm64 evidence. Node CI success on Linux does not establish a native Linux wallet installation.</p></div><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/qualification/reference-installation-2026-10-11/README.md" aria-label="Read standalone installation evidence">Record ↗</a></article>
-          <article class="evidence-row" data-evidence="installation"><div class="evidence-kind">PACKAGE / CI</div><div><h3>Interfaces, types, native state and refusal controls</h3><p>Clean Node 24 jobs on Linux and macOS: lint, root/owner type checks, full Jest suite, CJS/ESM consumer smoke and source inventory checks. Public fixtures cover ownership, lifecycle, storage and recovery boundaries.</p><p class="evidence-limit">Four external-runtime cases are explicitly opt-in/skipped without their pinned inputs. CI does not run the funded Electron journey or qualify a production distribution.</p></div><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/actions/workflows/package-checks.yml?query=branch%3Amain" aria-label="See package CI for exact repository heads">CI runs ↗</a></article>
-          <article class="evidence-row" data-evidence="installation"><div class="evidence-kind">REPRODUCIBILITY / OCT 10</div><div><h3>Runtime assembly and artifact compatibility</h3><p>Engine/prover archives reproduced; the separate fresh setup fetched all 18 supported circuit files and matched their pins. A compatibility tool checks an authenticated upstream manifest and local artifact bytes without opening a wallet.</p><p class="evidence-limit">Reproducible bytes do not establish current deployed verifier behavior or grant redistribution rights.</p></div><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/qualification/reference-runtime-rebuild-2026-10-10/README.md" aria-label="Read runtime reproducibility evidence">Runtime ↗</a></article>
-          <article class="evidence-row" data-evidence="live"><div class="evidence-kind">HISTORICAL / OCT 10–11</div><div><h3>Freedom’s first journey and the earlier standalone run</h3><p>Freedom’s private self-transfer/unshield campaign, followed by the separate two-account reference journey, established earlier integration and recovery milestones.</p><p class="evidence-limit">Those runs used their own candidate installations, including mid-campaign upgrades. Keep them separate from the later frozen guide result.</p></div><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/review/README.md#what-the-evidence-establishes" aria-label="Read the historical evidence matrix">Matrix ↗</a></article>
-        </div>
-        <p class="evidence-empty" role="status" aria-live="polite"></p>
-        <div class="candidate-record"><div><span class="mini-label">The live result belongs to these bytes</span><p>Frozen source <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/tree/3120bfcebd82b052bca94b95b6b6ac1a4bd08c6b"><code>3120bfc</code></a> · 304 installed package files matched the original tar.</p></div><a class="text-link" href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/qualification/reference-guided-live-2026-10-12/INDEX.json">Version and scope index ↗</a></div>
-        <p class="artifact-source">The 18-file acquisition is recorded in the <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/qualification/reference-installation-2026-10-10/README.md">fresh installation and artifact setup evidence ↗</a>.</p>
-        <p class="privacy-note">Public records deliberately omit account-linked transaction identifiers, addresses, values, proof inputs and exact operational timelines. A salted commitment binds the private evidence bundle; no raw wallet evidence is served by this site.</p>
-      </div>
-    </section>
+<section class="chapter" id="open">
+  <p class="kicker">10 / Open engineering work</p><h2>The direct-Sepolia reference is qualified. General adoption is not.</h2>
+  <div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable technical table"><table><thead><tr><th>Open area</th><th>Specific acceptance / next work</th></tr></thead><tbody>
+    <tr><td>Human operation</td><td>Developer completes installation/guide without implementer help. Agent-operated live and separate AI review do not close this gate.</td></tr>
+    <tr><td>Host complexity</td><td>Reduce adopter burden without generic key/receipt/module authority; qualify actual alternate hosts, original drains and profile custody; clarify opaque declarations.</td></tr>
+    <tr><td>Kohaku interface fit</td><td>Review specializations/outcomes for intended consumers. Generic host/factory support requires explicit contract work.</td></tr>
+    <tr><td>Deployment / operation scope</td><td>Parameterize fixed chain/coverage/services; qualify mainnet and additional assets/shapes/capacity. Wider amount policy alone is not generalization.</td></tr>
+    <tr><td>Relay / egress privacy</td><td>Authentic discovery/quote/handoff/broadcast and measured routing/circuit isolation. Current relay lanes stop at local custody.</td></tr>
+    <tr><td>Availability / diagnostics</td><td>Closed actionable owner stages, measured provider/Tor behavior, reviewed idempotent-read recovery. Private delivery/signing never inherit public retry authority.</td></tr>
+    <tr><td>Circuit/cache compatibility</td><td>Handoff-time compatibility discovery and conservative cache dependency narrowing. Updates require proof/deployed-status evidence, not changed pins to pass loading.</td></tr>
+    <tr><td>Platforms / release / product</td><td>Native Linux/Windows/other hosts, signed packaging/licensing, concrete versions/support, audit and another adopter. Freedom UI/startup/activation follows feedback.</td></tr>
+  </tbody></table></div>
+  <p>Some repository docs retain historical stage wording. Public declarations and versioned qualification records identify the applicable behavior/evidence; this dossier does not turn historical results into current production support.</p>
+  <p class="references"><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/ADOPTION-ROADMAP.md">Acceptance roadmap</a> · <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/review/REFERENCE-WALKTHROUGH.md">human tasks</a> · <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/review/MAINTENANCE.md#release-gates">release gates</a></p>
+</section>
 
-    <section class="section wrap" id="lessons" aria-labelledby="lessons-title">
-      <div class="section-heading"><p class="eyebrow">06 / What the work taught us</p><h2 id="lessons-title">The hard parts were<br>around the happy path.</h2></div>
-      <div class="lessons-grid"><article><span class="lesson-icon" aria-hidden="true">↻</span><h3>A locally valid proof can be obsolete.</h3><p>The historical campaign’s POI circuit had rotated. A proof accepted by the retired key was rejected by the current key. An explicit replacement transition and current-artifact verification restored the path.</p><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/review/MAINTENANCE.md#detect-circuit-changes-before-a-handoff">Artifact update discipline ↗</a></article><article><span class="lesson-icon" aria-hidden="true">⌁</span><h3>Availability is part of wallet design.</h3><p>Large scans, slow services, Tor failures and expiring reviews exposed gaps that fast fixtures missed. Returned progress, bounded recovery and remaining review time now have explicit treatment.</p><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/qualification/reference-slow-poi-2026-10-11/README.md">Delayed-service qualification ↗</a></article><article><span class="lesson-icon" aria-hidden="true">▤</span><h3>Custody is not a disposable cache.</h3><p>Derived scan state can be rebuilt under compatible policies. Signatures, retained operations and submission attempts keep their authenticated history through restart and reviewed upgrades.</p><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/review/MAINTENANCE.md#upgrade-and-downgrade-behavior">Storage and compatibility ↗</a></article></div>
-    </section>
-
-    <section class="section roadmap-section" id="roadmap" aria-labelledby="roadmap-title">
-      <div class="wrap roadmap-layout"><div class="section-heading"><p class="eyebrow">07 / What comes next</p><h2 id="roadmap-title">A strong reference.<br>More work before<br>production.</h2><p>The experimental direct-Sepolia milestone is complete. The next adoption gates test whether this is useful to people who did not build it.</p><a class="text-link" href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/ADOPTION-ROADMAP.md">Read the full roadmap ↗</a></div><div class="roadmap-list">
-        <article><span class="roadmap-tag">NEXT</span><div><h3>Independent human walkthrough</h3><p>Install and operate the example from the written guide. Record usability failures without implementer intervention. AI operation does not close this gate.</p></div></article>
-        <article><span class="roadmap-tag">REVIEW</span><div><h3>External technical and security feedback</h3><p>API fit, custody boundaries, host complexity, privacy assumptions and maintenance expectations. External review and an independent security audit remain open.</p></div></article>
-        <article><span class="roadmap-tag">PRIVACY</span><div><h3>Authentic relay transport</h3><p>Actual relay discovery, handoff and egress/circuit isolation. Local relay custody exists; direct EOA funding and submission do not prove relay privacy.</p></div></article>
-        <article><span class="roadmap-tag">PORTABILITY</span><div><h3>Platforms, deployments and operation shapes</h3><p>Additional native platforms, mainnet and broader operations need their own qualification. Current deployment support is deliberately narrow.</p></div></article>
-        <article><span class="roadmap-tag">ADOPTION</span><div><h3>Release and a second external adopter</h3><p>Concrete versioning, distribution and support commitments, runtime licensing, and another team’s host. The package remains unpublished to npm.</p></div></article>
-        <article><span class="roadmap-tag">PRODUCT</span><div><h3>Return to Freedom after feedback</h3><p>Wallet UI/UX, ordinary startup and production activation are separate work. The standalone reference milestone does not activate Freedom’s integration.</p></div></article>
-      </div></div>
-    </section>
-
-    <section class="review-cta wrap" aria-labelledby="review-title"><div><p class="eyebrow">For implementers & reviewers</p><h2 id="review-title">Help make the next<br>wallet easier to build.</h2><p>Start with the review brief. Try the reference app. Tell us where the interface, authority boundary or setup still asks too much of an adopter.</p></div><div class="review-links"><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/review/README.md">Technical review brief <span>↗</span></a><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/review/REFERENCE-WALKTHROUGH.md">Human walkthrough tasks <span>↗</span></a><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/issues">Public feedback <span>↗</span></a><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/security/policy">Private security reporting <span>↗</span></a></div></section>
-  </main>
-  <footer class="site-footer"><div class="wrap"><a class="brand" href="#"><img src="assets/mark.svg" width="28" height="28" alt=""><span>railgun-kohaku-adapter</span></a><p>Source license: MPL-2.0. Upstream inputs retain their own licenses;<br>the adapter’s license does not clear all runtime redistribution.<br>Independent project site; no Railgun or Kohaku endorsement is claimed.</p><div><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/NOTICE.md">Provenance</a><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/SECURITY.md">Security</a><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter">GitHub ↗</a></div></div><div class="wrap footer-bottom"><span>Evidence snapshot · October 12, 2026</span><span>Static site · no analytics · no wallet connections</span></div></footer>
+<section class="chapter review-questions" id="questions">
+  <p class="kicker">11 / Requested review</p><h2>Questions that would change the design.</h2>
+  <div class="question-group"><h3>EF / Kohaku engineers</h3><ol>
+    <li>Is this restricted plugin/private/public/broadcaster tier useful, or should the adapter implement a different standard composition point?</li>
+    <li>Which opaque operations and uncertainty outcomes belong in a reusable Kohaku interface rather than a wallet-specific owner?</li>
+    <li>Which host families should become reusable capabilities? Where would simplification remove necessary identity, lifetime or signing constraints?</li>
+    <li>Which generic host/factory tests should precede wider compatibility claims beyond the recorded structural bridge?</li>
+  </ol></div>
+  <div class="question-group"><h3>Railgun engineers</h3><ol>
+    <li>Does Shield-/Transact-origin provenance, TXID mirror/root validation and owned-output POI preserve the engine’s intended invariants?</li>
+    <li>What supported circuit/service compatibility signal should a wallet use before proving/submitting? Which deployment behavior can be relied on beyond the pinned source?</li>
+    <li>Are identical retries and retired-circuit replacements scoped correctly? Which duplicate, historical-root and request/response semantics should be modelled?</li>
+    <li>Which retained data and nullifier/journal joins are essential to cold submission? Which conservative compatibility restrictions can be narrowed with evidence?</li>
+  </ol></div>
+  <div class="question-group"><h3>Wallet implementers / security reviewers</h3><ol>
+    <li>Can you replace the host without private instructions? Which capability, native dependency or runtime setup step is impractical?</li>
+    <li>Where do cancellation, unknown exit, rollback, expired review or uncertain delivery permit an unsafe inference—or an unnecessary availability failure?</li>
+    <li>Which evidence is missing for experimental adoption, and which separate evidence would be required for production?</li>
+  </ol></div>
+  <div class="feedback-links"><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/issues">Technical feedback / issues ↗</a><a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/security/policy">Private vulnerability report ↗</a></div>
+  <p class="small-print">Public feedback must not contain funded custody, seeds, raw proofs, linked timelines or predictable private-report hashes. Publishing this dossier sends no operator message or external outreach.</p>
+</section>
+</main></div>
+<footer class="footer"><div><span>railgun-kohaku-adapter / engineering review dossier</span><span>Evidence snapshot: 12 October 2026</span></div><p>MPL-2.0 package-owned code; upstream inputs retain their licenses. Independent project, no endorsement claimed. Static site; no analytics, wallet connections, remote fonts or scripts.</p></footer>
 </body>
 </html>

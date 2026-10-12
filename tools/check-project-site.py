@@ -84,11 +84,18 @@ def main():
         if path.is_file():
             assets.add(path.relative_to(SITE).as_posix())
     assert assets == {"assets/style.css", "assets/site.js", "assets/mark.svg"}, "Review new public assets explicitly"
+    evidence = json.loads((ROOT / "docs/qualification/reference-guided-live-2026-10-12/INDEX.json").read_text())
+    public_software_pins = {
+        evidence["installation"]["package"]["sha256"],
+        evidence["runtime"]["archives"]["engine"]["sha256"],
+        evidence["runtime"]["archives"]["prover"]["sha256"],
+    }
     for relative in assets | {"index.html"}:
         content = (SITE / relative).read_text()
         assert not re.search(r"0x[0-9a-fA-F]{40,}\b", content), f"Account/transaction-like hex in {relative}"
-        assert not re.search(r"\b[0-9a-fA-F]{64}\b", content), f"Bare wallet-evidence-like digest in {relative}"
-        assert not re.search(r"/(?:Users|private|home)/", content), f"Local path in {relative}"
+        digests = set(re.findall(r"\b[0-9a-fA-F]{64}\b", content))
+        assert digests <= public_software_pins, f"Unreviewed evidence-like digest in {relative}"
+        assert not re.search(r"(?<![\w-])/(?:Users|private|home)/", content), f"Local path in {relative}"
         assert "BEGIN PRIVATE KEY" not in content, f"Private key in {relative}"
     packed = json.loads((ROOT / "package.json").read_text())["files"]
     assert not any(value.strip("/") == "site" or value.startswith("site/") for value in packed), "Website must stay outside package artifact"
