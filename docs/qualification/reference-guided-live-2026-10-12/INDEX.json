@@ -1,0 +1,117 @@
+{
+  "schema": "reference-guided-frozen-live-v1",
+  "completed": "2026-10-12",
+  "result": "complete",
+  "scope": "standalone installed guided lifecycle; direct Sepolia over dedicated Arti; macOS arm64",
+  "trust": "unverified-rpc",
+  "installation": {
+    "sourceCommit": "3120bfcebd82b052bca94b95b6b6ac1a4bd08c6b",
+    "package": {
+      "name": "@freedom/railgun-kohaku-adapter",
+      "version": "0.6.0",
+      "sha256": "32846549919e10ea781989d81a64fba1d6342f2d2d7f440e228e5f4f8620af33",
+      "integrity": "sha512-MHQf14RX+QzCQC8DxtuXdCZNHJHn3L//y3sSvQs77+JZGnj76iUaU+EOQYuv3RT47Fu8TdI9mN4BuUIQ+RX3PQ==",
+      "files": 304
+    },
+    "hostSourceSha256": "c6e97bbdaf86f11d241c0b7d59076cbc1df09edf8ddd8125126537f6415af36c",
+    "dependencies": {
+      "electron": "44.7.0",
+      "ethers": "6.17.0",
+      "better-sqlite3": "13.0.3"
+    },
+    "platform": "darwin",
+    "arch": "arm64",
+    "electronLauncherSha256": "6c7bfa625e72ad31e564b262c916aa6a9d5b88f570dea195dec52255e9c6305d",
+    "electronDistribution": {
+      "sha256": "9f00baca916352af000105ced63bdb49f4c242f42cc45ddf5c61198beea40af7",
+      "entries": 273
+    }
+  },
+  "runtime": {
+    "recordSha256": "e06195662c2a9405092c2fbffbe6bc6fb92cb6670495abec36af3e786afe771d",
+    "archives": {
+      "engine": {
+        "name": "railgun-engine.asar",
+        "size": 81790332,
+        "sha256": "019f10880abf1c448aee02ec77c5c2d68c3561c7b4eef02095d66bb5fecd6a7a"
+      },
+      "prover": {
+        "name": "railgun-prover.asar",
+        "size": 1613882,
+        "sha256": "dd50a29f297867b3bf91cb425066e1d257ea02230a94b02e4cf34c5c70a0c7ab"
+      }
+    },
+    "scope": "previously reproduced pinned public runtime inputs"
+  },
+  "installationUnchanged": true,
+  "installedFilesEqualFrozenTar": 304,
+  "independentActors": 2,
+  "chainTransactions": 3,
+  "poiHandoffs": 1,
+  "conservation": {
+    "shieldNet": true,
+    "transferFullValue": true,
+    "unshieldFullOutput": true,
+    "receivedPlusFee": true,
+    "availablePrivateNoteResidual": true
+  },
+  "receiptStatuses": [
+    "0x1",
+    "0x1",
+    "0x1"
+  ],
+  "actualGasWithinPerTransactionAndAggregateCaps": true,
+  "poiResponse": {
+    "classification": "malformed",
+    "httpStatus": 200,
+    "responseBytes": 36,
+    "matchingEnvelope": false,
+    "transportAuthenticated": false,
+    "acceptanceVerified": false,
+    "disclosureEnabled": false,
+    "spendingEnabled": false,
+    "diagnostic": {
+      "envelope": "invalid",
+      "rpcCode": null,
+      "messageCategory": null,
+      "dataCategory": null
+    }
+  },
+  "finalOwnedPoiStatus": [
+    "Valid"
+  ],
+  "retainedRecovery": {
+    "sameAuthenticatedHold": true,
+    "originalPrivateSpendingSignatureReused": true,
+    "freshEoaReview": true,
+    "newPrivateProof": false,
+    "resubmission": false
+  },
+  "nonceAccounting": {
+    "separateActorProcessesAndContexts": true,
+    "finalizedCountsMatchThreeReceipts": true,
+    "pendingCountsEqualFinalized": true,
+    "trust": "unverified-rpc"
+  },
+  "admissionCoverage": {
+    "historicalOfflineStartsWithoutAdmission": 2,
+    "allOtherInvocationsHaveAdmission": true,
+    "allInvocationsHaveResult": true,
+    "historicalOfflineFundingAdmissionBackfills": 2
+  },
+  "operator": "AI agent using original guided callbacks; independent human walkthrough remains open",
+  "limits": [
+    "unverified RPC observations and finality",
+    "direct EOAs and funding create public links; relay privacy not qualified",
+    "no live third-account ownership control",
+    "available-note residual only; no full EOA ETH balance reconciliation",
+    "no independent raw retained-proof byte comparison",
+    "mainnet, other native platforms, circuit isolation and external security review remain open"
+  ],
+  "privateEvidenceCommitment": {
+    "scheme": "sha256-domain-separated-salted-bundle",
+    "domain": "reference-private-evidence-v1",
+    "saltBytes": 32,
+    "value": "2d4a5310165d18b332c77891218cccb454c0cbe450c2a83a8ade20345947c4b4"
+  }
+}

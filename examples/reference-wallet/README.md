@@ -247,7 +247,7 @@ without a send remains held. Inspect it before choosing `submit-stored`; the
 owner checks its eligibility and reviews the original operation again. This
 example does not automatically release or submit a hold.
 
-The implemented commands have the scoped synthetic evidence above. The [recorded explicit-command two-account live journey](../../docs/qualification/reference-alice-bob-live-2026-10-11/README.md) passed on its identified installations; the frozen-version guided live lifecycle remains a separate acceptance gate. Fresh dependency
+The implemented commands have the scoped synthetic evidence above. The [recorded explicit-command two-account live journey](../../docs/qualification/reference-alice-bob-live-2026-10-11/README.md) passed on its identified installations. The [guided live lifecycle on one frozen installation](../../docs/qualification/reference-guided-live-2026-10-12/README.md) also completed on source `3120bfc`, with independent Bob custody/status, same-hold cold unshield, all three finalized receipts and conservation. An AI agent operated the original reviews; the independent human walkthrough remains open. Fresh dependency
 installation and offline vault creation/reopening have now been exercised on
 macOS arm64. Fresh engine/prover assembly and all 18 circuit artifacts were also
 verified; Arti acquisition is separate. This is not cross-platform acceptance.
