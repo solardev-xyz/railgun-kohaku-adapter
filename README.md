@@ -10,6 +10,7 @@ The existing five root factories retain their restricted data/session contracts.
 
 ## Start here
 
+- [Project website](https://solardev-xyz.github.io/railgun-kohaku-adapter/): an illustrated introduction, the Alice-to-Bob flow, setup paths, evidence and remaining adoption goals. Source lives in [site/](site/README.md).
 - [Review guide](docs/review/README.md): what exists, what has been exercised, and the questions for external reviewers.
 - [Architecture and responsibilities](docs/review/ARCHITECTURE.md): how Kohaku, this package, the Railgun engine and an adopting wallet fit together.
 - [Standalone installation and runtime setup](examples/reference-wallet/README.md#current-commands): install the example from a clean checkout without Freedom.
