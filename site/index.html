@@ -15,7 +15,7 @@
 <a class="skip-link" href="#main">Skip to dossier</a>
 <header class="masthead"><div class="masthead-inner">
   <a class="wordmark" href="#overview"><img src="assets/mark.svg" width="25" height="25" alt=""><span>railgun-kohaku-adapter</span></a>
-  <span class="masthead-label">Engineering review / 12 October 2026</span>
+  <span class="masthead-label">Engineering review / 13 October 2026</span>
   <a class="source-link" href="https://github.com/solardev-xyz/railgun-kohaku-adapter">Repository ↗</a>
 </div></header>
 <div class="document-layout">
@@ -58,6 +58,7 @@
   <p class="kicker">01 / Problem & implementation</p><h2>Why a separate adapter, rather than a thin SDK wrapper?</h2>
   <p>Freedom needed an integration in which the wallet retains control of keys, storage, process lifetimes and egress. A prepare/send wrapper alone would leave the application to reconstruct Railgun account state, authenticate selected inputs, bind recipients, handle output POI and decide what a timed-out submission means. Those decisions are part of the spending authority boundary.</p>
   <p>The work began in Freedom and was extracted with source provenance, then exercised by a standalone host that imports no Freedom source or profiles. It is more than an update to an existing plugin: this repository supplies the narrow plugin interfaces and the operational machinery underneath them. We do not claim a new protocol, a replacement Railgun engine or generic compatibility with every Kohaku host.</p>
+  <div class="constraint"><strong>Upstream Rust continuation — October 13</strong><p><a href="https://github.com/ethereum/kohaku-rs/pull/49">ethereum/kohaku-rs is reintroducing Railgun</a>, including an external signer and current POI artifacts. It is the preferred next backend candidate. We are contributing <a href="https://github.com/ethereum/kohaku-rs/pull/56">interoperability tests against the official Railgun engine</a> and focused boundary fixes, while retaining this qualified JS implementation for comparison. The <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/review/KOHAKU-RS-ASSESSMENT.md">adoption assessment</a> requires licensing/source approval, secret-lifetime controls, control of every network path, scoped POI disclosure and durable uncertain-send recovery before a switch. A <a href="https://github.com/solardev-xyz/railgun-kohaku-adapter/blob/main/docs/review/FREEDOM-CORE-BOUNDARY.md">proposed freedom-core contract</a> keeps wallet authority separate from reusable protocol behavior.</p></div>
   <div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable technical table"><table><caption>Concrete deliverables and their boundaries</caption><thead><tr><th>Implemented</th><th>Purpose</th><th>Boundary</th></tr></thead><tbody>
     <tr><td>Restricted root factories</td><td>Read, private prepare/broadcast and public prepare/submit; one-use opaque operation identity.</td><td>Wrap authoritative operations; do not create authority from a structurally valid host object.</td></tr>
     <tr><td>Trusted-main account owners</td><td>Enrollment, scan/wallet/TXID coordination, operational lanes, retained custody and recovery.</td><td>Require genuine host capabilities and fixed runtime; not a renderer/browser SDK.</td></tr>

@@ -29,6 +29,11 @@ native platform coverage remains open.
 
 ## Read in this order
 
+Upstream continuation: read the [Kohaku Rust assessment](KOHAKU-RS-ASSESSMENT.md)
+and [proposed freedom-core boundary](FREEDOM-CORE-BOUNDARY.md) for the October 13
+direction. Rust is the preferred backend candidate, with explicit adoption
+gates; the qualified JS example remains the comparison implementation.
+
 1. [Architecture](ARCHITECTURE.md) and the two integration levels.
 2. [Local evaluation](EVALUATION.md), including what each check does not prove.
 3. [Owner integration](../owners/INTEGRATION.md) and the

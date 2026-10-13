@@ -11,6 +11,10 @@ from urllib.parse import unquote, urlsplit
 ROOT = Path(__file__).resolve().parent.parent
 SITE = ROOT / "site"
 REPO = "/solardev-xyz/railgun-kohaku-adapter"
+UPSTREAM_LINKS = {
+    "https://github.com/ethereum/kohaku-rs/pull/49",
+    "https://github.com/ethereum/kohaku-rs/pull/56",
+}
 
 
 class Page(HTMLParser):
@@ -69,6 +73,8 @@ def main():
                 assert url.fragment in page.ids, f"Missing section: {link}"
             continue
         assert url.scheme == "https" and url.netloc == "github.com", f"Unexpected destination: {link}"
+        if link in UPSTREAM_LINKS:
+            continue
         assert url.path == REPO or url.path.startswith(REPO + "/"), f"Unexpected repository: {link}"
         if url.path.startswith(REPO + "/blob/main/"):
             path = ROOT / unquote(url.path.removeprefix(REPO + "/blob/main/"))

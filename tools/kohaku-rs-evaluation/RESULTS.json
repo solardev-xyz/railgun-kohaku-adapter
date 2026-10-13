@@ -1,0 +1,78 @@
+{
+  "schema": 1,
+  "observedDate": "2026-10-13",
+  "upstream": "ethereum/kohaku-rs",
+  "base": "da0b0b1f57f1351d5223a741583c0f3f46595531",
+  "environment": {
+    "platform": "macOS arm64",
+    "rust": "1.99",
+    "dependencyChanges": false,
+    "cargoLocked": true
+  },
+  "contributions": [
+    {
+      "pr": 56,
+      "head": "933b45dec5c8192a266fbc4ca6f960a9dc2671db",
+      "scope": "official engine interoperability",
+      "newTests": 4,
+      "releaseLibraryPassed": 55
+    },
+    {
+      "pr": 57,
+      "head": "76a1e61e898c0c0506ca7ff20cd958a8f45cd3a8",
+      "scope": "POI response binding",
+      "newTests": 7,
+      "releaseLibraryPassed": 58,
+      "wasmLibraryCheck": "passed"
+    },
+    {
+      "pr": 58,
+      "head": "9d61a64e0d133270bf667e4c2f147f316f250350",
+      "scope": "canonical address decoding",
+      "newTests": 3,
+      "releaseLibraryPassed": 54,
+      "wasmLibraryCheck": "passed"
+    },
+    {
+      "pr": 59,
+      "head": "f7aaa2234389ca8c7180163b864caa15af6bc37f",
+      "scope": "explicit POI processing prototype",
+      "draft": true,
+      "newTests": 1,
+      "releaseLibraryPassed": 52,
+      "wasmLibraryCheck": "passed",
+      "automaticProcessingMutation": "caught"
+    }
+  ],
+  "combined": {
+    "localTreeCommit": "0c7e3a5828cfe43343291152416379c40ac38d62",
+    "releaseLibraryPassed": 66,
+    "existingLiveTestsIgnored": 5,
+    "benchmarkTestMode": "passed",
+    "wasmLibraryCheck": "passed"
+  },
+  "harness": {
+    "moduleSha256": "6f21dadc86015c19f711c81b0246e64de2259f0942d115854eaa8cde0abff107",
+    "installerSha256": "10453ff77f9b92223cd5b1c2a609ff19ae9359777940587b6823e2fc8bb0cb82",
+    "passed": 1,
+    "accounts": 2,
+    "state": "directly seeded public dummy notes/checkpoints",
+    "checks": [
+      "disk object reopen",
+      "distinct registered accounts retrieve only their seeded notes",
+      "sync failure before writes preserves saved checkpoint"
+    ],
+    "doesNotQualify": [
+      "authentic discovery",
+      "encrypted storage",
+      "process crash",
+      "operation custody",
+      "live services",
+      "funded transactions"
+    ]
+  },
+  "review": "Separate Claude reviews; findings addressed. Not an external security audit.",
+  "ci": "Upstream Rust workflow targets master, not these feature-branch PRs. Manual native/WASM checks recorded here; GitGuardian checks are separate.",
+  "coreSourceReview": "62e21172aa7cabc8c615ae5a9d6246822191ba47",
+  "noFundedProfileTouched": true
+}

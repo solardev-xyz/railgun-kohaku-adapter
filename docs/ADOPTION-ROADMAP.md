@@ -3,13 +3,23 @@
 Agreed direction, October 10, 2026: make this repository independently usable
 before resuming Freedom product integration. Prepare review materials now;
 external outreach follows the reference application and adoption work below.
-Maintainers will choose and contact reviewers. No outreach has been sent.
+Maintainers choose and contact external reviewers. The October 13 upstream
+continuation below updates the next implementation direction.
 
 The completed Freedom Sepolia campaign is the baseline, not the reference app.
 Its evidence and retained profiles stay intact. New development uses independent
 disposable state and identifies every new runtime and artifact set.
 
 ## 1. Reviewable project
+
+October 13 direction: contribute protocol compatibility tests and bounded
+correctness fixes to [ethereum/kohaku-rs](https://github.com/ethereum/kohaku-rs/pull/49),
+then assess it for freedom-core. Freeze expansion of this JS protocol backend;
+preserve the example and qualification evidence. The
+[Rust assessment](review/KOHAKU-RS-ASSESSMENT.md) gives the replacement gates, and
+the [core proposal](review/FREEDOM-CORE-BOUNDARY.md) describes the future authority
+boundary. It does not change the ongoing core migration, start a Railgun
+migration, or move funded custody.
 
 Deliver an accurate README, responsibility diagram, capability/qualification
 matrix, reproducible local evaluation and a focused external-review brief.
